@@ -12,6 +12,7 @@ WORKDIR /usr/src/app/
 
 #install and cache app dependencies
 COPY package.json /usr/src/app/
+COPY . /usr/src/app/
 
 COPY scripts/get_build_tools.sh .
 COPY scripts/installs.sh .
@@ -24,10 +25,6 @@ RUN . ./installs.sh
 
 RUN rm get_build_tools.sh
 RUN rm installs.sh
-
-RUN npm install
-
-COPY . /usr/src/app/
 
 EXPOSE 3000
 
