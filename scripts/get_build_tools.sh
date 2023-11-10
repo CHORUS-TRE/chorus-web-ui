@@ -1,8 +1,9 @@
 #!/bin/bash
+curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+bash /tmp/nodesource_setup.sh
+apt-get install -y nodejs
+node -v
+npm  -v
 
-npm install --silent
-npm install react-script@1.1.1 -g --silent
-# npm install @mui/material 
-# npm install -D tailwindcss
-# npx tailwindcss init -p
-# npm install
+
+
