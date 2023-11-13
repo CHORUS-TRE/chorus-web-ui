@@ -1,15 +1,41 @@
 version: '3'
 services:
-  react-app-template:
-    container_name: react-app-template
+  dev:
+    container_name: react-app-dev
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: local.Dockerfile
     volumes:
       - .:/usr/src/app
-      - nodemodules:/usr/src/app/node_modules
+      - /usr/src/app/node_modules
     ports:
       - '3000:3000'
+    environment:
+      - NODE_ENV=development
+
+  test:
+    container_name: react-app-test
+    build: 
+      context: .
+      dockerfile: local.Dockerfile
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - CI=true
+    command: npm test
+
+  prod:
+    container_name: react-app-prod
+    build: 
+      context: .
+      dockerfile: production.Dockerfile
+    ports:
+      - '3001:80'
+    environment:
+      - NODE_ENV=production
+  
+
 
 volumes:
   nodemodules: {}

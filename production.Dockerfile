@@ -1,18 +1,16 @@
 #base image
 #FROM node:9.6.1
-FROM registry.itrcs3-app.intranet.chuv/ds-ubuntu:latest
+FROM registry.itrcs3-app.intranet.chuv/ds-ubuntu:latest as build-deps
 
 USER root
 
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl
 
 #set working directory
-#RUN  mkdir /usr/src/app
 WORKDIR /usr/src/app/
 
 #install and cache app dependencies
 COPY package.json /usr/src/app/
-COPY . /usr/src/app/
 
 COPY scripts/get_build_tools.sh .
 COPY scripts/installs.sh .
@@ -26,7 +24,17 @@ RUN . ./installs.sh
 RUN rm get_build_tools.sh
 RUN rm installs.sh
 
-EXPOSE 3000
+RUN npm install
+COPY . .
 
-#start app
-CMD ["npm", "start"]
+#test before deploying to prod
+RUN CI=true npm test
+
+#build
+RUN npm run build
+
+# Deploy
+FROM nginx:alpine
+COPY --from=build-deps /usr/src/app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
