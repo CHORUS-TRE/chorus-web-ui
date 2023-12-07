@@ -17,15 +17,15 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run containers') {
             steps {
-                sh 'docker exec t3-app-test pnpm test'
+                sh 'docker-compose -f docker/docker-compose.yml up -d'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
-        stage('Deploy') {
+        stage('Run Tests') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml up -d'
+                sh 'docker exec t3-app-test pnpm test'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
