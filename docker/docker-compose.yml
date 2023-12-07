@@ -33,4 +33,4 @@ services:
       - ./frontend/node_modules:/app/node_modules
     environment:
       - CI=true
-    # command: pnpm test
+    command: pnpm test

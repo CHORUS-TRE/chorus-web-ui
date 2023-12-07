@@ -16,19 +16,19 @@ pipeline {
                 sh 'docker-compose -f docker/docker-compose.yml build'
             }
         }
-
+        stage('Run Tests') {
+            steps {
+                //sh 'docker exec t3-app-test pnpm test'
+                sh 'docker-compose run --rm dev pnpm run test'
+            }
+        }
         stage('Run containers') {
             steps {
                 sh 'docker-compose -f docker/docker-compose.yml up -d'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
-        stage('Run Tests') {
-            steps {
-                sh 'docker exec t3-app-test pnpm test'
-                // sh 'docker-compose run --rm app pytest -v'
-            }
-        }
+
         stage("User notification?") {
             when {
                 expression {
