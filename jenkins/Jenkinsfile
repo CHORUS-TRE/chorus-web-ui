@@ -19,7 +19,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'sleep 20'
+                sh 'docker exec t3-app-test pnpm test'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
