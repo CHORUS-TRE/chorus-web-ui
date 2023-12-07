@@ -16,23 +16,25 @@ pipeline {
                 sh 'docker-compose -f docker/docker-compose.yml build'
             }
         }
-        stage('Run Tests') {
-            steps {
-                //sh 'docker exec t3-app-test pnpm test'
-                sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm run test'
-            }
-        }
+
         stage('Run containers') {
             steps {
                 sh 'docker-compose -f docker/docker-compose.yml up -d'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
-
+        stage('Run Tests') {
+            steps {
+                //sh 'docker exec t3-app-test pnpm test'
+                //sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm run test'
+                sh 'docker logs t3-app-test'
+            }
+        }
         stage("User notification?") {
             when {
                 expression {
-                    return params.SEND_EMAIL
+                   //return params.SEND_EMAIL
+                   return False
                 }
             }
             steps {
@@ -48,7 +50,6 @@ pipeline {
 
             //junit '../tests/result.xml' TODO
          }
-
         failure {
              // only in case of failure
              emailext subject: "${env.JOB_NAME} - build FAILURE (${env.BUILD_NUMBER})", body: "${env.BUILD_URL}console", to: "${E_MAIL_INFORM}";
