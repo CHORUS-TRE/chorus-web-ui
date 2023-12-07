@@ -19,7 +19,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 //sh 'docker exec t3-app-test pnpm test'
-                sh 'docker-compose -f docker/docker run --rm dev pnpm run test'
+                sh 'docker-compose -f docker/docke-compose.yml run --rm dev pnpm run test'
             }
         }
         stage('Run containers') {
