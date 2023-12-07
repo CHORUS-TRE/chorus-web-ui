@@ -19,18 +19,18 @@ services:
       context: ..
       dockerfile: docker/prod.Dockerfile
     ports:
-      - '3000:80'
+      - '3001:80'
     environment:
       - NODE_ENV=production
 
-  # test:
-  #   container_name: react-app-test
-  #   build:
-  #     context: ./app
-  #     dockerfile: local.Dockerfile
-  #   volumes:
-  #     - ./app:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   environment:
-  #     - CI=true
-  #   command: npm test
+  test:
+    container_name: react-app-test
+    build:
+      context: ./app
+      dockerfile: local.Dockerfile
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - CI=true
+    command: npm test
