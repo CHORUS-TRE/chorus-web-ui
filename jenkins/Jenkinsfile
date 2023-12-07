@@ -10,16 +10,10 @@ pipeline {
 	}
 
     stages {
-        stage('Cleanup and checkout') {
-            steps {
-                cleanWs()
-                checkout scm
-            }
-        }
 
         stage('Build') {
             steps {
-                sh 'docker-compose build'
+                sh 'docker-compose -f docker/docker-compose.yml build'
             }
         }
 
@@ -29,13 +23,12 @@ pipeline {
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
-
-        stage('Stop and remove container') {
+        stage('Deploy') {
             steps {
-                sh 'docker-compose down'
+                sh 'docker-compose -f docker/docker-compose.yml up -d'
+                // sh 'docker-compose run --rm app pytest -v'
             }
         }
-
         stage("User notification?") {
             when {
                 expression {
@@ -50,7 +43,9 @@ pipeline {
     post {
         always {
             // always (cannot be empty)
+            sh 'docker-compose -f docker/docker-compose.yml down'
             echo 'Email notification'
+
             //junit '../tests/result.xml' TODO
          }
 
