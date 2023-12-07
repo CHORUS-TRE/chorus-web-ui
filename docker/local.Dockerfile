@@ -17,5 +17,5 @@ RUN pnpm install
 
 FROM build1 as build2
 ADD frontend .
-EXPOSE 3000
+EXPOSE 3002
 CMD ["pnpm", "dev"]
