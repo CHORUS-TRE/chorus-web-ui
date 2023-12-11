@@ -13,13 +13,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml build'
+                sh 'docker-compose -f docker/docker-compose.yml build test'
             }
         }
 
         stage('Run containers') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml up -d'
+                sh 'docker-compose -f docker/docker-compose.yml up -d test'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
@@ -28,8 +28,8 @@ pipeline {
                 //sh 'docker exec t3-app-test pnpm test'
                 //sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm run test'
                 sh 'docker logs t3-app-test'
-                sh 'docker logs t3-app-dev'
-                sh 'docker logs t3-app-prod'
+                // sh 'docker logs t3-app-dev'
+                // sh 'docker logs t3-app-prod'
             }
         }
         stage("User notification?") {
