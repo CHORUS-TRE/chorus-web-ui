@@ -14,7 +14,6 @@ FROM builder AS build1
 COPY frontend/package*.json frontend/pnpm-lock.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install
-RUN pnpm install --global pnpm
 
 FROM build1 as build2
 ADD frontend .
