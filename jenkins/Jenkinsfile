@@ -35,8 +35,8 @@ pipeline {
         stage("User notification?") {
             when {
                 expression {
-                   sh "echo ${params.SEND_EMAIL}"
-                   return params.SEND_EMAIL
+                   return null
+                   //return params.SEND_EMAIL TODO
                 }
             }
             steps {

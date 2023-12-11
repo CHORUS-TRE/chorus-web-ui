@@ -6,10 +6,11 @@ services:
       context: ..
       dockerfile: docker/local.Dockerfile
     volumes:
-      - ./frontend/:/app
-      - ./frontend/node_modules:/app/node_modules
+      - ../frontend/:/app
+      - ../frontend/node_modules:/app/node_modules
+      - ../frontend/sysctl.conf:/etc/sysctl.conf
     ports:
-      - '3002:3000'
+      - '3000:3000'
     environment:
       - NODE_ENV=development
 
@@ -29,8 +30,9 @@ services:
       context: ..
       dockerfile: docker/local.Dockerfile
     volumes:
-      - ./frontend/:/app
-      - ./frontend/node_modules:/app/node_modules
+      - ../frontend/:/app
+      - ../frontend/node_modules:/app/node_modules
+      - ../frontend/sysctl.conf:/etc/sysctl.conf
     environment:
       - CI=true
     command: pnpm test
