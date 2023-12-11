@@ -27,6 +27,7 @@ pipeline {
             steps {
                 //sh 'docker exec t3-app-test pnpm test'
                 //sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm run test'
+                sh 'sleep 60'
                 sh 'docker logs t3-app-test'
                 // sh 'docker logs t3-app-dev'
                 // sh 'docker logs t3-app-prod'
