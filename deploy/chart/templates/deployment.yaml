@@ -20,6 +20,6 @@ spec:
       - name: deployment-frontend-{{ include "chart.nameid" . }}
         image: "{{ .Values.image }}"
         ports:
-        - containerPort: 3001
+        - containerPort: 80
       imagePullSecrets:
       - name: registry-auth
