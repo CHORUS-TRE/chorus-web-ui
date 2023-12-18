@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sh 'docker compose -f docker/docker-compose.yml run --rm dev pnpm test'
                 sh 'docker logs t3-app-dev'
-                sh 'docker logs t3-app-prod'
+                // sh 'docker logs t3-app-prod'
             }
         }
 
