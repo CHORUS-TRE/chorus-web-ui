@@ -20,15 +20,11 @@ pipeline {
             steps {
                 sh 'docker-compose -f docker/docker-compose.yml up -d  --remove-orphans'
 
-                // sh 'docker-compose run --rm app pytest -v'
             }
         }
         stage('Run Tests') {
             steps {
-                //sh 'docker exec t3-app-test pnpm test'
-                //sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm run test'
-                sh 'sleep 40'
-                sh 'docker logs t3-app-test'
+                sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm test'
                 sh 'docker logs t3-app-dev'
                 sh 'docker logs t3-app-prod'
             }
