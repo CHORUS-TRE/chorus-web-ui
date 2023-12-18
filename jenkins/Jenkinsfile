@@ -17,19 +17,19 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml build'
+                sh 'docker compose -f docker/docker-compose.yml build'
             }
         }
 
         stage('Run containers') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml up dev -d  --remove-orphans'
+                sh 'docker compose -f docker/docker-compose.yml up dev -d  --remove-orphans'
 
             }
         }
         stage('Run Tests') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm test'
+                sh 'docker compose -f docker/docker-compose.yml run --rm dev pnpm test'
                 sh 'docker logs t3-app-dev'
                 sh 'docker logs t3-app-prod'
             }
@@ -73,7 +73,7 @@ pipeline {
     post {
         always {
             // always (cannot be empty)
-            sh 'docker-compose -f docker/docker-compose.yml down'
+            sh 'docker compose -f docker/docker-compose.yml down'
             echo 'Email notification'
 
             //junit '../tests/result.xml' TODO
