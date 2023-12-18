@@ -5,10 +5,10 @@ services:
     build:
       context: ..
       dockerfile: docker/local.Dockerfile
-    volumes:
-      - ../frontend/:/app
-      - ../frontend/node_modules:/app/node_modules
-      - ../frontend/sysctl.conf:/etc/sysctl.conf
+    # volumes:
+    #   - ../frontend/:/app
+    #   - ../frontend/node_modules:/app/node_modules
+    #   - ../frontend/sysctl.conf:/etc/sysctl.conf
     ports:
       - '3000:3000'
     environment:

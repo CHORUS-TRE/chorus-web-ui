@@ -10,18 +10,15 @@ pipeline {
 	}
 
     stages {
-
         stage('Build') {
             steps {
-                sh 'ls -l'
-                sh 'ls -l frontend/'
-                sh 'docker-compose -f docker/docker-compose.yml build test'
+                sh 'docker-compose -f docker/docker-compose.yml build'
             }
         }
 
         stage('Run containers') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml up -d test --remove-orphans'
+                sh 'docker-compose -f docker/docker-compose.yml up -d  --remove-orphans'
 
                 // sh 'docker-compose run --rm app pytest -v'
             }
@@ -30,17 +27,16 @@ pipeline {
             steps {
                 //sh 'docker exec t3-app-test pnpm test'
                 //sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm run test'
-                sh 'sleep 60'
+                sh 'sleep 40'
                 sh 'docker logs t3-app-test'
-                // sh 'docker logs t3-app-dev'
-                // sh 'docker logs t3-app-prod'
+                sh 'docker logs t3-app-dev'
+                sh 'docker logs t3-app-prod'
             }
         }
         stage("User notification?") {
             when {
                 expression {
-                   return null
-                   //return params.SEND_EMAIL TODO
+                   return params.SEND_EMAIL
                 }
             }
             steps {
