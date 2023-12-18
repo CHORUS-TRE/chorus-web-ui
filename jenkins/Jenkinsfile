@@ -13,6 +13,8 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'ls -l'
+                sh 'ls -l frontend/'
                 sh 'docker-compose -f docker/docker-compose.yml build test'
             }
         }
