@@ -19,6 +19,7 @@ services:
     build:
       context: ..
       dockerfile: docker/prod.Dockerfile
+    image: registry.itrcs3-app.intranet.chuv/ds-cicd-template-frontend:latest
     ports:
       - '3001:80'
     environment:

@@ -13,7 +13,7 @@ RUN rm -r ./scripts
 FROM builder AS build1
 COPY frontend/package*.json frontend/pnpm-lock.yaml ./
 RUN npm install -g pnpm
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 FROM build1 AS build2
 COPY frontend .

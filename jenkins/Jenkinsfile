@@ -1,12 +1,17 @@
 pipeline {
     agent {
-        docker {
-            image 'docker:latest'
+        kubernetes {
+            cloud 'kubernetes-int'
+            namespace 'jenkins-int-pipeline'
+            label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
+            yamlFile "jenkins/agents/unit.yaml"
+            defaultContainer 'ds-ubuntu'
         }
     }
     environment {
 	    E_MAIL_INFORM = 'paloma.cito@chuv.ch'
         COMPOSE_PROJECT_NAME = 'my-app'
+        componentName = 'template-frontend'
 	}
 
     stages {
@@ -18,7 +23,7 @@ pipeline {
 
         stage('Run containers') {
             steps {
-                sh 'docker-compose -f docker/docker-compose.yml up -d  --remove-orphans'
+                sh 'docker-compose -f docker/docker-compose.yml up dev -d  --remove-orphans'
 
             }
         }
@@ -27,6 +32,30 @@ pipeline {
                 sh 'docker-compose -f docker/docker-compose.yml run --rm dev pnpm test'
                 sh 'docker logs t3-app-dev'
                 sh 'docker logs t3-app-prod'
+            }
+        }
+
+        stage('Master') {
+            when {
+                branch 'master'
+            }
+            stages {
+                stage("push to chuv registry") {
+                    steps {
+                        sh 'docker push registry.itrcs3-app.intranet.chuv/ds-cicd-template-frontend:latest'
+                    }
+                }
+                stage("deploy in int") {
+                    steps {
+                        checkout scm
+                        sh """
+                            export env=int
+                            export RELEASE_NAME="${componentName}-int-master"
+                            cd deploy
+                            ./deploy.sh
+                        """
+                    }
+                }
             }
         }
 
