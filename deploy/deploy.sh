@@ -2,6 +2,10 @@
 
 set -e
 
+mkdir -p ./chart/files
+rm -rf ./chart/files/*
+cp -r ../configs/$env/* ./chart/files/
+
 helm version
 helm template --namespace "$env" --values ./chart/files/values.yaml --set-string "image=registry.itrcs3-app.intranet.chuv/ds-cicd-template-frontend:${IMAGE_TAG}" ./chart
 
