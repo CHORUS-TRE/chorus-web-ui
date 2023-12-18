@@ -29,6 +29,7 @@ pipeline {
                 sh 'docker logs t3-app-prod'
             }
         }
+
         stage("User notification?") {
             when {
                 expression {
