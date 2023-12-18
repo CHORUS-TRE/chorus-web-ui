@@ -50,6 +50,7 @@ pipeline {
                         checkout scm
                         sh """
                             export env=int
+                            export IMAGE_TAG=latest
                             export RELEASE_NAME="${componentName}-int-master"
                             cd deploy
                             ./deploy.sh
