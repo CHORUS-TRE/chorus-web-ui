@@ -11,11 +11,11 @@ RUN . ./scripts/install.sh
 RUN rm -r ./scripts
 
 FROM builder AS build1
-COPY frontend/package*.json frontend/pnpm-lock.yaml ./
+COPY frontend/package*.json frontend/pnpm-lock.yaml /app/
 RUN npm install -g pnpm
 RUN pnpm install
 
 FROM build1 as build2
-ADD frontend .
+ADD frontend /app/
 EXPOSE 3000
 CMD ["pnpm", "dev"]
