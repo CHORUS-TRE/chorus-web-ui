@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unit
+spec:
+  containers:
+  - name: ds-ubuntu
+    image: registry.itrcs3-app.intranet.chuv/ds-ubuntu
+    imagePullPolicy: Always
+    tty: true
+    volumeMounts:
+    - name: docker
+      mountPath: /run/docker.sock
+    - name: docker-config
+      mountPath: /ds/ds-deployer/.docker/secret
+    env:
+      - name: CONFIG_AES_PASSPHRASE_ci
+        valueFrom:
+          secretKeyRef:
+            name: configaespassphrase-ci
+            key: passphrase
+      - name: CONFIG_AES_PASSPHRASE_int
+        valueFrom:
+          secretKeyRef:
+            name: configaespassphrase-int
+            key: passphrase
+    lifecycle:
+      postStart:
+        exec:
+          command: ['sh', '-c', "cp /ds/ds-deployer/.docker/secret/config.json /ds/ds-deployer/.docker/config.json"]
+  - name: jnlp
+    image: registry.itrcs3-app.intranet.chuv/ds-jnlp/jenkins/inbound-agent:3107.v665000b_51092-15
+    imagePullPolicy: Always
+  imagePullSecrets:
+  - name: registry-auth
+  volumes:
+  - name: docker
+    hostPath:
+      path: /run/docker.sock
+  - name: docker-config
+    secret:
+      secretName: registry-auth
+      items:
+      - key: .dockerconfigjson
+        path: config.json
