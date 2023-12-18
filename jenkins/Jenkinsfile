@@ -22,7 +22,7 @@ pipeline {
         stage('Run containers') {
             steps {
                 sh 'docker-compose -f docker/docker-compose.yml up -d test --remove-orphans'
-                sh 'docker run  test ls -la /app'
+                sh 'docker run  t3-app-test ls -la /app'
                 // sh 'docker-compose run --rm app pytest -v'
             }
         }
