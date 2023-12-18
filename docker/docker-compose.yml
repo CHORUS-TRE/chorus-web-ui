@@ -23,16 +23,3 @@ services:
       - '3001:80'
     environment:
       - NODE_ENV=production
-
-  # test:
-  #   container_name: t3-app-test
-  #   build:
-  #     context: ..
-  #     dockerfile: docker/local.Dockerfile
-  #   # volumes:
-  #   #   - ../frontend/:/app
-  #   #   - ../frontend/node_modules:/app/node_modules
-  #     # - ../frontend/sysctl.conf:/etc/sysctl.conf
-  #   environment:
-  #     - CI=true
-  #   command: pnpm test
