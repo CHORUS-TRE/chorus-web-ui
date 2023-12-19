@@ -17,7 +17,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker compose -f docker/docker-compose.yml build'
+                sh 'docker compose -f docker/docker-compose.yml build --no-cache'
             }
         }
 
@@ -30,8 +30,6 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh 'docker compose -f docker/docker-compose.yml run --rm dev pnpm test'
-                sh 'docker logs t3-app-dev'
-                // sh 'docker logs t3-app-prod'
             }
         }
 
