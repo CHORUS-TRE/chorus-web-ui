@@ -1,0 +1,57 @@
+pipeline {
+  agent {
+    kubernetes {
+      cloud 'kubernetes-int'
+      namespace 'jenkins-int-pipeline'
+      label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
+      yamlFile "jenkins/agents/unit.yaml"
+      defaultContainer 'ds-ubuntu'
+    }
+  }
+  environment{
+        E_MAIL_INFORM = 'paloma.cito@chuv.ch'
+        COMPOSE_PROJECT_NAME = 'my-app'
+        componentName = 'template-frontend'
+  }
+  stages {
+    stage('Test and Build') {
+      steps {
+        container(name: 'ds-ubuntu', shell: '/bin/bash') {
+          dir('ds-dev-ops') {
+            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PYPI_SERVER_USERNAME_PASSWORD', usernameVariable: 'PYPI_USERNAME', passwordVariable: 'PYPI_PASSWORD']]) {
+              checkout scm
+              sh '''
+                cd docker
+                ./build-stage2.sh
+              '''
+            }
+          }
+        }
+      }
+    }
+
+    stage('Master') {
+      when {
+        branch 'master'
+      }
+      stages {
+        stage('Deploy') {
+          steps {
+            container(name: 'ds-ubuntu', shell: '/bin/bash') {
+              dir('ds-dev-ops') {
+                checkout scm
+                sh """
+                  export env=int
+                  export IMAGE_TAG=latest
+                  export RELEASE_NAME="${componentName}-int-master"
+                  cd deploy
+                  ./deploy.sh
+                """
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
