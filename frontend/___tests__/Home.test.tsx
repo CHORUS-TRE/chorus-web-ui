@@ -4,6 +4,6 @@ import Home from '../src/pages/index'
 describe('Home', () => {
   it('heading', () => {
     render(<Home />)
-    const heading = screen.getByRole('heading', { level: 2, name: /Welcome to My Frontend App/i });
+    const heading = screen.getByRole('heading', { level: 2, name: /Welcome to The Frontend App/i });
     expect(heading).toBeTruthy();  })
 })
