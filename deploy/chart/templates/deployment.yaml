@@ -4,8 +4,8 @@ metadata:
   name: deployment-frontend-{{ include "chart.nameid" . }}
   labels:
     app: deployment-frontend-{{ include "chart.nameid" . }}
-    nameid: {{ include "chart.nameid" . }}
-    version: {{ .Values.version }}
+    nameid: { { include "chart.nameid" . } }
+    version: { { .Values.version } }
 spec:
   replicas: 1
   selector:
@@ -17,10 +17,10 @@ spec:
         app: deployment-frontend-{{ include "chart.nameid" . }}
     spec:
       containers:
-      - name: deployment-frontend-{{ include "chart.nameid" . }}
-        image: "{{ .Values.image }}"
-        imagePullPolicy: always
-        ports:
-        - containerPort: 80
+        - name: deployment-frontend-{{ include "chart.nameid" . }}
+          image: "{{ .Values.image }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
       imagePullSecrets:
-      - name: registry-auth
+        - name: registry-auth
