@@ -1,11 +1,14 @@
 pipeline {
   agent {
     kubernetes {
-      cloud 'kubernetes-int'
-      namespace 'jenkins-int-pipeline'
-      label "ci-ds-cicd-template-backend-stage1-${UUID.randomUUID().toString()}"
-      yamlFile "jenkins/agents/unit.yaml"
+        cloud 'kubernetes-int'
+        namespace 'jenkins-int-pipeline'
+        label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
+        yamlFile "jenkins/agents/unit.yaml"
+        defaultContainer 'ds-ubuntu'
     }
+
+
   }
   stages {
     stage('Build') {
