@@ -7,8 +7,6 @@ pipeline {
         yamlFile "jenkins/agents/unit.yaml"
         defaultContainer 'ds-ubuntu'
     }
-
-
   }
   stages {
     stage('Build') {
