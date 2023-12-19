@@ -48,7 +48,7 @@ export default function Contact() {
                     </div>
                     <div className="mb-4">
                         <label htmlFor="message" className="block mb-2">Message:</label>
-                        <textarea id="message" name="message" value={formData.message} onChange={handleChange} className="border rounded p-2 w-full text-black" rows='3'></textarea>
+                        <textarea id="message" name="message" value={formData.message} onChange={handleChange} className="border rounded p-2 w-full text-black" rows={3}></textarea>
                     </div>
                     <button type="submit" className="bg-[#05514d] text-white px-4 py-2 rounded">Send</button>
                 </form>
