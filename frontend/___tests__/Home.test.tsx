@@ -5,6 +5,6 @@ describe('Home', () => {
   it('heading', () => {
     render(<Home />)
     const main = within(screen.getByRole('main'))
-    expect(main.getByRole('heading', { level: 1, name: /welcome to/i })).toBeDefined()
+    expect(main.getByRole('heading', { level: 1, name: /Welcome to My Frontend App/i })).toBeDefined()
   })
 })
