@@ -13,6 +13,7 @@ pipeline {
               checkout scm
               sh '''
                 cd docker
+                chmod +x build-stage1.sh
                 ./build-stage1.sh
               '''
 
