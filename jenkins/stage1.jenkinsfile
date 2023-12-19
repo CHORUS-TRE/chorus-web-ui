@@ -1,0 +1,26 @@
+pipeline {
+  agent {
+    kubernetes {
+        cloud 'kubernetes-int'
+        namespace 'jenkins-int-pipeline'
+        label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
+        yamlFile "jenkins/agents/unit.yaml"
+        defaultContainer 'ds-ubuntu'
+    }
+  }
+  stages {
+    stage('Build') {
+      steps {
+              checkout scm
+              sh '''
+                cd docker
+                chmod +x build-stage1.sh
+                ./build-stage1.sh
+              '''
+
+
+
+      }
+    }
+  }
+}
