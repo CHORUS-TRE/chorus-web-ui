@@ -15,9 +15,11 @@ spec:
     metadata:
       labels:
         app: deployment-frontend-{{ include "chart.nameid" . }}
-      annotations:
-        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
     spec:
+      template:
+        metadata:
+          annotations:
+            releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
       containers:
         - name: deployment-frontend-{{ include "chart.nameid" . }}
           image: "{{ .Values.image }}"
