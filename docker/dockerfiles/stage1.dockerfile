@@ -10,5 +10,5 @@ RUN bash /tmp/nodesource_setup.sh
 RUN apt-get install -y nodejs
 
 RUN npm install -g pnpm
-COPY frontend/package*.json frontend/pnpm-lock.yaml ./
+COPY package*.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
