@@ -91,6 +91,6 @@ cd your-repository-name
    docker run -p <some port>:80 -d prod-image
    ```
 
-   Access your application at `localhost:&lt;the port you put&gt;`.
+   Access your application at `localhost:<the port you put>`.
 
 For further assistance or inquiries, feel free to open an issue in the repository.
