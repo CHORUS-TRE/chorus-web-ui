@@ -64,7 +64,7 @@ cd your-repository-name
 
 1. **Testing Your Application**
 
-   - Add or update tests in frontend/**tests**/.
+   - Add or update tests in `frontend/__tests__/`.
    - Example tests for components and pages are provided, such as for the Home component.
 
 2. **Deployment Configuration**
