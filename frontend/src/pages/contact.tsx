@@ -34,9 +34,6 @@ export default function Contact() {
             <Header />
             <main className="flex min-h-screen flex-col items-center justify-center text-white">
                 <h1 className="text-4xl font-bold">Contact Us</h1>
-                {/* <p className="mt-4 text-center">
-                    Have any questions? Reach out to us through our contact form.
-                </p> */}
                 <form onSubmit={handleSubmit} className='w-1/3 mt-8'>
                     <div className="mb-4">
                         <label htmlFor="name" className="block mb-2">Name:</label>

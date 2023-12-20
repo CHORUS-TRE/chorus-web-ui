@@ -14,11 +14,6 @@ export default function About() {
                 <p className="mt-4 text-center">
                     This is the about page of our T3 App. Here you can find information about our team and mission.
                 </p>
-                {/* <Link href="/" passHref>
-                    <span className="mt-6 rounded bg-blue-500 py-2 px-4 hover:bg-blue-600 cursor-pointer">
-                        Go back home
-                    </span>
-                </Link> */}
             </main>
         </div>
     );
