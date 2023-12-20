@@ -84,4 +84,4 @@ Once you are satisfied with your website, you will prepare it for production-lev
    docker run -p <some port>:80 -d prod-image
 ```
 
-Then you can access your website on localhost:&lt;the port you put:&gt;.
+Then you can access your website on localhost:&lt;the port you put&gt;.
