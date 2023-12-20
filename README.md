@@ -56,15 +56,15 @@ cd your-repository-name
 
 3. **Developing Your Application**
 
-   - Main Page: Edit frontend/src/pages/index.tsx to modify the homepage.
-   - New Pages: Create additional pages and routes in the frontend/src/pages directory.
-   - Shared Components: Develop reusable components like headers or footers in the frontend/src/components folder.
+   - Main Page: Edit src/pages/index.tsx to modify the homepage.
+   - New Pages: Create additional pages and routes in the src/pages directory.
+   - Shared Components: Develop reusable components like headers or footers in the src/components folder.
 
 ### Production
 
 1. **Testing Your Application**
 
-   - Add or update tests in `frontend/__tests__/`.
+   - Add or update tests in `__tests__/`.
    - Example tests for components and pages are provided, such as for the Home component.
 
 2. **Deployment Configuration**

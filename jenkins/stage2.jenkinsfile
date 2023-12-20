@@ -16,8 +16,8 @@ pipeline {
   stages {
     stage('Test and Build') {
       steps {
-        container(name: 'ds-ubuntu', shell: '/bin/bash') {
-          dir('ds-dev-ops') {
+        // container(name: 'ds-ubuntu', shell: '/bin/bash') {
+        //   dir('ds-dev-ops') {
             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PYPI_SERVER_USERNAME_PASSWORD', usernameVariable: 'PYPI_USERNAME', passwordVariable: 'PYPI_PASSWORD']]) {
               checkout scm
               sh '''
@@ -26,8 +26,8 @@ pipeline {
                 ./build-stage2.sh
               '''
             }
-          }
-        }
+        //   }
+        // }
       }
     }
 
@@ -38,8 +38,8 @@ pipeline {
       stages {
         stage('Deploy') {
           steps {
-            container(name: 'ds-ubuntu', shell: '/bin/bash') {
-              dir('ds-dev-ops') {
+            // container(name: 'ds-ubuntu', shell: '/bin/bash') {
+            //   dir('ds-dev-ops') {
                 checkout scm
                 sh """
                   export env=int
@@ -50,8 +50,8 @@ pipeline {
                 """
               }
             }
-          }
-        }
+        //   }
+        // }
       }
     }
   }
