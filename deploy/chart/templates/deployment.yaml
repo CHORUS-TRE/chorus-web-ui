@@ -15,41 +15,11 @@ spec:
     metadata:
       labels:
         app: deployment-frontend-{{ include "chart.nameid" . }}
-      annotations:
-        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
-        timestamp: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
     spec:
       template:
         metadata:
           annotations:
-            releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
             timestamp: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
-      containers:
-        - name: deployment-frontend-{{ include "chart.nameid" . }}
-          image: "{{ .Values.image }}"
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 80
-      imagePullSecrets:
-        - name: registry-auth
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: deployment-frontend-{{ include "chart.nameid" . }}
-  labels:
-    app: deployment-frontend-{{ include "chart.nameid" . }}
-    nameid: {{ include "chart.nameid" . }}
-    version: {{ .Values.version }}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: deployment-frontend-{{ include "chart.nameid" . }}
-  template:
-    metadata:
-      labels:
-        app: deployment-frontend-{{ include "chart.nameid" . }}
-    spec:
       containers:
         - name: deployment-frontend-{{ include "chart.nameid" . }}
           image: "{{ .Values.image }}"
