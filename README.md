@@ -4,14 +4,14 @@ This project is a Next.js frontend template designed to kickstart your web devel
 
 ## Getting Started
 
-Follow these steps to set up your own frontend based on this template.
+This guide will walk you through setting up and customizing your frontend based on this template.
 
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- Docker
-- Dev Containers extension in Visual Code
+- Docker: A containerization platform.
+- Dev Containers extension for Visual Studio Code: Enhances the development experience by allowing you to work within a Docker container.
 
 ### Installation
 
@@ -26,56 +26,63 @@ cd your-repository-name
 
 1. **Open the project in a dev container**
 
-   As you can see, there is a .devcontainer folder at the root of the project. Dev Containers allow you to open any folder inside a container and develop directly in the correct environment without needing to build everytime. If you want to learn more about Dev Containers, see [here](https://code.visualstudio.com/docs/devcontainers/containers).
+   The project includes a .devcontainer folder at the root. Dev Containers allow for seamless development inside a Docker container, ensuring a consistent and fully-prepared development environment. Learn more about Dev Containers [here](https://code.visualstudio.com/docs/devcontainers/containers).
 
-   To start the development environment, make sure you installed the Dev Containers extension and click on the green arrows on the lower left corner of the window (see picture).
+   To open the project in a Dev Container:
+
+   - Ensure the Dev Containers extension is installed in Visual Studio Code.
+   - Click on the green arrows in the lower left corner of VS Code (as shown below).
+   - Select "Reopen in Container" from the menu.
 
    ![alt text](https://code.visualstudio.com/assets/docs/devcontainers/tutorial/remote-status-bar.png)
 
-   You will see a menu appear, click on "Reopen in Container". You should now be in the development environment with a terminal to interact with it.
+   Once opened in the container, you'll have access to a terminal for interaction.
 
-2. **Install and build**
+2. **Install Dependencies and Run the Development Server**
 
-   First, install the requirements.
+   Install the necessary packages:
 
    ```bash
    pnpm install
    ```
 
-   Next, run the development website.
+   Start the development server:
 
    ```bash
    pnpm dev
    ```
 
-   You can now access your website on the localhost and port written in the terminal. You can develop your website and it will refresh automatically the website at any change.
+   Your application will now be running on the specified localhost port. The development server will automatically refresh upon any changes to the code.
 
-3. **Create your website**
+3. **Developing Your Application**
 
-   You can modify the main page in `frontend/src/pages/index.tsx`. You can create new pages and routes in that same folder, and create new components that you want to use in several pages (like a header or a footer) in the `components` folder.
+   - Main Page: Edit frontend/src/pages/index.tsx to modify the homepage.
+   - New Pages: Create additional pages and routes in the frontend/src/pages directory.
+   - Shared Components: Develop reusable components like headers or footers in the frontend/src/components folder.
 
 ### Production
 
-Once you are satisfied with your website, you will prepare it for production-level deployment.
+1. **Testing Your Application**
 
-1. **Write tests**
+   - Add or update tests in frontend/**tests**/.
+   - Example tests for components and pages are provided, such as for the Home component.
 
-   Modify the tests and create new ones in `frontend/__tests__/` for the different pages and components of your application. You can see an example of test for the Home component.
+2. **Deployment Configuration**
 
-2. **Update your deployment method**
+   The template is set up for deployment via Kubernetes. Update the configuration in the deploy directory, or modify the CI/CD pipeline in jenkins for alternative deployment methods.
 
-   The current method setup for deployment is through Kubernetes. Please update the Kubernetes configuration in `deploy` or change the CI/CD pipeline in `jenkins` to use another method.
+3. **Setting Up CI/CD with Jenkins**
 
-3. **Create a Jenkins pipeline**
+   - Push your code to a GitLab repository.
+   - Create a new folder in Jenkins and configure two stages:
+     - The first stage builds the base image (jenkins/stage1.jenkinsfile).
+     - The second stage is a Multibranch Pipeline that builds, tests, and deploys your site (jenkins/stage2.jenkinsfile).
+   - View the original pipeline configuration [here](https://jenkins.horus-graph.intranet.chuv/jenkins/job/100-DS/job/Template%20frontend/).
+   - Every push to GitLab will trigger this pipeline, automating the testing and deployment process.
 
-   Commit your code to a Gitlab account. Next, to create the CI/CD pipeline, go to the Jenkins main page and create a new folder. In this folder, you will configure two elements: the first stage of the build which creates the base image to run a NextJS app, and the second stage which builds, tests and deploys your website.
-   The first one is a Pipeline, with the Jenkinsfile path `jenkins/stage1.jenkinsfile`. The second element is a Pipeline Multibranches with Jenkinsfile path `jenkins/stage2.jenkinsfile`. For more information on the configuration, you can see the original pipeline [here](https://jenkins.horus-graph.intranet.chuv/jenkins/job/100-DS/job/Template%20frontend/).
+4. **Local Production Testing**
 
-   Once this is set up, everytime you push your code to GitLab it will trigger the pipeline, run the tests and deploy the new website.
-
-4. **Test locally your production application**
-
-   You can build your production application from the root:
+   Build and run the production application locally:
 
    ```bash
    cd docker
@@ -84,4 +91,6 @@ Once you are satisfied with your website, you will prepare it for production-lev
    docker run -p <some port>:80 -d prod-image
    ```
 
-   Then you can access your website on `localhost:&lt;the port you put&gt;` .
+   Access your application at `localhost:&lt;the port you put&gt;`.
+
+For further assistance or inquiries, feel free to open an issue in the repository.
