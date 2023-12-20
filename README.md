@@ -38,17 +38,17 @@ cd your-repository-name
 
    First, install the requirements.
 
-```bash
+   ```bash
    pnpm install
-```
+   ```
 
-Next, run the development website.
+   Next, run the development website.
 
-```bash
+   ```bash
    pnpm dev
-```
+   ```
 
-You can now access your website on the localhost and port written in the terminal. You can develop your website and it will refresh automatically the website at any change.
+   You can now access your website on the localhost and port written in the terminal. You can develop your website and it will refresh automatically the website at any change.
 
 3. **Create your website**
 
@@ -73,15 +73,15 @@ Once you are satisfied with your website, you will prepare it for production-lev
 
    Once this is set up, everytime you push your code to GitLab it will trigger the pipeline, run the tests and deploy the new website.
 
-4. **If you want to test your production-ready website on your local machine**
+4. **Test locally your production application**
 
    You can build your production application from the root:
 
-```bash
+   ```bash
    cd docker
    ./build-stage1.sh # this step can be done only once
    docker build -f dockerfiles/stage2.dockerfile -t prod-app ..
    docker run -p <some port>:80 -d prod-image
-```
+   ```
 
-Then you can access your website on localhost:&lt;the port you put&gt;.
+   Then you can access your website on `localhost:&lt;the port you put&gt;` .
