@@ -15,7 +15,7 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center justify-center text-white">
         <div className="text-center">
           <h2 className="mb-4 text-4xl font-extrabold">
-            Welcome to <span className="text-indigo-300">The Frontend App</span>
+            Welcome to <span className="text-green-300">The Frontend App</span>
           </h2>
           <p className="mb-8 text-lg">
             A modern template using T3: Tailwind CSS, Next.js, and TypeScript.
