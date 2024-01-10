@@ -5,7 +5,7 @@ pipeline {
         namespace 'jenkins-int-pipeline'
         label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
         yamlFile "jenkins/agents/unit.yaml"
-        defaultContainer 'ds-ubuntu'
+        defaultContainer 'dip-ubuntu'
     }
   }
   stages {

@@ -4,8 +4,8 @@ metadata:
   name: unit
 spec:
   containers:
-  - name: ds-ubuntu
-    image: registry.itrcs3-app.intranet.chuv/ds-ubuntu
+  - name: dip-ubuntu
+    image: registry.dip-dev.thehip.app/dip-ubuntu
     imagePullPolicy: Always
     tty: true
     volumeMounts:
@@ -29,7 +29,7 @@ spec:
         exec:
           command: ['sh', '-c', "cp /ds/ds-deployer/.docker/secret/config.json /ds/ds-deployer/.docker/config.json"]
   - name: jnlp
-    image: registry.itrcs3-app.intranet.chuv/ds-jnlp/jenkins/inbound-agent:3107.v665000b_51092-15
+    image: registry.dip-dev.thehip.app/ds-jnlp/jenkins/inbound-agent:3107.v665000b_51092-15
     imagePullPolicy: Always
   imagePullSecrets:
   - name: registry-auth

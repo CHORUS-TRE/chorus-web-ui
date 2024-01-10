@@ -5,7 +5,7 @@ pipeline {
       namespace 'jenkins-int-pipeline'
       label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
       yamlFile "jenkins/agents/unit.yaml"
-      defaultContainer 'ds-ubuntu'
+      defaultContainer 'dip-ubuntu'
     }
   }
   environment{
@@ -16,7 +16,7 @@ pipeline {
   stages {
     stage('Test and Build') {
       steps {
-        // container(name: 'ds-ubuntu', shell: '/bin/bash') {
+        // container(name: 'dip-ubuntu', shell: '/bin/bash') {
         //   dir('ds-dev-ops') {
             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PYPI_SERVER_USERNAME_PASSWORD', usernameVariable: 'PYPI_USERNAME', passwordVariable: 'PYPI_PASSWORD']]) {
               checkout scm
@@ -38,7 +38,7 @@ pipeline {
       stages {
         stage('Deploy') {
           steps {
-            // container(name: 'ds-ubuntu', shell: '/bin/bash') {
+            // container(name: 'dip-ubuntu', shell: '/bin/bash') {
             //   dir('ds-dev-ops') {
                 checkout scm
                 sh """
