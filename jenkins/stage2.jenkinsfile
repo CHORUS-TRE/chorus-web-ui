@@ -3,7 +3,7 @@ pipeline {
     kubernetes {
       cloud 'kubernetes-int'
       namespace 'jenkins-int-pipeline'
-      label "ci-ds-cicd-template-backend-${UUID.randomUUID().toString()}"
+      label "ci-dip-cicd-template-backend-${UUID.randomUUID().toString()}"
       yamlFile "jenkins/agents/unit.yaml"
       defaultContainer 'dip-ubuntu'
     }
@@ -17,7 +17,7 @@ pipeline {
     stage('Test and Build') {
       steps {
         // container(name: 'dip-ubuntu', shell: '/bin/bash') {
-        //   dir('ds-dev-ops') {
+        //   dir('dip-dev-ops') {
             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PYPI_SERVER_USERNAME_PASSWORD', usernameVariable: 'PYPI_USERNAME', passwordVariable: 'PYPI_PASSWORD']]) {
               checkout scm
               sh '''
@@ -39,7 +39,7 @@ pipeline {
         stage('Deploy') {
           steps {
             // container(name: 'dip-ubuntu', shell: '/bin/bash') {
-            //   dir('ds-dev-ops') {
+            //   dir('dip-dev-ops') {
                 checkout scm
                 sh """
                   export env=int

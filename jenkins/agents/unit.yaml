@@ -17,9 +17,6 @@ spec:
       postStart:
         exec:
           command: ['sh', '-c', "cp /dip/dip-deployer/.docker/secret/config.json /dip/dip-deployer/.docker/config.json"]
-  - name: jnlp
-    image: registry.dip-dev.thehip.app/ds-jnlp/jenkins/inbound-agent:3107.v665000b_51092-15
-    imagePullPolicy: Always
   imagePullSecrets:
   - name: registry-auth
   volumes:

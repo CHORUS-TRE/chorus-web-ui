@@ -4,7 +4,7 @@
 
 nameOverride: "template-frontend"
 
-image: registry.dip-dev.thehip.app/ds-cicd-template-frontend:latest
+image: registry.dip-dev.thehip.app/dip-cicd-template-frontend:latest
 
 version: master
 
