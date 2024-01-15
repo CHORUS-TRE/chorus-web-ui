@@ -2,8 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: kubernetes-dashboard
-  namespace: kubernetes-dashboard
+  name: ingress-frontend-{{ include "chart.nameid" . }}
   annotations:
     kubernetes.io/ingress.class: "public"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
