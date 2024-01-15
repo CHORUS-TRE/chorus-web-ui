@@ -22,5 +22,5 @@ spec:
           service:
             name: service-frontend-{{ include "chart.nameid" . }}
             port:
-              number: 443
+              number: 80
 {{- end }}
