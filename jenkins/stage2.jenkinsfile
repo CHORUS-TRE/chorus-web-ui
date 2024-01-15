@@ -18,14 +18,12 @@ pipeline {
       steps {
         // container(name: 'dip-ubuntu', shell: '/bin/bash') {
         //   dir('dip-dev-ops') {
-            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PYPI_SERVER_USERNAME_PASSWORD', usernameVariable: 'PYPI_USERNAME', passwordVariable: 'PYPI_PASSWORD']]) {
-              checkout scm
-              sh '''
-                cd docker
-                chmod +x build-stage2.sh
-                ./build-stage2.sh
-              '''
-            }
+            checkout scm
+            sh '''
+              cd docker
+              chmod +x build-stage2.sh
+              ./build-stage2.sh
+            '''
         //   }
         // }
       }
