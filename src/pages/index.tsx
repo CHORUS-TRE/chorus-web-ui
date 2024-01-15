@@ -1,6 +1,8 @@
 import Sidebar from "~/components/Sidebar"
 import Head from "next/head"
 import React, { useState } from "react"
+import Link from "next/link"
+import Dashboard from "./dashboard";
 
 export default function Home() {
 
@@ -8,21 +10,16 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Frontend template</title>
+        <title>Horus Analytics</title>
         <meta
           name="description"
-          content="A frontend template based on the T3 app"
+          content="A web application for Horus Analytics"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-screen h-screen flex items-center border-yellow-400 border-solid border-0 overflow-hidden">
-        <Sidebar />
-
-        <img src="/workbench-placeholder-1024-1024.jpg" alt="workbench" className="w-full  h-full" />
-        
-        {/* <iframe width="100%" className="w-screen h-screen" src="http://10.241.147.130:10000/" title="Workbench" allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe> */}
-      </main>
+      <Dashboard />
+       
     </div>
   )
 }
