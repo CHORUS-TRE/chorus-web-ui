@@ -3,4 +3,4 @@ ingress:
   host: "web-ui.dip-dev.thehip.app"
 
 service:
-  port: 16080
+  port: 80
