@@ -2,11 +2,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-frontend-{{ include "chart.nameid" . }}
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
   annotations:
     kubernetes.io/ingress.class: "public"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: service-frontend-{{ include "chart.nameid" . }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
@@ -17,5 +23,5 @@ spec:
           service:
             name: service-frontend-{{ include "chart.nameid" . }}
             port:
-              number: 16080
+              number: 443
 {{- end }}
