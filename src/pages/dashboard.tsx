@@ -1,9 +1,12 @@
-import React from "react"
+import React, { use, useEffect } from "react"
 import Navbar from "~/components/Navbar"
 import Link from "next/link"
 import { HiOutlineGlobe, HiBriefcase, HiOutlineFolderOpen, HiViewGridAdd, HiUserGroup, HiFolderAdd, HiOutlineTrendingUp, HiOutlineTrendingDown, HiDatabase, HiOutlineWifi } from 'react-icons/hi'
 
 export default function Dashboard() {
+  const [appstore, setAppstore] = React.useState([]) as any[]
+  const [showModal, setShowModal] = React.useState(false)
+
   const getCurrentTime = () => new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
@@ -16,8 +19,33 @@ export default function Dashboard() {
     day: 'numeric'
   })
 
+  useEffect(() => {
+    fetch('/appstore.json').then((res) => res.json()).then(setAppstore)
+  }, [])
+
   return (
     <>
+      {showModal && <div className="p-5 rounded-xl container mx-auto absolute top-10 left-10 bg-white z-50">
+        <div className="w-full flex justify-between items-center">
+          <h1>App Store </h1>
+          <button onClick={() => setShowModal(false)} className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
+            Close
+          </button>
+        </div>
+        <hr />
+        <div className="flex flex-wrap">
+          {appstore.map((app: any) => (
+            <div className="p-5 w-96 h-auto">
+              <h2 className="text-xl">{app.name}</h2>
+              <p className="text-[12px]">{app.description}</p>
+              <button className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
+                Install
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      }
       <div
         className="bg-cover border-cyan-700 border-solid border-0"
         style={{
@@ -103,9 +131,11 @@ export default function Dashboard() {
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/" passHref className="text-center  hover:text-slate-500">
-                      <HiViewGridAdd className="w-12 h-12" />
-                      <p className="text-[12px]">App Store</p>
+                    <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
+                      <a onClick={() => setShowModal(true)}>
+                        <HiViewGridAdd className="w-12 h-12" />
+                        <p className="text-[12px]">App Store</p>
+                      </a>
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
