@@ -1,6 +1,5 @@
 import { type Config } from "tailwindcss"
 import { fontFamily } from "tailwindcss/defaultTheme"
-const withMT = require("@material-tailwind/html/utils/withMT");
 
 
 export default {
