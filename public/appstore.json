@@ -9,7 +9,8 @@
     {
         "name": "Rstudio",
         "label": "RStudio IDE",
-        "description": "The RStudio IDE with a collection of standard data science packages.",
+        "description": "RStudio is an integrated development environment (IDE) for R and Python.",
+        "url": "https://posit.co/products/open-source/rstudio",
         "img": "/rstudio.png",
         "type": "ide"
     },
@@ -20,7 +21,7 @@
         "url": "https:/ubuntu.com",
         "version": "22.0.4",
         "label": "Ubuntu",
-        "img": "/rstudio.png",
+        "img": "/ubuntu.png",
         "type": "os"
     },
     {
@@ -78,15 +79,6 @@
         "type": "neuro"
     },
     {
-        "description": "RStudio is an integrated development environment (IDE) for R and Python.",
-        "name": "rstudio",
-        "state": "beta",
-        "url": "https://posit.co/products/open-source/rstudio",
-        "version": "2023.06.0",
-        "label": "RStudio",
-        "type": "ide"
-    },
-    {
         "description": "Desktop software to solve advanced image computing challenges with a focus on clinical and biomedical applications.",
         "name": "slicer",
         "state": "ready",
@@ -131,5 +123,89 @@
         "version": "latest",
         "label": "VS Code",
         "type": "ide"
+    },
+    {
+        "label": "Jupyter-tensorflow",
+        "description": "The JupyterLab IDE with Python and the deep-learning framework TensorFlow.",
+        "type": "ide",
+        "img": "/jupyter.png"
+    },
+    {
+        "label": "Rstudio-sparkr",
+        "description": "The RStudio IDE with a collection of standard data science packages. It includes SparkR, an R package that provides an interface to use Apache Spark from R.",
+        "type": "ide",
+        "img": "/rstudio.png"
+    },
+    {
+        "label": "Vscode-pyspark",
+        "description": "The Visual Studio Code IDE with PySpark, an interface to use Apache Spark from Python.",
+        "type": "ide",
+        "img": "/vscode.png"
+    },
+    {
+        "label": "Vscode-pytorch",
+        "description": "The VSCode IDE with Python and the deep-learning framework PyTorch.",
+        "type": "ide",
+        "img": "/vscode.png"
+    },
+    {
+        "label": "Vscode-r-python-julia",
+        "description": "The VSCode IDE with minimal installations of R, Python, and Julia.",
+        "type": "ide",
+        "img": "/vscode.png"
+    },
+    {
+        "label": "Metabase",
+        "description": "Metabase is a BI tool with a friendly UX and an integrated tooling to let you explore data.",
+        "type": "database",
+        "img": "/metabase.png"
+    },
+    {
+        "label": "Mongodb",
+        "description": "NoSQL document-oriented database that stores JSON-like documents with dynamic schemas.",
+        "type": "database",
+        "img": "/mongodb.png"
+    },
+    {
+        "label": "Neo4j",
+        "description": "Neo4j is a graph database management system. It's an ACID-compliant transactional database with native graph storage.",
+        "type": "database",
+        "img": "/neo4j.png"
+    },
+    {
+        "label": "Nocodb",
+        "description": "NocoDB is an open source NoCode platform that turns any database into a smart spreadsheet.",
+        "type": "database",
+        "img": "/nocodb.png"
+    },
+    {
+        "label": "OpenRefine",
+        "description": "OpenRefine (previously Google Refine) is a powerful tool for working with messy data, cleaning it; transforming it from one format into another; and extending it with web services and external data.",
+        "type": "database",
+        "img": "/openrefine.png"
+    },
+    {
+        "label": "Trino",
+        "description": "Fast distributed SQL query engine for big data analytics.",
+        "type": "database",
+        "img": "/trino.png"
+    },
+    {
+        "label": "ArgoCd",
+        "description": "Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.        ",
+        "type": "automation",
+        "img": "/argo.png"
+    },
+    {
+        "label": "Mlflow",
+        "description": "MLflow is an open source platform to manage the ML lifecycle, including experimentation, reproducibility, deployment, and a central model registry.        ",
+        "type": "automation",
+        "img": "/mlflow.png"
+    },
+    {
+        "label": "Yatai",
+        "description": "Yatai lets you deploy, operate and scale Machine Learning services on Kubernetes.",
+        "type": "automation",
+        "img": "/mlflow.png"
     }
 ]
