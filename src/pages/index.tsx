@@ -1,7 +1,5 @@
-import Sidebar from "~/components/Sidebar"
 import Head from "next/head"
 import React, { useState } from "react"
-import Link from "next/link"
 import Dashboard from "./dashboard";
 
 export default function Home() {
