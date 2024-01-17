@@ -4,9 +4,10 @@ import React, { use, useEffect } from "react"
 import Navbar from "../components/Navbar"
 import Link from "next/link"
 import { HiOutlineGlobe, HiDotsVertical, HiOutlineFolderOpen, HiViewGridAdd, HiUserGroup, HiFolderAdd, HiOutlineTrendingUp, HiOutlineTrendingDown, HiDatabase, HiOutlineWifi } from 'react-icons/hi'
+import { HiArrowSmRight, HiChartPie, HiUser } from 'react-icons/hi'
+import AppStore from "~/components/AppStore"
 
 export default function Dashboard() {
-  const [appstore, setAppstore] = React.useState([]) as any[]
   const [showModal, setShowModal] = React.useState(false)
   const [showAppMenu, setShowAppMenu] = React.useState(false)
 
@@ -22,36 +23,12 @@ export default function Dashboard() {
     day: 'numeric'
   })
 
-  useEffect(() => {
-    fetch('/appstore.json').then((res) => res.json()).then(setAppstore)
-  }, [])
 
   return (
     <>
-      {showModal && <div className="p-5 rounded-xl container mx-auto absolute top-10 left-10 bg-white z-50">
-        <div className="w-full flex justify-between items-center">
-          <h1>App Store </h1>
-          <button onClick={() => setShowModal(false)} className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
-            Close
-          </button>
-        </div>
-        <hr />
-        <div className="flex flex-wrap">
-          {appstore.map((app: any) => (
-            <div className="p-5 w-96 h-auto border">
-              <img src={app.img} className="rounded-full w-8 h-8" />
-              <h2 className="text-xl">{app.label}</h2>
-              <p className="text-[12px]">{app.description}</p>
-              <button className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
-                Install
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-      }
+      {showModal && <AppStore setShowModal={setShowModal}/>}
       <div
-        className="bg-cover border-cyan-700 border-solid border-0"
+        className="bg-cover border-cyan-700 border-solid border-0 "
         style={{
           height: "100vh",
           backgroundImage:
@@ -60,7 +37,7 @@ export default function Dashboard() {
             ")",
         }}
       >
-        <div className="container h-full mx-auto px-16 py-4 flex flex-col gap-4 border-purple-600 border-solid border-0">
+        <div className={`container h-full mx-auto px-16 py-4 flex flex-col gap-4 border-purple-600 border-solid border-0 ${showModal && 'opacity-30'}`}>
           <div className="bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border"><Navbar /></div>
           <div className="container flex gap-4 border-yellow-600 border-solid border-0">
             <div className="text-white basis-1/4 flex flex-col gap-4 border-orange-600 border-solid border-0">
@@ -71,7 +48,7 @@ export default function Dashboard() {
               <div className="p-5 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <h2 className="text-md mb-3">Eco Tracker</h2>
                 <div className="flex flex-row gap-4 items-center">
-                  <HiOutlineGlobe className="h-24 w-24" />
+                  <HiOutlineGlobe className="h-20 w-20" />
                   <div className="flex flex-col">
                     <p className="text-[12px]">Carbon Emissions: 0.5kg</p>
                     <p className="text-[12px]">Energy Consumption: 0.5kg</p>
@@ -84,11 +61,11 @@ export default function Dashboard() {
                 <h2 className="text-md  mb-3">System Status</h2>
                 <div className="flex flex-row gap-16">
                   <div className="flex flex-col">
-                    <HiOutlineTrendingUp className="h-24 w-24" />
+                    <HiOutlineTrendingUp className="h-20 w-20" />
                     <p className="text-[12px]">RAM: 32Mo</p>
                   </div>
                   <div className="flex flex-col">
-                    <HiOutlineTrendingDown className="h-24 w-24" />
+                    <HiOutlineTrendingDown className="h-20 w-20" />
                     <p className="text-[12px]">GPU: 58%</p>
                   </div>
                 </div>
@@ -96,7 +73,7 @@ export default function Dashboard() {
               <div className="p-5 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <h2 className="text-md mb-3">Storage</h2>
                 <div className="flex flex-row gap-4 items-center">
-                  <HiDatabase className="h-24 w-24" />
+                  <HiDatabase className="h-20 w-20" />
                   <div className="flex flex-col">
                     <p className="text-[12px]">Used: 17Mo</p>
                     <p className="text-[12px]">Total: 10Go</p>
@@ -105,7 +82,7 @@ export default function Dashboard() {
               </div>
               <div className="p-5 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <h2 className="text-md mb-3">Network</h2>
-                <HiOutlineWifi className="h-24 w-24" />
+                <HiOutlineWifi className="h-20 w-20" />
               </div>
             </div>
             <div className="flex flex-col gap-4 basis-3/4 ">
@@ -126,7 +103,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="p-5 rounded-xl text-white  border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                <h1 className="text-2xl mb-3">CHUV</h1>
+                <h1 className="text-md mb-3">CHUV</h1>
                 <div className="flex flex-row gap-4">
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
@@ -154,27 +131,55 @@ export default function Dashboard() {
                       <p className="text-[12px]">Members</p>
                     </Link>
                   </div>
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
-                      <img src="/jupyter.png" className="w-12 h-12" />
-                      <p className="text-[12px]">Jupyter</p>
-                    </Link>
-                    <button onClick={() => (setShowAppMenu(!showAppMenu))} className="text-white hover:text-slate-500">
-                      <HiDotsVertical />
-                    </button>
-                    <div className="absolute top-10 left-10">
-                      <select name="app" id="app" className={`${showAppMenu && 'hidden'}`}>
-                        <option value="open">Open</option>
-                        <option value="uninstall">Uninstall</option>
-                        <option value="pause">Pause</option>
-                        <option value="settings">Settings</option>
-                      </select>
+                  <div>
+                    <div className="w-32 h-32 flex flex-col justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
+                      <button onClick={() => (setShowAppMenu(!showAppMenu))}
+                        className="text-white hover:text-slate-500 absolute top-1 right-1">
+                        <HiDotsVertical />
+                      </button>
+                      {showAppMenu && <div className={`absolute left-32 flex-auto
+                      border-cyan-700 border-solid border-0 rounded-md p-3
+                      bg-white bg-opacity-30 backdrop-blur-lg backdrop-filter shadow-md
+                      `} aria-label="Horus Analytics">
+                        <ul className="space-y-1">
+                          <li>
+                            <Link href="/workbench" className="flex items-center gap-2 rounded-lg px-4 py-2  hover:text-slate-400">
+                              <HiChartPie />
+                              <span className="text-sm font-medium"> Open</span>
+                            </Link>
+                          </li>
+                          <li>
+                            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
+                              <HiUser />
+                              <span className="text-sm font-medium"> Uninstall </span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
+                              <HiArrowSmRight />
+                              <span className="text-sm font-medium"> Pause </span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
+                              <HiArrowSmRight />
+                              <span className="text-sm font-medium"> Settings </span>
+                            </a>
+                          </li>
+
+                        </ul>
+                      </div>}
+                      <Link href="/workbench" passHref className="text-center  hover:text-slate-400">
+                        <img src="/jupyter.png" className="w-12 h-12 rounded-xl" />
+                        <p className="text-[12px]">Jupyter</p>
+                      </Link>
                     </div>
+
                   </div>
                 </div>
               </div>
-              <div className="p-5 rounded-xl text-white  border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                <h1 className="text-2xl mb-3">Integrated analysis of tumor vessels and immune cells in
+              <div className="p-5 rounded-xl text-white border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+                <h1 className="text-md mb-3">Integrated analysis of tumor vessels and immune cells in
                   glioblastoma</h1>
                 <div className="flex flex-row gap-4">
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
@@ -184,9 +189,11 @@ export default function Dashboard() {
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/" passHref className="text-center  hover:text-slate-500">
-                      <HiViewGridAdd className="w-12 h-12" />
-                      <p className="text-[12px]">App Store</p>
+                    <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
+                      <a onClick={() => setShowModal(true)}>
+                        <HiViewGridAdd className="w-12 h-12" />
+                        <p className="text-[12px]">App Store</p>
+                      </a>
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
@@ -197,14 +204,14 @@ export default function Dashboard() {
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
-                      <img src="/jupyter.png" className="w-12 h-12" />
+                      <img src="/jupyter.png" className="w-12 h-12 rounded-xl" />
                       <p className="text-[12px]">Jupyter</p>
                     </Link>
                   </div>
                 </div>
               </div>
               <div className="p-5 rounded-xl text-white  border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                <h1 className="text-2xl mb-3">Hypnosis-aided awake craniotomy versus monitored anesthesia care for brain tumors (HAMAC Study)</h1>
+                <h1 className="text-md mb-3">Hypnosis-aided awake craniotomy versus monitored anesthesia care for brain tumors (HAMAC Study)</h1>
                 <div className="flex flex-row gap-4">
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
@@ -213,9 +220,11 @@ export default function Dashboard() {
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/" passHref className="text-center  hover:text-slate-500">
-                      <HiViewGridAdd className="w-12 h-12" />
-                      <p className="text-[12px]">App Store</p>
+                    <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
+                      <a onClick={() => setShowModal(true)}>
+                        <HiViewGridAdd className="w-12 h-12" />
+                        <p className="text-[12px]">App Store</p>
+                      </a>
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
