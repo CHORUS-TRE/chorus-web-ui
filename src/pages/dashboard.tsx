@@ -26,7 +26,7 @@ export default function Dashboard() {
 
   return (
     <>
-      {showModal && <AppStore setShowModal={setShowModal}/>}
+      {showModal && <AppStore setShowModal={setShowModal} />}
       <div
         className="bg-cover border-cyan-700 border-solid border-0 "
         style={{
@@ -62,11 +62,11 @@ export default function Dashboard() {
                 <div className="flex flex-row gap-16">
                   <div className="flex flex-col">
                     <HiOutlineTrendingUp className="h-20 w-20" />
-                    <p className="text-[12px]">RAM: 32Mo</p>
+                    <p className="text-[12px] text-center">RAM: 32Mo</p>
                   </div>
                   <div className="flex flex-col">
                     <HiOutlineTrendingDown className="h-20 w-20" />
-                    <p className="text-[12px]">GPU: 58%</p>
+                    <p className="text-[12px] text-center">GPU: 58%</p>
                   </div>
                 </div>
               </div>
@@ -105,6 +105,11 @@ export default function Dashboard() {
               <div className="p-5 rounded-xl text-white  border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                 <h1 className="text-md mb-3">CHUV</h1>
                 <div className="flex flex-row gap-4">
+                  <div className="w-64 h-32 flex flex-col p-3 rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+                    <p className="text-sm font-bold">Data</p>
+                    <p className="text-sm">Used: 16 Mo</p>
+                    <p className="text-sm">Total: 32 Go</p>
+                  </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
                       <HiOutlineFolderOpen className="w-12 h-12" />
@@ -113,7 +118,7 @@ export default function Dashboard() {
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
-                      <a onClick={() => setShowModal(true)}>
+                      <a onClick={() => setShowModal(true)} className=" hover:text-slate-500">
                         <HiViewGridAdd className="w-12 h-12" />
                         <p className="text-[12px]">App Store</p>
                       </a>
@@ -132,7 +137,7 @@ export default function Dashboard() {
                     </Link>
                   </div>
                   <div>
-                    <div className="w-32 h-32 flex flex-col justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
+                    <div className="w-32 h-32 flex flex-col justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                       <button onClick={() => (setShowAppMenu(!showAppMenu))}
                         className="text-white hover:text-slate-500 absolute top-1 right-1">
                         <HiDotsVertical />
@@ -169,8 +174,8 @@ export default function Dashboard() {
 
                         </ul>
                       </div>}
-                      <Link href="/workbench" passHref className="text-center  hover:text-slate-400">
-                        <img src="/jupyter.png" className="w-12 h-12 rounded-xl" />
+                      <Link href="/workbench" passHref className="text-center  hover:opacity-40">
+                        <img src="/jupyter.png" className="w-12 h-12 rounded-xl mb-1" />
                         <p className="text-[12px]">Jupyter</p>
                       </Link>
                     </div>
@@ -182,6 +187,12 @@ export default function Dashboard() {
                 <h1 className="text-md mb-3">Integrated analysis of tumor vessels and immune cells in
                   glioblastoma</h1>
                 <div className="flex flex-row gap-4">
+                  <div className="w-64 h-32 flex flex-col p-3 rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+                    <p className="text-sm mb-2">PI: Pr. Jean-François Tliuageqwf</p>
+                    <p className="text-sm font-bold">Data</p>
+                    <p className="text-sm">Used: 16 Mo</p>
+                    <p className="text-sm">Total: 32 Go</p>
+                  </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
                       <HiOutlineFolderOpen className="w-12 h-12" />
@@ -190,7 +201,7 @@ export default function Dashboard() {
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
-                      <a onClick={() => setShowModal(true)}>
+                      <a onClick={() => setShowModal(true)} className="hover:text-slate-500">
                         <HiViewGridAdd className="w-12 h-12" />
                         <p className="text-[12px]">App Store</p>
                       </a>
@@ -200,12 +211,6 @@ export default function Dashboard() {
                     <Link href="/" passHref className="text-center  hover:text-slate-500">
                       <HiUserGroup className="w-12 h-12" />
                       <p className="text-[12px]">Members</p>
-                    </Link>
-                  </div>
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
-                      <img src="/jupyter.png" className="w-12 h-12 rounded-xl" />
-                      <p className="text-[12px]">Jupyter</p>
                     </Link>
                   </div>
                 </div>
@@ -221,7 +226,7 @@ export default function Dashboard() {
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
-                      <a onClick={() => setShowModal(true)}>
+                      <a onClick={() => setShowModal(true)} className="hover:text-slate-500">
                         <HiViewGridAdd className="w-12 h-12" />
                         <p className="text-[12px]">App Store</p>
                       </a>
