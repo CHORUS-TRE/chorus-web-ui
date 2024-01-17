@@ -1,11 +1,14 @@
+'use client'
+
 import React, { use, useEffect } from "react"
-import Navbar from "~/components/Navbar"
+import Navbar from "../components/Navbar"
 import Link from "next/link"
-import { HiOutlineGlobe, HiBriefcase, HiOutlineFolderOpen, HiViewGridAdd, HiUserGroup, HiFolderAdd, HiOutlineTrendingUp, HiOutlineTrendingDown, HiDatabase, HiOutlineWifi } from 'react-icons/hi'
+import { HiOutlineGlobe, HiDotsVertical, HiOutlineFolderOpen, HiViewGridAdd, HiUserGroup, HiFolderAdd, HiOutlineTrendingUp, HiOutlineTrendingDown, HiDatabase, HiOutlineWifi } from 'react-icons/hi'
 
 export default function Dashboard() {
   const [appstore, setAppstore] = React.useState([]) as any[]
   const [showModal, setShowModal] = React.useState(false)
+  const [showAppMenu, setShowAppMenu] = React.useState(false)
 
   const getCurrentTime = () => new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -35,8 +38,9 @@ export default function Dashboard() {
         <hr />
         <div className="flex flex-wrap">
           {appstore.map((app: any) => (
-            <div className="p-5 w-96 h-auto">
-              <h2 className="text-xl">{app.name}</h2>
+            <div className="p-5 w-96 h-auto border">
+              <img src={app.img} className="rounded-full w-8 h-8" />
+              <h2 className="text-xl">{app.label}</h2>
               <p className="text-[12px]">{app.description}</p>
               <button className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
                 Install
@@ -56,12 +60,12 @@ export default function Dashboard() {
             ")",
         }}
       >
-        <div className="container h-full mx-auto p-16 flex flex-col gap-4 border-purple-600 border-solid border-0">
+        <div className="container h-full mx-auto px-16 py-4 flex flex-col gap-4 border-purple-600 border-solid border-0">
           <div className="bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border"><Navbar /></div>
           <div className="container flex gap-4 border-yellow-600 border-solid border-0">
             <div className="text-white basis-1/4 flex flex-col gap-4 border-orange-600 border-solid border-0">
               <div className="p-5 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
-                <h1 className="text-2xl">{getCurrentTime()}</h1>
+                <h1 className="text-2xl" suppressHydrationWarning>{getCurrentTime()}</h1>
                 <p className="text-[12px]">{getCurrentDate()}</p>
               </div>
               <div className="p-5 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
@@ -138,12 +142,12 @@ export default function Dashboard() {
                       </a>
                     </Link>
                   </div>
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+                  {/* <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/" passHref className="text-center  hover:text-slate-500">
                       <HiFolderAdd className="w-12 h-12" />
                       <p className="text-[12px]">Services</p>
                     </Link>
-                  </div>
+                  </div> */}
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/" passHref className="text-center  hover:text-slate-500">
                       <HiUserGroup className="w-12 h-12" />
@@ -152,9 +156,20 @@ export default function Dashboard() {
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
-                      <HiBriefcase className="w-12 h-12" />
-                      <p className="text-[12px]">Brainstorm</p>
+                      <img src="/jupyter.png" className="w-12 h-12" />
+                      <p className="text-[12px]">Jupyter</p>
                     </Link>
+                    <button onClick={() => (setShowAppMenu(!showAppMenu))} className="text-white hover:text-slate-500">
+                      <HiDotsVertical />
+                    </button>
+                    <div className="absolute top-10 left-10">
+                      <select name="app" id="app" className={`${showAppMenu && 'hidden'}`}>
+                        <option value="open">Open</option>
+                        <option value="uninstall">Uninstall</option>
+                        <option value="pause">Pause</option>
+                        <option value="settings">Settings</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -176,20 +191,14 @@ export default function Dashboard() {
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/" passHref className="text-center  hover:text-slate-500">
-                      <HiFolderAdd className="w-12 h-12" />
-                      <p className="text-[12px]">Services</p>
-                    </Link>
-                  </div>
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/" passHref className="text-center  hover:text-slate-500">
                       <HiUserGroup className="w-12 h-12" />
                       <p className="text-[12px]">Members</p>
                     </Link>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-cyan-700 bg-opacity-50 backdrop-blur-sm">
                     <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
-                      <HiBriefcase className="w-12 h-12" />
-                      <p className="text-[12px]">Office</p>
+                      <img src="/jupyter.png" className="w-12 h-12" />
+                      <p className="text-[12px]">Jupyter</p>
                     </Link>
                   </div>
                 </div>
