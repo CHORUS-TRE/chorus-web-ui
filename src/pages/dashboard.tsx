@@ -1,15 +1,14 @@
 'use client'
 
-import React, { use, useEffect } from "react"
-import Navbar from "../components/Navbar"
 import Link from "next/link"
-import { HiOutlineGlobe, HiDotsVertical, HiOutlineFolderOpen, HiViewGridAdd, HiUserGroup, HiFolderAdd, HiOutlineTrendingUp, HiOutlineTrendingDown, HiDatabase, HiOutlineWifi } from 'react-icons/hi'
-import { HiArrowSmRight, HiChartPie, HiUser } from 'react-icons/hi'
+import { useState } from "react"
+import { HiArrowSmRight, HiChartPie, HiDatabase, HiDotsVertical, HiFolderAdd, HiOutlineFolderOpen, HiOutlineGlobe, HiOutlineTrendingDown, HiOutlineTrendingUp, HiOutlineWifi, HiUser, HiUserGroup, HiViewGridAdd } from 'react-icons/hi'
 import AppStore from "~/components/AppStore"
+import Navbar from "../components/Navbar"
 
 export default function Dashboard() {
-  const [showModal, setShowModal] = React.useState(false)
-  const [showAppMenu, setShowAppMenu] = React.useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [showAppMenu, setShowAppMenu] = useState(false)
 
   const getCurrentTime = () => new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -33,7 +32,7 @@ export default function Dashboard() {
           height: "100vh",
           backgroundImage:
             "url(" +
-            "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1124&q=100" +
+            "https://images.unsplash.com/photo-1519681393784-d120267933ba" +
             ")",
         }}
       >
@@ -104,14 +103,17 @@ export default function Dashboard() {
               </div>
               <div className="p-5 rounded-xl text-white  border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                 <h1 className="text-md mb-3">CHUV</h1>
+                <img src="/chuv.png"  />
                 <div className="flex flex-row gap-4">
-                  <div className="w-64 h-32 flex flex-col p-3 rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+                  <div className="w-64 h-32 flex flex-col py-3">
+                  
+
                     <p className="text-sm font-bold">Data</p>
                     <p className="text-sm">Used: 16 Mo</p>
                     <p className="text-sm">Total: 32 Go</p>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
+                    <Link href="/workbench/files" passHref className="text-center  hover:text-slate-500">
                       <HiOutlineFolderOpen className="w-12 h-12" />
                       <p className="text-[12px]">Files</p>
                     </Link>
@@ -148,7 +150,7 @@ export default function Dashboard() {
                       `} aria-label="Horus Analytics">
                         <ul className="space-y-1">
                           <li>
-                            <Link href="/workbench" className="flex items-center gap-2 rounded-lg px-4 py-2  hover:text-slate-400">
+                            <Link href="/workbench/apps" className="flex items-center gap-2 rounded-lg px-4 py-2  hover:text-slate-400">
                               <HiChartPie />
                               <span className="text-sm font-medium"> Open</span>
                             </Link>
@@ -174,7 +176,7 @@ export default function Dashboard() {
 
                         </ul>
                       </div>}
-                      <Link href="/workbench" passHref className="text-center  hover:opacity-40">
+                      <Link href="/workbench/apps" passHref className="text-center  hover:opacity-40">
                         <img src="/jupyter.png" className="w-12 h-12 rounded-xl mb-1" />
                         <p className="text-[12px]">Jupyter</p>
                       </Link>
@@ -187,14 +189,14 @@ export default function Dashboard() {
                 <h1 className="text-md mb-3">Integrated analysis of tumor vessels and immune cells in
                   glioblastoma</h1>
                 <div className="flex flex-row gap-4">
-                  <div className="w-64 h-32 flex flex-col p-3 rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+                  <div className="w-64 h-32 flex flex-col py-3">
                     <p className="text-sm mb-2">PI: Pr. Jean-François Tliuageqwf</p>
                     <p className="text-sm font-bold">Data</p>
                     <p className="text-sm">Used: 16 Mo</p>
                     <p className="text-sm">Total: 32 Go</p>
                   </div>
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
+                    <Link href="/workbench/files" passHref className="text-center  hover:text-slate-500">
                       <HiOutlineFolderOpen className="w-12 h-12" />
                       <p className="text-[12px]">Files</p>
                     </Link>
@@ -219,7 +221,7 @@ export default function Dashboard() {
                 <h1 className="text-md mb-3">Hypnosis-aided awake craniotomy versus monitored anesthesia care for brain tumors (HAMAC Study)</h1>
                 <div className="flex flex-row gap-4">
                   <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/workbench" passHref className="text-center  hover:text-slate-500">
+                    <Link href="/workbench/files" passHref className="text-center  hover:text-slate-500">
                       <HiOutlineFolderOpen className="w-12 h-12" />
                       <p className="text-[12px]">Files</p>
                     </Link>
