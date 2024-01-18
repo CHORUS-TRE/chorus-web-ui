@@ -36,7 +36,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
           <div className="sm:hidden">
             <label htmlFor="Tab" className="sr-only">Tab</label>
             <select id="Tab" className="w-full rounded-md border-gray-200">
-              {categories.map((category: string) => <option>{category}</option>)}
+              {categories.map((category: string) => <option  key={category}>{category}</option>)}
             </select>
           </div>
 
@@ -44,6 +44,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex gap-6" aria-label="Tabs">
                 {categories.map((category: string) => <a
+                  key={category}
                   href="#"
                   onClick={() => setSelectedCategory(category)}
                   className={`shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 ${selectedCategory === category && 'border-gray-300'}`}
@@ -59,7 +60,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
       </div>
       <div className="flex flex-wrap gap-4 mt-4">
         {appstore?.filter((f: App) => f.type === selectedCategory).map((app: any) => (
-          <div className="px-5 pt-5 pb-2 w-96 h-auto border">
+          <div className="px-5 pt-5 pb-2 w-96 h-auto border"  key={app.label}>
             <div className="flex flex-start gap-2 items-center mb-1">
               <img src={app.img || '/app.png'} className="rounded-full w-8 h-8" />
               <h2 className="text-md">{app.label}</h2>
