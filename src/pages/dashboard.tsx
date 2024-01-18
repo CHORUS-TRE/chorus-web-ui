@@ -2,13 +2,13 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { HiArrowSmRight, HiChartPie, HiDatabase, HiDotsVertical, HiFolderAdd, HiOutlineFolderOpen, HiOutlineGlobe, HiOutlineTrendingDown, HiOutlineTrendingUp, HiOutlineWifi, HiUser, HiUserGroup, HiViewGridAdd } from 'react-icons/hi'
+import { HiDatabase, HiFolderAdd, HiOutlineFolderOpen, HiOutlineGlobe, HiOutlineTrendingDown, HiOutlineTrendingUp, HiOutlineWifi, HiUserGroup, HiViewGridAdd } from 'react-icons/hi'
 import AppStore from "~/components/AppStore"
+import ProjectCard from "~/components/ProjectCard"
 import Navbar from "../components/Navbar"
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false)
-  const [showAppMenu, setShowAppMenu] = useState(false)
 
   const getCurrentTime = () => new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -101,90 +101,8 @@ export default function Dashboard() {
                   </button>
                 </div>
               </div>
-              <div className="p-5 rounded-xl text-white  border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                <h1 className="text-md mb-3">CHUV</h1>
-                <img src="/chuv.png"  />
-                <div className="flex flex-row gap-4">
-                  <div className="w-64 h-32 flex flex-col py-3">
-                  
+              <ProjectCard setShowModal={setShowModal} />
 
-                    <p className="text-sm font-bold">Data</p>
-                    <p className="text-sm">Used: 16 Mo</p>
-                    <p className="text-sm">Total: 32 Go</p>
-                  </div>
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/workbench/files" passHref className="text-center  hover:text-slate-500">
-                      <HiOutlineFolderOpen className="w-12 h-12" />
-                      <p className="text-[12px]">Files</p>
-                    </Link>
-                  </div>
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link legacyBehavior href="#" className="text-center  hover:text-slate-500">
-                      <a onClick={() => setShowModal(true)} className=" hover:text-slate-500">
-                        <HiViewGridAdd className="w-12 h-12" />
-                        <p className="text-[12px]">App Store</p>
-                      </a>
-                    </Link>
-                  </div>
-                  {/* <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/" passHref className="text-center  hover:text-slate-500">
-                      <HiFolderAdd className="w-12 h-12" />
-                      <p className="text-[12px]">Services</p>
-                    </Link>
-                  </div> */}
-                  <div className="w-32 h-32 flex justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                    <Link href="/" passHref className="text-center  hover:text-slate-500">
-                      <HiUserGroup className="w-12 h-12" />
-                      <p className="text-[12px]">Members</p>
-                    </Link>
-                  </div>
-                  <div>
-                    <div className="w-32 h-32 flex flex-col justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
-                      <button onClick={() => (setShowAppMenu(!showAppMenu))}
-                        className="text-white hover:text-slate-500 absolute top-1 right-1">
-                        <HiDotsVertical />
-                      </button>
-                      {showAppMenu && <div className={`absolute left-32 flex-auto
-                      border-cyan-700 border-solid border-0 rounded-md p-3
-                      bg-white bg-opacity-30 backdrop-blur-lg backdrop-filter shadow-md
-                      `} aria-label="Horus Analytics">
-                        <ul className="space-y-1">
-                          <li>
-                            <Link href="/workbench/apps" className="flex items-center gap-2 rounded-lg px-4 py-2  hover:text-slate-400">
-                              <HiChartPie />
-                              <span className="text-sm font-medium"> Open</span>
-                            </Link>
-                          </li>
-                          <li>
-                            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
-                              <HiUser />
-                              <span className="text-sm font-medium"> Uninstall </span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
-                              <HiArrowSmRight />
-                              <span className="text-sm font-medium"> Pause </span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
-                              <HiArrowSmRight />
-                              <span className="text-sm font-medium"> Settings </span>
-                            </a>
-                          </li>
-
-                        </ul>
-                      </div>}
-                      <Link href="/workbench/apps" passHref className="text-center  hover:opacity-40">
-                        <img src="/jupyter.png" className="w-12 h-12 rounded-xl mb-1" />
-                        <p className="text-[12px]">Jupyter</p>
-                      </Link>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
               <div className="p-5 rounded-xl text-white border-slate-700 border-solid border bg-slate-900 bg-opacity-50 backdrop-blur-sm">
                 <h1 className="text-md mb-3">Integrated analysis of tumor vessels and immune cells in
                   glioblastoma</h1>
