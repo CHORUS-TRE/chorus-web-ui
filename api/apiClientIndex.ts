@@ -1,4 +1,4 @@
-import { IndexApi, Configuration } from 'src/internal/client/index';
+import { IndexApi, Configuration } from '../src/internal/client/index';
 
 const apiURL = "https://template-backend.horus-graph.intranet.chuv/"
 const apiConfig = new Configuration({ basePath: apiURL });
