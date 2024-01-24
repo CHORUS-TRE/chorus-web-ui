@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Header from "../components/Header";
-import apiClient from '../../api/apiClientIndex';
+import apiClientIndex from '../../api/apiClientIndex';
 import { useState } from "react";
 import { TemplatebackendCreateHelloReply } from "~/internal/client";
 
@@ -9,7 +9,7 @@ export default function Home() {
 
   const fetchHello = async () => {
     try {
-      const response = await apiClient.indexServiceGetHello();
+      const response = await apiClientIndex.indexServiceGetHello();
       console.log(response);
       setResponse(response);
     } catch (error) {

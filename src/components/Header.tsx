@@ -20,6 +20,12 @@ export default function Header() {
                         <Link href="/contact" passHref>
                             <span className="px-3 py-1 hover:bg-white hover:bg-opacity-20 rounded cursor-pointer">Contact</span>
                         </Link>
+                        <Link href="/user" passHref>
+                            <span className="px-3 py-1 hover:bg-white hover:bg-opacity-20 rounded cursor-pointer">Register</span>
+                        </Link>
+                        <Link href="/authenticate" passHref>
+                            <span className="px-3 py-1 hover:bg-white hover:bg-opacity-20 rounded cursor-pointer">Log in</span>
+                        </Link>
                     </div>
                 </nav>
 
