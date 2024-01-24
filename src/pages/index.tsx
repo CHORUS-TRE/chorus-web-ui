@@ -1,7 +1,21 @@
 import Head from "next/head";
 import Header from "../components/Header";
+import apiClient from '../../api/apiClientIndex';
+import { useState } from "react";
+import { TemplatebackendCreateHelloReply } from "~/internal/client";
 
 export default function Home() {
+  const [response, setResponse] = useState<TemplatebackendCreateHelloReply>();
+
+  const fetchHello = async () => {
+    try {
+      const response = await apiClient.indexServiceGetHello();
+      console.log(response);
+      setResponse(response);
+    } catch (error) {
+      console.error("Error fetching hello:", error);
+    }
+  };
   return (
     <div className=' bg-gradient-to-b from-[#19126c] to-[#15162c] '>
 
@@ -28,7 +42,14 @@ export default function Home() {
             >
               What is T3
             </a>
+
           </div>
+          <button onClick={fetchHello}
+            className="rounded-lg bg-white bg-opacity-20 py-2 mt-4 px-6 text-lg font-medium hover:bg-opacity-30 cursor-pointer"
+          >
+            Say hello !
+          </button>
+          <p>{response?.content}</p>
         </div>
       </main>
     </div>

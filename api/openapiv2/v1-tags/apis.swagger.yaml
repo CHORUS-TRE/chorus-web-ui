@@ -1,0 +1,401 @@
+swagger: "2.0"
+info:
+  title: template backend
+  version: "1.0"
+  contact:
+    name: template backend authentication service
+    url: https://template-backend.horus-graph.intranet.chuv
+    email: development.bdsc@chuv.ch
+tags:
+  - name: AuthenticationService
+  - name: IndexService
+  - name: UserService
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /api/rest/v1/authentication/login:
+    post:
+      summary: Authenticate
+      description: This endpoint authenticates a user
+      operationId: AuthenticationService_Authenticate
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendAuthenticationReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/templatebackendCredentials'
+      tags:
+        - Authentication
+      x-openapi-router-controller: authentication_controller
+  /api/rest/v1/users:
+    post:
+      summary: Create a user
+      description: This endpoint creates a user
+      operationId: UserService_CreateUser
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendCreateUserReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/templatebackendUser'
+      tags:
+        - Users
+      x-openapi-router-controller: user_controller
+  /api/rest/v1/users/me:
+    get:
+      summary: Get my own user
+      description: This endpoint returns the details of the authenticated user
+      operationId: UserService_GetUserMe
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendGetUserMeReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - Users
+      x-openapi-router-controller: user_controller
+  /api/rest/v1/users/me/password:
+    put:
+      summary: Update password
+      description: This endpoint updates the password of the authenticated user
+      operationId: UserService_UpdatePassword
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendUpdatePasswordReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/templatebackendUpdatePasswordRequest'
+      tags:
+        - Users
+      x-openapi-router-controller: user_controller
+  /api/rest/v1/users/{id}:
+    get:
+      summary: Get a user
+      description: This endpoint returns a user
+      operationId: UserService_GetUser
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendGetUserReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Users
+      x-openapi-router-controller: user_controller
+    delete:
+      summary: Delete a user
+      description: This endpoint deletes a user
+      operationId: UserService_DeleteUser
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendDeleteUserReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Users
+      x-openapi-router-controller: user_controller
+  /api/rest/v1/users/{id}/password/reset:
+    post:
+      summary: Reset password
+      description: This endpoint resets a user's password
+      operationId: UserService_ResetPassword
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendResetPasswordReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+      tags:
+        - Users
+      x-openapi-router-controller: user_controller
+  /api/v1/hello:
+    get:
+      summary: Get a hello
+      description: This endpoint returns a hello
+      operationId: IndexService_GetHello
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendGetHelloReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - Index
+      x-openapi-router-controller: index_controller
+  /api/v1/hello/{identifier}:
+    post:
+      summary: Get a hello
+      description: This endpoint returns a hello
+      operationId: IndexService_CreateHello
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendCreateHelloReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              content:
+                type: string
+      tags:
+        - Index
+      x-openapi-router-controller: index_controller
+  /api/v1/helloo:
+    get:
+      summary: Get a hello
+      description: This endpoint returns a hello
+      operationId: IndexService_GetHelloo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/templatebackendGetHelloReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - Index
+      x-openapi-router-controller: index_controller
+definitions:
+  protobufAny:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  rpcStatus:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/protobufAny'
+  templatebackendAuthenticationReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendAuthenticationResult'
+  templatebackendAuthenticationResult:
+    type: object
+    properties:
+      token:
+        type: string
+  templatebackendCreateHelloReply:
+    type: object
+    properties:
+      identifier:
+        type: integer
+        format: int32
+      title:
+        type: string
+      content:
+        type: string
+  templatebackendCreateUserReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendCreateUserResult'
+    title: Create Users
+  templatebackendCreateUserResult:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+  templatebackendCredentials:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      totp:
+        type: string
+  templatebackendDeleteUserReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendDeleteUserResult'
+  templatebackendDeleteUserResult:
+    type: object
+  templatebackendGetHelloReply:
+    type: object
+    properties:
+      content:
+        type: string
+  templatebackendGetUserMeReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendGetUserMeResult'
+  templatebackendGetUserMeResult:
+    type: object
+    properties:
+      me:
+        $ref: '#/definitions/templatebackendUser'
+    title: Get User (me)
+  templatebackendGetUserReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendGetUserResult'
+  templatebackendGetUserResult:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/templatebackendUser'
+  templatebackendResetPasswordReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendResetPasswordResult'
+  templatebackendResetPasswordResult:
+    type: object
+  templatebackendUpdatePasswordReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/templatebackendUpdateUserResult'
+  templatebackendUpdatePasswordRequest:
+    type: object
+    properties:
+      currentPassword:
+        type: string
+      newPassword:
+        type: string
+    title: Update User Password
+  templatebackendUpdateUserResult:
+    type: object
+  templatebackendUser:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      firstName:
+        type: string
+      lastName:
+        type: string
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      status:
+        type: string
+      roles:
+        type: array
+        items:
+          type: string
+      totpEnabled:
+        type: boolean
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+      passwordChanged:
+        type: boolean
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+security:
+  - Bearer: []
+  - {}
