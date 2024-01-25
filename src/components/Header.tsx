@@ -1,6 +1,41 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Header() {
+    const [visible, setVisible] = useState<boolean>(false);
+    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+    const logout = () => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('token', '');
+            setVisible(true);
+            setLoggedIn(false);
+        }
+    }
+
+    // const checkIfLoggedIn = () => {
+    //     if (typeof window !== 'undefined') {
+    //         const storedToken = localStorage.getItem('token');
+    //         if (storedToken && storedToken != '') {
+    //             setLoggedIn(true);
+    //         } else {
+    //             setLoggedIn(false);
+    //         }
+    //         console.log(storedToken);
+    //     }
+    // }
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         checkIfLoggedIn();
+    //     }, 100);
+
+    //     return () => clearInterval(interval);
+    // }, []);
+
+    const closePopup = () => {
+        setVisible(false);
+    }
+
     return (
         <>
 
@@ -26,10 +61,24 @@ export default function Header() {
                         <Link href="/authenticate" passHref>
                             <span className="px-3 py-1 hover:bg-white hover:bg-opacity-20 rounded cursor-pointer">Log in</span>
                         </Link>
+                        <button onClick={logout} className="px-3 py-1 hover:bg-white hover:bg-opacity-20 rounded cursor-pointer">Log out</button>
+                        {/* {loggedIn ?
+                            <p className="text-green-500">Logged in</p>
+                            :
+                            <p className="text-red-500">Logged out</p>} */}
                     </div>
                 </nav>
 
             </header>
+            <main>
+                <div
+                    className={`container mx-auto absolute inset-0 top-20 flex flex-col justify-between h-2/6 w-4/12 p-6 rounded-md
+                    bg-[#D6D6D6] text-lg text-center text-black ${visible ? 'visible' : 'invisible'}`}
+                >
+                    <p>you are logged out</p>
+                    <button onClick={closePopup} className="rounded-lg bg-[#898989] py-2 px-6 text-lg font-medium hover:bg-opacity-30 cursor-pointer" >Close</button>
+                </div>
+            </main>
         </>
 
     )

@@ -9,11 +9,16 @@ export default function Home() {
 
   const fetchHello = async () => {
     try {
+      // get the token if someone authenticated
+      if (typeof window !== 'undefined') {
+        const storedToken = localStorage.getItem('token');
+        console.log(storedToken);
+      }
       const response = await apiClientIndex.indexServiceGetHello();
       console.log(response);
       setResponse(response);
     } catch (error) {
-      console.error("Error fetching hello:", error);
+      console.error("Error fetching hello: ", error);
     }
   };
   return (
