@@ -6,13 +6,19 @@ import { TemplatebackendCreateHelloReply } from "~/internal/client";
 
 export default function Home() {
   const [response, setResponse] = useState<TemplatebackendCreateHelloReply>();
+  const [token, setToken] = useState<string | null>(null);
 
   const fetchHello = async () => {
     try {
       // get the token if someone authenticated
       if (typeof window !== 'undefined') {
         const storedToken = localStorage.getItem('token');
+        setToken(storedToken);
         console.log(storedToken);
+      }
+      if (token) {
+
+      } else {
       }
       const response = await apiClientIndex.indexServiceGetHello();
       console.log(response);
@@ -54,7 +60,7 @@ export default function Home() {
           >
             Say hello !
           </button>
-          <p>{response?.content}</p>
+          <p className="mt-4">{response?.content}</p>
         </div>
       </main>
     </div>

@@ -2,12 +2,15 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import { ChangeEvent, useState } from 'react';
 import { authenticateUser } from 'api/authenticateUser';
+import { useAuth } from '../components/AuthContext';
 
 export default function Authenticate() {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const { login } = useAuth();
+
 
     const [token, setToken] = useState<string>();
     const authUser = async () => {
@@ -20,7 +23,7 @@ export default function Authenticate() {
         setToken(token == '' ? 'NULL' : token);
         if (token && token != 'NULL') {
             if (typeof window !== 'undefined') {
-                localStorage.setItem('token', token);
+                login(token);
                 // const storedVariable = localStorage.getItem('token');
                 // console.log(storedVariable);
             }
