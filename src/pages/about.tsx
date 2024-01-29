@@ -1,5 +1,7 @@
 import Head from 'next/head';
 import Header from '../components/Header';
+
+// About component for displaying the 'About Us' page
 export default function About() {
     return (
         <div className=' bg-gradient-to-b from-[#2e026d] to-[#15162c] '>
