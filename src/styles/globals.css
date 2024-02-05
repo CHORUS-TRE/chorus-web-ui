@@ -3,5 +3,10 @@
 @tailwind utilities;
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.body-fixed {
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
