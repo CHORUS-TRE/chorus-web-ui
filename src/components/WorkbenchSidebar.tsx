@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { useState } from 'react'
-import { HiFilm, HiArrowsExpand, HiChartPie, HiLogout, HiOutlineUsers, HiOutlineChevronDoubleLeft, HiOutlineChevronDoubleRight } from 'react-icons/hi'
+import React, { useState } from 'react'
+import { HiFilm, HiArrowsExpand, HiOutlineCloudDownload, HiOutlineCloudUpload, HiArrowSmLeft, HiLogout, HiOutlineUsers, HiOutlineChevronDoubleLeft, HiOutlineChevronDoubleRight } from 'react-icons/hi'
 
 export default function Component() {
   const [showSidebar, setShowSidebar] = useState(true)
@@ -21,8 +21,22 @@ export default function Component() {
         <ul className="space-y-1 mt-2">
           <li>
             <Link href="/" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
-              <HiChartPie />
+              <HiArrowSmLeft />
               <span className="text-sm font-medium"> Return to Dashboard </span>
+            </Link>
+            <hr />
+          </li>
+          <li>
+            <Link href="/" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+              <HiOutlineCloudUpload />
+              <span className="text-sm font-medium"> Upload </span>
+            </Link>
+            <hr />
+          </li>
+          <li>
+            <Link href="/" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+              <HiOutlineCloudDownload />
+              <span className="text-sm font-medium"> Download </span>
             </Link>
             <hr />
           </li>

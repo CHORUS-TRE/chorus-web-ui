@@ -1,5 +1,8 @@
+'use client'
+
+
 import React from "react"
-import { useEffect } from "react"
+// import { useEffect } from "react"
 
 interface App {
   name: string
@@ -10,14 +13,14 @@ interface App {
   url: string
 }
 
-export default function AppStore({ setShowModal }: { setShowModal: React.Dispatch<React.SetStateAction<boolean>> }
+export default function AppStore( // { setShowModal }: { setShowModal: React.Dispatch<React.SetStateAction<boolean>> }
 ) {
   const [appstore, setAppstore] = React.useState<App[]>([]) as any[]
   const [selectedCategory, setSelectedCategory] = React.useState('ide') as any
 
-  useEffect(() => {
-    fetch('/appstore.json').then((res) => res.json()).then(setAppstore)
-  }, [])
+  // useEffect(() => {
+    // fetch('/appstore.json').then((res) => res.json()).then(setAppstore)
+  // }, [])
 
 
   const categories = appstore?.reduce((acc: string[], app: App): string[] => Array.from(new Set([...acc, app.type])), [])
@@ -25,10 +28,10 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
   return (
     <div className="p-5 rounded-xl container mx-auto mb-16 absolute top-16 left-16 right-16 bottom-16 bg-white z-50 ">
       <div className="w-full flex justify-between items-center">
-        <h1 className="text-xl mb-6">App Store </h1>
-        <button onClick={() => setShowModal(false)} className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
+        <h1 className="text-xl mb-6">Apps </h1>
+        {/* <button onClick={() => setShowModal(false)} className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
           Close
-        </button>
+        </button> */}
       </div>
       <hr />
       <div className="mt-4 flex flex-wrap w-full">
@@ -43,7 +46,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
           <div className="hidden sm:block">
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex gap-6" aria-label="Tabs">
-                {categories.map((category: string) => <a
+                {categories?.map((category: string) => <a
                   key={category}
                   href="#"
                   onClick={() => setSelectedCategory(category)}
