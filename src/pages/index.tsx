@@ -42,8 +42,11 @@ export default function Home() {
     <div className=' bg-gradient-to-b from-[#19126c] to-[#15162c] '>
       {/* Head section for metadata and title */}
       <Head>
-        <title>Frontend template</title>
-        <meta name="description" content="A frontend template based on the T3 app" />
+        <title>Horus Analytics</title>
+        <meta
+          name="description"
+          content="A web application for Horus Analytics"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* Header component */}
@@ -78,5 +81,5 @@ export default function Home() {
         </div>
       </main>
     </div>
-  );
+  )
 }

@@ -4,33 +4,19 @@ metadata:
   name: unit
 spec:
   containers:
-  - name: ds-ubuntu
-    image: registry.itrcs3-app.intranet.chuv/ds-ubuntu
+  - name: dip-ubuntu
+    image: registry.dip-dev.thehip.app/dip-ubuntu
     imagePullPolicy: Always
     tty: true
     volumeMounts:
     - name: docker
       mountPath: /run/docker.sock
     - name: docker-config
-      mountPath: /ds/ds-deployer/.docker/secret
-    env:
-      - name: CONFIG_AES_PASSPHRASE_ci
-        valueFrom:
-          secretKeyRef:
-            name: configaespassphrase-ci
-            key: passphrase
-      - name: CONFIG_AES_PASSPHRASE_int
-        valueFrom:
-          secretKeyRef:
-            name: configaespassphrase-int
-            key: passphrase
+      mountPath: /dip/dip-deployer/.docker/secret
     lifecycle:
       postStart:
         exec:
-          command: ['sh', '-c', "cp /ds/ds-deployer/.docker/secret/config.json /ds/ds-deployer/.docker/config.json"]
-  - name: jnlp
-    image: registry.itrcs3-app.intranet.chuv/ds-jnlp/jenkins/inbound-agent:3107.v665000b_51092-15
-    imagePullPolicy: Always
+          command: ['sh', '-c', "cp /dip/dip-deployer/.docker/secret/config.json /dip/dip-deployer/.docker/config.json"]
   imagePullSecrets:
   - name: registry-auth
   volumes:

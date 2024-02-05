@@ -8,23 +8,23 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ds-cicd-template-backend
+  name: dip-cicd-template-backend
   namespace: int
   labels:
-    app: ds-cicd-template-backend
+    app: dip-cicd-template-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ds-cicd-template-backend
+      app: dip-cicd-template-backend
   template:
     metadata:
       labels:
-        app: ds-cicd-template-backend
+        app: dip-cicd-template-backend
     spec:
       containers:
-      - name: ds-cicd-template-backend
-        image: registry.itrcs3-app.intranet.chuv/ds-cicd-template-backend:latest
+      - name: dip-cicd-template-backend
+        image: registry.dip-dev.thehip.app/dip-cicd-template-backend:latest
         ports:
         - containerPort: 3001
       imagePullSecrets:
@@ -35,11 +35,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ds-cicd-template-backend
+  name: dip-cicd-template-backend
   namespace: int
 spec:
   selector:
-    app: ds-cicd-template-backend
+    app: dip-cicd-template-backend
   ports:
     - protocol: TCP
       port: 80
@@ -51,7 +51,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ds-cicd-template-backend-ingress
+  name: dip-cicd-template-backend-ingress
   namespace: int
   annotations:
     kubernetes.io/ingress.class: "public"
@@ -61,16 +61,16 @@ metadata:
 spec:
   tls:
   - hosts:
-    - ds-cicd-template-backend.itrcs3-app.intranet.chuv
-    secretName: ds-cicd-template-backend-tls
+    - dip-cicd-template-backend.itrcs3-app.intranet.chuv
+    secretName: dip-cicd-template-backend-tls
   rules:
-  - host: ds-cicd-template-backend.itrcs3-app.intranet.chuv
+  - host: dip-cicd-template-backend.itrcs3-app.intranet.chuv
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: ds-cicd-template-backend
+            name: dip-cicd-template-backend
             port:
               number: 80

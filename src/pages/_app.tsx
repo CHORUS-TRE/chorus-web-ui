@@ -13,4 +13,4 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   );
 };
 
-export default MyApp;
+export default MyApp

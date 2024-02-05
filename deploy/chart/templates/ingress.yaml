@@ -5,8 +5,13 @@ metadata:
   name: ingress-frontend-{{ include "chart.nameid" . }}
   annotations:
     kubernetes.io/ingress.class: "public"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: service-frontend-{{ include "chart.nameid" . }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
@@ -17,5 +22,5 @@ spec:
           service:
             name: service-frontend-{{ include "chart.nameid" . }}
             port:
-              number: 16080
+              number: 80
 {{- end }}

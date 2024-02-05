@@ -4,7 +4,7 @@
 
 nameOverride: "template-frontend"
 
-image: registry.itrcs3-app.intranet.chuv/ds-cicd-template-frontend:latest
+image: registry.dip-dev.thehip.app/dip-cicd-template-frontend:latest
 
 version: master
 
@@ -46,7 +46,7 @@ ingress:
   enabled: true
   className: ""
   annotations: {}
-  host: "template-frontend.horus-graph.intranet.chuv"
+  host: "web-ui.dip-dev.thehip.app"
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
