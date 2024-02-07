@@ -132,7 +132,7 @@ export default function Dashboard() {
 
   return (
     <>
-      {/* {showModal && <AppStore setShowModal={setShowModal} />} */}
+      {showModal && <AppStore setShowModal={setShowModal} />}
       
           <div className="bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border"></div>
           <div className="container flex gap-4">

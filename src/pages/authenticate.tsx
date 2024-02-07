@@ -1,50 +1,52 @@
-import Head from 'next/head';
-import Header from '../components/Header';
-import { ChangeEvent, useState } from 'react';
-import { authenticateUser } from '../utils/authenticateUser';
-import { useAuth } from '../components/AuthContext';
-import Link from 'next/link';
+import Head from 'next/head'
+import Header from '../components/Header'
+import { ChangeEvent, useState } from 'react'
+import { authenticateUser } from '../utils/authenticateUser'
+import { useAuth } from '../components/AuthContext'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // The Authenticate component is used for handling the user authentication process.
 export default function Authenticate() {
+    const router = useRouter()
     // State for managing user input data
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-    });
+    })
 
     // Using the useAuth hook to access the login function
-    const { login } = useAuth();
+    const { login } = useAuth()
 
     // State for storing the authentication token received from the server
-    const [token, setToken] = useState<string>();
+    const [token, setToken] = useState<string>()
 
     // Function to handle the authentication process
     const authUser = async () => {
-        const response = await authenticateUser(formData.email, formData.password);
-        const newToken = response ? (response.result ? response.result.token : '') : '';
-        setToken(newToken === '' ? 'NULL' : newToken);
+        const response = await authenticateUser(formData.email, formData.password)
+        const newToken = response ? (response.result ? response.result.token : '') : ''
+        setToken(newToken === '' ? 'NULL' : newToken)
         if (newToken && newToken !== 'NULL') {
-            login(newToken);
+            login(newToken)
+            router.push('/dashboard')
         }
     }
 
     // Function to handle changes in the form inputs
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
         setFormData(prevState => ({
             ...prevState,
             [name]: value,
-        }));
-        setToken('');
-    };
+        }))
+        setToken('')
+    }
 
     return (
         <div className='bg-gradient-to-b from-[#2e026d] to-[#15162c]'>
             <Head>
                 <title>Authentication</title>
             </Head>
-            <Header />
             <main className="flex min-h-screen flex-col items-center justify-center text-white">
                 <div className="text-center">
                     <h2 className="mb-4 text-4xl font-extrabold">
@@ -77,5 +79,5 @@ export default function Authenticate() {
                 <p className="mt-4">{token === 'NULL' && 'Your credentials are not correct'}</p>
             </main>
         </div>
-    );
+    )
 }
