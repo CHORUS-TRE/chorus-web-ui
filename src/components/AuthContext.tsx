@@ -17,7 +17,7 @@ type AuthProviderProps = {
 
 // AuthProvider component: provides authentication context to child components
 export const AuthProvider: FunctionComponent<AuthProviderProps> = ({ children }) => {
-    const [isLoggedIn, setLoggedIn] = useState<boolean>(false); // State to track login status
+    const [isLoggedIn, setLoggedIn] = useState(false); // State to track login status
 
     // Login function to set the user's token and update login status
     const login = (token: string) => {
