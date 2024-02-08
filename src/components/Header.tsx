@@ -1,4 +1,4 @@
-import {  useState } from "react"
+import { useState } from "react"
 import { useAuth } from './AuthContext'
 import { HiCollection, HiLogout, HiLogin } from "react-icons/hi"
 import { useRouter } from "next/router"
@@ -30,55 +30,56 @@ export default function Header() {
                     <a
                         className="text-white text-md uppercase hidden lg:inline-block"
                         href="/"
+                        onClick={e => { e.preventDefault(); router.push('/') }}
                     >
                         Horus
                     </a>
                     <div className="flex items-center justify-between lg:flex-grow-0">
                         <div className="flex items-center justify-between gap-x-8">
                             {/* <a
-                                className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+                                className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                 href="/"
                                 onClick={e => e.preventDefault()}
                             >
                                 <>
-                                    <HiUserCircle className="w-6 h-6 mr-2" />
                                     <span className="text-sm">User</span>
+                                    <HiUserCircle className="w-6 h-6 ml-2" />
                                 </>
                             </a> */}
 
-                            {isLoggedIn && <a
-                                className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+                            <a
+                                className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                 href="/dashboard"
+                                onClick={e => { e.preventDefault(); router.push('/dashboard') }}
                             >
                                 <div className="flex items-center">
-                                    <HiCollection className="w-6 h-6 mr-2" />
                                     <span className="text-sm">Dashboard</span>
+                                    <HiCollection className="w-6 h-6 ml-2" />
                                 </div>
                             </a>
-                            }
 
                             {isLoggedIn &&
                                 <a
-                                    className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+                                    className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                     href="/authenticate"
                                     onClick={handleLogout}
                                 >
 
                                     <div className="flex items-center">
-                                        <HiLogout className="w-6 h-6 mr-2" />
                                         <span className="text-sm">Logout</span>
+                                        <HiLogout className="w-6 h-6 ml-2" />
                                     </div>
                                 </a>
                             }
 
                             {!isLoggedIn &&
-                                <a className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+                                <a className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                     href="/authenticate"
                                     onClick={handleLogin}
                                 >
                                     <div className="flex items-center">
-                                        <HiLogin className="w-6 h-6 mr-2" />
                                         <span className="text-sm">Login</span>
+                                        <HiLogin className="w-6 h-6 ml-2" />
                                     </div>
                                 </a>
                             }

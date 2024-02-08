@@ -1,6 +1,5 @@
 'use client'
 
-
 import React, { useEffect } from "react"
 // import { useEffect } from "react"
 
@@ -19,7 +18,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
   const [selectedCategory, setSelectedCategory] = React.useState('ide') as any
 
   useEffect(() => {
-  fetch('/appstore.json').then((res) => res.json()).then(setAppstore)
+    fetch('/appstore.json').then((res) => res.json()).then(setAppstore)
   }, [])
 
 

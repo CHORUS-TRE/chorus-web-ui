@@ -38,13 +38,13 @@ export default function Home() {
                 The Trusted Research Environment of CHUV-UNIL
               </p>
               {/* Button to trigger the fetchHello function */}
-              <button onClick={fetchHello}
+              {/* <button onClick={fetchHello}
                 className="rounded-lg bg-white bg-opacity-20 py-2 mt-4 px-6 text-lg font-medium hover:bg-opacity-30 cursor-pointer"
               >
                 Say hello !
               </button>
               {/* Display the response content from the API */}
-              <p className="mt-4">{response?.content}</p>
+              {/* <p className="mt-4">{response?.content}</p> */}
             </div>
           </div>
         </div>
