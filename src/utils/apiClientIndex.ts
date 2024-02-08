@@ -3,7 +3,7 @@ import { IndexApi, Configuration } from '../internal/client/index';
 // The base URL for the API. This should be the root URL where your API is hosted.
 let apiURL = 'http://localhost:3000';
 if (typeof window !== "undefined") {
-  apiURL = `${window.location.protocol}//${window.location.hostname}:3000`;
+  apiURL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
 }
 // Creating a Configuration object for the API client.
 const apiConfig = new Configuration({ basePath: apiURL });
