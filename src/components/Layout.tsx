@@ -16,9 +16,9 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
           "url(" + "https://images.unsplash.com/photo-1519681393784-d120267933ba" + ")",
       }}
     >
-      <div className={`overflow-hidden fixed inset-x-0 container h-fit mx-auto px-16 py-4 flex flex-col gap-4 `}>
+      <div className={`overflow-hidden fixed inset-x-0 container h-full mx-auto px-16 py-4 flex flex-col gap-4`}>
         <Header />
-        <main className="container mx-auto">
+        <main className="container mx-auto h-full">
           {children}
         </main>
         <footer className="text-center text-white"></footer>

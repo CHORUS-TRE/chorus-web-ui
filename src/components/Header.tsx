@@ -23,7 +23,7 @@ export default function Header() {
     }
 
     return (
-        <header className="text-white ">
+        <header className="text-white h-12">
             <nav className="container mx-auto w-full bg-transparent flex items-center
                      p-2 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <div className="w-full mx-auto items-center flex justify-between flex-wrap">

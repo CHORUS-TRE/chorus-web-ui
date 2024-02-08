@@ -26,8 +26,8 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
   const categories = appstore?.reduce((acc: string[], app: App): string[] => Array.from(new Set([...acc, app.type])), [])
 
   return (
-    <div className="p-5 rounded-xl container mx-auto mb-16 absolute top-16 left-16 right-16 bottom-16 bg-white z-50 ">
-      <div className="w-full flex justify-between items-center">
+    <div>
+      <div className="flex justify-between items-center">
         <h1 className="text-xl mb-6">Apps </h1>
         <button onClick={() => setShowModal(false)} className="bg-sky-500 hover:bg-sky-700 rounded px-2 py-1 text-[12px] float-right">
           Close

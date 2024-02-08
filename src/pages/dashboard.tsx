@@ -133,9 +133,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      {showModal && <AppStore setShowModal={setShowModal} />}
-
-      <div className="bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border"></div>
+      {showModal && <div className="p-5 h-full w-fit rounded-xl mx-auto absolute bg-white z-50 "><AppStore setShowModal={setShowModal} /></div>}
       <div className="container flex gap-4">
         <div className="text-white basis-1/4 flex flex-col gap-4">
           <div className="p-5 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">

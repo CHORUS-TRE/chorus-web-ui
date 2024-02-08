@@ -28,28 +28,27 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="h-screen flex items-center justify-center">
-          <div className="p-2 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
-            <main className=" flex p-5 h-92 flex-col items-center justify-center text-white">
-              <div className="text-center">
-                <h2 className="mb-4 text-4xl font-extrabold">
-                  Welcome to <span className="text-green-300">HORUS Analytics</span>
-                </h2>
-                <p className="mb-8 text-lg">
-                  The Trusted Research Environment of CHUV-UNIL
-                </p>
-                {/* Button to trigger the fetchHello function */}
-                <button onClick={fetchHello}
-                  className="rounded-lg bg-white bg-opacity-20 py-2 mt-4 px-6 text-lg font-medium hover:bg-opacity-30 cursor-pointer"
-                >
-                  Say hello !
-                </button>
-                {/* Display the response content from the API */}
-                <p className="mt-4">{response?.content}</p>
-              </div>
-            </main>
+        <div className="flex justify-center  p-2 w-full h-full rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
+          <div className=" flex p-5 flex-col justify-center text-white ">
+            <div className="text-center">
+              <h2 className="mb-4 text-4xl font-extrabold">
+                Welcome to <span className="text-green-300">HORUS Analytics</span>
+              </h2>
+              <p className="mb-8 text-lg">
+                The Trusted Research Environment of CHUV-UNIL
+              </p>
+              {/* Button to trigger the fetchHello function */}
+              <button onClick={fetchHello}
+                className="rounded-lg bg-white bg-opacity-20 py-2 mt-4 px-6 text-lg font-medium hover:bg-opacity-30 cursor-pointer"
+              >
+                Say hello !
+              </button>
+              {/* Display the response content from the API */}
+              <p className="mt-4">{response?.content}</p>
+            </div>
           </div>
         </div>
+
       </Layout>
     </>
   )
