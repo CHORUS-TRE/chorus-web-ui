@@ -1,13 +1,30 @@
 import Link from 'next/link'
-import React, { useState } from 'react'
+import Router from 'next/router'
+import React, { useState, useEffect, useRef } from 'react'
 import { HiFilm, HiArrowsExpand, HiOutlineCloudDownload, HiOutlineCloudUpload, HiArrowSmLeft, HiLogout, HiOutlineUsers, HiOutlineChevronDoubleLeft, HiOutlineChevronDoubleRight } from 'react-icons/hi'
 
 export default function Component() {
   const [showSidebar, setShowSidebar] = useState(true)
+  const sidebarRef = useRef(null)
+
+  useEffect(() => {
+    const handleOutSideClick = (event: MouseEvent) => {
+      if (sidebarRef.current && !(sidebarRef.current as HTMLElement).contains(event.target as Node)) {
+        setShowSidebar(false)
+      }
+    }
+
+    window.addEventListener("mousedown", handleOutSideClick)
+
+    return () => {
+      window.removeEventListener("mousedown", handleOutSideClick)
+    }
+  }, [sidebarRef])
 
   return (
     <div
-      className={`absolute flex items-center 
+      ref={sidebarRef}
+      className={`absolute flex items-center
       transform transition-transform ${showSidebar ? "translate-x-0" : "-translate-x-[calc(100%-2rem)]"}
       border-yellow-400 border-solid border-0`}
     >
@@ -20,46 +37,46 @@ export default function Component() {
         <hr />
         <ul className="space-y-1 mt-2">
           <li>
-            <Link href="/" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={() => Router.back()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700 hover:text-gray-500 active:text-gray-300">
               <HiArrowSmLeft />
               <span className="text-sm font-medium"> Return to Dashboard </span>
             </Link>
             <hr />
           </li>
           <li>
-            <Link href="/" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiOutlineCloudUpload />
               <span className="text-sm font-medium"> Upload </span>
             </Link>
             <hr />
           </li>
           <li>
-            <Link href="/" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiOutlineCloudDownload />
               <span className="text-sm font-medium"> Download </span>
             </Link>
             <hr />
           </li>
           <li>
-            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiOutlineUsers />
               <span className="text-sm font-medium"> Collaborate </span>
             </a>
           </li>
           <li>
-            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiArrowsExpand />
               <span className="text-sm font-medium"> Fullscreen </span>
             </a>
           </li>
           <li>
-            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiFilm />
               <span className="text-sm font-medium"> Screenshot </span>
             </a>
           </li>
           <li>
-            <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiLogout />
               <span className="text-sm font-medium"> Logout </span>
             </a>

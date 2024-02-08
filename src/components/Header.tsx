@@ -1,67 +1,91 @@
-import Link from "next/link"
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import { useAuth } from './AuthContext'
-import { HiUserCircle, HiCog, HiLogout } from "react-icons/hi"
+import { HiCollection, HiLogout, HiLogin } from "react-icons/hi"
+import { useRouter } from "next/router"
 
 export default function Header() {
-    // State to control visibility of the logout notification
+    const router = useRouter()
     const [visible, setVisible] = useState<boolean>(false)
-    // Extract isLoggedIn and logout function from useAuth hook
     const { isLoggedIn, logout } = useAuth()
+    const handleLogin = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault()
+        router.push('/authenticate')
+    }
 
-    // Handler for the logout process
-    const handleLogout = () => {
+    const handleLogout = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault()
         logout() // Perform logout
         setVisible(true) // Show logout notification
     }
 
-    // Handler to close the logout notification
     const closePopup = () => {
         setVisible(false) // Hide logout notification
     }
 
     return (
-
-        <header className="text-white ">
-            <nav className="container mx-auto w-full bg-transparent flex items-center p-4">
+        <header className="text-white h-12">
+            <nav className="container mx-auto w-full bg-transparent flex items-center
+                     p-2 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <div className="w-full mx-auto items-center flex justify-between flex-wrap">
                     <a
                         className="text-white text-md uppercase hidden lg:inline-block"
                         href="/"
-                        onClick={e => e.preventDefault()}
                     >
                         Horus
                     </a>
                     <div className="flex items-center justify-between lg:flex-grow-0">
-                        <div className="flex items-center justify-between gap-x-2">
-                            <a
+                        <div className="flex items-center justify-between gap-x-8">
+                            {/* <a
                                 className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
                                 href="/"
                                 onClick={e => e.preventDefault()}
                             >
-                                <HiUserCircle className="w-6 h-6 mr-2" />
-                                {/* <span className="text-sm">User</span> */}
-                            </a>
-                            <a
+                                <>
+                                    <HiUserCircle className="w-6 h-6 mr-2" />
+                                    <span className="text-sm">User</span>
+                                </>
+                            </a> */}
+
+                            {isLoggedIn && <a
                                 className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
-                                href="/"
-                                onClick={e => e.preventDefault()}
+                                href="/dashboard"
                             >
-                                <HiCog className="w-6 h-6 mr-2" />
-                                {/* <span className="text-sm">Settings</span> */}
+                                <div className="flex items-center">
+                                    <HiCollection className="w-6 h-6 mr-2" />
+                                    <span className="text-sm">Dashboard</span>
+                                </div>
                             </a>
-                            <a
-                                className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
-                                href="/"
-                                onClick={e => e.preventDefault()}
-                            >
-                                <HiLogout className="w-6 h-6 mr-2" />
-                                {/* <span className="text-sm">Logout</span> */}
-                            </a>
+                            }
+
+                            {isLoggedIn &&
+                                <a
+                                    className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+                                    href="/authenticate"
+                                    onClick={handleLogout}
+                                >
+
+                                    <div className="flex items-center">
+                                        <HiLogout className="w-6 h-6 mr-2" />
+                                        <span className="text-sm">Logout</span>
+                                    </div>
+                                </a>
+                            }
+
+                            {!isLoggedIn &&
+                                <a className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+                                    href="/authenticate"
+                                    onClick={handleLogin}
+                                >
+                                    <div className="flex items-center">
+                                        <HiLogin className="w-6 h-6 mr-2" />
+                                        <span className="text-sm">Login</span>
+                                    </div>
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
-            </nav>
-        </header>
+            </nav >
+        </header >
     )
 };

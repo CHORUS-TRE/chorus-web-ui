@@ -1,8 +1,6 @@
 import Link from "next/link"
-import React from "react"
-
-import { Dispatch, SetStateAction, useState } from "react"
-import { HiArrowSmRight, HiChartPie, HiDotsVertical, HiOutlineFolderOpen, HiUser, HiUserGroup, HiViewGridAdd, HiChatAlt2 } from 'react-icons/hi'
+import React, { Dispatch, SetStateAction, useState } from "react"
+import { HiArrowSmRight, HiChartPie, HiDotsVertical, HiOutlineFolderOpen, HiUser, HiUserGroup, HiViewGridAdd } from 'react-icons/hi'
 import { Project } from "~/pages/dashboard"
 
 export default function ProjectCard({ project, setShowModal }: { project: Project, setShowModal: Dispatch<SetStateAction<boolean>> }) {
@@ -81,17 +79,17 @@ export default function ProjectCard({ project, setShowModal }: { project: Projec
           </Link>
         </div> */}
         <div className="flex flex-row gap-4">
-          {project.apps.map((app) =>
-            <div className="relative w-32 h-32 flex flex-col justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
+          {project.apps.map((app, index) =>
+            <div key={index} className="relative w-32 h-32 flex flex-col justify-center items-center rounded-xl bg-slate-900 bg-opacity-50 backdrop-blur-sm">
               <button onClick={() => (setShowAppMenu(!showAppMenu))}
                 className="hover:text-white text-slate-500 absolute top-1 right-1 ">
                 <HiDotsVertical />
               </button>
               {showAppMenu &&
                 <div className={`absolute left-32 flex-auto
-              border-cyan-700 border-solid border-0 rounded-md p-3
-              bg-white bg-opacity-30 backdrop-blur-lg backdrop-filter shadow-md
-              `} aria-label="Horus Analytics">
+                  border-cyan-700 border-solid border-0 rounded-md p-3
+                  bg-white bg-opacity-30 backdrop-blur-lg backdrop-filter shadow-md
+                `} aria-label="Horus Analytics">
                   <ul className="space-y-1">
                     <li>
                       <Link href="/workbench/apps" className="flex items-center gap-2 rounded-lg px-4 py-2  hover:text-slate-400">
@@ -100,33 +98,31 @@ export default function ProjectCard({ project, setShowModal }: { project: Projec
                       </Link>
                     </li>
                     <li>
-                      <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
+                      <button className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
                         <HiUser />
                         <span className="text-sm font-medium"> Uninstall </span>
-                      </a>
+                      </button>
                     </li>
                     <li>
-                      <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
+                      <button className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
                         <HiArrowSmRight />
                         <span className="text-sm font-medium"> Pause </span>
-                      </a>
+                      </button>
                     </li>
                     <li>
-                      <a href="" className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
+                      <button className="flex items-center gap-2 rounded-lg px-4 py-2 hover:text-slate-400">
                         <HiArrowSmRight />
                         <span className="text-sm font-medium"> Settings </span>
-                      </a>
+                      </button>
                     </li>
-
                   </ul>
                 </div>}
               <Link href="/workbench/apps" passHref className="text-center  hover:opacity-40">
-                <img src={app.icon} className="w-12 h-12 rounded-xl mb-1" />
+                <img src={app.icon} className="w-12 h-12 rounded-xl mb-1" alt={app.name} />
                 <p className="text-[12px]">{app.name}</p>
               </Link>
             </div>
           )}
-
         </div>
       </div>
     </div>)
