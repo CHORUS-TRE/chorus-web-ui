@@ -33,7 +33,7 @@ export default function Component() {
         bg-white bg-opacity-70 backdrop-blur-lg backdrop-filter shadow-md
         `} aria-label="Horus Analytics">
         <h1 className='text-md  mb-2 text-gray-800'>Jupyter</h1>
-        <p className='text-xs mb-2 text-gray-800'>CHUV - Manuel Spuhler</p>
+        <p className='text-xs mb-2 text-gray-800'>CHUV - Albert Leevert</p>
         <hr />
         <ul className="space-y-1 mt-2">
           <li>

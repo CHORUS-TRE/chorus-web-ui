@@ -60,7 +60,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
         </div>
 
       </div>
-      <div className="flex flex-wrap gap-4 mt-4">
+      <div className="flex flex-wrap gap-3 mt-4">
         {appstore?.filter((f: App) => f.type === selectedCategory).map((app: any) => (
           <div className="px-5 pt-5 pb-2 w-96 h-auto border" key={app.label}>
             <div className="flex flex-start gap-2 items-center mb-1">

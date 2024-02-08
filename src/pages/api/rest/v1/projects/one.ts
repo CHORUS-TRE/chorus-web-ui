@@ -3,7 +3,7 @@ import { Project } from '~/internal/client/models/Project'
 const myProject: Project = {
   name: 'Biomedical Data Science Center',
   shortName: 'BDSC',
-  owner: 'Manuel Spuhler',
+  owner: 'Albert Leevert',
   institution: 'Centre Hospitalier Universitaire de Lausanne (CHUV)',
   country: 'Lausanne, Switzerland',
   logo: '/chuv.png',

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useAuth } from './AuthContext'
-import { HiCollection, HiLogout, HiLogin } from "react-icons/hi"
+import { HiCollection, HiLogout, HiLogin, HiExclamation } from "react-icons/hi"
 import { useRouter } from "next/router"
 
 export default function Header() {
@@ -25,15 +25,17 @@ export default function Header() {
     return (
         <header className="text-white h-12">
             <nav className="container mx-auto w-full bg-transparent flex items-center
-                     p-2 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
-                <div className="w-full mx-auto items-center flex justify-between flex-wrap">
+                     p-3 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
+                <div className="w-full mx-auto items-center flex justify-between flex-wrap ">
                     <a
-                        className="text-white text-md uppercase hidden lg:inline-block"
+                        className="text-white text-md uppercase hidden lg:inline-block hover:text-gray-300"
                         href="/"
                         onClick={e => { e.preventDefault(); router.push('/') }}
                     >
                         Horus
                     </a>
+                    <div className="flex align-middle items-center gap-2 text-orange-500">
+                    <HiExclamation /><p className="text-[12px] ">Developement Mockups v2</p> <HiExclamation /></div>
                     <div className="flex items-center justify-between lg:flex-grow-0">
                         <div className="flex items-center justify-between gap-x-8">
                             {/* <a
