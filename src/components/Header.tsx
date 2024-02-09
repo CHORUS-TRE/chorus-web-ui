@@ -28,7 +28,7 @@ export default function Header() {
                      p-3 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <div className="w-full mx-auto items-center flex justify-between flex-wrap ">
                     <a
-                        className="text-white text-md uppercase hidden lg:inline-block hover:text-gray-300"
+                        className="text-white text-md  font-semibold uppercase hidden lg:inline-block hover:text-gray-300"
                         href="/"
                         onClick={e => { e.preventDefault(); router.push('/') }}
                     >

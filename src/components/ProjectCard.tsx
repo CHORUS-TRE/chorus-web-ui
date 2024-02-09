@@ -123,6 +123,8 @@ export default function ProjectCard({ project, setShowModal }: { project: Projec
         <h2 className="">Upload / Download</h2>
         <h2 className="">Activity</h2>
         <h2 className="">Discussion</h2>
+        <h2 className="">Copilot</h2>
+                <p className="text-[12px]">Start your project with a project steward</p>
       </div>
         <div>
           <h2 className="">Feedback</h2>

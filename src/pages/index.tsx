@@ -73,17 +73,20 @@ export default function Home() {
                   <p className="text-[12px]">100 GB RAM</p>
                   <p className="text-[12px]">500 GB storage</p>
                 </div>
-
               </div>
-              <div className="mt-8">
-                <h2 className="">Why, How and What</h2>
-                <h2 className="">Take the tour</h2>
-                <h2 className="">Tutorials</h2>
-                <h2 className="">Data Browser</h2>
-                <h2 className="">Eco Tracker</h2>
-                <h2 className="">Copilot</h2>
-                <p className="text-[12px]">Start your project with a project steward
-                </p>
+              <div className="flex gap-8 mt-16 mb-8 justify-center">
+                <div className="">
+                  <h2 className="">Why, How and What</h2>
+                  <h2 className="">Take the tour</h2>
+                  <h2 className="">Tutorials</h2>
+                  <h2 className="">Eco Tracker</h2>
+                </div>
+                <div>
+                  <h2 className="">Troubleshooting</h2>
+                  <h2 className="">Privacy Policy</h2>
+                  <h2 className="">Security</h2>
+                  <h2 className="">Instagram, Twitter, FB, LinkedIn, etc.</h2>
+                </div>
               </div>
               {/* Button to trigger the fetchHello function */}
               {/* <button onClick={fetchHello}
