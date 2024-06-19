@@ -1,9 +1,9 @@
-import { render, screen, within } from '@testing-library/react'
-import Home from '../src/pages/index'
+import { expect, test } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import Home from '../src/pages/home'
 
-describe('Home', () => {
-  it.skip('heading', () => {
-    render(<Home />)
-    const heading = screen.getByRole('heading', { level: 2, name: /Welcome to The Frontend App/i });
-    expect(heading).toBeTruthy();  })
+
+test('Home', () => {
+  render(<Home />)
+  expect(screen.getByRole('heading', { level: 1, name: 'Home' })).toBeDefined()
 })
