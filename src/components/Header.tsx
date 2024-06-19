@@ -33,10 +33,10 @@ export default function Header() {
                         href="/"
                         onClick={e => { e.preventDefault(); router.push('/') }}
                     >
-                        Horus
+                        Chorus
                     </Link>
                     <div className="flex align-middle items-center gap-2 text-orange-500">
-                    <HiExclamation /><p className="text-[12px] ">Development Testbed, Horus v1</p> <HiExclamation /></div>
+                    <HiExclamation /><p className="text-[12px] ">Development Testbed, Chorus v1</p> <HiExclamation /></div>
                     <div className="flex items-center justify-between lg:flex-grow-0">
                         <div className="flex items-center justify-between gap-x-8">
                             {/* <a

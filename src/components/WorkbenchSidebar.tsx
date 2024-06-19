@@ -31,7 +31,7 @@ export default function Component() {
       <div className={`flex-auto
         border-cyan-700 border-solid border-0 rounded-md p-3
         bg-white bg-opacity-70 backdrop-blur-lg backdrop-filter shadow-md
-        `} aria-label="Horus Analytics">
+        `} aria-label="Chorus Analytics">
         <h1 className='text-md  mb-2 text-gray-800'>Jupyter</h1>
         <p className='text-xs mb-2 text-gray-800'>CHUV - Albert Leevert</p>
         <hr />

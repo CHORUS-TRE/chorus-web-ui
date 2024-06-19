@@ -37,7 +37,7 @@ export default function Home() {
             </div> */}
             <div className="text-center">
               <h2 className="mb-3 text-4xl font-extrabold">
-                Welcome to <span className="text-[#009933]">HORUS Analytics</span>
+                Welcome to <span className="text-[#009933]">CHORUS TRE</span>
               </h2>
               <p className="mb-8 text-lg">
                 The Trusted Research Environment of CHUV-UNIL

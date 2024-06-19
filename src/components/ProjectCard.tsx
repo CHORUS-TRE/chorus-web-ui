@@ -81,7 +81,7 @@ export default function ProjectCard({ project, setShowModal }: { project: Projec
                   <div className={`absolute left-32 flex-auto
                   border-cyan-700 border-solid border-0 rounded-md p-3
                   bg-white bg-opacity-30 backdrop-blur-lg backdrop-filter shadow-md
-                `} aria-label="Horus Analytics">
+                `} aria-label="Chorus Analytics">
                     <ul className="space-y-1">
                       <li>
                         <Link href="/workbench/apps" className="flex items-center gap-2 rounded-lg px-4 py-2  hover:text-slate-400">
