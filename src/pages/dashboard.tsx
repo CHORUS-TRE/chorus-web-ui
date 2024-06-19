@@ -1,12 +1,10 @@
 'use client'
 
-import Link from "next/link"
 import React, { useState, useEffect } from "react"
 import AppStore from "../components/AppStore"
 import ProjectCard from "../components/ProjectCard"
 import Layout from "~/components/Layout"
 import SidebarWidgets from "~/components/SidebarWidgets"
-import ProjectList from "~/components/ProjectList"
 import { useProject } from "~/hooks/useProjects"
 import Sidebar from "~/components/Sidebar"
 

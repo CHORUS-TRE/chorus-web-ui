@@ -1,5 +1,7 @@
+'use client'
+
 import React from 'react'
-import ReactECharts from 'echarts-for-react'
+// import ReactECharts from 'echarts-for-react'
 
 export default function BarChart() {
   const options = {
@@ -37,7 +39,11 @@ export default function BarChart() {
         ]
       }
     ]
-  };
+  }
 
-  return <ReactECharts option={options} />
+  // if (typeof window !== 'undefined') {
+  //   return <ReactECharts option={options} />
+  // } else return null
+
+  return <div>ECHART</div>
 }

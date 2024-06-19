@@ -28,7 +28,7 @@ export default function Component() {
       transform transition-transform ${showSidebar ? "translate-x-0" : "-translate-x-[calc(100%-2rem)]"}
       border-yellow-400 border-solid border-0`}
     >
-      <div className={`flex-auto 
+      <div className={`flex-auto
         border-cyan-700 border-solid border-0 rounded-md p-3
         bg-white bg-opacity-70 backdrop-blur-lg backdrop-filter shadow-md
         `} aria-label="Horus Analytics">
@@ -58,28 +58,28 @@ export default function Component() {
             <hr />
           </li>
           <li>
-            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiOutlineUsers />
               <span className="text-sm font-medium"> Collaborate </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiArrowsExpand />
               <span className="text-sm font-medium"> Fullscreen </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiFilm />
               <span className="text-sm font-medium"> Screenshot </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
+            <Link href="/dashboard" onClick={e => e.preventDefault()} className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700">
               <HiLogout />
               <span className="text-sm font-medium"> Logout </span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

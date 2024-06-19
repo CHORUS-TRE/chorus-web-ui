@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react"
 // import { useEffect } from "react"
+import Image from "next/image"
 
 interface App {
   name: string
@@ -64,7 +65,7 @@ export default function AppStore({ setShowModal }: { setShowModal: React.Dispatc
         {appstore?.filter((f: App) => f.type === selectedCategory).map((app: any) => (
           <div className="px-5 pt-5 pb-2 w-96 h-auto border" key={app.label}>
             <div className="flex flex-start gap-2 items-center mb-1">
-              <img src={app.img || '/app.png'} className="rounded-full w-8 h-8" />
+              <Image alt={'app'} src={app.Image || '/app.png'} width={100} height={100} className="rounded-full w-8 h-8" />
               <h2 className="text-md">{app.label}</h2>
             </div>
             <p className="text-[12px]">{app.description}</p>

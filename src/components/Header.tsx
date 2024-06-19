@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { useAuth } from './AuthContext'
 import { HiCollection, HiLogout, HiLogin, HiExclamation } from "react-icons/hi"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
+import Link from 'next/link'
 
 export default function Header() {
     const router = useRouter()
@@ -27,13 +28,13 @@ export default function Header() {
             <nav className="container mx-auto w-full bg-transparent flex items-center
                      p-3 rounded-xl shadow-sm bg-slate-900 bg-opacity-50 backdrop-blur-sm border-slate-700 border-solid border">
                 <div className="w-full mx-auto items-center flex justify-between flex-wrap ">
-                    <a
+                    <Link
                         className="text-white text-md  font-semibold uppercase hidden lg:inline-block hover:text-gray-300"
                         href="/"
                         onClick={e => { e.preventDefault(); router.push('/') }}
                     >
                         Horus
-                    </a>
+                    </Link>
                     <div className="flex align-middle items-center gap-2 text-orange-500">
                     <HiExclamation /><p className="text-[12px] ">Development Testbed, Horus v1</p> <HiExclamation /></div>
                     <div className="flex items-center justify-between lg:flex-grow-0">
@@ -49,7 +50,7 @@ export default function Header() {
                                 </>
                             </a> */}
 
-                            <a
+                            <Link
                                 className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                 href="/dashboard"
                                 onClick={e => { e.preventDefault(); router.push('/dashboard') }}
@@ -58,10 +59,10 @@ export default function Header() {
                                     <span className="text-sm">Dashboard</span>
                                     <HiCollection className="w-6 h-6 ml-2" />
                                 </div>
-                            </a>
+                            </Link>
 
                             {isLoggedIn &&
-                                <a
+                                <Link
                                     className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                     href="/authenticate"
                                     onClick={handleLogout}
@@ -71,11 +72,11 @@ export default function Header() {
                                         <span className="text-sm">Logout</span>
                                         <HiLogout className="w-6 h-6 ml-2" />
                                     </div>
-                                </a>
+                                </Link>
                             }
 
                             {!isLoggedIn &&
-                                <a className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
+                                <Link className="text-white text-sm uppercase hidden lg:inline-block font-semibold hover:text-gray-300"
                                     href="/authenticate"
                                     onClick={handleLogin}
                                 >
@@ -83,7 +84,7 @@ export default function Header() {
                                         <span className="text-sm">Login</span>
                                         <HiLogin className="w-6 h-6 ml-2" />
                                     </div>
-                                </a>
+                                </Link>
                             }
                         </div>
                     </div>

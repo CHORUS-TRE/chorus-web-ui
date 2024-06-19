@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction, useState } from "react"
 import { HiArrowSmRight, HiChartPie, HiDotsVertical, HiOutlineFolderOpen, HiUser, HiUserGroup, HiViewGridAdd } from 'react-icons/hi'
 import { Project } from "../internal/client/models/Project"
 import BarChart from "./BarChart"
+import Image from 'next/image'
 
 export default function ProjectCard({ project, setShowModal }: { project: Project, setShowModal: Dispatch<SetStateAction<boolean>> }) {
   const [showAppMenu, setShowAppMenu] = useState(false)
@@ -109,7 +110,7 @@ export default function ProjectCard({ project, setShowModal }: { project: Projec
                     </ul>
                   </div>}
                 <Link href="/workbench/apps" passHref className="text-center  hover:opacity-40">
-                  <img src={app.icon} className="w-12 h-12 rounded-xl mb-1" alt={app.name} />
+                  <Image  width={100} height={100}  src={app.icon || 'icon'} className="w-12 h-12 rounded-xl mb-1" alt={app.name} />
                   <p className="text-[12px]">{app.name}</p>
                 </Link>
               </div>
