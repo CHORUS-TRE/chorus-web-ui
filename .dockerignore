@@ -1,5 +1,6 @@
 *
-!.eslintrc.cjs
+!.nvmrc
+!.eslintrc.json
 !package.json
 !pnpm-lock.yaml
 !next.config.js
