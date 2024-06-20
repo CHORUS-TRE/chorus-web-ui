@@ -1,7 +1,7 @@
 import { type AppType } from "next/app"
+import { AuthProvider } from '../components/AuthContext'
 import "../styles/globals.css"
 import "../styles/build.css"
-import { AuthProvider } from '../components/AuthContext'
 
 // MyApp component acts as the root component for all pages in the Next.js application
 const MyApp: AppType = ({ Component, pageProps }) => {

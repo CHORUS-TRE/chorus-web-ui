@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build && npx tailwindcss -o src/styles/build.css --minify",
+    "build": "next build && npx tailwindcss -o src/styles/build.css --minify ",
     "dev": "> src/styles/build.css && next dev --turbo",
     "lint": "next lint",
     "start": "next start",
