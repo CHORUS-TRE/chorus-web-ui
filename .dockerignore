@@ -1,5 +1,4 @@
 *
-!.nvmrc
 !.eslintrc.json
 !package.json
 !pnpm-lock.yaml

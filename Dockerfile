@@ -4,7 +4,6 @@ SHELL ["/bin/bash", "-xe", "-o", "pipefail", "-c"]
 
 WORKDIR /app
 
-
 FROM base as builder
 
 ENV NEXT_TELEMETRY_DISABLED=1
