@@ -32,8 +32,9 @@
     "baseUrl": ".",
     "paths": {
       "~/*": [
-        "./src/*"
-      ]
+        "./src/*",
+      ],
+      "@/*": ["./src/*"],
     },
     "allowSyntheticDefaultImports": true,
     "declaration": true
