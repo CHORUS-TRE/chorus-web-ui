@@ -1,0 +1,17 @@
+# Ignore artifacts:
+build
+coverage
+
+# Ignore all HTML files:
+**/*.html
+**/*.htm
+
+# Ignore all Markdown files:
+**/*.md
+
+# Ignore all JSON files:
+**/*.json
+
+# Ignore all YAML files:
+**/*.yaml
+**/*.yml

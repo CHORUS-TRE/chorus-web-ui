@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build && npx tailwindcss -o src/styles/build.css --minify ",
-    "dev": "> src/styles/build.css && next dev --turbo",
+    "build": "next build && npx tailwindcss -o src/app/build.css --minify ",
+    "dev": "> src/app/build.css && next dev --turbo",
     "lint": "next lint",
     "start": "next start",
-    "test": "vitest"
+    "test": "vitest",
+    "format:all": "prettier --write ."
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
@@ -35,6 +36,8 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^8.41.0",
     "eslint-config-next": "14.2.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
     "jsdom": "^24.1.0",
     "postcss": "^8.4.38",
     "prettier": "^3.3.2",
