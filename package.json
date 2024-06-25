@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npx tailwindcss -i src/styles/globals.css -o src/app/build.css",
     "build": "next build",
     "dev": "next dev --turbo",
     "lint": "next lint",
