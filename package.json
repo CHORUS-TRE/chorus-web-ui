@@ -7,10 +7,12 @@
     "prebuild": "npx tailwindcss -i src/styles/globals.css -o src/app/build.css",
     "build": "next build",
     "dev": "next dev --turbo",
-    "lint": "next lint",
+    "lint": "next lint --fix",
     "start": "next start",
     "test": "vitest",
-    "format:all": "prettier --write ."
+    "test:run": "vitest --run",
+    "format:all": "prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
@@ -39,6 +41,7 @@
     "eslint-config-next": "14.2.4",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-unused-imports": "^4.0.0",
+    "husky": "^9.0.11",
     "jsdom": "^24.1.0",
     "postcss": "^8.4.38",
     "prettier": "^3.3.2",
