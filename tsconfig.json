@@ -13,7 +13,11 @@
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
     /* Bundled projects */
-    "lib": ["dom", "dom.iterable", "ES2022"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2022"
+    ],
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -27,8 +31,12 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"],
-      "@/*": ["./src/*"]
+      "~/*": [
+        "./src/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
     },
     "allowSyntheticDefaultImports": true,
     "declaration": true
@@ -43,5 +51,18 @@
     ".next/types/**/*.ts",
     "vitest.config.ts"
   ],
-  "exclude": ["node_modules"]
+  "module": "esnext",
+  "moduleResolution": "bundler",
+  "baseUrl": "./",
+  "paths": {
+    "@/*": [
+      "src/*"
+    ],
+    "~/*": [
+      "src/*"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
