@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build && npx tailwindcss -o src/app/build.css --minify ",
-    "dev": "> src/app/build.css && next dev --turbo",
+    "build": "next build",
+    "dev": "next dev --turbo",
     "lint": "next lint",
     "start": "next start",
     "test": "vitest",
