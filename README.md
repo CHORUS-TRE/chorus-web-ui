@@ -1,25 +1,36 @@
-# Next.js Frontend Template
+# CHORUS Web User Interface
 
-This project is a Next.js frontend template designed to kickstart your web development projects. It integrates Tailwind CSS for styling and TypeScript for type-safe coding, providing a robust foundation for building modern web applications.
+Welcome to the CHORUS Web User Interface! This part of the platform provides a web-based interface to interact with CHORUS, leveraging the power of Next.js to deliver a responsive and dynamic user experience.
+
+## Description
+
+The CHORUS Web UI is built with Next.js, a React framework that supports both client-side and server-side rendering. This approach ensures optimal performance and responsiveness across all devices.
+
+## Technology Stack
+
+- **Frameworks**: Next.js
+- **Programming Language**: TypeScript
+- **Engines**: Node, pnpm
+- **Code Quality Tools**: ESLint, Prettier, husky
+- **CSS Framework**: Tailwind CSS, shadcdn/ui
+- **Testing Framework**: Jest
 
 ## Getting Started
 
-This guide will walk you through setting up and customizing your frontend based on this template.
-
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
+To set up your development environment for CHORUS Web UI, you will need:
 
-- Docker: A containerization platform.
-- Dev Containers extension for Visual Studio Code: Enhances the development experience by allowing you to work within a Docker container.
+- **Docker**: A platform for developing, shipping, and running applications inside containers.
+- **Dev Containers Extension for Visual Studio Code**: Enhances your development experience by enabling you to code inside a Docker container.
 
 ### Installation
 
 Start by cloning this repository to your local machine:
 
 ```bash
-git clone https://your-repository-url.git
-cd your-repository-name
+git clone https://github.com/CHORUS-TRE/chorus-web-ui.git
+cd chorus-web-ui
 ```
 
 ### Development
@@ -56,9 +67,25 @@ cd your-repository-name
 
 3. **Developing Your Application**
 
-   - Main Page: Edit src/pages/index.tsx to modify the homepage.
-   - New Pages: Create additional pages and routes in the src/pages directory.
+   - Main Page: Edit src/app/index.tsx to modify the homepage.
+   - New Pages: Create additional pages and routes in the src/app directory.
    - Shared Components: Develop reusable components like headers or footers in the src/components folder.
+
+4. **Code versionning**
+
+   - Use Conventional Commits [https://www.conventionalcommits.org/en/v1.0.0/](https://www.conventionalcommits.org/en/v1.0.0/) for your message (so later we can use it to make automatic semantic versionning)
+     - Format: `<type>(<scope>): <subject> ` (`<scope>` is optional)
+
+
+		```
+			feat: add cat greetings
+			^--^  ^--------_------^
+			|     |
+			|     +-> Summary in present tense.
+			|
+			+-------> Type: chore, docs, feat, fix, refactor, style, or test.
+		```
+   - git runs a pre-commit hook before pushing, with eslint, prettier and test
 
 ### Production
 
@@ -67,28 +94,13 @@ cd your-repository-name
    - Add or update tests in `__tests__/`.
    - Example tests for components and pages are provided, such as for the Home component.
 
-2. **Deployment Configuration**
-
-   The template is set up for deployment via Kubernetes. Update the configuration in the deploy directory, or modify the CI/CD pipeline in jenkins for alternative deployment methods.
-
-3. **Setting Up CI/CD with Jenkins**
-
-   - Push your code to a GitLab repository.
-   - Create a new folder in Jenkins and configure two stages:
-     - The first stage builds the base image (jenkins/stage1.jenkinsfile).
-     - The second stage is a Multibranch Pipeline that builds, tests, and deploys your site (jenkins/stage2.jenkinsfile).
-   - View the original pipeline configuration [here](https://jenkins.horus-graph.intranet.chuv/jenkins/job/100-DS/job/Template%20frontend/).
-   - Every push to GitLab will trigger this pipeline, automating the testing and deployment process.
-
-4. **Local Production Testing**
+2. **Local Production Testing**
 
    Build and run the production application locally:
 
    ```bash
-   cd docker
-   ./build-stage1.sh # this step can be done only once
-   docker build -f dockerfiles/stage2.dockerfile -t prod-app ..
-   docker run -p <some port>:80 -d prod-image
+   docker build -t chorus-web-ui .
+   docker run --rm -p <some port>:3000 chorus-web-ui
    ```
 
    Access your application at `localhost:<the port you put>`.
