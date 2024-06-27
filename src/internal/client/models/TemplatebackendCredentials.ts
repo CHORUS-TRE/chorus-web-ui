@@ -12,70 +12,74 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists, mapValues } from '../runtime'
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendCredentials
  */
 export interface TemplatebackendCredentials {
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendCredentials
-     */
-    username?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendCredentials
-     */
-    password?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendCredentials
-     */
-    totp?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendCredentials
+   */
+  username?: string
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendCredentials
+   */
+  password?: string
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendCredentials
+   */
+  totp?: string
 }
 
 /**
  * Check if a given object implements the TemplatebackendCredentials interface.
  */
 export function instanceOfTemplatebackendCredentials(value: object): boolean {
-    let isInstance = true;
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendCredentialsFromJSON(json: any): TemplatebackendCredentials {
-    return TemplatebackendCredentialsFromJSONTyped(json, false);
+export function TemplatebackendCredentialsFromJSON(
+  json: any
+): TemplatebackendCredentials {
+  return TemplatebackendCredentialsFromJSONTyped(json, false)
 }
 
-export function TemplatebackendCredentialsFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendCredentials {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'username': !exists(json, 'username') ? undefined : json['username'],
-        'password': !exists(json, 'password') ? undefined : json['password'],
-        'totp': !exists(json, 'totp') ? undefined : json['totp'],
-    };
+export function TemplatebackendCredentialsFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendCredentials {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    username: !exists(json, 'username') ? undefined : json['username'],
+    password: !exists(json, 'password') ? undefined : json['password'],
+    totp: !exists(json, 'totp') ? undefined : json['totp']
+  }
 }
 
-export function TemplatebackendCredentialsToJSON(value?: TemplatebackendCredentials | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'username': value.username,
-        'password': value.password,
-        'totp': value.totp,
-    };
+export function TemplatebackendCredentialsToJSON(
+  value?: TemplatebackendCredentials | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    username: value.username,
+    password: value.password,
+    totp: value.totp
+  }
 }
-

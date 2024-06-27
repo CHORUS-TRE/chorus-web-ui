@@ -12,54 +12,60 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists, mapValues } from '../runtime'
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendCreateUserResult
  */
 export interface TemplatebackendCreateUserResult {
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendCreateUserResult
-     */
-    id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendCreateUserResult
+   */
+  id?: string
 }
 
 /**
  * Check if a given object implements the TemplatebackendCreateUserResult interface.
  */
-export function instanceOfTemplatebackendCreateUserResult(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendCreateUserResult(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendCreateUserResultFromJSON(json: any): TemplatebackendCreateUserResult {
-    return TemplatebackendCreateUserResultFromJSONTyped(json, false);
+export function TemplatebackendCreateUserResultFromJSON(
+  json: any
+): TemplatebackendCreateUserResult {
+  return TemplatebackendCreateUserResultFromJSONTyped(json, false)
 }
 
-export function TemplatebackendCreateUserResultFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendCreateUserResult {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'id': !exists(json, 'id') ? undefined : json['id'],
-    };
+export function TemplatebackendCreateUserResultFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendCreateUserResult {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    id: !exists(json, 'id') ? undefined : json['id']
+  }
 }
 
-export function TemplatebackendCreateUserResultToJSON(value?: TemplatebackendCreateUserResult | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'id': value.id,
-    };
+export function TemplatebackendCreateUserResultToJSON(
+  value?: TemplatebackendCreateUserResult | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    id: value.id
+  }
 }
-

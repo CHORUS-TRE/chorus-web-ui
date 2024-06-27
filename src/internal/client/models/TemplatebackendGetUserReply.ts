@@ -12,61 +12,67 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
-import type { TemplatebackendGetUserResult } from './TemplatebackendGetUserResult';
+import { exists, mapValues } from '../runtime'
+import type { TemplatebackendGetUserResult } from './TemplatebackendGetUserResult'
 import {
-    TemplatebackendGetUserResultFromJSON,
-    TemplatebackendGetUserResultFromJSONTyped,
-    TemplatebackendGetUserResultToJSON,
-} from './TemplatebackendGetUserResult';
+  TemplatebackendGetUserResultFromJSON,
+  TemplatebackendGetUserResultFromJSONTyped,
+  TemplatebackendGetUserResultToJSON
+} from './TemplatebackendGetUserResult'
 
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendGetUserReply
  */
 export interface TemplatebackendGetUserReply {
-    /**
-     * 
-     * @type {TemplatebackendGetUserResult}
-     * @memberof TemplatebackendGetUserReply
-     */
-    result?: TemplatebackendGetUserResult;
+  /**
+   *
+   * @type {TemplatebackendGetUserResult}
+   * @memberof TemplatebackendGetUserReply
+   */
+  result?: TemplatebackendGetUserResult
 }
 
 /**
  * Check if a given object implements the TemplatebackendGetUserReply interface.
  */
 export function instanceOfTemplatebackendGetUserReply(value: object): boolean {
-    let isInstance = true;
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendGetUserReplyFromJSON(json: any): TemplatebackendGetUserReply {
-    return TemplatebackendGetUserReplyFromJSONTyped(json, false);
+export function TemplatebackendGetUserReplyFromJSON(
+  json: any
+): TemplatebackendGetUserReply {
+  return TemplatebackendGetUserReplyFromJSONTyped(json, false)
 }
 
-export function TemplatebackendGetUserReplyFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendGetUserReply {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'result': !exists(json, 'result') ? undefined : TemplatebackendGetUserResultFromJSON(json['result']),
-    };
+export function TemplatebackendGetUserReplyFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendGetUserReply {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    result: !exists(json, 'result')
+      ? undefined
+      : TemplatebackendGetUserResultFromJSON(json['result'])
+  }
 }
 
-export function TemplatebackendGetUserReplyToJSON(value?: TemplatebackendGetUserReply | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'result': TemplatebackendGetUserResultToJSON(value.result),
-    };
+export function TemplatebackendGetUserReplyToJSON(
+  value?: TemplatebackendGetUserReply | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    result: TemplatebackendGetUserResultToJSON(value.result)
+  }
 }
-

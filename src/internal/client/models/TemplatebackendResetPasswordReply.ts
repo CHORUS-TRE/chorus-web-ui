@@ -12,54 +12,60 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists, mapValues } from '../runtime'
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendResetPasswordReply
  */
 export interface TemplatebackendResetPasswordReply {
-    /**
-     * 
-     * @type {object}
-     * @memberof TemplatebackendResetPasswordReply
-     */
-    result?: object;
+  /**
+   *
+   * @type {object}
+   * @memberof TemplatebackendResetPasswordReply
+   */
+  result?: object
 }
 
 /**
  * Check if a given object implements the TemplatebackendResetPasswordReply interface.
  */
-export function instanceOfTemplatebackendResetPasswordReply(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendResetPasswordReply(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendResetPasswordReplyFromJSON(json: any): TemplatebackendResetPasswordReply {
-    return TemplatebackendResetPasswordReplyFromJSONTyped(json, false);
+export function TemplatebackendResetPasswordReplyFromJSON(
+  json: any
+): TemplatebackendResetPasswordReply {
+  return TemplatebackendResetPasswordReplyFromJSONTyped(json, false)
 }
 
-export function TemplatebackendResetPasswordReplyFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendResetPasswordReply {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'result': !exists(json, 'result') ? undefined : json['result'],
-    };
+export function TemplatebackendResetPasswordReplyFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendResetPasswordReply {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    result: !exists(json, 'result') ? undefined : json['result']
+  }
 }
 
-export function TemplatebackendResetPasswordReplyToJSON(value?: TemplatebackendResetPasswordReply | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'result': value.result,
-    };
+export function TemplatebackendResetPasswordReplyToJSON(
+  value?: TemplatebackendResetPasswordReply | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    result: value.result
+  }
 }
-

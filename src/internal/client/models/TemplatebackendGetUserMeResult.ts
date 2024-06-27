@@ -12,61 +12,69 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
-import type { TemplatebackendUser } from './TemplatebackendUser';
+import { exists, mapValues } from '../runtime'
+import type { TemplatebackendUser } from './TemplatebackendUser'
 import {
-    TemplatebackendUserFromJSON,
-    TemplatebackendUserFromJSONTyped,
-    TemplatebackendUserToJSON,
-} from './TemplatebackendUser';
+  TemplatebackendUserFromJSON,
+  TemplatebackendUserFromJSONTyped,
+  TemplatebackendUserToJSON
+} from './TemplatebackendUser'
 
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendGetUserMeResult
  */
 export interface TemplatebackendGetUserMeResult {
-    /**
-     * 
-     * @type {TemplatebackendUser}
-     * @memberof TemplatebackendGetUserMeResult
-     */
-    me?: TemplatebackendUser;
+  /**
+   *
+   * @type {TemplatebackendUser}
+   * @memberof TemplatebackendGetUserMeResult
+   */
+  me?: TemplatebackendUser
 }
 
 /**
  * Check if a given object implements the TemplatebackendGetUserMeResult interface.
  */
-export function instanceOfTemplatebackendGetUserMeResult(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendGetUserMeResult(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendGetUserMeResultFromJSON(json: any): TemplatebackendGetUserMeResult {
-    return TemplatebackendGetUserMeResultFromJSONTyped(json, false);
+export function TemplatebackendGetUserMeResultFromJSON(
+  json: any
+): TemplatebackendGetUserMeResult {
+  return TemplatebackendGetUserMeResultFromJSONTyped(json, false)
 }
 
-export function TemplatebackendGetUserMeResultFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendGetUserMeResult {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'me': !exists(json, 'me') ? undefined : TemplatebackendUserFromJSON(json['me']),
-    };
+export function TemplatebackendGetUserMeResultFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendGetUserMeResult {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    me: !exists(json, 'me')
+      ? undefined
+      : TemplatebackendUserFromJSON(json['me'])
+  }
 }
 
-export function TemplatebackendGetUserMeResultToJSON(value?: TemplatebackendGetUserMeResult | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'me': TemplatebackendUserToJSON(value.me),
-    };
+export function TemplatebackendGetUserMeResultToJSON(
+  value?: TemplatebackendGetUserMeResult | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    me: TemplatebackendUserToJSON(value.me)
+  }
 }
-

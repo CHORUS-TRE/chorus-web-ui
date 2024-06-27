@@ -11,5 +11,5 @@ export interface Project {
     status?: string
     mod: number
   }[]
-  type?: "personal" | "project"
+  type?: 'personal' | 'project'
 }

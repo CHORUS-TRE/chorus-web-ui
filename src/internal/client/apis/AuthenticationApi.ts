@@ -12,68 +12,86 @@
  * Do not edit the class manually.
  */
 
-
-import * as runtime from '../runtime';
+import * as runtime from '../runtime'
 import type {
   RpcStatus,
   TemplatebackendAuthenticationReply,
-  TemplatebackendCredentials,
-} from '../models/index';
+  TemplatebackendCredentials
+} from '../models/index'
 import {
-    RpcStatusFromJSON,
-    RpcStatusToJSON,
-    TemplatebackendAuthenticationReplyFromJSON,
-    TemplatebackendAuthenticationReplyToJSON,
-    TemplatebackendCredentialsFromJSON,
-    TemplatebackendCredentialsToJSON,
-} from '../models/index';
+  RpcStatusFromJSON,
+  RpcStatusToJSON,
+  TemplatebackendAuthenticationReplyFromJSON,
+  TemplatebackendAuthenticationReplyToJSON,
+  TemplatebackendCredentialsFromJSON,
+  TemplatebackendCredentialsToJSON
+} from '../models/index'
 
 export interface AuthenticationServiceAuthenticateRequest {
-    body: TemplatebackendCredentials;
+  body: TemplatebackendCredentials
 }
 
 /**
- * 
+ *
  */
 export class AuthenticationApi extends runtime.BaseAPI {
-
-    /**
-     * This endpoint authenticates a user
-     * Authenticate
-     */
-    async authenticationServiceAuthenticateRaw(requestParameters: AuthenticationServiceAuthenticateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendAuthenticationReply>> {
-        if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling authenticationServiceAuthenticate.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/rest/v1/authentication/login`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: TemplatebackendCredentialsToJSON(requestParameters.body),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendAuthenticationReplyFromJSON(jsonValue));
+  /**
+   * This endpoint authenticates a user
+   * Authenticate
+   */
+  async authenticationServiceAuthenticateRaw(
+    requestParameters: AuthenticationServiceAuthenticateRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendAuthenticationReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling authenticationServiceAuthenticate.'
+      )
     }
 
-    /**
-     * This endpoint authenticates a user
-     * Authenticate
-     */
-    async authenticationServiceAuthenticate(requestParameters: AuthenticationServiceAuthenticateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendAuthenticationReply> {
-        const response = await this.authenticationServiceAuthenticateRaw(requestParameters, initOverrides);
-        return await response.value();
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/authentication/login`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: TemplatebackendCredentialsToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendAuthenticationReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint authenticates a user
+   * Authenticate
+   */
+  async authenticationServiceAuthenticate(
+    requestParameters: AuthenticationServiceAuthenticateRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendAuthenticationReply> {
+    const response = await this.authenticationServiceAuthenticateRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
 }

@@ -33,21 +33,35 @@
     "paths": {
       "~/*": [
         "./src/*"
+      ],
+      "@/*": [
+        "./src/*"
       ]
     },
     "allowSyntheticDefaultImports": true,
     "declaration": true
   },
   "include": [
-    ".eslintrc.cjs",
+    ".eslintrc.json",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts",
-    "jest.config.ts"
+    "vitest.config.ts"
   ],
+  "module": "esnext",
+  "moduleResolution": "bundler",
+  "baseUrl": "./",
+  "paths": {
+    "@/*": [
+      "src/*"
+    ],
+    "~/*": [
+      "src/*"
+    ]
+  },
   "exclude": [
     "node_modules"
   ]

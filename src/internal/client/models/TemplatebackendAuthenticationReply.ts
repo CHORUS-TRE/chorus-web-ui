@@ -12,61 +12,69 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
-import type { TemplatebackendAuthenticationResult } from './TemplatebackendAuthenticationResult';
+import { exists, mapValues } from '../runtime'
+import type { TemplatebackendAuthenticationResult } from './TemplatebackendAuthenticationResult'
 import {
-    TemplatebackendAuthenticationResultFromJSON,
-    TemplatebackendAuthenticationResultFromJSONTyped,
-    TemplatebackendAuthenticationResultToJSON,
-} from './TemplatebackendAuthenticationResult';
+  TemplatebackendAuthenticationResultFromJSON,
+  TemplatebackendAuthenticationResultFromJSONTyped,
+  TemplatebackendAuthenticationResultToJSON
+} from './TemplatebackendAuthenticationResult'
 
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendAuthenticationReply
  */
 export interface TemplatebackendAuthenticationReply {
-    /**
-     * 
-     * @type {TemplatebackendAuthenticationResult}
-     * @memberof TemplatebackendAuthenticationReply
-     */
-    result?: TemplatebackendAuthenticationResult;
+  /**
+   *
+   * @type {TemplatebackendAuthenticationResult}
+   * @memberof TemplatebackendAuthenticationReply
+   */
+  result?: TemplatebackendAuthenticationResult
 }
 
 /**
  * Check if a given object implements the TemplatebackendAuthenticationReply interface.
  */
-export function instanceOfTemplatebackendAuthenticationReply(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendAuthenticationReply(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendAuthenticationReplyFromJSON(json: any): TemplatebackendAuthenticationReply {
-    return TemplatebackendAuthenticationReplyFromJSONTyped(json, false);
+export function TemplatebackendAuthenticationReplyFromJSON(
+  json: any
+): TemplatebackendAuthenticationReply {
+  return TemplatebackendAuthenticationReplyFromJSONTyped(json, false)
 }
 
-export function TemplatebackendAuthenticationReplyFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendAuthenticationReply {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'result': !exists(json, 'result') ? undefined : TemplatebackendAuthenticationResultFromJSON(json['result']),
-    };
+export function TemplatebackendAuthenticationReplyFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendAuthenticationReply {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    result: !exists(json, 'result')
+      ? undefined
+      : TemplatebackendAuthenticationResultFromJSON(json['result'])
+  }
 }
 
-export function TemplatebackendAuthenticationReplyToJSON(value?: TemplatebackendAuthenticationReply | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'result': TemplatebackendAuthenticationResultToJSON(value.result),
-    };
+export function TemplatebackendAuthenticationReplyToJSON(
+  value?: TemplatebackendAuthenticationReply | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    result: TemplatebackendAuthenticationResultToJSON(value.result)
+  }
 }
-

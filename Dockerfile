@@ -4,11 +4,9 @@ SHELL ["/bin/bash", "-xe", "-o", "pipefail", "-c"]
 
 WORKDIR /app
 
-
-FROM base as builder
+FROM base AS builder
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
 
 COPY . .
 
@@ -18,6 +16,7 @@ RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
     pnpm i --frozen-lockfile && \
     pnpm build
 
+ENV NODE_ENV=production
 
 FROM gcr.io/distroless/nodejs20-debian12
 

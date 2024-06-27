@@ -1,8 +1,9 @@
 *
-!.eslintrc.cjs
+!.eslintrc.json
 !package.json
 !pnpm-lock.yaml
 !next.config.js
 !tsconfig.json
+!tailwind.config.ts
 !public
 !src

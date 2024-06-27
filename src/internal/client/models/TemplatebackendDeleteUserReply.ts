@@ -12,54 +12,60 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists, mapValues } from '../runtime'
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendDeleteUserReply
  */
 export interface TemplatebackendDeleteUserReply {
-    /**
-     * 
-     * @type {object}
-     * @memberof TemplatebackendDeleteUserReply
-     */
-    result?: object;
+  /**
+   *
+   * @type {object}
+   * @memberof TemplatebackendDeleteUserReply
+   */
+  result?: object
 }
 
 /**
  * Check if a given object implements the TemplatebackendDeleteUserReply interface.
  */
-export function instanceOfTemplatebackendDeleteUserReply(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendDeleteUserReply(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendDeleteUserReplyFromJSON(json: any): TemplatebackendDeleteUserReply {
-    return TemplatebackendDeleteUserReplyFromJSONTyped(json, false);
+export function TemplatebackendDeleteUserReplyFromJSON(
+  json: any
+): TemplatebackendDeleteUserReply {
+  return TemplatebackendDeleteUserReplyFromJSONTyped(json, false)
 }
 
-export function TemplatebackendDeleteUserReplyFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendDeleteUserReply {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'result': !exists(json, 'result') ? undefined : json['result'],
-    };
+export function TemplatebackendDeleteUserReplyFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendDeleteUserReply {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    result: !exists(json, 'result') ? undefined : json['result']
+  }
 }
 
-export function TemplatebackendDeleteUserReplyToJSON(value?: TemplatebackendDeleteUserReply | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'result': value.result,
-    };
+export function TemplatebackendDeleteUserReplyToJSON(
+  value?: TemplatebackendDeleteUserReply | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    result: value.result
+  }
 }
-

@@ -12,61 +12,69 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
-import type { TemplatebackendCreateUserResult } from './TemplatebackendCreateUserResult';
+import { exists, mapValues } from '../runtime'
+import type { TemplatebackendCreateUserResult } from './TemplatebackendCreateUserResult'
 import {
-    TemplatebackendCreateUserResultFromJSON,
-    TemplatebackendCreateUserResultFromJSONTyped,
-    TemplatebackendCreateUserResultToJSON,
-} from './TemplatebackendCreateUserResult';
+  TemplatebackendCreateUserResultFromJSON,
+  TemplatebackendCreateUserResultFromJSONTyped,
+  TemplatebackendCreateUserResultToJSON
+} from './TemplatebackendCreateUserResult'
 
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendCreateUserReply
  */
 export interface TemplatebackendCreateUserReply {
-    /**
-     * 
-     * @type {TemplatebackendCreateUserResult}
-     * @memberof TemplatebackendCreateUserReply
-     */
-    result?: TemplatebackendCreateUserResult;
+  /**
+   *
+   * @type {TemplatebackendCreateUserResult}
+   * @memberof TemplatebackendCreateUserReply
+   */
+  result?: TemplatebackendCreateUserResult
 }
 
 /**
  * Check if a given object implements the TemplatebackendCreateUserReply interface.
  */
-export function instanceOfTemplatebackendCreateUserReply(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendCreateUserReply(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendCreateUserReplyFromJSON(json: any): TemplatebackendCreateUserReply {
-    return TemplatebackendCreateUserReplyFromJSONTyped(json, false);
+export function TemplatebackendCreateUserReplyFromJSON(
+  json: any
+): TemplatebackendCreateUserReply {
+  return TemplatebackendCreateUserReplyFromJSONTyped(json, false)
 }
 
-export function TemplatebackendCreateUserReplyFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendCreateUserReply {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'result': !exists(json, 'result') ? undefined : TemplatebackendCreateUserResultFromJSON(json['result']),
-    };
+export function TemplatebackendCreateUserReplyFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendCreateUserReply {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    result: !exists(json, 'result')
+      ? undefined
+      : TemplatebackendCreateUserResultFromJSON(json['result'])
+  }
 }
 
-export function TemplatebackendCreateUserReplyToJSON(value?: TemplatebackendCreateUserReply | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'result': TemplatebackendCreateUserResultToJSON(value.result),
-    };
+export function TemplatebackendCreateUserReplyToJSON(
+  value?: TemplatebackendCreateUserReply | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    result: TemplatebackendCreateUserResultToJSON(value.result)
+  }
 }
-

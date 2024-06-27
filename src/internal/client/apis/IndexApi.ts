@@ -12,140 +12,187 @@
  * Do not edit the class manually.
  */
 
-
-import * as runtime from '../runtime';
+import * as runtime from '../runtime'
 import type {
   IndexServiceCreateHelloRequest,
   RpcStatus,
   TemplatebackendCreateHelloReply,
-  TemplatebackendGetHelloReply,
-} from '../models/index';
+  TemplatebackendGetHelloReply
+} from '../models/index'
 import {
-    IndexServiceCreateHelloRequestFromJSON,
-    IndexServiceCreateHelloRequestToJSON,
-    RpcStatusFromJSON,
-    RpcStatusToJSON,
-    TemplatebackendCreateHelloReplyFromJSON,
-    TemplatebackendCreateHelloReplyToJSON,
-    TemplatebackendGetHelloReplyFromJSON,
-    TemplatebackendGetHelloReplyToJSON,
-} from '../models/index';
+  IndexServiceCreateHelloRequestFromJSON,
+  IndexServiceCreateHelloRequestToJSON,
+  RpcStatusFromJSON,
+  RpcStatusToJSON,
+  TemplatebackendCreateHelloReplyFromJSON,
+  TemplatebackendCreateHelloReplyToJSON,
+  TemplatebackendGetHelloReplyFromJSON,
+  TemplatebackendGetHelloReplyToJSON
+} from '../models/index'
 
 export interface IndexServiceCreateHelloOperationRequest {
-    identifier: number;
-    body: IndexServiceCreateHelloRequest;
+  identifier: number
+  body: IndexServiceCreateHelloRequest
 }
 
 /**
- * 
+ *
  */
 export class IndexApi extends runtime.BaseAPI {
-
-    /**
-     * This endpoint returns a hello
-     * Get a hello
-     */
-    async indexServiceCreateHelloRaw(requestParameters: IndexServiceCreateHelloOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendCreateHelloReply>> {
-        if (requestParameters.identifier === null || requestParameters.identifier === undefined) {
-            throw new runtime.RequiredError('identifier','Required parameter requestParameters.identifier was null or undefined when calling indexServiceCreateHello.');
-        }
-
-        if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling indexServiceCreateHello.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/v1/hello/{identifier}`.replace(`{${"identifier"}}`, encodeURIComponent(String(requestParameters.identifier))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: IndexServiceCreateHelloRequestToJSON(requestParameters.body),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendCreateHelloReplyFromJSON(jsonValue));
+  /**
+   * This endpoint returns a hello
+   * Get a hello
+   */
+  async indexServiceCreateHelloRaw(
+    requestParameters: IndexServiceCreateHelloOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendCreateHelloReply>> {
+    if (
+      requestParameters.identifier === null ||
+      requestParameters.identifier === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'identifier',
+        'Required parameter requestParameters.identifier was null or undefined when calling indexServiceCreateHello.'
+      )
     }
 
-    /**
-     * This endpoint returns a hello
-     * Get a hello
-     */
-    async indexServiceCreateHello(requestParameters: IndexServiceCreateHelloOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendCreateHelloReply> {
-        const response = await this.indexServiceCreateHelloRaw(requestParameters, initOverrides);
-        return await response.value();
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling indexServiceCreateHello.'
+      )
     }
 
-    /**
-     * This endpoint returns a hello
-     * Get a hello
-     */
-    async indexServiceGetHelloRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendGetHelloReply>> {
-        const queryParameters: any = {};
+    const queryParameters: any = {}
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    const headerParameters: runtime.HTTPHeaders = {}
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
+    headerParameters['Content-Type'] = 'application/json'
 
-        const response = await this.request({
-            path: `/api/v1/hello`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendGetHelloReplyFromJSON(jsonValue));
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint returns a hello
-     * Get a hello
-     */
-    async indexServiceGetHello(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendGetHelloReply> {
-        const response = await this.indexServiceGetHelloRaw(initOverrides);
-        return await response.value();
+    const response = await this.request(
+      {
+        path: `/api/v1/hello/{identifier}`.replace(
+          `{${'identifier'}}`,
+          encodeURIComponent(String(requestParameters.identifier))
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: IndexServiceCreateHelloRequestToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendCreateHelloReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns a hello
+   * Get a hello
+   */
+  async indexServiceCreateHello(
+    requestParameters: IndexServiceCreateHelloOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendCreateHelloReply> {
+    const response = await this.indexServiceCreateHelloRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns a hello
+   * Get a hello
+   */
+  async indexServiceGetHelloRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendGetHelloReply>> {
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint returns a hello
-     * Get a hello
-     */
-    async indexServiceGetHellooRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendGetHelloReply>> {
-        const queryParameters: any = {};
+    const response = await this.request(
+      {
+        path: `/api/v1/hello`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendGetHelloReplyFromJSON(jsonValue)
+    )
+  }
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
+  /**
+   * This endpoint returns a hello
+   * Get a hello
+   */
+  async indexServiceGetHello(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendGetHelloReply> {
+    const response = await this.indexServiceGetHelloRaw(initOverrides)
+    return await response.value()
+  }
 
-        const response = await this.request({
-            path: `/api/v1/helloo`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+  /**
+   * This endpoint returns a hello
+   * Get a hello
+   */
+  async indexServiceGetHellooRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendGetHelloReply>> {
+    const queryParameters: any = {}
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendGetHelloReplyFromJSON(jsonValue));
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint returns a hello
-     * Get a hello
-     */
-    async indexServiceGetHelloo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendGetHelloReply> {
-        const response = await this.indexServiceGetHellooRaw(initOverrides);
-        return await response.value();
-    }
+    const response = await this.request(
+      {
+        path: `/api/v1/helloo`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
 
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendGetHelloReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns a hello
+   * Get a hello
+   */
+  async indexServiceGetHelloo(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendGetHelloReply> {
+    const response = await this.indexServiceGetHellooRaw(initOverrides)
+    return await response.value()
+  }
 }

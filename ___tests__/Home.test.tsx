@@ -1,9 +1,16 @@
-import { render, screen, within } from '@testing-library/react'
-import Home from '../src/pages/index'
+/**
+ * @jest-environment jsdom
+ */
+import '@testing-library/jest-dom'
+import { render, screen } from '@testing-library/react'
+import Home from '@/app/page'
 
 describe('Home', () => {
-  it.skip('heading', () => {
+  it('renders a heading', () => {
     render(<Home />)
-    const heading = screen.getByRole('heading', { level: 2, name: /Welcome to The Frontend App/i });
-    expect(heading).toBeTruthy();  })
+
+    const heading = screen.getByRole('heading', { level: 1 })
+
+    expect(heading).toBeInTheDocument()
+  })
 })

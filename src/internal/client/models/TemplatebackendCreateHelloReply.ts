@@ -12,70 +12,76 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists, mapValues } from '../runtime'
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendCreateHelloReply
  */
 export interface TemplatebackendCreateHelloReply {
-    /**
-     * 
-     * @type {number}
-     * @memberof TemplatebackendCreateHelloReply
-     */
-    identifier?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendCreateHelloReply
-     */
-    title?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendCreateHelloReply
-     */
-    content?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof TemplatebackendCreateHelloReply
+   */
+  identifier?: number
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendCreateHelloReply
+   */
+  title?: string
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendCreateHelloReply
+   */
+  content?: string
 }
 
 /**
  * Check if a given object implements the TemplatebackendCreateHelloReply interface.
  */
-export function instanceOfTemplatebackendCreateHelloReply(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendCreateHelloReply(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendCreateHelloReplyFromJSON(json: any): TemplatebackendCreateHelloReply {
-    return TemplatebackendCreateHelloReplyFromJSONTyped(json, false);
+export function TemplatebackendCreateHelloReplyFromJSON(
+  json: any
+): TemplatebackendCreateHelloReply {
+  return TemplatebackendCreateHelloReplyFromJSONTyped(json, false)
 }
 
-export function TemplatebackendCreateHelloReplyFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendCreateHelloReply {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'identifier': !exists(json, 'identifier') ? undefined : json['identifier'],
-        'title': !exists(json, 'title') ? undefined : json['title'],
-        'content': !exists(json, 'content') ? undefined : json['content'],
-    };
+export function TemplatebackendCreateHelloReplyFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendCreateHelloReply {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    identifier: !exists(json, 'identifier') ? undefined : json['identifier'],
+    title: !exists(json, 'title') ? undefined : json['title'],
+    content: !exists(json, 'content') ? undefined : json['content']
+  }
 }
 
-export function TemplatebackendCreateHelloReplyToJSON(value?: TemplatebackendCreateHelloReply | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'identifier': value.identifier,
-        'title': value.title,
-        'content': value.content,
-    };
+export function TemplatebackendCreateHelloReplyToJSON(
+  value?: TemplatebackendCreateHelloReply | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    identifier: value.identifier,
+    title: value.title,
+    content: value.content
+  }
 }
-

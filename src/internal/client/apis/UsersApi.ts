@@ -12,8 +12,7 @@
  * Do not edit the class manually.
  */
 
-
-import * as runtime from '../runtime';
+import * as runtime from '../runtime'
 import type {
   RpcStatus,
   TemplatebackendCreateUserReply,
@@ -23,278 +22,397 @@ import type {
   TemplatebackendResetPasswordReply,
   TemplatebackendUpdatePasswordReply,
   TemplatebackendUpdatePasswordRequest,
-  TemplatebackendUser,
-} from '../models/index';
+  TemplatebackendUser
+} from '../models/index'
 import {
-    RpcStatusFromJSON,
-    RpcStatusToJSON,
-    TemplatebackendCreateUserReplyFromJSON,
-    TemplatebackendCreateUserReplyToJSON,
-    TemplatebackendDeleteUserReplyFromJSON,
-    TemplatebackendDeleteUserReplyToJSON,
-    TemplatebackendGetUserMeReplyFromJSON,
-    TemplatebackendGetUserMeReplyToJSON,
-    TemplatebackendGetUserReplyFromJSON,
-    TemplatebackendGetUserReplyToJSON,
-    TemplatebackendResetPasswordReplyFromJSON,
-    TemplatebackendResetPasswordReplyToJSON,
-    TemplatebackendUpdatePasswordReplyFromJSON,
-    TemplatebackendUpdatePasswordReplyToJSON,
-    TemplatebackendUpdatePasswordRequestFromJSON,
-    TemplatebackendUpdatePasswordRequestToJSON,
-    TemplatebackendUserFromJSON,
-    TemplatebackendUserToJSON,
-} from '../models/index';
+  RpcStatusFromJSON,
+  RpcStatusToJSON,
+  TemplatebackendCreateUserReplyFromJSON,
+  TemplatebackendCreateUserReplyToJSON,
+  TemplatebackendDeleteUserReplyFromJSON,
+  TemplatebackendDeleteUserReplyToJSON,
+  TemplatebackendGetUserMeReplyFromJSON,
+  TemplatebackendGetUserMeReplyToJSON,
+  TemplatebackendGetUserReplyFromJSON,
+  TemplatebackendGetUserReplyToJSON,
+  TemplatebackendResetPasswordReplyFromJSON,
+  TemplatebackendResetPasswordReplyToJSON,
+  TemplatebackendUpdatePasswordReplyFromJSON,
+  TemplatebackendUpdatePasswordReplyToJSON,
+  TemplatebackendUpdatePasswordRequestFromJSON,
+  TemplatebackendUpdatePasswordRequestToJSON,
+  TemplatebackendUserFromJSON,
+  TemplatebackendUserToJSON
+} from '../models/index'
 
 export interface UserServiceCreateUserRequest {
-    body: TemplatebackendUser;
+  body: TemplatebackendUser
 }
 
 export interface UserServiceDeleteUserRequest {
-    id: string;
+  id: string
 }
 
 export interface UserServiceGetUserRequest {
-    id: string;
+  id: string
 }
 
 export interface UserServiceResetPasswordRequest {
-    id: string;
-    body: object;
+  id: string
+  body: object
 }
 
 export interface UserServiceUpdatePasswordRequest {
-    body: TemplatebackendUpdatePasswordRequest;
+  body: TemplatebackendUpdatePasswordRequest
 }
 
 /**
- * 
+ *
  */
 export class UsersApi extends runtime.BaseAPI {
-
-    /**
-     * This endpoint creates a user
-     * Create a user
-     */
-    async userServiceCreateUserRaw(requestParameters: UserServiceCreateUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendCreateUserReply>> {
-        if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling userServiceCreateUser.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/rest/v1/users`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: TemplatebackendUserToJSON(requestParameters.body),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendCreateUserReplyFromJSON(jsonValue));
+  /**
+   * This endpoint creates a user
+   * Create a user
+   */
+  async userServiceCreateUserRaw(
+    requestParameters: UserServiceCreateUserRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendCreateUserReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling userServiceCreateUser.'
+      )
     }
 
-    /**
-     * This endpoint creates a user
-     * Create a user
-     */
-    async userServiceCreateUser(requestParameters: UserServiceCreateUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendCreateUserReply> {
-        const response = await this.userServiceCreateUserRaw(requestParameters, initOverrides);
-        return await response.value();
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint deletes a user
-     * Delete a user
-     */
-    async userServiceDeleteUserRaw(requestParameters: UserServiceDeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendDeleteUserReply>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling userServiceDeleteUser.');
-        }
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: TemplatebackendUserToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
 
-        const queryParameters: any = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendCreateUserReplyFromJSON(jsonValue)
+    )
+  }
 
-        const headerParameters: runtime.HTTPHeaders = {};
+  /**
+   * This endpoint creates a user
+   * Create a user
+   */
+  async userServiceCreateUser(
+    requestParameters: UserServiceCreateUserRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendCreateUserReply> {
+    const response = await this.userServiceCreateUserRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/rest/v1/users/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendDeleteUserReplyFromJSON(jsonValue));
+  /**
+   * This endpoint deletes a user
+   * Delete a user
+   */
+  async userServiceDeleteUserRaw(
+    requestParameters: UserServiceDeleteUserRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendDeleteUserReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling userServiceDeleteUser.'
+      )
     }
 
-    /**
-     * This endpoint deletes a user
-     * Delete a user
-     */
-    async userServiceDeleteUser(requestParameters: UserServiceDeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendDeleteUserReply> {
-        const response = await this.userServiceDeleteUserRaw(requestParameters, initOverrides);
-        return await response.value();
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint returns a user
-     * Get a user
-     */
-    async userServiceGetUserRaw(requestParameters: UserServiceGetUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendGetUserReply>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling userServiceGetUser.');
-        }
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
 
-        const queryParameters: any = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendDeleteUserReplyFromJSON(jsonValue)
+    )
+  }
 
-        const headerParameters: runtime.HTTPHeaders = {};
+  /**
+   * This endpoint deletes a user
+   * Delete a user
+   */
+  async userServiceDeleteUser(
+    requestParameters: UserServiceDeleteUserRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendDeleteUserReply> {
+    const response = await this.userServiceDeleteUserRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/rest/v1/users/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendGetUserReplyFromJSON(jsonValue));
+  /**
+   * This endpoint returns a user
+   * Get a user
+   */
+  async userServiceGetUserRaw(
+    requestParameters: UserServiceGetUserRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendGetUserReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling userServiceGetUser.'
+      )
     }
 
-    /**
-     * This endpoint returns a user
-     * Get a user
-     */
-    async userServiceGetUser(requestParameters: UserServiceGetUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendGetUserReply> {
-        const response = await this.userServiceGetUserRaw(requestParameters, initOverrides);
-        return await response.value();
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint returns the details of the authenticated user
-     * Get my own user
-     */
-    async userServiceGetUserMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendGetUserMeReply>> {
-        const queryParameters: any = {};
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendGetUserReplyFromJSON(jsonValue)
+    )
+  }
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
+  /**
+   * This endpoint returns a user
+   * Get a user
+   */
+  async userServiceGetUser(
+    requestParameters: UserServiceGetUserRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendGetUserReply> {
+    const response = await this.userServiceGetUserRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
 
-        const response = await this.request({
-            path: `/api/rest/v1/users/me`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+  /**
+   * This endpoint returns the details of the authenticated user
+   * Get my own user
+   */
+  async userServiceGetUserMeRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendGetUserMeReply>> {
+    const queryParameters: any = {}
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendGetUserMeReplyFromJSON(jsonValue));
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint returns the details of the authenticated user
-     * Get my own user
-     */
-    async userServiceGetUserMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendGetUserMeReply> {
-        const response = await this.userServiceGetUserMeRaw(initOverrides);
-        return await response.value();
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/me`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendGetUserMeReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns the details of the authenticated user
+   * Get my own user
+   */
+  async userServiceGetUserMe(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendGetUserMeReply> {
+    const response = await this.userServiceGetUserMeRaw(initOverrides)
+    return await response.value()
+  }
+
+  /**
+   * This endpoint resets a user\'s password
+   * Reset password
+   */
+  async userServiceResetPasswordRaw(
+    requestParameters: UserServiceResetPasswordRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendResetPasswordReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling userServiceResetPassword.'
+      )
     }
 
-    /**
-     * This endpoint resets a user\'s password
-     * Reset password
-     */
-    async userServiceResetPasswordRaw(requestParameters: UserServiceResetPasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendResetPasswordReply>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling userServiceResetPassword.');
-        }
-
-        if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling userServiceResetPassword.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/rest/v1/users/{id}/password/reset`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: requestParameters.body as any,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendResetPasswordReplyFromJSON(jsonValue));
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling userServiceResetPassword.'
+      )
     }
 
-    /**
-     * This endpoint resets a user\'s password
-     * Reset password
-     */
-    async userServiceResetPassword(requestParameters: UserServiceResetPasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendResetPasswordReply> {
-        const response = await this.userServiceResetPasswordRaw(requestParameters, initOverrides);
-        return await response.value();
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
-    /**
-     * This endpoint updates the password of the authenticated user
-     * Update password
-     */
-    async userServiceUpdatePasswordRaw(requestParameters: UserServiceUpdatePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TemplatebackendUpdatePasswordReply>> {
-        if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling userServiceUpdatePassword.');
-        }
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/{id}/password/reset`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: requestParameters.body as any
+      },
+      initOverrides
+    )
 
-        const queryParameters: any = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendResetPasswordReplyFromJSON(jsonValue)
+    )
+  }
 
-        const headerParameters: runtime.HTTPHeaders = {};
+  /**
+   * This endpoint resets a user\'s password
+   * Reset password
+   */
+  async userServiceResetPassword(
+    requestParameters: UserServiceResetPasswordRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendResetPasswordReply> {
+    const response = await this.userServiceResetPasswordRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
 
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
-        }
-
-        const response = await this.request({
-            path: `/api/rest/v1/users/me/password`,
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: TemplatebackendUpdatePasswordRequestToJSON(requestParameters.body),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TemplatebackendUpdatePasswordReplyFromJSON(jsonValue));
+  /**
+   * This endpoint updates the password of the authenticated user
+   * Update password
+   */
+  async userServiceUpdatePasswordRaw(
+    requestParameters: UserServiceUpdatePasswordRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<TemplatebackendUpdatePasswordReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling userServiceUpdatePassword.'
+      )
     }
 
-    /**
-     * This endpoint updates the password of the authenticated user
-     * Update password
-     */
-    async userServiceUpdatePassword(requestParameters: UserServiceUpdatePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TemplatebackendUpdatePasswordReply> {
-        const response = await this.userServiceUpdatePasswordRaw(requestParameters, initOverrides);
-        return await response.value();
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // Bearer authentication
     }
 
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/me/password`,
+        method: 'PUT',
+        headers: headerParameters,
+        query: queryParameters,
+        body: TemplatebackendUpdatePasswordRequestToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      TemplatebackendUpdatePasswordReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint updates the password of the authenticated user
+   * Update password
+   */
+  async userServiceUpdatePassword(
+    requestParameters: UserServiceUpdatePasswordRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<TemplatebackendUpdatePasswordReply> {
+    const response = await this.userServiceUpdatePasswordRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
 }

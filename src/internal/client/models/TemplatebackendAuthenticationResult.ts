@@ -12,54 +12,60 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { exists, mapValues } from '../runtime'
 /**
- * 
+ *
  * @export
  * @interface TemplatebackendAuthenticationResult
  */
 export interface TemplatebackendAuthenticationResult {
-    /**
-     * 
-     * @type {string}
-     * @memberof TemplatebackendAuthenticationResult
-     */
-    token?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TemplatebackendAuthenticationResult
+   */
+  token?: string
 }
 
 /**
  * Check if a given object implements the TemplatebackendAuthenticationResult interface.
  */
-export function instanceOfTemplatebackendAuthenticationResult(value: object): boolean {
-    let isInstance = true;
+export function instanceOfTemplatebackendAuthenticationResult(
+  value: object
+): boolean {
+  let isInstance = true
 
-    return isInstance;
+  return isInstance
 }
 
-export function TemplatebackendAuthenticationResultFromJSON(json: any): TemplatebackendAuthenticationResult {
-    return TemplatebackendAuthenticationResultFromJSONTyped(json, false);
+export function TemplatebackendAuthenticationResultFromJSON(
+  json: any
+): TemplatebackendAuthenticationResult {
+  return TemplatebackendAuthenticationResultFromJSONTyped(json, false)
 }
 
-export function TemplatebackendAuthenticationResultFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplatebackendAuthenticationResult {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'token': !exists(json, 'token') ? undefined : json['token'],
-    };
+export function TemplatebackendAuthenticationResultFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TemplatebackendAuthenticationResult {
+  if (json === undefined || json === null) {
+    return json
+  }
+  return {
+    token: !exists(json, 'token') ? undefined : json['token']
+  }
 }
 
-export function TemplatebackendAuthenticationResultToJSON(value?: TemplatebackendAuthenticationResult | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'token': value.token,
-    };
+export function TemplatebackendAuthenticationResultToJSON(
+  value?: TemplatebackendAuthenticationResult | null
+): any {
+  if (value === undefined) {
+    return undefined
+  }
+  if (value === null) {
+    return null
+  }
+  return {
+    token: value.token
+  }
 }
-
