@@ -71,6 +71,11 @@ cd chorus-web-ui
    - New Pages: Create additional pages and routes in the src/app directory.
    - Shared Components: Develop reusable components like headers or footers in the src/components folder.
 
+4. **Styling, Design System**
+
+	- We use [shadcdn/ui](https://ui.shadcn.com/) as a design system.
+	- Use `npx shadcn-ui@latest add <compnent>` to add [components](https://ui.shadcn.com/docs/components/accordion)
+
 4. **Code versionning**
 
    - Use Conventional Commits [https://www.conventionalcommits.org/en/v1.0.0/](https://www.conventionalcommits.org/en/v1.0.0/) for your message (so later we can use it to make automatic semantic versionning)
@@ -79,7 +84,7 @@ cd chorus-web-ui
 
 		```
 			feat: add cat greetings
-			^--^  ^--------_------^
+			^--^  ^---------------^
 			|     |
 			|     +-> Summary in present tense.
 			|

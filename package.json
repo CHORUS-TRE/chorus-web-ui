@@ -16,6 +16,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@radix-ui/react-navigation-menu": "^1.2.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.7.3",
     "class-variance-authority": "^0.7.0",
@@ -56,5 +57,4 @@
     "npm": "please use pnpm",
     "yarn": "please use pnpm"
   }
-
 }
