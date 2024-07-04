@@ -1,7 +1,10 @@
 import { User } from '@/domain/model/user'
-
 interface UserDataSource {
-  getUsers(): Promise<User[]>
+  authenticateUser(
+    username: string,
+    password: string
+  ): Promise<{ data: User; error: Error | null }>
+  getUsers(): Promise<{ data: User[]; error: Error | null }>
 }
 
 export default UserDataSource

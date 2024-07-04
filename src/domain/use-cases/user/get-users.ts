@@ -2,7 +2,7 @@ import { User } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 
 export interface GetUsersUseCase {
-  execute(): Promise<User[]>
+  execute(): Promise<{ data: User[]; error: Error | null }>
 }
 
 export class GetUsers implements GetUsersUseCase {
@@ -12,7 +12,7 @@ export class GetUsers implements GetUsersUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<User[]> {
+  async execute(): Promise<{ data: User[]; error: Error | null }> {
     return await this.repository.getUsers()
   }
 }
