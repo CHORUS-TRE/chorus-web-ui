@@ -23,12 +23,5 @@ export interface User {
   createdAt: Date
   updatedAt: Date
   passwordChanged?: boolean
-}
-
-export interface CreateUser {
-  firstName: string
-  lastName: string
-  username: string
-  email: string
-  password: string
+  token: string
 }

@@ -13,11 +13,14 @@ export default function Portal() {
 
   return (
     <ErrorBoundary>
-      {users.length === 0 ? (
-        <div>loading...</div>
-      ) : (
-        users.map((user) => <div key={user.id}>{user.firstName}</div>)
-      )}
+      <div>
+        {users?.data === null && <div>loading...</div>}
+        {users?.error && <div>error: {JSON.stringify(users?.error)}</div>}
+        {users?.data &&
+          users.data.map((user) => (
+            <pre key={user.id}>{JSON.stringify(user, null, 2)}</pre>
+          ))}
+      </div>
     </ErrorBoundary>
   )
 }
