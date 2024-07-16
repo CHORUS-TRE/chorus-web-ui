@@ -60,7 +60,7 @@ import { ResponsiveLine } from '@nivo/line'
 import React from 'react'
 
 const plateform = {
-  navigation: ['Projects', 'Teams', 'Data', 'App Store', 'Getting Started',]
+  navigation: ['Projects', 'Teams', 'Data', 'App Store', 'Getting Started']
 }
 
 const workspace = {
@@ -68,14 +68,12 @@ const workspace = {
   shortName: 'M-SCWT',
   description:
     'Patients with epileptic activity often experience reduced attentional functions. The Stroop Color-Word Task (SCWT) is commonly used to assess attention, particularly in persons with epilepsy. Successful performance on the Stroop task is linked to the effective functioning of different brain regions. Studies have shown correlations between EEG coherence and reaction',
-  owner: [
-    { fullName: 'John Doe', }, { fullName: 'Jane Smith' }
-  ],
+  owner: [{ fullName: 'John Doe' }, { fullName: 'Jane Smith' }],
   createdAt: 'June 1 2024',
   project: {
     type: 'Research', //
     status: 'design', //
-    tags: ['Research', 'Neurology', 'Epilepsy'],
+    tags: ['Research', 'Neurology', 'Epilepsy']
   },
   menu: [
     {
@@ -134,69 +132,60 @@ const workspace = {
 }
 
 export function Workspace() {
-  const [showLeftSidebar, setShowLeftSidebar] = React.useState(true)
+  const [showLargeLeftSidebar, setShowLargeLeftSidebar] = React.useState(true)
   const [showApp, setShowApp] = React.useState(false)
 
-  const handleToggleMenu = () => {
-    console.log('Toggle Menu')
-    setShowLeftSidebar(!showLeftSidebar)
+  const handleToggleLeftSidebar = () => {
+    setShowLargeLeftSidebar(!showLargeLeftSidebar)
   }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       {/* Sidebar */}
-
       <aside
-        className={`fixed inset-y-0 left-0 z-10 ${showLeftSidebar ? 'w-56' : 'w-10'} flex-col border-r bg-background`}
+        className={`transition-width fixed inset-y-0 left-0 top-0 z-10 flex-col border-r bg-background duration-300 ease-in-out  ${showLargeLeftSidebar ? 'w-56' : 'w-10'}`}
       >
         <header className="flex h-12 items-center justify-between border-b">
           <Link
             href="#"
-            className="flex h-5 items-center gap-4  rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
+            className={`${showLargeLeftSidebar ? '' : 'sr-only'} flex h-5 items-center gap-4  rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8`}
             prefetch={false}
           >
             <Pyramid className="h-5 w-5" />
             CHORUS
           </Link>
-          <Button size="icon" variant="ghost" onClick={handleToggleMenu}>
+          <Button size="icon" variant="ghost" onClick={handleToggleLeftSidebar}>
             <PanelLeft className="h-5 w-5" />
             <h1 className="sr-only">Toggle Menu</h1>
           </Button>
         </header>
         <nav className="grid gap-4 pt-4">
-          {workspace.menu.map((item) =>
-            item.children ? (
-              <>
-                <Link
-                  href="#"
-                  className="flex h-5 items-center gap-4 rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
-                  prefetch={false}
-                >
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
-                </Link>
-                {item.children.map((child) => (
-                  <Button
-                    className="flex h-5 items-center gap-4 rounded-lg px-5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
-                    variant={'ghost'}
-                    onClick={() => setShowApp(!showApp)}
-                  >
-                    <child.icon className="h-5 w-5" />
-                    {child.name}
-                  </Button>
-                ))}
-              </>
-            ) : (
+          {workspace.menu.map((item) => (
+            <>
               <Link
                 href="#"
-                className="flex h-5 items-center gap-4 rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
+                className="flex h-5 items-center gap-4 px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
                 prefetch={false}
               >
                 <item.icon className="h-5 w-5" />
-                {item.name}
+                <span className={`${showLargeLeftSidebar ? '' : 'sr-only'} `}>
+                  {item.name}
+                </span>
               </Link>
-            )
-          )}
+              {item.children?.map((child) => (
+                <Link
+                  href="#"
+                  className={`transform duration-300 ease-in-out ${showLargeLeftSidebar ? 'px-5' : 'px-2.5'} flex h-5 items-center gap-4 text-muted-foreground transition-colors hover:text-foreground md:h-8`}
+                  onClick={() => setShowApp(!showApp)}
+                >
+                  <child.icon className="h-5 w-5" />
+                  <span className={`${showLargeLeftSidebar ? '' : 'sr-only'} `}>
+                    {child.name}
+                  </span>
+                </Link>
+              ))}
+            </>
+          ))}
         </nav>
       </aside>
 
@@ -286,9 +275,18 @@ export function Workspace() {
                           {workspace.name}
                         </CardTitle>
                         <div>
-                          <p className="text-xs text-muted-foreground"><strong>Type: </strong>{workspace.project.type}</p>
-                          <p className="text-xs text-muted-foreground"><strong>Status: </strong>{workspace.project.status}</p>
-                          <p className="text-xs text-muted-foreground"><strong>Creation date: </strong>{workspace.createdAt}</p>
+                          <p className="text-xs text-muted-foreground">
+                            <strong>Type: </strong>
+                            {workspace.project.type}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            <strong>Status: </strong>
+                            {workspace.project.status}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            <strong>Creation date: </strong>
+                            {workspace.createdAt}
+                          </p>
                         </div>
                         {/* <CardDescription>
                           {workspace.description}
@@ -296,9 +294,10 @@ export function Workspace() {
                       </CardHeader>
                       <CardContent>
                         <div className="text-sm"> {workspace.description}</div>
-                        <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+                        <p className="text-xs text-muted-foreground">
+                          +180.1% from last month
+                        </p>
                       </CardContent>
-
                     </Card>
 
                     <Card className="p-4">
@@ -313,13 +312,17 @@ export function Workspace() {
                         <Card>
                           <CardHeader>
                             <CardDescription>
-                              Combien de projets de recherches sont en cours au CHUV?
+                              Combien de projets de recherches sont en cours au
+                              CHUV?
                             </CardDescription>
                           </CardHeader>
                         </Card>
                         <Card>
                           <CardHeader>
-                            <CardDescription>Que dois-je faire pour commencer un projet de recherche ?</CardDescription>
+                            <CardDescription>
+                              Que dois-je faire pour commencer un projet de
+                              recherche ?
+                            </CardDescription>
                           </CardHeader>
                         </Card>
                         <Card>
@@ -483,22 +486,21 @@ export function Workspace() {
                       <h1 className="sr-only">Toggle Menu</h1>
                     </Button>
                   </SheetTrigger>
-                  <SheetContent
-                    side="right"
-                    className="sm:max-w-lg"
-                  >
-
+                  <SheetContent side="right" className="sm:max-w-lg">
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
+                        <CardTitle className="text-sm font-medium">
+                          Subscriptions
+                        </CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">+2350</div>
-                        <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+                        <p className="text-xs text-muted-foreground">
+                          +180.1% from last month
+                        </p>
                       </CardContent>
                     </Card>
-
                   </SheetContent>
                 </Sheet>
               </div>
