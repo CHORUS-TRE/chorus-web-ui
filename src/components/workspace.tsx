@@ -2,9 +2,6 @@
 
 import {
   Pyramid,
-  CornerDownLeft,
-  Mic,
-  Paperclip,
   Home,
   Boxes,
   Box,
@@ -18,8 +15,6 @@ import {
   PanelLeft,
   Search
 } from 'lucide-react'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import {
   TooltipProvider,
   Tooltip,
@@ -28,7 +23,6 @@ import {
 } from '~/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
@@ -141,70 +135,92 @@ export function Workspace() {
   }
 
   return (
-
-    <div className='flex'>
-
+    <div className="flex">
       {/* Left Sidebar */}
       <aside
-        className={`transition-width fixed inset-y-0 left-0 top-0 z-10 flex-col border-r bg-background duration-300 ease-in-out  ${showLargeLeftSidebar ? 'w-56' : 'w-10'}`}
+        className={`fixed inset-y-0 left-0 top-0 z-10 flex-col border-r bg-background transition-[width] duration-300 ease-in-out  ${showLargeLeftSidebar ? 'w-56' : 'w-10'} overflow-hidden`}
       >
-        <header className="flex h-12 items-center justify-between border-b">
-          <Link
-            href="#"
-            className={`${showLargeLeftSidebar ? '' : 'sr-only'} flex h-5 items-center gap-4  rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8`}
-            prefetch={false}
-          >
-            <Pyramid className="h-5 w-5" />
-            CHORUS
-          </Link>
-          <Button size="icon" variant="ghost" onClick={handleToggleLeftSidebar}>
-            <PanelLeft className="h-5 w-5" />
-            <h1 className="sr-only">Toggle Menu</h1>
-          </Button>
-        </header>
-        <nav className="grid gap-4 pt-4">
-          {workspace.menu.map((item) => (
-            <>
-              <Link
-                href="#"
-                className="flex h-5 items-center gap-4 px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
-                prefetch={false}
-              >
-                <item.icon className="h-5 w-5" />
-                <span className={`${showLargeLeftSidebar ? '' : 'sr-only'} `}>
-                  {item.name}
-                </span>
-              </Link>
-              {item.children?.map((child) => (
+        <TooltipProvider>
+          <header className="flex h-12 items-center justify-between border-b">
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className={`transform duration-300 ease-in-out ${showLargeLeftSidebar ? 'px-5' : 'px-2.5'} flex h-5 items-center gap-4 text-muted-foreground transition-colors hover:text-foreground md:h-8`}
-                  onClick={() => {
-                    if (showApp) {
-                      setShowRightSidebar(!showRightSidebar)
-                    } else {
-                      setShowLargeLeftSidebar(false)
-                      setShowApp(!showApp)
-                    }
-                  }}
+                  className={`${showLargeLeftSidebar ? '' : 'sr-only'} flex h-5 shrink items-center gap-4 rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8`}
+                  prefetch={false}
                 >
-                  <child.icon className="h-5 w-5" />
-                  <span className={`${showLargeLeftSidebar ? '' : 'sr-only'} `}>
-                    {child.name}
-                  </span>
-                </Link >
-              ))}
-            </>
-          ))}
-        </nav>
+                  <Pyramid className="h-5 w-5" />
+                  CHORUS
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">CHORUS</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleToggleLeftSidebar}
+                  className=""
+                >
+                  <PanelLeft className="h-5 w-5" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Toggle sidebar</TooltipContent>
+            </Tooltip>
+          </header>
+
+          <nav className="grid gap-4 pt-4">
+            {workspace.menu.map((item) => (
+              <>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href="#"
+                      className="flex h-5 items-center gap-4 px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
+                      prefetch={false}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.name}</span>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={-110}>
+                    {item.name}
+                  </TooltipContent>
+                </Tooltip>
+                {item.children?.map((child) => (
+                  <Link
+                    href="#"
+                    className={`transition-[padding] duration-300 ease-in-out ${showLargeLeftSidebar ? 'px-5' : 'px-2.5'} flex h-5 items-center gap-4 rounded-lg text-muted-foreground transition-colors  ${showApp ? 'bg-accent text-foreground' : 'text-accent-foreground'} md:h-8`}
+                    onClick={() => {
+                      if (showApp) {
+                        setShowRightSidebar(!showRightSidebar)
+                      } else {
+                        setShowLargeLeftSidebar(false)
+                        setShowApp(!showApp)
+                      }
+                    }}
+                  >
+                    <child.icon className="h-5 w-5" />
+                    <span
+                      className={`${showLargeLeftSidebar ? '' : 'sr-only'} `}
+                    >
+                      {child.name}
+                    </span>
+                  </Link>
+                ))}
+              </>
+            ))}
+          </nav>
+        </TooltipProvider>
       </aside>
 
       {/* Main */}
-      <div className="border-2 border-orange-500 flex min-h-screen w-full flex-col bg-muted/40">
-
+      <div className="flex min-h-screen w-full flex-col  bg-muted/40">
         {showApp && (
           <iframe
-            title="Desktop"
+            title="Workbench"
             src="https://xpra.dev.chorus-tre.ch/"
             allow="autoplay; fullscreen; clipboard-write;"
             style={{ width: '100vw', height: '100vh' }}
@@ -216,8 +232,10 @@ export function Workspace() {
         {!showApp && (
           <div>
             {/* Header */}
-            <header className="sticky top-0 z-30 flex h-14 items-center gap-8 bg-background px-4  pb-16 sm:static sm:h-auto sm:gap-1 sm:bg-transparent sm:px-6 sm:py-1  sm:pl-56">
-              <Breadcrumb className="hidden md:flex">
+            <header className="sticky top-0 z-30 flex h-14 items-center gap-8 bg-background px-4  pb-16 sm:static sm:h-auto sm:gap-1 sm:bg-transparent sm:px-6 sm:py-1  ">
+              <Breadcrumb
+                className={`duration-300 ease-in-out ${showLargeLeftSidebar ? 'translate-x-0' : '-translate-x-56'} hidden sm:pl-56 md:flex`}
+              >
                 <BreadcrumbList>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
@@ -276,7 +294,7 @@ export function Workspace() {
             </header>
 
             {/* Main space */}
-            <div className="border-2 border-fuchsia-500 flex flex-col pt-16 ">
+            <div className="flex flex-col pt-16 ">
               {/* Content */}
               <div className="flex">
                 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -285,7 +303,7 @@ export function Workspace() {
                       <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                           <CardTitle className="text-2xl">
-                            {workspace.name}
+                            Project: {workspace.name}
                           </CardTitle>
                           <div>
                             <p className="text-xs text-muted-foreground">
@@ -306,13 +324,14 @@ export function Workspace() {
                         </CardDescription> */}
                         </CardHeader>
                         <CardContent>
-                          <div className="text-sm"> {workspace.description}</div>
                           <p className="text-xs text-muted-foreground">
-                            +180.1% from last month
+                            {workspace.owner.map((owner) => (
+                              <span>{owner.fullName}</span>
+                            ))}
                           </p>
                         </CardContent>
                       </Card>
-
+                      {/*
                       <Card className="p-4">
                         <div className="flex gap-4">
                           <Card>
@@ -325,8 +344,8 @@ export function Workspace() {
                           <Card>
                             <CardHeader>
                               <CardDescription>
-                                Combien de projets de recherches sont en cours au
-                                CHUV?
+                                Combien de projets de recherches sont en cours
+                                au CHUV?
                               </CardDescription>
                             </CardHeader>
                           </Card>
@@ -363,7 +382,9 @@ export function Workspace() {
                                   <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon">
                                       <Paperclip className="size-4" />
-                                      <span className="sr-only">Attach file</span>
+                                      <span className="sr-only">
+                                        Attach file
+                                      </span>
                                     </Button>
                                   </TooltipTrigger>
                                   <TooltipContent side="top">
@@ -395,7 +416,7 @@ export function Workspace() {
                             </div>
                           </form>
                         </div>
-                      </Card>
+                      </Card> */}
 
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <Card className="h-full">
@@ -461,7 +482,9 @@ export function Workspace() {
                                   <AvatarFallback>MB</AvatarFallback>
                                 </Avatar>
                                 <div>
-                                  <div className="font-medium">Michael Brown</div>
+                                  <div className="font-medium">
+                                    Michael Brown
+                                  </div>
                                   <div className="text-muted-foreground">
                                     Developer
                                   </div>
@@ -495,12 +518,20 @@ export function Workspace() {
             </div>
           </div>
         )}
-
       </div>
 
       {/* Right Sidebar */}
-      <div className='border-2 border-blue-500'>
-        <Sheet open={showRightSidebar}>
+
+      <div
+        className={`fixed right-0 top-0 z-40  h-full w-[35vw] bg-primary p-10 pl-20 text-white  duration-300 ease-in-out ${
+          showRightSidebar ? 'translate-x-0 ' : 'translate-x-full'
+        }`}
+      >
+        <h3 className="mt-20 text-4xl font-semibold text-white">
+          I am a sidebar
+        </h3>
+
+        {/* <Sheet open={showRightSidebar}>
           <SheetTrigger asChild>
             <Button size="icon" variant="ghost">
               <PanelLeft className="h-5 w-5" />
@@ -523,9 +554,9 @@ export function Workspace() {
               </CardContent>
             </Card>
           </SheetContent>
-        </Sheet>
+        </Sheet> */}
       </div>
-    </div >
+    </div>
   )
 }
 
