@@ -16,45 +16,47 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusUpdateUserReply
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusUpdateUserReply {
   /**
    *
-   * @type {string}
-   * @memberof ProtobufAny
+   * @type {object}
+   * @memberof ChorusUpdateUserReply
    */
-  type?: string
+  result?: object
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusUpdateUserReply interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusUpdateUserReply(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusUpdateUserReplyFromJSON(
+  json: any
+): ChorusUpdateUserReply {
+  return ChorusUpdateUserReplyFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusUpdateUserReplyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusUpdateUserReply {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    result: !exists(json, 'result') ? undefined : json['result']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusUpdateUserReplyToJSON(
+  value?: ChorusUpdateUserReply | null
+): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +64,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    result: value.result
   }
 }

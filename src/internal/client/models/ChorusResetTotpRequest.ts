@@ -16,45 +16,47 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusResetTotpRequest
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusResetTotpRequest {
   /**
    *
    * @type {string}
-   * @memberof ProtobufAny
+   * @memberof ChorusResetTotpRequest
    */
-  type?: string
+  password?: string
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusResetTotpRequest interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusResetTotpRequest(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusResetTotpRequestFromJSON(
+  json: any
+): ChorusResetTotpRequest {
+  return ChorusResetTotpRequestFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusResetTotpRequestFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusResetTotpRequest {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    password: !exists(json, 'password') ? undefined : json['password']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusResetTotpRequestToJSON(
+  value?: ChorusResetTotpRequest | null
+): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +64,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    password: value.password
   }
 }
