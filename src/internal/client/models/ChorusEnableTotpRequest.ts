@@ -16,45 +16,47 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusEnableTotpRequest
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusEnableTotpRequest {
   /**
    *
    * @type {string}
-   * @memberof ProtobufAny
+   * @memberof ChorusEnableTotpRequest
    */
-  type?: string
+  totp?: string
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusEnableTotpRequest interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusEnableTotpRequest(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusEnableTotpRequestFromJSON(
+  json: any
+): ChorusEnableTotpRequest {
+  return ChorusEnableTotpRequestFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusEnableTotpRequestFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusEnableTotpRequest {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    totp: !exists(json, 'totp') ? undefined : json['totp']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusEnableTotpRequestToJSON(
+  value?: ChorusEnableTotpRequest | null
+): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +64,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    totp: value.totp
   }
 }

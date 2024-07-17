@@ -16,45 +16,47 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusCreateAppResult
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusCreateAppResult {
   /**
    *
    * @type {string}
-   * @memberof ProtobufAny
+   * @memberof ChorusCreateAppResult
    */
-  type?: string
+  id?: string
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusCreateAppResult interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusCreateAppResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusCreateAppResultFromJSON(
+  json: any
+): ChorusCreateAppResult {
+  return ChorusCreateAppResultFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusCreateAppResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusCreateAppResult {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    id: !exists(json, 'id') ? undefined : json['id']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusCreateAppResultToJSON(
+  value?: ChorusCreateAppResult | null
+): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +64,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    id: value.id
   }
 }

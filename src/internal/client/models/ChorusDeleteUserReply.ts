@@ -16,45 +16,47 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusDeleteUserReply
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusDeleteUserReply {
   /**
    *
-   * @type {string}
-   * @memberof ProtobufAny
+   * @type {object}
+   * @memberof ChorusDeleteUserReply
    */
-  type?: string
+  result?: object
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusDeleteUserReply interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusDeleteUserReply(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusDeleteUserReplyFromJSON(
+  json: any
+): ChorusDeleteUserReply {
+  return ChorusDeleteUserReplyFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusDeleteUserReplyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusDeleteUserReply {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    result: !exists(json, 'result') ? undefined : json['result']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusDeleteUserReplyToJSON(
+  value?: ChorusDeleteUserReply | null
+): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +64,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    result: value.result
   }
 }

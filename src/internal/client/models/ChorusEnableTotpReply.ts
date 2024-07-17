@@ -16,45 +16,47 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusEnableTotpReply
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusEnableTotpReply {
   /**
    *
-   * @type {string}
-   * @memberof ProtobufAny
+   * @type {object}
+   * @memberof ChorusEnableTotpReply
    */
-  type?: string
+  result?: object
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusEnableTotpReply interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusEnableTotpReply(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusEnableTotpReplyFromJSON(
+  json: any
+): ChorusEnableTotpReply {
+  return ChorusEnableTotpReplyFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusEnableTotpReplyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusEnableTotpReply {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    result: !exists(json, 'result') ? undefined : json['result']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusEnableTotpReplyToJSON(
+  value?: ChorusEnableTotpReply | null
+): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +64,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    result: value.result
   }
 }

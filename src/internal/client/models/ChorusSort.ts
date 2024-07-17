@@ -16,45 +16,50 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ProtobufAny
+ * @interface ChorusSort
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusSort {
   /**
    *
    * @type {string}
-   * @memberof ProtobufAny
+   * @memberof ChorusSort
+   */
+  order?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusSort
    */
   type?: string
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusSort interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusSort(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusSortFromJSON(json: any): ChorusSort {
+  return ChorusSortFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusSortFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusSort {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    order: !exists(json, 'order') ? undefined : json['order'],
+    type: !exists(json, 'type') ? undefined : json['type']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusSortToJSON(value?: ChorusSort | null): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +67,7 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    order: value.order,
+    type: value.type
   }
 }
