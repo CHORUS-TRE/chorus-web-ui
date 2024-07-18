@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'CHORUS - Trusted Research Platform',
+
   description: 'A secure anayltics platform for your data'
 }
 

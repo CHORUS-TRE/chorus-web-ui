@@ -269,8 +269,6 @@ export function Workspace() {
           </div>
         )}
       </div>
-
-      {/* Right Sidebar */}
     </div>
   )
 }
