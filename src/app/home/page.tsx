@@ -6,17 +6,15 @@ import {
   TooltipTrigger,
   TooltipContent
 } from '~/components/ui/tooltip'
-import { Paperclip, Mic, CornerDownLeft } from "lucide-react"
-import { Label } from "recharts"
-import { Button } from "~/components/ui/button"
-import { Card, CardHeader, CardDescription } from "~/components/ui/card"
-import { Textarea } from "~/components/ui/textarea"
-
+import { Paperclip, Mic, CornerDownLeft } from 'lucide-react'
+import { Label } from 'recharts'
+import { Button } from '~/components/ui/button'
+import { Card, CardHeader, CardDescription } from '~/components/ui/card'
+import { Textarea } from '~/components/ui/textarea'
 
 export default function HomePage() {
   return (
-
-    <Card className="p-4 w-1/3">
+    <Card className="w-1/3 p-4">
       <div className="flex gap-4">
         <Card>
           <CardHeader>
@@ -28,16 +26,14 @@ export default function HomePage() {
         <Card>
           <CardHeader>
             <CardDescription>
-              Combien de projets de recherches sont en cours
-              au CHUV?
+              Combien de projets de recherches sont en cours au CHUV?
             </CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
             <CardDescription>
-              Que dois-je faire pour commencer un projet de
-              recherche ?
+              Que dois-je faire pour commencer un projet de recherche ?
             </CardDescription>
           </CardHeader>
         </Card>
@@ -66,33 +62,21 @@ export default function HomePage() {
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon">
                     <Paperclip className="size-4" />
-                    <span className="sr-only">
-                      Attach file
-                    </span>
+                    <span className="sr-only">Attach file</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="top">
-                  Attach File
-                </TooltipContent>
+                <TooltipContent side="top">Attach File</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon">
                     <Mic className="size-4" />
-                    <span className="sr-only">
-                      Use Microphone
-                    </span>
+                    <span className="sr-only">Use Microphone</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="top">
-                  Use Microphone
-                </TooltipContent>
+                <TooltipContent side="top">Use Microphone</TooltipContent>
               </Tooltip>
-              <Button
-                type="submit"
-                size="sm"
-                className="ml-auto gap-1.5"
-              >
+              <Button type="submit" size="sm" className="ml-auto gap-1.5">
                 Send Message
                 <CornerDownLeft className="size-3.5" />
               </Button>

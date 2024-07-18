@@ -5,6 +5,7 @@ import {
   Home,
   Boxes,
   Box,
+  EllipsisVertical,
   Users,
   MessageCircle,
   RefreshCcw,
@@ -95,22 +96,26 @@ const workspace = {
     {
       name: 'Environment',
       icon: RefreshCcw,
-      href: '#'
+      href: '#',
+      target: 'overlay'
     },
     {
       name: 'Discussion',
       icon: MessageCircle,
-      href: '#'
+      href: '#',
+      target: 'overlay'
     },
     {
       name: 'Activities',
       icon: Activity,
-      href: '#'
+      href: '#',
+      target: 'overlay'
     },
     {
       name: 'Notifications',
       icon: Bell,
-      href: '#'
+      href: '#',
+      target: 'overlay'
     },
     {
       name: 'Monitoring',
@@ -120,7 +125,8 @@ const workspace = {
     {
       name: 'Settings',
       icon: Settings,
-      href: '#'
+      href: '#',
+      target: 'overlay'
     }
   ]
 }
@@ -177,6 +183,13 @@ export function Workspace() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link
+                      onClick={() => {
+                        if (item.target === 'overlay') {
+                          setShowRightSidebar(!showRightSidebar)
+                        } else {
+                          setShowApp(false)
+                        }
+                      }}
                       href="#"
                       className="flex h-5 items-center gap-4 px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
                       prefetch={false}
@@ -190,25 +203,38 @@ export function Workspace() {
                   </TooltipContent>
                 </Tooltip>
                 {item.children?.map((child) => (
-                  <Link
-                    href="#"
-                    className={`transition-[padding] duration-300 ease-in-out ${showLargeLeftSidebar ? 'px-5' : 'px-2.5'} flex h-5 items-center gap-4 rounded-lg text-muted-foreground transition-colors  ${showApp ? 'bg-accent text-foreground' : 'text-accent-foreground'} md:h-8`}
-                    onClick={() => {
-                      if (showApp) {
-                        setShowRightSidebar(!showRightSidebar)
-                      } else {
-                        setShowLargeLeftSidebar(false)
-                        setShowApp(!showApp)
-                      }
-                    }}
-                  >
-                    <child.icon className="h-5 w-5" />
-                    <span
-                      className={`${showLargeLeftSidebar ? '' : 'sr-only'} `}
+                  <Card className={`mx-1 p-2 `}>
+                    <div className="flex items-center justify-between">
+                      <Link
+                        href="#"
+                        className={`flex h-5 items-center gap-4 rounded-lg text-muted-foreground transition-[padding] duration-300 ease-in-out ${showApp ? 'text-foreground' : 'text-accent-foreground'} md:h-8 `}
+                        onClick={() => {
+                          if (!showApp) {
+                            setShowLargeLeftSidebar(false)
+                            setShowApp(!showApp)
+                          } else {
+                            setShowRightSidebar(!showRightSidebar)
+                          }
+                        }}
+                      >
+                        <child.icon className="h-5 w-5" />
+                        <span>{child.name}</span>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowRightSidebar(!showRightSidebar)}
+                      >
+                        <EllipsisVertical className="size-4" />
+                        <span className="sr-only">Settings</span>
+                      </Button>
+                    </div>
+                    <p
+                      className={`text-xs text-muted-foreground ${showLargeLeftSidebar ? '' : 'visibility-0'}`}
                     >
-                      {child.name}
-                    </span>
-                  </Link>
+                      Opened: 3 weeks ago
+                    </p>
+                  </Card>
                 ))}
               </>
             ))}
@@ -331,93 +357,6 @@ export function Workspace() {
                           </p>
                         </CardContent>
                       </Card>
-                      {/*
-                      <Card className="p-4">
-                        <div className="flex gap-4">
-                          <Card>
-                            <CardHeader>
-                              <CardDescription>
-                                Quel est le cycle d'un projet de recherche ?
-                              </CardDescription>
-                            </CardHeader>
-                          </Card>
-                          <Card>
-                            <CardHeader>
-                              <CardDescription>
-                                Combien de projets de recherches sont en cours
-                                au CHUV?
-                              </CardDescription>
-                            </CardHeader>
-                          </Card>
-                          <Card>
-                            <CardHeader>
-                              <CardDescription>
-                                Que dois-je faire pour commencer un projet de
-                                recherche ?
-                              </CardDescription>
-                            </CardHeader>
-                          </Card>
-                          <Card>
-                            <CardHeader>
-                              <CardDescription>
-                                Comment puis-je accéder à mes données ?
-                              </CardDescription>
-                            </CardHeader>
-                          </Card>
-                        </div>
-                        <br />
-                        <div>
-                          <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
-                            <Label htmlFor="message" className="sr-only">
-                              Message
-                            </Label>
-                            <Textarea
-                              id="message"
-                              placeholder="I'm an AI bot for all health research at CHUV hospital. How can I help you today?"
-                              className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
-                            />
-                            <div className="flex items-center p-3 pt-0">
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                      <Paperclip className="size-4" />
-                                      <span className="sr-only">
-                                        Attach file
-                                      </span>
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top">
-                                    Attach File
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                      <Mic className="size-4" />
-                                      <span className="sr-only">
-                                        Use Microphone
-                                      </span>
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top">
-                                    Use Microphone
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Button
-                                  type="submit"
-                                  size="sm"
-                                  className="ml-auto gap-1.5"
-                                >
-                                  Send Message
-                                  <CornerDownLeft className="size-3.5" />
-                                </Button>
-                              </TooltipProvider>
-                            </div>
-                          </form>
-                        </div>
-                      </Card> */}
-
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <Card className="h-full">
                           <CardHeader>
