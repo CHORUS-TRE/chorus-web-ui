@@ -74,3 +74,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* .flex {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+} */
