@@ -174,7 +174,7 @@ export function Sidebar() {
                 <Card className={`mx-1 p-2 `} key={`${i}-${child.name}`}>
                   <div className="flex items-center justify-between">
                     <Link
-                      href="/workspaces/1/workbenches/1"
+                      href={child.href}
                       className={`flex h-5 items-center gap-4 rounded-lg text-muted-foreground transition-[padding] duration-300 ease-in-out ${showApp ? 'text-foreground' : 'text-accent-foreground'} md:h-8 `}
                       onClick={() => {
                         if (!showApp) {
