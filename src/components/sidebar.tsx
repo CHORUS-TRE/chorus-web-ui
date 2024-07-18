@@ -22,41 +22,11 @@ import {
   TooltipTrigger,
   TooltipContent
 } from '~/components/ui/tooltip'
-import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage
-} from '@/components/ui/breadcrumb'
-import { Input } from '~/components/ui/input'
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter
-} from './ui/card'
-import { ResponsiveLine } from '@nivo/line'
-import React from 'react'
 
-const plateform = {
-  navigation: ['Projects', 'Teams', 'Data', 'App Store', 'Getting Started']
-}
+import { Card } from './ui/card'
+import React from 'react'
 
 const workspace = {
   name: 'The Modified Stroop Color-Word Task',
@@ -74,58 +44,58 @@ const workspace = {
     {
       name: 'M-SCWT',
       icon: Home,
-      href: '#'
+      href: '/workspaces/1'
     },
     {
       name: 'Workbenches',
       icon: Boxes,
-      href: '#',
+      href: '/workspaces/1/workbenches/',
       children: [
         {
           name: 'Explorer',
           icon: Box,
-          href: '#'
+          href: '/workspaces/1/workbenches/1'
         }
       ]
     },
     {
       name: 'Team',
       icon: Users,
-      href: '#'
+      href: '/workspaces/1/team'
     },
     {
       name: 'Environment',
       icon: RefreshCcw,
-      href: '#',
+      href: '/workspaces/1/environment',
       target: 'overlay'
     },
     {
       name: 'Discussion',
       icon: MessageCircle,
-      href: '#',
+      href: '/workspaces/1/discussion',
       target: 'overlay'
     },
     {
       name: 'Activities',
       icon: Activity,
-      href: '#',
+      href: '/workspaces/1/activities',
       target: 'overlay'
     },
     {
       name: 'Notifications',
       icon: Bell,
-      href: '#',
+      href: '/workspaces/1/notifications',
       target: 'overlay'
     },
     {
       name: 'Monitoring',
       icon: Scroll,
-      href: '#'
+      href: '/workspaces/1/monitoring'
     },
     {
       name: 'Settings',
       icon: Settings,
-      href: '#',
+      href: '/workspaces/1/settings',
       target: 'overlay'
     }
   ]
@@ -149,7 +119,7 @@ export function Sidebar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
+                href="/"
                 className={`${showLargeLeftSidebar ? '' : 'sr-only'} flex h-5 shrink items-center gap-4 rounded-lg px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8`}
                 prefetch={false}
               >
@@ -176,8 +146,8 @@ export function Sidebar() {
         </header>
 
         <nav className="grid gap-4 pt-4">
-          {workspace.menu.map((item) => (
-            <>
+          {workspace.menu.map((item, i) => (
+            <span key={`${i}-${item.name}`}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link
@@ -188,7 +158,7 @@ export function Sidebar() {
                         setShowApp(false)
                       }
                     }}
-                    href="#"
+                    href={item.href}
                     className="flex h-5 items-center gap-4 px-2.5 text-muted-foreground transition-colors hover:text-foreground md:h-8"
                     prefetch={false}
                   >
@@ -201,10 +171,10 @@ export function Sidebar() {
                 </TooltipContent>
               </Tooltip>
               {item.children?.map((child) => (
-                <Card className={`mx-1 p-2 `}>
+                <Card className={`mx-1 p-2 `} key={`${i}-${child.name}`}>
                   <div className="flex items-center justify-between">
                     <Link
-                      href="#"
+                      href="/workspaces/1/workbenches/1"
                       className={`flex h-5 items-center gap-4 rounded-lg text-muted-foreground transition-[padding] duration-300 ease-in-out ${showApp ? 'text-foreground' : 'text-accent-foreground'} md:h-8 `}
                       onClick={() => {
                         if (!showApp) {
@@ -234,7 +204,7 @@ export function Sidebar() {
                   </p>
                 </Card>
               ))}
-            </>
+            </span>
           ))}
         </nav>
       </TooltipProvider>

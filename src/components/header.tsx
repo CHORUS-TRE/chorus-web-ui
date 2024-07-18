@@ -23,6 +23,7 @@ export function Header() {
       <nav className="flex flex-grow items-center justify-end gap-x-8 pr-8">
         {plateform.navigation.map((item) => (
           <Link
+            key={item}
             href="#"
             className="flex items-center justify-center"
             prefetch={false}

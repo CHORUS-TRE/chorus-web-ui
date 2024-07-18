@@ -11,7 +11,7 @@ import { SVGProps } from 'react'
 
 export function Home() {
   return (
-    <div className="flex min-h-[100dvh] flex-col">
+    <div className="min-h-screen flex-col">
       <section className="w-full bg-primary py-24 lg:py-48">
         <div className="container flex flex-col items-center gap-6 px-4 text-center md:px-6">
           <h1 className="max-w-4xl text-5xl font-extrabold leading-tight tracking-tighter text-primary-foreground sm:text-7xl md:text-8xl">
@@ -25,10 +25,10 @@ export function Home() {
             collaboration, and compliance challenges.
           </p>
           <div className="flex w-full max-w-md justify-center gap-2">
-            <Link href="/workspaces" passHref className="ml-auto">
+            <Link href="/workspaces/1" passHref className="ml-auto">
               <Button variant="outline">Get Started</Button>
             </Link>
-            <Link href="/workspaces" passHref className="ml-auto">
+            <Link href="/workspaces/1" passHref className="ml-auto">
               <Button variant="outline">Learn More</Button>
             </Link>
           </div>

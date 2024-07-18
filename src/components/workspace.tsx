@@ -117,17 +117,6 @@ export function Workspace() {
     <div className="flex">
       {/* Main */}
       <div className="flex min-h-screen w-full flex-col  bg-muted/40">
-        {showApp && (
-          <iframe
-            title="Workbench"
-            src="https://xpra.dev.chorus-tre.ch/"
-            allow="autoplay; fullscreen; clipboard-write;"
-            style={{ width: '100vw', height: '100vh' }}
-          >
-            className='w-full h-full'
-          </iframe>
-        )}
-
         {!showApp && (
           <div>
             {/* Main space */}
@@ -163,7 +152,7 @@ export function Workspace() {
                         <CardContent>
                           <p className="text-xs text-muted-foreground">
                             {workspace.owner.map((owner) => (
-                              <span>{owner.fullName}</span>
+                              <span key={owner.fullName}>{owner.fullName}</span>
                             ))}
                           </p>
                         </CardContent>
