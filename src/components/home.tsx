@@ -77,17 +77,8 @@ export function Home() {
             <Link href="/workspace" passHref className="ml-auto">
               <Button variant="outline">Get Started</Button>
             </Link>
-            <Link href="/workspace2" passHref className="ml-auto">
+            <Link href="/workspace" passHref className="ml-auto">
               <Button variant="outline">Learn More</Button>
-            </Link>
-            <Link href="/workspace3" passHref className="ml-auto">
-              <Button variant="outline">Learn again</Button>
-            </Link>
-            <Link href="/workspace4" passHref className="ml-auto">
-              <Button variant="outline">Learn 4</Button>
-            </Link>
-            <Link href="/workspace5" passHref className="ml-auto">
-              <Button variant="outline">Learn 5</Button>
             </Link>
           </div>
         </div>
