@@ -8,53 +8,49 @@ import React, {
   FunctionComponent
 } from 'react'
 
-// Define the type for the context value
 type AuthContextType = {
   isLoggedIn: boolean
-  login: (token: string) => void
-  logout: () => void
+  setAuthentication: (token: string) => void
+  clearAuthentication: () => void
 }
 
-// Create the context with an initial undefined value
 const AuthContext = createContext<AuthContextType | null>(null)
 
-// Type for AuthProvider component props
 type AuthProviderProps = {
-  children: ReactNode // ReactNode allows any valid React child (element, string, etc.)
+  children: ReactNode
 }
 
-// AuthProvider component: provides authentication context to child components
+// Provides authentication context to child components
 export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
   children
 }) => {
-  const [isLoggedIn, setLoggedIn] = useState<boolean>(false) // State to track login status
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
 
-  // Login function to set the user's token and update login status
-  const login = (token: string) => {
-    localStorage.setItem('token', token) // Store the user token in localStorage
-    setLoggedIn(true) // Update login status to true
+  // Set the user's token and update login status
+  const setAuthentication = (token: string) => {
+    localStorage.setItem('token', token)
+    setIsLoggedIn(true)
   }
 
-  // Logout function to remove the user's token and update login status
-  const logout = () => {
-    localStorage.removeItem('token') // Remove the user token from localStorage
-    setLoggedIn(false) // Update login status to false
+  // Remove the user's token and update login status
+  const clearAuthentication = () => {
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
   }
 
-  // Render the AuthContext.Provider with the current state and functions
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-      {children} {/* Render children components passed to this provider */}
+    <AuthContext.Provider
+      value={{ isLoggedIn, setAuthentication, clearAuthentication }}
+    >
+      {children}
     </AuthContext.Provider>
   )
 }
 
 // Custom hook to use the auth context
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext) // Access the context
-  if (!context) {
-    // Throw an error if the hook is used outside of the AuthProvider
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context // Return the auth context
+  const context = useContext(AuthContext)
+  if (!context) throw new Error('useAuth must be used within an AuthProvider')
+
+  return context
 }

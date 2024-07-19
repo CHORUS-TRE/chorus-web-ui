@@ -1,10 +1,11 @@
-import { useState } from 'react'
+'use client'
+
 import AuthenticationRepositoryImpl from '@/data/repository/authentication-repository-impl'
 import AuthenticationMockApiDataSourceImpl from '@/data/data-source/mock-api/authentication-mock-api-data-source-impl'
-import { AuthenticationResponse } from '@/domain/model'
+import { useAuth } from '~/components/auth-context'
 
 export default function authenticationLoginViewModel() {
-  const [authentication, setAuthentication] = useState<AuthenticationResponse>()
+  const { setAuthentication } = useAuth()
 
   const useCase = new AuthenticationRepositoryImpl(
     new AuthenticationMockApiDataSourceImpl()
@@ -12,10 +13,13 @@ export default function authenticationLoginViewModel() {
 
   const login = async (username: string, password: string) => {
     const response = await useCase.login({ username, password })
-    setAuthentication(response)
 
-    return response
+    if (response?.error) throw new Error(response.error.message)
+
+    if (response?.data.token) setAuthentication(response?.data.token)
+
+    return response?.data.token
   }
 
-  return { authentication, login }
+  return { login }
 }
