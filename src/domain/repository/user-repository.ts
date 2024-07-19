@@ -1,4 +1,4 @@
-import { User } from '@/domain/model/user'
+import { User } from '@/domain/model'
 
 interface UserRepository {
   authenticateUser: (
