@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEvent, useState } from 'react'
-import userAuthenticateViewModel from './user-authenticate-view-model'
+import authenticationLoginViewModel from './authentication-login-view-model'
 import Link from 'next/link'
 
 export default function Login() {
@@ -9,16 +9,10 @@ export default function Login() {
     username: '',
     password: ''
   })
-  const [token, setToken] = useState<string>()
-  const { user, authenticate } = userAuthenticateViewModel()
+  const { authentication, login } = authenticationLoginViewModel()
 
   const handleClickAuthenticate = async () => {
-    await authenticate(formData.username, formData.password)
-    setToken(user?.token)
-
-    if (user?.token) {
-      window.alert('Welcome back!')
-    }
+    await login(formData.username, formData.password)
   }
 
   const handleChange = (
@@ -29,7 +23,6 @@ export default function Login() {
       ...prevState,
       [name]: value
     }))
-    setToken('')
   }
 
   return (
@@ -79,9 +72,11 @@ export default function Login() {
           <span className="underline">Or create an account here</span>
         </Link>
         {/* Display login status messages */}
-        <p className="mt-4">{token && token !== 'NULL' && 'Welcome back!'}</p>
+        <p>{JSON.stringify(authentication, null, 2)}</p>
+        <p className="mt-4">{authentication?.data?.token && 'Welcome back!'}</p>
+        <p className="mt-4">{authentication?.data?.token}</p>
         <p className="mt-4">
-          {token === 'NULL' && 'Your credentials are not correct'}
+          {authentication?.error && 'Your credentials are not correct'}
         </p>
       </main>
     </div>
