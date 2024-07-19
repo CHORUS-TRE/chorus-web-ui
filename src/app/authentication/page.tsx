@@ -1,15 +1,27 @@
 'use client'
 
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import authenticationLoginViewModel from './authentication-login-view-model'
 import Link from 'next/link'
+import { useAuth } from '~/components/auth-context'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Login() {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   })
-  const { authentication, login } = authenticationLoginViewModel()
+  const { login } = authenticationLoginViewModel()
+  const { isLoggedIn } = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (!isLoggedIn) return
+
+    const redirect = searchParams?.get('redirect')
+    router.push(redirect || '/')
+  }, [isLoggedIn])
 
   const handleClickAuthenticate = async () => {
     await login(formData.username, formData.password)
@@ -72,12 +84,7 @@ export default function Login() {
           <span className="underline">Or create an account here</span>
         </Link>
         {/* Display login status messages */}
-        <p>{JSON.stringify(authentication, null, 2)}</p>
-        <p className="mt-4">{authentication?.data?.token && 'Welcome back!'}</p>
-        <p className="mt-4">{authentication?.data?.token}</p>
-        <p className="mt-4">
-          {authentication?.error && 'Your credentials are not correct'}
-        </p>
+        <p className="mt-4">{isLoggedIn && 'Welcome back!'}</p>
       </main>
     </div>
   )
