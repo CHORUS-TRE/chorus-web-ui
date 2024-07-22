@@ -47,55 +47,55 @@ const workspace = {
       href: '/workspaces/1'
     },
     {
-      name: 'Workbenches',
+      name: 'apps',
       icon: Boxes,
-      href: '/workspaces/1/workbenches/',
+      href: '#',
       children: [
         {
           name: 'Explorer',
           icon: Box,
-          href: '/workspaces/1/workbenches/1'
+          href: '/workspaces/1/apps/1'
         }
       ]
     },
     {
       name: 'Team',
       icon: Users,
-      href: '/workspaces/1/team'
+      href: '/workspaces/1/apps/1'
     },
     {
       name: 'Environment',
       icon: RefreshCcw,
-      href: '/workspaces/1/environment',
+      href: '/workspaces/1/apps/1',
       target: 'overlay'
     },
     {
       name: 'Discussion',
       icon: MessageCircle,
-      href: '/workspaces/1/discussion',
+      href: '/workspaces/1/apps/1',
       target: 'overlay'
     },
     {
       name: 'Activities',
       icon: Activity,
-      href: '/workspaces/1/activities',
+      href: '/workspaces/1/apps/1',
       target: 'overlay'
     },
     {
       name: 'Notifications',
       icon: Bell,
-      href: '/workspaces/1/notifications',
+      href: '/workspaces/1/apps/1',
       target: 'overlay'
     },
     {
       name: 'Monitoring',
       icon: Scroll,
-      href: '/workspaces/1/monitoring'
+      href: '/workspaces/1/apps/1'
     },
     {
       name: 'Settings',
       icon: Settings,
-      href: '/workspaces/1/settings',
+      href: '/workspaces/1/apps/1',
       target: 'overlay'
     }
   ]
@@ -112,7 +112,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 top-0 z-10 flex-col border-r bg-background transition-[width] duration-300 ease-in-out  ${showLargeLeftSidebar ? 'w-56' : 'w-10'} overflow-hidden`}
+      className={`fixed inset-y-0 left-0 top-0 flex-col border-r bg-background transition-[width] duration-300 ease-in-out  ${showLargeLeftSidebar ? 'w-56' : 'w-10'} overflow-hidden`}
     >
       <TooltipProvider>
         <header className="flex h-12 items-center justify-between border-b">

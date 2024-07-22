@@ -10,9 +10,21 @@ import Link from 'next/link'
 
 const showLargeLeftSidebar = true
 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport
+} from '@/components/ui/navigation-menu'
+import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
+
 export default function Breadcrumbs() {
   return (
-    <Breadcrumb className="bg-muted/40 pl-64 pt-8">
+    <Breadcrumb className="bg-white pl-64 pt-8 text-blue-50">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
@@ -24,7 +36,7 @@ export default function Breadcrumbs() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="#" prefetch={false}>
+            <Link href="/workspaces/1" prefetch={false}>
               Workspaces
             </Link>
           </BreadcrumbLink>

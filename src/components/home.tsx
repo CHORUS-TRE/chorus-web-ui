@@ -1,12 +1,6 @@
 import React from 'react'
 import { Button } from '~/components/ui/button'
 import Link from 'next/link'
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink
-} from '~/components/ui/navigation-menu'
 import { SVGProps } from 'react'
 
 export function Home() {

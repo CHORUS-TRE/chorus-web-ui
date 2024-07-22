@@ -1,6 +1,6 @@
 import React from 'react'
-import Workbench from '@/components/workbench'
+import App from '@/components/app'
 
 export default function Page({ params }: { params: { slug: string } }) {
-  return <Workbench />
+  return <App />
 }
