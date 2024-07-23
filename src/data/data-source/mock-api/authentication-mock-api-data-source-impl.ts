@@ -1,6 +1,5 @@
 import { AuthenticationRequest, AuthenticationResponse } from '~/domain/model'
 import { AuthenticationDataSource } from '../authentication-data-source'
-import { AuthenticationMockApiEntity } from './entity/authentication-mock-api-entity'
 
 const BASE_URL = 'http://localhost:3000/api/rest/v1/'
 

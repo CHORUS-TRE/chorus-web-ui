@@ -6,6 +6,6 @@ export interface AuthenticationRequest {
 export interface AuthenticationResponse {
   data: {
     token: string
-  }
+  } | null
   error: Error | null
 }
