@@ -61,7 +61,7 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/authentication/login`,
+        path: `:5000/api/rest/v1/authentication/login`,
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
