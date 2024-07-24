@@ -23,5 +23,9 @@ export interface User {
   createdAt: Date
   updatedAt: Date
   passwordChanged?: boolean
-  token: string
+}
+
+export interface UserResponse {
+  data: User | null
+  error: Error | null
 }
