@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 apis/AppInstanceServiceApi.ts
 apis/AppServiceApi.ts
 apis/AuthenticationServiceApi.ts
