@@ -1,11 +1,16 @@
 import { User, UserResponse } from '~/domain/model'
 import UserDataSource from '../user-data-source'
 import { UserServiceApi } from '@/internal/client/apis/UserServiceApi'
+import { Configuration } from '~/internal/client'
 
 class UserApiDataSourceImpl implements UserDataSource {
   async me(): Promise<UserResponse> {
     try {
-      const service = new UserServiceApi()
+      const configuration = new Configuration({
+        apiKey: `Bearer ${localStorage.getItem('token')}`
+      })
+
+      const service = new UserServiceApi(configuration)
       const user = await service.userServiceGetUserMe()
 
       if (!user?.result?.me)
