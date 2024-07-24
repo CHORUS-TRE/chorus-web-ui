@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import authenticationLoginViewModel from './authentication-login-view-model'
 import Link from 'next/link'
 import { useAuth } from '~/components/auth-context'
