@@ -1,10 +1,6 @@
-import { User } from '@/domain/model'
+import { UserResponse } from '@/domain/model'
 interface UserDataSource {
-  authenticateUser(
-    username: string,
-    password: string
-  ): Promise<{ data: User; error: Error | null }>
-  getUsers(): Promise<{ data: User[]; error: Error | null }>
+  me: () => Promise<UserResponse>
 }
 
 export default UserDataSource
