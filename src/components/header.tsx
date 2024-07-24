@@ -25,7 +25,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-8 bg-background px-4  pb-16 sm:static sm:h-auto sm:gap-1 sm:bg-transparent sm:px-6 sm:py-1  ">
-      <nav className="flex flex-grow items-center justify-end gap-x-8 pr-8">
+      <nav className="flex flex-grow items-center justify-between gap-x-8 pr-8">
+        <Link
+          href="/"
+          className="flex flex-grow items-center "
+          prefetch={false}
+        >
+          CHORUS
+        </Link>
         {plateform.navigation.map((item) => (
           <Link
             key={item}
