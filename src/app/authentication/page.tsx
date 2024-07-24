@@ -1,30 +1,41 @@
 'use client'
 
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import authenticationLoginViewModel from './authentication-login-view-model'
 import Link from 'next/link'
 import { useAuth } from '~/components/auth-context'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { userMeViewModel } from './user-me-view-model'
 
 export default function Login() {
+  const { login } = authenticationLoginViewModel()
+  const { me } = userMeViewModel()
+  const { isLoggedIn } = useAuth()
+
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   })
-  const { login } = authenticationLoginViewModel()
-  const { isLoggedIn } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (!isLoggedIn) return
+  // const router = useRouter()
+  // const searchParams = useSearchParams()
 
-    const redirect = searchParams?.get('redirect')
-    router.push(redirect || '/')
-  }, [isLoggedIn])
+  // useEffect(() => {
+  //   if (!isLoggedIn) return
+
+  //   const redirect = searchParams?.get('redirect')
+  //   router.push(redirect || '/')
+  // }, [isLoggedIn])
 
   const handleClickAuthenticate = async () => {
-    await login(formData.username, formData.password)
+    setError('')
+    try {
+      await login(formData.username, formData.password)
+    } catch (error: any) {
+      // eslint-disable-next-line no-console
+      // console.error(error)
+      setError(error.message)
+    }
   }
 
   const handleChange = (
@@ -83,7 +94,7 @@ export default function Login() {
         <Link href="/user" passHref className="mt-4">
           <span className="underline">Or create an account here</span>
         </Link>
-        {/* Display login status messages */}
+        {error && <p className="mt-4 text-red-500">{error}</p>}
         <p className="mt-4">{isLoggedIn && 'Welcome back!'}</p>
       </main>
     </div>
