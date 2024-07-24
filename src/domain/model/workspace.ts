@@ -14,3 +14,12 @@ export interface Workspace {
   workbenchIds: string[]
   serviceIds: string[]
 }
+
+export interface WorkspaceResponse extends Workspace {}
+export interface WorkspaceCreateParams {
+  name: string
+  shortName: string
+  description: string
+  ownerId: string
+  tags: string[]
+}
