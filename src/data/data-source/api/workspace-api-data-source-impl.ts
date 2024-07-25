@@ -60,4 +60,4 @@ class WorkspaceRepositoryImpl implements WorkspaceDataSource {
   }
 }
 
-export default WorkspaceRepositoryImpl
+export { WorkspaceRepositoryImpl }

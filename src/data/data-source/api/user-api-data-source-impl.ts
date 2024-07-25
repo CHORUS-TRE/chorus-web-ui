@@ -2,7 +2,7 @@
 
 import { User, UserResponse } from '@/domain/model'
 import { UserDataSource } from '@/data/data-source'
-import { UserServiceApi } from '@/internal/client/apis/UserServiceApi'
+import { UserServiceApi } from '@/internal/client/apis'
 import { Configuration } from '@/internal/client'
 
 class UserApiDataSourceImpl implements UserDataSource {
@@ -44,4 +44,4 @@ class UserApiDataSourceImpl implements UserDataSource {
   }
 }
 
-export default UserApiDataSourceImpl
+export { UserApiDataSourceImpl }

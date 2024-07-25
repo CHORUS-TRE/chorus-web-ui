@@ -1,6 +1,6 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
 import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
-import { AuthenticationServiceApi } from '@/internal/client/apis/AuthenticationServiceApi'
+import { AuthenticationServiceApi } from '@/internal/client/apis'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   authService = new AuthenticationServiceApi()
@@ -22,4 +22,4 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 }
 
-export default AuthenticationApiDataSourceImpl
+export { AuthenticationApiDataSourceImpl }

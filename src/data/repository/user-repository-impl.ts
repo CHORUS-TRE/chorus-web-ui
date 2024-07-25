@@ -2,7 +2,7 @@ import { UserResponse } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 import { UserDataSource } from '@/data/data-source'
 
-export default class UserRepositoryImpl implements UserRepository {
+export class UserRepositoryImpl implements UserRepository {
   private dataSource: UserDataSource
 
   constructor(dataSource: UserDataSource) {

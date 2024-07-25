@@ -1,7 +1,7 @@
 'use client'
 
-import UserApiDataSourceImpl from '@/data/data-source/api/user-api-data-source-impl'
-import UserRepositoryImpl from '~/data/repository/user-repository-impl'
+import { UserApiDataSourceImpl } from '@/data/data-source/api'
+import { UserRepositoryImpl } from '~/data/repository'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 
 export function userMeViewModel() {

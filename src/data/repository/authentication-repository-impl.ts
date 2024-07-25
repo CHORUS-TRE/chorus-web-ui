@@ -2,9 +2,7 @@ import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 import { AuthenticationDataSource } from '@/data/data-source'
 
-export default class AuthenticationRepositoryImpl
-  implements AuthenticationRepository
-{
+export class AuthenticationRepositoryImpl implements AuthenticationRepository {
   private dataSource: AuthenticationDataSource
 
   constructor(dataSource: AuthenticationDataSource) {

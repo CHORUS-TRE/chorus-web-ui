@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '~/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card'
 // import { userMeViewModel } from './user-me-view-model'
 import { useEffect, useState } from 'react'
 import { UserResponse } from '~/domain/model'

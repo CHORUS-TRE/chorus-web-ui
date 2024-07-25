@@ -2,7 +2,7 @@ import { Workspace, WorkspaceCreate, WorkspaceResponse } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 import { WorkspaceDataSource } from '@/data/data-source'
 
-export default class WorkspaceRepositoryImpl implements WorkspaceRepository {
+export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   private dataSource: WorkspaceDataSource
 
   constructor(dataSource: WorkspaceDataSource) {
