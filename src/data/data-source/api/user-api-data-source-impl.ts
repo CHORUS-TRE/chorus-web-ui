@@ -1,5 +1,5 @@
 import { User, UserResponse } from '~/domain/model'
-import UserDataSource from '../user-data-source'
+import { UserDataSource } from '../user-data-source'
 import { UserServiceApi } from '@/internal/client/apis/UserServiceApi'
 import { Configuration } from '~/internal/client'
 
