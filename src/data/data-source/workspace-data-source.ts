@@ -1,12 +1,8 @@
-import {
-  ChorusWorkspace,
-  ChorusCreateWorkspaceReply,
-  ChorusGetWorkspaceReply
-} from '~/internal/client'
+import { Workspace, WorkspaceCreate } from '@/domain/model'
 
 interface WorkspaceDataSource {
-  create: (workspace: ChorusWorkspace) => Promise<ChorusCreateWorkspaceReply>
-  get: (id: string) => Promise<ChorusGetWorkspaceReply>
+  create: (workspace: WorkspaceCreate) => Promise<Workspace>
+  get: (id: string) => Promise<Workspace>
 }
 
 export type { WorkspaceDataSource }

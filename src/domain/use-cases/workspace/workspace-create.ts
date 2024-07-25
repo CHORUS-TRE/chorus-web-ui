@@ -2,7 +2,7 @@ import {
   WorkspaceCreate as WorkspaceCreateModel,
   WorkspaceResponse
 } from '@/domain/model/workspace'
-import { WorkspaceRepository } from '~/domain/repository'
+import { WorkspaceRepository } from '@/domain/repository'
 
 export interface WorkspaceCreateUseCase {
   execute(data: WorkspaceCreateModel): Promise<WorkspaceResponse>

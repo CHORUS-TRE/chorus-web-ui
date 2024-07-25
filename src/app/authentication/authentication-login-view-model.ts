@@ -16,9 +16,9 @@ export default function authenticationLoginViewModel() {
     const response = await useCase.execute({ username, password })
 
     if (response?.error) throw new Error(response.error.message)
-    if (response?.data?.token) setAuthentication(response.data.token)
+    if (response?.data) setAuthentication(response.data)
 
-    return response?.data?.token
+    return response?.data
   }
 
   return { login }
