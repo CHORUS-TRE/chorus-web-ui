@@ -1,17 +1,25 @@
-import { User, UserResponse } from '~/domain/model'
-import { UserDataSource } from '../user-data-source'
+'use client'
+
+import { User, UserResponse } from '@/domain/model'
+import { UserDataSource } from '@/data/data-source'
 import { UserServiceApi } from '@/internal/client/apis/UserServiceApi'
-import { Configuration } from '~/internal/client'
+import { Configuration } from '@/internal/client'
 
 class UserApiDataSourceImpl implements UserDataSource {
+  private configuration: Configuration
+  private service: UserServiceApi
+
+  // FIXME: switch local storage to cookies, server-side rendering is a better option
+  constructor() {
+    this.configuration = new Configuration({
+      apiKey: `Bearer ${localStorage.getItem('token')}`
+    })
+    this.service = new UserServiceApi(this.configuration)
+  }
+
   async me(): Promise<UserResponse> {
     try {
-      const configuration = new Configuration({
-        apiKey: `Bearer ${localStorage.getItem('token')}`
-      })
-
-      const service = new UserServiceApi(configuration)
-      const user = await service.userServiceGetUserMe()
+      const user = await this.service.userServiceGetUserMe()
 
       if (!user?.result?.me)
         return { data: null, error: new Error('User not found') }

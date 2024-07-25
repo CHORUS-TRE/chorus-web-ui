@@ -1,40 +1,34 @@
 'use client'
 
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
-import { Badge, LineChart } from 'lucide-react'
-import { Button } from '~/components/ui/button'
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-  CardDescription,
-  CardFooter
 } from '~/components/ui/card'
-import { userMeViewModel } from './user-me-view-model'
-import { use, useEffect, useState } from 'react'
+// import { userMeViewModel } from './user-me-view-model'
+import { useEffect, useState } from 'react'
 import { UserResponse } from '~/domain/model'
-import { set } from 'zod'
 
 export default function Me() {
   const [user, setUser] = useState<UserResponse['data']>()
   const [error, setError] = useState<UserResponse['error']>()
-  const { me } = userMeViewModel()
+  // const { me } = userMeViewModel()
 
-  useEffect(() => {
-    try {
-      me()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setUser(response?.data)
-        })
-        .catch((error) => {
-          throw new Error(error)
-        })
-    } catch (error: any) {
-      setError(error.message)
-    }
-  }, [])
+  // useEffect(() => {
+  //   try {
+  //     me()
+  //       .then((response) => {
+  //         if (response?.error) setError(response.error)
+  //         if (response?.data) setUser(response?.data)
+  //       })
+  //       .catch((error) => {
+  //         throw new Error(error)
+  //       })
+  //   } catch (error: any) {
+  //     setError(error.message)
+  //   }
+  // }, [])
 
   return (
     <div className="flex">
