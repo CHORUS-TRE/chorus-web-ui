@@ -3,4 +3,4 @@ interface UserDataSource {
   me: () => Promise<UserResponse>
 }
 
-export default UserDataSource
+export type { UserDataSource }
