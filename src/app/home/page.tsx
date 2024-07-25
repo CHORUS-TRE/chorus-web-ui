@@ -48,9 +48,7 @@ export default function HomePage() {
       <br />
       <div>
         <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
-          <Label htmlFor="message" className="sr-only">
-            Message
-          </Label>
+          <Label className="sr-only">Message</Label>
           <Textarea
             id="message"
             placeholder="I'm an AI bot for all health research at CHUV hospital. How can I help you today?"

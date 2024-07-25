@@ -1,7 +1,10 @@
+'use client'
+
 import { Search } from 'lucide-react'
-import { Button } from './ui/button'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Input } from './ui/input'
+import { Input } from '@/components/ui/input'
+import { useAuth } from '@/components/auth-context'
 
 import {
   DropdownMenu,
@@ -18,9 +21,18 @@ const plateform = {
 const showLargeLeftSidebar = true
 
 export function Header() {
+  const { isLoggedIn } = useAuth()
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-8 bg-background px-4  pb-16 sm:static sm:h-auto sm:gap-1 sm:bg-transparent sm:px-6 sm:py-1  ">
-      <nav className="flex flex-grow items-center justify-end gap-x-8 pr-8">
+      <nav className="flex flex-grow items-center justify-between gap-x-8 pr-8">
+        <Link
+          href="/"
+          className="flex flex-grow items-center "
+          prefetch={false}
+        >
+          CHORUS
+        </Link>
         {plateform.navigation.map((item) => (
           <Link
             key={item}
@@ -52,14 +64,33 @@ export function Header() {
             />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
+        {isLoggedIn ? (
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href="/users/me" passHref>
+                Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        ) : (
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Link href="/authentication" passHref>
+                Login
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/register" passHref>
+                Register
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        )}
       </DropdownMenu>
     </header>
   )

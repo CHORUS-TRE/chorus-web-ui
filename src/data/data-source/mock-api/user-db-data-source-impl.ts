@@ -1,4 +1,4 @@
-import { User } from '@/domain/model/user'
+import { User, UserResponse } from '@/domain/model/user'
 import UserDataSource from '@/data/data-source/user-data-source'
 import { UserDBEntity } from '@/data/data-source/mock-api/entity/user-db-entity'
 
@@ -13,16 +13,13 @@ function myFetch<T>(...args: any): Promise<TypedResponse<T>> {
 }
 
 class UserDBDataSourceImpl implements UserDataSource {
-  async authenticateUser(
-    username: string,
-    password: string
-  ): Promise<{ data: User; error: Error | null }> {
+  async me(): Promise<UserResponse> {
     const response = await myFetch<{ data: UserDBEntity; error: Error | null }>(
       `${BASE_URL}/authenticate`
     )
     const { data, error } = await response.json()
 
-    const user = {
+    const user: User = {
       id: data.id,
       firstName: data.name.split(' ')[0] || '',
       lastName: data.name.split(' ')[1] || '',
@@ -30,33 +27,10 @@ class UserDBDataSourceImpl implements UserDataSource {
       email: data.email,
       status: 'active',
       createdAt: new Date(),
-      updatedAt: new Date(),
-      token: 'token'
+      updatedAt: new Date()
     }
 
     return { data: user, error }
-  }
-
-  async getUsers(): Promise<{ data: User[]; error: Error | null }> {
-    const response = await myFetch<{
-      data: UserDBEntity[]
-      error: Error | null
-    }>(`${BASE_URL}/users`)
-    const { data, error } = await response.json()
-
-    const responseData: User[] = data.map((dbUser) => ({
-      id: dbUser.id,
-      firstName: dbUser.name.split(' ')[0] || '',
-      lastName: dbUser.name.split(' ')[1] || '',
-      username: dbUser.username,
-      email: dbUser.email,
-      status: 'active',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      token: 'token'
-    }))
-
-    return { data: responseData, error }
   }
 }
 
