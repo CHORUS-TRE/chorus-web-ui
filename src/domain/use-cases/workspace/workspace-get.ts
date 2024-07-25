@@ -2,7 +2,7 @@ import { WorkspaceResponse } from '@/domain/model/workspace'
 import { WorkspaceRepository } from '~/domain/repository'
 
 export interface WorkspaceGetUseCase {
-  execute(id: number): Promise<WorkspaceResponse>
+  execute(id: string): Promise<WorkspaceResponse>
 }
 
 export class WorkspaceGet implements WorkspaceGetUseCase {
@@ -12,8 +12,7 @@ export class WorkspaceGet implements WorkspaceGetUseCase {
     this.repository = repository
   }
 
-  async execute(id: number): Promise<WorkspaceResponse> {
-    const createdWorkspace = await this.repository.get(id)
-    return createdWorkspace
+  async execute(id: string): Promise<WorkspaceResponse> {
+    return await this.repository.get(id)
   }
 }

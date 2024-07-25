@@ -1,6 +1,6 @@
-import { User, UserResponse } from '@/domain/model'
+import { UserResponse } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
-import UserDataSource from '@/data/data-source/user-data-source'
+import { UserDataSource } from '@/data/data-source'
 
 export default class UserRepositoryImpl implements UserRepository {
   private dataSource: UserDataSource
