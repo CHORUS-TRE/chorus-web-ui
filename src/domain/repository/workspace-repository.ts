@@ -1,8 +1,8 @@
-import { WorkspaceCreateParams, WorkspaceResponse } from '@/domain/model'
+import { WorkspaceCreate, WorkspaceResponse } from '@/domain/model'
 
 interface WorkspaceRepository {
-  create: (workspace: WorkspaceCreateParams) => Promise<WorkspaceResponse>
-  get: (id: number) => Promise<WorkspaceResponse>
+  create: (workspace: WorkspaceCreate) => Promise<WorkspaceResponse>
+  get: (id: string) => Promise<WorkspaceResponse>
 }
 
 export type { WorkspaceRepository }

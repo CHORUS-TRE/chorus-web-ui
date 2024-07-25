@@ -3,23 +3,29 @@ export interface Workspace {
   name: string
   shortName: string
   description: string
+  image: string
+  ownerId: string[]
   memberIds: string[]
-  ownerId: string
   tags: string[]
+
+  workbenchIds: string[]
+  serviceIds: string[]
 
   createdAt: Date
   updatedAt: Date
   archivedAt: Date
-
-  workbenchIds: string[]
-  serviceIds: string[]
 }
 
-export interface WorkspaceResponse extends Workspace {}
-export interface WorkspaceCreateParams {
+export interface WorkspaceResponse {
+  data: Workspace | null
+  error: Error | null
+}
+export interface WorkspaceCreate {
   name: string
   shortName: string
   description: string
+  image: string
   ownerId: string
+  memberIds: string[]
   tags: string[]
 }
