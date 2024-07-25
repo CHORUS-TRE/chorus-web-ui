@@ -1,4 +1,4 @@
-import { User, UserResponse } from '@/domain/model'
+import { UserResponse } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 
 export interface UserMeUseCase {

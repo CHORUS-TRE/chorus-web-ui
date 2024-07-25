@@ -1,10 +1,12 @@
 enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  ARCHIVED = 'archived'
 }
 enum UserRoleEnum {
+  VISITOR = 'visitor',
   USER = 'user',
+  PI = 'pi',
   ADMIN = 'admin'
 }
 

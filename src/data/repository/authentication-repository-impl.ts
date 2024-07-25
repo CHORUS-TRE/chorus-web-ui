@@ -1,5 +1,5 @@
-import { AuthenticationRequest, AuthenticationResponse } from '~/domain/model'
-import { AuthenticationRepository } from '~/domain/repository'
+import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
+import { AuthenticationRepository } from '@/domain/repository'
 import { AuthenticationDataSource } from '@/data/data-source'
 
 export default class AuthenticationRepositoryImpl

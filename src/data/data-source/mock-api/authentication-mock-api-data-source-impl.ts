@@ -1,13 +1,9 @@
-import { AuthenticationRequest, AuthenticationResponse } from '~/domain/model'
+import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
 import { AuthenticationDataSource } from '../authentication-data-source'
+import { BASE_URL, TypedResponse, myFetch } from './utils'
 
-const BASE_URL = 'http://localhost:3000/api/rest/v1/'
-
-interface TypedResponse<T = any> extends Response {
-  json<P = T>(): Promise<P>
-}
-function myFetch<T>(...args: any): Promise<TypedResponse<T>> {
-  return fetch.apply(window, args)
+export interface AuthenticationMockApiEntity {
+  token: string
 }
 
 class AuthenticationMockApiDataSourceImpl implements AuthenticationDataSource {

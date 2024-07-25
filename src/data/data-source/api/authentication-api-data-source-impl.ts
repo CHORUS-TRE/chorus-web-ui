@@ -1,5 +1,5 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import { AuthenticationRequest, AuthenticationResponse } from '~/domain/model'
+import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis/AuthenticationServiceApi'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
@@ -15,7 +15,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
         return { data: null, error: new Error('Invalid credentials') }
       }
 
-      return { data: { token }, error: null }
+      return { data: token, error: null }
     } catch (error: any) {
       return { data: null, error }
     }
