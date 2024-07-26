@@ -10,38 +10,34 @@ import React, {
 
 type AuthContextType = {
   isLoggedIn: boolean
-  setAuthentication: (token: string) => void
-  clearAuthentication: () => void
+  setSession: () => void
+  clearSession: () => void
 }
-
 const AuthContext = createContext<AuthContextType | null>(null)
-
 type AuthProviderProps = {
   children: ReactNode
 }
 
-// Provides authentication context to child components
+// Provides authentication dummy context to child components
 export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
   children
 }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    localStorage?.getItem('session') ? true : false
+  )
 
-  // Set the user's token and update login status
-  const setAuthentication = (token: string) => {
-    localStorage.setItem('token', token)
+  const setSession = () => {
+    localStorage.setItem('session', 'yeap')
     setIsLoggedIn(true)
   }
 
-  // Remove the user's token and update login status
-  const clearAuthentication = () => {
-    localStorage.removeItem('token')
+  const clearSession = () => {
+    localStorage.removeItem('session')
     setIsLoggedIn(false)
   }
 
   return (
-    <AuthContext.Provider
-      value={{ isLoggedIn, setAuthentication, clearAuthentication }}
-    >
+    <AuthContext.Provider value={{ isLoggedIn, setSession, clearSession }}>
       {children}
     </AuthContext.Provider>
   )

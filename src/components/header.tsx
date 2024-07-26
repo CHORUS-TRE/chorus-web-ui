@@ -14,6 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
+import { logout } from '~/app/authentication/authentication-login-view-model'
+import { redirect } from 'next/navigation'
 
 const plateform = {
   navigation: ['Projects', 'Teams', 'Data', 'App Store', 'Getting Started']
@@ -21,7 +23,7 @@ const plateform = {
 const showLargeLeftSidebar = true
 
 export function Header() {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, clearSession } = useAuth()
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-8 bg-background px-4  pb-16 sm:static sm:h-auto sm:gap-1 sm:bg-transparent sm:px-6 sm:py-1  ">
@@ -75,7 +77,15 @@ export function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                logout()
+                clearSession()
+                redirect('/')
+              }}
+            >
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         ) : (
           <DropdownMenuContent align="end">

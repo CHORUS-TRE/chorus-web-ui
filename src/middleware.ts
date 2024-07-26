@@ -1,7 +1,10 @@
 import type { NextRequest } from 'next/server'
+import { updateSession } from './app/authentication/authentication-login-view-model'
 
-export function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get('currentUser')?.value
+export async function middleware(request: NextRequest) {
+  await updateSession(request)
+
+  // const session = request.cookies.get('session')?.value
 
   // Allow browsing the '/' page without restrictions
   if (request.nextUrl.pathname === '/') {
@@ -9,12 +12,12 @@ export function middleware(request: NextRequest) {
   }
 
   // Disallow browsing '/workspaces' if not authenticated, redirect to login page
-  // if (!currentUser && request.nextUrl.pathname.startsWith('/workspaces')) {
+  // if (!session && request.nextUrl.pathname.startsWith('/workspaces')) {
   //   return Response.redirect(new URL('/authentication' + '?redirect=' + request.nextUrl.pathname, request.url))
   // }
 
   // // Redirect to authentication page if not authenticated and trying to access other pages
-  // if (!currentUser && !request.nextUrl.pathname.startsWith('/authentication')) {
+  // if (!session && !request.nextUrl.pathname.startsWith('/authentication')) {
   //   return Response.redirect(new URL('/authentication', request.url))
   // }
 }

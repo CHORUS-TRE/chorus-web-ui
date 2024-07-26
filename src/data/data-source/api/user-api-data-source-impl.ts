@@ -1,5 +1,3 @@
-'use client'
-
 import { User, UserResponse } from '@/domain/model'
 import { UserDataSource } from '@/data/data-source'
 import { UserServiceApi } from '@/internal/client/apis'
@@ -9,10 +7,9 @@ class UserApiDataSourceImpl implements UserDataSource {
   private configuration: Configuration
   private service: UserServiceApi
 
-  // FIXME: switch local storage to cookies, server-side rendering is a better option
-  constructor() {
+  constructor(token: string) {
     this.configuration = new Configuration({
-      apiKey: `Bearer ${localStorage.getItem('token')}`
+      apiKey: `Bearer ${token}`
     })
     this.service = new UserServiceApi(this.configuration)
   }

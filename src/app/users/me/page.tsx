@@ -1,29 +1,28 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card'
-// import { userMeViewModel } from './user-me-view-model'
+import { userMeViewModel } from './user-me-view-model'
 import { useEffect, useState } from 'react'
 import { UserResponse } from '~/domain/model'
 
 export default function Me() {
   const [user, setUser] = useState<UserResponse['data']>()
   const [error, setError] = useState<UserResponse['error']>()
-  // const { me } = userMeViewModel()
 
-  // useEffect(() => {
-  //   try {
-  //     me()
-  //       .then((response) => {
-  //         if (response?.error) setError(response.error)
-  //         if (response?.data) setUser(response?.data)
-  //       })
-  //       .catch((error) => {
-  //         throw new Error(error)
-  //       })
-  //   } catch (error: any) {
-  //     setError(error.message)
-  //   }
-  // }, [])
+  useEffect(() => {
+    try {
+      userMeViewModel()
+        .then((response) => {
+          if (response?.error) setError(response.error)
+          if (response?.data) setUser(response?.data)
+        })
+        .catch((error) => {
+          throw new Error(error)
+        })
+    } catch (error: any) {
+      setError(error.message)
+    }
+  }, [])
 
   return (
     <div className="flex">
@@ -40,32 +39,11 @@ export default function Me() {
                     {user && (
                       <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                          <CardTitle className="text-2xl">
-                            User: {user.username}
-                          </CardTitle>
-                          {/* <div>
-                          <p className="text-xs text-muted-foreground">
-                            <strong>Type: </strong>
-                            {workspace.project.type}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            <strong>Status: </strong>
-                            {workspace.project.status}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            <strong>Creation date: </strong>
-                            {workspace.createdAt}
-                          </p>
-                        </div> */}
-                          {/* <CardDescription>
-                        {workspace.description}
-                      </CardDescription> */}
+                          <CardTitle className="text-2xl">Profile</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <p className="text-xs text-muted-foreground">
-                            {/* {workspace.owner.map((owner) => (
-                            <span key={owner.fullName}>{owner.fullName}</span>
-                          ))} */}
+                            {user.firstName} {user.lastName}
                           </p>
                         </CardContent>
                       </Card>
