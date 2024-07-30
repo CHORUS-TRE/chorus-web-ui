@@ -111,3 +111,7 @@ cd chorus-web-ui
    Access your application at `localhost:<the port you put>`.
 
 For further assistance or inquiries, feel free to open an issue in the repository.
+
+## License and Usage Restrictions
+
+Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from CHUV.
