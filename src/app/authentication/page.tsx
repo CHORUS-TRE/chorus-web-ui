@@ -14,11 +14,11 @@ export default function Login() {
   const [formState, formAction] = useFormState(authenticationLoginViewModel, {
     data: null
   })
-  const { setSession, isLoggedIn } = useAuth()
+  const { isAuthenticated, setAuthenticated } = useAuth()
 
   useEffect(() => {
     if (formState.data === true) {
-      setSession()
+      setAuthenticated(true)
       redirect('/')
     }
   }, [formState.data])
@@ -33,7 +33,7 @@ export default function Login() {
               <p className="text-balance text-muted-foreground">
                 Enter your username below to login to your account
               </p>
-              {isLoggedIn && (
+              {isAuthenticated && (
                 <p className="mt-4 text-green-500">You are logged in</p>
               )}
             </div>
@@ -46,7 +46,7 @@ export default function Login() {
                   type="input"
                   name="username"
                   required
-                  disabled={isLoggedIn}
+                  disabled={isAuthenticated}
                 />
               </div>
               <div className="grid gap-2">
@@ -58,7 +58,7 @@ export default function Login() {
                   type="password"
                   name="password"
                   required
-                  disabled={isLoggedIn}
+                  disabled={isAuthenticated}
                 />
                 <Link
                   href="#"
@@ -68,7 +68,11 @@ export default function Login() {
                   Forgot your password?
                 </Link>
               </div>
-              <Button type="submit" className="w-full" disabled={isLoggedIn}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isAuthenticated}
+              >
                 Login
               </Button>
             </div>
