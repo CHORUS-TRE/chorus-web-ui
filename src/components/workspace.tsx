@@ -1,21 +1,3 @@
-'use client'
-
-import {
-  Pyramid,
-  Home,
-  Boxes,
-  Box,
-  EllipsisVertical,
-  Users,
-  MessageCircle,
-  RefreshCcw,
-  Bell,
-  Activity,
-  Settings,
-  Scroll,
-  PanelLeft,
-  Search
-} from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -26,85 +8,91 @@ import {
   CardDescription,
   CardContent,
   CardFooter
-} from './ui/card'
+} from '@/components/ui/card'
 import { ResponsiveLine } from '@nivo/line'
 import React from 'react'
-import Breadcrumb from './breadcrumb'
+import { Workspace as WorkspaceType } from '@/domain/model'
 
-const workspace = {
-  name: 'The Modified Stroop Color-Word Task',
-  shortName: 'M-SCWT',
-  description:
-    'Patients with epileptic activity often experience reduced attentional functions. The Stroop Color-Word Task (SCWT) is commonly used to assess attention, particularly in persons with epilepsy. Successful performance on the Stroop task is linked to the effective functioning of different brain regions. Studies have shown correlations between EEG coherence and reaction',
-  owner: [{ fullName: 'John Doe' }, { fullName: 'Jane Smith' }],
-  createdAt: 'June 1 2024',
-  project: {
-    type: 'Research', //
-    status: 'design', //
-    tags: ['Research', 'Neurology', 'Epilepsy']
-  },
-  menu: [
-    {
-      name: 'M-SCWT',
-      icon: Home,
-      href: '#'
-    },
-    {
-      name: 'Workbenches',
-      icon: Boxes,
-      href: '#',
-      children: [
-        {
-          name: 'Explorer',
-          icon: Box,
-          href: '#'
-        }
-      ]
-    },
-    {
-      name: 'Team',
-      icon: Users,
-      href: '#'
-    },
-    {
-      name: 'Environment',
-      icon: RefreshCcw,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Discussion',
-      icon: MessageCircle,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Activities',
-      icon: Activity,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Notifications',
-      icon: Bell,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Monitoring',
-      icon: Scroll,
-      href: '#'
-    },
-    {
-      name: 'Settings',
-      icon: Settings,
-      href: '#',
-      target: 'overlay'
-    }
-  ]
-}
+// const workspace = {
+//   name: 'The Modified Stroop Color-Word Task',
+//   shortName: 'M-SCWT',
+//   description:
+//     'Patients with epileptic activity often experience reduced attentional functions. The Stroop Color-Word Task (SCWT) is commonly used to assess attention, particularly in persons with epilepsy. Successful performance on the Stroop task is linked to the effective functioning of different brain regions. Studies have shown correlations between EEG coherence and reaction',
+//   owner: [{ fullName: 'John Doe' }, { fullName: 'Jane Smith' }],
+//   createdAt: 'June 1 2024',
+//   project: {
+//     type: 'Research', //
+//     status: 'design', //
+//     tags: ['Research', 'Neurology', 'Epilepsy']
+//   },
+//   menu: [
+//     {
+//       name: 'M-SCWT',
+//       icon: Home,
+//       href: '#'
+//     },
+//     {
+//       name: 'Workbenches',
+//       icon: Boxes,
+//       href: '#',
+//       children: [
+//         {
+//           name: 'Explorer',
+//           icon: Box,
+//           href: '#'
+//         }
+//       ]
+//     },
+//     {
+//       name: 'Team',
+//       icon: Users,
+//       href: '#'
+//     },
+//     {
+//       name: 'Environment',
+//       icon: RefreshCcw,
+//       href: '#',
+//       target: 'overlay'
+//     },
+//     {
+//       name: 'Discussion',
+//       icon: MessageCircle,
+//       href: '#',
+//       target: 'overlay'
+//     },
+//     {
+//       name: 'Activities',
+//       icon: Activity,
+//       href: '#',
+//       target: 'overlay'
+//     },
+//     {
+//       name: 'Notifications',
+//       icon: Bell,
+//       href: '#',
+//       target: 'overlay'
+//     },
+//     {
+//       name: 'Monitoring',
+//       icon: Scroll,
+//       href: '#'
+//     },
+//     {
+//       name: 'Settings',
+//       icon: Settings,
+//       href: '#',
+//       target: 'overlay'
+//     }
+//   ]
+// }
 
-export function Workspace() {
+export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
+  if (!workspace) {
+    return <div>Workspace not found</div>
+  }
+
+  // const workspace = await WorkspaceGetViewModel(workspaceId)
+
   const [showLargeLeftSidebar, setShowLargeLeftSidebar] = React.useState(true)
   const [showRightSidebar, setShowRightSidebar] = React.useState(false)
   const [showApp, setShowApp] = React.useState(false)
@@ -129,9 +117,9 @@ export function Workspace() {
                       <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                           <CardTitle className="text-2xl">
-                            Project: {workspace.name}
+                            Project: {workspace?.name}
                           </CardTitle>
-                          <div>
+                          {/* <div>
                             <p className="text-xs text-muted-foreground">
                               <strong>Type: </strong>
                               {workspace.project.type}
@@ -144,17 +132,17 @@ export function Workspace() {
                               <strong>Creation date: </strong>
                               {workspace.createdAt}
                             </p>
-                          </div>
+                          </div> */}
                           {/* <CardDescription>
                           {workspace.description}
                         </CardDescription> */}
                         </CardHeader>
                         <CardContent>
-                          <p className="text-xs text-muted-foreground">
+                          {/* <p className="text-xs text-muted-foreground">
                             {workspace.owner.map((owner) => (
                               <span key={owner.fullName}>{owner.fullName}</span>
                             ))}
-                          </p>
+                          </p> */}
                         </CardContent>
                       </Card>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

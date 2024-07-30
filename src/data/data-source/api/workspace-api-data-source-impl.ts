@@ -1,17 +1,15 @@
-'use client'
-
 import { WorkspaceDataSource } from '@/data/data-source/'
 import { WorkspaceServiceApi } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 import { Workspace, WorkspaceCreate } from '@/domain/model'
 
-class WorkspaceRepositoryImpl implements WorkspaceDataSource {
+class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   private configuration: Configuration
   private service: WorkspaceServiceApi
 
-  constructor() {
+  constructor(token: string) {
     this.configuration = new Configuration({
-      apiKey: `Bearer ${localStorage.getItem('token')}`
+      apiKey: `Bearer ${token}`
     })
     this.service = new WorkspaceServiceApi(this.configuration)
   }
@@ -60,4 +58,4 @@ class WorkspaceRepositoryImpl implements WorkspaceDataSource {
   }
 }
 
-export { WorkspaceRepositoryImpl }
+export { WorkspaceDataSourceImpl }
