@@ -17,7 +17,7 @@ export default function Me() {
           if (response?.data) setUser(response?.data)
         })
         .catch((error) => {
-          throw new Error(error)
+          setError(error.message)
         })
     } catch (error: any) {
       setError(error.message)
