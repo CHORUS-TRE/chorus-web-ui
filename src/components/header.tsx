@@ -1,6 +1,6 @@
 'use client'
 
-import { Search } from 'lucide-react'
+import { Pyramid, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
@@ -30,9 +30,10 @@ export function Header() {
       <nav className="flex flex-grow items-center justify-between gap-x-8 pr-8">
         <Link
           href="/"
-          className="flex flex-grow items-center "
+          className={`flex h-5 flex-grow items-center gap-4 rounded-lg  text-muted-foreground transition-colors hover:text-foreground md:h-8`}
           prefetch={false}
         >
+          <Pyramid className="h-5 w-5" />
           CHORUS
         </Link>
         {plateform.navigation.map((item) => (

@@ -31,7 +31,7 @@ const WorkspacePage = () => {
   return (
     <div className="workspace-page">
       <main>
-        {error && <p>{error}</p>}
+        {error && <p className="mt-4 text-red-500">{error}</p>}
         <Workspace workspace={workspace} />
       </main>
       <footer>{/* Footer content */}</footer>

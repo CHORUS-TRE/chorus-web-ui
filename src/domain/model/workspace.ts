@@ -20,6 +20,11 @@ export interface WorkspaceResponse {
   data: Workspace | null
   error: Error | null
 }
+
+export interface WorkspacesResponse {
+  data: Workspace[] | null
+  error: Error | null
+}
 export interface WorkspaceCreate {
   name: string
   shortName: string

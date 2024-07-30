@@ -1,4 +1,9 @@
-import { Workspace, WorkspaceCreate, WorkspaceResponse } from '@/domain/model'
+import {
+  Workspace,
+  WorkspaceCreate,
+  WorkspaceResponse,
+  WorkspacesResponse
+} from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 import { WorkspaceDataSource } from '@/data/data-source'
 
@@ -22,6 +27,15 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     if (!data)
       return { data: null, error: new Error('Error fetching workspace') }
+
+    return { data, error: null }
+  }
+
+  async list(): Promise<WorkspacesResponse> {
+    const data = await this.dataSource.list()
+
+    if (!data)
+      return { data: null, error: new Error('Error fetching workspaces') }
 
     return { data, error: null }
   }

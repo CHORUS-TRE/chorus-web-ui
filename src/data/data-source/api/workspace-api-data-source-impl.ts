@@ -56,6 +56,32 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
       throw error
     }
   }
+
+  async list(): Promise<Workspace[]> {
+    try {
+      const workspacesResponse =
+        await this.service.workspaceServiceListWorkspaces()
+      const workspaces = workspacesResponse.result || []
+      return workspaces.map((w) => ({
+        ...w,
+        id: w.id || '',
+        name: w.name || '',
+        shortName: w.shortName || '',
+        description: w.description || '',
+        image: '',
+        ownerId: [''],
+        memberIds: [],
+        tags: [],
+        workbenchIds: [],
+        serviceIds: [],
+        archivedAt: new Date(),
+        createdAt: new Date(w.createdAt || new Date()),
+        updatedAt: new Date(w.updatedAt || new Date())
+      }))
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export { WorkspaceDataSourceImpl }

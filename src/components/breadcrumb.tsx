@@ -16,7 +16,7 @@ export default function Breadcrumbs() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="#" prefetch={false}>
+            <Link href="/" prefetch={false}>
               CHORUS
             </Link>
           </BreadcrumbLink>
@@ -24,14 +24,14 @@ export default function Breadcrumbs() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="#" prefetch={false}>
+            <Link href="/workspaces" prefetch={false}>
               Workspaces
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>M-SCWT</BreadcrumbPage>
+          <BreadcrumbPage>[Current Project short name]</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
