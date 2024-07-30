@@ -9,8 +9,10 @@ import { Button } from '~/components/ui/button'
 import { useEffect } from 'react'
 import { useAuth } from '~/components/auth-context'
 import { redirect } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 export default function Login() {
+  const searchParams = useSearchParams()!
   const [formState, formAction] = useFormState(authenticationLoginViewModel, {
     data: null
   })
@@ -18,8 +20,9 @@ export default function Login() {
 
   useEffect(() => {
     if (formState.data === true) {
+      const path = searchParams.get('redirect') || '/'
       setAuthenticated(true)
-      redirect('/')
+      redirect(path)
     }
   }, [formState.data])
 
