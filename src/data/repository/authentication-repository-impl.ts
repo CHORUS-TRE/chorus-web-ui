@@ -1,15 +1,28 @@
 import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
-import { AuthenticationDataSource } from '@/data/data-source'
+import { AuthenticationServiceApi } from '~/internal/client'
 
 export class AuthenticationRepositoryImpl implements AuthenticationRepository {
-  private dataSource: AuthenticationDataSource
+  private authService
 
-  constructor(dataSource: AuthenticationDataSource) {
-    this.dataSource = dataSource
+  constructor() {
+    this.authService = new AuthenticationServiceApi()
   }
 
   async login(data: AuthenticationRequest): Promise<AuthenticationResponse> {
-    return await this.dataSource.login(data)
+    try {
+      const response = await this.authService.authenticationServiceAuthenticate(
+        { body: data }
+      )
+
+      const token = response.result?.token
+      if (!token) {
+        return { data: null, error: 'Invalid credentials' }
+      }
+
+      return { data: token, error: null }
+    } catch (error: any) {
+      return { data: null, error }
+    }
   }
 }

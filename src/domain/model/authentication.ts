@@ -5,5 +5,5 @@ export interface AuthenticationRequest {
 
 export interface AuthenticationResponse {
   data: string | null
-  error: Error | null
+  error: string | null
 }

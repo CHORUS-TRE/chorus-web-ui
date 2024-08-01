@@ -1,7 +1,6 @@
 'use server'
 
 import { AuthenticationRepositoryImpl } from '@/data/repository'
-import { AuthenticationApiDataSourceImpl } from '@/data/data-source/api'
 import { AuthenticationLogin } from '@/domain/use-cases/authentication/authentication-login'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
@@ -10,19 +9,18 @@ export async function authenticationLoginViewModel(
   prevState: any,
   formData: FormData
 ) {
+  const repository = new AuthenticationRepositoryImpl()
+  const useCase = new AuthenticationLogin(repository)
+
   const username = formData.get('username') as string
   const password = formData.get('password') as string
-
-  const dataSource = new AuthenticationApiDataSourceImpl()
-  const repository = new AuthenticationRepositoryImpl(dataSource)
-  const useCase = new AuthenticationLogin(repository)
 
   const { data, error } = await useCase.execute({ username, password })
 
   if (error)
     return {
       ...prevState,
-      data: error.message
+      data: error
     }
 
   if (!data)
