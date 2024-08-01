@@ -1,0 +1,40 @@
+/**
+ * @jest-environment jsdom
+ */
+import '@testing-library/jest-dom'
+import { AuthenticationRepositoryImpl } from '~/data/repository'
+import { AuthenticationLogin } from '~/domain/use-cases/authentication/authentication-login'
+
+const MOCK_LOGIN_API_RESPONSE = {
+  token: '2'
+}
+
+const MOCK_AUTHN_RESULT = MOCK_LOGIN_API_RESPONSE.token
+
+describe('AuthenticationLoginUseCase', () => {
+  it('should login a user', async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            result: MOCK_LOGIN_API_RESPONSE
+          }),
+        status: 200,
+        ok: true
+      })
+    ) as jest.Mock
+
+    const repository = new AuthenticationRepositoryImpl()
+    const useCase = new AuthenticationLogin(repository)
+
+    const response = await useCase.execute({
+      username: 'albert.levert@chuv.ch',
+      password: 'password123'
+    })
+    expect(response.error).toBeNull()
+
+    const user = response.data
+    expect(user).toBeDefined()
+    expect(user).toEqual(MOCK_AUTHN_RESULT)
+  })
+})
