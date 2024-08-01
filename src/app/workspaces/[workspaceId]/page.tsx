@@ -17,7 +17,7 @@ const WorkspacePage = () => {
     try {
       workspaceGetViewModel(workspaceId)
         .then((response) => {
-          if (response?.error) setError(response.error.message)
+          if (response?.error) setError(response.error)
           if (response?.data) setWorkspace(response.data)
         })
         .catch((error) => {

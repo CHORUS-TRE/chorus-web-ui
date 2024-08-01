@@ -88,8 +88,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       const response = await this.dataSource.workspaceServiceListWorkspaces()
       const workspaces = response.result || []
 
-      if (!workspaces)
-        return { data: null, error: 'Error fetching workspaces' }
+      if (!workspaces) return { data: null, error: 'Error fetching workspaces' }
 
       const data = workspaces.map(workspaceMapper)
 

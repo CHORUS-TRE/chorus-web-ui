@@ -13,7 +13,7 @@ export default function Page() {
     try {
       workspacesListViewModel()
         .then((response) => {
-          if (response?.error) setError(response.error.message)
+          if (response?.error) setError(response.error)
           if (response?.data) setWorkspaces(response.data)
         })
         .catch((error) => {

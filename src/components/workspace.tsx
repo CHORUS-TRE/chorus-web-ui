@@ -13,85 +13,10 @@ import { ResponsiveLine } from '@nivo/line'
 import React from 'react'
 import { Workspace as WorkspaceType } from '@/domain/model'
 
-// const workspace = {
-//   name: 'The Modified Stroop Color-Word Task',
-//   shortName: 'M-SCWT',
-//   description:
-//     'Patients with epileptic activity often experience reduced attentional functions. The Stroop Color-Word Task (SCWT) is commonly used to assess attention, particularly in persons with epilepsy. Successful performance on the Stroop task is linked to the effective functioning of different brain regions. Studies have shown correlations between EEG coherence and reaction',
-//   owner: [{ fullName: 'John Doe' }, { fullName: 'Jane Smith' }],
-//   createdAt: 'June 1 2024',
-//   project: {
-//     type: 'Research', //
-//     status: 'design', //
-//     tags: ['Research', 'Neurology', 'Epilepsy']
-//   },
-//   menu: [
-//     {
-//       name: 'M-SCWT',
-//       icon: Home,
-//       href: '#'
-//     },
-//     {
-//       name: 'Workbenches',
-//       icon: Boxes,
-//       href: '#',
-//       children: [
-//         {
-//           name: 'Explorer',
-//           icon: Box,
-//           href: '#'
-//         }
-//       ]
-//     },
-//     {
-//       name: 'Team',
-//       icon: Users,
-//       href: '#'
-//     },
-//     {
-//       name: 'Environment',
-//       icon: RefreshCcw,
-//       href: '#',
-//       target: 'overlay'
-//     },
-//     {
-//       name: 'Discussion',
-//       icon: MessageCircle,
-//       href: '#',
-//       target: 'overlay'
-//     },
-//     {
-//       name: 'Activities',
-//       icon: Activity,
-//       href: '#',
-//       target: 'overlay'
-//     },
-//     {
-//       name: 'Notifications',
-//       icon: Bell,
-//       href: '#',
-//       target: 'overlay'
-//     },
-//     {
-//       name: 'Monitoring',
-//       icon: Scroll,
-//       href: '#'
-//     },
-//     {
-//       name: 'Settings',
-//       icon: Settings,
-//       href: '#',
-//       target: 'overlay'
-//     }
-//   ]
-// }
-
 export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
   if (!workspace) {
     return <div>Workspace not found</div>
   }
-
-  // const workspace = await WorkspaceGetViewModel(workspaceId)
 
   const [showLargeLeftSidebar, setShowLargeLeftSidebar] = React.useState(true)
   const [showRightSidebar, setShowRightSidebar] = React.useState(false)
@@ -119,30 +44,30 @@ export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
                           <CardTitle className="text-2xl">
                             Project: {workspace?.name}
                           </CardTitle>
-                          {/* <div>
+                          <div>
                             <p className="text-xs text-muted-foreground">
                               <strong>Type: </strong>
-                              {workspace.project.type}
+                              {workspace.tags.join(', ')}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               <strong>Status: </strong>
-                              {workspace.project.status}
+                              {workspace.status}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               <strong>Creation date: </strong>
-                              {workspace.createdAt}
+                              {workspace.createdAt.toDateString()}
                             </p>
-                          </div> */}
-                          {/* <CardDescription>
-                          {workspace.description}
-                        </CardDescription> */}
+                          </div>
+                          <CardDescription>
+                            {workspace.description}
+                          </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          {/* <p className="text-xs text-muted-foreground">
-                            {workspace.owner.map((owner) => (
-                              <span key={owner.fullName}>{owner.fullName}</span>
+                          <p className="text-xs text-muted-foreground">
+                            {workspace.ownerIds.map((owner) => (
+                              <span key={owner}>{owner}</span>
                             ))}
-                          </p> */}
+                          </p>
                         </CardContent>
                       </Card>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -15,7 +15,7 @@ import {
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
 import { logout } from '~/app/authentication/authentication-login-view-model'
-import { redirect } from 'next/navigation'
+// import { useRouter } from 'next/router'
 
 const plateform = {
   navigation: ['Projects', 'Teams', 'Data', 'App Store', 'Getting Started']
@@ -23,7 +23,14 @@ const plateform = {
 const showLargeLeftSidebar = true
 
 export function Header() {
+  // const router = useRouter()
   const { isAuthenticated, setAuthenticated } = useAuth()
+
+  const handleLogoutClick = async () => {
+    logout()
+    setAuthenticated(false)
+    // router.push('/')
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-8 bg-background px-4  pb-16 sm:static sm:h-auto sm:gap-1 sm:bg-transparent sm:px-6 sm:py-1  ">
@@ -78,13 +85,7 @@ export function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                logout()
-                setAuthenticated(false)
-                redirect('/')
-              }}
-            >
+            <DropdownMenuItem onClick={handleLogoutClick}>
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -33,9 +33,7 @@ export default function Me() {
               <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
                 <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
                   <div className="grid gap-6">
-                    {error && (
-                      <p className="mt-4 text-red-500">{error.message}</p>
-                    )}
+                    {error && <p className="mt-4 text-red-500">{error}</p>}
                     {user && (
                       <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
