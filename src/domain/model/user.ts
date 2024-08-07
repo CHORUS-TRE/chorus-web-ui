@@ -20,17 +20,24 @@ export const UserSchema = z.object({
   id: z.string(),
   firstName: z.string(),
   lastName: z.string(),
-  username: z.string(),
   email: z.string().email(),
   status: z.nativeEnum(UserStatusEnum),
   roles: z.array(z.nativeEnum(UserRoleEnum)).optional(),
   totpEnabled: z.boolean().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  passwordChanged: z.boolean().optional()
+  passwordChanged: z.boolean().optional(),
+  avatar: z.string().optional()
 })
 
 export type User = z.infer<typeof UserSchema>
+
+export const UserCreateSchema = z.object({
+  email: z.string().email(),
+  password: z.string()
+})
+
+export type UserCreateModel = z.infer<typeof UserCreateSchema>
 
 export interface UserResponse {
   data: User | null

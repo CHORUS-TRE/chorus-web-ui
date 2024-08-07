@@ -1,5 +1,5 @@
 import {
-  WorkspaceCreate as WorkspaceCreateModel,
+  WorkspaceCreateModel,
   WorkspaceResponse
 } from '@/domain/model/workspace'
 import { WorkspaceRepository } from '@/domain/repository'
@@ -16,7 +16,6 @@ export class WorkspaceCreate implements WorkspaceCreateUseCase {
   }
 
   async execute(workspace: WorkspaceCreateModel): Promise<WorkspaceResponse> {
-    const createdWorkspace = await this.repository.create(workspace)
-    return createdWorkspace
+    return await this.repository.create(workspace)
   }
 }
