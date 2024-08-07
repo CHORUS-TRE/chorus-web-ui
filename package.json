@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "prebuild": "npx tailwindcss -i src/styles/globals.css -o src/app/build.css",
-    "build": "next build",
+    "build": "SKIP_ENV_VALIDATION=1 next build",
     "dev": "next dev",
     "dev:turbo": "next dev --turbo",
     "lint": "next lint --fix",
     "start": "next start",
-    "test": "jest --watch",
-    "test:run": "jest",
+    "test": "SKIP_ENV_VALIDATION=1 jest --watch",
+    "test:run": "SKIP_ENV_VALIDATION=1 jest",
     "format:all": "prettier --write .",
     "fix": "pnpm run format:all && pnpm run lint",
     "prepare": "husky"

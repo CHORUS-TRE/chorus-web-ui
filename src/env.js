@@ -6,9 +6,12 @@ export const env = createEnv({
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
    */
-  // server: {
-  //   NODE_ENV: z.enum(["development", "test", "production"]),
-  // },
+  server: {
+    NODE_ENV: z.enum(['development', 'test', 'production']),
+    DATA_SOURCE: z.enum(['local', 'api']),
+    DATA_SOURCE_LOCAL_DIR: z.string(),
+    DATA_SOURCE_API_URL: z.string().url()
+  },
 
   /**
    * Specify your client-side environment variables schema here. This way you can ensure the app
@@ -24,8 +27,10 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    NODE_ENV: process.env.NODE_ENV
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NODE_ENV: process.env.NODE_ENV,
+    DATA_SOURCE: process.env.DATA_SOURCE,
+    DATA_SOURCE_LOCAL_DIR: process.env.DATA_SOURCE_LOCAL_DIR,
+    DATA_SOURCE_API_URL: process.env.DATA_SOURCE_API_URL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
