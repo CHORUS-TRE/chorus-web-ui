@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom'
+import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { AuthenticationRepositoryImpl } from '~/data/repository'
 import { AuthenticationLogin } from '~/domain/use-cases/authentication/authentication-login'
 
@@ -24,7 +25,8 @@ describe('AuthenticationLoginUseCase', () => {
       })
     ) as jest.Mock
 
-    const repository = new AuthenticationRepositoryImpl()
+    const dataSource = new AuthenticationApiDataSourceImpl()
+    const repository = new AuthenticationRepositoryImpl(dataSource)
     const useCase = new AuthenticationLogin(repository)
 
     const response = await useCase.execute({
