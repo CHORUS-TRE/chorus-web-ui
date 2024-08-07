@@ -112,5 +112,5 @@ cd chorus-web-ui
 
 For further assistance or inquiries, feel free to open an issue in the repository.
 
-Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from CHUV.
+Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from [CHUV](mailto:pactt.legal@chuv.ch).
 
