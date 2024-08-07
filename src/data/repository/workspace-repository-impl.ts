@@ -1,100 +1,52 @@
 import {
   Workspace,
-  WorkspaceCreate,
+  WorkspaceCreateModel,
   WorkspaceResponse,
   WorkspacesResponse
 } from '@/domain/model'
-import { WorkspaceSchema } from '@/domain/model/workspace'
 import { WorkspaceRepository } from '@/domain/repository'
-import {
-  ChorusWorkspace as WorkspaceApi,
-  Configuration,
-  WorkspaceServiceApi
-} from '~/internal/client'
-import { z } from 'zod'
+import { WorkspaceDataSource } from '@/data/data-source'
 
-export const WorkspaceApiSchema = z.object({
-  id: z.string().optional(),
-  tenantId: z.string().optional(),
-  userId: z.string().optional(),
-  name: z.string().optional(),
-  shortName: z.string().optional(),
-  description: z.string().optional(),
-  status: z.string().optional(),
-  appInsanceIds: z.array(z.string()).optional(),
-  appInstances: z.array(z.string()).optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
-})
-
-const workspaceMapper = (w: WorkspaceApi): Workspace => {
-  WorkspaceApiSchema.parse(w)
-
-  return WorkspaceSchema.parse({
-    id: w.id || '',
-    name: w.name || '',
-    shortName: w.shortName || '',
-    description: w.description || '',
-    image: '',
-    ownerIds: [w.userId!],
-    memberIds: [w.userId!],
-    tags: [],
-    status: w.status || '',
-    workbenchIds: [],
-    serviceIds: [],
-    createdAt: new Date(w.createdAt!),
-    updatedAt: new Date(w.updatedAt!),
-    archivedAt: undefined
-  })
-}
 export class WorkspaceRepositoryImpl implements WorkspaceRepository {
-  private dataSource: WorkspaceServiceApi
+  private dataSource: WorkspaceDataSource
 
-  constructor(token: string) {
-    const configuration = new Configuration({
-      apiKey: `Bearer ${token}`
-    })
-    this.dataSource = new WorkspaceServiceApi(configuration)
+  constructor(dataSource: WorkspaceDataSource) {
+    this.dataSource = dataSource
   }
 
-  async create(workspace: WorkspaceCreate): Promise<WorkspaceResponse> {
-    const response = await this.dataSource.workspaceServiceCreateWorkspace({
-      body: workspace
-    })
+  async create(workspace: WorkspaceCreateModel): Promise<WorkspaceResponse> {
+    try {
+      const response = await this.dataSource.create(workspace)
+      if (!response) return { data: null, error: 'Error creating workspace' }
 
-    if (!response.result?.id)
-      return { data: null, error: 'Error creating workspace' }
+      const w = await this.dataSource.get(response)
 
-    return this.get(response.result?.id)
+      return { data: w, error: null }
+    } catch (error: any) {
+      return { data: null, error: error.message }
+    }
   }
 
   async get(id: string): Promise<WorkspaceResponse> {
     try {
-      const workspaceResponse =
-        await this.dataSource.workspaceServiceGetWorkspace({ id })
-      const w = workspaceResponse.result?.workspace
-      if (!w) {
-        return { data: null, error: 'Error fetching workspace' }
-      }
+      const data = await this.dataSource.get(id)
+      if (!data) return { data: null, error: 'Not found' }
 
-      return { data: workspaceMapper(w), error: null }
+      return { data, error: null }
     } catch (error: any) {
-      return { data: null, error }
+      return { data: null, error: error.message }
     }
   }
 
   async list(): Promise<WorkspacesResponse> {
     try {
-      const response = await this.dataSource.workspaceServiceListWorkspaces()
-      const workspaces = response.result || []
+      const data = await this.dataSource.list()
 
-      if (!workspaces) return { data: null, error: 'Error fetching workspaces' }
-
-      const data = workspaces.map(workspaceMapper)
+      if (!data) return { data: [], error: null }
 
       return { data, error: null }
     } catch (error: any) {
-      return { data: null, error: error.message }
+      return { data: [], error: error.message }
     }
   }
 }
