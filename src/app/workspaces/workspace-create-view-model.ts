@@ -1,13 +1,14 @@
 'use server'
 
+import { WorkspaceCreate } from '~/domain/use-cases'
+import { WorkspaceDataSourceImpl } from '@/data/data-source/chorus-api'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
-import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { cookies } from 'next/headers'
-import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api'
-import { WorkspaceLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
 import { env } from '@/env'
+import { WorkspaceLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
+import { workspaces } from '~/data/data-source/local-storage/mocks'
 
-export async function workspaceGetViewModel(workspaceId: string) {
+export async function workspaceCreateViewModel() {
   try {
     const session = cookies().get('session')?.value || ''
     const dataSource =
@@ -16,12 +17,12 @@ export async function workspaceGetViewModel(workspaceId: string) {
             env.DATA_SOURCE_LOCAL_DIR
           )
         : new WorkspaceDataSourceImpl(session)
-
     const repository = new WorkspaceRepositoryImpl(dataSource)
-    const useCase = new WorkspaceGet(repository)
+    const useCase = new WorkspaceCreate(repository)
 
-    return await useCase.execute(workspaceId)
+    return await useCase.execute(workspaces[Math.floor(Math.random() * 10)]!)
   } catch (error: any) {
+    console.error(error)
     return { data: null, error: error.message }
   }
 }

@@ -4,32 +4,43 @@ import { AuthenticationRepositoryImpl } from '@/data/repository'
 import { AuthenticationLogin } from '@/domain/use-cases/authentication/authentication-login'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
+import { AuthenticationLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/authentication-local-storage-data-source-impl'
+import { env } from '~/env'
 
 export async function authenticationLoginViewModel(
   prevState: any,
   formData: FormData
 ) {
-  const repository = new AuthenticationRepositoryImpl()
+  const dataSource =
+    env.DATA_SOURCE === 'local'
+      ? await AuthenticationLocalStorageDataSourceImpl.getInstance(
+          env.DATA_SOURCE_LOCAL_DIR
+        )
+      : new AuthenticationApiDataSourceImpl()
+  const repository = new AuthenticationRepositoryImpl(dataSource)
   const useCase = new AuthenticationLogin(repository)
 
   const username = formData.get('username') as string
   const password = formData.get('password') as string
 
-  const { data, error } = await useCase.execute({ username, password })
+  const login = await useCase.execute({ email: username, password })
 
-  if (error)
+  if (login.error)
     return {
       ...prevState,
-      data: error
+      data: null,
+      error: login.error
     }
 
-  if (!data)
+  if (!login.data)
     return {
       ...prevState,
-      data: 'No token received'
+      data: null,
+      error: 'Something went wrong, please try again'
     }
 
-  cookies().set('session', data, {
+  cookies().set('session', login.data, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 7, // One week
@@ -38,7 +49,8 @@ export async function authenticationLoginViewModel(
 
   return {
     ...prevState,
-    data: true
+    data: login.data,
+    error: null
   }
 }
 
@@ -51,7 +63,7 @@ export async function getSession() {
 
 export async function logout() {
   // Destroy the session
-  cookies().set('session', '', { expires: new Date(0) })
+  await cookies().set('session', '', { expires: new Date(0) })
 }
 
 export async function updateSession(request: NextRequest) {

@@ -1,26 +1,32 @@
 'use server'
 
 import { UserRepositoryImpl } from '~/data/repository'
-import { UserMe } from '~/domain/use-cases/user/user-me'
+import { UserCreateModel } from '~/domain/model'
 import { cookies } from 'next/headers'
 import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { env } from '@/env'
 import { UserLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/user-local-storage-data-source-impl'
+import { UserCreate } from '~/domain/use-cases/user/user-create'
 
-export async function userMeViewModel() {
+export async function userCreateViewModel(prevState: any, formData: FormData) {
   try {
-    const session = cookies().get('session')?.value || ''
     const dataSource =
       env.DATA_SOURCE === 'local'
         ? await UserLocalStorageDataSourceImpl.getInstance(
             env.DATA_SOURCE_LOCAL_DIR
           )
-        : new UserApiDataSourceImpl(session)
+        : new UserApiDataSourceImpl('')
     const userRepository = new UserRepositoryImpl(dataSource)
-    const useCase = new UserMe(userRepository)
+    const useCase = new UserCreate(userRepository)
 
-    return await useCase.execute()
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    const u = await useCase.execute({ email, password })
+    // console.log(u.error)
+    return u
   } catch (error: any) {
+    console.log(error)
     return { data: null, error: error.message }
   }
 }
