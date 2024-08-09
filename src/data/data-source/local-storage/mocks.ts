@@ -1,5 +1,5 @@
 import { WorkspaceCreateModel } from '~/domain/model'
-import { WorkbenchCreateModel} from '~/domain/model'
+import { WorkbenchCreateModel } from '~/domain/model'
 
 export const workspaces: WorkspaceCreateModel[] = [
   {
@@ -94,14 +94,15 @@ export const workspaces: WorkspaceCreateModel[] = [
   }
 ]
 
-export const apps: WorkbenchCreateModel[] = [
-    {
+export const workbenches: WorkbenchCreateModel[] = [
+  {
     tenantId: 'tenant1',
     ownerId: 'owner1',
     appId: 'jupyter',
     workspaceId: 'workspace1',
     name: 'Jupyter',
-    description: 'A powerful interactive notebook for data science and machine learning.',
+    description:
+      'A powerful interactive notebook for data science and machine learning.',
     memberIds: ['member1', 'member2'],
     tags: ['data-science', 'notebook']
   },
@@ -111,7 +112,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'rStudio',
     workspaceId: 'workspace2',
     name: 'RStudio',
-    description: 'An integrated development environment for R, ideal for statistical computing and graphics.',
+    description:
+      'An integrated development environment for R, ideal for statistical computing and graphics.',
     memberIds: ['member3', 'member4'],
     tags: ['data-analysis', 'statistics']
   },
@@ -121,7 +123,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'visualStudioCode',
     workspaceId: 'workspace3',
     name: 'Visual Studio Code',
-    description: 'A versatile code editor with support for various programming languages and extensions.',
+    description:
+      'A versatile code editor with support for various programming languages and extensions.',
     memberIds: ['member5', 'member6'],
     tags: ['code-editor', 'development']
   },
@@ -131,7 +134,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'strada',
     workspaceId: 'workspace4',
     name: 'Strada',
-    description: 'A collaborative data visualization tool for creating interactive dashboards.',
+    description:
+      'A collaborative data visualization tool for creating interactive dashboards.',
     memberIds: ['member7', 'member8'],
     tags: ['data-visualization', 'collaboration']
   },
@@ -141,7 +145,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'python',
     workspaceId: 'workspace5',
     name: 'Python',
-    description: 'A high-level programming language known for its readability and versatility.',
+    description:
+      'A high-level programming language known for its readability and versatility.',
     memberIds: ['member9', 'member10'],
     tags: ['programming', 'scripting']
   },
@@ -151,7 +156,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'matlab',
     workspaceId: 'workspace6',
     name: 'MATLAB',
-    description: 'A numerical computing environment and programming language for algorithm development and data visualization.',
+    description:
+      'A numerical computing environment and programming language for algorithm development and data visualization.',
     memberIds: ['member11', 'member12'],
     tags: ['numerical-computing', 'simulation']
   },
@@ -161,7 +167,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'tableau',
     workspaceId: 'workspace7',
     name: 'Tableau',
-    description: 'A leading data visualization tool for transforming data into interactive and shareable dashboards.',
+    description:
+      'A leading data visualization tool for transforming data into interactive and shareable dashboards.',
     memberIds: ['member13', 'member14'],
     tags: ['data-visualization', 'business-intelligence']
   },
@@ -171,7 +178,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'sas',
     workspaceId: 'workspace8',
     name: 'SAS',
-    description: 'A software suite for advanced analytics, business intelligence, and data management.',
+    description:
+      'A software suite for advanced analytics, business intelligence, and data management.',
     memberIds: ['member15', 'member16'],
     tags: ['analytics', 'data-management']
   },
@@ -181,7 +189,8 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'spss',
     workspaceId: 'workspace9',
     name: 'SPSS',
-    description: 'A software package used for statistical analysis and data mining.',
+    description:
+      'A software package used for statistical analysis and data mining.',
     memberIds: ['member17', 'member18'],
     tags: ['statistical-analysis', 'data-mining']
   },
@@ -191,10 +200,9 @@ export const apps: WorkbenchCreateModel[] = [
     appId: 'apacheZeppelin',
     workspaceId: 'workspace10',
     name: 'Apache Zeppelin',
-    description: 'A web-based notebook that enables interactive data analytics with support for multiple languages.',
+    description:
+      'A web-based notebook that enables interactive data analytics with support for multiple languages.',
     memberIds: ['member19', 'member20'],
     tags: ['notebook', 'data-visualization']
   }
-];
-
-
+]

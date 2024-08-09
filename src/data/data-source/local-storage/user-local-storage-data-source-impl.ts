@@ -8,6 +8,8 @@ import { UserDataSource } from '@/data/data-source'
 import { ChorusUser as ChorusUserApi } from '@/internal/client'
 import { z } from 'zod'
 import { cookies } from 'next/headers'
+import crypto from 'crypto'
+
 const storage = require('node-persist')
 
 const ChorusUserApiSchema = z.object({
@@ -59,6 +61,7 @@ class UserLocalStorageDataSourceImpl implements UserDataSource {
     try {
       await storage.setItem(user.email, {
         ...user,
+        password: crypto.createHmac('sha256', user.password).digest('hex'),
         id: user.email,
         firstName: 'Albert',
         lastName: 'Levert',

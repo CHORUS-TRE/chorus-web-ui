@@ -8,10 +8,7 @@ import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { AuthenticationLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/authentication-local-storage-data-source-impl'
 import { env } from '~/env'
 
-export async function authenticationLoginViewModel(
-  prevState: any,
-  formData: FormData
-) {
+export async function authenticationLogin(prevState: any, formData: FormData) {
   const dataSource =
     env.DATA_SOURCE === 'local'
       ? await AuthenticationLocalStorageDataSourceImpl.getInstance(
@@ -29,14 +26,14 @@ export async function authenticationLoginViewModel(
   if (login.error)
     return {
       ...prevState,
-      data: null,
+      data: undefined,
       error: login.error
     }
 
   if (!login.data)
     return {
       ...prevState,
-      data: null,
+      data: undefined,
       error: 'Something went wrong, please try again'
     }
 
@@ -50,7 +47,7 @@ export async function authenticationLoginViewModel(
   return {
     ...prevState,
     data: login.data,
-    error: null
+    error: undefined
   }
 }
 

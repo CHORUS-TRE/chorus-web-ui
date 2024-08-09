@@ -4,6 +4,8 @@ import { WorkspaceDataSource } from '../workspace-data-source'
 import storage from 'node-persist'
 import NodePersist from 'node-persist'
 
+const listStorageKey = 'workspaceids'
+
 export class WorkspaceLocalStorageDataSourceImpl
   implements WorkspaceDataSource
 {
@@ -20,7 +22,6 @@ export class WorkspaceLocalStorageDataSourceImpl
         new WorkspaceLocalStorageDataSourceImpl()
       await storage.init({ dir })
       this.localStorage = storage
-      // this.localStorage.setItem('workspaceids', [])
     }
 
     return WorkspaceLocalStorageDataSourceImpl.instance
@@ -47,10 +48,10 @@ export class WorkspaceLocalStorageDataSourceImpl
 
       const workspaceIds =
         await WorkspaceLocalStorageDataSourceImpl.localStorage.getItem(
-          'workspaceids'
+          listStorageKey
         )
       await WorkspaceLocalStorageDataSourceImpl.localStorage.setItem(
-        'workspaceids',
+        listStorageKey,
         [...(workspaceIds || []), nextWorkspace.id]
       )
 
@@ -75,10 +76,23 @@ export class WorkspaceLocalStorageDataSourceImpl
     })
   }
 
+  async delete(id: string): Promise<boolean> {
+    const workspaceIds = await storage.getItem(listStorageKey)
+    if (!workspaceIds) throw new Error('Workspace not found')
+
+    await storage.removeItem(id)
+    await storage.setItem(
+      listStorageKey,
+      workspaceIds.filter((workspaceId: string) => workspaceId !== id)
+    )
+
+    return true
+  }
+
   async list(): Promise<Workspace[]> {
     const workspaceIds =
       await WorkspaceLocalStorageDataSourceImpl.localStorage.getItem(
-        'workspaceids'
+        listStorageKey
       )
     if (!workspaceIds) return []
 

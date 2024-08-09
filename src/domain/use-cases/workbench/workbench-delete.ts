@@ -1,4 +1,7 @@
-import { WorkbenchDeleteResponse, WorkbenchResponse } from '@/domain/model/workbench'
+import {
+  WorkbenchDeleteResponse,
+  WorkbenchResponse
+} from '@/domain/model/workbench'
 import { WorkbenchRepository } from '@/domain/repository'
 
 export interface WorkbenchDeleteUseCase {

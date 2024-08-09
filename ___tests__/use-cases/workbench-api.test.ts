@@ -67,7 +67,7 @@ describe('WorkbenchUseCases', () => {
 
     // TODO: as the repository perform an extra get request to get the created workbench, we need to mock the get request
     expect(response.error).toEqual('Error fetching workbench')
-    expect(response.data).toBeNull()
+    expect(response.data).toBeUndefined()
   })
 
   it('should get a workbench', async () => {
@@ -91,7 +91,7 @@ describe('WorkbenchUseCases', () => {
 
     const response = await useCase.execute(MOCK_API_RESPONSE.id!)
 
-    expect(response.error).toBeNull()
+    expect(response.error).toBeUndefined()
 
     const workbench = response.data
     expect(workbench).toBeDefined()
@@ -142,7 +142,7 @@ describe('WorkbenchUseCases', () => {
     const useCase = new WorkbenchList(repository)
 
     const response = await useCase.execute()
-    expect(response.error).toBeNull()
+    expect(response.error).toBeUndefined()
 
     const workbenchs = response.data
     expect(workbenchs).toBeDefined()

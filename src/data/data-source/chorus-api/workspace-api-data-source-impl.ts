@@ -102,6 +102,10 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
     }
   }
 
+  async delete(id: string): Promise<boolean> {
+    throw new Error('Method not implemented.')
+  }
+
   async list(): Promise<Workspace[]> {
     try {
       const response = await this.service.workspaceServiceListWorkspaces()

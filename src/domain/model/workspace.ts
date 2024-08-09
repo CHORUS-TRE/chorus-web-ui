@@ -21,13 +21,18 @@ export const WorkspaceSchema = z.object({
 export type Workspace = z.infer<typeof WorkspaceSchema>
 
 export interface WorkspaceResponse {
-  data: Workspace | null
-  error: string | null
+  data?: Workspace
+  error?: string
+}
+
+export interface WorkspaceDeleteResponse {
+  data?: boolean
+  error?: string
 }
 
 export interface WorkspacesResponse {
-  data: Workspace[] | null
-  error: string | null
+  data?: Workspace[]
+  error?: string
 }
 
 export const WorkspaceCreateModelSchema = z.object({

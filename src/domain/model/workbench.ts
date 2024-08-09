@@ -1,12 +1,21 @@
 import { z } from 'zod'
 
+export enum WorkbenchState {
+  UNINITIALIZED = 'uninitialized',
+  CREATED = 'created',
+  LOADING = 'loading',
+  ACTIVE = 'active',
+  STOPPING = 'stopping',
+  EXITED = 'exited'
+}
+
 export const WorkbenchSchema = z.object({
   id: z.string(),
   tenantId: z.string(),
   ownerId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  status: z.string(),
+  status: z.nativeEnum(WorkbenchState),
   name: z.string(),
   description: z.string().optional(),
 
@@ -23,8 +32,8 @@ export const WorkbenchSchema = z.object({
 export type Workbench = z.infer<typeof WorkbenchSchema>
 
 export interface WorkbenchResponse {
-  data: Workbench | null
-  error: string | null
+  data?: Workbench
+  error?: string
 }
 
 export interface WorkbenchDeleteResponse {
@@ -33,8 +42,8 @@ export interface WorkbenchDeleteResponse {
 }
 
 export interface WorkbenchesResponse {
-  data: Workbench[] | null
-  error: string | null
+  data?: Workbench[]
+  error?: string
 }
 
 export const WorkbenchCreateModelSchema = z.object({

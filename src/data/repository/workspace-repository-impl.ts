@@ -1,6 +1,7 @@
 import {
   Workspace,
   WorkspaceCreateModel,
+  WorkspaceDeleteResponse,
   WorkspaceResponse,
   WorkspacesResponse
 } from '@/domain/model'
@@ -17,24 +18,36 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async create(workspace: WorkspaceCreateModel): Promise<WorkspaceResponse> {
     try {
       const response = await this.dataSource.create(workspace)
-      if (!response) return { data: null, error: 'Error creating workspace' }
+      if (!response) return { error: 'Error creating workspace' }
 
       const w = await this.dataSource.get(response)
 
-      return { data: w, error: null }
+      return { data: w }
     } catch (error: any) {
-      return { data: null, error: error.message }
+      return { error: error.message }
     }
   }
 
   async get(id: string): Promise<WorkspaceResponse> {
     try {
       const data = await this.dataSource.get(id)
-      if (!data) return { data: null, error: 'Not found' }
+      if (!data) return { error: 'Not found' }
 
-      return { data, error: null }
+      return { data }
     } catch (error: any) {
-      return { data: null, error: error.message }
+      return { error: error.message }
+    }
+  }
+
+  async delete(id: string): Promise<WorkspaceDeleteResponse> {
+    try {
+      const data = await this.dataSource.delete(id)
+      if (!data) return { error: 'Error deleting workbench' }
+
+      return { data: true }
+    } catch (error: any) {
+      console.error(error)
+      return { error: error.message }
     }
   }
 
@@ -42,9 +55,9 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     try {
       const data = await this.dataSource.list()
 
-      if (!data) return { data: [], error: null }
+      if (!data) return { data: [] }
 
-      return { data, error: null }
+      return { data }
     } catch (error: any) {
       return { data: [], error: error.message }
     }

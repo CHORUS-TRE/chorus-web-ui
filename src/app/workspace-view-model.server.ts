@@ -10,8 +10,15 @@ import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 import { WorkspaceCreate } from '~/domain/use-cases'
 import { workspaces } from '~/data/data-source/local-storage/mocks'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
+import {
+  WorkspaceDeleteResponse,
+  WorkspaceResponse,
+  WorkspacesResponse
+} from '~/domain/model'
 
-export async function workspaceDelete(id: string) {
+export async function workspaceDelete(
+  id?: string
+): Promise<WorkspaceDeleteResponse> {
   try {
     if (!id) {
       throw new Error('Invalid workspace id')
@@ -29,11 +36,11 @@ export async function workspaceDelete(id: string) {
 
     return await useCase.execute(id)
   } catch (error: any) {
-    return { data: null, error: error.message }
+    return { error: error.message }
   }
 }
 
-export async function workspaceList() {
+export async function workspaceList(): Promise<WorkspacesResponse> {
   try {
     const session = cookies().get('session')?.value || ''
     const dataSource =
@@ -47,11 +54,11 @@ export async function workspaceList() {
 
     return await useCase.execute()
   } catch (error: any) {
-    return { data: null, error: error.message }
+    return { error: error.message }
   }
 }
 
-export async function workspaceCreate() {
+export async function workspaceCreate(): Promise<WorkspaceResponse> {
   try {
     const session = cookies().get('session')?.value || ''
     const dataSource =
@@ -66,11 +73,13 @@ export async function workspaceCreate() {
     return await useCase.execute(workspaces[Math.floor(Math.random() * 10)]!)
   } catch (error: any) {
     console.error(error)
-    return { data: null, error: error.message }
+    return { error: error.message }
   }
 }
 
-export async function workspaceGet(workspaceId: string) {
+export async function workspaceGet(
+  workspaceId: string
+): Promise<WorkspaceResponse> {
   if (!workspaceId) {
     throw new Error('Invalid workspace id')
   }
@@ -89,6 +98,6 @@ export async function workspaceGet(workspaceId: string) {
 
     return await useCase.execute(workspaceId)
   } catch (error: any) {
-    return { data: null, error: error.message }
+    return { error: error.message }
   }
 }

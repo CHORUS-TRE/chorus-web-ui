@@ -1,17 +1,23 @@
 'use server'
 
-import { WorkbenchRepositoryImpl } from '~/data/repository'
-import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
-import { cookies } from 'next/headers'
 import { env } from '@/env'
-import { WorkbenchLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
+import { cookies } from 'next/headers'
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
-import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
+import { WorkbenchLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
 import { workbenches } from '~/data/data-source/local-storage/mocks'
+import { WorkbenchRepositoryImpl } from '~/data/repository'
+import {
+  WorkbenchDeleteResponse,
+  WorkbenchesResponse,
+  WorkbenchResponse
+} from '~/domain/model'
+import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
+import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
-import { WorkbenchesResponse } from '~/domain/model'
 
-export async function workbenchDelete(id?: string) {
+export async function workbenchDelete(
+  id?: string
+): Promise<WorkbenchDeleteResponse> {
   try {
     // const id = formData.get('id') as string
     if (!id) {
@@ -37,7 +43,7 @@ export async function workbenchDelete(id?: string) {
 
 export async function workbenchCreate(
   formData: FormData
-): Promise<WorkbenchesResponse> {
+): Promise<WorkbenchResponse> {
   try {
     const session = cookies().get('session')?.value || ''
     const dataSource =
@@ -50,11 +56,9 @@ export async function workbenchCreate(
     const repository = new WorkbenchRepositoryImpl(dataSource)
     const useCase = new WorkbenchCreate(repository)
 
-    await useCase.execute(
+    return await useCase.execute(
       workbenches[Math.floor(Math.random() * workbenches.length)]!
     )
-
-    return await workbenchList()
   } catch (error: any) {
     console.error('Error creating workbench', error)
     return { error: error.message }

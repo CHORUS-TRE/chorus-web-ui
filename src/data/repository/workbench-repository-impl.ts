@@ -18,24 +18,24 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   async create(workbench: WorkbenchCreateModel): Promise<WorkbenchResponse> {
     try {
       const response = await this.dataSource.create(workbench)
-      if (!response) return { data: null, error: 'Error creating workbench' }
+      if (!response) return { error: 'Error creating workbench' }
 
       const w = await this.dataSource.get(response)
 
-      return { data: w, error: null }
+      return { data: w }
     } catch (error: any) {
-      return { data: null, error: error.message }
+      return { error: error.message }
     }
   }
 
   async get(id: string): Promise<WorkbenchResponse> {
     try {
       const data = await this.dataSource.get(id)
-      if (!data) return { data: null, error: 'Not found' }
+      if (!data) return { error: 'Not found' }
 
-      return { data, error: null }
+      return { data }
     } catch (error: any) {
-      return { data: null, error: error.message }
+      return { error: error.message }
     }
   }
 
@@ -54,11 +54,11 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     try {
       const data = await this.dataSource.list()
 
-      if (!data) return { data: [], error: null }
+      if (!data) return { data: [] }
 
-      return { data, error: null }
+      return { data }
     } catch (error: any) {
-      return { data: null, error: error.message }
+      return { error: error.message }
     }
   }
 }

@@ -70,7 +70,7 @@ describe('WorkspaceUseCases', () => {
 
     // TODO: as the repository perform an extra get request to get the created workspace, we need to mock the get request
     expect(response.error).toEqual('Error fetching workspace')
-    expect(response.data).toBeNull()
+    expect(response.data).toBeUndefined()
   })
 
   it('should get a workspace', async () => {
@@ -93,7 +93,7 @@ describe('WorkspaceUseCases', () => {
     const useCase = new WorkspaceGet(repository)
 
     const response = await useCase.execute(MOCK_API_RESPONSE.id!)
-    expect(response.error).toBeNull()
+    expect(response.error).toBeUndefined()
 
     const workspace = response.data
     expect(workspace).toBeDefined()
@@ -118,7 +118,7 @@ describe('WorkspaceUseCases', () => {
     const useCase = new WorkspacesList(repository)
 
     const response = await useCase.execute()
-    expect(response.error).toBeNull()
+    expect(response.error).toBeUndefined()
 
     const workspaces = response.data
     expect(workspaces).toBeDefined()

@@ -40,6 +40,6 @@ export const UserCreateSchema = z.object({
 export type UserCreateModel = z.infer<typeof UserCreateSchema>
 
 export interface UserResponse {
-  data: User | null
-  error: string | null
+  data?: User
+  error?: string
 }

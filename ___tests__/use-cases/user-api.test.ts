@@ -49,7 +49,7 @@ describe('UserUseCases', () => {
     const useCase = new UserMe(repository)
 
     const response = await useCase.execute()
-    expect(response.error).toBeNull()
+    expect(response.error).toBeUndefined()
 
     const user = response.data
     expect(user).toBeDefined()

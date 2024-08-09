@@ -30,10 +30,10 @@ describe('AuthenticationLoginUseCase', () => {
     const useCase = new AuthenticationLogin(repository)
 
     const response = await useCase.execute({
-      username: 'albert.levert@chuv.ch',
+      email: 'albert.levert@chuv.ch',
       password: 'password123'
     })
-    expect(response.error).toBeNull()
+    expect(response.error).toBeUndefined()
 
     const user = response.data
     expect(user).toBeDefined()

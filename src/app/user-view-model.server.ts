@@ -7,9 +7,9 @@ import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { env } from '@/env'
 import { UserLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/user-local-storage-data-source-impl'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
-import { UserCreateModel } from '~/domain/model'
+import { UserCreateModel, UserResponse } from '~/domain/model'
 
-export async function userMe() {
+export async function userMe(): Promise<UserResponse> {
   try {
     const session = cookies().get('session')?.value || ''
     const dataSource =
@@ -23,11 +23,13 @@ export async function userMe() {
 
     return await useCase.execute()
   } catch (error: any) {
-    return { data: null, error: error.message }
+    return { error: error.message }
   }
 }
 
-export async function userCreateViewModel(prevState: any, formData: FormData) {
+export async function userCreate(
+  prevState: any,
+  formData: FormData): Promise<UserResponse> {
   try {
     const dataSource =
       env.DATA_SOURCE === 'local'
@@ -41,10 +43,9 @@ export async function userCreateViewModel(prevState: any, formData: FormData) {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const u = await useCase.execute({ email, password })
-    return u
+    return await useCase.execute({ email, password })
   } catch (error: any) {
     console.log(error)
-    return { data: null, error: error.message }
+    return { error: error.message }
   }
 }
