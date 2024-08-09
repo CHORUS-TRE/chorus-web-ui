@@ -1,9 +1,9 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card'
-import { userMeViewModel } from './user-me-view-model'
 import { useEffect, useState } from 'react'
 import { UserResponse } from '~/domain/model'
+import { userMe } from '~/app/user-view-model.server'
 
 export default function Me() {
   const [user, setUser] = useState<UserResponse['data']>()
@@ -11,7 +11,7 @@ export default function Me() {
 
   useEffect(() => {
     try {
-      userMeViewModel()
+      userMe()
         .then((response) => {
           if (response?.error) setError(response.error)
           if (response?.data) setUser(response?.data)
@@ -43,6 +43,7 @@ export default function Me() {
                           <p className="text-xs text-muted-foreground">
                             {user.firstName} {user.lastName}
                           </p>
+                          <pre>{JSON.stringify(user, null, 2)}</pre>
                         </CardContent>
                       </Card>
                     )}

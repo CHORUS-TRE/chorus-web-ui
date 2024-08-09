@@ -26,89 +26,104 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 import { Card } from './ui/card'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Workspace as WorkspaceType } from '@/domain/model'
+import { workspaceList } from '~/app/workspace-view-model.server'
 
-const workspace = {
-  name: 'The Modified Stroop Color-Word Task',
-  shortName: 'M-SCWT',
-  description:
-    'Patients with epileptic activity often experience reduced attentional functions. The Stroop Color-Word Task (SCWT) is commonly used to assess attention, particularly in persons with epilepsy. Successful performance on the Stroop task is linked to the effective functioning of different brain regions. Studies have shown correlations between EEG coherence and reaction',
-  owner: [{ fullName: 'John Doe' }, { fullName: 'Jane Smith' }],
-  createdAt: 'June 1 2024',
-  project: {
-    type: 'Research', //
-    status: 'design', //
-    tags: ['Research', 'Neurology', 'Epilepsy']
+const workspaceProps = [
+  {
+    name: 'M-SCWT',
+    icon: Home,
+    href: '/workspaces/1'
   },
-  menu: [
-    {
-      name: 'M-SCWT',
-      icon: Home,
-      href: '/workspaces/1'
-    },
-    {
-      name: 'Workbenches',
-      icon: Boxes,
-      href: '/workspaces/1/workbenches/',
-      children: [
-        {
-          name: 'Explorer',
-          icon: Box,
-          href: '/workspaces/1/workbenches/1'
-        }
-      ]
-    },
-    {
-      name: 'Team',
-      icon: Users,
-      href: '/workspaces/1/team'
-    },
-    {
-      name: 'Environment',
-      icon: RefreshCcw,
-      href: '/workspaces/1/environment',
-      target: 'overlay'
-    },
-    {
-      name: 'Discussion',
-      icon: MessageCircle,
-      href: '/workspaces/1/discussion',
-      target: 'overlay'
-    },
-    {
-      name: 'Activities',
-      icon: Activity,
-      href: '/workspaces/1/activities',
-      target: 'overlay'
-    },
-    {
-      name: 'Notifications',
-      icon: Bell,
-      href: '/workspaces/1/notifications',
-      target: 'overlay'
-    },
-    {
-      name: 'Monitoring',
-      icon: Scroll,
-      href: '/workspaces/1/monitoring'
-    },
-    {
-      name: 'Settings',
-      icon: Settings,
-      href: '/workspaces/1/settings',
-      target: 'overlay'
-    }
-  ]
-}
+  {
+    name: 'Workbenches',
+    icon: Boxes,
+    href: '/workspaces/1/workbenches/',
+    children: [
+      {
+        name: 'Explorer',
+        icon: Box,
+        href: '/workspaces/1/workbenches/1'
+      }
+    ]
+  },
+  {
+    name: 'Team',
+    icon: Users,
+    href: '/workspaces/1/team'
+  },
+  {
+    name: 'Environment',
+    icon: RefreshCcw,
+    href: '/workspaces/1/environment',
+    target: 'overlay'
+  },
+  {
+    name: 'Discussion',
+    icon: MessageCircle,
+    href: '/workspaces/1/discussion',
+    target: 'overlay'
+  },
+  {
+    name: 'Activities',
+    icon: Activity,
+    href: '/workspaces/1/activities',
+    target: 'overlay'
+  },
+  {
+    name: 'Notifications',
+    icon: Bell,
+    href: '/workspaces/1/notifications',
+    target: 'overlay'
+  },
+  {
+    name: 'Monitoring',
+    icon: Scroll,
+    href: '/workspaces/1/monitoring'
+  },
+  {
+    name: 'Settings',
+    icon: Settings,
+    href: '/workspaces/1/settings',
+    target: 'overlay'
+  }
+]
+// }
 
 export function Sidebar() {
-  const [showLargeLeftSidebar, setShowLargeLeftSidebar] = React.useState(true)
-  const [showRightSidebar, setShowRightSidebar] = React.useState(false)
-  const [showApp, setShowApp] = React.useState(false)
+  const [showLargeLeftSidebar, setShowLargeLeftSidebar] = useState(false)
+  const [showRightSidebar, setShowRightSidebar] = useState(false)
+  const [workspaces, setWorkspaces] = useState<WorkspaceType[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [showApp, setShowApp] = useState(true)
+
+  useEffect(() => {
+    try {
+      workspaceList()
+        .then((response) => {
+          if (response?.error) setError(response.error)
+          if (response?.data) setWorkspaces(response.data)
+        })
+        .catch((error) => {
+          setError(error.message)
+        })
+    } catch (error: any) {
+      setError(error.message)
+    }
+  }, [])
 
   const handleToggleLeftSidebar = () => {
     setShowLargeLeftSidebar(!showLargeLeftSidebar)
   }
+
+  const menu = workspaces?.map((w) => ({
+    name: w.shortName,
+    icon: Home,
+    href: `/workspaces/${w.id}`,
+    target: 'overlay',
+    children: workspaceProps
+  }))
 
   return (
     <aside
@@ -146,7 +161,7 @@ export function Sidebar() {
         </header>
 
         <nav className="grid gap-4 pt-4">
-          {workspace.menu.map((item, i) => (
+          {workspaceProps?.map((item, i) => (
             <span key={`${i}-${item.name}`}>
               <Tooltip>
                 <TooltipTrigger asChild>

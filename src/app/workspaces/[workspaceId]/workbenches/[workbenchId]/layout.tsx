@@ -1,15 +1,16 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import '@/app/build.css'
-import '@/styles/globals.css'
-import { Sidebar } from '@/components/sidebar'
-import Breadcrumb from '~/components/breadcrumb'
-import RightSidebar from '~/components/right-sidebar'
+import { Sidebar } from '~/components/sidebar'
+import WorkbenchZHandler from '~/components/workbench-z-handler'
 
-export default function RootLayout({
+export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <>{children}</>
+  return (
+    <>
+      <Sidebar />
+      <WorkbenchZHandler />
+      {children}
+    </>
+  )
 }

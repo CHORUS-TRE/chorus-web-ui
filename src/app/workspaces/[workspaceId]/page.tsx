@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { Workspace } from '@/components/workspace'
 import { Workspace as WorkspaceType } from '@/domain/model'
-import { workspaceGetViewModel } from './workspace-get-view-model'
+import {
+  workspaceDelete,
+  workspaceCreate,
+  workspaceGet
+} from '~/app/workspace-view-model.server'
 
 const WorkspacePage = () => {
   const params = useParams()
@@ -14,18 +18,14 @@ const WorkspacePage = () => {
   useEffect(() => {
     const workspaceId = params?.workspaceId as string
     if (!workspaceId) return
-    try {
-      workspaceGetViewModel(workspaceId)
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkspace(response.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
-    } catch (error: any) {
-      setError(error.message)
-    }
+    workspaceGet(workspaceId)
+      .then((response) => {
+        if (response?.error) setError(response.error)
+        if (response?.data) setWorkspace(response.data)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
   }, [params])
 
   return (

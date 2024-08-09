@@ -1,38 +1,49 @@
+'use client'
+
 import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage
+  BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-
-const showLargeLeftSidebar = true
+import { Fragment } from 'react'
 
 export default function Breadcrumbs() {
+  const paths = usePathname()
+  const pathNames = paths?.split('/').filter((path) => path)
+  const pathItems = pathNames?.map((path, i) => ({
+    name: path.toUpperCase(),
+    path: pathNames.slice(0, i + 1).join('/')
+  }))
+
+  const Item = ({ name, href }: { name: string; href: string }) => (
+    <BreadcrumbItem>
+      <BreadcrumbLink asChild key={href}>
+        <Link href={href} prefetch={false}>
+          {name}
+        </Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+  )
+
   return (
-    <Breadcrumb className="bg-muted/40 pl-64 pt-8">
+    <Breadcrumb className="mb-4">
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="/" prefetch={false}>
-              CHORUS
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="/workspaces" prefetch={false}>
-              Workspaces
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>[Current Project short name]</BreadcrumbPage>
-        </BreadcrumbItem>
+        <BreadcrumbLink asChild>
+          <Link href="/" prefetch={false}>
+            CHORUS
+          </Link>
+        </BreadcrumbLink>
+        {paths && paths?.length > 1 && <BreadcrumbSeparator />}
+        {pathItems?.map((item, index) => (
+          <Fragment key={item.path}>
+            <Item href={`/${item.path}`} name={item.name} />
+            {index < pathItems.length - 1 && <BreadcrumbSeparator />}
+          </Fragment>
+        ))}
       </BreadcrumbList>
     </Breadcrumb>
   )

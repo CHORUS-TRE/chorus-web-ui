@@ -1,28 +1,29 @@
 import type { NextRequest } from 'next/server'
-import { updateSession } from './app/authentication/authentication-login-view-model'
+import { updateSession } from './app/(auth)/login/authentication-login-view-model'
 
 export async function middleware(request: NextRequest) {
   await updateSession(request)
   const session = request.cookies.get('session')?.value
 
   // Allow browsing the '/' page without restrictions
-  if (request.nextUrl.pathname === '/') {
-    return
-  }
+  // if (request.nextUrl.pathname === '/') {
+  //   return
+  // }
 
-  // Disallow browsing '/workspaces' if not authenticated, redirect to login page
-  if (!session && request.nextUrl.pathname.startsWith('/workspaces')) {
+  // Disallow browsing '/' if not authenticated, redirect to login page
+  if (!session && request.nextUrl.pathname === '/') {
     return Response.redirect(
-      new URL(
-        '/authentication' + '?redirect=' + request.nextUrl.pathname,
-        request.url
-      )
+      new URL('/login' + '?redirect=' + request.nextUrl.pathname, request.url)
     )
   }
 
-  // // Redirect to authentication page if not authenticated and trying to access other pages
-  if (!session && !request.nextUrl.pathname.startsWith('/authentication')) {
-    return Response.redirect(new URL('/authentication', request.url))
+  // Redirect to authentication page if not authenticated and trying to access other pages
+  if (
+    !session &&
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/register')
+  ) {
+    return Response.redirect(new URL('/login', request.url))
   }
 }
 

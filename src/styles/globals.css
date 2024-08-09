@@ -75,6 +75,18 @@
   }
 }
 
+@layer utilities {
+  .blur-soft {
+    /* @apply bg-slate-500 bg-opacity-10 backdrop-blur-sm text-slate-200; */
+  }
+  .b1 {
+    @apply border-2 border-cyan-400;
+  }
+  .b2 {
+    @apply border-2 border-teal-400;
+  }
+}
+
 /* .flex {
   border: 1px solid rgba(0, 0, 0, 0.2);
 } */
