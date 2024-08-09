@@ -1,4 +1,5 @@
 import { WorkspaceCreateModel } from '~/domain/model'
+import { WorkbenchCreateModel} from '~/domain/model'
 
 export const workspaces: WorkspaceCreateModel[] = [
   {
@@ -92,3 +93,108 @@ export const workspaces: WorkspaceCreateModel[] = [
     tenantId: 'tenant10'
   }
 ]
+
+export const apps: WorkbenchCreateModel[] = [
+    {
+    tenantId: 'tenant1',
+    ownerId: 'owner1',
+    appId: 'jupyter',
+    workspaceId: 'workspace1',
+    name: 'Jupyter',
+    description: 'A powerful interactive notebook for data science and machine learning.',
+    memberIds: ['member1', 'member2'],
+    tags: ['data-science', 'notebook']
+  },
+  {
+    tenantId: 'tenant2',
+    ownerId: 'owner2',
+    appId: 'rStudio',
+    workspaceId: 'workspace2',
+    name: 'RStudio',
+    description: 'An integrated development environment for R, ideal for statistical computing and graphics.',
+    memberIds: ['member3', 'member4'],
+    tags: ['data-analysis', 'statistics']
+  },
+  {
+    tenantId: 'tenant3',
+    ownerId: 'owner3',
+    appId: 'visualStudioCode',
+    workspaceId: 'workspace3',
+    name: 'Visual Studio Code',
+    description: 'A versatile code editor with support for various programming languages and extensions.',
+    memberIds: ['member5', 'member6'],
+    tags: ['code-editor', 'development']
+  },
+  {
+    tenantId: 'tenant4',
+    ownerId: 'owner4',
+    appId: 'strada',
+    workspaceId: 'workspace4',
+    name: 'Strada',
+    description: 'A collaborative data visualization tool for creating interactive dashboards.',
+    memberIds: ['member7', 'member8'],
+    tags: ['data-visualization', 'collaboration']
+  },
+  {
+    tenantId: 'tenant5',
+    ownerId: 'owner5',
+    appId: 'python',
+    workspaceId: 'workspace5',
+    name: 'Python',
+    description: 'A high-level programming language known for its readability and versatility.',
+    memberIds: ['member9', 'member10'],
+    tags: ['programming', 'scripting']
+  },
+  {
+    tenantId: 'tenant6',
+    ownerId: 'owner6',
+    appId: 'matlab',
+    workspaceId: 'workspace6',
+    name: 'MATLAB',
+    description: 'A numerical computing environment and programming language for algorithm development and data visualization.',
+    memberIds: ['member11', 'member12'],
+    tags: ['numerical-computing', 'simulation']
+  },
+  {
+    tenantId: 'tenant7',
+    ownerId: 'owner7',
+    appId: 'tableau',
+    workspaceId: 'workspace7',
+    name: 'Tableau',
+    description: 'A leading data visualization tool for transforming data into interactive and shareable dashboards.',
+    memberIds: ['member13', 'member14'],
+    tags: ['data-visualization', 'business-intelligence']
+  },
+  {
+    tenantId: 'tenant8',
+    ownerId: 'owner8',
+    appId: 'sas',
+    workspaceId: 'workspace8',
+    name: 'SAS',
+    description: 'A software suite for advanced analytics, business intelligence, and data management.',
+    memberIds: ['member15', 'member16'],
+    tags: ['analytics', 'data-management']
+  },
+  {
+    tenantId: 'tenant9',
+    ownerId: 'owner9',
+    appId: 'spss',
+    workspaceId: 'workspace9',
+    name: 'SPSS',
+    description: 'A software package used for statistical analysis and data mining.',
+    memberIds: ['member17', 'member18'],
+    tags: ['statistical-analysis', 'data-mining']
+  },
+  {
+    tenantId: 'tenant10',
+    ownerId: 'owner10',
+    appId: 'apacheZeppelin',
+    workspaceId: 'workspace10',
+    name: 'Apache Zeppelin',
+    description: 'A web-based notebook that enables interactive data analytics with support for multiple languages.',
+    memberIds: ['member19', 'member20'],
+    tags: ['notebook', 'data-visualization']
+  }
+];
+
+

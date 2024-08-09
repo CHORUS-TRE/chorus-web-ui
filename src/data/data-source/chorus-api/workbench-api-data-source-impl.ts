@@ -103,6 +103,22 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
     }
   }
 
+  async delete(id: string): Promise<boolean> {
+    try {
+      const response = await this.service.appInstanceServiceDeleteAppInstance({
+        id
+      })
+
+      if (!response.result) {
+        throw new Error('Error deleting workbench')
+      }
+
+      return true
+    } catch (error) {
+      throw error
+    }
+  }
+
   async list(): Promise<Workbench[]> {
     try {
       const response = await this.service.appInstanceServiceListAppInstances()

@@ -7,6 +7,7 @@ import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import { Workbench, WorkbenchCreateModel } from '~/domain/model'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
+import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { ChorusAppInstance as ChorusAppInstanceApi } from '~/internal/client'
@@ -97,7 +98,33 @@ describe('WorkbenchUseCases', () => {
     expect(workbench).toMatchObject(MOCK_WORKBENCH_RESULT)
   })
 
-  it('should get a list of workbenchs', async () => {
+  it('should delete a workbench', async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            result: {
+              data: 'ok'
+            }
+          }),
+        status: 200,
+        ok: true
+      })
+    ) as jest.Mock
+
+    const session = 'empty'
+    const dataSource = new WorkbenchDataSourceImpl(session)
+    const repository = new WorkbenchRepositoryImpl(dataSource)
+    const useCase = new WorkbenchDelete(repository)
+
+    const response = await useCase.execute('1')
+
+    expect(response.error).toBeUndefined()
+    const workbench = response.data
+    expect(workbench).toBeTruthy()
+  })
+
+  it('should get a list of workbenches', async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
         json: () =>

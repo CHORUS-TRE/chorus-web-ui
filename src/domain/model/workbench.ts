@@ -27,6 +27,11 @@ export interface WorkbenchResponse {
   error: string | null
 }
 
+export interface WorkbenchDeleteResponse {
+  data?: boolean
+  error?: string
+}
+
 export interface WorkbenchesResponse {
   data: Workbench[] | null
   error: string | null

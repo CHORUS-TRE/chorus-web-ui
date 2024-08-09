@@ -64,6 +64,19 @@ export class WorkbenchLocalStorageDataSourceImpl
     })
   }
 
+  async delete(id: string): Promise<boolean> {
+    const workbenchIds = await storage.getItem('workbenchIds')
+    if (!workbenchIds) return false
+
+    await storage.removeItem(id)
+    await storage.setItem(
+      'workbenchIds',
+      workbenchIds.filter((workbenchId: string) => workbenchId !== id)
+    )
+
+    return true
+  }
+
   async list(): Promise<Workbench[]> {
     const workbenchIds = await storage.getItem('workbenchIds')
     if (!workbenchIds) return []

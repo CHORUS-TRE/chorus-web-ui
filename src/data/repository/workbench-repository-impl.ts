@@ -1,6 +1,7 @@
 import {
   Workbench,
   WorkbenchCreateModel,
+  WorkbenchDeleteResponse,
   WorkbenchResponse,
   WorkbenchesResponse
 } from '@/domain/model'
@@ -35,6 +36,17 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       return { data, error: null }
     } catch (error: any) {
       return { data: null, error: error.message }
+    }
+  }
+
+  async delete(id: string): Promise<WorkbenchDeleteResponse> {
+    try {
+      const data = await this.dataSource.delete(id)
+      if (!data) return { error: 'Error deleting workbench' }
+
+      return { data: true }
+    } catch (error: any) {
+      return { error: error.message }
     }
   }
 
