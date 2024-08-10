@@ -1,16 +1,18 @@
+import { z } from 'zod'
+
 import { WorkbenchDataSource } from '@/data/data-source/'
+import { Workbench, WorkbenchCreateModel } from '@/domain/model'
+import {
+  WorkbenchCreateModelSchema,
+  WorkbenchSchema,
+  WorkbenchState
+} from '@/domain/model/workbench'
+
 import {
   AppInstanceServiceApi,
   ChorusAppInstance as ChorusAppInstanceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-import { Workbench, WorkbenchCreateModel } from '@/domain/model'
-import {
-  WorkbenchSchema,
-  WorkbenchCreateModelSchema,
-  WorkbenchState
-} from '@/domain/model/workbench'
-import { z } from 'zod'
 
 export const WorkbenchApiSchema = z.object({
   id: z.string().optional(),

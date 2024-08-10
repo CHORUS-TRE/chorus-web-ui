@@ -1,15 +1,16 @@
 'use client'
 
+import { Fragment } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
 import {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
+  BreadcrumbList,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
-import { Fragment } from 'react'
 
 export default function Breadcrumbs() {
   const paths = usePathname()

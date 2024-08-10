@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Sidebar } from '~/components/sidebar'
 import WorkbenchZHandler from '~/components/workbench-z-handler'
 

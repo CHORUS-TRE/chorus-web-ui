@@ -1,7 +1,4 @@
-import {
-  WorkspaceDeleteResponse,
-  WorkspaceResponse
-} from '@/domain/model/workspace'
+import { WorkspaceDeleteResponse } from '@/domain/model/workspace'
 import { WorkspaceRepository } from '@/domain/repository'
 
 export interface WorkspaceDeleteUseCase {

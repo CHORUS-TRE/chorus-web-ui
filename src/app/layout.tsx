@@ -1,11 +1,14 @@
+import React from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import '@/app/build.css'
-import '@/styles/globals.css'
 import { cookies } from 'next/headers'
+
 import { AuthProvider } from '~/components/auth-context'
 import Breadcrumb from '~/components/breadcrumb'
 import { Header } from '~/components/header'
+
+import '@/app/build.css'
+import '@/styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 

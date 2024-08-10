@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+
 import cover from '/public/cover.jpeg'
 
 export default function Workbench() {

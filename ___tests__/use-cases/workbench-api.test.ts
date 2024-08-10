@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import '@testing-library/jest-dom'
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import { Workbench, WorkbenchCreateModel } from '~/domain/model'
@@ -11,6 +10,8 @@ import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { ChorusAppInstance as ChorusAppInstanceApi } from '~/internal/client'
+
+import '@testing-library/jest-dom'
 
 const MOCK_API_RESPONSE = {
   id: '1',

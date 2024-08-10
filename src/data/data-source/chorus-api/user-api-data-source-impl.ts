@@ -1,15 +1,16 @@
+import { z } from 'zod'
+
+import { UserDataSource } from '@/data/data-source'
 import { User } from '@/domain/model'
 import {
-  UserSchema,
-  UserStatusEnum,
-  UserRoleEnum,
   UserCreateModel,
-  UserResponse
+  UserResponse,
+  UserRoleEnum,
+  UserSchema,
+  UserStatusEnum
 } from '@/domain/model/user'
-import { UserDataSource } from '@/data/data-source'
-import { UserServiceApi } from '@/internal/client/apis'
 import { ChorusUser as ChorusUserApi, Configuration } from '@/internal/client'
-import { z } from 'zod'
+import { UserServiceApi } from '@/internal/client/apis'
 
 const ChorusUserApiSchema = z.object({
   id: z.string().optional(),

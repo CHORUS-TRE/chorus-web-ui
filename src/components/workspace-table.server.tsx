@@ -1,6 +1,8 @@
+import { Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Suspense } from 'react'
+
+import { workspaceList } from '~/app/workspace-view-model.server'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -29,13 +31,14 @@ import {
 } from '~/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workspace } from '~/domain/model'
+
 import { Icons } from './ui/icons'
-import placeholder from '/public/placeholder.svg'
-import { workspaceList } from '~/app/workspace-view-model.server'
 import {
   CreateWorkspaceAction,
   DropdownMenuActions
 } from './workspace-actions.client'
+
+import placeholder from '/public/placeholder.svg'
 
 export default async function WorkspaceTable() {
   let workspaces = await workspaceList()

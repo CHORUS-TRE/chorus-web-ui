@@ -1,29 +1,30 @@
+import React from 'react'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card'
-import { ResponsiveLine } from '@nivo/line'
-import React from 'react'
 import { Workspace as WorkspaceType } from '@/domain/model'
+import { ResponsiveLine } from '@nivo/line'
 
 export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
-  if (!workspace) {
-    return <div>Workspace not found</div>
-  }
-
   const [showLargeLeftSidebar, setShowLargeLeftSidebar] = React.useState(true)
   const [showRightSidebar, setShowRightSidebar] = React.useState(false)
   const [showApp, setShowApp] = React.useState(false)
 
   const handleToggleLeftSidebar = () => {
     setShowLargeLeftSidebar(!showLargeLeftSidebar)
+  }
+
+  if (!workspace) {
+    return <div>Workspace not found</div>
   }
 
   return (

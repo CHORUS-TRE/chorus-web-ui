@@ -1,15 +1,17 @@
+import { z } from 'zod'
+
 import { WorkspaceDataSource } from '@/data/data-source/'
+import { Workspace, WorkspaceCreateModel } from '@/domain/model'
+import {
+  WorkspaceCreateModelSchema,
+  WorkspaceSchema
+} from '@/domain/model/workspace'
+
 import {
   ChorusWorkspace as ChorusWorkspaceApi,
   WorkspaceServiceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-import { Workspace, WorkspaceCreateModel } from '@/domain/model'
-import {
-  WorkspaceSchema,
-  WorkspaceCreateModelSchema
-} from '@/domain/model/workspace'
-import { z } from 'zod'
 
 export const WorkspaceApiSchema = z.object({
   id: z.string().optional(),

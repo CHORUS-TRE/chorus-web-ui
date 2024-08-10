@@ -1,9 +1,11 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { EllipsisVerticalIcon } from 'lucide-react'
+
 import {
-  workbenchDelete,
-  workbenchCreate
+  workbenchCreate,
+  workbenchDelete
 } from '~/app/workbench-view-model.server'
 import { Button } from '~/components/ui/button'
 import {
@@ -13,9 +15,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import { Icons } from './ui/icons'
 import { WorkbenchesResponse } from '~/domain/model'
-import { useRouter } from 'next/navigation'
+
+import { Icons } from './ui/icons'
 
 export function DropdownMenuActions({ id }: { id?: string }) {
   const router = useRouter()

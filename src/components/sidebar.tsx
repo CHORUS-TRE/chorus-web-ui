@@ -1,34 +1,36 @@
 'use client'
 
-import {
-  Pyramid,
-  Home,
-  Boxes,
-  Box,
-  EllipsisVertical,
-  Users,
-  MessageCircle,
-  RefreshCcw,
-  Bell,
-  Activity,
-  Settings,
-  Scroll,
-  PanelLeft,
-  Search
-} from 'lucide-react'
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent
-} from '~/components/ui/tooltip'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import {
+  Activity,
+  Bell,
+  Box,
+  Boxes,
+  EllipsisVertical,
+  Home,
+  MessageCircle,
+  PanelLeft,
+  Pyramid,
+  RefreshCcw,
+  Scroll,
+  Search,
+  Settings,
+  Users
+} from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
+import { Workspace as WorkspaceType } from '@/domain/model'
+
+import { workspaceList } from '~/app/workspace-view-model.server'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip'
 
 import { Card } from './ui/card'
-import React, { useEffect, useState } from 'react'
-import { Workspace as WorkspaceType } from '@/domain/model'
-import { workspaceList } from '~/app/workspace-view-model.server'
 
 const workspaceProps = [
   {

@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom'
 import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { AuthenticationRepositoryImpl } from '~/data/repository'
 import { AuthenticationLogin } from '~/domain/use-cases/authentication/authentication-login'
+
+import '@testing-library/jest-dom'
 
 const MOCK_LOGIN_API_RESPONSE = {
   token: '2'

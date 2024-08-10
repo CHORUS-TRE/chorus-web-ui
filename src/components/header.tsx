@@ -1,26 +1,29 @@
 'use client'
 
-import { Pyramid, Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { Input } from '@/components/ui/input'
-import { useAuth } from '@/components/auth-context'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import userPlaceholder from '/public/placeholder-user.jpg'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Pyramid, Search } from 'lucide-react'
+
+import { userMe } from '@/app/user-view-model.server'
+import { useAuth } from '@/components/auth-context'
+import { Navigation } from '@/components/top-navigation'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuItem
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+
 import { logout } from '~/app/(auth)/login/authentication-login-view-model'
-import { Navigation } from '@/components/top-navigation'
-import { useEffect, useState } from 'react'
 import { UserResponse } from '~/domain/model'
-import { userMe } from '@/app/user-view-model.server'
-import { useRouter } from 'next/navigation'
+
+import userPlaceholder from '/public/placeholder-user.jpg'
 
 const plateform = {
   navigation: [

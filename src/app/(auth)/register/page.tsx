@@ -1,15 +1,18 @@
 'use client'
 
-import { userCreate } from '@/app/user-view-model.server'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
+
+import { userCreate } from '@/app/user-view-model.server'
+
 import { Button } from '~/components/ui/button'
 import { Icons } from '~/components/ui/icons'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+
 import placeholder from '/public/placeholder.svg'
 
 export default function Me() {

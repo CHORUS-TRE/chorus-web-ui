@@ -1,9 +1,11 @@
 'use server'
 
-import { AuthenticationRepositoryImpl } from '@/data/repository'
-import { AuthenticationLogin } from '@/domain/use-cases/authentication/authentication-login'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+
+import { AuthenticationRepositoryImpl } from '@/data/repository'
+import { AuthenticationLogin } from '@/domain/use-cases/authentication/authentication-login'
+
 import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { AuthenticationLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/authentication-local-storage-data-source-impl'
 import { env } from '~/env'

@@ -1,5 +1,6 @@
 import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
+
 import { AuthenticationDataSource } from '../data-source'
 
 export class AuthenticationRepositoryImpl implements AuthenticationRepository {

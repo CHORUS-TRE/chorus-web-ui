@@ -1,6 +1,7 @@
 'use client'
 
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
+
 import {
   Card,
   CardContent,
@@ -17,7 +18,7 @@ export default async function DashboardWidgets() {
         <CardHeader className="p-4 pb-0">
           <CardTitle>Carbon Footprint</CardTitle>
           <CardDescription>
-            You're burning an average of 0.2g carbon per day. Good job!
+            You&apos;re burning an average of 0.2g carbon per day. Good job!
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-2">
@@ -69,7 +70,7 @@ export default async function DashboardWidgets() {
         <CardHeader className="p-4 pb-0">
           <CardTitle>Storage</CardTitle>
           <CardDescription>
-            You're using 1.2GB of your 5GB storage limit.
+            You&apos;re using 1.2GB of your 5GB storage limit.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-0">

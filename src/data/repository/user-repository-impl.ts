@@ -1,5 +1,6 @@
 import { UserCreateModel, UserResponse } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
+
 import { UserDataSource } from '../data-source'
 
 export class UserRepositoryImpl implements UserRepository {

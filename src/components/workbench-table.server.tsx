@@ -1,42 +1,45 @@
-import {
-  Card,
-  CardHeader,
-  CardDescription,
-  CardTitle,
-  CardContent,
-  CardFooter
-} from '~/components/ui/card'
-import { Button } from '~/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuCheckboxItem
-} from '~/components/ui/dropdown-menu'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs'
-import {
-  Table,
-  TableHeader,
-  TableRow as TableRowComponent,
-  TableHead,
-  TableBody,
-  TableCell
-} from '~/components/ui/table'
-import { Badge } from '~/components/ui/badge'
-import { Icons } from './ui/icons'
-import { Workbench } from '~/domain/model'
-import placeholder from '/public/placeholder.svg'
+import { Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Suspense } from 'react'
-import {
-  DropdownMenuActions,
-  CreateWorkbenchAction
-} from './workbench-actions.client'
+
 import { workbenchList } from '~/app/workbench-view-model.server'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow as TableRowComponent
+} from '~/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { Workbench } from '~/domain/model'
+
+import { Icons } from './ui/icons'
+import {
+  CreateWorkbenchAction,
+  DropdownMenuActions
+} from './workbench-actions.client'
+
+import placeholder from '/public/placeholder.svg'
 
 export default async function WorkbenchList() {
   let workbenches = await workbenchList()

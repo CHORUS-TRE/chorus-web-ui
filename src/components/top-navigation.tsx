@@ -2,7 +2,8 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { Pyramid } from 'lucide-react'
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,7 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu'
-import { Pyramid } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Item {
   name: string

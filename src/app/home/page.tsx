@@ -1,16 +1,17 @@
 'use client'
 
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent
-} from '~/components/ui/tooltip'
-import { Paperclip, Mic, CornerDownLeft } from 'lucide-react'
+import { CornerDownLeft, Mic, Paperclip } from 'lucide-react'
 import { Label } from 'recharts'
+
 import { Button } from '~/components/ui/button'
-import { Card, CardHeader, CardDescription } from '~/components/ui/card'
+import { Card, CardDescription, CardHeader } from '~/components/ui/card'
 import { Textarea } from '~/components/ui/textarea'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip'
 
 export default function HomePage() {
   return (
@@ -19,7 +20,7 @@ export default function HomePage() {
         <Card>
           <CardHeader>
             <CardDescription>
-              Quel est le cycle d'un projet de recherche ?
+              Quel est le cycle d&apos;un projet de recherche ?
             </CardDescription>
           </CardHeader>
         </Card>

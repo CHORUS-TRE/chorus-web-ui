@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Workspace as WorkspaceType } from '@/domain/model'
-import {
-  workspaceList,
-  workspaceCreate
-} from '@/app/workspace-view-model.server'
 import Link from 'next/link'
+
+import {
+  workspaceCreate,
+  workspaceList
+} from '@/app/workspace-view-model.server'
+import { Workspace as WorkspaceType } from '@/domain/model'
+
 import { Button } from '~/components/ui/button'
 
 export default function Page() {

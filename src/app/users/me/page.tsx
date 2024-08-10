@@ -1,9 +1,10 @@
 'use client'
 
-import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card'
 import { useEffect, useState } from 'react'
-import { UserResponse } from '~/domain/model'
+
 import { userMe } from '~/app/user-view-model.server'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { UserResponse } from '~/domain/model'
 
 export default function Me() {
   const [user, setUser] = useState<UserResponse['data']>()

@@ -1,12 +1,12 @@
+import { WorkbenchDataSource } from '@/data/data-source'
 import {
   Workbench,
   WorkbenchCreateModel,
   WorkbenchDeleteResponse,
-  WorkbenchResponse,
-  WorkbenchesResponse
+  WorkbenchesResponse,
+  WorkbenchResponse
 } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
-import { WorkbenchDataSource } from '@/data/data-source'
 
 export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   private dataSource: WorkbenchDataSource

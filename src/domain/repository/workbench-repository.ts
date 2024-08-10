@@ -1,8 +1,8 @@
 import {
   WorkbenchCreateModel,
   WorkbenchDeleteResponse,
-  WorkbenchResponse,
-  WorkbenchesResponse
+  WorkbenchesResponse,
+  WorkbenchResponse
 } from '@/domain/model'
 
 interface WorkbenchRepository {
