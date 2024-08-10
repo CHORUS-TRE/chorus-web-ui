@@ -7,7 +7,8 @@ import { Configuration } from '~/internal/client'
 import { Workbench, WorkbenchCreateModel } from '@/domain/model'
 import {
   WorkbenchSchema,
-  WorkbenchCreateModelSchema
+  WorkbenchCreateModelSchema,
+  WorkbenchState
 } from '@/domain/model/workbench'
 import { z } from 'zod'
 
@@ -29,7 +30,8 @@ const apiToDomain = (w: ChorusAppInstanceApi): Workbench => {
     ownerId: w.userId || '',
     appId: w.appId || '',
     workspaceId: w.workspaceId || '',
-    status: w.status || '',
+    status:
+      WorkbenchState[w.status?.toUpperCase() as keyof typeof WorkbenchState],
     name: 'not yet implemented',
     description: 'not yet implemented',
     memberIds: w.userId ? [w.userId] : [],
@@ -96,6 +98,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
       const validatedInput = WorkbenchApiSchema.parse(
         response.result?.appInstance
       )
+
       const workbench = apiToDomain(validatedInput)
       return WorkbenchSchema.parse(workbench)
     } catch (error) {

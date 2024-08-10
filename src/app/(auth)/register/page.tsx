@@ -1,22 +1,21 @@
 'use client'
 
 import { userCreate } from '@/app/user-view-model.server'
-import { UserResponse } from '~/domain/model'
-import { Label } from '~/components/ui/label'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Icons } from '~/components/ui/icons'
-import Link from 'next/link'
-import { useFormState } from 'react-dom'
-import { redirect } from 'next/navigation'
-import placeholder from '/public/placeholder.svg'
 import Image from 'next/image'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { useEffect } from 'react'
+import { useFormState } from 'react-dom'
+import { Button } from '~/components/ui/button'
+import { Icons } from '~/components/ui/icons'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
+import placeholder from '/public/placeholder.svg'
 
 export default function Me() {
   const [formState, formAction] = useFormState(userCreate, {
-    data: null,
-    error: null
+    data: undefined,
+    error: undefined
   })
 
   useEffect(() => {

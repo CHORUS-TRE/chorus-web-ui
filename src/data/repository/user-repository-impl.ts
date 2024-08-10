@@ -1,4 +1,4 @@
-import { User, UserCreateModel, UserResponse } from '@/domain/model'
+import { UserCreateModel, UserResponse } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 import { UserDataSource } from '../data-source'
 
@@ -13,10 +13,7 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       const data = await this.dataSource.create(user)
       if (!data) {
-        return {
-          data: null,
-          error: 'User not created'
-        }
+        return { error: 'User not created' }
       }
 
       const me = await this.dataSource.get(user.email)
@@ -31,10 +28,7 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       const data = await this.dataSource.me()
       if (!data) {
-        return {
-          data: null,
-          error: 'User not found'
-        }
+        return { error: 'User not found' }
       }
 
       return { data }
@@ -47,10 +41,7 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       const data = await this.dataSource.get(id)
       if (!data) {
-        return {
-          data: null,
-          error: 'User not found'
-        }
+        return { error: 'User not found' }
       }
 
       return { data }
