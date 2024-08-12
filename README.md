@@ -130,28 +130,29 @@ cd chorus-web-ui
 
    Build and run the production application locally:
 
-   ```bash
+```bash
    docker build -t chorus/web-ui .
    ```
 
    Local storage mode
 
-	```bash
+```bash
 	echo "DATA_SOURCE=local" > .env
 	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
 	echo "DATA_SOURCE_API_URL=https://chorus-tre.com/api/v1" >> .env
 
 	docker run --rm  --env-file .env  -v $(pwd)/.local-storage:/app/.local-storage  -p3000:3000 chorus/web-ui
-	```
+ ```
 
    API mode
-	```bash
+
+```bash
 	echo "DATA_SOURCE=api" > .env
 	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
 	echo "DATA_SOURCE_API_URL=https://chorus-tre.com/api/v1" >> .env
 
    docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui
-   ```
+```
 
    Access your application at `localhost:3000`.
 
