@@ -10,6 +10,16 @@ const config = {
   output: 'standalone',
   eslint: {
     dirs: ['app']
+  },
+  logging: {
+    fetches: {
+      fullUrl: true
+    }
+  },
+  compiler: {
+    // Remove console logs only in production, excluding error logs
+    removeConsole:
+      process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false
   }
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
