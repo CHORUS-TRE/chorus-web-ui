@@ -2,26 +2,22 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 
 import { Workspace as MyWorkspace } from '@/components/my-workspace'
 import { Workspace as WorkspaceType } from '@/domain/model'
 
 import {
   workbenchCreate,
-  workbenchDelete,
   workbenchList
 } from '~/app/workbench-view-model.server'
 import {
   workspaceCreate,
-  workspaceDelete,
   workspaceList
 } from '~/app/workspace-view-model.server'
 import { Button } from '~/components/ui/button'
 import { Workbench } from '~/domain/model/workbench'
 
 const WorkspacePage = () => {
-  const params = useParams()
   const [workspace, setWorkspace] = useState<WorkspaceType | null>(null)
   const [workspaces, setWorkspaces] = useState<WorkspaceType[] | null>(null)
   const [workbenches, setWorkbenches] = useState<Workbench[] | null>(null)

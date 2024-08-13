@@ -1,6 +1,5 @@
 import { WorkbenchDataSource } from '@/data/data-source'
 import {
-  Workbench,
   WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
@@ -23,7 +22,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       const w = await this.dataSource.get(response)
 
       return { data: w }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }
@@ -34,7 +33,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       if (!data) return { error: 'Not found' }
 
       return { data }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }
@@ -45,7 +44,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       if (!data) return { error: 'Error deleting workbench' }
 
       return { data: true }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }
@@ -57,7 +56,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       if (!data) return { data: [] }
 
       return { data }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }

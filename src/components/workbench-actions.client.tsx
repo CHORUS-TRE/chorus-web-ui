@@ -15,7 +15,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import { WorkbenchesResponse } from '~/domain/model'
 
 import { Icons } from './ui/icons'
 
@@ -44,11 +43,7 @@ export function DropdownMenuActions({ id }: { id?: string }) {
   )
 }
 
-export function CreateWorkbenchAction({
-  cb
-}: {
-  cb?: (w?: WorkbenchesResponse) => void
-}) {
+export function CreateWorkbenchAction() {
   const router = useRouter()
 
   async function handleCreate() {

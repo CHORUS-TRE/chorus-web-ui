@@ -25,7 +25,7 @@ export default function Page() {
         .catch((error) => {
           setError(error.message)
         })
-    } catch (error: any) {
+    } catch (error) {
       setError(error.message)
     }
   }, [])

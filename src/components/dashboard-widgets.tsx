@@ -11,7 +11,7 @@ import {
 } from '~/components/ui/card'
 import { ChartContainer } from '~/components/ui/chart'
 
-export default async function DashboardWidgets() {
+export default function DashboardWidgets() {
   return (
     <>
       <Card className="blur-soft max-w-xs">

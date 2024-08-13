@@ -14,7 +14,6 @@ import {
   Pyramid,
   RefreshCcw,
   Scroll,
-  Search,
   Settings,
   Users
 } from 'lucide-react'
@@ -110,7 +109,7 @@ export function Sidebar() {
         .catch((error) => {
           setError(error.message)
         })
-    } catch (error: any) {
+    } catch (error) {
       setError(error.message)
     }
   }, [])
@@ -118,14 +117,6 @@ export function Sidebar() {
   const handleToggleLeftSidebar = () => {
     setShowLargeLeftSidebar(!showLargeLeftSidebar)
   }
-
-  const menu = workspaces?.map((w) => ({
-    name: w.shortName,
-    icon: Home,
-    href: `/workspaces/${w.id}`,
-    target: 'overlay',
-    children: workspaceProps
-  }))
 
   return (
     <aside

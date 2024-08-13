@@ -83,6 +83,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
       return response.result?.id
     } catch (error) {
+      console.error(error)
       throw error
     }
   }
@@ -104,6 +105,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
       const workbench = apiToDomain(validatedInput)
       return WorkbenchSchema.parse(workbench)
     } catch (error) {
+      console.error(error)
       throw error
     }
   }
@@ -120,6 +122,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
       return true
     } catch (error) {
+      console.error(error)
       throw error
     }
   }
@@ -135,6 +138,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
       return workbenchs.map((w) => WorkbenchSchema.parse(w))
     } catch (error) {
+      console.error(error)
       throw error
     }
   }

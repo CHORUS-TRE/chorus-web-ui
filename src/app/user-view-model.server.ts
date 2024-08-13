@@ -24,12 +24,13 @@ export async function userMe(): Promise<UserResponse> {
     const useCase = new UserMe(userRepository)
 
     return await useCase.execute()
-  } catch (error: any) {
+  } catch (error) {
     return { error: error.message }
   }
 }
 
 export async function userCreate(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   prevState: any,
   formData: FormData
 ): Promise<UserResponse> {
@@ -47,7 +48,7 @@ export async function userCreate(
     const password = formData.get('password') as string
 
     return await useCase.execute({ email, password })
-  } catch (error: any) {
+  } catch (error) {
     console.log(error)
     return { error: error.message }
   }

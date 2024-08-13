@@ -15,7 +15,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       const d = await this.dataSource.login(data)
 
       return { data: d }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }

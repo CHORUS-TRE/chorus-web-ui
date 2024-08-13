@@ -41,7 +41,7 @@ import {
 import placeholder from '/public/placeholder.svg'
 
 export default async function WorkspaceTable() {
-  let workspaces = await workspaceList()
+  const workspaces = await workspaceList()
 
   const TableHeads = () => (
     <>

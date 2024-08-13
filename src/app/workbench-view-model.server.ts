@@ -38,7 +38,7 @@ export async function workbenchDelete(
     const useCase = new WorkbenchDelete(repository)
 
     return await useCase.execute(id)
-  } catch (error: any) {
+  } catch (error) {
     return { error: error.message }
   }
 }
@@ -61,7 +61,7 @@ export async function workbenchCreate(
     return await useCase.execute(
       workbenches[Math.floor(Math.random() * workbenches.length)]!
     )
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating workbench', error)
     return { error: error.message }
   }
@@ -80,7 +80,7 @@ export async function workbenchList(): Promise<WorkbenchesResponse> {
     const useCase = new WorkbenchList(repository)
 
     return await useCase.execute()
-  } catch (error: any) {
+  } catch (error) {
     return { error: error.message }
   }
 }

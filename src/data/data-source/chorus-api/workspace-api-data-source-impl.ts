@@ -82,6 +82,7 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
 
       return response.result?.id
     } catch (error) {
+      console.error(error)
       throw error
     }
   }
@@ -100,6 +101,7 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
       const workspace = apiToDomainMapper(validatedInput)
       return WorkspaceSchema.parse(workspace)
     } catch (error) {
+      console.error(error)
       throw error
     }
   }
@@ -119,6 +121,7 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
 
       return workspaces.map((w) => WorkspaceSchema.parse(w))
     } catch (error) {
+      console.error(error)
       throw error
     }
   }

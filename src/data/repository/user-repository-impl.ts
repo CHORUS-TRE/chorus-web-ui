@@ -19,7 +19,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       const me = await this.dataSource.get(user.email)
       return { data: me }
-    } catch (error: any) {
+    } catch (error) {
       console.log(error)
       return { error: error.message }
     }
@@ -33,7 +33,7 @@ export class UserRepositoryImpl implements UserRepository {
       }
 
       return { data }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }
@@ -46,7 +46,7 @@ export class UserRepositoryImpl implements UserRepository {
       }
 
       return { data }
-    } catch (error: any) {
+    } catch (error) {
       return { error: error.message }
     }
   }

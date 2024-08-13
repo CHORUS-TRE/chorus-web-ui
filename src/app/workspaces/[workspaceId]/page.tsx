@@ -6,11 +6,7 @@ import { useParams } from 'next/navigation'
 import { Workspace } from '@/components/workspace'
 import { Workspace as WorkspaceType } from '@/domain/model'
 
-import {
-  workspaceCreate,
-  workspaceDelete,
-  workspaceGet
-} from '~/app/workspace-view-model.server'
+import { workspaceGet } from '~/app/workspace-view-model.server'
 
 const WorkspacePage = () => {
   const params = useParams()

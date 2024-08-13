@@ -37,7 +37,7 @@ export async function workspaceDelete(
     const useCase = new WorkspaceDelete(repository)
 
     return await useCase.execute(id)
-  } catch (error: any) {
+  } catch (error) {
     return { error: error.message }
   }
 }
@@ -55,7 +55,7 @@ export async function workspaceList(): Promise<WorkspacesResponse> {
     const useCase = new WorkspacesList(repository)
 
     return await useCase.execute()
-  } catch (error: any) {
+  } catch (error) {
     return { error: error.message }
   }
 }
@@ -73,7 +73,7 @@ export async function workspaceCreate(): Promise<WorkspaceResponse> {
     const useCase = new WorkspaceCreate(repository)
 
     return await useCase.execute(workspaces[Math.floor(Math.random() * 10)]!)
-  } catch (error: any) {
+  } catch (error) {
     console.error(error)
     return { error: error.message }
   }
@@ -99,7 +99,7 @@ export async function workspaceGet(
     const useCase = new WorkspaceGet(repository)
 
     return await useCase.execute(workspaceId)
-  } catch (error: any) {
+  } catch (error) {
     return { error: error.message }
   }
 }

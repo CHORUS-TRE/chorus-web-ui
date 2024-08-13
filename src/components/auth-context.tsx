@@ -2,32 +2,18 @@
 
 import React, {
   createContext,
-  FunctionComponent,
   ReactElement,
   ReactNode,
-  use,
-  useContext,
-  useEffect,
-  useState
+  useContext
 } from 'react'
 
-// type AuthContextType = {
-//   isLoggedIn: boolean
-//   setIsLoggedIn: (isLoggedIn: boolean) => void
-// }
-// const AuthContext = createContext<AuthContextType | null>(null)
-// type AuthProviderProps = {
-//   children: ReactNode
-// }
-
-type AuthContext = {
+type AuthContextType = {
   isAuthenticated: boolean
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AuthContext = createContext<AuthContext>({
+const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAuthenticated: () => {}
 })
 
@@ -52,7 +38,7 @@ export const AuthProvider = ({
   )
 }
 
-export function useAuth(): AuthContext {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext)
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')

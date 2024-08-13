@@ -147,6 +147,7 @@ export const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ListFilterIcon(props: any) {
     return (
       <svg
@@ -167,6 +168,7 @@ export const Icons = {
       </svg>
     )
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   CirclePlusIcon(props: any) {
     return (
       <svg
@@ -187,6 +189,7 @@ export const Icons = {
       </svg>
     )
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MoveHorizontalIcon(props: any) {
     return (
       <svg

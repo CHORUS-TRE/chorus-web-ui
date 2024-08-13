@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import crypto from 'crypto'
-import { z } from 'zod'
 
+// import { z } from 'zod'
 import { UserDataSource } from '@/data/data-source'
 import { User } from '@/domain/model'
 import {
@@ -9,37 +9,37 @@ import {
   UserRoleEnum,
   UserStatusEnum
 } from '@/domain/model/user'
-import { ChorusUser as ChorusUserApi } from '@/internal/client'
+// import { ChorusUser as ChorusUserApi } from '@/internal/client'
 
 const storage = require('node-persist')
 
-const ChorusUserApiSchema = z.object({
-  id: z.string().optional(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  username: z.string().optional(),
-  status: z.string().optional(),
-  roles: z.array(z.string()).optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  passwordChanged: z.boolean().optional(),
-  totpEnabled: z.boolean().optional()
-})
+// const ChorusUserApiSchema = z.object({
+//   id: z.string().optional(),
+//   firstName: z.string().optional(),
+//   lastName: z.string().optional(),
+//   username: z.string().optional(),
+//   status: z.string().optional(),
+//   roles: z.array(z.string()).optional(),
+//   createdAt: z.date().optional(),
+//   updatedAt: z.date().optional(),
+//   passwordChanged: z.boolean().optional(),
+//   totpEnabled: z.boolean().optional()
+// })
 
-const userMapper = (user: ChorusUserApi): User => {
-  return {
-    id: user.id || '',
-    firstName: user.firstName || '',
-    lastName: user.lastName || '',
-    status: (user.status as UserStatusEnum) || '',
-    roles: user.roles?.map((u) => u as UserRoleEnum) || [],
-    createdAt: new Date(user.createdAt || ''),
-    updatedAt: new Date(user.updatedAt || ''),
-    passwordChanged: user.passwordChanged || false,
-    totpEnabled: user.totpEnabled || false,
-    email: 'not@implemented.yet'
-  }
-}
+// const userMapper = (user: ChorusUserApi): User => {
+//   return {
+//     id: user.id || '',
+//     firstName: user.firstName || '',
+//     lastName: user.lastName || '',
+//     status: (user.status as UserStatusEnum) || '',
+//     roles: user.roles?.map((u) => u as UserRoleEnum) || [],
+//     createdAt: new Date(user.createdAt || ''),
+//     updatedAt: new Date(user.updatedAt || ''),
+//     passwordChanged: user.passwordChanged || false,
+//     totpEnabled: user.totpEnabled || false,
+//     email: 'not@implemented.yet'
+//   }
+// }
 
 class UserLocalStorageDataSourceImpl implements UserDataSource {
   private static instance: UserLocalStorageDataSourceImpl
@@ -75,7 +75,8 @@ class UserLocalStorageDataSourceImpl implements UserDataSource {
       })
 
       return user.email
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error)
       throw error
     }
   }
@@ -84,7 +85,7 @@ class UserLocalStorageDataSourceImpl implements UserDataSource {
     try {
       const email = cookies().get('session')?.value
       return await storage.getItem(email)
-    } catch (error: any) {
+    } catch (error) {
       console.error(error)
       throw error
     }
@@ -93,7 +94,8 @@ class UserLocalStorageDataSourceImpl implements UserDataSource {
   async get(username: string): Promise<User> {
     try {
       return await storage.getItem(username)
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error)
       throw error
     }
   }

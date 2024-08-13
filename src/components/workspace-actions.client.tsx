@@ -15,7 +15,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import { WorkspacesResponse } from '~/domain/model'
 
 import { Icons } from './ui/icons'
 
@@ -44,11 +43,7 @@ export function DropdownMenuActions({ id }: { id?: string }) {
   )
 }
 
-export function CreateWorkspaceAction({
-  cb
-}: {
-  cb?: (w?: WorkspacesResponse) => void
-}) {
+export function CreateWorkspaceAction() {
   const router = useRouter()
 
   async function handleCreate() {

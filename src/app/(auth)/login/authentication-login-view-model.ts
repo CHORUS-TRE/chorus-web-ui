@@ -10,6 +10,7 @@ import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { AuthenticationLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/authentication-local-storage-data-source-impl'
 import { env } from '~/env'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function authenticationLogin(prevState: any, formData: FormData) {
   const dataSource =
     env.DATA_SOURCE === 'local'

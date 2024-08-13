@@ -17,7 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
@@ -42,7 +41,7 @@ import {
 import placeholder from '/public/placeholder.svg'
 
 export default async function WorkbenchList() {
-  let workbenches = await workbenchList()
+  const workbenches = await workbenchList()
 
   const TableHeads = () => (
     <>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Pyramid, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 
 import { userMe } from '@/app/user-view-model.server'
 import { useAuth } from '@/components/auth-context'
@@ -14,7 +14,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
@@ -24,17 +23,6 @@ import { logout } from '~/app/(auth)/login/authentication-login-view-model'
 import { UserResponse } from '~/domain/model'
 
 import userPlaceholder from '/public/placeholder-user.jpg'
-
-const plateform = {
-  navigation: [
-    'My Workspace',
-    'Workspaces',
-    'Data ',
-    'Community',
-    'Getting Started'
-  ]
-}
-const showLargeLeftSidebar = true
 
 export function Header() {
   const [user, setUser] = useState<UserResponse['data']>()
@@ -51,6 +39,7 @@ export function Header() {
   useEffect(() => {
     userMe()
       .then((response) => {
+        console.log(response)
         if (response?.error) setError(response.error)
         if (response?.data) setUser(response?.data)
       })
@@ -115,16 +104,6 @@ export function Header() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem>
-              <Link href="/" passHref>
-                Dashboard
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="#" passHref>
-                Create Workspace
-              </Link>
-            </DropdownMenuItem> */}
             <DropdownMenuItem>
               <Link href="#" passHref>
                 Settings

@@ -5,6 +5,12 @@ import { WorkbenchDataSource } from '../workbench-data-source'
 
 const storage = require('node-persist')
 
+function getRandomWorkbenchState(): WorkbenchState {
+  const states = Object.values(WorkbenchState)
+  const randomIndex = Math.floor(Math.random() * states.length)
+
+  return states[randomIndex] as WorkbenchState
+}
 export class WorkbenchLocalStorageDataSourceImpl
   implements WorkbenchDataSource
 {
@@ -26,12 +32,6 @@ export class WorkbenchLocalStorageDataSourceImpl
 
   async create(workbench: WorkbenchCreateModel): Promise<string> {
     try {
-      function getRandomWorkbenchState(): WorkbenchState {
-        const states = Object.values(WorkbenchState)
-        const randomIndex = Math.floor(Math.random() * states.length)
-        return states[randomIndex] as WorkbenchState
-      }
-
       const nextWorkbench: Workbench = WorkbenchSchema.parse({
         ...workbench,
         id: crypto.randomUUID(),
@@ -53,40 +53,56 @@ export class WorkbenchLocalStorageDataSourceImpl
 
       return nextWorkbench.id
     } catch (error) {
+      console.error(error)
       throw error
     }
   }
 
   async get(id: string): Promise<Workbench> {
-    const response = await storage.getItem(id)
+    try {
+      const response = await storage.getItem(id)
 
-    return WorkbenchSchema.parse({
-      ...response,
-      updatedAt: new Date(response.updatedAt),
-      createdAt: new Date(response.createdAt),
-      archivedAt: response.archivedAt
-        ? new Date(response.archivedAt)
-        : undefined
-    })
+      return WorkbenchSchema.parse({
+        ...response,
+        updatedAt: new Date(response.updatedAt),
+        createdAt: new Date(response.createdAt),
+        archivedAt: response.archivedAt
+          ? new Date(response.archivedAt)
+          : undefined
+      })
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
   }
 
   async delete(id: string): Promise<boolean> {
-    const workbenchIds = await storage.getItem('workbenchIds')
-    if (!workbenchIds) throw new Error('Workspace not found')
+    try {
+      const workbenchIds = await storage.getItem('workbenchIds')
+      if (!workbenchIds) throw new Error('Workspace not found')
 
-    await storage.removeItem(id)
-    await storage.setItem(
-      'workbenchIds',
-      workbenchIds.filter((workbenchId: string) => workbenchId !== id)
-    )
+      await storage.removeItem(id)
+      await storage.setItem(
+        'workbenchIds',
+        workbenchIds.filter((workbenchId: string) => workbenchId !== id)
+      )
 
-    return true
+      return true
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
   }
 
   async list(): Promise<Workbench[]> {
-    const workbenchIds = await storage.getItem('workbenchIds')
-    if (!workbenchIds) return []
+    try {
+      const workbenchIds = await storage.getItem('workbenchIds')
+      if (!workbenchIds) return []
 
-    return await Promise.all(workbenchIds?.map((id: string) => this.get(id)))
+      return await Promise.all(workbenchIds?.map((id: string) => this.get(id)))
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
   }
 }

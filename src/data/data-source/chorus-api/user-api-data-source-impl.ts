@@ -4,7 +4,6 @@ import { UserDataSource } from '@/data/data-source'
 import { User } from '@/domain/model'
 import {
   UserCreateModel,
-  UserResponse,
   UserRoleEnum,
   UserSchema,
   UserStatusEnum
@@ -67,7 +66,8 @@ class UserApiDataSourceImpl implements UserDataSource {
 
       // return the validated domain object
       return UserSchema.parse(user)
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error)
       throw error
     }
   }

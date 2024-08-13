@@ -1,5 +1,5 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
+import { AuthenticationRequest } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
@@ -16,7 +16,8 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       }
 
       return token
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error)
       throw error
     }
   }

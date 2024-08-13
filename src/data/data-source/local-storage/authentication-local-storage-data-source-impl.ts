@@ -1,6 +1,8 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
+import { AuthenticationRequest } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const storage = require('node-persist')
 
 class AuthenticationLocalStorageDataSourceImpl
@@ -29,7 +31,8 @@ class AuthenticationLocalStorageDataSourceImpl
       }
 
       return data.email
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error)
       throw error
     }
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -15,13 +15,6 @@ import { Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
 export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
-  const [showLargeLeftSidebar, setShowLargeLeftSidebar] = useState(true)
-  const [showRightSidebar, setShowRightSidebar] = useState(false)
-
-  const handleToggleLeftSidebar = () => {
-    setShowLargeLeftSidebar(!showLargeLeftSidebar)
-  }
-
   if (!workspace) {
     return <div>Workspace not found</div>
   }
@@ -150,7 +143,7 @@ export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
   )
 }
 
-function LineChart(props: any) {
+function LineChart(props: React.HTMLProps<HTMLDivElement>) {
   return (
     <div {...props}>
       <ResponsiveLine
