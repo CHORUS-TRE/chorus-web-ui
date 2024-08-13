@@ -79,6 +79,12 @@ export interface ChorusApp {
    * @memberof ChorusApp
    */
   updatedAt?: Date
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  prettyName?: string
 }
 
 /**
@@ -119,7 +125,8 @@ export function ChorusAppFromJSONTyped(
       : new Date(json['createdAt']),
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
-      : new Date(json['updatedAt'])
+      : new Date(json['updatedAt']),
+    prettyName: !exists(json, 'prettyName') ? undefined : json['prettyName']
   }
 }
 
@@ -142,6 +149,7 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+    prettyName: value.prettyName
   }
 }

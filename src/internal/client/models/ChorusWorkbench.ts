@@ -16,82 +16,100 @@ import { exists, mapValues } from '../runtime'
 /**
  *
  * @export
- * @interface ChorusAppInstance
+ * @interface ChorusWorkbench
  */
-export interface ChorusAppInstance {
+export interface ChorusWorkbench {
   /**
    *
    * @type {string}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
   id?: string
   /**
    *
    * @type {string}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
   tenantId?: string
   /**
    *
    * @type {string}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
   userId?: string
   /**
    *
    * @type {string}
-   * @memberof ChorusAppInstance
-   */
-  appId?: string
-  /**
-   *
-   * @type {string}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
   workspaceId?: string
   /**
    *
    * @type {string}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
-  workbenchId?: string
+  name?: string
   /**
    *
    * @type {string}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
+   */
+  shortName?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkbench
+   */
+  description?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkbench
    */
   status?: string
   /**
    *
+   * @type {Array<string>}
+   * @memberof ChorusWorkbench
+   */
+  appInsanceIds?: Array<string>
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ChorusWorkbench
+   */
+  appInstances?: Array<string>
+  /**
+   *
    * @type {Date}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
   createdAt?: Date
   /**
    *
    * @type {Date}
-   * @memberof ChorusAppInstance
+   * @memberof ChorusWorkbench
    */
   updatedAt?: Date
 }
 
 /**
- * Check if a given object implements the ChorusAppInstance interface.
+ * Check if a given object implements the ChorusWorkbench interface.
  */
-export function instanceOfChorusAppInstance(value: object): boolean {
+export function instanceOfChorusWorkbench(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusAppInstanceFromJSON(json: any): ChorusAppInstance {
-  return ChorusAppInstanceFromJSONTyped(json, false)
+export function ChorusWorkbenchFromJSON(json: any): ChorusWorkbench {
+  return ChorusWorkbenchFromJSONTyped(json, false)
 }
 
-export function ChorusAppInstanceFromJSONTyped(
+export function ChorusWorkbenchFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusAppInstance {
+): ChorusWorkbench {
   if (json === undefined || json === null) {
     return json
   }
@@ -99,10 +117,17 @@ export function ChorusAppInstanceFromJSONTyped(
     id: !exists(json, 'id') ? undefined : json['id'],
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
     userId: !exists(json, 'userId') ? undefined : json['userId'],
-    appId: !exists(json, 'appId') ? undefined : json['appId'],
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
-    workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
+    name: !exists(json, 'name') ? undefined : json['name'],
+    shortName: !exists(json, 'shortName') ? undefined : json['shortName'],
+    description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
+    appInsanceIds: !exists(json, 'appInsanceIds')
+      ? undefined
+      : json['appInsanceIds'],
+    appInstances: !exists(json, 'appInstances')
+      ? undefined
+      : json['appInstances'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -112,7 +137,7 @@ export function ChorusAppInstanceFromJSONTyped(
   }
 }
 
-export function ChorusAppInstanceToJSON(value?: ChorusAppInstance | null): any {
+export function ChorusWorkbenchToJSON(value?: ChorusWorkbench | null): any {
   if (value === undefined) {
     return undefined
   }
@@ -123,10 +148,13 @@ export function ChorusAppInstanceToJSON(value?: ChorusAppInstance | null): any {
     id: value.id,
     tenantId: value.tenantId,
     userId: value.userId,
-    appId: value.appId,
     workspaceId: value.workspaceId,
-    workbenchId: value.workbenchId,
+    name: value.name,
+    shortName: value.shortName,
+    description: value.description,
     status: value.status,
+    appInsanceIds: value.appInsanceIds,
+    appInstances: value.appInstances,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
