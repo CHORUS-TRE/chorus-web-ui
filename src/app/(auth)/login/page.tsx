@@ -7,12 +7,12 @@ import { redirect } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import { useFormState } from 'react-dom'
 
+import { authenticationLogin } from '@/components/actions/authentication-login-view-model'
+
 import { useAuth } from '~/components/auth-context'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-
-import { authenticationLogin } from './authentication-login-view-model'
 
 import placeholder from '/public/placeholder.svg'
 
@@ -26,7 +26,6 @@ export default function Login() {
 
   useEffect(() => {
     if (formState.data) {
-      console.log(formState)
       const path = searchParams.get('redirect') || '/'
       setAuthenticated(true)
       redirect(path)

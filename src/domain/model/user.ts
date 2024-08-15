@@ -34,7 +34,9 @@ export type User = z.infer<typeof UserSchema>
 
 export const UserCreateSchema = z.object({
   email: z.string().email(),
-  password: z.string()
+  password: z.string(),
+  firstName: z.string().min(2),
+  lastName: z.string().min(2)
 })
 
 export type UserCreateModel = z.infer<typeof UserCreateSchema>

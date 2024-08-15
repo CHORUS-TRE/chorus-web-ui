@@ -53,10 +53,10 @@ class UserApiDataSourceImpl implements UserDataSource {
       body: {
         username: user.email,
         password: user.password,
-        status: 'active',
-        firstName: 'Albert',
-        lastName: 'Levert',
-        roles: ['admin']
+        firstName: user.firstName,
+        lastName: user.lastName,
+        roles: ['admin'],
+        status: 'active'
       }
     })
 
