@@ -1,4 +1,8 @@
-import { UserCreateModel, UserResponse } from '@/domain/model'
+import {
+  UserCreatedResponse,
+  UserCreateModel,
+  UserResponse
+} from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 
 import { UserDataSource } from '../data-source'
@@ -10,17 +14,16 @@ export class UserRepositoryImpl implements UserRepository {
     this.dataSource = dataSource
   }
 
-  async create(user: UserCreateModel): Promise<UserResponse> {
+  async create(user: UserCreateModel): Promise<UserCreatedResponse> {
     try {
       const data = await this.dataSource.create(user)
       if (!data) {
         return { error: 'User not created' }
       }
 
-      const me = await this.dataSource.get(user.email)
-      return { data: me }
+      return { data }
     } catch (error) {
-      console.log(error)
+      console.error(error)
       return { error: error.message }
     }
   }

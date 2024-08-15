@@ -38,9 +38,9 @@ export interface WorkspacesResponse {
 export const WorkspaceCreateModelSchema = z.object({
   tenantId: z.string(),
   ownerId: z.string(),
-  name: z.string(),
-  shortName: z.string().optional(),
-  description: z.string(),
+  name: z.string().min(3),
+  shortName: z.string().min(3).optional(),
+  description: z.string().min(5),
   memberIds: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional()
 })

@@ -49,31 +49,49 @@ class UserApiDataSourceImpl implements UserDataSource {
   }
 
   async create(user: UserCreateModel): Promise<string> {
-    throw new Error('Method not implemented.')
+    const response = await this.service.userServiceCreateUser({
+      body: {
+        username: user.email,
+        password: user.password,
+        status: 'active',
+        firstName: 'Albert',
+        lastName: 'Levert',
+        roles: ['admin']
+      }
+    })
+
+    if (!response?.result?.id) throw new Error('Error creating user')
+
+    return response?.result?.id
   }
 
   async me(): Promise<User> {
-    try {
-      const response = await this.service.userServiceGetUserMe()
+    const response = await this.service.userServiceGetUserMe()
 
-      if (!response?.result?.me) throw new Error('Error fetching user')
+    if (!response?.result?.me) throw new Error('Error fetching user')
 
-      // Validated the response api
-      const validatedInput = ChorusUserApiSchema.parse(response?.result?.me)
+    // Validated the response api
+    const validatedInput = ChorusUserApiSchema.parse(response?.result?.me)
 
-      // map the response to the domain
-      const user = apiToDomain(validatedInput)
+    // map the response to the domain
+    const user = apiToDomain(validatedInput)
 
-      // return the validated domain object
-      return UserSchema.parse(user)
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
+    // return the validated domain object
+    return UserSchema.parse(user)
   }
 
   async get(id: string): Promise<User> {
-    throw new Error('Method not implemented.')
+    const response = await this.service.userServiceGetUser({ id })
+    if (!response?.result?.user) throw new Error('Error fetching user')
+
+    // Validated the response api
+    const validatedInput = ChorusUserApiSchema.parse(response?.result?.user)
+
+    // map the response to the domain
+    const user = apiToDomain(validatedInput)
+
+    // return the validated domain object
+    return UserSchema.parse(user)
   }
 }
 

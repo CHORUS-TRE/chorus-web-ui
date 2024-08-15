@@ -52,7 +52,8 @@ const domainToApiMapper = (w: WorkspaceCreateModel): ChorusWorkspaceApi => {
     userId: w.ownerId,
     name: w.name,
     shortName: w.shortName,
-    description: w.description
+    description: w.description,
+    status: 'active' // TODO: should be w.status ?
   }
 }
 
@@ -68,62 +69,52 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   }
 
   async create(workspace: WorkspaceCreateModel): Promise<string> {
-    try {
-      const validatedInput = WorkspaceCreateModelSchema.parse(workspace)
-      const w = domainToApiMapper(validatedInput)
-      const validatedRequest = WorkspaceApiSchema.parse(w)
-      const response = await this.service.workspaceServiceCreateWorkspace({
-        body: validatedRequest
-      })
+    const validatedInput = WorkspaceCreateModelSchema.parse(workspace)
+    const w = domainToApiMapper(validatedInput)
+    const validatedRequest = WorkspaceApiSchema.parse(w)
 
-      if (!response.result?.id) {
-        throw new Error('Error creating workspace')
-      }
+    const response = await this.service.workspaceServiceCreateWorkspace({
+      body: validatedRequest
+    })
 
-      return response.result?.id
-    } catch (error) {
-      console.error(error)
-      throw error
+    if (!response.result?.id) {
+      throw new Error('Error creating workspace')
     }
+
+    return response.result?.id
   }
 
   async get(id: string): Promise<Workspace> {
-    try {
-      const response = await this.service.workspaceServiceGetWorkspace({ id })
+    const response = await this.service.workspaceServiceGetWorkspace({ id })
 
-      if (!response.result?.workspace) {
-        throw new Error('Error fetching workspace')
-      }
-
-      const validatedInput = WorkspaceApiSchema.parse(
-        response.result?.workspace
-      )
-      const workspace = apiToDomainMapper(validatedInput)
-      return WorkspaceSchema.parse(workspace)
-    } catch (error) {
-      console.error(error)
-      throw error
+    if (!response.result?.workspace) {
+      throw new Error('Error fetching workspace')
     }
+
+    const validatedInput = WorkspaceApiSchema.parse(response.result?.workspace)
+    const workspace = apiToDomainMapper(validatedInput)
+    return WorkspaceSchema.parse(workspace)
   }
 
   async delete(id: string): Promise<boolean> {
-    throw new Error('Method not implemented.')
+    const response = await this.service.workspaceServiceDeleteWorkspace({ id })
+
+    if (!response.result) {
+      throw new Error('Error deleting workspace')
+    }
+
+    return true
   }
 
   async list(): Promise<Workspace[]> {
-    try {
-      const response = await this.service.workspaceServiceListWorkspaces()
+    const response = await this.service.workspaceServiceListWorkspaces()
 
-      if (!response.result) throw new Error('Error fetching workspaces')
+    if (!response.result) throw new Error('Error fetching workspaces')
 
-      const parsed = response.result.map((r) => WorkspaceApiSchema.parse(r))
-      const workspaces = parsed.map(apiToDomainMapper)
+    const parsed = response.result.map((r) => WorkspaceApiSchema.parse(r))
+    const workspaces = parsed.map(apiToDomainMapper)
 
-      return workspaces.map((w) => WorkspaceSchema.parse(w))
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
+    return workspaces.map((w) => WorkspaceSchema.parse(w))
   }
 }
 

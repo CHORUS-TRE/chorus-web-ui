@@ -7,8 +7,11 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
 
   async login(data: AuthenticationRequest): Promise<string> {
     try {
+      const nextData = { username: data.email, password: data.password }
       const authenticate =
-        await this.authService.authenticationServiceAuthenticate({ body: data })
+        await this.authService.authenticationServiceAuthenticate({
+          body: nextData
+        })
 
       const token = authenticate.result?.token
       if (!token) {

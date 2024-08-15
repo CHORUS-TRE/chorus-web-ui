@@ -20,7 +20,7 @@ export const UserSchema = z.object({
   id: z.string(),
   firstName: z.string(),
   lastName: z.string(),
-  email: z.string().email(),
+  email: z.string(), //.email(), TODT: fix username/email in backend
   status: z.nativeEnum(UserStatusEnum),
   roles: z.array(z.nativeEnum(UserRoleEnum)).optional(),
   totpEnabled: z.boolean().optional(),
@@ -41,5 +41,10 @@ export type UserCreateModel = z.infer<typeof UserCreateSchema>
 
 export interface UserResponse {
   data?: User
+  error?: string
+}
+
+export interface UserCreatedResponse {
+  data?: string
   error?: string
 }

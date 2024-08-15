@@ -20,7 +20,6 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       if (!response) return { error: 'Error creating workspace' }
 
       const w = await this.dataSource.get(response)
-
       return { data: w }
     } catch (error) {
       return { error: error.message }
