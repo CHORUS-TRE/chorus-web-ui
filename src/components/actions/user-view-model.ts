@@ -49,7 +49,6 @@ export async function userCreate(
 
     return await useCase.execute({ email, password })
   } catch (error) {
-    console.log(error)
     return { error: error.message }
   }
 }

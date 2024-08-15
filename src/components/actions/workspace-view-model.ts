@@ -1,22 +1,39 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
+import type { ZodIssue } from 'zod'
 
 import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
 import { env } from '@/env'
 
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-api-data-source-impl'
 import { WorkspaceLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
-import { workspaces } from '~/data/data-source/local-storage/mocks'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
+  WorkspaceCreateModel,
   WorkspaceDeleteResponse,
   WorkspaceResponse,
   WorkspacesResponse
 } from '~/domain/model'
+import { WorkspaceCreateModelSchema } from '~/domain/model/workspace'
 import { WorkspaceCreate } from '~/domain/use-cases'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
+
+import { IFormState } from './utils'
+
+const getRepository = async () => {
+  const session = cookies().get('session')?.value || ''
+  const dataSource =
+    env.DATA_SOURCE === 'local'
+      ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
+          env.DATA_SOURCE_LOCAL_DIR
+        )
+      : new WorkspaceDataSourceImpl(session)
+
+  return new WorkspaceRepositoryImpl(dataSource)
+}
 
 export async function workspaceDelete(
   id?: string
@@ -25,15 +42,7 @@ export async function workspaceDelete(
     if (!id) {
       throw new Error('Invalid workspace id')
     }
-
-    const session = cookies().get('session')?.value || ''
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new WorkspaceDataSourceImpl(session)
-    const repository = new WorkspaceRepositoryImpl(dataSource)
+    const repository = await getRepository()
     const useCase = new WorkspaceDelete(repository)
 
     return await useCase.execute(id)
@@ -60,19 +69,41 @@ export async function workspaceList(): Promise<WorkspacesResponse> {
   }
 }
 
-export async function workspaceCreate(): Promise<WorkspaceResponse> {
+export async function workspaceCreate(
+  prevState: IFormState,
+  formData: FormData
+): Promise<IFormState> {
   try {
-    const session = cookies().get('session')?.value || ''
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new WorkspaceDataSourceImpl(session)
-    const repository = new WorkspaceRepositoryImpl(dataSource)
+    const repository = await getRepository()
     const useCase = new WorkspaceCreate(repository)
 
-    return await useCase.execute(workspaces[Math.floor(Math.random() * 10)]!)
+    // const rawFormData = Object.fromEntries(formData)
+    const workspace: WorkspaceCreateModel = {
+      name: formData.get('name') as string,
+      tenantId: formData.get('tenantId') as string,
+      ownerId: formData.get('ownerId') as string,
+      description: formData.get('description') as string,
+      shortName: formData.get('shortName') as string,
+      memberIds: formData.getAll('memberIds') as string[],
+      tags: formData.getAll('tags') as string[]
+    }
+
+    const validation = WorkspaceCreateModelSchema.safeParse(workspace)
+
+    if (!validation.success) {
+      return { issues: validation.error.issues }
+    }
+
+    const nextWorkspace = WorkspaceCreateModelSchema.parse(workspace)
+    const w = await useCase.execute(nextWorkspace)
+
+    revalidatePath('/')
+
+    return {
+      ...prevState,
+      data: 'Successfully created workspace',
+      error: w.error
+    }
   } catch (error) {
     console.error(error)
     return { error: error.message }
@@ -87,15 +118,7 @@ export async function workspaceGet(
   }
 
   try {
-    const session = cookies().get('session')?.value || ''
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new WorkspaceDataSourceImpl(session)
-
-    const repository = new WorkspaceRepositoryImpl(dataSource)
+    const repository = await getRepository()
     const useCase = new WorkspaceGet(repository)
 
     return await useCase.execute(workspaceId)

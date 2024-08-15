@@ -29,14 +29,12 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
   if (login.error)
     return {
       ...prevState,
-      data: undefined,
       error: login.error
     }
 
   if (!login.data)
     return {
       ...prevState,
-      data: undefined,
       error: 'Something went wrong, please try again'
     }
 
@@ -49,16 +47,8 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
 
   return {
     ...prevState,
-    data: login.data,
-    error: undefined
+    data: login.data
   }
-}
-
-export async function getSession() {
-  const session = cookies().get('session')?.value
-  if (!session) return null
-
-  return session
 }
 
 export async function logout() {
