@@ -1,7 +1,11 @@
-export default function Page() {
+'use server'
+
+import WorkbenchTable from '~/components/workbench-table'
+
+export default async function Page() {
   return (
-    <div>
-      <p>Apps</p>
+    <div className="flex flex-col">
+      <WorkbenchTable />
     </div>
   )
 }

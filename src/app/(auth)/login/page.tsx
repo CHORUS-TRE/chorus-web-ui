@@ -3,8 +3,7 @@
 import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { useSearchParams } from 'next/navigation'
+import { redirect, useSearchParams } from 'next/navigation'
 import { useFormState } from 'react-dom'
 
 import { authenticationLogin } from '@/components/actions/authentication-login-view-model'
@@ -14,7 +13,7 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
-import placeholder from '/public/placeholder.svg'
+import placeholder from '/public/login.png'
 
 export default function Login() {
   const searchParams = useSearchParams()!
@@ -33,13 +32,14 @@ export default function Login() {
   }, [formState?.data, searchParams, setAuthenticated])
 
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="border-slate-600 bg-slate-900  bg-opacity-85 lg:grid lg:grid-cols-[2fr_1fr]">
       <div className="flex items-center justify-center py-12">
         <form action={formAction}>
           <div className="mx-auto grid w-[350px] gap-6">
-            <div className="grid gap-2 text-center">
-              <h1 className="text-3xl font-bold">Login</h1>
-              <p className="text-balance text-muted-foreground">
+            <div className="grid gap-2 text-center text-muted">
+              <h3 className="mb-4">Welcome to CHORUS!</h3>
+              <h1 className="text-3xl font-bold text-muted">Login</h1>
+              <p className="text-balance text-muted">
                 Enter your email below to login to your account
               </p>
               {isAuthenticated && (
@@ -49,7 +49,9 @@ export default function Login() {
 
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-muted">
+                  Email
+                </Label>
                 <Input
                   id="username"
                   type="input"
@@ -61,7 +63,9 @@ export default function Login() {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-muted">
+                    Password
+                  </Label>
                 </div>
                 <Input
                   id="password"
@@ -73,7 +77,8 @@ export default function Login() {
               </div>
               <Button
                 type="submit"
-                className="w-full"
+                variant="link"
+                className="w-full bg-accent text-accent-foreground hover:bg-accent"
                 disabled={isAuthenticated}
               >
                 Login
@@ -84,27 +89,29 @@ export default function Login() {
             )}
             <Link
               href="#"
-              className="ml-auto inline-block text-sm underline"
+              className="ml-auto inline-block text-sm text-muted underline"
               prefetch={false}
             >
               Forgot your password?
             </Link>
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-sm text-muted">
               Don&apos;t have an account?{' '}
-              <Link href="/register" className="underline" prefetch={false}>
+              <Link
+                href="/register"
+                className="text-muted-foreground underline"
+                prefetch={false}
+              >
                 Register
               </Link>
             </div>
           </div>
         </form>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-opacity-0 bg-cover bg-center lg:block ">
         <Image
           src={placeholder}
           alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="bg-cover bg-center dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>
