@@ -4,7 +4,10 @@
 
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
-import { Workbench, WorkbenchCreateModel } from '~/domain/model'
+import {
+  Workbench,
+  WorkbenchCreate as WorkbenchCreateModel
+} from '~/domain/model'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
@@ -16,9 +19,10 @@ import '@testing-library/jest-dom'
 const MOCK_API_RESPONSE = {
   id: '1',
   tenantId: '1',
+  name: 'toto',
   userId: '2',
-  appId: '3',
   workspaceId: '4',
+  description: 'descriptiojn',
   status: 'active',
   createdAt: new Date('2024-07-17T12:30:54Z'),
   updatedAt: new Date('2024-07-17T12:30:54Z')
@@ -39,8 +43,8 @@ const { userId, ...other } = MOCK_API_RESPONSE
 const MOCK_WORKBENCH_RESULT = {
   ...other,
   ownerId: '2',
-  name: 'not yet implemented',
-  description: 'not yet implemented',
+  name: 'toto',
+  description: 'descriptiojn',
   memberIds: ['2'],
   tags: ['not', 'yet', 'implemented'],
   archivedAt: undefined
@@ -77,7 +81,7 @@ describe('WorkbenchUseCases', () => {
         json: () =>
           Promise.resolve({
             result: {
-              appInstance: MOCK_API_RESPONSE
+              workbench: MOCK_API_RESPONSE
             }
           }),
         status: 200,

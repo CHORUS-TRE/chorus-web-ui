@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import Home from '@/app/page'
+import Home from '@/app/(home)/page'
 import { render, screen } from '@testing-library/react'
 
 import '@testing-library/jest-dom'
