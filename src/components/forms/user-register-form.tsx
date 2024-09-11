@@ -111,7 +111,7 @@ export default function UserRegisterForm() {
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">
-        {state?.data}
+        {JSON.stringify(state, null, 2)}
       </p>
       {state?.error && <p className="text-red-500">{state.error}</p>}
 

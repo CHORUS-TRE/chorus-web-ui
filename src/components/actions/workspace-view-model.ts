@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
-import type { ZodIssue } from 'zod'
 
 import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
 import { env } from '@/env'
@@ -12,7 +11,6 @@ import { WorkspaceLocalStorageDataSourceImpl } from '~/data/data-source/local-st
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
   WorkspaceCreateModel,
-  WorkspaceDeleteResponse,
   WorkspaceResponse,
   WorkspacesResponse
 } from '~/domain/model'
@@ -36,17 +34,27 @@ const getRepository = async () => {
 }
 
 export async function workspaceDelete(
-  id?: string
-): Promise<WorkspaceDeleteResponse> {
+  prevState: IFormState,
+  formData: FormData
+): Promise<IFormState> {
   try {
+    const id = formData.get('id') as string
+
     if (!id) {
       throw new Error('Invalid workspace id')
     }
     const repository = await getRepository()
     const useCase = new WorkspaceDelete(repository)
 
-    return await useCase.execute(id)
+    const r = await useCase.execute(id)
+    if (r.error) {
+      return { error: r.error }
+    }
+
+    revalidatePath('/')
+    return { data: 'Successfully deleted workspace' }
   } catch (error) {
+    console.error(error)
     return { error: error.message }
   }
 }

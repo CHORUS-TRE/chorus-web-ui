@@ -45,6 +45,13 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
     path: '/'
   })
 
+  cookies().set('jwttoken', login.data, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24 * 7, // One week
+    path: '/'
+  })
+
   return {
     ...prevState,
     data: login.data
@@ -61,7 +68,7 @@ export async function updateSession(request: NextRequest) {
   if (!session) return
 
   // Refresh the session so it doesn't expire
-  const expires = new Date(Date.now() + 10 * 1000)
+  const expires = new Date(Date.now() + 5 * 1000)
   const res = NextResponse.next()
   res.cookies.set({
     name: 'session',
