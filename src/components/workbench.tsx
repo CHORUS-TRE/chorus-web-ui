@@ -8,7 +8,7 @@ export default function Workbench() {
   return background ? (
     <iframe
       title="Workbench"
-      src={`http://localhost:5000/api/rest/v1/workbenchs/${background}/stream`}
+      src={`/api/rest/v1/workbenchs/${background}/stream`}
       allow="autoplay; fullscreen; clipboard-write;"
       style={{ width: '100vw', height: '100vh' }}
       className="fixed left-0 top-11 z-10 h-full w-full"

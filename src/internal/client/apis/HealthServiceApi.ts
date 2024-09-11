@@ -13,8 +13,6 @@
  */
 
 import * as runtime from '../runtime'
-import type { RpcStatus } from '../models/index'
-import { RpcStatusFromJSON, RpcStatusToJSON } from '../models/index'
 
 /**
  *

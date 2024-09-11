@@ -12,14 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { ChorusInitializeTenantRequest } from '../models/index'
+import { ChorusInitializeTenantRequestToJSON } from '../models/index'
 import * as runtime from '../runtime'
-import type { ChorusInitializeTenantRequest, RpcStatus } from '../models/index'
-import {
-  ChorusInitializeTenantRequestFromJSON,
-  ChorusInitializeTenantRequestToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
-} from '../models/index'
 
 export interface StewardServiceInitializeTenantRequest {
   body: ChorusInitializeTenantRequest

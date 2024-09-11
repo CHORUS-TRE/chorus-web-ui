@@ -12,20 +12,15 @@
  * Do not edit the class manually.
  */
 
-import * as runtime from '../runtime'
 import type {
   ChorusAuthenticationReply,
-  ChorusCredentials,
-  RpcStatus
+  ChorusCredentials
 } from '../models/index'
 import {
   ChorusAuthenticationReplyFromJSON,
-  ChorusAuthenticationReplyToJSON,
-  ChorusCredentialsFromJSON,
-  ChorusCredentialsToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusCredentialsToJSON
 } from '../models/index'
+import * as runtime from '../runtime'
 
 export interface AuthenticationServiceAuthenticateRequest {
   body: ChorusCredentials

@@ -12,23 +12,17 @@
  * Do not edit the class manually.
  */
 
-import * as runtime from '../runtime'
 import type {
   ChorusCountUnreadNotificationsReply,
   ChorusGetNotificationsReply,
-  ChorusMarkNotificationsAsReadRequest,
-  RpcStatus
+  ChorusMarkNotificationsAsReadRequest
 } from '../models/index'
 import {
   ChorusCountUnreadNotificationsReplyFromJSON,
-  ChorusCountUnreadNotificationsReplyToJSON,
   ChorusGetNotificationsReplyFromJSON,
-  ChorusGetNotificationsReplyToJSON,
-  ChorusMarkNotificationsAsReadRequestFromJSON,
-  ChorusMarkNotificationsAsReadRequestToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusMarkNotificationsAsReadRequestToJSON
 } from '../models/index'
+import * as runtime from '../runtime'
 
 export interface NotificationServiceGetNotificationsRequest {
   paginationOffset?: number
