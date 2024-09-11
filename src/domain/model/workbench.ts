@@ -9,15 +9,25 @@ export enum WorkbenchState {
   EXITED = 'exited'
 }
 
-export const WorkbenchSchema = z.object({
-  id: z.string(),
+export const WorkbenchCreateSchema = z.object({
   tenantId: z.string(),
   ownerId: z.string(),
-  appId: z.string(),
+  workspaceId: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  memberIds: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional()
+})
+
+export const WorkbenchSchema = WorkbenchCreateSchema.extend({
+  id: z.string(),
+  name: z.string(),
+  shortName: z.string(),
+  description: z.string().optional(),
+  tenantId: z.string(),
+  ownerId: z.string(),
   workspaceId: z.string(),
   status: z.nativeEnum(WorkbenchState),
-  name: z.string(),
-  description: z.string().optional(),
 
   memberIds: z.array(z.string()),
   tags: z.array(z.string()),
@@ -29,6 +39,7 @@ export const WorkbenchSchema = z.object({
   // edges: z.array(EdgeSchema).optional(),
 })
 
+export type WorkbenchCreate = z.infer<typeof WorkbenchCreateSchema>
 export type Workbench = z.infer<typeof WorkbenchSchema>
 
 export interface WorkbenchResponse {
@@ -45,16 +56,3 @@ export interface WorkbenchesResponse {
   data?: Workbench[]
   error?: string
 }
-
-export const WorkbenchCreateModelSchema = z.object({
-  tenantId: z.string(),
-  ownerId: z.string(),
-  appId: z.string(),
-  workspaceId: z.string(),
-  name: z.string().optional(),
-  description: z.string().optional(),
-  memberIds: z.array(z.string()).optional(),
-  tags: z.array(z.string()).optional()
-})
-
-export type WorkbenchCreateModel = z.infer<typeof WorkbenchCreateModelSchema>

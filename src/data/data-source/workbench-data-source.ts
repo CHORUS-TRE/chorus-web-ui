@@ -1,4 +1,7 @@
-import { Workbench, WorkbenchCreateModel } from '@/domain/model'
+import {
+  Workbench,
+  WorkbenchCreate as WorkbenchCreateModel
+} from '@/domain/model'
 
 interface WorkbenchDataSource {
   create: (workbench: WorkbenchCreateModel) => Promise<string>

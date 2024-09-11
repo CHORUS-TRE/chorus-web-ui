@@ -1,41 +1,52 @@
 import { z } from 'zod'
 
 import { WorkbenchDataSource } from '@/data/data-source/'
-import { Workbench, WorkbenchCreateModel } from '@/domain/model'
 import {
-  WorkbenchCreateModelSchema,
+  Workbench,
+  WorkbenchCreate as WorkbenchCreateModel
+} from '@/domain/model'
+import {
+  WorkbenchCreateSchema,
   WorkbenchSchema,
   WorkbenchState
 } from '@/domain/model/workbench'
 
 import {
-  AppInstanceServiceApi,
-  ChorusAppInstance as ChorusAppInstanceApi
+  ChorusWorkbench as ChorusWorkbenchApi,
+  WorkbenchServiceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
-export const WorkbenchApiSchema = z.object({
-  id: z.string().optional(),
-  tenantId: z.string().optional(),
-  userId: z.string().optional(),
-  appId: z.string().optional(),
-  workspaceId: z.string().optional(),
-  status: z.string().optional(),
+// see src/internal/client/models/ChorusWorkbench.ts
+export const WorkbenchApiCreateSchema = z.object({
+  name: z.string().optional(),
+  shortName: z.string().optional(),
+  description: z.string().optional(),
+  status: z.string(),
+  tenantId: z.string(),
+  userId: z.string(),
+  appInstanceIds: z.array(z.string()).optional(),
+  appInstances: z.array(z.string()).optional(),
+  workspaceId: z.string().optional()
+})
+
+export const WorkbenchApiSchema = WorkbenchApiCreateSchema.extend({
+  id: z.string(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 })
 
-const apiToDomain = (w: ChorusAppInstanceApi): Workbench => {
+const apiToDomain = (w: ChorusWorkbenchApi): Workbench => {
   return {
     id: w.id || '',
+    name: w.name || '',
+    shortName: w.shortName || '',
+    description: w.description || '',
     tenantId: w.tenantId || '',
     ownerId: w.userId || '',
-    appId: w.appId || '',
     workspaceId: w.workspaceId || '',
     status:
       WorkbenchState[w.status?.toUpperCase() as keyof typeof WorkbenchState],
-    name: 'not yet implemented',
-    description: 'not yet implemented',
     memberIds: w.userId ? [w.userId] : [],
     tags: ['not', 'yet', 'implemented'],
     createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),
@@ -44,36 +55,38 @@ const apiToDomain = (w: ChorusAppInstanceApi): Workbench => {
   }
 }
 
-const domainToApi = (w: WorkbenchCreateModel): ChorusAppInstanceApi => {
+const domainToApi = (w: WorkbenchCreateModel): ChorusWorkbenchApi => {
   return {
     tenantId: w.tenantId,
     userId: w.ownerId,
-    appId: w.appId,
-    workspaceId: w.workspaceId
+    workspaceId: w.workspaceId,
+    status: 'active',
+    name: w.name,
+    shortName: w.name,
+    description: w.description
   }
 }
 
 class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   private configuration: Configuration
-  private service: AppInstanceServiceApi
+  private service: WorkbenchServiceApi
 
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`
     })
-    this.service = new AppInstanceServiceApi(this.configuration)
+    this.service = new WorkbenchServiceApi(this.configuration)
   }
 
   async create(workbench: WorkbenchCreateModel): Promise<string> {
     try {
       const validatedInput: WorkbenchCreateModel =
-        WorkbenchCreateModelSchema.parse(workbench)
-
+        WorkbenchCreateSchema.parse(workbench)
       const w = domainToApi(validatedInput)
+      const validatedRequest: ChorusWorkbenchApi =
+        WorkbenchApiCreateSchema.parse(w)
 
-      const validatedRequest: ChorusAppInstanceApi = WorkbenchApiSchema.parse(w)
-
-      const response = await this.service.appInstanceServiceCreateAppInstance({
+      const response = await this.service.workbenchServiceCreateWorkbench({
         body: validatedRequest
       })
 
@@ -90,16 +103,16 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
   async get(id: string): Promise<Workbench> {
     try {
-      const response = await this.service.appInstanceServiceGetAppInstance({
+      const response = await this.service.workbenchServiceGetWorkbench({
         id
       })
 
-      if (!response.result?.appInstance) {
+      if (!response.result?.workbench) {
         throw new Error('Error fetching workbench')
       }
 
       const validatedInput = WorkbenchApiSchema.parse(
-        response.result?.appInstance
+        response.result?.workbench
       )
 
       const workbench = apiToDomain(validatedInput)
@@ -112,7 +125,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
   async delete(id: string): Promise<boolean> {
     try {
-      const response = await this.service.appInstanceServiceDeleteAppInstance({
+      const response = await this.service.workbenchServiceDeleteWorkbench({
         id
       })
 
@@ -129,9 +142,10 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
   async list(): Promise<Workbench[]> {
     try {
-      const response = await this.service.appInstanceServiceListAppInstances()
+      const response = await this.service.workbenchServiceListWorkbenchs()
 
-      if (!response.result) throw new Error('Error fetching workbenchs')
+      if (!response.result) return []
+      // throw new Error('Error fetching workbenchs')
 
       const parsed = response.result.map((r) => WorkbenchApiSchema.parse(r))
       const workbenchs = parsed.map(apiToDomain)

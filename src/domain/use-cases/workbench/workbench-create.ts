@@ -1,5 +1,5 @@
 import {
-  WorkbenchCreateModel,
+  WorkbenchCreate as WorkbenchCreateModel,
   WorkbenchResponse
 } from '@/domain/model/workbench'
 import { WorkbenchRepository } from '@/domain/repository'

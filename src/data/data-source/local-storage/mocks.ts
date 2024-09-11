@@ -1,5 +1,5 @@
 import { WorkspaceCreateModel } from '~/domain/model'
-import { WorkbenchCreateModel } from '~/domain/model'
+import { WorkbenchCreate as WorkbenchCreateModel } from '~/domain/model'
 
 export const workspaces: WorkspaceCreateModel[] = [
   {
@@ -98,9 +98,8 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant1',
     ownerId: 'owner1',
-    appId: 'jupyter',
     workspaceId: 'workspace1',
-    name: 'Jupyter',
+    name: 'jupyter',
     description:
       'A powerful interactive notebook for data science and machine learning.',
     memberIds: ['member1', 'member2'],
@@ -109,7 +108,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant2',
     ownerId: 'owner2',
-    appId: 'rStudio',
     workspaceId: 'workspace2',
     name: 'RStudio',
     description:
@@ -120,7 +118,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant3',
     ownerId: 'owner3',
-    appId: 'visualStudioCode',
     workspaceId: 'workspace3',
     name: 'Visual Studio Code',
     description:
@@ -131,7 +128,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant4',
     ownerId: 'owner4',
-    appId: 'strada',
     workspaceId: 'workspace4',
     name: 'Strada',
     description:
@@ -142,7 +138,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant5',
     ownerId: 'owner5',
-    appId: 'python',
     workspaceId: 'workspace5',
     name: 'Python',
     description:
@@ -153,7 +148,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant6',
     ownerId: 'owner6',
-    appId: 'matlab',
     workspaceId: 'workspace6',
     name: 'MATLAB',
     description:
@@ -164,7 +158,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant7',
     ownerId: 'owner7',
-    appId: 'tableau',
     workspaceId: 'workspace7',
     name: 'Tableau',
     description:
@@ -175,7 +168,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant8',
     ownerId: 'owner8',
-    appId: 'sas',
     workspaceId: 'workspace8',
     name: 'SAS',
     description:
@@ -186,7 +178,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant9',
     ownerId: 'owner9',
-    appId: 'spss',
     workspaceId: 'workspace9',
     name: 'SPSS',
     description:
@@ -197,7 +188,6 @@ export const workbenches: WorkbenchCreateModel[] = [
   {
     tenantId: 'tenant10',
     ownerId: 'owner10',
-    appId: 'apacheZeppelin',
     workspaceId: 'workspace10',
     name: 'Apache Zeppelin',
     description:

@@ -1,3 +1,4 @@
+export type * from './app-instance-data-source'
 export type * from './authentication-data-source'
 export type * from './user-data-source'
 export type * from './workbench-data-source'

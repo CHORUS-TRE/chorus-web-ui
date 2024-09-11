@@ -1,5 +1,5 @@
 import {
-  WorkbenchCreateModel,
+  WorkbenchCreate as WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
   WorkbenchResponse

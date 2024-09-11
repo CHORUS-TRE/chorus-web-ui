@@ -1,4 +1,7 @@
-import { Workbench, WorkbenchCreateModel } from '~/domain/model'
+import {
+  Workbench,
+  WorkbenchCreate as WorkbenchCreateModel
+} from '~/domain/model'
 import { WorkbenchSchema, WorkbenchState } from '~/domain/model/workbench'
 
 import { WorkbenchDataSource } from '../workbench-data-source'

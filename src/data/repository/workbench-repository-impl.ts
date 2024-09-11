@@ -1,6 +1,6 @@
 import { WorkbenchDataSource } from '@/data/data-source'
 import {
-  WorkbenchCreateModel,
+  WorkbenchCreate as WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
   WorkbenchResponse
@@ -57,6 +57,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data }
     } catch (error) {
+      console.error(error)
       return { error: error.message }
     }
   }

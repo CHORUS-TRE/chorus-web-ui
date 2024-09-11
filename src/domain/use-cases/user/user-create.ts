@@ -1,8 +1,8 @@
-import { UserCreateModel, UserResponse } from '@/domain/model'
+import { UserCreatedResponse, UserCreateModel } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 
 export interface UserCreateUseCase {
-  execute(user: UserCreateModel): Promise<UserResponse>
+  execute(user: UserCreateModel): Promise<UserCreatedResponse>
 }
 
 export class UserCreate implements UserCreateUseCase {
@@ -12,7 +12,7 @@ export class UserCreate implements UserCreateUseCase {
     this.repository = repository
   }
 
-  async execute(user: UserCreateModel): Promise<UserResponse> {
+  async execute(user: UserCreateModel): Promise<UserCreatedResponse> {
     return await this.repository.create(user)
   }
 }
