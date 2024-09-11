@@ -21,39 +21,15 @@ interface Item {
   href?: string
   poster?: Item
   links?: Item[]
+  class?: string
 }
 
 const items: Item[] = [
   {
-    name: 'CHORUS',
-    description: 'Secure Collaborative Research Platform',
-    href: '/'
-  },
-  {
-    name: 'Workspaces',
-    description: 'Collaborative workspaces',
-    href: '/workspaces'
-  },
-  {
-    name: 'Getting Started',
-    description: 'Get started with the application'
-    // links: [
-    //   {
-    //     name: 'Installation',
-    //     description: 'How to install and setup the application'
-    //   },
-    //   { name: 'Configuration', description: 'How to configure the application' }
-    // ]
-  },
-  {
     name: 'Demos',
     description: '',
+    class: 'text-muted-foreground',
     links: [
-      // {
-      //   name: 'My workspace',
-      //   description: 'iframes layers z-index',
-      //   href: '/workspace'
-      // },
       {
         name: 'LLM (LLama 3.1 @127.0.0.1)',
         description: 'When Llama angry, he always do so',
@@ -65,7 +41,7 @@ const items: Item[] = [
 
 export function Navigation() {
   return (
-    <NavigationMenu>
+    <NavigationMenu className="pr-32">
       <NavigationMenuList>
         {items.map((item) => {
           if (item.links) {
@@ -96,7 +72,7 @@ const BasicNavigationList = ({ item }: { item: Item }) => (
   <NavigationMenuItem>
     <NavigationMenuTrigger>{item.name}</NavigationMenuTrigger>
     <NavigationMenuContent>
-      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
         {item.links?.map((component) => (
           <ListItem
             key={component.name}

@@ -1,28 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-
+// import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { Button } from './ui/button'
+import { useNavigation } from './navigation-context'
 
-export default function RightSidebar() {
-  const [showRightSidebar, setShowRightSidebar] = useState(true)
+export default function RightSidebar({ show }: { show?: boolean }) {
+  const { showRightSidebar, toggleRightSidebar } = useNavigation()
 
   return (
     <div
-      className={`fixed right-0 top-0 z-40  h-full w-[35vw] bg-primary p-10 pl-20 text-white  duration-300 ease-in-out ${
+      className={`fixed right-0 top-0  z-50 h-full w-[35vw] bg-slate-100 p-10 pl-20  text-white duration-300 ease-in-out ${
         showRightSidebar ? 'translate-x-0 ' : 'translate-x-full'
       }`}
     >
-      <Button
-        onClick={() => setShowRightSidebar(!showRightSidebar)}
-        className="absolute right-5 top-5"
-      >
+      <Button onClick={toggleRightSidebar} className="absolute right-5 top-16">
         {showRightSidebar ? 'Close' : 'Open'}
       </Button>
-
-      <h3 className="mt-20 text-4xl font-semibold text-white">
-        I am a sidebar
-      </h3>
     </div>
   )
 }

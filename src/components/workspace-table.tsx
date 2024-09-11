@@ -1,5 +1,9 @@
-import Image from 'next/image'
+'use server'
+
+import Link from 'next/link'
 import { EllipsisVerticalIcon } from 'lucide-react'
+
+import { workspaceList } from '@/components/actions/workspace-view-model'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -31,27 +35,22 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workspace } from '~/domain/model'
 
+import { userMe } from './actions/user-view-model'
+import {
+  WorkspaceCreateForm,
+  WorkspaceDeleteForm
+} from './forms/workspace-forms'
 import { Icons } from './ui/icons'
 
-import placeholder from '/public/placeholder.svg'
+export default async function WorkspaceTable() {
+  const workspaces = await workspaceList()
+  const user = await userMe()
 
-export default function WorkspaceList({
-  workspaces,
-  handleWorkspaceClicked,
-  handleCreateWorkspaceClicked,
-  handleDeleteWorkspaceClicked
-}: {
-  workspaces?: Workspace[]
-  handleWorkspaceClicked?: (id?: string) => void
-  handleCreateWorkspaceClicked: () => void
-  handleDeleteWorkspaceClicked: (id?: string) => void
-}) {
   const TableHeads = () => (
     <>
-      <TableHead className="hidden w-[100px] sm:table-cell">
-        <span className="sr-only">Image</span>
-      </TableHead>
       <TableHead>Name</TableHead>
+      <TableHead>Short Name</TableHead>
+      <TableHead>Description</TableHead>
       <TableHead>Status</TableHead>
       <TableHead className="hidden md:table-cell">Members</TableHead>
       <TableHead className="hidden md:table-cell">Created at</TableHead>
@@ -63,26 +62,29 @@ export default function WorkspaceList({
 
   const TableRow = ({ workspace }: { workspace?: Workspace }) => (
     <TableRowComponent>
-      <TableCell className="hidden sm:table-cell">
-        <Image
-          src={placeholder}
-          alt={workspace?.name || 'App image'}
-          width="64"
-          height="64"
-          className="aspect-square rounded-md object-cover"
-        />
+      <TableCell className="p-1 font-medium">
+        <Link href={`/workspaces/${workspace?.id}`}>{workspace?.name}</Link>
       </TableCell>
-      <TableCell className="font-medium">{workspace?.name}</TableCell>
-      <TableCell>
+      <TableCell className="p-1 font-medium">
+        <Link href={`/workspaces/${workspace?.id}`}>
+          {workspace?.shortName}
+        </Link>
+      </TableCell>
+      <TableCell className="font-xs p-1">
+        <Link href={`/workspaces/${workspace?.id}`}>
+          {workspace?.description}
+        </Link>
+      </TableCell>
+      <TableCell className="p-1">
         <Badge variant="outline">{workspace?.status}</Badge>
       </TableCell>
-      <TableCell className="font-medium">
-        {workspace?.workbenchIds?.toString()}
+      <TableCell className="p-1 font-medium">
+        {workspace?.memberIds?.toString()}
       </TableCell>
-      <TableCell className="hidden md:table-cell">
+      <TableCell className="hidden p-1 md:table-cell">
         {workspace?.createdAt.toLocaleDateString()}
       </TableCell>
-      <TableCell>
+      <TableCell className="p-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button aria-haspopup="true" size="icon" variant="ghost">
@@ -93,10 +95,8 @@ export default function WorkspaceList({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDeleteWorkspaceClicked(workspace?.id)}
-            >
-              Delete
+            <DropdownMenuItem>
+              <WorkspaceDeleteForm id={workspace?.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -108,7 +108,7 @@ export default function WorkspaceList({
     <Card>
       <CardHeader>
         <CardTitle>Workspaces</CardTitle>
-        <CardDescription>The workspaces you collaborate on</CardDescription>
+        <CardDescription>Your collaborative workspaces</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -124,14 +124,15 @@ export default function WorkspaceList({
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1-10</strong> of <strong>32</strong> apps
+          Showing <strong>1-{workspaces?.length}</strong> of{' '}
+          <strong>{workspaces?.length}</strong>
         </div>
       </CardFooter>
     </Card>
   )
 
   return (
-    <div className="mb-8 grid flex-1 items-start gap-4 pr-8 md:gap-8">
+    <div className="mb-8 grid flex-1 items-start gap-4 md:gap-8">
       <Tabs defaultValue="all">
         <div className="flex items-center">
           <TabsList>
@@ -161,30 +162,22 @@ export default function WorkspaceList({
                 <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={handleCreateWorkspaceClicked}
-            >
-              <Icons.CirclePlusIcon className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Create Workspace
-              </span>
-            </Button>
+            <WorkspaceCreateForm userId={user.data?.id} />
           </div>
         </div>
         <TabsContent value="all">
-          <CardContainer workspaces={workspaces} />
+          <CardContainer workspaces={workspaces?.data} />
         </TabsContent>
         <TabsContent value="active">
           <CardContainer
-            workspaces={workspaces?.filter((a) => a.status === 'active')}
+            workspaces={
+              workspaces?.data?.filter((a) => a.status === 'active') ?? []
+            }
           />
         </TabsContent>
         <TabsContent value="archived">
           <CardContainer
-            workspaces={workspaces?.filter((a) => a.status !== 'active')}
+            workspaces={workspaces?.data?.filter((a) => a.status !== 'active')}
           />
         </TabsContent>
       </Tabs>

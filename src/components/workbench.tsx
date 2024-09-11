@@ -1,26 +1,19 @@
 'use client'
 
-import Image from 'next/image'
-
-import cover from '/public/cover.jpeg'
+import { useNavigation } from './navigation-context'
 
 export default function Workbench() {
-  return (
-    // <iframe
-    //   title="Workbench"
-    //   src="https://xpra.dev.chorus-tre.ch/"
-    //   allow="autoplay; fullscreen; clipboard-write;"
-    //   style={{ width: '100vw', height: '100vh' }}
-    //   className="h-full w-full"
-    // />
-    <Image
-      alt="Workbench"
-      src={cover}
-      placeholder="blur"
-      quality={75}
-      priority={true}
-      fill
-      sizes="100vw"
+  const { background } = useNavigation()
+
+  return background ? (
+    <iframe
+      title="Workbench"
+      src={`http://localhost:5000/api/rest/v1/workbenchs/${background}/stream`}
+      allow="autoplay; fullscreen; clipboard-write;"
+      style={{ width: '100vw', height: '100vh' }}
+      className="fixed left-0 top-11 z-10 h-full w-full"
+      id="iframe"
     />
-  )
+  ) : // <Image alt="Workbench" src={Number(background.workbenchId) % 2 === 0 ? workbenchPlaceholder : workbenchPlaceholder2} placeholder="blur" quality={100} priority={true} sizes="100vw" className="fixed left-0 top-11 z-10 h-full w-full aspect-video" id="iframe"/>
+  null
 }

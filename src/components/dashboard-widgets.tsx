@@ -13,12 +13,13 @@ import { ChartContainer } from '~/components/ui/chart'
 
 export default function DashboardWidgets() {
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <Card className="blur-soft max-w-xs">
         <CardHeader className="p-4 pb-0">
           <CardTitle>Carbon Footprint</CardTitle>
           <CardDescription>
-            You&apos;re burning an average of 0.2g carbon per day. Good job!
+            Your group produced an average of 0.2g carbon per day since last
+            week.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-2">
@@ -118,6 +119,6 @@ export default function DashboardWidgets() {
           </ChartContainer>
         </CardContent>
       </Card>
-    </>
+    </div>
   )
 }
