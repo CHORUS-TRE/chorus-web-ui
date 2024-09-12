@@ -1,11 +1,9 @@
 export interface AuthenticationRequest {
-  username: string
+  email: string
   password: string
 }
 
 export interface AuthenticationResponse {
-  data: {
-    token: string
-  } | null
-  error: Error | null
+  data?: string
+  error?: string
 }

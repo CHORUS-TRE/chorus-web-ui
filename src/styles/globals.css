@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+222.2 100% 56.1%;  Converted #1240FF  BLUE
+183.1 100% 70.9%;  Converted #32E8FF TURQUOISE
+73.8 100% 54.3%; Converted #B6FF12 LIME
+240 75% 84.3%;  Converted #ABA5F5 FLOWER
+*/
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -13,23 +20,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 100% 56.1%; /* Converted #1240FF */
+    --primary: 222.2 100% 56.1%;
     --primary-foreground: 210 100% 100%;
 
-    --secondary: 183.1 100% 70.9%; /* Converted #32E8FF */
+    --secondary: 183.1 100% 70.9%;
     --secondary-foreground: 222.2 100% 56.1%; /* Using primary color for contrast */
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 73.8 100% 54.3%; /* Converted #B6FF12 */
-    --accent-foreground: 222.2 100% 56.1%; /* Using primary color for contrast */
+    --accent: 73.8 100% 54.3%;
+    --accent-foreground: 222.2 100% 56.1%;
+    --accent-background: 240 75% 84.3%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 100% 100%;
 
-    --border: 240 75% 84.3%; /* Converted #ABA5F5 */
-    --input: 240 75% 84.3%; /* Converted #ABA5F5 */
+    --border: 240 75% 84.3%;
+    --input: 240 75% 84.3%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
@@ -56,6 +64,7 @@
 
     --accent: 73.8 100% 54.3%; /* Converted #B6FF12 */
     --accent-foreground: 222.2 100% 56.1%; /* Using primary color for contrast */
+    --accent-background: 240 75% 84.3%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 100% 100%;
@@ -72,6 +81,42 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  h1 {
+    @apply text-5xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl font-medium tracking-tight;
+  }
+
+  h4 {
+    @apply text-xl font-medium tracking-tight;
+  }
+
+  p {
+    @apply text-base font-normal;
+  }
+
+  .blur-soft {
+    @apply bg-background bg-opacity-50 backdrop-blur-sm;
+  }
+
+  .b1 {
+    @apply border-2 border-cyan-400;
+  }
+  .b2 {
+    @apply border-2 border-teal-400;
+  }
+  .b3 {
+    @apply border-2 border-l-rose-400;
   }
 }
 

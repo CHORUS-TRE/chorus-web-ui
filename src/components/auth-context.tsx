@@ -2,55 +2,51 @@
 
 import React, {
   createContext,
-  useContext,
-  useState,
+  ReactElement,
   ReactNode,
-  FunctionComponent
+  useContext
 } from 'react'
 
 type AuthContextType = {
-  isLoggedIn: boolean
-  setAuthentication: (token: string) => void
-  clearAuthentication: () => void
+  isAuthenticated: boolean
+  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  setAuthenticated: () => {}
+})
 
-type AuthProviderProps = {
+export const AuthProvider = ({
+  children,
+  authenticated
+}: {
   children: ReactNode
-}
-
-// Provides authentication context to child components
-export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
-  children
-}) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-
-  // Set the user's token and update login status
-  const setAuthentication = (token: string) => {
-    localStorage.setItem('token', token)
-    setIsLoggedIn(true)
-  }
-
-  // Remove the user's token and update login status
-  const clearAuthentication = () => {
-    localStorage.removeItem('token')
-    setIsLoggedIn(false)
-  }
-
+  authenticated: boolean
+}): ReactElement => {
+  const [isAuthenticated, setAuthenticated] =
+    React.useState<boolean>(authenticated)
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, setAuthentication, clearAuthentication }}
+      value={{
+        isAuthenticated,
+        setAuthenticated
+      }}
     >
       {children}
     </AuthContext.Provider>
   )
 }
 
-// Custom hook to use the auth context
-export const useAuth = (): AuthContextType => {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within an AuthProvider')
-
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
   return context
+}
+
+export function useIsAuthenticated(): boolean {
+  const context = useAuth()
+  return context.isAuthenticated
 }

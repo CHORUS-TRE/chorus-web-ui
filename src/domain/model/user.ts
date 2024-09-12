@@ -1,31 +1,52 @@
-enum UserStatusEnum {
+import { z } from 'zod'
+
+export enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  ARCHIVED = 'archived'
 }
-enum UserRoleEnum {
+export enum UserRoleEnum {
+  VISITOR = 'visitor',
   USER = 'user',
-  ADMIN = 'admin'
+  PI = 'pi',
+  ADMIN = 'admin',
+  AUTHENTICATED = 'authenticated'
 }
 
-type UserStatus = `${UserStatusEnum}`
-type UserRole = `${UserRoleEnum}`
+export type UserStatus = `${UserStatusEnum}`
+export type UserRole = `${UserRoleEnum}`
 
-export interface User {
-  id: string
-  firstName: string
-  lastName: string
-  username: string
-  email: string
-  status: UserStatus
-  roles?: UserRole[]
-  totpEnabled?: boolean
-  createdAt: Date
-  updatedAt: Date
-  passwordChanged?: boolean
-}
+export const UserSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(), //.email(), TODT: fix username/email in backend
+  status: z.nativeEnum(UserStatusEnum),
+  roles: z.array(z.nativeEnum(UserRoleEnum)).optional(),
+  totpEnabled: z.boolean().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  passwordChanged: z.boolean().optional(),
+  avatar: z.string().optional()
+})
+
+export type User = z.infer<typeof UserSchema>
+
+export const UserCreateSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+  firstName: z.string().min(2),
+  lastName: z.string().min(2)
+})
+
+export type UserCreateModel = z.infer<typeof UserCreateSchema>
 
 export interface UserResponse {
-  data: User | null
-  error: Error | null
+  data?: User
+  error?: string
+}
+
+export interface UserCreatedResponse {
+  data?: string
+  error?: string
 }

@@ -1,2 +1,5 @@
-export type * from './user'
+export type * from './app-instance'
 export type * from './authentication'
+export type * from './user'
+export type * from './workbench'
+export type * from './workspace'

@@ -1,7 +1,7 @@
-import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
+import { AuthenticationRequest } from '@/domain/model'
 
 interface AuthenticationDataSource {
-  login: (data: AuthenticationRequest) => Promise<AuthenticationResponse>
+  login: (data: AuthenticationRequest) => Promise<string>
 }
 
 export type { AuthenticationDataSource }

@@ -1,22 +1,31 @@
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get('currentUser')?.value
+import { updateSession } from '@/components/actions/authentication-login-view-model'
+
+export async function middleware(request: NextRequest) {
+  await updateSession(request)
+  const session = request.cookies.get('session')?.value
 
   // Allow browsing the '/' page without restrictions
-  if (request.nextUrl.pathname === '/') {
-    return
+  // if (request.nextUrl.pathname === '/') {
+  //   return
+  // }
+
+  // Disallow browsing '/' if not authenticated, redirect to login page
+  if (!session && request.nextUrl.pathname === '/') {
+    return Response.redirect(
+      new URL('/login' + '?redirect=' + request.nextUrl.pathname, request.url)
+    )
   }
 
-  // Disallow browsing '/workspaces' if not authenticated, redirect to login page
-  // if (!currentUser && request.nextUrl.pathname.startsWith('/workspaces')) {
-  //   return Response.redirect(new URL('/authentication' + '?redirect=' + request.nextUrl.pathname, request.url))
-  // }
-
-  // // Redirect to authentication page if not authenticated and trying to access other pages
-  // if (!currentUser && !request.nextUrl.pathname.startsWith('/authentication')) {
-  //   return Response.redirect(new URL('/authentication', request.url))
-  // }
+  // Redirect to authentication page if not authenticated and trying to access other pages
+  if (
+    !session &&
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/register')
+  ) {
+    return Response.redirect(new URL('/login', request.url))
+  }
 }
 
 export const config = {

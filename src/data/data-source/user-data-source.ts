@@ -1,6 +1,9 @@
-import { UserResponse } from '@/domain/model'
+import { User, UserCreateModel } from '@/domain/model'
+
 interface UserDataSource {
-  me: () => Promise<UserResponse>
+  create: (user: UserCreateModel) => Promise<string>
+  me: () => Promise<User>
+  get: (id: string) => Promise<User>
 }
 
-export default UserDataSource
+export type { UserDataSource }

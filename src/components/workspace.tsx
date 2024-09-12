@@ -1,268 +1,246 @@
-'use client'
+import React from 'react'
+import Link from 'next/link'
+import { formatDistanceToNow } from 'date-fns'
+import { ArrowRight } from 'lucide-react'
 
-import {
-  Pyramid,
-  Home,
-  Boxes,
-  Box,
-  EllipsisVertical,
-  Users,
-  MessageCircle,
-  RefreshCcw,
-  Bell,
-  Activity,
-  Settings,
-  Scroll,
-  PanelLeft,
-  Search
-} from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter
-} from './ui/card'
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import { Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
-import React from 'react'
-import Breadcrumb from './breadcrumb'
 
-const workspace = {
-  name: 'The Modified Stroop Color-Word Task',
-  shortName: 'M-SCWT',
-  description:
-    'Patients with epileptic activity often experience reduced attentional functions. The Stroop Color-Word Task (SCWT) is commonly used to assess attention, particularly in persons with epilepsy. Successful performance on the Stroop task is linked to the effective functioning of different brain regions. Studies have shown correlations between EEG coherence and reaction',
-  owner: [{ fullName: 'John Doe' }, { fullName: 'Jane Smith' }],
-  createdAt: 'June 1 2024',
-  project: {
-    type: 'Research', //
-    status: 'design', //
-    tags: ['Research', 'Neurology', 'Epilepsy']
-  },
-  menu: [
-    {
-      name: 'M-SCWT',
-      icon: Home,
-      href: '#'
-    },
-    {
-      name: 'Workbenches',
-      icon: Boxes,
-      href: '#',
-      children: [
-        {
-          name: 'Explorer',
-          icon: Box,
-          href: '#'
-        }
-      ]
-    },
-    {
-      name: 'Team',
-      icon: Users,
-      href: '#'
-    },
-    {
-      name: 'Environment',
-      icon: RefreshCcw,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Discussion',
-      icon: MessageCircle,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Activities',
-      icon: Activity,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Notifications',
-      icon: Bell,
-      href: '#',
-      target: 'overlay'
-    },
-    {
-      name: 'Monitoring',
-      icon: Scroll,
-      href: '#'
-    },
-    {
-      name: 'Settings',
-      icon: Settings,
-      href: '#',
-      target: 'overlay'
-    }
-  ]
-}
+import { WorkbenchCreateForm } from './forms/workbench-forms'
+import { useNavigation } from './navigation-context'
 
-export function Workspace() {
-  const [showLargeLeftSidebar, setShowLargeLeftSidebar] = React.useState(true)
-  const [showRightSidebar, setShowRightSidebar] = React.useState(false)
-  const [showApp, setShowApp] = React.useState(false)
+export function Workspace({
+  workspace,
+  workbenches
+}: {
+  workspace?: WorkspaceType | null
+  workbenches?: Workbench[]
+}) {
+  const { setBackground } = useNavigation()
 
-  const handleToggleLeftSidebar = () => {
-    setShowLargeLeftSidebar(!showLargeLeftSidebar)
+  if (!workspace) {
+    return <></>
   }
 
   return (
-    <div className="flex">
-      {/* Main */}
-      <div className="flex min-h-screen w-full flex-col  bg-muted/40">
-        {!showApp && (
-          <div>
-            {/* Main space */}
-            <div className="flex flex-col pt-8 ">
-              {/* Content */}
-              <div className="flex">
-                <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-                  <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
-                    <div className="grid gap-6">
-                      <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                          <CardTitle className="text-2xl">
-                            Project: {workspace.name}
-                          </CardTitle>
-                          <div>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Type: </strong>
-                              {workspace.project.type}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Status: </strong>
-                              {workspace.project.status}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Creation date: </strong>
-                              {workspace.createdAt}
-                            </p>
-                          </div>
-                          {/* <CardDescription>
-                          {workspace.description}
-                        </CardDescription> */}
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-xs text-muted-foreground">
-                            {workspace.owner.map((owner) => (
-                              <span key={owner.fullName}>{owner.fullName}</span>
-                            ))}
-                          </p>
-                        </CardContent>
-                      </Card>
-                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <Card className="h-full">
-                          <CardHeader>
-                            <CardTitle>Apps</CardTitle>
-                            <CardDescription>
-                              View and manage your active apps.
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="grid gap-2">
-                              <div className="flex items-center justify-between">
-                                Explorer
-                                <Badge>Active</Badge>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                Brainstorm
-                                <Badge>Active</Badge>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                Excel
-                                <Badge>Exited</Badge>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                        <Card className="h-full">
-                          <CardHeader>
-                            <CardTitle>Team</CardTitle>
-                            <CardDescription>
-                              See who's on your team and their roles.
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="grid gap-4">
-                              <div className="flex items-center gap-4">
-                                <Avatar>
-                                  <AvatarImage src="/placeholder-user.jpg" />
-                                  <AvatarFallback>JD</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="font-medium">John Doe</div>
-                                  <div className="text-muted-foreground">
-                                    Project Manager
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <Avatar>
-                                  <AvatarImage src="/placeholder-user.jpg" />
-                                  <AvatarFallback>JS</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="font-medium">Jane Smith</div>
-                                  <div className="text-muted-foreground">
-                                    Designer
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <Avatar>
-                                  <AvatarImage src="/placeholder-user.jpg" />
-                                  <AvatarFallback>MB</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="font-medium">
-                                    Michael Brown
-                                  </div>
-                                  <div className="text-muted-foreground">
-                                    Developer
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                          <CardFooter>
-                            <Button size="sm">View Team</Button>
-                          </CardFooter>
-                        </Card>
-                        <Card className="h-full">
-                          <CardHeader>
-                            <CardTitle>Analytics</CardTitle>
-                            <CardDescription>
-                              Check out the latest analytics for your workspace.
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <LineChart className="aspect-[3/2]" />
-                          </CardContent>
-                          <CardFooter>
-                            <Button size="sm">View Analytics</Button>
-                          </CardFooter>
-                        </Card>
-                      </div>
-                    </div>
-                  </div>
-                </main>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Apps
+          </CardTitle>
+          <CardDescription>View and manage your active apps.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2">
+            {workbenches?.map(({ shortName, createdAt, id }) => (
+              <div className="flex items-center justify-between" key={id}>
+                <Link
+                  key={workspace.id}
+                  href={`/workspaces/${workspace.id}/${id}`}
+                  className="text-accent hover:text-accent-foreground"
+                  onClick={() => {
+                    setBackground({
+                      workspaceId: workspace.id,
+                      workbenchId: id
+                    })
+                  }}
+                >
+                  <Button
+                    size="sm"
+                    variant="link"
+                    className="hover:bg-accent-background focus:bg-accent-background h-5 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
+                  >
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      {shortName}
+                    </span>
+                  </Button>
+                </Link>
+                <p className="text-xs">{formatDistanceToNow(createdAt)} ago</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter>
+          <WorkbenchCreateForm workspaceId={workspace.id} />
+        </CardFooter>
+      </Card>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Team</CardTitle>
+          <CardDescription>
+            See who&apos;s on your team and their roles.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            <div className="flex items-center gap-4">
+              <Avatar>
+                <AvatarImage src="/placeholder-user.jpg" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm">John Doe</p>
+                <p className="text-sm text-muted-foreground">Project Manager</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Avatar>
+                <AvatarImage src="/placeholder-user.jpg" />
+                <AvatarFallback>JS</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm">Jane Smith</p>
+                <p className="text-sm text-muted-foreground">Designer</p>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            size="sm"
+            variant="link"
+            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
+          >
+            <ArrowRight className="mr-2 h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              View Team
+            </span>
+          </Button>
+        </CardFooter>
+      </Card>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Analytics</CardTitle>
+          <CardDescription>
+            Latest analytics for your workspace.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LineChart className="aspect-[3/2]" />
+        </CardContent>
+        <CardFooter>
+          <Button
+            size="sm"
+            variant="link"
+            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
+          >
+            <ArrowRight className="mr-2 h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              View Analytics
+            </span>
+          </Button>
+        </CardFooter>
+      </Card>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Data</CardTitle>
+          <CardDescription>View and manage your data sources.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs">Database</p>
+              <p className="text-xs">3</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs">API</p>
+              <p className="text-xs">2</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs">Files</p>
+              <p className="text-xs">1026</p>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            size="sm"
+            variant="link"
+            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
+          >
+            <ArrowRight className="mr-2 h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              View Data
+            </span>
+          </Button>
+        </CardFooter>
+      </Card>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Wiki</CardTitle>
+          <CardDescription>Share and view latest news</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <iframe
+            name="embed_readwrite"
+            src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
+            width="100%"
+            height="100%"
+          ></iframe>
+        </CardContent>
+        <CardFooter>
+          <Button
+            size="sm"
+            variant="link"
+            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
+          >
+            <ArrowRight className="mr-2 h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              View Wiki
+            </span>
+          </Button>
+        </CardFooter>
+      </Card>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Activities</CardTitle>
+          <CardDescription>Events, analytics & monitoring.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs">Database</p>
+              <p className="text-xs">3</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs">API</p>
+              <p className="text-xs">2</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs">Files</p>
+              <p className="text-xs">1026</p>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            size="sm"
+            variant="link"
+            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
+          >
+            <ArrowRight className="mr-2 h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              View Activities
+            </span>
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
 
-function LineChart(props: any) {
+function LineChart(props: React.HTMLProps<HTMLDivElement>) {
   return (
     <div {...props}>
       <ResponsiveLine

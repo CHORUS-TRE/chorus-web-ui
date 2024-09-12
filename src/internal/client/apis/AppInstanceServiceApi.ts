@@ -12,7 +12,6 @@
  * Do not edit the class manually.
  */
 
-import * as runtime from '../runtime'
 import type {
   ChorusAppInstance,
   ChorusCreateAppInstanceReply,
@@ -20,27 +19,18 @@ import type {
   ChorusGetAppInstanceReply,
   ChorusListAppInstancesReply,
   ChorusUpdateAppInstanceReply,
-  ChorusUpdateAppInstanceRequest,
-  RpcStatus
+  ChorusUpdateAppInstanceRequest
 } from '../models/index'
 import {
-  ChorusAppInstanceFromJSON,
   ChorusAppInstanceToJSON,
   ChorusCreateAppInstanceReplyFromJSON,
-  ChorusCreateAppInstanceReplyToJSON,
   ChorusDeleteAppInstanceReplyFromJSON,
-  ChorusDeleteAppInstanceReplyToJSON,
   ChorusGetAppInstanceReplyFromJSON,
-  ChorusGetAppInstanceReplyToJSON,
   ChorusListAppInstancesReplyFromJSON,
-  ChorusListAppInstancesReplyToJSON,
   ChorusUpdateAppInstanceReplyFromJSON,
-  ChorusUpdateAppInstanceReplyToJSON,
-  ChorusUpdateAppInstanceRequestFromJSON,
-  ChorusUpdateAppInstanceRequestToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusUpdateAppInstanceRequestToJSON
 } from '../models/index'
+import * as runtime from '../runtime'
 
 export interface AppInstanceServiceCreateAppInstanceRequest {
   body: ChorusAppInstance
@@ -78,6 +68,7 @@ export class AppInstanceServiceApi extends runtime.BaseAPI {
     requestParameters: AppInstanceServiceCreateAppInstanceRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<runtime.ApiResponse<ChorusCreateAppInstanceReply>> {
+    console.log('requestParameters', requestParameters.body)
     if (
       requestParameters.body === null ||
       requestParameters.body === undefined
