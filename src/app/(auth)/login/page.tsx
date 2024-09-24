@@ -32,14 +32,13 @@ export default function Login() {
   }, [formState?.data, searchParams, setAuthenticated])
 
   return (
-    <div className="border-slate-600 bg-slate-900  bg-opacity-85 lg:grid lg:grid-cols-[2fr_1fr]">
-      <div className="flex items-center justify-center py-12">
+    <div className="bg-opacity-50 lg:grid lg:grid-cols-[2fr_1fr]">
+      <div className="flex items-center justify-center bg-opacity-50 py-4 text-white">
         <form action={formAction}>
           <div className="mx-auto grid w-[350px] gap-6">
-            <div className="grid gap-2 text-center text-muted">
-              <h3 className="mb-4">Welcome to CHORUS!</h3>
-              <h1 className="text-3xl font-bold text-muted">Login</h1>
-              <p className="text-balance text-muted">
+            <div className="grid gap-2 text-center">
+              <h1>Login</h1>
+              <p className="mt-4 text-muted">
                 Enter your email below to login to your account
               </p>
               {isAuthenticated && (
@@ -58,6 +57,7 @@ export default function Login() {
                   name="username"
                   required
                   disabled={isAuthenticated}
+                  className="text-muted"
                   defaultValue={searchParams.get('email') || ''}
                 />
               </div>
@@ -71,6 +71,7 @@ export default function Login() {
                   id="password"
                   type="password"
                   name="password"
+                  className="text-muted"
                   required
                   disabled={isAuthenticated}
                 />
@@ -84,12 +85,12 @@ export default function Login() {
                 Login
               </Button>
             </div>
-            {formState.error && (
-              <p className="mt-4 text-red-500">{formState.error}</p>
+            {formState?.error && (
+              <p className="mt-4 text-red-500">{formState?.error}</p>
             )}
             <Link
               href="#"
-              className="ml-auto inline-block text-sm text-muted underline"
+              className="text-muted underline hover:text-accent"
               prefetch={false}
             >
               Forgot your password?
@@ -98,7 +99,7 @@ export default function Login() {
               Don&apos;t have an account?{' '}
               <Link
                 href="/register"
-                className="text-muted-foreground underline"
+                className="text-muted underline hover:text-accent"
                 prefetch={false}
               >
                 Register

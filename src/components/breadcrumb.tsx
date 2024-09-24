@@ -29,10 +29,8 @@ export default function Breadcrumbs() {
   const workbenchId = params?.appId
 
   useEffect(() => {
-    const pathNames = paths
-      ?.split('/')
-      .filter((path) => path)
-      ?.filter((path) => path !== 'workspaces')
+    const pathNames = paths?.split('/').filter((path) => path)
+    // ?.filter((path) => path !== 'workspaces')
     setPathItems((items) =>
       pathNames?.map((path, i) => ({
         name: (items && items[i]?.name) || path,
@@ -57,7 +55,7 @@ export default function Breadcrumbs() {
             items
               ?.filter((_, i) => i <= (pathNames?.length || 0))
               ?.map((item, i) => {
-                if (i === 0)
+                if (i === 1)
                   return {
                     ...item,
                     name: response?.data?.shortName || item.name
@@ -113,7 +111,7 @@ export default function Breadcrumbs() {
               <Link
                 href={href}
                 prefetch={false}
-                className="block p-0 px-2 text-accent hover:text-accent-foreground"
+                className="block p-0 px-2 hover:text-accent hover:underline"
               >
                 {name}
               </Link>
@@ -128,22 +126,16 @@ export default function Breadcrumbs() {
   return (
     <Breadcrumb className="pl-4">
       <BreadcrumbList className="text-primary-foreground">
-        {/* <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href='/' prefetch={false} className='hover:text-accent'>
-              HOME
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem> */}
         {paths && paths?.length > 1 && <BreadcrumbSeparator />}
         {pathItems?.map((item, index) => (
           <Fragment key={item.href}>
-            {index < pathItems.length - 1 && (
-              <Item href={`/${item.href}`} name={item.name} />
+            {index < pathItems.length - 1 && item.name !== 'workspaces' && (
+              <>
+                <Item href={`/${item.href}`} name={item.name} />
+                <BreadcrumbSeparator />
+              </>
             )}
             {index === pathItems.length - 1 && <Item name={item.name} />}
-            {index < pathItems.length - 1 && <BreadcrumbSeparator />}
           </Fragment>
         ))}
       </BreadcrumbList>

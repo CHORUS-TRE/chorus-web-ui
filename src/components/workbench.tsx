@@ -1,6 +1,11 @@
 'use client'
 
+import Image from 'next/image'
+
 import { useNavigation } from './navigation-context'
+
+import workbenchPlaceholder from '/public/workbench-placeholder.png'
+import workbenchPlaceholder2 from '/public/workbench-placeholder-2.png'
 
 export default function Workbench() {
   const { background } = useNavigation()
@@ -8,7 +13,7 @@ export default function Workbench() {
   return background ? (
     <iframe
       title="Workbench"
-      src={`/api/rest/v1/workbenchs/${background}/stream`}
+      src={`http://localhost:5000/api/rest/v1/workbenchs/50/stream/`}
       allow="autoplay; fullscreen; clipboard-write;"
       style={{ width: '100vw', height: '100vh' }}
       className="fixed left-0 top-11 z-10 h-full w-full"
