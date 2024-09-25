@@ -7,12 +7,12 @@ import {
   AppInstanceSchema
 } from '@/domain/model/app-instance'
 
+import { env } from '~/env'
 import {
   AppInstanceServiceApi,
   ChorusAppInstance as ChorusAppInstanceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-import { env } from '~/env'
 
 // see src/internal/client/models/ChorusAppInstance.ts
 export const AppInstanceApiCreateSchema = z.object({

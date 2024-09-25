@@ -41,10 +41,7 @@ export default async function Portal() {
   return (
     <>
       <div className="mb-8 flex items-start justify-between border-b pb-2">
-        <h1
-          className="mt-5 scroll-m-20
-        text-background first:mt-0"
-        >
+        <h1 className="mt-5 scroll-m-20 text-background first:mt-0">
           Welcome home
         </h1>
       </div>
