@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import {
@@ -32,6 +32,8 @@ import { App } from '~/domain/model'
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Textarea } from '../ui/textarea'
+import { error } from 'console'
+import { Alert, AlertTitle, AlertDescription } from '../ui/alert'
 
 const initialState: IFormState = {
   data: undefined,
@@ -72,13 +74,17 @@ export function WorkbenchCreateForm({
   )
   const [open, setOpen] = useState(false)
   const [apps, setApps] = useState<App[]>([])
+  const [error, setError] = useState<string>()
 
   useEffect(() => {
     appList().then((res) => {
       if (res.error) {
+        setError(res.error)
         return
       }
+
       if (!res.data) {
+        setError('There is no apps available')
         return
       }
 
@@ -118,9 +124,16 @@ export function WorkbenchCreateForm({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
+                  {error && (
+                    <Alert variant="destructive">
+                      <TriangleAlert className="h-4 w-4" />
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
                   <div className="grid gap-2">
                     {/* <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" placeholder="Enter workbench name" /> */}
+            <Input id="name" name="name" placeho lder="Enter workbench name" /> */}
                     <div className="grid gap-3">
                       <Label htmlFor="name">Name</Label>
                       <select name="name" id="name">
@@ -215,7 +228,7 @@ export function WorkbenchCreateForm({
                       }
                     </div>
                   </div>
-                  <div className="hidden hidden gap-2">
+                  <div className="hidden gap-2">
                     <Label htmlFor="tenantId">Tenant ID</Label>
                     <Input
                       id="tenantId"
