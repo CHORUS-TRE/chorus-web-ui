@@ -21,7 +21,11 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button className="ml-auto" type="submit" disabled={pending}>
+    <Button
+      className="w-full bg-accent text-accent-foreground hover:bg-accent"
+      type="submit"
+      disabled={pending}
+    >
       Create account
     </Button>
   )
@@ -37,20 +41,26 @@ export default function UserRegisterForm() {
   }, [state])
 
   return (
-    <div className="mx-auto grid w-[350px] gap-6">
+    <div className="mx-auto grid w-[450px] gap-6 text-white">
       <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-bold">Create an account</h1>
-        <p className="text-balance text-muted-foreground">
+        <h1>Create an account</h1>
+        <p className="mt-4 text-muted">
           Enter your email below to create your account
         </p>
       </div>
       <div className="grid gap-4">
         <div className="grid grid-cols-2 gap-6">
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            className="w-full bg-accent text-accent-foreground hover:bg-accent"
+          >
             <Icons.gitHub className="mr-2 h-4 w-4" />
             Github
           </Button>
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            className="w-full bg-accent text-accent-foreground hover:bg-accent"
+          >
             <Icons.google className="mr-2 h-4 w-4" />
             Google
           </Button>
@@ -117,7 +127,11 @@ export default function UserRegisterForm() {
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}
-        <Link href="/login" className="underline" prefetch={false}>
+        <Link
+          href="/login"
+          className="text-muted underline hover:text-accent"
+          prefetch={false}
+        >
           Login
         </Link>
       </div>

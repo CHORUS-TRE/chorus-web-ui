@@ -27,7 +27,9 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { App } from '~/domain/model'
 
+import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Textarea } from '../ui/textarea'
 
@@ -69,6 +71,20 @@ export function WorkbenchCreateForm({
     '/workspaces/8'
   )
   const [open, setOpen] = useState(false)
+  const [apps, setApps] = useState<App[]>([])
+
+  useEffect(() => {
+    appList().then((res) => {
+      if (res.error) {
+        return
+      }
+      if (!res.data) {
+        return
+      }
+
+      setApps(res.data)
+    })
+  }, [])
 
   useEffect(() => {
     if (state?.data) {
@@ -109,10 +125,11 @@ export function WorkbenchCreateForm({
                       <Label htmlFor="name">Name</Label>
                       <select name="name" id="name">
                         <option value="">Choose an app</option>
-                        <option value="vscode">VS Code</option>
-                        <option value="arx">arx</option>
-                        <option value="wezterm">wezterm</option>
-                        <option value="jupyterlab">jupyterlab</option>
+                        {apps.map((app) => (
+                          <option key={app.id} value={app.name}>
+                            {app.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="text-xs text-red-500">

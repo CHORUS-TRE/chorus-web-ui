@@ -27,6 +27,8 @@ export default function HUD() {
   const [isPending, startTransition] = useTransition()
   const { background, setBackground } = useNavigation()
 
+  const workspaceId = params?.workspaceId
+
   useEffect(() => {
     startTransition(async () => {
       workspaceList()
@@ -53,10 +55,16 @@ export default function HUD() {
     workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
   )
 
+  const sortedWorkbenches = workspacesWithWorkbenches?.sort((a, b) =>
+    a.id === workspaceId ? 1 : 0
+  )
+  console.log(workspaceId)
+  console.log(sortedWorkbenches)
+
   function HUD() {
     return (
       <div className="flex items-center">
-        <div className="flex flex-col items-start justify-center gap-2">
+        <div className="flex flex-col items-start justify-center gap-3">
           {workspacesWithWorkbenches?.map((workspace) => (
             <div className="" key={workspace.id}>
               {workbenches
@@ -74,7 +82,7 @@ export default function HUD() {
                         <HoverCardTrigger asChild>
                           <Link
                             href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
-                            className={`flex h-full items-center justify-center rounded-lg bg-accent ${background?.workbenchId === workbench.id ? 'bg-primary' : 'bg-accent '}`}
+                            className={`flex h-full items-center justify-center rounded-lg hover:bg-accent ${background?.workbenchId === workbench.id ? 'bg-accent' : workbench.workspaceId === workspaceId ? 'bg-accent' : 'bg-muted'} `}
                             onClick={() => {
                               setBackground({
                                 workspaceId: workspace.id,
@@ -86,7 +94,7 @@ export default function HUD() {
                               {workbench.name === 'vscode' && (
                                 <AvatarImage
                                   src="/vscode.png"
-                                  className="h-8 w-8"
+                                  className="m-auto h-8 w-8"
                                 />
                               )}
                               <AvatarFallback>
@@ -103,7 +111,9 @@ export default function HUD() {
                         >
                           <div className={`flex flex-col justify-start gap-4`}>
                             <div className="space-y-0">
-                              <h4 className="text-sm font-semibold">
+                              <h4
+                                className={`text-sm font-semibold ${background?.workbenchId === workbench.id ? 'text-primary' : ''} `}
+                              >
                                 {workbench.name}
                               </h4>
                               <p className="pb-4 text-xs text-muted-foreground">
@@ -118,7 +128,7 @@ export default function HUD() {
                       </HoverCard>
                     </div>
                     {background?.workbenchId === workbench.id && (
-                      <h2 className="-mt-3 p-0 text-5xl text-primary">·</h2>
+                      <h2 className="-mt-3 p-0 text-5xl text-accent">·</h2>
                     )}
                     {background?.workbenchId !== workbench.id && (
                       <h2 className="-mt-3 p-0 text-accent">&nbsp;</h2>

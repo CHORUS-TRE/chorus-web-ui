@@ -109,6 +109,8 @@ export default async function WorkbenchPage({
         <CardContent className="h-96">
           <div className=" mt-4 w-32 bg-white">
             <WorksbenchDeleteForm id={params.appId} />
+          </div>
+          <div className=" mt-4 w-32 bg-white">
             <AppInstanceCreateForm
               workbenchId={params.appId}
               userId={user.data?.id}

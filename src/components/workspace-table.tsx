@@ -7,21 +7,12 @@ import { workspaceList } from '@/components/actions/workspace-view-model'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
+import { Card, CardContent, CardFooter } from '~/components/ui/card'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
@@ -32,18 +23,13 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workspace } from '~/domain/model'
 
 import { userMe } from './actions/user-view-model'
-import {
-  WorkspaceCreateForm,
-  WorkspaceDeleteForm
-} from './forms/workspace-forms'
-import { Icons } from './ui/icons'
+import { WorkspaceDeleteForm } from './forms/workspace-forms'
 
 export default async function WorkspaceTable() {
-  const workspaces = await workspaceList()
+  const response = await workspaceList()
   const user = await userMe()
 
   const TableHeads = () => (
@@ -63,18 +49,15 @@ export default async function WorkspaceTable() {
   const TableRow = ({ workspace }: { workspace?: Workspace }) => (
     <TableRowComponent>
       <TableCell className="p-1 font-medium">
-        <Link href={`/workspaces/${workspace?.id}`}>{workspace?.name}</Link>
-      </TableCell>
-      <TableCell className="p-1 font-medium">
-        <Link href={`/workspaces/${workspace?.id}`}>
-          {workspace?.shortName}
+        <Link
+          href={`/workspaces/${workspace?.id}`}
+          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
+        >
+          {workspace?.name}
         </Link>
       </TableCell>
-      <TableCell className="font-xs p-1">
-        <Link href={`/workspaces/${workspace?.id}`}>
-          {workspace?.description}
-        </Link>
-      </TableCell>
+      <TableCell className="p-1 font-medium">{workspace?.shortName}</TableCell>
+      <TableCell className="font-xs p-1">{workspace?.description}</TableCell>
       <TableCell className="p-1">
         <Badge variant="outline">{workspace?.status}</Badge>
       </TableCell>
@@ -104,83 +87,31 @@ export default async function WorkspaceTable() {
     </TableRowComponent>
   )
 
-  const CardContainer = ({ workspaces }: { workspaces?: Workspace[] }) => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Workspaces</CardTitle>
-        <CardDescription>Your collaborative workspaces</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRowComponent>
-              <TableHeads />
-            </TableRowComponent>
-          </TableHeader>
-          <TableBody>
-            {workspaces?.map((w) => <TableRow key={w.id} workspace={w} />)}
-          </TableBody>
-        </Table>
-      </CardContent>
-      <CardFooter>
-        <div className="text-xs text-muted-foreground">
-          Showing <strong>1-{workspaces?.length}</strong> of{' '}
-          <strong>{workspaces?.length}</strong>
-        </div>
-      </CardFooter>
-    </Card>
-  )
+  const workspaces = response?.data
+  const error = response?.error
 
   return (
-    <div className="mb-8 grid flex-1 items-start gap-4 md:gap-8">
-      <Tabs defaultValue="all">
-        <div className="flex items-center">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="archived" className="hidden sm:flex">
-              Archived
-            </TabsTrigger>
-          </TabsList>
-          <div className="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <Icons.ListFilterIcon className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem checked>
-                  Active
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <WorkspaceCreateForm userId={user.data?.id} />
+    <div className="mb-8 grid flex-1 items-start gap-4">
+      <Card>
+        <CardContent className="mt-4">
+          <Table>
+            <TableHeader>
+              <TableRowComponent>
+                <TableHeads />
+              </TableRowComponent>
+            </TableHeader>
+            <TableBody>
+              {workspaces?.map((w) => <TableRow key={w.id} workspace={w} />)}
+            </TableBody>
+          </Table>
+        </CardContent>
+        <CardFooter>
+          <div className="text-xs text-muted-foreground">
+            Showing <strong>1-{workspaces?.length}</strong> of{' '}
+            <strong>{workspaces?.length}</strong>
           </div>
-        </div>
-        <TabsContent value="all">
-          <CardContainer workspaces={workspaces?.data} />
-        </TabsContent>
-        <TabsContent value="active">
-          <CardContainer
-            workspaces={
-              workspaces?.data?.filter((a) => a.status === 'active') ?? []
-            }
-          />
-        </TabsContent>
-        <TabsContent value="archived">
-          <CardContainer
-            workspaces={workspaces?.data?.filter((a) => a.status !== 'active')}
-          />
-        </TabsContent>
-      </Tabs>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
