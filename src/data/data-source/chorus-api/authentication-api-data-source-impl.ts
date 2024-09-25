@@ -8,9 +8,8 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   private configuration: Configuration
   private service: AuthenticationServiceApi
 
-  constructor(token: string) {
+  constructor() {
     this.configuration = new Configuration({
-      apiKey: `Bearer ${token}`,
       basePath: env.DATA_SOURCE_API_URL
     })
     this.service = new AuthenticationServiceApi(this.configuration)
