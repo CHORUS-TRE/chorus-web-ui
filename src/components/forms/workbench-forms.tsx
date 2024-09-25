@@ -32,7 +32,6 @@ import { App } from '~/domain/model'
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Textarea } from '../ui/textarea'
-import { error } from 'console'
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert'
 
 const initialState: IFormState = {
@@ -136,7 +135,7 @@ export function WorkbenchCreateForm({
             <Input id="name" name="name" placeho lder="Enter workbench name" /> */}
                     <div className="grid gap-3">
                       <Label htmlFor="name">Name</Label>
-                      <select name="name" id="name">
+                      <select name="id" id="id">
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
                           <option key={app.id} value={app.name}>
@@ -147,7 +146,7 @@ export function WorkbenchCreateForm({
                     </div>
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('name'))
+                        state?.issues?.find((e) => e.path.includes('id'))
                           ?.message
                       }
                     </div>

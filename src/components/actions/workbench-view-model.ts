@@ -74,7 +74,7 @@ export async function workbenchCreate(
     const useCase = new WorkbenchCreate(repository)
 
     const workbench: WorkbenchCreateModel = {
-      name: formData.get('name') as string,
+      name: formData.get('id') as string,
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       description: formData.get('description') as string,
@@ -92,28 +92,15 @@ export async function workbenchCreate(
     const nextWorkbench = WorkbenchCreateSchema.parse(workbench)
     const createdWorkbench = await useCase.execute(nextWorkbench)
 
-    await delay(10 * 1000)
+    await delay(5 * 1000)
 
     if (createdWorkbench.error) {
       return { error: createdWorkbench.error }
     }
 
-    revalidatePath('/')
+    revalidatePath(`/workspaces/${formData.get('workspaceId')}`)
 
-    let appId = ''
-    switch (workbench.name) {
-      case 'vscode':
-        appId = '2'
-        break
-      case 'arx':
-        appId = '3'
-        break
-      case 'jupyterlab':
-        appId = '5'
-        break
-      default:
-        appId = '4'
-    }
+    const appId = formData.get('id') as string
 
     const appFormData = new FormData()
     appFormData.set('tenantId', workbench.tenantId)
@@ -122,7 +109,7 @@ export async function workbenchCreate(
     appFormData.set('workspaceId', workbench.workspaceId)
     appFormData.set('workbenchId', createdWorkbench?.data?.id || '')
 
-    const app = await appInstanceCreate(prevState, appFormData)
+    await appInstanceCreate(prevState, appFormData)
 
     return {
       ...prevState,

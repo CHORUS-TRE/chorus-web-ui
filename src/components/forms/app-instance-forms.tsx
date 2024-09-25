@@ -128,7 +128,7 @@ export function AppInstanceCreateForm({
                       <select name="id" id="id">
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
-                          <option key={app.id} value={app.name}>
+                          <option key={app.id} value={app.id}>
                             {app.name}
                           </option>
                         ))}
