@@ -23,7 +23,9 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { App } from '~/domain/model'
 
+import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Icons } from '../ui/icons'
 import { Textarea } from '../ui/textarea'
@@ -58,6 +60,20 @@ export function AppInstanceCreateForm({
     '/workspaces/8'
   )
   const [open, setOpen] = useState(false)
+  const [apps, setApps] = useState<App[]>([])
+
+  useEffect(() => {
+    appList().then((res) => {
+      if (res.error) {
+        return
+      }
+      if (!res.data) {
+        return
+      }
+
+      setApps(res.data)
+    })
+  }, [])
 
   useEffect(() => {
     if (state?.data) {
@@ -98,10 +114,15 @@ export function AppInstanceCreateForm({
                       <Label htmlFor="name">Name</Label>
                       <select name="id" id="id">
                         <option value="">Choose an app</option>
-                        <option value="vscode">VS Code</option>
+                        {apps.map((app) => (
+                          <option key={app.id} value={app.name}>
+                            {app.name}
+                          </option>
+                        ))}
+                        {/* <option value="vscode">VS Code</option>
                         <option value="arx">arx</option>
                         <option value="wezterm">wezterm</option>
-                        <option value="jupyterlab">jupyterlab</option>
+                        <option value="jupyterlab">jupyterlab</option> */}
                       </select>
                       {/* <Select>
                 <FormControl>

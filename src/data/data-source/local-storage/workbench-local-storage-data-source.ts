@@ -38,6 +38,8 @@ export class WorkbenchLocalStorageDataSourceImpl
       const nextWorkbench: Workbench = WorkbenchSchema.parse({
         ...workbench,
         id: crypto.randomUUID(),
+        shortName: '',
+        description: '',
         ownerIds: [workbench.ownerId],
         status: getRandomWorkbenchState(),
         serviceIds: [],

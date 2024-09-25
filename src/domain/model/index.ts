@@ -1,3 +1,4 @@
+export type * from './app'
 export type * from './app-instance'
 export type * from './authentication'
 export type * from './user'

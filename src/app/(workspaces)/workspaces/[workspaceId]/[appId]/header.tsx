@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation'
 import { Maximize, Settings } from 'lucide-react'
 
 import { workbenchGet } from '@/components/actions/workbench-view-model'
+import { HeaderButtons } from '@/components/header-buttons'
 import { Button } from '@/components/ui/button'
 
 import { workspaceGet } from '~/components/actions/workspace-view-model'
@@ -50,9 +51,9 @@ export function Header() {
   }, [workbenchId])
 
   return (
-    <nav className="flex h-11 min-w-full items-center justify-between	 gap-2 bg-slate-900 bg-opacity-70 py-1 text-slate-100 shadow-lg backdrop-blur-sm">
+    <nav className="grid h-11 min-w-full grid-cols-3 items-center bg-slate-900 bg-opacity-70 py-1 text-slate-100 shadow-lg backdrop-blur-sm">
       <div className="flex items-center justify-start gap-4 pl-4">
-        <Link href="/" passHref className="hover:border hover:border-accent">
+        <Link href="/" passHref>
           <Image
             src={logo}
             alt="Chorus"
@@ -64,15 +65,17 @@ export function Header() {
         &gt;{' '}
         <Link
           href={`/workspaces/${workspaceId}`}
-          className="text-accent hover:text-accent-foreground"
+          className="text-sm hover:text-accent hover:underline"
         >
           {workspace?.shortName}
         </Link>
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className="flex items-center justify-center gap-8">
         <h4>{workbench?.name}</h4>
       </div>
-      <div>
+
+      <div className="flex items-center justify-end pr-2">
         <Link
           href={`/workspaces/${workspaceId}/${workbenchId}/preferences`}
           className="text-accent hover:text-accent-foreground"
@@ -98,6 +101,9 @@ export function Header() {
             <Maximize />
           </Button>
         </Link>
+        <div className="ml-4">
+          <HeaderButtons />
+        </div>
       </div>
     </nav>
   )

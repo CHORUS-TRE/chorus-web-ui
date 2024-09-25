@@ -1,4 +1,5 @@
 export type * from './app-instance-repository'
+export type * from './app-repository'
 export type * from './authentication-repository'
 export type * from './user-repository'
 export type * from './workbench-repository'

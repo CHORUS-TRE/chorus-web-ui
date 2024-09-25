@@ -12,6 +12,7 @@ import {
   WorkspaceServiceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
+import { env } from '~/env'
 
 export const WorkspaceApiSchema = z.object({
   id: z.string().optional(),
@@ -63,7 +64,8 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
 
   constructor(token: string) {
     this.configuration = new Configuration({
-      apiKey: `Bearer ${token}`
+      apiKey: `Bearer ${token}`,
+      basePath: env.DATA_SOURCE_API_URL
     })
     this.service = new WorkspaceServiceApi(this.configuration)
   }

@@ -12,6 +12,7 @@ import {
   ChorusAppInstance as ChorusAppInstanceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
+import { env } from '~/env'
 
 // see src/internal/client/models/ChorusAppInstance.ts
 export const AppInstanceApiCreateSchema = z.object({
@@ -58,7 +59,8 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
 
   constructor(token: string) {
     this.configuration = new Configuration({
-      apiKey: `Bearer ${token}`
+      apiKey: `Bearer ${token}`,
+      basePath: env.DATA_SOURCE_API_URL
     })
     this.service = new AppInstanceServiceApi(this.configuration)
   }
