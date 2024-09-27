@@ -108,7 +108,7 @@ export default function Login() {
           </div>
         </form>
       </div>
-      <div className="hidden bg-opacity-0 bg-cover bg-center lg:block ">
+      <div className="hidden bg-opacity-0 bg-cover bg-center lg:block">
         <Image
           src={placeholder}
           alt="Image"

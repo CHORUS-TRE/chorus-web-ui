@@ -215,7 +215,7 @@ export function WorkbenchCreateForm({
                       }
                     </div>
                   </div>
-                  <div className="hidden hidden gap-2">
+                  <div className="hidden gap-2">
                     <Label htmlFor="tenantId">Tenant ID</Label>
                     <Input
                       id="tenantId"

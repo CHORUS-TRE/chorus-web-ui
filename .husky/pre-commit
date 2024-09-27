@@ -1,3 +1,2 @@
-pnpm lint
-pnpm format:all
+pnpm fix
 pnpm test:run

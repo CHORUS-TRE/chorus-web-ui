@@ -11,12 +11,12 @@ import {
   WorkbenchState
 } from '@/domain/model/workbench'
 
+import { env } from '~/env'
 import {
   ChorusWorkbench as ChorusWorkbenchApi,
   WorkbenchServiceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-import { env } from '~/env'
 
 // see src/internal/client/models/ChorusWorkbench.ts
 export const WorkbenchApiCreateSchema = z.object({

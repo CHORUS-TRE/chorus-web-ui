@@ -26,7 +26,7 @@ export default function Layout({
           className="hover:bg-accent"
         >
           <div
-            className="fixed left-0 top-0 z-20 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60 "
+            className="fixed left-0 top-0 z-20 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
             id="iframe-overlay"
           ></div>
         </Link>

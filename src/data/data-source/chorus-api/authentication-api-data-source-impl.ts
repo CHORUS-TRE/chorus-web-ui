@@ -1,8 +1,9 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
 import { AuthenticationRequest } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
-import { Configuration } from '~/internal/client'
+
 import { env } from '~/env'
+import { Configuration } from '~/internal/client'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   private configuration: Configuration

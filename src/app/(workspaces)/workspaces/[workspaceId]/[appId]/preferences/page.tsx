@@ -46,7 +46,7 @@ export default async function WorkbenchPage({
       </div>
 
       <div className="mb-4 flex items-start justify-between border-b pb-2 text-background">
-        <h2 className="mt-5 scroll-m-20 first:mt-0 ">Preferences</h2>
+        <h2 className="mt-5 scroll-m-20 first:mt-0">Preferences</h2>
       </div>
       <div className="">
         {/* <Menubar>
@@ -105,12 +105,12 @@ export default async function WorkbenchPage({
 
         </Menubar> */}
       </div>
-      <Card className="mt-4 h-full w-full  border-slate-600 bg-slate-900 bg-opacity-85">
+      <Card className="mt-4 h-full w-full border-slate-600 bg-slate-900 bg-opacity-85">
         <CardContent className="h-96">
-          <div className=" mt-4 w-32 bg-white">
+          <div className="mt-4 w-32 bg-white">
             <WorksbenchDeleteForm id={params.appId} />
           </div>
-          <div className=" mt-4 w-32 bg-white">
+          <div className="mt-4 w-32 bg-white">
             <AppInstanceCreateForm
               workbenchId={params.appId}
               userId={user.data?.id}

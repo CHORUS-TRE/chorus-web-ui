@@ -87,7 +87,7 @@ export function AppInstanceCreateForm({
         <Button
           size="sm"
           variant="outline"
-          className="h-8 gap-1 bg-accent hover:bg-accent-foreground focus:bg-accent focus:text-accent-foreground "
+          className="h-8 gap-1 bg-accent hover:bg-accent-foreground focus:bg-accent focus:text-accent-foreground"
         >
           <Icons.CirclePlusIcon className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -242,7 +242,7 @@ export function AppInstanceCreateForm({
                       }
                     </div>
                   </div>
-                  <div className="hidden hidden gap-2">
+                  <div className="hidden gap-2">
                     <Label htmlFor="tenantId">Tenant ID</Label>
                     <Input
                       id="tenantId"

@@ -10,6 +10,7 @@ import {
 } from '@/domain/model/user'
 import { ChorusUser as ChorusUserApi, Configuration } from '@/internal/client'
 import { UserServiceApi } from '@/internal/client/apis'
+
 import { env } from '~/env'
 
 const ChorusUserApiSchema = z.object({

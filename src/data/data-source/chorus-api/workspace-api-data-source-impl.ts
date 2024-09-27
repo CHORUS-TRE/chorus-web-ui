@@ -7,12 +7,12 @@ import {
   WorkspaceSchema
 } from '@/domain/model/workspace'
 
+import { env } from '~/env'
 import {
   ChorusWorkspace as ChorusWorkspaceApi,
   WorkspaceServiceApi
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-import { env } from '~/env'
 
 export const WorkspaceApiSchema = z.object({
   id: z.string().optional(),
