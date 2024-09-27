@@ -42,20 +42,20 @@ export function Workspace({
           <CardDescription>{workspace?.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-xs ">
+          <p className="text-xs">
             <strong>Owner: </strong>
             {workspace?.ownerId}
           </p>
           <div>
-            <p className="text-xs ">
+            <p className="text-xs">
               <strong>Status: </strong>
               {workspace?.status}
             </p>
-            <p className="text-xs ">
+            <p className="text-xs">
               <strong>Creation date: </strong>
               {formatDistanceToNow(workspace.createdAt)} ago
             </p>
-            <p className="text-xs ">
+            <p className="text-xs">
               <strong>Updated: </strong>
               {formatDistanceToNow(workspace.updatedAt)} ago
             </p>

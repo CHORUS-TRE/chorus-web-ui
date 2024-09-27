@@ -104,7 +104,7 @@ export default function HUD() {
                           </Link>
                         </HoverCardTrigger>
                         <HoverCardContent
-                          className="p-2 "
+                          className="p-2"
                           side="right"
                           hideWhenDetached
                           sideOffset={8}
@@ -119,7 +119,7 @@ export default function HUD() {
                               <p className="pb-4 text-xs text-muted-foreground">
                                 {formatDistanceToNow(workbench.createdAt)} ago
                               </p>
-                              <p className="text-xs text-muted-foreground ">
+                              <p className="text-xs text-muted-foreground">
                                 {workspace.shortName}
                               </p>
                             </div>

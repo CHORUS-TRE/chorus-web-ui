@@ -12,7 +12,7 @@ export default function Register() {
       <div className="py-4">
         <UserRegisterForm />
       </div>
-      <div className="hidden bg-opacity-0 bg-cover bg-center lg:block ">
+      <div className="hidden bg-opacity-0 bg-cover bg-center lg:block">
         <Image
           src={placeholder}
           alt="Image"

@@ -17,10 +17,10 @@ export function Workspace({ workspace }: { workspace?: WorkspaceType | null }) {
   return (
     <div className="flex">
       {/* Main */}
-      <div className="flex w-full flex-col ">
+      <div className="flex w-full flex-col">
         <div>
           {/* Main space */}
-          <div className="flex flex-col pt-8 ">
+          <div className="flex flex-col pt-8">
             {/* Content */}
             <div className="flex">
               <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">

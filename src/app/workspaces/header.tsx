@@ -49,10 +49,7 @@ const WorkspaceHeader = () => {
   return (
     <>
       <div className="mb-4 flex items-start justify-between border-b pb-2">
-        <h1
-          className="mt-5 scroll-m-20
-        pr-1 text-3xl font-semibold tracking-tight text-background first:mt-0"
-        >
+        <h1 className="mt-5 scroll-m-20 pr-1 text-3xl font-semibold tracking-tight text-background first:mt-0">
           Welcome to {workspace?.shortName}
         </h1>
         <Link href="#" className="text-accent hover:text-accent-foreground">

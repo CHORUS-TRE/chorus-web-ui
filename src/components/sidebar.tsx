@@ -111,7 +111,7 @@ export function Sidebar() {
                     >
                       <Link
                         href={child2.href}
-                        className={`flex h-10 items-center gap-2 px-6 text-sm `}
+                        className={`flex h-10 items-center gap-2 px-6 text-sm`}
                       >
                         <child2.icon className="h-5 w-5" />
                         <span>{child2.name}</span>

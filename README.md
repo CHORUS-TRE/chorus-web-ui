@@ -106,7 +106,7 @@ cd chorus-web-ui
 5. **Styling, Design System**
 
 	- We use [shadcdn/ui](https://ui.shadcn.com/) as a design system.
-	- Use `npx shadcn-ui@latest add <compnent>` to add [components](https://ui.shadcn.com/docs/components/accordion)
+	- Use `pnpm dlx shadcn-ui@latest add <compnent>` to add [components](https://ui.shadcn.com/docs/components/accordion)
 
 6. **Code versionning**
 

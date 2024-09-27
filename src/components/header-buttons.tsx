@@ -66,7 +66,7 @@ export function HeaderButtons() {
           <DropdownMenuTrigger asChild>
             <Button
               size="icon"
-              className="overflow-hidden rounded-full text-accent hover:text-accent-foreground "
+              className="overflow-hidden rounded-full text-accent hover:text-accent-foreground"
               variant="ghost"
             >
               <Image

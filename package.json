@@ -4,7 +4,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "prebuild": "npx tailwindcss -i src/styles/globals.css -o src/app/build.css",
+    "prebuild": "pnpm exec tailwindcss -i src/styles/globals.css -o src/app/build.css",
     "build": "SKIP_ENV_VALIDATION=1 next build",
     "dev": "next dev",
     "dev:turbo": "next dev --turbo",
@@ -13,7 +13,7 @@
     "test": "SKIP_ENV_VALIDATION=1 jest --watch",
     "test:run": "SKIP_ENV_VALIDATION=1 jest",
     "format:all": "prettier --write .",
-    "fix": "npx eslint . --fix && pnpm run format:all && pnpm run lint",
+    "fix": "pnpm exec eslint . --fix && pnpm format:all && pnpm lint",
     "prepare": "husky"
   },
   "dependencies": {
