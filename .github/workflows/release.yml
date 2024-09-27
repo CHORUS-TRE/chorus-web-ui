@@ -32,12 +32,6 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build app
-        run: pnpm build
-
       - name: Semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
