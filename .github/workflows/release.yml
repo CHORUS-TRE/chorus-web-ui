@@ -32,7 +32,12 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
 
+      - name: Install semantic-release plugin
+        run:
+          pnpm i semantic-release-helm3
+
       - name: Semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: pnpm dlx semantic-release
+        run:
+          pnpm dlx semantic-release

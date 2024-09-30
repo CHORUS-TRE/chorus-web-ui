@@ -1,0 +1,11 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/"
+      }
+    ]
+  ]
+}
