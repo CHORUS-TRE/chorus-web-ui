@@ -7,6 +7,7 @@ import { AppServiceApi, ChorusApp } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
 import { AppDataSource } from '../app-data-source'
+import { env } from '~/env'
 
 // see src/internal/client/models/ChorusApp.ts
 export const AppApiCreateSchema = z.object({
@@ -47,7 +48,8 @@ class AppDataSourceImpl implements AppDataSource {
 
   constructor(token: string) {
     this.configuration = new Configuration({
-      apiKey: `Bearer ${token}`
+      apiKey: `Bearer ${token}`,
+      basePath: env.DATA_SOURCE_API_URL
     })
     this.service = new AppServiceApi(this.configuration)
   }

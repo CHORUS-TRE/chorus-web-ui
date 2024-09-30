@@ -24,11 +24,13 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { App } from '~/domain/model'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Icons } from '../ui/icons'
 import { Textarea } from '../ui/textarea'
+import { TriangleAlert } from 'lucide-react'
 
 const initialState: IFormState = {
   data: undefined,
@@ -61,13 +63,17 @@ export function AppInstanceCreateForm({
   )
   const [open, setOpen] = useState(false)
   const [apps, setApps] = useState<App[]>([])
+  const [error, setError] = useState<string>()
 
   useEffect(() => {
     appList().then((res) => {
       if (res.error) {
+        setError(res.error)
         return
       }
+
       if (!res.data) {
+        setError('There is no apps available')
         return
       }
 
@@ -107,6 +113,13 @@ export function AppInstanceCreateForm({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
+                  {error && (
+                    <Alert variant="destructive">
+                      <TriangleAlert className="h-4 w-4" />
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
                   <div className="grid gap-2">
                     {/* <Label htmlFor="name">Name</Label>
             <Input id="name" name="name" placeholder="Enter workbench name" /> */}
@@ -115,7 +128,7 @@ export function AppInstanceCreateForm({
                       <select name="id" id="id">
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
-                          <option key={app.id} value={app.name}>
+                          <option key={app.id} value={app.id}>
                             {app.name}
                           </option>
                         ))}

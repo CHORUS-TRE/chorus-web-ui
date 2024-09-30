@@ -33,24 +33,8 @@ export async function appInstanceCreate(
     const repository = await getRepository()
     const useCase = new AppInstanceCreate(repository)
 
-    const id = formData.get('id') as string
-    let appId = ''
-    switch (id) {
-      case 'vscode':
-        appId = '2'
-        break
-      case 'arx':
-        appId = '3'
-        break
-      case 'jupyterlab':
-        appId = '5'
-        break
-      default:
-        appId = '4'
-    }
-
     const appInstance: AppInstanceCreateModel = {
-      appId,
+      appId: formData.get('id') as string,
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       workspaceId: formData.get('workspaceId') as string,
@@ -65,15 +49,15 @@ export async function appInstanceCreate(
     }
 
     const nextAppInstance = AppInstanceCreateSchema.parse(appInstance)
-
-    console.log('appInstance', nextAppInstance)
-
     const createdAppInstance = await useCase.execute(nextAppInstance)
 
-    console.log('createdAppInstance', createdAppInstance)
     if (createdAppInstance.error) {
       return { error: createdAppInstance.error }
     }
+
+    revalidatePath(
+      `/workspaces/${formData.get('workspaceId')}/${formData.get('workbenchId')}`
+    )
 
     return {
       ...prevState,
