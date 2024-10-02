@@ -1,15 +1,15 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "chart.name" -}}
+{{- define "web-ui.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "chart.nameid" -}}
-{{- printf "%s-%s" (include "chart.name" .) .Values.version }}
+{{- define "web-ui.nameid" -}}
+{{- printf "%s-%s" (include "web-ui.name" .) .Values.version }}
 {{- end }}
 
-# {{- define "chart.main" -}}
+# {{- define "web-ui.main" -}}
 
 #     {{- $encryptedFile := .Files.Get "files/secrets.yaml.enc" }}
 #     {{- $salt := $encryptedFile | substr 0 64 }}
@@ -28,7 +28,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "chart.fullname" -}}
+{{- define "web-ui.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -44,16 +44,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "chart.chart" -}}
+{{- define "web-ui.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "chart.labels" -}}
-helm.sh/chart: {{ include "chart.chart" . }}
-{{ include "chart.selectorLabels" . }}
+{{- define "web-ui.labels" -}}
+helm.sh/chart: {{ include "web-ui.chart" . }}
+{{ include "web-ui.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -63,17 +63,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "chart.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "chart.name" . }}
+{{- define "web-ui.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "web-ui.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "chart.serviceAccountName" -}}
+{{- define "web-ui.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "chart.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "web-ui.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
