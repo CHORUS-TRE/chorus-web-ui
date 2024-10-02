@@ -1,7 +1,7 @@
 {
   "name": "chorus-web-ui",
   "version": "0.1.2-alpha",
-  "private": false,
+  "private": true,
   "type": "module",
   "scripts": {
     "prebuild": "npx tailwindcss -i src/styles/globals.css -o src/app/build.css",
