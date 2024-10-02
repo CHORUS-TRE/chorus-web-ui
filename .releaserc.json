@@ -17,20 +17,21 @@
       }
     ],
     [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/web-ui/"
+      }
+    ],
+    [
       "@semantic-release/git",
       {
         "assets": [
           "package.json",
           "pnpm-lock.yaml",
-          "CHANGELOG.md"
+          "CHANGELOG.md",
+          "./charts/web-ui/Chart.yaml"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
-    ],
-    [
-      "semantic-release-helm3",
-      {
-        "chartPath": "./charts/web-ui/"
       }
     ]
   ]
