@@ -14,7 +14,7 @@
     "test:run": "SKIP_ENV_VALIDATION=1 jest",
     "format:all": "prettier --write .",
     "fix": "pnpm exec eslint . --fix && pnpm format:all && pnpm lint",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@nivo/line": "^0.87.0",
