@@ -3,12 +3,15 @@ on:
   push:
     branches:
       - main
+      - dev/*
 
 permissions:
   contents: read # for checkout
 
 jobs:
   release:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
     name: Semantic Release
     runs-on: ubuntu-latest
 
@@ -32,12 +35,12 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
 
-      - name: Install semantic-release plugin
+      - name: Install dependencies
         run:
-          pnpm i semantic-release-helm3
+          pnpm install -D
 
       - name: Semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run:
-          pnpm dlx semantic-release
+          pnpm exec semantic-release
