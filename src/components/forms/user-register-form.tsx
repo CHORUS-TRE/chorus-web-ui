@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { ArrowRight } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { userCreate } from '@/components/actions/user-view-model'
@@ -9,7 +10,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
 import { IFormState } from '../actions/utils'
-import { Button } from '../ui/button'
+import { Button } from '../button'
 
 const initialState: IFormState = {
   data: undefined,
@@ -20,11 +21,8 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button
-      className="w-full bg-accent text-accent-foreground hover:bg-accent"
-      type="submit"
-      disabled={pending}
-    >
+    <Button type="submit" disabled={pending}>
+      <ArrowRight className="h-3.5 w-3.5" />
       Create account
     </Button>
   )
@@ -48,7 +46,7 @@ export default function UserRegisterForm() {
         </h5>
       </div>
       <form action={formAction}>
-        <div className="grid gap-4">
+        <div className="mb-4 grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
@@ -56,7 +54,7 @@ export default function UserRegisterForm() {
                 id="firstName"
                 name="firstName"
                 required
-                className="text-black"
+                className="bg-background text-neutral-400"
               />
               <div className="text-xs text-red-500">
                 {
@@ -71,7 +69,7 @@ export default function UserRegisterForm() {
                 id="lastName"
                 name="lastName"
                 required
-                className="text-black"
+                className="bg-background text-neutral-400"
               />
               <div className="text-xs text-red-500">
                 {
@@ -88,7 +86,7 @@ export default function UserRegisterForm() {
               type="email"
               name="email"
               required
-              className="text-black"
+              className="bg-background text-neutral-400"
             />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('email'))?.message}
@@ -103,15 +101,15 @@ export default function UserRegisterForm() {
               type="password"
               name="password"
               required
-              className="text-black"
+              className="bg-background text-neutral-400"
               autoComplete="new-password"
             />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('password'))?.message}
             </div>
           </div>
-          <SubmitButton />
         </div>
+        <SubmitButton />
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">

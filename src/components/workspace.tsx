@@ -38,7 +38,7 @@ export function Workspace({
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card className="flex h-full flex-col justify-between border-none bg-slate-950 text-white">
         <CardHeader>
-          <CardTitle>{workspace?.name}</CardTitle>
+          <CardTitle className="text-white">{workspace?.name}</CardTitle>
           <CardDescription>{workspace?.description}</CardDescription>
         </CardHeader>
         <CardContent>

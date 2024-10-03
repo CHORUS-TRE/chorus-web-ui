@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { redirect, useSearchParams } from 'next/navigation'
+import { ArrowRight } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { Input } from '~/components/ui/input'
@@ -9,7 +10,7 @@ import { Label } from '~/components/ui/label'
 import { authenticationLogin } from '../actions/authentication-login-view-model'
 import { IFormState } from '../actions/utils'
 import { useAuth } from '../auth-context'
-import { Button } from '../ui/button'
+import { Button } from '../button'
 
 const initialState: IFormState = {
   data: undefined,
@@ -20,12 +21,9 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button
-      className="w-full bg-accent text-accent-foreground hover:bg-accent"
-      type="submit"
-      disabled={pending}
-    >
-      Create account
+    <Button type="submit" disabled={pending}>
+      <ArrowRight className="h-3.5 w-3.5" />
+      Login
     </Button>
   )
 }
@@ -62,7 +60,7 @@ export default function LoginForm() {
         )}
       </div>
       <form action={formAction}>
-        <div className="grid gap-4">
+        <div className="mb-4 grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -71,7 +69,7 @@ export default function LoginForm() {
               name="username"
               required
               disabled={isAuthenticated}
-              className="text-black"
+              className="bg-background text-neutral-400"
               defaultValue={searchParams.get('email') || ''}
             />
           </div>
@@ -83,20 +81,13 @@ export default function LoginForm() {
               id="password"
               type="password"
               name="password"
-              className="text-black"
+              className="bg-background text-neutral-400"
               required
               disabled={isAuthenticated}
             />
           </div>
-          <Button
-            type="submit"
-            variant="link"
-            className="w-full bg-accent text-accent-foreground hover:bg-accent"
-            disabled={isAuthenticated}
-          >
-            Login
-          </Button>
         </div>
+        <SubmitButton />
         {state?.error && <p className="mt-4 text-red-500">{state?.error}</p>}
       </form>
 

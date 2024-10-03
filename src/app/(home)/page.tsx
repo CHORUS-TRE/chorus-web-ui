@@ -41,9 +41,7 @@ export default async function Portal() {
   return (
     <>
       <div className="mb-8 flex items-start justify-between border-b pb-2">
-        <h1 className="mt-5 scroll-m-20 text-background first:mt-0">
-          Welcome home
-        </h1>
+        <h1 className="mt-5 text-white first:mt-0">Welcome home</h1>
       </div>
       {workbenches.error && (
         <p className="mt-4 text-red-500">{workbenches.error}</p>
@@ -89,7 +87,7 @@ export default async function Portal() {
               {workspaces?.data?.map((workspace) => (
                 <Link key={workspace.id} href={`/workspaces/${workspace.id}`}>
                   <Card
-                    className="flex h-full flex-col justify-between rounded-xl border-none hover:bg-accent hover:shadow-lg"
+                    className="flex h-full flex-col justify-between rounded-xl border-none transition duration-300 hover:scale-105 hover:bg-accent hover:shadow-lg"
                     key={workspace.id}
                   >
                     <CardHeader className="">

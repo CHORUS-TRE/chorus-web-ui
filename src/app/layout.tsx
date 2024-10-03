@@ -51,7 +51,7 @@ export default function RootLayout({
         })
         `}
       </Script>
-      <body className={rubik.variable}>
+      <body className={`${rubik.variable} antialiased`}>
         <AuthProvider authenticated={authenticated}>
           <NavigationProvider>
             {children}

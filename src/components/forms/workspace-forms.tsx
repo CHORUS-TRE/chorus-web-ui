@@ -15,7 +15,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -69,22 +69,16 @@ export function WorkspaceCreateForm({ userId }: { userId?: string }) {
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="link"
-          className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-        >
+        <Button>
           <Icons.CirclePlusIcon className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            New workspace
-          </span>
+          New workspace
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
-              <Card className="w-full max-w-md">
+              <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
                   <CardTitle>Create Workspace</CardTitle>
                   <CardDescription>
@@ -97,6 +91,7 @@ export function WorkspaceCreateForm({ userId }: { userId?: string }) {
                     <Input
                       id="name"
                       name="name"
+                      className="bg-background text-neutral-400"
                       placeholder="Enter workspace name"
                     />
                     <div className="text-xs text-red-500">
@@ -111,6 +106,7 @@ export function WorkspaceCreateForm({ userId }: { userId?: string }) {
                     <Input
                       id="shortName"
                       name="shortName"
+                      className="bg-background text-neutral-400"
                       placeholder="Enter short name"
                     />
                     <div className="text-xs text-red-500">
@@ -126,7 +122,7 @@ export function WorkspaceCreateForm({ userId }: { userId?: string }) {
                       id="description"
                       name="description"
                       placeholder="Enter description"
-                      className="min-h-[100px]"
+                      className="min-h-[100px] bg-background text-neutral-400"
                     />
                     <div className="text-xs text-red-500">
                       {
