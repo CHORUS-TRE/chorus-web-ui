@@ -44,7 +44,6 @@ jobs:
 
       - name: Semantic release
         env:
-          HUSKY: 0
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run:
-          pnpm exec semantic-release
+        run: |
+          HUSKY=0 pnpm exec semantic-release
