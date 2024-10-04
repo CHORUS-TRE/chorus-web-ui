@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -24,13 +26,11 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { App } from '~/domain/model'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Icons } from '../ui/icons'
 import { Textarea } from '../ui/textarea'
-import { TriangleAlert } from 'lucide-react'
 
 const initialState: IFormState = {
   data: undefined,

@@ -3,11 +3,11 @@ import { z } from 'zod'
 import { App } from '@/domain/model'
 import { AppSchema, AppState } from '@/domain/model/app'
 
+import { env } from '~/env'
 import { AppServiceApi, ChorusApp } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
 import { AppDataSource } from '../app-data-source'
-import { env } from '~/env'
 
 // see src/internal/client/models/ChorusApp.ts
 export const AppApiCreateSchema = z.object({
