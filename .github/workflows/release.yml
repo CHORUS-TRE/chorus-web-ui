@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - alpha
+      - beta
 
 permissions:
   contents: read # for checkout
@@ -38,12 +39,13 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
 
-      - name: Install dependencies
+      - name: Install dev dependencies
         run:
           pnpm install -D
 
       - name: Semantic release
         env:
+          SKIP_SIMPLE_GIT_HOOKS: 1
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          HUSKY=0 pnpm exec semantic-release
+        run:
+          pnpm exec semantic-release
