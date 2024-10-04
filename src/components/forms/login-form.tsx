@@ -6,6 +6,7 @@ import { useFormState, useFormStatus } from 'react-dom'
 
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Separator } from '~/components/ui/separator'
 
 import { authenticationLogin } from '../actions/authentication-login-view-model'
 import { IFormState } from '../actions/utils'
@@ -50,7 +51,7 @@ export default function LoginForm() {
 
   return (
     <div className="mx-auto grid w-[450px] gap-6 text-white">
-      <div className="grid gap-2 text-center">
+      <div className="grid gap-4 text-center">
         <h2>Login</h2>
         <h5 className="text-muted">
           Enter your email below to login to your account
@@ -59,8 +60,9 @@ export default function LoginForm() {
           <p className="mt-4 text-green-500">You are logged in</p>
         )}
       </div>
+      <Separator className="mb-4" />
       <form action={formAction}>
-        <div className="mb-4 grid gap-4">
+        <div className="mb-6 grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -69,7 +71,7 @@ export default function LoginForm() {
               name="username"
               required
               disabled={isAuthenticated}
-              className="bg-background text-neutral-400"
+              className="border-none bg-background text-muted"
               defaultValue={searchParams.get('email') || ''}
             />
           </div>
@@ -81,7 +83,7 @@ export default function LoginForm() {
               id="password"
               type="password"
               name="password"
-              className="bg-background text-neutral-400"
+              className="border-none bg-background text-muted"
               required
               disabled={isAuthenticated}
             />
@@ -97,12 +99,12 @@ export default function LoginForm() {
       {state?.error && <p className="text-red-500">{state.error}</p>}
       <Link
         href="#"
-        className="text-muted underline hover:text-accent"
+        className="text-sm text-muted underline hover:text-accent"
         prefetch={false}
       >
         Forgot your password?
       </Link>
-      <div className="mt-4 text-center text-sm text-muted">
+      <div className="mt-4 text-center text-sm text-white">
         Don&apos;t have an account?{' '}
         <Link
           href="/register"

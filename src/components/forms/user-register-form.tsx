@@ -11,6 +11,7 @@ import { Label } from '~/components/ui/label'
 
 import { IFormState } from '../actions/utils'
 import { Button } from '../button'
+import { Separator } from '../ui/separator'
 
 const initialState: IFormState = {
   data: undefined,
@@ -39,12 +40,13 @@ export default function UserRegisterForm() {
 
   return (
     <div className="mx-auto grid w-[450px] gap-6 text-white">
-      <div className="grid gap-2 text-center">
+      <div className="grid gap-4 text-center">
         <h2>Create an account</h2>
         <h5 className="text-muted">
           Enter your email below to create your account
         </h5>
       </div>
+      <Separator className="mb-2" />
       <form action={formAction}>
         <div className="mb-4 grid gap-4">
           <div className="grid grid-cols-2 gap-4">
@@ -54,7 +56,7 @@ export default function UserRegisterForm() {
                 id="firstName"
                 name="firstName"
                 required
-                className="bg-background text-neutral-400"
+                className="border-none bg-background text-muted"
               />
               <div className="text-xs text-red-500">
                 {
@@ -69,7 +71,7 @@ export default function UserRegisterForm() {
                 id="lastName"
                 name="lastName"
                 required
-                className="bg-background text-neutral-400"
+                className="border-none bg-background text-muted"
               />
               <div className="text-xs text-red-500">
                 {
@@ -86,7 +88,7 @@ export default function UserRegisterForm() {
               type="email"
               name="email"
               required
-              className="bg-background text-neutral-400"
+              className="border-none bg-background text-muted"
             />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('email'))?.message}
@@ -101,7 +103,7 @@ export default function UserRegisterForm() {
               type="password"
               name="password"
               required
-              className="bg-background text-neutral-400"
+              className="border-none bg-background text-muted"
               autoComplete="new-password"
             />
             <div className="text-xs text-red-500">
