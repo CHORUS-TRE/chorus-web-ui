@@ -31,8 +31,8 @@ import { App } from '~/domain/model'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Textarea } from '../ui/textarea'
-import { Alert, AlertTitle, AlertDescription } from '../ui/alert'
 
 const initialState: IFormState = {
   data: undefined,
