@@ -156,7 +156,7 @@ export default async function WorkbenchTable({
   )
 
   return (
-    <div className="mb-8 grid flex-1 items-start gap-4 md:gap-8">
+    <div className="mb-4 grid flex-1 items-start gap-4">
       <Tabs defaultValue="all">
         <div className="flex items-center">
           <TabsList>
@@ -166,7 +166,7 @@ export default async function WorkbenchTable({
               Archived
             </TabsTrigger>
           </TabsList>
-          <div className="ml-auto flex items-center gap-2">
+          {/* <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -186,11 +186,7 @@ export default async function WorkbenchTable({
                 <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* <Dialog triggerText="New app">
-              <WorkbenchCreateForm />
-            </Dialog> */}
-          </div>
+          </div> */}
         </div>
         <TabsContent value="all">
           <CardContainer workbenches={nextWorkbenches} />

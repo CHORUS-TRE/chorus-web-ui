@@ -54,7 +54,7 @@
 
 @layer utilities {
   h1 {
-    @apply text-6xl font-medium tracking-tight;
+    @apply text-5xl font-medium tracking-tight;
   }
 
   h2 {
@@ -69,8 +69,16 @@
     @apply text-xl font-medium tracking-tight;
   }
 
+  h5 {
+    @apply text-xl font-medium tracking-tight text-muted;
+  }
+
   p {
     @apply text-base font-normal;
+  }
+
+  .nav-link {
+    @apply bg-transparent text-sm font-semibold text-muted;
   }
 
   .blur-soft {

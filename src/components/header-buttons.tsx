@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { CircleHelp } from 'lucide-react'
+import { CircleHelp, User } from 'lucide-react'
 
 import { logout } from '@/components/actions/authentication-login-view-model'
 import { userMe } from '@/components/actions/user-view-model'
@@ -53,10 +53,10 @@ export function HeaderButtons() {
 
   return (
     <>
-      <div className="flex items-center justify-end pr-4">
+      <div className="flex items-center justify-end">
         <Button
           size="icon"
-          className="overflow-hidden rounded-full text-accent hover:text-accent-foreground"
+          className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
           variant="ghost"
           onClick={toggleRightSidebar}
         >
@@ -66,17 +66,20 @@ export function HeaderButtons() {
           <DropdownMenuTrigger asChild>
             <Button
               size="icon"
-              className="overflow-hidden rounded-full text-accent hover:text-accent-foreground"
+              className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
               variant="ghost"
             >
-              <Image
-                src={user?.avatar || userPlaceholder}
-                width={24}
-                height={24}
-                alt="Avatar"
-                className="overflow-hidden rounded-full border-2 border-accent"
-                style={{ aspectRatio: '24/24', objectFit: 'cover' }}
-              />
+              {user?.avatar && (
+                <Image
+                  src={user?.avatar || userPlaceholder}
+                  width={24}
+                  height={24}
+                  alt="Avatar"
+                  className="overflow-hidden rounded-full"
+                  style={{ aspectRatio: '24/24', objectFit: 'cover' }}
+                />
+              )}
+              {!user?.avatar && <User />}
             </Button>
           </DropdownMenuTrigger>
           {isAuthenticated ? (

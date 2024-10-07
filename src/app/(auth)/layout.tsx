@@ -19,7 +19,7 @@ export default function Layout({
       </div>
 
       <div
-        className="absolute left-1/2 top-24 z-30 w-full max-w-xl -translate-x-1/2 rounded-2xl bg-black bg-opacity-85 p-8"
+        className="absolute left-1/2 top-24 z-30 w-full max-w-xl -translate-x-1/2 rounded-2xl bg-black bg-opacity-85 p-8 empty:hidden"
         id="content"
       >
         {children}

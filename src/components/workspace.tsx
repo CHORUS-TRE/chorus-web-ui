@@ -4,8 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { ArrowRight } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
+import { Button } from '@/components/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -35,8 +35,8 @@ export function Workspace({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card className="flex h-full flex-col justify-between border-none bg-slate-950 text-white">
+    <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border border-muted bg-black text-white">
         <CardHeader>
           <CardTitle className="text-white">{workspace?.name}</CardTitle>
           <CardDescription>{workspace?.description}</CardDescription>
@@ -63,11 +63,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button
-            size="sm"
-            variant="link"
-            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-          >
+          <Button>
             <ArrowRight className="mr-2 h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Settings
@@ -76,7 +72,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Apps
@@ -98,11 +94,7 @@ export function Workspace({
                     })
                   }}
                 >
-                  <Button
-                    size="sm"
-                    variant="link"
-                    className="hover:bg-accent-background focus:bg-accent-background h-5 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-                  >
+                  <Button>
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       {shortName}
                     </span>
@@ -119,7 +111,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Data</CardTitle>
           <CardDescription>View and manage your data sources.</CardDescription>
@@ -142,11 +134,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button
-            size="sm"
-            variant="link"
-            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-          >
+          <Button>
             <ArrowRight className="mr-2 h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               View Data
@@ -155,7 +143,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Resources</CardTitle>
           <CardDescription>
@@ -208,11 +196,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button
-            size="sm"
-            variant="link"
-            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-          >
+          <Button>
             <ArrowRight className="mr-2 h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               View Resources
@@ -221,7 +205,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Team</CardTitle>
           <CardDescription>
@@ -254,11 +238,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button
-            size="sm"
-            variant="link"
-            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-          >
+          <Button>
             <ArrowRight className="mr-2 h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               View Team
@@ -267,26 +247,22 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Wiki</CardTitle>
           <CardDescription>Share and view latest news</CardDescription>
         </CardHeader>
         <CardContent>
-          <iframe
+          {/* <iframe
             name="embed_readwrite"
             src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
             width="100%"
             height="100%"
-          ></iframe>
+          ></iframe> */}
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button
-            size="sm"
-            variant="link"
-            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-          >
+          <Button>
             <ArrowRight className="mr-2 h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               View Wiki
@@ -294,7 +270,8 @@ export function Workspace({
           </Button>
         </CardFooter>
       </Card>
-      <Card className="h-full">
+
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Activities</CardTitle>
           <CardDescription>Events, analytics & monitoring.</CardDescription>
@@ -304,11 +281,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button
-            size="sm"
-            variant="link"
-            className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-          >
+          <Button>
             <ArrowRight className="mr-2 h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               View Activities
@@ -317,7 +290,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Footprint</CardTitle>
           <CardDescription>

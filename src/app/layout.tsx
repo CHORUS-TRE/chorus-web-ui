@@ -76,7 +76,7 @@ export default function RootLayout({
               priority={true}
               sizes="100vw"
               id="background"
-              className="fixed left-0 top-0 z-0 h-full w-full"
+              className="fixed left-0 top-0 h-full w-full"
             />
           </NavigationProvider>
         </AuthProvider>

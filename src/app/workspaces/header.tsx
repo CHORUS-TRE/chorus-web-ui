@@ -1,15 +1,33 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Settings } from 'lucide-react'
 
-import { workspaceGet } from '@/components/actions/workspace-view-model'
 import { Workspace as WorkspaceType } from '@/domain/model'
 
+import { workspaceGet } from '~/components/actions/workspace-view-model'
 import NavLink from '~/components/nav-link'
 import { Button } from '~/components/ui/button'
+
+function StyledNavLink({
+  children,
+  href
+}: {
+  children: ReactNode
+  href: string
+}) {
+  return (
+    <NavLink
+      href={href}
+      exact
+      className="border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+    >
+      {children}
+    </NavLink>
+  )
+}
 
 const WorkspaceHeader = () => {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
@@ -48,84 +66,35 @@ const WorkspaceHeader = () => {
 
   return (
     <>
-      <div className="mb-4 flex items-start justify-between border-b pb-2">
-        <h1 className="mt-5 scroll-m-20 pr-1 text-3xl font-semibold tracking-tight text-background first:mt-0">
-          Welcome to {workspace?.shortName}
-        </h1>
-        <Link href="#" className="text-accent hover:text-accent-foreground">
-          <Button
-            size="icon"
-            className="overflow-hidden rounded-full"
-            variant="ghost"
-          >
+      <div className="mb-6 flex items-center justify-between border-b border-muted pb-2">
+        <h2 className="mt-5 text-muted">
+          <span className="font-semibold text-white">
+            {workspace?.shortName}
+          </span>
+        </h2>
+        <Link
+          href="#"
+          className="text-muted hover:bg-transparent hover:text-accent"
+        >
+          <Button size="icon" className="overflow-hidden" variant="ghost">
             <Settings />
           </Button>
         </Link>{' '}
       </div>
 
-      <nav className="mb-4 inline-flex h-10 flex-col items-center justify-start gap-6 rounded-md bg-white px-4 text-lg font-medium text-muted md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-        <NavLink
-          href={`/workspaces/${params?.workspaceId}`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
+      <nav className="nav-link mb-6 inline-flex h-10 flex-row items-center justify-start gap-6">
+        <StyledNavLink href={`/workspaces/${params?.workspaceId}`}>
           Dashboard
-        </NavLink>
-        <NavLink
-          href={`/workspaces/${params?.workspaceId}/apps`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
+        </StyledNavLink>
+        <StyledNavLink href={`/workspaces/${params?.workspaceId}/apps`}>
           Apps
-        </NavLink>
-
-        <NavLink
-          href={`#`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
-          Data
-        </NavLink>
-
-        <NavLink
-          href={`#`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
-          Resources
-        </NavLink>
-
-        <NavLink
-          href={`#`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
-          Team
-        </NavLink>
-
-        <NavLink
-          href={`#`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
-          Wiki
-        </NavLink>
-
-        <NavLink
-          href={`#`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
-          Activities
-        </NavLink>
-
-        <NavLink
-          href={`#`}
-          exact
-          className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-        >
-          Footprint
-        </NavLink>
+        </StyledNavLink>
+        <StyledNavLink href={`#`}>Data</StyledNavLink>
+        <StyledNavLink href={`#`}>Resources</StyledNavLink>
+        <StyledNavLink href={`#`}>Team</StyledNavLink>
+        <StyledNavLink href={`#`}>Wiki</StyledNavLink>
+        <StyledNavLink href={`#`}>Activities</StyledNavLink>
+        <StyledNavLink href={`#`}>Footprint</StyledNavLink>
       </nav>
     </>
   )
