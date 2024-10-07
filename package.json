@@ -17,7 +17,7 @@
     "prepare": "simple-git-hooks || true"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm fix && pnpm test:run"
+    "pre-commit": "pnpm run fix && pnpm test:run"
   },
   "dependencies": {
     "@nivo/line": "^0.87.0",
