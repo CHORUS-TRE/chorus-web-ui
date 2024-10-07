@@ -10,7 +10,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 image:
-  repository: registry.build.chorus-tre.ch/chorus-web-ui
+  repository: registry.build.chorus-tre.ch/chorus/web-ui
   tag: ""
 
 serviceAccount:
