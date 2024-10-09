@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { useNavigation } from '~/components/navigation-context'
-
 import { Header } from '../header'
 
 export default function Layout({
@@ -11,8 +9,6 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { background } = useNavigation()
-
   return (
     <>
       <div
@@ -23,7 +19,7 @@ export default function Layout({
       </div>
 
       <div
-        className="absolute left-1/2 top-24 z-30 w-full max-w-6xl -translate-x-1/2 rounded-lg border-2 border-slate-600 bg-slate-900 bg-opacity-85 p-8"
+        className="absolute left-1/2 top-24 z-30 w-full max-w-6xl -translate-x-1/2 rounded-2xl bg-black bg-opacity-85 p-8"
         id="content"
       >
         {children}

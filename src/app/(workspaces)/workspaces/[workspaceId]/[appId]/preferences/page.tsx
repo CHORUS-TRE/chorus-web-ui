@@ -7,8 +7,8 @@ import { workbenchGet } from '@/components/actions/workbench-view-model'
 import { WorksbenchDeleteForm } from '@/components/forms/workbench-forms'
 
 import { userMe } from '~/components/actions/user-view-model'
+import { Button } from '~/components/button'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
 
 export default async function WorkbenchPage({
@@ -26,30 +26,25 @@ export default async function WorkbenchPage({
 
   return (
     <div>
-      <div
-        className={`absolute left-0 top-0 z-40 flex h-11 min-w-full items-center justify-end`}
-        id="header"
-      >
+      <div className="mb-6 flex items-center justify-between pb-2">
+        <h2 className="mt-5 text-muted">
+          <span className="font-semibold text-white">
+            {workbench?.data?.name}
+          </span>
+        </h2>
         <Link
           href={`/workspaces/${workspaceId}/${workbenchId}`}
-          passHref
-          className="text-accent hover:text-accent-foreground"
+          className="text-muted hover:bg-transparent hover:text-accent"
         >
-          <Button
-            size="icon"
-            className="overflow-hidden rounded-full"
-            variant="ghost"
-          >
+          <Button>
             <CircleX />
           </Button>
-        </Link>
+        </Link>{' '}
       </div>
 
-      <div className="mb-4 flex items-start justify-between border-b pb-2 text-background">
-        <h2 className="mt-5 scroll-m-20 first:mt-0">Preferences</h2>
-      </div>
-      <div className="">
-        {/* <Menubar>
+      <h3 className="text-white">Preferences</h3>
+
+      {/* <Menubar>
           <MenubarMenu>
             <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent>
@@ -104,21 +99,15 @@ export default async function WorkbenchPage({
           </MenubarMenu>
 
         </Menubar> */}
+      <div className="mt-4 flex flex-col items-start justify-between gap-4">
+        <WorksbenchDeleteForm id={params.appId} />
+
+        <AppInstanceCreateForm
+          workbenchId={params.appId}
+          userId={user.data?.id}
+          workspaceId={params.workspaceId}
+        />
       </div>
-      <Card className="mt-4 h-full w-full border-slate-600 bg-slate-900 bg-opacity-85">
-        <CardContent className="h-96">
-          <div className="mt-4 w-32 bg-white">
-            <WorksbenchDeleteForm id={params.appId} />
-          </div>
-          <div className="mt-4 w-32 bg-white">
-            <AppInstanceCreateForm
-              workbenchId={params.appId}
-              userId={user.data?.id}
-              workspaceId={params.workspaceId}
-            />
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

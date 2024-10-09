@@ -13,7 +13,7 @@ import logo from '/public/logo-chorus-primaire-white@2x.svg'
 
 export function Header() {
   return (
-    <nav className="grid h-11 min-w-full grid-cols-3 items-center bg-slate-900 bg-opacity-70 py-1 text-slate-100 shadow-lg backdrop-blur-sm">
+    <nav className="grid h-11 min-w-full grid-cols-3 items-center bg-black bg-opacity-85 py-1 text-slate-100 shadow-lg backdrop-blur-sm">
       <div className="flex flex-nowrap items-center justify-start pl-4">
         <Link href="/" passHref className="">
           <Image
@@ -27,14 +27,26 @@ export function Header() {
         <Breadcrumb />
       </div>
 
-      <div className="flex items-center justify-center gap-8">
-        <Link href="#" passHref className="hover:text-accent hover:underline">
+      <div className="flex items-center justify-center gap-4">
+        <Link
+          href="#"
+          passHref
+          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
+        >
           App Store
         </Link>
-        <Link href="#" passHref className="hover:text-accent hover:underline">
+        <Link
+          href="#"
+          passHref
+          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
+        >
           Services
         </Link>
-        <Link href="#" passHref className="hover:text-accent hover:underline">
+        <Link
+          href="#"
+          passHref
+          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
+        >
           Data
         </Link>
       </div>
@@ -45,7 +57,7 @@ export function Header() {
           <Input
             type="search"
             placeholder="Find workspaces, apps, content ..."
-            className="h-7 bg-slate-900 pl-8 md:w-[240px] lg:w-[360px]"
+            className="h-7 border-none bg-background pl-8 md:w-[240px] lg:w-[360px]"
           />
         </div>
         <div className="ml-4">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { TriangleAlert } from 'lucide-react'
+import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
@@ -14,7 +14,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -29,7 +29,6 @@ import { App } from '~/domain/model'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
-import { Icons } from '../ui/icons'
 import { Textarea } from '../ui/textarea'
 
 const initialState: IFormState = {
@@ -50,11 +49,13 @@ function SubmitButton() {
 export function AppInstanceCreateForm({
   workspaceId,
   workbenchId,
-  userId
+  userId,
+  cb
 }: {
   workspaceId?: string
   workbenchId?: string
   userId?: string
+  cb?: () => void
 }) {
   const [state, formAction] = useFormState(
     appInstanceCreate,
@@ -82,30 +83,29 @@ export function AppInstanceCreateForm({
   }, [])
 
   useEffect(() => {
+    if (state?.error) {
+      return
+    }
+
     if (state?.data) {
       setOpen(false)
+      if (cb) cb()
     }
   }, [state])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8 gap-1 bg-accent hover:bg-accent-foreground focus:bg-accent focus:text-accent-foreground"
-        >
-          <Icons.CirclePlusIcon className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Start new app
-          </span>
+        <Button>
+          <CirclePlus className="h-3.5 w-3.5" />
+          Start new app
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
-              <Card className="w-full">
+              <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
                   <CardTitle>Start App</CardTitle>
                   <CardDescription>
@@ -125,7 +125,11 @@ export function AppInstanceCreateForm({
             <Input id="name" name="name" placeholder="Enter workbench name" /> */}
                     <div className="grid gap-3">
                       <Label htmlFor="name">Name</Label>
-                      <select name="id" id="id">
+                      <select
+                        name="id"
+                        id="id"
+                        className="bg-background text-white"
+                      >
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
                           <option key={app.id} value={app.id}>

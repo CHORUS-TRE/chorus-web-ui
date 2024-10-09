@@ -1,16 +1,17 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { ArrowRight } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { userCreate } from '@/components/actions/user-view-model'
 
-import { Icons } from '~/components/ui/icons'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
 import { IFormState } from '../actions/utils'
-import { Button } from '../ui/button'
+import { Button } from '../button'
+import { Separator } from '../ui/separator'
 
 const initialState: IFormState = {
   data: undefined,
@@ -21,11 +22,8 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button
-      className="w-full bg-accent text-accent-foreground hover:bg-accent"
-      type="submit"
-      disabled={pending}
-    >
+    <Button type="submit" disabled={pending}>
+      <ArrowRight className="h-3.5 w-3.5" />
       Create account
     </Button>
   )
@@ -42,46 +40,24 @@ export default function UserRegisterForm() {
 
   return (
     <div className="mx-auto grid w-[450px] gap-6 text-white">
-      <div className="grid gap-2 text-center">
-        <h1>Create an account</h1>
-        <p className="mt-4 text-muted">
+      <div className="grid gap-4 text-center">
+        <h2>Create an account</h2>
+        <h5 className="text-muted">
           Enter your email below to create your account
-        </p>
+        </h5>
       </div>
-      <div className="grid gap-4">
-        <div className="grid grid-cols-2 gap-6">
-          <Button
-            variant="outline"
-            className="w-full bg-accent text-accent-foreground hover:bg-accent"
-          >
-            <Icons.gitHub className="mr-2 h-4 w-4" />
-            Github
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full bg-accent text-accent-foreground hover:bg-accent"
-          >
-            <Icons.google className="mr-2 h-4 w-4" />
-            Google
-          </Button>
-        </div>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-      </div>
+      <Separator className="mb-2" />
       <form action={formAction}>
-        <div className="grid gap-4">
+        <div className="mb-4 grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
-              <Input id="firstName" name="firstName" required />
+              <Input
+                id="firstName"
+                name="firstName"
+                required
+                className="border-none bg-background text-muted"
+              />
               <div className="text-xs text-red-500">
                 {
                   state?.issues?.find((e) => e.path.includes('firstName'))
@@ -91,7 +67,12 @@ export default function UserRegisterForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
-              <Input id="lastName" name="lastName" required />
+              <Input
+                id="lastName"
+                name="lastName"
+                required
+                className="border-none bg-background text-muted"
+              />
               <div className="text-xs text-red-500">
                 {
                   state?.issues?.find((e) => e.path.includes('lastName'))
@@ -102,7 +83,13 @@ export default function UserRegisterForm() {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" name="email" required />
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              required
+              className="border-none bg-background text-muted"
+            />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('email'))?.message}
             </div>
@@ -111,13 +98,20 @@ export default function UserRegisterForm() {
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
             </div>
-            <Input id="password" type="password" name="password" required />
+            <Input
+              id="password"
+              type="password"
+              name="password"
+              required
+              className="border-none bg-background text-muted"
+              autoComplete="new-password"
+            />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('password'))?.message}
             </div>
           </div>
-          <SubmitButton />
         </div>
+        <SubmitButton />
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">

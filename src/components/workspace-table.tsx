@@ -1,9 +1,11 @@
-'use server'
+'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { EllipsisVerticalIcon } from 'lucide-react'
 
 import { workspaceList } from '@/components/actions/workspace-view-model'
+import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -28,9 +30,30 @@ import { Workspace } from '~/domain/model'
 import { userMe } from './actions/user-view-model'
 import { WorkspaceDeleteForm } from './forms/workspace-forms'
 
-export default async function WorkspaceTable() {
-  const response = await workspaceList()
-  const user = await userMe()
+export default function WorkspaceTable() {
+  const [user, setUser] = useState<User | null>(null)
+  const [workspaces, setWorkspaces] = useState<WorkspaceType[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    try {
+      workspaceList()
+        .then((response) => {
+          if (response?.error) setError(response.error)
+          if (response?.data) setWorkspaces(response.data)
+        })
+        .catch((error) => {
+          setError(error.message)
+        })
+
+      userMe().then((response) => {
+        if (response?.error) setError(response.error)
+        if (response?.data) setUser(response.data)
+      })
+    } catch (error) {
+      setError(error.message)
+    }
+  }, [])
 
   const TableHeads = () => (
     <>
@@ -87,31 +110,26 @@ export default async function WorkspaceTable() {
     </TableRowComponent>
   )
 
-  const workspaces = response?.data
-  const error = response?.error
-
   return (
-    <div className="mb-8 grid flex-1 items-start gap-4">
-      <Card>
-        <CardContent className="mt-4">
-          <Table>
-            <TableHeader>
-              <TableRowComponent>
-                <TableHeads />
-              </TableRowComponent>
-            </TableHeader>
-            <TableBody>
-              {workspaces?.map((w) => <TableRow key={w.id} workspace={w} />)}
-            </TableBody>
-          </Table>
-        </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-{workspaces?.length}</strong> of{' '}
-            <strong>{workspaces?.length}</strong>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+    <Card className="rounded-2xl border-none bg-background text-white">
+      <CardContent className="mt-4">
+        <Table>
+          <TableHeader>
+            <TableRowComponent>
+              <TableHeads />
+            </TableRowComponent>
+          </TableHeader>
+          <TableBody>
+            {workspaces?.map((w) => <TableRow key={w.id} workspace={w} />)}
+          </TableBody>
+        </Table>
+      </CardContent>
+      <CardFooter>
+        <div className="text-xs text-muted-foreground">
+          Showing <strong>1-{workspaces?.length}</strong> of{' '}
+          <strong>{workspaces?.length}</strong>
+        </div>
+      </CardFooter>
+    </Card>
   )
 }

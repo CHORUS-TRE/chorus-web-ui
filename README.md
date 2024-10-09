@@ -126,6 +126,15 @@ cd chorus-web-ui
 
 ### Production
 
+**environment variables**
+
+- `DATA_SOURCE` is either api or local
+- `DATA_SOURCE_LOCAL_DIR` is used if DATA_SOURCE=local. It is the path to store the local data files
+- `DATA_SOURCE_API_URL` is the API backend. Note that the generated files are prefixed with /api/rest/v1/ so generally you want to have something like
+DATA_SOURCE_API_URL=https://api.chorus-tre.com/
+- `NEXT_PUBLIC_DATA_SOURCE_API_URL` is exposed to the web-ui and should contains the prefix to the API, like https://api.chorus-tre.com/api/rest/v1/
+
+
  **Local Production Testing**
 
    Build and run the production application locally:
@@ -134,12 +143,15 @@ cd chorus-web-ui
    docker build -t chorus/web-ui .
    ```
 
+
+
    Local storage mode
 
 ```bash
 	echo "DATA_SOURCE=local" > .env
 	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
-	echo "DATA_SOURCE_API_URL=https://chorus-tre.com/api/v1" >> .env
+	echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com/" >> .env
+	echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
 
 	docker run --rm  --env-file .env  -v $(pwd)/.local-storage:/app/.local-storage  -p3000:3000 chorus/web-ui
  ```
@@ -149,10 +161,16 @@ cd chorus-web-ui
 ```bash
 	echo "DATA_SOURCE=api" > .env
 	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
-	echo "DATA_SOURCE_API_URL=https://chorus-tre.com/api/v1" >> .env
+	echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
+	echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
 
    docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui
 ```
+
+inline
+
+`docker run -e DATA_SOURCE=api -e DATA_SOURCE_API_URL=https://api.chorus-tre.com -e DATA_SOURCE_LOCAL_DIR=./.local-storage -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/`
+
 
    Access your application at `localhost:3000`.
 

@@ -58,8 +58,6 @@ export default function HUD() {
   const sortedWorkbenches = workspacesWithWorkbenches?.sort((a, b) =>
     a.id === workspaceId ? 1 : 0
   )
-  console.log(workspaceId)
-  console.log(sortedWorkbenches)
 
   function HUD() {
     return (

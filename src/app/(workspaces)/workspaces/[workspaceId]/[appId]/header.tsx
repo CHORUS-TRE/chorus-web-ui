@@ -65,7 +65,7 @@ export function Header() {
         &gt;{' '}
         <Link
           href={`/workspaces/${workspaceId}`}
-          className="text-sm hover:text-accent hover:underline"
+          className="border-b-2 border-accent text-sm hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
         >
           {workspace?.shortName}
         </Link>
@@ -97,6 +97,12 @@ export function Header() {
             size="icon"
             className="overflow-hidden rounded-full"
             variant="ghost"
+            onClick={() => {
+              const iframe = document.getElementById('iframe')
+              if (iframe) {
+                iframe.requestFullscreen()
+              }
+            }}
           >
             <Maximize />
           </Button>
