@@ -1,3 +1,23 @@
+# [1.0.0-alpha.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2024-10-09)
+
+
+### Bug Fixes
+
+* **charts:** repository has changed to chorus-web-ui ([#53](https://github.com/CHORUS-TRE/chorus-web-ui/issues/53)) ([4989530](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4989530f7cbe390c8228d5c2fabd0e0d49aa211c))
+* **ci:** disable Husky in semantic release workflow ([#50](https://github.com/CHORUS-TRE/chorus-web-ui/issues/50)) ([1d5a5dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1d5a5dc08944fda2991a6e82243e255bea4d863e))
+* **ci:** updated pre-commit hooks, added beta branch to semantic-release workflow ([#51](https://github.com/CHORUS-TRE/chorus-web-ui/issues/51)) ([1e568ee](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1e568ee1f0b5b62e32d3a42566a7cac9f80a4468))
+* **deps:** update dependency lucide-react to ^0.451.0 ([#40](https://github.com/CHORUS-TRE/chorus-web-ui/issues/40)) ([d003855](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d003855bd1bfcd213e5b6f4d7d8c9349f094c1e7))
+* updated lock-file & fix hooks ([#52](https://github.com/CHORUS-TRE/chorus-web-ui/issues/52)) ([2171f70](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2171f70c4e2f92153fa6718c1170f7e69b9e993c))
+
+
+### Features
+
+* Add Button component ([3aa2e54](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3aa2e54ee9f661971a139e3821668161308a5933))
+* Add semantic release workflow and update package version ([#46](https://github.com/CHORUS-TRE/chorus-web-ui/issues/46)) ([5b55301](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5b55301626291fb33c5b88dbb87f76e1b1c0c014))
+* added frontend env for iframe API urls ([d1fc7d3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d1fc7d34869ab8d358e68ccbf299e45da1439416))
+* callback for app creation ([f760ed2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f760ed212f552740540786b43e35f673d5de8ebd))
+* moved home page to client ([6d5ab88](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6d5ab88bbfc866a265649441a5f90cb468e3362d))
+
 # [1.0.0-alpha.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2024-10-09)
 
 
