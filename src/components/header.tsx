@@ -27,25 +27,25 @@ export function Header() {
         <Breadcrumb />
       </div>
 
-      <div className="flex items-center justify-center gap-8">
+      <div className="flex items-center justify-center gap-4">
         <Link
           href="#"
           passHref
-          className="nav-link hover:text-accent hover:underline"
+          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
         >
           App Store
         </Link>
         <Link
           href="#"
           passHref
-          className="nav-link hover:text-accent hover:underline"
+          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
         >
           Services
         </Link>
         <Link
           href="#"
           passHref
-          className="nav-link hover:text-accent hover:underline"
+          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
         >
           Data
         </Link>

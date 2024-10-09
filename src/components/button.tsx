@@ -10,6 +10,7 @@ export function Button({
   ...props
 }: Readonly<{
   children: React.ReactNode
+  icon?: React.ReactNode
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
   className?: string
@@ -19,7 +20,7 @@ export function Button({
       size="sm"
       disabled={disabled}
       type={type}
-      className={`focus:bg-accent-background flex h-8 items-center justify-center gap-1 rounded-full bg-accent text-accent-foreground hover:bg-accent-foreground hover:text-accent focus:text-accent focus:ring-2 focus:ring-accent ${className}`}
+      className={`flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent ${className}`}
       {...props}
     >
       {children}

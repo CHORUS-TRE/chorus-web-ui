@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Play } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
@@ -23,10 +23,12 @@ import { useNavigation } from './navigation-context'
 
 export function Workspace({
   workspace,
-  workbenches
+  workbenches,
+  cb
 }: {
   workspace?: WorkspaceType | null
   workbenches?: Workbench[]
+  cb?: (id: string) => void
 }) {
   const { setBackground } = useNavigation()
 
@@ -64,10 +66,8 @@ export function Workspace({
         <div className="flex-grow" />
         <CardFooter>
           <Button>
-            <ArrowRight className="mr-2 h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Settings
-            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+            Settings
           </Button>
         </CardFooter>
       </Card>
@@ -77,7 +77,7 @@ export function Workspace({
           <CardTitle className="flex items-center justify-between">
             Apps
           </CardTitle>
-          <CardDescription>View and manage your active apps.</CardDescription>
+          <CardDescription>Run and start apps.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2">
@@ -86,7 +86,6 @@ export function Workspace({
                 <Link
                   key={workspace.id}
                   href={`/workspaces/${workspace.id}/${id}`}
-                  className="text-accent hover:text-accent-foreground"
                   onClick={() => {
                     setBackground({
                       workspaceId: workspace.id,
@@ -95,9 +94,8 @@ export function Workspace({
                   }}
                 >
                   <Button>
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {shortName}
-                    </span>
+                    <Play className="h-3.5 w-3.5" />
+                    {shortName}
                   </Button>
                 </Link>
                 <p className="text-xs">{formatDistanceToNow(createdAt)} ago</p>
@@ -107,7 +105,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <WorkbenchCreateForm workspaceId={workspace.id} />
+          <WorkbenchCreateForm workspaceId={workspace.id} cb={cb} />
         </CardFooter>
       </Card>
 
@@ -135,10 +133,8 @@ export function Workspace({
         <div className="flex-grow" />
         <CardFooter>
           <Button>
-            <ArrowRight className="mr-2 h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              View Data
-            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+            View Data
           </Button>
         </CardFooter>
       </Card>
@@ -197,10 +193,8 @@ export function Workspace({
         <div className="flex-grow" />
         <CardFooter>
           <Button>
-            <ArrowRight className="mr-2 h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              View Resources
-            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+            View Resources
           </Button>
         </CardFooter>
       </Card>
@@ -239,10 +233,8 @@ export function Workspace({
         <div className="flex-grow" />
         <CardFooter>
           <Button>
-            <ArrowRight className="mr-2 h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              View Team
-            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+            View Team
           </Button>
         </CardFooter>
       </Card>
@@ -263,10 +255,8 @@ export function Workspace({
         <div className="flex-grow" />
         <CardFooter>
           <Button>
-            <ArrowRight className="mr-2 h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              View Wiki
-            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+            View Wiki
           </Button>
         </CardFooter>
       </Card>
@@ -282,10 +272,8 @@ export function Workspace({
         <div className="flex-grow" />
         <CardFooter>
           <Button>
-            <ArrowRight className="mr-2 h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              View Activities
-            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+            View Activities
           </Button>
         </CardFooter>
       </Card>
@@ -293,18 +281,18 @@ export function Workspace({
       <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Footprint</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm">
             <p>
               Your group produced an average of 320g carbon per day since last
               week.
             </p>
-            <h4>Numbers</h4>
+            <h4 className="mt-2">Numbers</h4>
             320g CO2/day is equivalent to:
             <ul>
               <li>1.6 km by car</li>
               <li>a flight to the moon</li>
             </ul>
-            <h4>Tips</h4>
+            <h4 className="mt-2">Tips</h4>
             <ul>
               <li>Use public transportation</li>
               <li>Use a bike</li>
