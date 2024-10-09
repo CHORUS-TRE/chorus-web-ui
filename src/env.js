@@ -20,7 +20,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_DATA_SOURCE_API_URL: z.string().url().optional()
   },
 
   /**
@@ -31,7 +31,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     DATA_SOURCE: process.env.DATA_SOURCE,
     DATA_SOURCE_LOCAL_DIR: process.env.DATA_SOURCE_LOCAL_DIR,
-    DATA_SOURCE_API_URL: process.env.DATA_SOURCE_API_URL
+    DATA_SOURCE_API_URL: process.env.DATA_SOURCE_API_URL,
+    NEXT_PUBLIC_DATA_SOURCE_API_URL: process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

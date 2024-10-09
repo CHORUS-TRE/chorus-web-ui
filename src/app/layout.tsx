@@ -6,10 +6,10 @@ import Image from 'next/image'
 import Script from 'next/script'
 
 import { AuthProvider } from '~/components/auth-context'
+import BackgroundIframe from '~/components/background-iframe'
 import HUD from '~/components/HUD'
 import { NavigationProvider } from '~/components/navigation-context'
 import RightSidebar from '~/components/right-sidebar'
-import Workbench from '~/components/workbench'
 
 import '@/app/build.css'
 import '@/styles/globals.css'
@@ -59,7 +59,7 @@ export default function RootLayout({
             <RightSidebar show={true} />
 
             {/* z-10 */}
-            <Workbench />
+            <BackgroundIframe />
 
             <div
               className="fixed left-0 top-1/2 z-30 -translate-y-1/2 pl-2 transition-[left] duration-500 ease-in-out"
