@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Settings } from 'lucide-react'
@@ -29,56 +29,25 @@ function StyledNavLink({
   )
 }
 
-const WorkspaceHeader = () => {
-  const [workspace, setWorkspace] = useState<WorkspaceType>()
-  const [error, setError] = useState<string>()
+const WorkspaceHeader = ({
+  workspace
+}: {
+  workspace?: WorkspaceType | null
+}) => {
   const params = useParams<{ workspaceId: string; appId: string }>()
-  const workspaceId = params?.workspaceId
-
-  useEffect(() => {
-    if (!workspaceId) return
-
-    workspaceGet(workspaceId)
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkspace(response.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
-
-  // const fetchWorkspace = async () => {
-  //   if (!params?.workspaceId) return
-
-  //   return await workspaceGet(params.workspaceId)
-  // }
-
-  // function WSH() {
-  //   const response = use(fetchWorkspace())
-  //   return <WorkspaceHeader workspace={response?.data} />
-  // }
-
-  // function WS() {
-  //   const response = use(fetchWorkspace())
-  //   return <Workspace workspace={response?.data} workbenches={workbenches}/>
-  // }
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between border-b border-muted pb-2">
+      <div className="mb-6 flex items-center justify-between pb-2">
         <h2 className="mt-5 text-muted">
-          <span className="font-semibold text-white">
-            {workspace?.shortName}
+          <span className="border-b border-dotted border-muted pb-2 font-semibold text-white">
+            <Suspense fallback={<>Loading workspace...</>}>
+              {workspace?.shortName}
+            </Suspense>
           </span>
         </h2>
-        <Link
-          href="#"
-          className="text-muted hover:bg-transparent hover:text-accent"
-        >
-          <Button size="icon" className="overflow-hidden" variant="ghost">
-            <Settings />
-          </Button>
+        <Link href="#" className="text-muted">
+          <Settings />
         </Link>{' '}
       </div>
 
@@ -104,7 +73,6 @@ export default WorkspaceHeader
 
 export const dynamic = 'auto'
 export const dynamicParams = true
-// export const revalidate = false
 export const fetchCache = 'auto'
 export const runtime = 'nodejs'
 export const preferredRegion = 'auto'

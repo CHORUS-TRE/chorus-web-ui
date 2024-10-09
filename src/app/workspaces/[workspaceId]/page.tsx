@@ -1,37 +1,26 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 
 import { workbenchList } from '@/components/actions/workbench-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Workspace as WorkspaceType } from '@/domain/model'
 
 import { Workspace } from '~/components/workspace'
 import { Workbench } from '~/domain/model/workbench'
 
-import WorkspaceHeader from '../header'
-
 const WorkspacePage = () => {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [workbenches, setWorkbenches] = useState<Workbench[]>()
   const [error, setError] = useState<string>()
+
+  const router = useRouter()
   const params = useParams<{ workspaceId: string; appId: string }>()
   const workspaceId = params?.workspaceId
-  const workbenchId = params?.appId
 
-  useEffect(() => {
-    if (!workspaceId) return
-
-    workspaceGet(workspaceId)
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkspace(response.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-
+  const getWorkbenchList = useCallback(() => {
     workbenchList()
       .then((response) => {
         if (response?.error) setError(response.error)
@@ -45,6 +34,22 @@ const WorkspacePage = () => {
       })
   }, [])
 
+  useEffect(() => {
+    if (!workspaceId) return
+
+    workspaceGet(workspaceId)
+      .then((response) => {
+        if (response?.error) setError(response.error)
+        if (response?.data) setWorkspace(response.data)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
+
+    getWorkbenchList()
+  }, [])
+
+  // TODO: react use in not yet ready in NextJS
   // const fetchWorkspace = async () => {
   //   if (!params?.workspaceId) return
 
@@ -63,7 +68,6 @@ const WorkspacePage = () => {
 
   return (
     <>
-      <WorkspaceHeader />
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
         <Suspense
@@ -73,7 +77,14 @@ const WorkspacePage = () => {
             </div>
           }
         >
-          <Workspace workspace={workspace} workbenches={workbenches} />
+          <Workspace
+            workspace={workspace}
+            workbenches={workbenches}
+            cb={(id) => {
+              getWorkbenchList()
+              router.push(`/workspaces/${workspaceId}/${id}`)
+            }}
+          />
         </Suspense>
       </div>
 
@@ -86,7 +97,6 @@ export default WorkspacePage
 
 export const dynamic = 'auto'
 export const dynamicParams = true
-// export const revalidate = 'false'
 export const fetchCache = 'auto'
 export const runtime = 'nodejs'
 export const preferredRegion = 'auto'

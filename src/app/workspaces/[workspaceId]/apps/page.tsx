@@ -2,8 +2,6 @@
 
 import WorkbenchTable from '~/components/workbench-table'
 
-import WorkspaceHeader from '../../header'
-
 export default async function Page({
   params,
   searchParams
@@ -15,7 +13,6 @@ export default async function Page({
 
   return (
     <div className="flex flex-col">
-      <WorkspaceHeader />
       {workspaceId && <WorkbenchTable workspaceId={workspaceId} />}
     </div>
   )
