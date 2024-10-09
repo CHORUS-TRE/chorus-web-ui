@@ -1,3 +1,11 @@
+# [1.0.0-alpha.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2024-10-09)
+
+
+### Bug Fixes
+
+* **charts:** repository has changed to chorus-web-ui ([#53](https://github.com/CHORUS-TRE/chorus-web-ui/issues/53)) ([55ff59f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/55ff59fe2285b1ea9766b718ccf72fc8b5b064fd))
+* **deps:** update dependency lucide-react to ^0.451.0 ([#40](https://github.com/CHORUS-TRE/chorus-web-ui/issues/40)) ([cedfca3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cedfca3e17aee541cfb651df9835e294f99051e8))
+
 # 1.0.0-alpha.1 (2024-10-07)
 
 
