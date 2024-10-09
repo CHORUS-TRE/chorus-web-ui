@@ -113,7 +113,7 @@ export async function workbenchCreate(
 
     return {
       ...prevState,
-      data: 'Successfully created workbench',
+      data: createdWorkbench?.data?.id,
       error: createdWorkbench.error
     }
   } catch (error) {

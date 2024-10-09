@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { CirclePlus } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import {
@@ -29,7 +30,6 @@ import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 
 import { IFormState } from '../actions/utils'
-import { Icons } from '../ui/icons'
 
 const initialState: IFormState = {
   data: undefined,
@@ -56,13 +56,24 @@ function DeleteButton() {
   )
 }
 
-export function WorkspaceCreateForm({ userId }: { userId?: string }) {
+export function WorkspaceCreateForm({
+  userId,
+  cb
+}: {
+  userId?: string
+  cb?: () => void
+}) {
   const [state, formAction] = useFormState(workspaceCreate, initialState)
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
+    if (state?.error) {
+      return
+    }
+
     if (state?.data) {
       setOpen(false)
+      if (cb) cb()
     }
   }, [state])
 
@@ -70,7 +81,7 @@ export function WorkspaceCreateForm({ userId }: { userId?: string }) {
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Icons.CirclePlusIcon className="h-3.5 w-3.5" />
+          <CirclePlus className="h-3.5 w-3.5" />
           New workspace
         </Button>
       </DialogTrigger>

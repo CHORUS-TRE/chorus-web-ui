@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowRight, TriangleAlert } from 'lucide-react'
+import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import {
@@ -16,7 +16,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -53,18 +53,20 @@ function DeleteButton() {
   const { pending } = useFormStatus()
 
   return (
-    <button type="submit" aria-disabled={pending}>
+    <Button type="submit" aria-disabled={pending}>
       Delete
-    </button>
+    </Button>
   )
 }
 
 export function WorkbenchCreateForm({
   workspaceId,
-  userId
+  userId,
+  cb
 }: {
   workspaceId?: string
   userId?: string
+  cb?: (id: string) => void
 }) {
   const [state, formAction] = useFormState(
     workbenchCreate,
@@ -92,30 +94,29 @@ export function WorkbenchCreateForm({
   }, [])
 
   useEffect(() => {
+    if (state?.error) {
+      return
+    }
+
     if (state?.data) {
       setOpen(false)
+      if (cb) cb(state?.data as string)
     }
   }, [state])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="link"
-          className="hover:bg-accent-background focus:bg-accent-background h-8 gap-1 rounded-full bg-accent text-accent-foreground focus:text-accent-foreground"
-        >
-          <ArrowRight className="mr-2 h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Start new app
-          </span>
+        <Button>
+          <CirclePlus className="h-3.5 w-3.5" />
+          Start new app
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
-              <Card className="w-full">
+              <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
                   <CardTitle>Start App</CardTitle>
                   <CardDescription>
@@ -135,7 +136,11 @@ export function WorkbenchCreateForm({
             <Input id="name" name="name" placeho lder="Enter workbench name" /> */}
                     <div className="grid gap-3">
                       <Label htmlFor="name">Name</Label>
-                      <select name="id" id="id">
+                      <select
+                        name="id"
+                        id="id"
+                        className="bg-background text-white"
+                      >
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
                           <option key={app.id} value={app.name}>
