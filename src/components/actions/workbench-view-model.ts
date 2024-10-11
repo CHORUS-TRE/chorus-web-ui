@@ -92,7 +92,7 @@ export async function workbenchCreate(
     const nextWorkbench = WorkbenchCreateSchema.parse(workbench)
     const createdWorkbench = await useCase.execute(nextWorkbench)
 
-    await delay(5 * 1000)
+    await delay(8 * 1000)
 
     if (createdWorkbench.error) {
       return { error: createdWorkbench.error }
