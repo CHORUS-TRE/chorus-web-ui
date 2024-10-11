@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Button as UIButton } from './ui/button'
 
 export interface ButtonProps
@@ -7,13 +8,10 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({
-    children,
-    disabled = false,
-    type = 'button',
-    className,
-    ...props
-  }, ref) => {
+  (
+    { children, disabled = false, type = 'button', className, ...props },
+    ref
+  ) => {
     return (
       <UIButton
         size="sm"

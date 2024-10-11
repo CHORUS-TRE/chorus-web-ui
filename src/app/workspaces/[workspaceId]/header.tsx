@@ -51,7 +51,7 @@ const WorkspaceHeader = ({
         </Link>{' '}
       </div>
 
-      <nav className="nav-link mb-6 inline-flex h-10 flex-row items-center justify-start gap-6">
+      <div className="nav-link mb-6 flex h-10 flex-wrap items-center justify-start gap-2 sm:flex-nowrap md:gap-6">
         <StyledNavLink href={`/workspaces/${params?.workspaceId}`}>
           Dashboard
         </StyledNavLink>
@@ -64,7 +64,7 @@ const WorkspaceHeader = ({
         <StyledNavLink href={`#`}>Wiki</StyledNavLink>
         <StyledNavLink href={`#`}>Activities</StyledNavLink>
         <StyledNavLink href={`#`}>Footprint</StyledNavLink>
-      </nav>
+      </div>
     </>
   )
 }
