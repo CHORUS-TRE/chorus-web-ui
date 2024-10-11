@@ -1,3 +1,15 @@
+# [1.0.0-alpha.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2024-10-11)
+
+
+### Bug Fixes
+
+* window fix ([c06d66d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c06d66d873eb984c4c37f334d78ea78dc4d04a96))
+
+
+### Features
+
+* fix rendering test ([53609c6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/53609c607c5c519c33c521f2f6602fc3591d42f4))
+
 # [1.0.0-alpha.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2024-10-11)
 
 
