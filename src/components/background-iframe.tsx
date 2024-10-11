@@ -26,41 +26,41 @@ export default function BackgroundIframe() {
     }, t * 1000)
   }
 
-  // const checkIframeURL = () => {
-  //   fetch(url, { method: 'HEAD' })
-  //     .then((result) => {
-  //       if (result.status === 200) {
-  //         if (intervalRef.current) {
-  //           clearInterval(intervalRef.current)
-  //           intervalRef.current = undefined
-  //         }
+  const checkIframeURL = () => {
+    fetch(url, { method: 'HEAD' })
+      .then((result) => {
+        if (result.status === 200) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+            intervalRef.current = undefined
+          }
 
-  //         setIframeURLIsOK(true)
-  //         focusOnIframe(3)
-  //       } else {
-  //         setError(`Error loading app: ${result.statusText}`)
-  //       }
-  //     })
-  //     .catch((e) => {
-  //       console.error(e)
-  //       setError(`Error loading app: ${e.message}`)
-  //     })
-  // }
+          setIframeURLIsOK(true)
+          focusOnIframe(3)
+        } else {
+          setError(`Error loading app: ${result.statusText}`)
+        }
+      })
+      .catch((e) => {
+        console.error(e)
+        setError(`Error loading app: ${e.message}`)
+      })
+  }
 
   // we check if the iframe URL is OK
-  // useEffect(() => {
-  //   if (!background?.workbenchId) return
+  useEffect(() => {
+    if (!background?.workbenchId) return
 
-  //   checkIframeURL()
-  //   intervalRef.current = setInterval(() => {
-  //     checkIframeURL()
-  //   }, 1000)
+    checkIframeURL()
+    intervalRef.current = setInterval(() => {
+      checkIframeURL()
+    }, 1000)
 
-  //   return () => {
-  //     if (intervalRef.current) clearInterval(intervalRef.current)
-  //     intervalRef.current = undefined
-  //   }
-  // }, [url, background])
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      intervalRef.current = undefined
+    }
+  }, [url, background])
 
   return (
     <>
@@ -76,8 +76,7 @@ export default function BackgroundIframe() {
       {background && (
         <iframe
           title="Background Iframe"
-          src={url}
-          // src={iframeURLIsOK ? url : ''}
+          src={iframeURLIsOK ? url : ''}
           allow="autoplay; fullscreen; clipboard-write;"
           style={{ width: '100vw', height: '100vh' }}
           className="fixed left-0 top-11 z-10 h-full w-full"

@@ -33,7 +33,7 @@ export default function Layout({
       )}
 
       <div
-        className="absolute left-1/2 top-24 z-30 w-full max-w-6xl -translate-x-1/2 rounded-2xl bg-black bg-opacity-85 p-8"
+        className="absolute left-1/2 top-24 z-30 min-h-[75vh] w-full max-w-6xl -translate-x-1/2 rounded-2xl border border-secondary bg-black bg-opacity-85 p-8"
         id="content"
       >
         {children}

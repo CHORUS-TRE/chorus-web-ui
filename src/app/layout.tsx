@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
-import Script from 'next/script'
 
 import { AuthProvider } from '~/components/auth-context'
 import BackgroundIframe from '~/components/background-iframe'
@@ -36,38 +35,13 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <Script id="hud-mouse-events">
-        {`
-        const hud = document.getElementById('hud')
-
-        hud?.addEventListener('mouseleave', function () {
-          hud?.classList.remove('left-0')
-          hud?.classList.add('-left-16')
-
-          hud?.addEventListener('mouseenter', function () {
-            hud?.classList.add('left-0')
-            hud?.classList.remove('-left-16')
-          })
-        })
-        `}
-      </Script>
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider authenticated={authenticated}>
           <NavigationProvider>
             {children}
-
             <RightSidebar show={true} />
-
-            {/* z-10 */}
-            <BackgroundIframe />
-
-            <div
-              className="fixed left-0 top-1/2 z-30 -translate-y-1/2 pl-2 transition-[left] duration-500 ease-in-out"
-              id="hud"
-            >
-              <HUD />
-            </div>
-
+            <BackgroundIframe /> {/* z-10 */}
+            <HUD />
             <Image
               alt="Background"
               src={cover}

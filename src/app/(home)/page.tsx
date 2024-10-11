@@ -107,7 +107,7 @@ export default function Portal() {
                 {workspaces?.map((workspace) => (
                   <Link key={workspace.id} href={`/workspaces/${workspace.id}`}>
                     <Card
-                      className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white transition duration-300 hover:scale-105 hover:shadow-lg"
+                      className="flex h-full flex-col justify-between rounded-2xl border-transparent bg-background text-white transition duration-300 hover:border-accent hover:shadow-lg"
                       key={workspace.id}
                     >
                       <CardHeader className="">

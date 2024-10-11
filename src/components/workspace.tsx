@@ -282,22 +282,23 @@ export function Workspace({
         <CardHeader>
           <CardTitle>Footprint</CardTitle>
           <CardDescription className="text-sm">
-            <p>
-              Your group produced an average of 320g carbon per day since last
-              week.
+            <p className="mb-2">
+              <strong>
+                Your group produced an average of 320g carbon per day since last
+                week.
+              </strong>
             </p>
-            <h4 className="mt-2">Numbers</h4>
-            320g CO2/day is equivalent to:
-            <ul>
-              <li>1.6 km by car</li>
-              <li>a flight to the moon</li>
-            </ul>
-            <h4 className="mt-2">Tips</h4>
-            <ul>
-              <li>Use public transportation</li>
-              <li>Use a bike</li>
-              <li>Plant a tree</li>
-            </ul>
+            <p className="mt-2">
+              <strong>Which is equivalent to:</strong>
+            </p>
+            <p>1.6 km by car</p>
+            <p>a flight to the moon</p>
+            <p className="mt-2">
+              <strong className="mt-2">Tips</strong>
+            </p>
+            <p>Use public transportation</p>
+            <p>Use a bike</p>
+            <p>Plant a tree</p>
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-row items-baseline gap-4 pt-2">

@@ -74,7 +74,7 @@ export async function workbenchCreate(
     const useCase = new WorkbenchCreate(repository)
 
     const workbench: WorkbenchCreateModel = {
-      name: formData.get('id') as string,
+      name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       description: formData.get('description') as string,
@@ -92,7 +92,7 @@ export async function workbenchCreate(
     const nextWorkbench = WorkbenchCreateSchema.parse(workbench)
     const createdWorkbench = await useCase.execute(nextWorkbench)
 
-    await delay(5 * 1000)
+    await delay(8 * 1000)
 
     if (createdWorkbench.error) {
       return { error: createdWorkbench.error }

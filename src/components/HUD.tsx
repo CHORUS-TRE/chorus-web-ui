@@ -17,6 +17,7 @@ import { Workbench, Workspace } from '~/domain/model'
 
 import { workbenchList } from './actions/workbench-view-model'
 import { workspaceList } from './actions/workspace-view-model'
+import { useAuth } from './auth-context'
 import { useNavigation } from './navigation-context'
 
 export default function HUD() {
@@ -24,8 +25,10 @@ export default function HUD() {
   const [workbenches, setWorkbenches] = useState<Workbench[]>()
   const [workspaces, setWorkspaces] = useState<Workspace[]>()
   const [error, setError] = useState<string>()
+
   const [isPending, startTransition] = useTransition()
   const { background, setBackground } = useNavigation()
+  const { isAuthenticated } = useAuth()
 
   const workspaceId = params?.workspaceId
 
@@ -49,7 +52,7 @@ export default function HUD() {
           setError(error.message)
         })
     })
-  }, [])
+  }, [background?.workbenchId, isAuthenticated])
 
   const workspacesWithWorkbenches = workspaces?.filter((workspace) =>
     workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
@@ -59,92 +62,98 @@ export default function HUD() {
     a.id === workspaceId ? 1 : 0
   )
 
-  function HUD() {
-    return (
-      <div className="flex items-center">
-        <div className="flex flex-col items-start justify-center gap-3">
-          {workspacesWithWorkbenches?.map((workspace) => (
-            <div className="" key={workspace.id}>
-              {workbenches
-                ?.filter((workbench) => workbench.workspaceId === workspace.id)
-                .map((workbench) => (
-                  <div
-                    className="flex items-center justify-start gap-1"
-                    key={workbench.id}
-                  >
-                    <div
-                      key={workbench.shortName}
-                      className={`mb-2 h-12 w-12 transform cursor-pointer transition duration-300 hover:scale-125`}
-                    >
-                      <HoverCard openDelay={100} closeDelay={100}>
-                        <HoverCardTrigger asChild>
-                          <Link
-                            href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
-                            className={`flex h-full items-center justify-center rounded-lg hover:bg-accent ${background?.workbenchId === workbench.id ? 'bg-accent' : workbench.workspaceId === workspaceId ? 'bg-accent' : 'bg-muted'} `}
-                            onClick={() => {
-                              setBackground({
-                                workspaceId: workspace.id,
-                                workbenchId: workbench.id
-                              })
-                            }}
-                          >
-                            <Avatar>
-                              {workbench.name === 'vscode' && (
-                                <AvatarImage
-                                  src="/vscode.png"
-                                  className="m-auto h-8 w-8"
-                                />
-                              )}
-                              <AvatarFallback>
-                                {workbench.name.slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </Link>
-                        </HoverCardTrigger>
-                        <HoverCardContent
-                          className="p-2"
-                          side="right"
-                          hideWhenDetached
-                          sideOffset={8}
-                        >
-                          <div className={`flex flex-col justify-start gap-4`}>
-                            <div className="space-y-0">
-                              <h4
-                                className={`text-sm font-semibold ${background?.workbenchId === workbench.id ? 'text-primary' : ''} `}
-                              >
-                                {workbench.name}
-                              </h4>
-                              <p className="pb-4 text-xs text-muted-foreground">
-                                {formatDistanceToNow(workbench.createdAt)} ago
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {workspace.shortName}
-                              </p>
-                            </div>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                    </div>
-                    {background?.workbenchId === workbench.id && (
-                      <h2 className="-mt-3 p-0 text-5xl text-accent">·</h2>
-                    )}
-                    {background?.workbenchId !== workbench.id && (
-                      <h2 className="-mt-3 p-0 text-accent">&nbsp;</h2>
-                    )}
-                  </div>
-                ))}
-            </div>
-          ))}
-        </div>
-        <GripVertical className="-ml-3 text-accent active:bg-none" />
-      </div>
-    )
-  }
-
   return (
     <>
+      {error && <h3 className="text-red-500">x</h3>}
       {isPending && <h3 className="text-white">...</h3>}
-      {!isPending && <HUD />}
+      {!isPending && !error && (
+        <div
+          className={`fixed -left-16 top-1/2 z-30 -translate-y-1/2 cursor-pointer pl-2 transition-[left] duration-500 ease-in-out hover:left-0`}
+        >
+          <div className="flex items-center">
+            <div className="flex flex-col items-start justify-center gap-3">
+              {sortedWorkbenches?.map((workspace) => (
+                <div className="" key={workspace.id}>
+                  {workbenches
+                    ?.filter(
+                      (workbench) => workbench.workspaceId === workspace.id
+                    )
+                    .map((workbench) => (
+                      <div
+                        className="flex items-center justify-start gap-1"
+                        key={workbench.id}
+                      >
+                        <div
+                          key={workbench.shortName}
+                          className={`mb-2 h-12 w-12 transform cursor-pointer transition duration-300 hover:scale-125`}
+                        >
+                          <HoverCard openDelay={100} closeDelay={100}>
+                            <HoverCardTrigger asChild>
+                              <Link
+                                href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
+                                className={`flex h-full items-center justify-center rounded-lg hover:bg-accent ${background?.workbenchId === workbench.id ? 'bg-accent' : workbench.workspaceId === workspaceId ? 'bg-accent' : 'bg-muted'} `}
+                                onClick={() => {
+                                  setBackground({
+                                    workspaceId: workspace.id,
+                                    workbenchId: workbench.id
+                                  })
+                                }}
+                              >
+                                <Avatar>
+                                  {workbench.name === 'vscode' && (
+                                    <AvatarImage
+                                      src="/vscode.png"
+                                      className="m-auto h-8 w-8"
+                                    />
+                                  )}
+                                  <AvatarFallback>
+                                    {workbench.name.slice(0, 2)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </Link>
+                            </HoverCardTrigger>
+                            <HoverCardContent
+                              className="p-2"
+                              side="right"
+                              hideWhenDetached
+                              sideOffset={8}
+                            >
+                              <div
+                                className={`flex flex-col justify-start gap-4`}
+                              >
+                                <div className="space-y-0">
+                                  <h4
+                                    className={`text-sm font-semibold ${background?.workbenchId === workbench.id ? 'text-primary' : ''} `}
+                                  >
+                                    {workbench.name}
+                                  </h4>
+                                  <p className="pb-4 text-xs text-muted-foreground">
+                                    {formatDistanceToNow(workbench.createdAt)}{' '}
+                                    ago
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {workspace.shortName}
+                                  </p>
+                                </div>
+                              </div>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </div>
+                        {background?.workbenchId === workbench.id && (
+                          <h2 className="-mt-3 p-0 text-5xl text-accent">·</h2>
+                        )}
+                        {background?.workbenchId !== workbench.id && (
+                          <h2 className="-mt-3 p-0 text-accent">&nbsp;</h2>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              ))}
+            </div>
+            <GripVertical className="-ml-3 text-accent active:bg-none" />
+          </div>
+        </div>
+      )}
     </>
   )
 }
