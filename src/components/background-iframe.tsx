@@ -10,15 +10,12 @@ import { useNavigation } from './navigation-context'
 
 export default function BackgroundIframe() {
   const [iframeURLIsOK, setIframeURLIsOK] = useState(false)
+  const [url, setUrl] = useState<string>()
   const [error, setError] = useState<string | null>(null)
 
   const { background } = useNavigation()
   const intervalRef = useRef<NodeJS.Timeout>()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
-
-  const currentUrl = window.location
-  const baseUrl = `${currentUrl.protocol}//${currentUrl.hostname}${currentUrl.port ? `:${currentUrl.port}` : ''}`
-  const url = `${env.NEXT_PUBLIC_DATA_SOURCE_API_URL ? env.NEXT_PUBLIC_DATA_SOURCE_API_URL : baseUrl}/workbenchs/${background?.workbenchId}/stream/`
 
   const focusOnIframe = (t: number) => {
     setTimeout(() => {
@@ -27,6 +24,8 @@ export default function BackgroundIframe() {
   }
 
   const checkIframeURL = () => {
+    if (!url) return
+
     fetch(url, { method: 'HEAD' })
       .then((result) => {
         if (result.status === 200) {
@@ -46,6 +45,14 @@ export default function BackgroundIframe() {
         setError(`Error loading app: ${e.message}`)
       })
   }
+
+  useEffect(() => {
+    const currentUrl = window.location
+    const baseUrl = `${currentUrl.protocol}//${currentUrl.hostname}${currentUrl.port ? `:${currentUrl.port}` : ''}`
+    const url = `${env.NEXT_PUBLIC_DATA_SOURCE_API_URL ? env.NEXT_PUBLIC_DATA_SOURCE_API_URL : baseUrl}/workbenchs/${background?.workbenchId}/stream/`
+
+    setUrl(url)
+  }, [setUrl, background])
 
   // we check if the iframe URL is OK
   useEffect(() => {
