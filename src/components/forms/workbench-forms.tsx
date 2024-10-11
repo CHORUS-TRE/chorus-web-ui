@@ -136,6 +136,7 @@ export function WorkbenchCreateForm({
                     <Input
                       id="name"
                       name="name"
+                      required
                       placeholder="Enter workbench name"
                       defaultValue={'workbench' + workspaceId + useId()}
                     />
@@ -144,6 +145,7 @@ export function WorkbenchCreateForm({
                       <select
                         name="id"
                         id="id"
+                        required
                         className="bg-background text-white"
                       >
                         <option value="">Choose an app</option>

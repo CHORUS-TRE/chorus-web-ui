@@ -129,6 +129,7 @@ export function AppInstanceCreateForm({
                         name="id"
                         id="id"
                         className="bg-background text-white"
+                        required
                       >
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
