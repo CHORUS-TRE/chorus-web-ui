@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
@@ -132,10 +132,15 @@ export function WorkbenchCreateForm({
                     </Alert>
                   )}
                   <div className="grid gap-2">
-                    {/* <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" placeho lder="Enter workbench name" /> */}
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      placeholder="Enter workbench name"
+                      defaultValue={'workbench' + workspaceId + useId()}
+                    />
                     <div className="grid gap-3">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">App</Label>
                       <select
                         name="id"
                         id="id"
@@ -143,7 +148,7 @@ export function WorkbenchCreateForm({
                       >
                         <option value="">Choose an app</option>
                         {apps.map((app) => (
-                          <option key={app.id} value={app.name}>
+                          <option key={app.id} value={app.id}>
                             {app.name}
                           </option>
                         ))}

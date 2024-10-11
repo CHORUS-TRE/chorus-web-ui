@@ -74,7 +74,7 @@ export async function workbenchCreate(
     const useCase = new WorkbenchCreate(repository)
 
     const workbench: WorkbenchCreateModel = {
-      name: formData.get('id') as string,
+      name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       description: formData.get('description') as string,
