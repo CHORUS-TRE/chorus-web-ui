@@ -1,3 +1,13 @@
+# [1.0.0-alpha.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2024-10-11)
+
+
+### Features
+
+* add background overlay to preferences component ([e75d13a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e75d13ab9b935bd70eb0173d0c7febe3e71b2c37))
+* add onClick prop to Button component ([e452633](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e45263360c076851bec044cb0457c4ffa71d003d))
+* add required attribute to select inputs in forms ([7f5e5f1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7f5e5f1abee529f9b4643b89c98a45b033fcc93e))
+* id for apps ([42ba68f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/42ba68f090c5a276132a0322d648350c1c532cb6))
+
 # [1.0.0-alpha.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2024-10-09)
 
 
