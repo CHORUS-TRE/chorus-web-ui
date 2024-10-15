@@ -1,10 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { env } from 'next-runtime-env'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-
-import { env } from '~/env'
 
 import { useNavigation } from './navigation-context'
 
@@ -36,8 +35,6 @@ export default function BackgroundIframe() {
 
           setIframeURLIsOK(true)
           focusOnIframe(3)
-        } else {
-          setError(`Error loading app: ${result.statusText}`)
         }
       })
       .catch((e) => {
@@ -47,9 +44,10 @@ export default function BackgroundIframe() {
   }
 
   useEffect(() => {
-    const currentUrl = window.location
-    const baseUrl = `${currentUrl.protocol}//${currentUrl.hostname}${currentUrl.port ? `:${currentUrl.port}` : ''}`
-    const url = `${env.NEXT_PUBLIC_DATA_SOURCE_API_URL ? env.NEXT_PUBLIC_DATA_SOURCE_API_URL : baseUrl}/workbenchs/${background?.workbenchId}/stream/`
+    const currentLocation = window.location
+    const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
+    const baseAPIURL = env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+    const url = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background?.workbenchId}/stream/`
 
     setUrl(url)
   }, [setUrl, background])
@@ -83,7 +81,7 @@ export default function BackgroundIframe() {
       {background && (
         <iframe
           title="Background Iframe"
-          src={iframeURLIsOK ? url : ''}
+          src={iframeURLIsOK ? url : 'about:blank'}
           allow="autoplay; fullscreen; clipboard-write;"
           style={{ width: '100vw', height: '100vh' }}
           className="fixed left-0 top-11 z-10 h-full w-full"
