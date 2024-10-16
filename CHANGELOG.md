@@ -1,3 +1,10 @@
+# [1.0.0-alpha.6](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2024-10-16)
+
+
+### Features
+
+* start app button in app ([66eaf02](https://github.com/CHORUS-TRE/chorus-web-ui/commit/66eaf02e4b39f78dd4bcff8afe1c1044b05f5cd9))
+
 # [1.0.0-alpha.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2024-10-11)
 
 
