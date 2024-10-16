@@ -10,7 +10,9 @@ import { workbenchGet } from '@/components/actions/workbench-view-model'
 import { HeaderButtons } from '@/components/header-buttons'
 import { Button } from '@/components/ui/button'
 
+import { userMe } from '~/components/actions/user-view-model'
 import { workspaceGet } from '~/components/actions/workspace-view-model'
+import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import { UserResponse, Workbench, WorkspaceResponse } from '~/domain/model'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
@@ -19,10 +21,19 @@ export function Header() {
   const [error, setError] = useState<UserResponse['error']>()
   const [workbench, setWorkbench] = useState<Workbench | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceResponse['data']>()
+  const [user, setUser] = useState<UserResponse['data']>()
+
   const params = useParams<{ workspaceId: string; appId: string }>()
 
   const workspaceId = params?.workspaceId
   const workbenchId = params?.appId
+
+  useEffect(() => {
+    userMe().then((response) => {
+      if (response?.error) setError(response.error)
+      if (response?.data) setUser(response.data)
+    })
+  }, [])
 
   useEffect(() => {
     if (!workspaceId) return
@@ -76,6 +87,11 @@ export function Header() {
       </div>
 
       <div className="flex items-center justify-end pr-2">
+        <AppInstanceCreateForm
+          workbenchId={params.appId}
+          userId={user?.id}
+          workspaceId={params.workspaceId}
+        ></AppInstanceCreateForm>
         <Link
           href={`/workspaces/${workspaceId}/${workbenchId}/preferences`}
           className="text-accent hover:text-accent-foreground"
