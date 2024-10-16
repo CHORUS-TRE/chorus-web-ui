@@ -2,14 +2,17 @@
 
 import React, {
   createContext,
+  Dispatch,
   ReactElement,
   ReactNode,
-  useContext
+  SetStateAction,
+  useContext,
+  useState
 } from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
-  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
+  setAuthenticated: Dispatch<SetStateAction<boolean>>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,8 +27,8 @@ export const AuthProvider = ({
   children: ReactNode
   authenticated: boolean
 }): ReactElement => {
-  const [isAuthenticated, setAuthenticated] =
-    React.useState<boolean>(authenticated)
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(authenticated)
+
   return (
     <AuthContext.Provider
       value={{

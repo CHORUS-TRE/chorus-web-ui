@@ -18,8 +18,8 @@ import { Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
 import { WorkbenchCreateForm } from './forms/workbench-forms'
+import { useNavigation } from './store/navigation-context'
 import { ChartContainer } from './ui/chart'
-import { useNavigation } from './navigation-context'
 
 export function Workspace({
   workspace,

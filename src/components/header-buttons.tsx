@@ -8,7 +8,7 @@ import { CircleHelp, User } from 'lucide-react'
 
 import { logout } from '@/components/actions/authentication-login-view-model'
 import { userMe } from '@/components/actions/user-view-model'
-import { useAuth } from '@/components/auth-context'
+import { useAuth } from '@/components/store/auth-context'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ import {
 
 import { UserResponse } from '~/domain/model'
 
-import { useNavigation } from './navigation-context'
+import { useNavigation } from './store/navigation-context'
 
 import userPlaceholder from '/public/placeholder-user.jpg'
 

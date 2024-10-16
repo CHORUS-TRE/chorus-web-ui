@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 
-import { useNavigation } from '~/components/navigation-context'
+import { useNavigation } from '~/components/store/navigation-context'
 
 import { Header } from './header'
 

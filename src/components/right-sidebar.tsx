@@ -4,9 +4,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { useNavigation } from './store/navigation-context'
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './button'
-import { useNavigation } from './navigation-context'
 
 import placeholder from '/public/placeholder.svg'
 
