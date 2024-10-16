@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
+import { PublicEnvScript } from 'next-runtime-env'
 
 import { AuthProvider } from '~/components/auth-context'
 import BackgroundIframe from '~/components/background-iframe'
@@ -35,6 +36,9 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <PublicEnvScript />
+      </head>
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider authenticated={authenticated}>
           <NavigationProvider>

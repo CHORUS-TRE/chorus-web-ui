@@ -126,13 +126,16 @@ cd chorus-web-ui
 
 ### Production
 
-**environment variables**
+**Environment variables**
 
-- `DATA_SOURCE` is either api or local
+Server side variables:
+- `DATA_SOURCE` is either api, or local if you want to use a local storage.
 - `DATA_SOURCE_LOCAL_DIR` is used if DATA_SOURCE=local. It is the path to store the local data files
 - `DATA_SOURCE_API_URL` is the API backend. Note that the generated files are prefixed with /api/rest/v1/ so generally you want to have something like
 DATA_SOURCE_API_URL=https://api.chorus-tre.com/
-- `NEXT_PUBLIC_DATA_SOURCE_API_URL` is exposed to the web-ui and should contains the prefix to the API, like https://api.chorus-tre.com/api/rest/v1/
+
+Client side variable:
+- `NEXT_PUBLIC_DATA_SOURCE_API_URL` is exposed to the web-ui and should contains the prefix to the API, like https://api.chorus-tre.com/api/rest/v1/ Used for the iframe streams
 
 
  **Local Production Testing**
