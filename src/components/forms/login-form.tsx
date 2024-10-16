@@ -10,8 +10,8 @@ import { Separator } from '~/components/ui/separator'
 
 import { authenticationLogin } from '../actions/authentication-login-view-model'
 import { IFormState } from '../actions/utils'
-import { useAuth } from '../auth-context'
 import { Button } from '../button'
+import { useAuth } from '../store/auth-context'
 
 const initialState: IFormState = {
   data: undefined,
@@ -37,6 +37,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (state.data) {
+      console.log('state.data', state.data)
       const path = searchParams.get('redirect') || '/'
       setAuthenticated(true)
       redirect(path)

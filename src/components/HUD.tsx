@@ -17,8 +17,8 @@ import { Workbench, Workspace } from '~/domain/model'
 
 import { workbenchList } from './actions/workbench-view-model'
 import { workspaceList } from './actions/workspace-view-model'
-import { useAuth } from './auth-context'
-import { useNavigation } from './navigation-context'
+import { useAuth } from './store/auth-context'
+import { useNavigation } from './store/navigation-context'
 
 export default function HUD() {
   const params = useParams<{ workspaceId: string; appId: string }>()

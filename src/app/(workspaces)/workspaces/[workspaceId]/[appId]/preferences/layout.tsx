@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { useNavigation } from '~/components/navigation-context'
+import { useNavigation } from '~/components/store/navigation-context'
 
 import { Header } from '../header'
 

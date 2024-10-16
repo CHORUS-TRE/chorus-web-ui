@@ -3,7 +3,7 @@
 import React from 'react'
 
 import { Header } from '~/components/header'
-import { useNavigation } from '~/components/navigation-context'
+import { useNavigation } from '~/components/store/navigation-context'
 
 export default function Layout({
   children

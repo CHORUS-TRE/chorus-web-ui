@@ -1,6 +1,14 @@
 'use client'
 
-import React, { createContext, useContext, useState } from 'react'
+import React, {
+  createContext,
+  Dispatch,
+  ReactElement,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState
+} from 'react'
 
 type NavigationContextType = {
   showRightSidebar: boolean
@@ -13,8 +21,8 @@ type NavigationContextType = {
         workspaceId: string
       }
     | undefined
-  setBackground: React.Dispatch<
-    React.SetStateAction<
+  setBackground: Dispatch<
+    SetStateAction<
       | {
           workbenchId: string
           workspaceId: string
@@ -36,8 +44,8 @@ const NavigationContext = createContext<NavigationContextType>({
 export const NavigationProvider = ({
   children
 }: {
-  children: React.ReactNode
-}) => {
+  children: ReactNode
+}): ReactElement => {
   const [showRightSidebar, setShowRightSidebar] = useState(false)
   const [showLeftSidebar, setShowLeftSidebar] = useState(false)
   const [background, setBackground] = useState<{

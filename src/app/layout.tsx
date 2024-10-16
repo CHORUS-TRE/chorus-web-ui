@@ -5,11 +5,11 @@ import { cookies } from 'next/headers'
 import Image from 'next/image'
 import { PublicEnvScript } from 'next-runtime-env'
 
-import { AuthProvider } from '~/components/auth-context'
 import BackgroundIframe from '~/components/background-iframe'
 import HUD from '~/components/HUD'
-import { NavigationProvider } from '~/components/navigation-context'
 import RightSidebar from '~/components/right-sidebar'
+import { AuthProvider } from '~/components/store/auth-context'
+import { NavigationProvider } from '~/components/store/navigation-context'
 
 import '@/app/build.css'
 import '@/styles/globals.css'

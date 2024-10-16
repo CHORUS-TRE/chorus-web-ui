@@ -5,7 +5,7 @@ import { env } from 'next-runtime-env'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-import { useNavigation } from './navigation-context'
+import { useNavigation } from './store/navigation-context'
 
 export default function BackgroundIframe() {
   const [iframeURLIsOK, setIframeURLIsOK] = useState(false)
