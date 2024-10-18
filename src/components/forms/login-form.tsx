@@ -1,6 +1,8 @@
+'use client'
+
 import { useEffect } from 'react'
 import Link from 'next/link'
-import { redirect, useSearchParams } from 'next/navigation'
+import { redirect, RedirectType, useSearchParams } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
@@ -37,16 +39,15 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (state.data) {
-      const path = searchParams.get('redirect') || '/'
       setAuthenticated(true)
-      redirect(path)
     }
   }, [state?.data, searchParams, setAuthenticated])
 
   useEffect(() => {
     if (!isAuthenticated) return
 
-    redirect('/')
+    const path = searchParams.get('redirect') || '/'
+    redirect(path, RedirectType.replace)
   }, [isAuthenticated])
 
   return (
@@ -85,6 +86,7 @@ export default function LoginForm() {
               name="password"
               className="border-none bg-background text-muted"
               required
+              autoComplete="current-password"
               disabled={isAuthenticated}
             />
           </div>
