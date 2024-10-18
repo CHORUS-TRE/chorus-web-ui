@@ -61,14 +61,7 @@ export async function workspaceDelete(
 
 export async function workspaceList(): Promise<WorkspacesResponse> {
   try {
-    const session = cookies().get('session')?.value || ''
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new WorkspaceDataSourceImpl(session)
-    const repository = new WorkspaceRepositoryImpl(dataSource)
+    const repository = await getRepository()
     const useCase = new WorkspacesList(repository)
 
     return await useCase.execute()
