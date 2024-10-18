@@ -37,7 +37,6 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (state.data) {
-      console.log('state.data', state.data)
       const path = searchParams.get('redirect') || '/'
       setAuthenticated(true)
       redirect(path)
