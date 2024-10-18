@@ -10,20 +10,26 @@ import { UserRepositoryImpl } from '~/data/repository'
 import { UserResponse } from '~/domain/model'
 import { UserCreateSchema } from '~/domain/model/user'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
+import { UserGet } from '~/domain/use-cases/user/user-get'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 
 import { IFormState } from './utils'
 
+const getRepository = async () => {
+  const session = cookies().get('session')?.value || ''
+  const dataSource =
+    env.DATA_SOURCE === 'local'
+      ? await UserLocalStorageDataSourceImpl.getInstance(
+          env.DATA_SOURCE_LOCAL_DIR
+        )
+      : new UserApiDataSourceImpl(session)
+
+  return new UserRepositoryImpl(dataSource)
+}
+
 export async function userMe(): Promise<UserResponse> {
   try {
-    const session = cookies().get('session')?.value || ''
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await UserLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new UserApiDataSourceImpl(session)
-    const userRepository = new UserRepositoryImpl(dataSource)
+    const userRepository = await getRepository()
     const useCase = new UserMe(userRepository)
 
     return await useCase.execute()
@@ -37,13 +43,7 @@ export async function userCreate(
   formData: FormData
 ): Promise<IFormState> {
   try {
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await UserLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new UserApiDataSourceImpl('')
-    const userRepository = new UserRepositoryImpl(dataSource)
+    const userRepository = await getRepository()
     const useCase = new UserCreate(userRepository)
 
     const user = {
@@ -62,6 +62,17 @@ export async function userCreate(
     const u = await useCase.execute(nextUser)
 
     return { data: nextUser.email }
+  } catch (error) {
+    return { error: error.message }
+  }
+}
+
+export async function userGet(id: string): Promise<UserResponse> {
+  try {
+    const userRepository = await getRepository()
+    const useCase = new UserGet(userRepository)
+
+    return await useCase.execute(id)
   } catch (error) {
     return { error: error.message }
   }

@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Workbench, Workspace as WorkspaceType } from '@/domain/model'
+import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
 import { WorkbenchCreateForm } from './forms/workbench-forms'
@@ -24,10 +24,12 @@ import { ChartContainer } from './ui/chart'
 export function Workspace({
   workspace,
   workbenches,
+  workspaceOwner,
   cb
 }: {
   workspace?: WorkspaceType | null
   workbenches?: Workbench[]
+  workspaceOwner?: User
   cb?: (id: string) => void
 }) {
   const { setBackground } = useNavigation()
@@ -46,7 +48,7 @@ export function Workspace({
         <CardContent>
           <p className="text-xs">
             <strong>Owner: </strong>
-            {workspace?.ownerId}
+            {workspaceOwner?.firstName} {workspaceOwner?.lastName}
           </p>
           <div>
             <p className="text-xs">
