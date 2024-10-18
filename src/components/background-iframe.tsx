@@ -44,6 +44,10 @@ export default function BackgroundIframe() {
   }
 
   useEffect(() => {
+    if (!background?.workbenchId) {
+      return
+    }
+
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
     const baseAPIURL = env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
