@@ -1,36 +1,62 @@
-'use server'
+'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useParams, useRouter } from 'next/navigation'
 import { CircleX } from 'lucide-react'
 
 import { workbenchGet } from '@/components/actions/workbench-view-model'
 import { WorksbenchDeleteForm } from '@/components/forms/workbench-forms'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-import { userMe } from '~/components/actions/user-view-model'
 import { Button } from '~/components/button'
-import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { Card, CardContent } from '~/components/ui/card'
+import { useNavigation } from '~/components/store/navigation-context'
+import { Workbench } from '~/domain/model'
 
-export default async function WorkbenchPage({
-  params,
-  searchParams
-}: {
-  params: { appId: string; workspaceId: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
-  const workbench = await workbenchGet(params.appId)
-  const user = await userMe()
+export default function WorkbenchPreferencesPage() {
+  const [error, setError] = useState<string | null>(null)
+  const [workbench, setWorkbench] = useState<Workbench | null>(null)
+  const [deleted, setDeleted] = useState<boolean>(false)
+
+  const router = useRouter()
+  const params = useParams<{ workspaceId: string; appId: string }>()
+  const { setBackground } = useNavigation()
 
   const workspaceId = params?.workspaceId
   const workbenchId = params?.appId
 
+  useEffect(() => {
+    if (!workbenchId) return
+
+    workbenchGet(workbenchId)
+      .then((response) => {
+        if (response?.error) setError(response.error)
+        if (response?.data) setWorkbench(response?.data)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
+  }, [workbenchId])
+
   return (
     <div>
+      {deleted && (
+        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
+          <AlertTitle>Success !</AlertTitle>
+          <AlertDescription>
+            Workbench was deleted, redirecting to workspace...
+          </AlertDescription>
+        </Alert>
+      )}
+      {error && (
+        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
+          <AlertTitle>Error ! </AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <div className="mb-6 flex items-center justify-between pb-2">
         <h2 className="mt-5 text-muted">
-          <span className="font-semibold text-white">
-            {workbench?.data?.name}
-          </span>
+          <span className="font-semibold text-white">{workbench?.name}</span>
         </h2>
         <Link
           href={`/workspaces/${workspaceId}/${workbenchId}`}
@@ -100,12 +126,15 @@ export default async function WorkbenchPage({
 
         </Menubar> */}
       <div className="mt-4 flex flex-col items-start justify-between gap-4">
-        <WorksbenchDeleteForm id={params.appId} />
-
-        <AppInstanceCreateForm
-          workbenchId={params.appId}
-          userId={user.data?.id}
-          workspaceId={params.workspaceId}
+        <WorksbenchDeleteForm
+          id={params.appId}
+          cb={() => {
+            setDeleted(true)
+            setTimeout(() => {
+              setBackground(undefined)
+              router.replace(`/workspaces/${workspaceId}`)
+            }, 2000)
+          }}
         />
       </div>
     </div>

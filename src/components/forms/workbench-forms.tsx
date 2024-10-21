@@ -49,16 +49,6 @@ function SubmitButton() {
   )
 }
 
-function DeleteButton() {
-  const { pending } = useFormStatus()
-
-  return (
-    <Button type="submit" aria-disabled={pending}>
-      Delete
-    </Button>
-  )
-}
-
 export function WorkbenchCreateForm({
   workspaceId,
   userId,
@@ -273,8 +263,28 @@ export function WorkbenchCreateForm({
   )
 }
 
-export function WorksbenchDeleteForm({ id }: { id?: string }) {
+export function WorksbenchDeleteForm({
+  id,
+  cb
+}: {
+  id?: string
+  cb?: () => void
+}) {
   const [state, formAction] = useFormState(workbenchDelete, initialState)
+
+  function DeleteButton() {
+    const { pending } = useFormStatus()
+
+    useEffect(() => {
+      if (cb && pending) cb()
+    }, [pending])
+
+    return (
+      <Button type="submit" aria-disabled={pending}>
+        Delete
+      </Button>
+    )
+  }
 
   return (
     <form action={formAction}>
