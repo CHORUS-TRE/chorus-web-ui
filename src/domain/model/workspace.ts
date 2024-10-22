@@ -40,7 +40,7 @@ export const WorkspaceCreateModelSchema = z.object({
   ownerId: z.string(),
   name: z.string().min(3),
   shortName: z.string().min(3).optional(),
-  description: z.string().min(5),
+  description: z.string().optional(),
   memberIds: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional()
 })

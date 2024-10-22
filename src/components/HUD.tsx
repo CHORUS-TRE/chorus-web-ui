@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useTransition } from 'react'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
@@ -21,11 +21,11 @@ import { useAuth } from './store/auth-context'
 import { useNavigation } from './store/navigation-context'
 
 export default function HUD() {
-  const params = useParams<{ workspaceId: string; appId: string }>()
   const [workbenches, setWorkbenches] = useState<Workbench[]>()
   const [workspaces, setWorkspaces] = useState<Workspace[]>()
   const [error, setError] = useState<string>()
 
+  const params = useParams<{ workspaceId: string; appId: string }>()
   const [isPending, startTransition] = useTransition()
   const { background, setBackground } = useNavigation()
   const { isAuthenticated } = useAuth()
@@ -33,20 +33,26 @@ export default function HUD() {
   const workspaceId = params?.workspaceId
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setWorkspaces(undefined)
+      setWorkbenches(undefined)
+
+      return
+    }
     startTransition(async () => {
       workspaceList()
         .then((response) => {
           if (response?.error) setError(response.error)
           if (response?.data) setWorkspaces(response.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
 
-      workbenchList()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkbenches(response.data)
+          workbenchList()
+            .then((response) => {
+              if (response?.error) setError(response.error)
+              if (response?.data) setWorkbenches(response.data)
+            })
+            .catch((error) => {
+              setError(error.message)
+            })
         })
         .catch((error) => {
           setError(error.message)
@@ -58,8 +64,8 @@ export default function HUD() {
     workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
   )
 
-  const sortedWorkbenches = workspacesWithWorkbenches?.sort((a, b) =>
-    a.id === workspaceId ? 1 : 0
+  const sortedWorkspacesWithWorkbenches = workspacesWithWorkbenches?.sort(
+    (a, b) => (a.id === workspaceId ? 1 : 0)
   )
 
   return (
@@ -72,7 +78,7 @@ export default function HUD() {
         >
           <div className="flex items-center">
             <div className="flex flex-col items-start justify-center gap-3">
-              {sortedWorkbenches?.map((workspace) => (
+              {sortedWorkspacesWithWorkbenches?.map((workspace) => (
                 <div className="" key={workspace.id}>
                   {workbenches
                     ?.filter(
@@ -91,7 +97,7 @@ export default function HUD() {
                             <HoverCardTrigger asChild>
                               <Link
                                 href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
-                                className={`flex h-full items-center justify-center rounded-lg hover:bg-accent ${background?.workbenchId === workbench.id ? 'bg-accent' : workbench.workspaceId === workspaceId ? 'bg-accent' : 'bg-muted'} `}
+                                className={`flex h-full items-center justify-center rounded-lg ${background?.workbenchId === workbench.id ? 'hover:bg-primary' : 'hover:bg-accent'} ${background?.workbenchId === workbench.id ? 'bg-primary' : workbench.workspaceId === workspaceId ? 'bg-accent' : 'bg-muted'} `}
                                 onClick={() => {
                                   setBackground({
                                     workspaceId: workspace.id,
@@ -125,25 +131,30 @@ export default function HUD() {
                                   <h4
                                     className={`text-sm font-semibold ${background?.workbenchId === workbench.id ? 'text-primary' : ''} `}
                                   >
+                                    {background?.workbenchId === workbench.id &&
+                                      'Active: '}{' '}
                                     {workbench.name}
                                   </h4>
                                   <p className="pb-4 text-xs text-muted-foreground">
                                     {formatDistanceToNow(workbench.createdAt)}{' '}
                                     ago
                                   </p>
-                                  <p className="text-xs text-muted-foreground">
+                                  <Link
+                                    href={`/workspaces/${workbench.workspaceId}`}
+                                    className="border-b-2 border-accent text-xs hover:text-muted"
+                                  >
                                     {workspace.shortName}
-                                  </p>
+                                  </Link>
                                 </div>
                               </div>
                             </HoverCardContent>
                           </HoverCard>
                         </div>
                         {background?.workbenchId === workbench.id && (
-                          <h2 className="-mt-3 p-0 text-5xl text-accent">·</h2>
+                          <h2 className="-mt-3 p-0 text-5xl text-primary">·</h2>
                         )}
                         {background?.workbenchId !== workbench.id && (
-                          <h2 className="-mt-3 p-0 text-accent">&nbsp;</h2>
+                          <h2 className="-mt-3 p-0">&nbsp;</h2>
                         )}
                       </div>
                     ))}

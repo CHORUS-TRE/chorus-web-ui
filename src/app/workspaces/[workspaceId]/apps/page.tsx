@@ -12,8 +12,6 @@ export default async function Page({
   const workspaceId = params?.workspaceId
 
   return (
-    <div className="flex flex-col">
-      {workspaceId && <WorkbenchTable workspaceId={workspaceId} />}
-    </div>
+    <div className="flex flex-col">{workspaceId && <WorkbenchTable />}</div>
   )
 }

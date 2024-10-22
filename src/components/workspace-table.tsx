@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { EllipsisVerticalIcon } from 'lucide-react'
 
 import { workspaceList } from '@/components/actions/workspace-view-model'
-import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { User, Workspace as WorkspaceType } from '@/domain/model'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -29,11 +30,14 @@ import { Workspace } from '~/domain/model'
 
 import { userMe } from './actions/user-view-model'
 import { WorkspaceDeleteForm } from './forms/workspace-forms'
+import { useNavigation } from './store/navigation-context'
 
-export default function WorkspaceTable() {
+export default function WorkspaceTable({ cb }: { cb?: () => void }) {
   const [user, setUser] = useState<User | null>(null)
   const [workspaces, setWorkspaces] = useState<WorkspaceType[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [deleted, setDeleted] = useState<boolean>(false)
+  const { setBackground } = useNavigation()
 
   useEffect(() => {
     try {
@@ -102,7 +106,22 @@ export default function WorkspaceTable() {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuItem>
-              <WorkspaceDeleteForm id={workspace?.id} />
+              <WorkspaceDeleteForm
+                id={workspace?.id}
+                cb={() => {
+                  setDeleted(true)
+                  workspaceList()
+                    .then((response) => {
+                      if (response?.error) setError(response.error)
+                      if (response?.data) setWorkspaces(response.data)
+                    })
+                    .catch((error) => {
+                      setError(error.message)
+                    })
+                  setBackground(undefined)
+                  if (cb) cb()
+                }}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -112,6 +131,18 @@ export default function WorkspaceTable() {
 
   return (
     <Card className="rounded-2xl border-none bg-background text-white">
+      {deleted && (
+        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
+          <AlertTitle>Success !</AlertTitle>
+          <AlertDescription>Workspace deleted</AlertDescription>
+        </Alert>
+      )}
+      {error && (
+        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
+          <AlertTitle>Error ! </AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <CardContent className="mt-4">
         <Table>
           <TableHeader>

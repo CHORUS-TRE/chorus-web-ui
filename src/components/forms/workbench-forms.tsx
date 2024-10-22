@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
 
@@ -45,16 +46,6 @@ function SubmitButton() {
   return (
     <Button className="ml-auto" type="submit" disabled={pending}>
       Start
-    </Button>
-  )
-}
-
-function DeleteButton() {
-  const { pending } = useFormStatus()
-
-  return (
-    <Button type="submit" aria-disabled={pending}>
-      Delete
     </Button>
   )
 }
@@ -113,6 +104,7 @@ export function WorkbenchCreateForm({
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">Start App</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
@@ -273,8 +265,28 @@ export function WorkbenchCreateForm({
   )
 }
 
-export function WorksbenchDeleteForm({ id }: { id?: string }) {
+export function WorksbenchDeleteForm({
+  id,
+  cb
+}: {
+  id?: string
+  cb?: () => void
+}) {
   const [state, formAction] = useFormState(workbenchDelete, initialState)
+
+  function DeleteButton() {
+    const { pending } = useFormStatus()
+
+    useEffect(() => {
+      if (cb && pending) cb()
+    }, [pending])
+
+    return (
+      <Button type="submit" aria-disabled={pending}>
+        Delete
+      </Button>
+    )
+  }
 
   return (
     <form action={formAction}>

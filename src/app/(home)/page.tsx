@@ -80,25 +80,40 @@ export default function Portal() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-muted hover:bg-inherit hover:text-accent"
+                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${showGrid ? 'border-accent' : ''}`}
                 onClick={() => setShowGrid(true)}
                 id="grid-button"
+                disabled={showGrid}
               >
                 <LayoutGrid />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-muted hover:bg-inherit hover:text-accent"
+                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${!showGrid ? 'border-accent' : ''}`}
                 onClick={() => setShowGrid(false)}
                 id="table-button"
+                disabled={!showGrid}
               >
                 <Rows3 />
               </Button>
             </div>
           </div>
           <TabsContent value="all">
-            {!showGrid && <WorkspaceTable />}
+            {!showGrid && (
+              <WorkspaceTable
+                cb={() => {
+                  workspaceList()
+                    .then((response) => {
+                      if (response?.error) setError(response.error)
+                      if (response?.data) setWorkspaces(response.data)
+                    })
+                    .catch((error) => {
+                      setError(error.message)
+                    })
+                }}
+              />
+            )}
             {showGrid && (
               <div
                 className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
