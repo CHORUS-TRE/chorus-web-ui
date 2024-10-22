@@ -1,3 +1,23 @@
+# [1.0.0-alpha.7](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2024-10-22)
+
+
+### Bug Fixes
+
+* delete workbench feedback ([fa998c8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fa998c88f80c17864fbba02aacd6cd36791027ee))
+* delete workbench feedback ([ded71fe](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ded71fe84066d17970cba026f092c53c4c2ca979))
+* description length ([921b720](https://github.com/CHORUS-TRE/chorus-web-ui/commit/921b720385152e33f3ed4cc0507ccddc767f0de4))
+* disable a few buttons ([215c7b6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/215c7b6e8a3b7f07de8f9f1f9d55eef9c0e361ea))
+* get user missing file ^^' ([d866a45](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d866a45cb6de9dfcbe9d2d02fb0b436414e11ef8))
+* handle missing background workbenchId in BackgroundIframe component ([29992ba](https://github.com/CHORUS-TRE/chorus-web-ui/commit/29992ba8a47ccaec1266c7fad6ae82de4dbdc0a0))
+* load hud at start ([2be4b60](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2be4b602d027de1cb619cc177c466ece02b34b54))
+* remove console.log ([e389365](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e3893657b433b95d0c5e598b18ae169bc45ba51b))
+* temp delete feedback ([ccfba71](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ccfba7118db1d15fd03cc6391498ea45fce585c5))
+
+
+### Features
+
+* user get for workspace ([8e851c0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8e851c04cbee5e42927d72dda69ffa0b75791fe6))
+
 # [1.0.0-alpha.6](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2024-10-16)
 
 
