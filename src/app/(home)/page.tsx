@@ -98,7 +98,20 @@ export default function Portal() {
             </div>
           </div>
           <TabsContent value="all">
-            {!showGrid && <WorkspaceTable />}
+            {!showGrid && (
+              <WorkspaceTable
+                cb={() => {
+                  workspaceList()
+                    .then((response) => {
+                      if (response?.error) setError(response.error)
+                      if (response?.data) setWorkspaces(response.data)
+                    })
+                    .catch((error) => {
+                      setError(error.message)
+                    })
+                }}
+              />
+            )}
             {showGrid && (
               <div
                 className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
