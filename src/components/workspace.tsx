@@ -67,7 +67,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button>
+          <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             Settings
           </Button>
@@ -134,7 +134,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button>
+          <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             View Data
           </Button>
@@ -194,7 +194,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button>
+          <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             View Resources
           </Button>
@@ -234,7 +234,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button>
+          <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             View Team
           </Button>
@@ -256,7 +256,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button>
+          <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             View Wiki
           </Button>
@@ -273,7 +273,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <Button>
+          <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             View Activities
           </Button>
