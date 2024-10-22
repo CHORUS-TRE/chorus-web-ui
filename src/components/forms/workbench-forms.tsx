@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
 
@@ -103,6 +104,7 @@ export function WorkbenchCreateForm({
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">Start App</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
