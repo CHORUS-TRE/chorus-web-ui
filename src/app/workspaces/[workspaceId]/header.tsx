@@ -11,18 +11,20 @@ import { workspaceGet } from '~/components/actions/workspace-view-model'
 import NavLink from '~/components/nav-link'
 import { Button } from '~/components/ui/button'
 
-function StyledNavLink({
+export function StyledNavLink({
   children,
-  href
+  href,
+  disabled = false
 }: {
   children: ReactNode
   href: string
+  disabled?: boolean
 }) {
   return (
     <NavLink
       href={href}
       exact
-      className="border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+      className={`border-b-2 border-transparent text-muted ${!disabled ? 'hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white' : 'cursor-default'}`}
     >
       {children}
     </NavLink>
@@ -46,9 +48,9 @@ const WorkspaceHeader = ({
             </Suspense>
           </span>
         </h2>
-        <Link href="#" className="text-muted">
+        <Link href="#" className="mt-5 cursor-default text-muted">
           <Settings />
-        </Link>{' '}
+        </Link>
       </div>
 
       <div className="nav-link mb-6 flex h-10 flex-wrap items-center justify-start gap-2 sm:flex-nowrap md:gap-6">
@@ -58,12 +60,24 @@ const WorkspaceHeader = ({
         <StyledNavLink href={`/workspaces/${params?.workspaceId}/apps`}>
           Apps
         </StyledNavLink>
-        <StyledNavLink href={`#`}>Data</StyledNavLink>
-        <StyledNavLink href={`#`}>Resources</StyledNavLink>
-        <StyledNavLink href={`#`}>Team</StyledNavLink>
-        <StyledNavLink href={`#`}>Wiki</StyledNavLink>
-        <StyledNavLink href={`#`}>Activities</StyledNavLink>
-        <StyledNavLink href={`#`}>Footprint</StyledNavLink>
+        <StyledNavLink disabled href={`#`}>
+          Data
+        </StyledNavLink>
+        <StyledNavLink disabled href={`#`}>
+          Resources
+        </StyledNavLink>
+        <StyledNavLink disabled href={`#`}>
+          Team
+        </StyledNavLink>
+        <StyledNavLink disabled href={`#`}>
+          Wiki
+        </StyledNavLink>
+        <StyledNavLink disabled href={`#`}>
+          Activities
+        </StyledNavLink>
+        <StyledNavLink disabled href={`#`}>
+          Footprint
+        </StyledNavLink>
       </div>
     </>
   )

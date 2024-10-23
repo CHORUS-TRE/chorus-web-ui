@@ -3,9 +3,16 @@
 // import { WorkbenchCreateForm } from './forms/workbench-forms'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Frown, Meh, Smile } from 'lucide-react'
 
 import { useNavigation } from './store/navigation-context'
-import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from './ui/card'
 import { Button } from './button'
 
 import placeholder from '/public/placeholder.svg'
@@ -29,7 +36,7 @@ export default function RightSidebar({ show }: { show?: boolean }) {
         </h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
           <Card>
-            <Link href="#">
+            <Link href="#" className="cursor-default">
               <div className="relative max-w-xs overflow-hidden bg-cover bg-no-repeat">
                 <Image
                   src={placeholder}
@@ -45,7 +52,7 @@ export default function RightSidebar({ show }: { show?: boolean }) {
             </CardHeader>
           </Card>
           <Card>
-            <Link href="#">
+            <Link href="#" className="cursor-default">
               <div className="relative max-w-xs overflow-hidden bg-cover bg-no-repeat">
                 <Image
                   src={placeholder}
@@ -61,7 +68,7 @@ export default function RightSidebar({ show }: { show?: boolean }) {
             </CardHeader>
           </Card>
           <Card>
-            <Link href="#">
+            <Link href="#" className="cursor-default">
               <div className="relative max-w-xs overflow-hidden bg-cover bg-no-repeat">
                 <Image
                   src={placeholder}
@@ -73,11 +80,11 @@ export default function RightSidebar({ show }: { show?: boolean }) {
             </Link>
             <CardHeader>
               <CardTitle>Footprint</CardTitle>
-              <CardDescription>Your environmental impact.</CardDescription>
+              <CardDescription>Research Environmental Impact.</CardDescription>
             </CardHeader>
           </Card>
           <Card>
-            <Link href="#">
+            <Link href="#" className="cursor-default">
               <div className="relative max-w-xs overflow-hidden bg-cover bg-no-repeat">
                 <Image
                   src={placeholder}
@@ -88,10 +95,19 @@ export default function RightSidebar({ show }: { show?: boolean }) {
               </div>
             </Link>
             <CardHeader>
-              <CardTitle>Poll</CardTitle>
-              <CardDescription>
-                What would you like to see in the next release?
-              </CardDescription>
+              <CardTitle>Survey</CardTitle>
+              <CardDescription>What do you think of CHORUS?</CardDescription>
+              <CardFooter className="flex gap-4">
+                <Button disabled className="">
+                  <Smile className="h-8 w-8" />
+                </Button>
+                <Button disabled className="bg-orange-400">
+                  <Meh />
+                </Button>
+                <Button disabled className="bg-red-400">
+                  <Frown />
+                </Button>
+              </CardFooter>
             </CardHeader>
           </Card>
         </div>

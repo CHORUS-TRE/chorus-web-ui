@@ -60,7 +60,7 @@ export default function WorkbenchPreferencesPage() {
         </h2>
         <Link
           href={`/workspaces/${workspaceId}/${workbenchId}`}
-          className="text-muted hover:bg-transparent hover:text-accent"
+          className="mt-5 text-muted hover:bg-transparent hover:text-accent"
         >
           <Button>
             <CircleX />

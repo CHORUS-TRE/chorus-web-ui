@@ -31,21 +31,21 @@ export function Header() {
         <Link
           href="#"
           passHref
-          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
+          className="nav-link cursor-default border-b-2 border-transparent text-muted hover:border-b-2 hover:border-transparent hover:text-muted"
         >
           App Store
         </Link>
         <Link
           href="#"
           passHref
-          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
+          className="nav-link cursor-default border-b-2 border-transparent text-muted hover:border-b-2 hover:border-transparent hover:text-muted"
         >
           Services
         </Link>
         <Link
           href="#"
           passHref
-          className="nav-link border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent hover:text-muted"
+          className="nav-link cursor-default border-b-2 border-transparent text-muted hover:border-b-2 hover:border-transparent hover:text-muted"
         >
           Data
         </Link>
@@ -55,6 +55,7 @@ export function Header() {
         <div className="relative flex-1 md:grow-0">
           <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
           <Input
+            disabled
             type="search"
             placeholder="Find workspaces, apps, content ..."
             className="h-7 border-none bg-background pl-8 md:w-[240px] lg:w-[360px]"
