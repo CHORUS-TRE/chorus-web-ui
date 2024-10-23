@@ -1,3 +1,10 @@
+# [1.0.0-alpha.8](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2024-10-23)
+
+
+### Features
+
+* disable non functional links ([7771ba4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7771ba469e819dfd846fd70ea6f45887013b3073))
+
 # [1.0.0-alpha.7](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2024-10-22)
 
 
