@@ -77,8 +77,9 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
   const TableHeads = () => (
     <>
       <TableHead>Name</TableHead>
+      <TableHead className="hidden md:table-cell">Created</TableHead>
+
       <TableHead>Status</TableHead>
-      <TableHead className="hidden md:table-cell">Created at</TableHead>
       <TableHead>
         <span className="sr-only">Actions</span>
       </TableHead>
@@ -98,14 +99,15 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
             {workbench?.shortName}
           </Link>
         </TableCell>
-        <TableCell className="p-1">
-          <Badge variant="outline">{workbench?.status}</Badge>
-        </TableCell>
+
         <TableCell
           className="hidden p-1 md:table-cell"
           title={workbench?.createdAt.toLocaleDateString()}
         >
           {workbench && formatDistanceToNow(workbench?.createdAt)} ago
+        </TableCell>
+        <TableCell className="p-1">
+          <Badge variant="outline">{workbench?.status}</Badge>
         </TableCell>
         <TableCell className="p-1">
           <DropdownMenu>
@@ -117,7 +119,7 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem disabled>Edit</DropdownMenuItem>
               <DropdownMenuItem>
                 <WorksbenchDeleteForm
                   id={workbench?.id}
@@ -159,7 +161,8 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1-10</strong> of <strong>32</strong> apps
+          Showing <strong>1-{workbenches?.length}</strong> of{' '}
+          <strong>{workbenches?.length}</strong> apps
         </div>
       </CardFooter>
     </Card>

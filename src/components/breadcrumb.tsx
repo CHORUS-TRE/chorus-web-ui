@@ -111,7 +111,7 @@ export default function Breadcrumbs() {
               <Link
                 href={href}
                 prefetch={false}
-                className="block p-0 px-2 hover:text-accent hover:underline"
+                className="border-b-2 border-accent text-sm hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
               >
                 {name}
               </Link>
@@ -135,7 +135,9 @@ export default function Breadcrumbs() {
                 <BreadcrumbSeparator />
               </>
             )}
-            {index === pathItems.length - 1 && <Item name={item.name} />}
+            {index === pathItems.length - 1 && (
+              <Item name={item.name} href={`/${item.href}`} />
+            )}
           </Fragment>
         ))}
       </BreadcrumbList>

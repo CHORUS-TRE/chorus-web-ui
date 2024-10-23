@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { LayoutGrid, Rows3 } from 'lucide-react'
+import { ArrowRight, LayoutGrid, Rows3, Settings } from 'lucide-react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
@@ -11,6 +11,7 @@ import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { userMe } from '~/components/actions/user-view-model'
 import { workbenchList } from '~/components/actions/workbench-view-model'
 import { workspaceList } from '~/components/actions/workspace-view-model'
+import { Button as ThemedButton } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { Button } from '~/components/ui/button'
 import {
@@ -62,17 +63,30 @@ export default function Portal() {
     <>
       <div className="mb-6 flex items-center justify-between">
         <h2 className="mt-5 text-white">Welcome home</h2>
+        <Link href="#" className="mt-5 cursor-default text-muted">
+          <Settings />
+        </Link>
       </div>
       {error && <p className="mt-4 text-red-500">{error}</p>}
 
       <div className="w-full">
         <h3 className="mb-3 text-muted">Workspaces</h3>
         <Tabs defaultValue="all" className="">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="archived" className="hidden sm:flex">
+              <TabsTrigger
+                disabled
+                value="active"
+                className="cursor-default hover:border-b-transparent"
+              >
+                Active
+              </TabsTrigger>
+              <TabsTrigger
+                disabled
+                value="archived"
+                className="hidden cursor-default hover:border-b-transparent sm:flex"
+              >
                 Archived
               </TabsTrigger>
             </TabsList>
