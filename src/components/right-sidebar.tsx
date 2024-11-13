@@ -22,8 +22,9 @@ export default function RightSidebar({ show }: { show?: boolean }) {
 
   return (
     <div
-      className={`fixed right-0 top-0 z-50 h-full w-[50vw] bg-slate-100 p-10 pl-20 text-white duration-300 ease-in-out ${showRightSidebar ? 'translate-x-0' : 'translate-x-full'
-        }`}
+      className={`fixed right-0 top-0 z-50 h-full w-[50vw] bg-slate-100 p-10 pl-20 text-white duration-300 ease-in-out ${
+        showRightSidebar ? 'translate-x-0' : 'translate-x-full'
+      }`}
     >
       <CButton onClick={toggleRightSidebar} className="absolute right-5 top-5">
         {showRightSidebar ? 'Close' : 'Open'}
