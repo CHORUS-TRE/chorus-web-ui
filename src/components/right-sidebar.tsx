@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Frown, Github, Meh, Smile } from 'lucide-react'
 
-import { version } from '../../package.json'
+import packageInfo from '../../package.json'
 
 import { useNavigation } from './store/navigation-context'
 import {
@@ -122,7 +122,7 @@ export default function RightSidebar({ show }: { show?: boolean }) {
           </div>
         </div>
         <div className="flex items-end justify-between">
-          <div className="text-sm text-black">Web-UI Version: {version}</div>
+          <div className="text-sm text-black">Web-UI Version: {packageInfo.version}</div>
           <CButton
             className="mt-4"
             onClick={() =>
