@@ -16,8 +16,8 @@ export default function WorkbenchPage() {
 
   useEffect(() => {
     if (!workbenchId || !workspaceId) return
-    setBackground({ workspaceId, workbenchId })
-  }, [workbenchId])
+    setBackground(workspaceId)
+  }, [setBackground, workspaceId])
 
   return (
     <>

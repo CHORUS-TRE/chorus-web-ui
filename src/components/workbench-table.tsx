@@ -177,7 +177,7 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
       {deleted && (
         <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
           <AlertTitle>Success !</AlertTitle>
-          <AlertDescription>Workbench deleted</AlertDescription>
+          <AlertDescription>Desktop deleted</AlertDescription>
         </Alert>
       )}
       {error && (

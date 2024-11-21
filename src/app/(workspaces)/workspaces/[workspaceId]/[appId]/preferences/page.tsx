@@ -44,7 +44,7 @@ export default function WorkbenchPreferencesPage() {
         <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
           <AlertTitle>Success !</AlertTitle>
           <AlertDescription>
-            Workbench was deleted, redirecting to workspace...
+            Desktop was deleted, redirecting to workspace...
           </AlertDescription>
         </Alert>
       )}

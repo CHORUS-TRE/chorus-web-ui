@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Maximize, Settings } from 'lucide-react'
 
-import { workbenchGet } from '@/components/actions/workbench-view-model'
 import { Button } from '@/components/ui/button'
 
 import { userMe } from '~/components/actions/user-view-model'
@@ -15,14 +14,12 @@ import { Header as BaseHeader } from '~/components/header'
 import { UserResponse, Workbench, WorkspaceResponse } from '~/domain/model'
 
 export function Header() {
-  const [error, setError] = useState<UserResponse['error']>()
   const [user, setUser] = useState<UserResponse['data']>()
 
   const params = useParams<{ workspaceId: string; appId: string }>()
 
   useEffect(() => {
     userMe().then((response) => {
-      if (response?.error) setError(response.error)
       if (response?.data) setUser(response.data)
     })
   }, [])

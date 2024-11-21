@@ -34,7 +34,7 @@ const WorkspacePage = () => {
       .catch((error) => {
         setError(error.message)
       })
-  }, [])
+  }, [workspaceId])
 
   useEffect(() => {
     if (!workspaceId) return
@@ -54,7 +54,7 @@ const WorkspacePage = () => {
       })
 
     getWorkbenchList()
-  }, [])
+  }, [getWorkbenchList, workspaceId])
 
   // TODO: react use in not yet ready in NextJS
   // const fetchWorkspace = async () => {
