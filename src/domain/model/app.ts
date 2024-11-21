@@ -9,13 +9,21 @@ export enum AppState {
   EXITED = 'exited'
 }
 
+export enum AppType {
+  APP = 'app',
+  SERVICE = 'service'
+}
+
 export const AppCreateSchema = z.object({
   tenantId: z.string(),
   ownerId: z.string(),
   name: z.string().optional(),
+  prettyName: z.string().optional(),
   description: z.string().optional(),
   dockerImageName: z.string(),
-  dockerImageTag: z.string()
+  dockerImageTag: z.string(),
+  type: z.nativeEnum(AppType).default(AppType.APP),
+  url: z.string().optional()
 })
 
 export const AppSchema = AppCreateSchema.extend({

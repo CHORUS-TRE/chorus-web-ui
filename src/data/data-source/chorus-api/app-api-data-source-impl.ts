@@ -1,13 +1,15 @@
 import { z } from 'zod'
 
 import { App } from '@/domain/model'
-import { AppSchema, AppState } from '@/domain/model/app'
+import { AppSchema, AppState, AppType } from '@/domain/model/app'
 
 import { env } from '~/env'
 import { AppServiceApi, ChorusApp } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
 import { AppDataSource } from '../app-data-source'
+
+import customServicesData from './custom-services.json'
 
 // see src/internal/client/models/ChorusApp.ts
 export const AppApiCreateSchema = z.object({
@@ -37,6 +39,9 @@ const apiToDomain = (app: ChorusApp): App => {
     tenantId: app.tenantId || '',
     ownerId: app.userId || '',
     status: AppState[app.status?.toUpperCase() as keyof typeof AppState],
+    type: AppType.APP,
+    prettyName: '',
+    url: '',
     createdAt: app.createdAt ? new Date(app.createdAt) : new Date(),
     updatedAt: app.updatedAt ? new Date(app.updatedAt) : new Date()
   }
@@ -64,7 +69,18 @@ class AppDataSourceImpl implements AppDataSource {
       const parsed = response.result.map((r) => AppApiSchema.parse(r))
       const apps = parsed.map(apiToDomain)
 
-      return apps.map((w) => AppSchema.parse(w))
+      const nextApps = apps.map((w) => AppSchema.parse(w))
+
+      const customServices = customServicesData.map((service) => ({
+        ...service,
+        status: AppState[service.status as keyof typeof AppState],
+        type: AppType[service.type as keyof typeof AppType],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }))
+      nextApps.push(...customServices)
+
+      return nextApps
     } catch (error) {
       console.error(error)
       throw error

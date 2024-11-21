@@ -66,7 +66,7 @@ export default function Breadcrumbs() {
           )
         }
       })
-      .catch((error) => {
+      .catch(() => {
         // setError(error.message)
       })
   }, [paths, workspaceId])
@@ -97,7 +97,7 @@ export default function Breadcrumbs() {
           )
         }
       })
-      .catch((error) => {
+      .catch(() => {
         // setError(error.message)
       })
   }, [workbenchId, paths])
