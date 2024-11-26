@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 export enum AppState {
-  UNINITIALIZED = 'uninitialized',
   CREATED = 'created',
   LOADING = 'loading',
   ACTIVE = 'active',
@@ -22,7 +21,7 @@ export const AppCreateSchema = z.object({
   description: z.string().optional(),
   dockerImageName: z.string(),
   dockerImageTag: z.string(),
-  type: z.nativeEnum(AppType).default(AppType.APP),
+  type: z.nativeEnum(AppType),
   url: z.string().optional()
 })
 
