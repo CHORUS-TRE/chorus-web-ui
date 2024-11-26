@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { App } from '@/domain/model'
+import { App, AppCreate } from '@/domain/model'
 import { AppSchema, AppState, AppType } from '@/domain/model/app'
 
 import { env } from '~/env'
@@ -24,7 +24,6 @@ export const AppApiCreateSchema = z.object({
 export const AppApiSchema = AppApiCreateSchema.extend({
   id: z.string(),
   status: z.nativeEnum(AppState),
-
   createdAt: z.date(),
   updatedAt: z.date()
 })
@@ -47,45 +46,79 @@ const apiToDomain = (app: ChorusApp): App => {
   }
 }
 
-class AppDataSourceImpl implements AppDataSource {
-  private configuration: Configuration
-  private service: AppServiceApi
+export class AppDataSourceImpl implements AppDataSource {
+  private client: AppServiceApi
 
-  constructor(token: string) {
-    this.configuration = new Configuration({
-      apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+  constructor(session: string) {
+    const configuration = new Configuration({
+      basePath: env.DATA_SOURCE_API_URL,
+      apiKey: `Bearer ${session}`
     })
-    this.service = new AppServiceApi(this.configuration)
+    this.client = new AppServiceApi(configuration)
   }
 
   async list(): Promise<App[]> {
-    try {
-      const response = await this.service.appServiceListApps()
-
-      if (!response.result) return []
-      // throw new Error('Error fetching apps')
-
-      const parsed = response.result.map((r) => AppApiSchema.parse(r))
-      const apps = parsed.map(apiToDomain)
-
-      const nextApps = apps.map((w) => AppSchema.parse(w))
-
-      const customServices = customServicesData.map((service) => ({
-        ...service,
-        status: AppState[service.status as keyof typeof AppState],
-        type: AppType[service.type as keyof typeof AppType],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }))
-      nextApps.push(...customServices)
-
-      return nextApps
-    } catch (error) {
-      console.error(error)
-      throw error
+    if (env.DATA_SOURCE === 'local') {
+      return customServicesData as App[]
     }
+
+    const response = await this.client.appServiceListApps({})
+    const apps = response.result || []
+    return apps.map(apiToDomain)
+  }
+
+  async create(app: AppCreate): Promise<App> {
+    const response = await this.client.appServiceCreateApp({
+      body: {
+        tenantId: app.tenantId,
+        userId: app.ownerId,
+        name: app.name,
+        description: app.description,
+        dockerImageName: app.dockerImageName,
+        dockerImageTag: app.dockerImageTag,
+        status: AppState.ACTIVE.toLowerCase()
+      }
+    })
+
+    if (!response.result?.id) {
+      throw new Error('Failed to create app')
+    }
+
+    return this.get(response.result.id)
+  }
+
+  async update(app: AppCreate & { id: string }): Promise<App> {
+    const updateRequest = {
+      id: app.id,
+      body: {
+        app: {
+          id: app.id,
+          tenantId: app.tenantId,
+          userId: app.ownerId,
+          name: app.name,
+          description: app.description,
+          dockerImageName: app.dockerImageName,
+          dockerImageTag: app.dockerImageTag,
+          status: AppState.ACTIVE.toLowerCase()
+        }
+      }
+    }
+
+    await this.client.appServiceUpdateApp(updateRequest)
+    return this.get(app.id)
+  }
+
+  async delete(id: string): Promise<App> {
+    const app = await this.get(id)
+    await this.client.appServiceDeleteApp({ id })
+    return app
+  }
+
+  async get(id: string): Promise<App> {
+    const response = await this.client.appServiceGetApp({ id })
+    if (!response.result?.app) {
+      throw new Error('App not found')
+    }
+    return apiToDomain(response.result.app)
   }
 }
-
-export { AppDataSourceImpl }
