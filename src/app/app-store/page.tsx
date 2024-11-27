@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Settings } from 'lucide-react'
 
-import AppStore from '~/components/app-store'
+import { AppStoreView } from '~/components/app-store-view'
 
 export default function Page() {
   return (
@@ -12,8 +12,7 @@ export default function Page() {
           <Settings />
         </Link>
       </div>
-      {/* {error && <p className="mt-4 text-red-500">{error}</p>} */}
-      <AppStore />
+      <AppStoreView />
     </>
   )
 }
