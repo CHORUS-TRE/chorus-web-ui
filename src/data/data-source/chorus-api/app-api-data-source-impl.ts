@@ -58,10 +58,6 @@ export class AppDataSourceImpl implements AppDataSource {
   }
 
   async list(): Promise<App[]> {
-    if (env.DATA_SOURCE === 'local') {
-      return customServicesData as App[]
-    }
-
     const response = await this.client.appServiceListApps({})
     const apps = response.result || []
     return apps.map(apiToDomain)

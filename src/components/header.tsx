@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
+import customServices from '@/data/data-source/chorus-api/custom-services.json'
 
 import {
   ListItem,
@@ -16,46 +17,24 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
-import { App } from '~/domain/model'
 
-import { appList } from './actions/app-view-model'
 import { navigationMenuTriggerStyle } from './ui/navigation-menu'
 import Breadcrumb from './breadcrumb'
 import { HeaderButtons } from './header-buttons'
 
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import logo from '/public/logo-chorus-primare-white@2x.svg'
 
 interface HeaderProps {
   additionalHeaderButtons?: React.ReactNode
 }
 
 export function Header({ additionalHeaderButtons }: HeaderProps) {
-  const [apps, setApps] = useState<App[]>([])
-  const [error, setError] = useState<string>()
-
-  useEffect(() => {
-    appList().then((res) => {
-      if (res.error) {
-        setError(res.error)
-        return
-      }
-
-      if (!res.data) {
-        setError('There is no apps available')
-        return
-      }
-
-      setApps(res.data.filter((app) => app.type === 'service'))
-    })
-  }, [])
-
-  const services: { title: string; href: string; description: string }[] = apps
-    .filter((app) => app.type === 'service')
-    .map((app) => ({
-      title: app.name || '',
-      href: `/services/${app.id}`,
-      description: app.description || ''
-    }))
+  // Transform the static services data
+  const services = customServices.map((app) => ({
+    title: app.name,
+    href: `/services/${app.id}`,
+    description: app.description
+  }))
 
   return (
     <nav className="grid h-11 min-w-full grid-cols-3 items-center bg-black bg-opacity-85 py-1 text-slate-100 shadow-lg backdrop-blur-sm">
@@ -127,13 +106,6 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {/* <NavigationMenuItem>
-              <Link href="#" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Data
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem> */}
           </NavigationMenuList>
         </NavigationMenu>
       </div>
