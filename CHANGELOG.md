@@ -1,3 +1,15 @@
+# [1.0.0-alpha.9](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2024-11-28)
+
+
+### Bug Fixes
+
+* import package ([628e3cc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/628e3ccca3af65a30f2e1284fe1cac40ce236224))
+
+
+### Features
+
+* add NotFound component ([d2f1105](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d2f11052254b14e8821ac55190c3cb935ed7cf8f))
+
 # [1.0.0-alpha.8](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2024-10-23)
 
 
