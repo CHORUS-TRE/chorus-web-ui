@@ -22,7 +22,7 @@ import { navigationMenuTriggerStyle } from './ui/navigation-menu'
 import Breadcrumb from './breadcrumb'
 import { HeaderButtons } from './header-buttons'
 
-import logo from '/public/logo-chorus-primare-white@2x.svg'
+import logo from '/public/logo-chorus-primaire-white@2x.svg'
 
 interface HeaderProps {
   additionalHeaderButtons?: React.ReactNode
