@@ -17,7 +17,7 @@ import { workspaceGet } from './actions/workspace-view-model'
 
 interface BreadcrumbItem {
   name: string
-  href: string
+  href?: string
 }
 
 interface ItemProps {
@@ -50,31 +50,34 @@ export default function Breadcrumbs() {
   const [items, setItems] = useState<BreadcrumbItem[]>([])
 
   // Memoize path parsing
-  const pathNames = useMemo(() =>
-    paths?.split('/').filter(Boolean) || [],
+  const pathNames = useMemo(
+    () => paths?.split('/').filter(Boolean) || [],
     [paths]
   )
 
   // Utility function for capitalizing
-  const capitalize = useCallback((str: string) =>
-    str.split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
+  const capitalize = useCallback(
+    (str: string) =>
+      str
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
     []
   )
 
   // Generate initial breadcrumb items
-  const initialItems = useMemo(() =>
-    pathNames.map((path, i) => ({
-      name: capitalize(path),
-      href: pathNames.slice(0, i + 1).join('/')
-    })),
+  const initialItems = useMemo(
+    () =>
+      pathNames.map((path, i) => ({
+        name: capitalize(path),
+        href: pathNames.slice(0, i + 1).join('/')
+      })),
     [pathNames, capitalize]
   )
 
   // Handle data fetching and updates
   const updateBreadcrumbItems = useCallback(async () => {
-    const updatedItems = [...initialItems]
+    const updatedItems: BreadcrumbItem[] = [...initialItems]
 
     if (params?.workspaceId) {
       try {
@@ -119,7 +122,7 @@ export default function Breadcrumbs() {
         {items.map((item, index) => (
           <Fragment key={item.href}>
             <BreadcrumbItemComponent
-              href={`/${item.href}`}
+              href={item.href ? `/${item.href}` : undefined}
               name={item.name}
             />
             {index < items.length - 1 && <BreadcrumbSeparator />}
