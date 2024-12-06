@@ -70,7 +70,24 @@ export default function Portal() {
       {error && <p className="mt-4 text-red-500">{error}</p>}
 
       <div className="w-full">
-        <h3 className="mb-3 text-muted">Workspaces</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="mb-3 flex-grow text-muted mr-8">Workspaces</h3>
+          <div className="mb-4 flex justify-end">
+            <WorkspaceCreateForm
+              userId={user?.id}
+              cb={() => {
+                workspaceList()
+                  .then((response) => {
+                    if (response?.error) setError(response.error)
+                    if (response?.data) setWorkspaces(response.data)
+                  })
+                  .catch((error) => {
+                    setError(error.message)
+                  })
+              }}
+            />
+          </div>
+        </div>
         <Tabs defaultValue="all" className="">
           <div className="mb-4 grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
@@ -113,7 +130,7 @@ export default function Portal() {
               </Button>
             </div>
           </div>
-          <TabsContent value="all">
+          <TabsContent value="all" className="border-none">
             {!showGrid && (
               <WorkspaceTable
                 cb={() => {
@@ -136,7 +153,7 @@ export default function Portal() {
                 {workspaces?.map((workspace) => (
                   <Link key={workspace.id} href={`/workspaces/${workspace.id}`}>
                     <Card
-                      className="flex h-full flex-col justify-between rounded-2xl border-transparent bg-background text-white transition duration-300 hover:border-accent hover:shadow-lg"
+                      className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background text-white transition duration-300 hover:border-accent hover:shadow-lg"
                       key={workspace.id}
                     >
                       <CardHeader className="">
@@ -170,23 +187,6 @@ export default function Portal() {
           <TabsContent value="active"></TabsContent>
           <TabsContent value="archived"></TabsContent>
         </Tabs>
-
-        <div className="align-center mt-4 flex w-full justify-between">
-          <h2 className="text-background"></h2>
-          <WorkspaceCreateForm
-            userId={user?.id}
-            cb={() => {
-              workspaceList()
-                .then((response) => {
-                  if (response?.error) setError(response.error)
-                  if (response?.data) setWorkspaces(response.data)
-                })
-                .catch((error) => {
-                  setError(error.message)
-                })
-            }}
-          />
-        </div>
       </div>
     </>
   )
