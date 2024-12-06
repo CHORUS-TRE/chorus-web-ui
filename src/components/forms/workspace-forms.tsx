@@ -72,7 +72,7 @@ export function WorkspaceCreateForm({
       <DialogTrigger asChild>
         <Button>
           <CirclePlus className="h-3.5 w-3.5" />
-          New workspace
+          Create Workspace
         </Button>
       </DialogTrigger>
       <DialogContent>

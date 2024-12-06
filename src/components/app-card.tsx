@@ -77,7 +77,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
   return (
     <>
-      <Card className="flex flex-col overflow-hidden border bg-background/60 transition-colors hover:bg-background/80">
+      <Card className="flex flex-col overflow-hidden border bg-background/40 transition-colors hover:bg-background/80">
         <CardHeader className="flex-row items-start justify-between space-y-0 border-b border-border pb-2">
           <div className="flex items-center space-x-4">
             <Avatar className="h-12 w-12">

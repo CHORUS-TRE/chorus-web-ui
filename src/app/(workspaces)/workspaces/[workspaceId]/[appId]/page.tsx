@@ -1,14 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-
-import { useNavigation } from '~/components/store/navigation-context'
-
 import { Header } from './header'
 
 export default function WorkbenchPage() {
-
   return (
     <>
       <div

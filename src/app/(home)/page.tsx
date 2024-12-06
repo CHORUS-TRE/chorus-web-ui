@@ -71,7 +71,7 @@ export default function Portal() {
 
       <div className="w-full">
         <div className="flex items-center justify-between">
-          <h3 className="mb-3 flex-grow text-muted mr-8">Workspaces</h3>
+          <h3 className="mb-3 mr-8 flex-grow text-muted">Workspaces</h3>
           <div className="mb-4 flex justify-end">
             <WorkspaceCreateForm
               userId={user?.id}
