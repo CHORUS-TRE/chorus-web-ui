@@ -60,6 +60,12 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
+  dockerImageRegistry?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
   dockerImageName?: string
   /**
    *
@@ -114,6 +120,9 @@ export function ChorusAppFromJSONTyped(
     name: !exists(json, 'name') ? undefined : json['name'],
     description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
+    dockerImageRegistry: !exists(json, 'dockerImageRegistry')
+      ? undefined
+      : json['dockerImageRegistry'],
     dockerImageName: !exists(json, 'dockerImageName')
       ? undefined
       : json['dockerImageName'],
@@ -144,6 +153,7 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     name: value.name,
     description: value.description,
     status: value.status,
+    dockerImageRegistry: value.dockerImageRegistry,
     dockerImageName: value.dockerImageName,
     dockerImageTag: value.dockerImageTag,
     createdAt:

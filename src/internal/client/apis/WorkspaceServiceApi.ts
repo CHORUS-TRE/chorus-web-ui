@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import * as runtime from '../runtime'
 import type {
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
@@ -19,18 +20,27 @@ import type {
   ChorusListWorkspacesReply,
   ChorusUpdateWorkspaceReply,
   ChorusUpdateWorkspaceRequest,
-  ChorusWorkspace
+  ChorusWorkspace,
+  RpcStatus
 } from '../models/index'
 import {
   ChorusCreateWorkspaceReplyFromJSON,
+  ChorusCreateWorkspaceReplyToJSON,
   ChorusDeleteWorkspaceReplyFromJSON,
+  ChorusDeleteWorkspaceReplyToJSON,
   ChorusGetWorkspaceReplyFromJSON,
+  ChorusGetWorkspaceReplyToJSON,
   ChorusListWorkspacesReplyFromJSON,
+  ChorusListWorkspacesReplyToJSON,
   ChorusUpdateWorkspaceReplyFromJSON,
+  ChorusUpdateWorkspaceReplyToJSON,
+  ChorusUpdateWorkspaceRequestFromJSON,
   ChorusUpdateWorkspaceRequestToJSON,
-  ChorusWorkspaceToJSON
+  ChorusWorkspaceFromJSON,
+  ChorusWorkspaceToJSON,
+  RpcStatusFromJSON,
+  RpcStatusToJSON
 } from '../models/index'
-import * as runtime from '../runtime'
 
 export interface WorkspaceServiceCreateWorkspaceRequest {
   body: ChorusWorkspace
@@ -300,9 +310,7 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
       requestParameters,
       initOverrides
     )
-    const r = await response.value()
-
-    return r
+    return await response.value()
   }
 
   /**
