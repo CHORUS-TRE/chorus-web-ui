@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 
-import { updateSession } from '@/components/actions/authentication-login-view-model'
+import { updateSession } from '@/components/actions/authentication-view-model'
 
 export async function middleware(request: NextRequest) {
   await updateSession(request)

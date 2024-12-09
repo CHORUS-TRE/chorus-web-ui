@@ -3,12 +3,12 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { AuthenticationApiDataSourceImpl } from '@/data/data-source/chorus-api'
+import { AuthenticationLocalStorageDataSourceImpl } from '@/data/data-source/local-storage/authentication-local-storage-data-source-impl'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
-import { AuthenticationLogin } from '@/domain/use-cases/authentication/authentication-login'
-
-import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
-import { AuthenticationLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/authentication-local-storage-data-source-impl'
-import { env } from '~/env'
+import { AuthenticationModesResponse } from '@/domain/model'
+import { AuthenticationGetModes, AuthenticationLogin } from '@/domain/use-cases'
+import { env } from '@/env'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function authenticationLogin(prevState: any, formData: FormData) {
@@ -55,6 +55,25 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
   return {
     ...prevState,
     data: login.data
+  }
+}
+
+export async function getAuthenticationModes(): Promise<AuthenticationModesResponse> {
+  try {
+    const dataSource =
+      env.DATA_SOURCE === 'local'
+        ? await AuthenticationLocalStorageDataSourceImpl.getInstance(
+            env.DATA_SOURCE_LOCAL_DIR
+          )
+        : new AuthenticationApiDataSourceImpl()
+
+    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const useCase = new AuthenticationGetModes(repository)
+
+    return await useCase.execute()
+  } catch (error) {
+    console.error('Error fetching auth modes:', error)
+    return { error: 'Failed to fetch authentication modes' }
   }
 }
 

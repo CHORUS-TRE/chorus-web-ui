@@ -54,7 +54,6 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       }
 
       const result = response.result
-      console.log(result)
       const r = result.map(
         (mode: ChorusAuthenticationMode): AuthenticationMode => {
           const authMode: AuthenticationMode = {
@@ -73,8 +72,6 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
           return authMode
         }
       )
-
-      console.log(r)
       return r
     } catch (error) {
       console.error('Error fetching authentication modes:', error)
