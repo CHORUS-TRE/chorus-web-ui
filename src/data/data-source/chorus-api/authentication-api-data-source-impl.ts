@@ -1,6 +1,13 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import { AuthenticationRequest } from '@/domain/model'
+import {
+  AuthenticationInternal,
+  AuthenticationMode,
+  AuthenticationModeType,
+  AuthenticationOpenID,
+  AuthenticationRequest
+} from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
+import { ChorusAuthenticationMode } from '@/internal/client/models'
 
 import { env } from '~/env'
 import { Configuration } from '~/internal/client'
@@ -33,6 +40,44 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       return token
     } catch (error) {
       console.error(error)
+      throw error
+    }
+  }
+
+  async getAuthenticationModes(): Promise<AuthenticationMode[]> {
+    try {
+      const response =
+        await this.service.authenticationServiceGetAuthenticationModes()
+
+      if (!response.result) {
+        return []
+      }
+
+      const result = response.result
+      console.log(result)
+      const r = result.map(
+        (mode: ChorusAuthenticationMode): AuthenticationMode => {
+          const authMode: AuthenticationMode = {
+            type: mode.type as AuthenticationModeType,
+            internal: mode.internal
+              ? ({
+                  enabled: mode.internal.publicRegistrationEnabled ?? false
+                } as AuthenticationInternal)
+              : undefined,
+            openid: mode.openid
+              ? ({
+                  id: mode.openid.id ?? ''
+                } as AuthenticationOpenID)
+              : undefined
+          }
+          return authMode
+        }
+      )
+
+      console.log(r)
+      return r
+    } catch (error) {
+      console.error('Error fetching authentication modes:', error)
       throw error
     }
   }

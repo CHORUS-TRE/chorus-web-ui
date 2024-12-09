@@ -1,4 +1,8 @@
-import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
+import {
+  AuthenticationModesResponse,
+  AuthenticationRequest,
+  AuthenticationResponse
+} from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 import { AuthenticationDataSource } from '../data-source'
@@ -15,6 +19,15 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       const d = await this.dataSource.login(data)
 
       return { data: d }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async getAuthenticationModes(): Promise<AuthenticationModesResponse> {
+    try {
+      const modes = await this.dataSource.getAuthenticationModes()
+      return { data: modes }
     } catch (error) {
       return { error: error.message }
     }
