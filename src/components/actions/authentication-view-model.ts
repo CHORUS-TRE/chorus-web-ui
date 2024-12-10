@@ -121,3 +121,26 @@ export async function getOAuthUrl(
     return { error: 'Failed to get OAuth URL' }
   }
 }
+
+export async function handleOAuthToken(token: string) {
+  'use server'
+
+  // Set both session and JWT token cookies
+  cookies().set('session', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24 * 7, // One week
+    path: '/'
+  })
+
+  cookies().set('jwttoken', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24 * 7, // One week
+    path: '/'
+  })
+
+  return {
+    data: token
+  }
+}

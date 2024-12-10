@@ -79,14 +79,14 @@ export default function LoginForm() {
     if (state.data) {
       setAuthenticated(true)
     }
-  }, [state?.data, searchParams, setAuthenticated])
+  }, [state?.data, setAuthenticated])
 
   useEffect(() => {
     if (!isAuthenticated) return
 
     const path = searchParams.get('redirect') || '/'
     redirect(path, RedirectType.replace)
-  }, [isAuthenticated])
+  }, [isAuthenticated, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
