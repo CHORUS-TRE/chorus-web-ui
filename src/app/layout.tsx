@@ -10,6 +10,7 @@ import HUD from '~/components/HUD'
 import RightSidebar from '~/components/right-sidebar'
 import { AuthProvider } from '~/components/store/auth-context'
 import { NavigationProvider } from '~/components/store/navigation-context'
+import { Toaster } from '~/components/ui/toaster'
 
 import '@/app/build.css'
 import '@/styles/globals.css'
@@ -58,6 +59,7 @@ export default function RootLayout({
             />
           </NavigationProvider>
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   )

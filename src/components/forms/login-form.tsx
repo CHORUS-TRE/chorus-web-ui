@@ -9,6 +9,7 @@ import { useFormState, useFormStatus } from 'react-dom'
 import { AuthenticationMode } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 
+import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
@@ -16,10 +17,10 @@ import { useToast } from '~/hooks/use-toast'
 
 import {
   authenticationLogin,
-  getAuthenticationModes
+  getAuthenticationModes,
+  getOAuthUrl
 } from '../actions/authentication-view-model'
 import { IFormState } from '../actions/utils'
-import { Button } from '../button'
 import { useAuth } from '../store/auth-context'
 
 const initialState: IFormState = {
@@ -31,7 +32,11 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending} className="w-full justify-center">
+    <Button
+      type="submit"
+      disabled={pending}
+      className="flex w-full items-center justify-center gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
+    >
       {pending ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : (
@@ -83,9 +88,20 @@ export default function LoginForm() {
     redirect(path, RedirectType.replace)
   }, [isAuthenticated])
 
-  const handleOAuthLogin = (mode: AuthenticationMode) => {
-    if (mode.openid?.url) {
-      window.location.href = mode.openid.url
+  const handleOAuthLogin = async (mode: AuthenticationMode) => {
+    if (mode.openid?.id) {
+      const response = await getOAuthUrl(mode.openid.id)
+      if (response.error) {
+        toast({
+          title: "Couldn't initiate login",
+          description: response.error,
+          variant: 'destructive'
+        })
+        return
+      }
+      if (response.data) {
+        window.location.href = response.data
+      }
     }
   }
 
@@ -93,9 +109,7 @@ export default function LoginForm() {
     <div className="mx-auto grid w-[380px] gap-6 text-white">
       <div className="grid gap-4 text-center">
         <h2>Login</h2>
-        <h5 className="text-muted">
-          Enter your email below to login to your account
-        </h5>
+        <h5 className="text-muted">Login to your account</h5>
       </div>
       <Separator className="mb-4" />
 
@@ -112,6 +126,11 @@ export default function LoginForm() {
               mode.internal?.enabled
           ) && (
             <>
+              <div className="grid gap-4 text-center">
+                <p className="text-muted">
+                  Enter your email below to login to your account
+                </p>
+              </div>
               <form action={formAction}>
                 <div className="mb-6 grid gap-4">
                   <div className="grid gap-2">
@@ -151,14 +170,23 @@ export default function LoginForm() {
 
           {/* OAuth Providers */}
           <div className="grid gap-4">
-            <Separator className="mb-4" />
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted">
+                  Or continue with
+                </span>
+              </div>
+            </div>
             {authModes
               .filter((mode) => mode.type === AuthenticationModeType.OPENID)
               .map((mode) => (
                 <Button
                   key={mode.openid?.id}
                   variant="outline"
-                  className="w-full justify-center"
+                  className="w-full justify-center gap-1 rounded-full text-sm transition-[gap] duration-500 ease-in-out hover:gap-2 focus:ring-2 focus:ring-accent"
                   onClick={() => handleOAuthLogin(mode)}
                 >
                   {mode.openid?.id}
