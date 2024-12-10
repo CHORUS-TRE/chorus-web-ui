@@ -1,5 +1,6 @@
 import {
   AuthenticationModesResponse,
+  AuthenticationOAuthResponse,
   AuthenticationRequest,
   AuthenticationResponse
 } from '@/domain/model'
@@ -28,6 +29,15 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     try {
       const modes = await this.dataSource.getAuthenticationModes()
       return { data: modes }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async getOAuthUrl(id: string): Promise<AuthenticationOAuthResponse> {
+    try {
+      const url = await this.dataSource.getOAuthUrl(id)
+      return { data: url }
     } catch (error) {
       return { error: error.message }
     }

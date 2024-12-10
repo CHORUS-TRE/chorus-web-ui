@@ -6,8 +6,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source/chorus-api'
 import { AuthenticationLocalStorageDataSourceImpl } from '@/data/data-source/local-storage/authentication-local-storage-data-source-impl'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
-import { AuthenticationModesResponse } from '@/domain/model'
-import { AuthenticationGetModes, AuthenticationLogin } from '@/domain/use-cases'
+import {
+  AuthenticationModesResponse,
+  AuthenticationOAuthResponse
+} from '@/domain/model'
+import {
+  AuthenticationGetModes,
+  AuthenticationGetOAuthUrl,
+  AuthenticationLogin
+} from '@/domain/use-cases'
 import { env } from '@/env'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,4 +104,20 @@ export async function updateSession(request: NextRequest) {
   })
 
   return res
+}
+
+export async function getOAuthUrl(
+  id: string
+): Promise<AuthenticationOAuthResponse> {
+  try {
+    const dataSource = new AuthenticationApiDataSourceImpl()
+
+    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const useCase = new AuthenticationGetOAuthUrl(repository)
+
+    return await useCase.execute(id)
+  } catch (error) {
+    console.error('Error getting OAuth URL:', error)
+    return { error: 'Failed to get OAuth URL' }
+  }
 }

@@ -34,3 +34,8 @@ export interface AuthenticationModesResponse {
   data?: AuthenticationMode[]
   error?: string
 }
+
+export interface AuthenticationOAuthResponse {
+  data?: string // URL for redirection
+  error?: string
+}

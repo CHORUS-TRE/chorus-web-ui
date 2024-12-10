@@ -78,6 +78,22 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       throw error
     }
   }
+
+  async getOAuthUrl(id: string): Promise<string> {
+    try {
+      const response =
+        await this.service.authenticationServiceAuthenticateOauth({ id })
+
+      if (!response.result?.redirectURI) {
+        throw new Error('No redirect URL provided')
+      }
+
+      return response.result.redirectURI
+    } catch (error) {
+      console.error('Error getting OAuth URL:', error)
+      throw error
+    }
+  }
 }
 
 export { AuthenticationApiDataSourceImpl }

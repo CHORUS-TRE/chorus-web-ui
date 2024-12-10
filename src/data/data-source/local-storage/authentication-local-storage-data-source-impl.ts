@@ -1,9 +1,6 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import {
-  AuthenticationMode,
-  AuthenticationModeType,
-  AuthenticationRequest
-} from '@/domain/model'
+import { AuthenticationMode, AuthenticationRequest } from '@/domain/model'
+import { AuthenticationModeType } from '@/domain/model/authentication'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const storage = require('node-persist')
@@ -49,6 +46,10 @@ class AuthenticationLocalStorageDataSourceImpl
         }
       }
     ]
+  }
+
+  async getOAuthUrl(id: string): Promise<string> {
+    throw new Error('OAuth not supported in local storage mode')
   }
 }
 
