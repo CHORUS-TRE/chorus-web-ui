@@ -1,3 +1,12 @@
+# [1.0.0-alpha.10](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2024-12-11)
+
+
+### Bug Fixes
+
+* **chart:** bump chart version ([f0963fd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f0963fd110620613469ba96f6d515008aa49fc37))
+* **chart:** replaced registry by harbor ([525f652](https://github.com/CHORUS-TRE/chorus-web-ui/commit/525f6526ac0f0a21316f3b46b5fed4818a1690e1))
+* **chart:** undo bump chart version ([be7560b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/be7560be8dc9eec1d134d18db9c550b52c79b830))
+
 # [1.0.0-alpha.9](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2024-11-28)
 
 
