@@ -39,3 +39,15 @@ export interface AuthenticationOAuthResponse {
   data?: string // URL for redirection
   error?: string
 }
+
+export interface AuthenticationOAuthRedirectRequest {
+  id: string
+  state?: string
+  sessionState?: string
+  code?: string
+}
+
+export interface AuthenticationOAuthRedirectResponse {
+  data?: string
+  error?: string
+}

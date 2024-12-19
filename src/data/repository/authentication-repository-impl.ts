@@ -1,5 +1,7 @@
 import {
   AuthenticationModesResponse,
+  AuthenticationOAuthRedirectRequest,
+  AuthenticationOAuthRedirectResponse,
   AuthenticationOAuthResponse,
   AuthenticationRequest,
   AuthenticationResponse
@@ -38,6 +40,17 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     try {
       const url = await this.dataSource.getOAuthUrl(id)
       return { data: url }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async handleOAuthRedirect(
+    data: AuthenticationOAuthRedirectRequest
+  ): Promise<AuthenticationOAuthRedirectResponse> {
+    try {
+      const token = await this.dataSource.handleOAuthRedirect(data)
+      return { data: token }
     } catch (error) {
       return { error: error.message }
     }

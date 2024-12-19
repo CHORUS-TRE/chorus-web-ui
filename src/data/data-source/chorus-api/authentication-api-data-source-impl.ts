@@ -3,6 +3,7 @@ import {
   AuthenticationInternal,
   AuthenticationMode,
   AuthenticationModeType,
+  AuthenticationOAuthRedirectRequest,
   AuthenticationOpenID,
   AuthenticationRequest
 } from '@/domain/model'
@@ -91,6 +92,29 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       return response.result.redirectURI
     } catch (error) {
       console.error('Error getting OAuth URL:', error)
+      throw error
+    }
+  }
+
+  async handleOAuthRedirect(
+    data: AuthenticationOAuthRedirectRequest
+  ): Promise<string> {
+    try {
+      const response =
+        await this.service.authenticationServiceAuthenticateOauthRedirect({
+          id: data.id,
+          state: data.state,
+          sessionState: data.sessionState,
+          code: data.code
+        })
+
+      if (!response.result?.token) {
+        throw new Error('No token received from OAuth redirect')
+      }
+
+      return response.result.token
+    } catch (error) {
+      console.error('Error handling OAuth redirect:', error)
       throw error
     }
   }

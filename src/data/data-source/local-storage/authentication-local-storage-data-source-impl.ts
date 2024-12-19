@@ -1,5 +1,9 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import { AuthenticationMode, AuthenticationRequest } from '@/domain/model'
+import {
+  AuthenticationMode,
+  AuthenticationOAuthRedirectRequest,
+  AuthenticationRequest
+} from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -49,6 +53,12 @@ class AuthenticationLocalStorageDataSourceImpl
   }
 
   async getOAuthUrl(id: string): Promise<string> {
+    throw new Error('OAuth not supported in local storage mode')
+  }
+
+  async handleOAuthRedirect(
+    data: AuthenticationOAuthRedirectRequest
+  ): Promise<string> {
     throw new Error('OAuth not supported in local storage mode')
   }
 }
