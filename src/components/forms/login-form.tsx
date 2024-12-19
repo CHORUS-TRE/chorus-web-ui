@@ -91,7 +91,6 @@ export default function LoginForm() {
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
       const response = await getOAuthUrl(mode.openid.id)
-
       if (response.error) {
         toast({
           title: "Couldn't initiate login",
@@ -102,7 +101,10 @@ export default function LoginForm() {
       }
 
       if (response.data) {
-        window.location.href = response.data
+        const url = new URL(response.data)
+        const currentState = url.searchParams.get('state') || ''
+        url.searchParams.set('state', `${currentState}:${mode.openid.id}`)
+        window.location.href = url.toString()
       }
     }
   }

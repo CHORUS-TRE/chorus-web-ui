@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import { NextRequest } from 'next/server'
 
 import { handleOAuthRedirect } from '@/components/actions/authentication-view-model'
@@ -6,9 +5,12 @@ import { env } from '@/env'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
+  const state = searchParams.get('state') || ''
+  const [originalState, providerId] = state.split(':')
+
   const queryParams = {
-    id: 'keycloak',
-    state: searchParams.get('state') || undefined,
+    id: providerId || 'keycloak',
+    state: originalState,
     sessionState: searchParams.get('session_state') || undefined,
     code: searchParams.get('code') || undefined
   }
