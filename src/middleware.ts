@@ -22,7 +22,8 @@ export async function middleware(request: NextRequest) {
   if (
     !session &&
     !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/register')
+    !request.nextUrl.pathname.startsWith('/register') &&
+    !request.nextUrl.pathname.startsWith('/oauthredirect')
   ) {
     return Response.redirect(new URL('/login', request.url))
   }

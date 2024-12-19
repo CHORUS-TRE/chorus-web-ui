@@ -20,6 +20,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_APP_URL: z.string().url(),
     NEXT_PUBLIC_DATA_SOURCE_API_URL: z.string().url().optional(),
     NEXT_PUBLIC_MATOMO_URL: z.string().url(),
     NEXT_PUBLIC_MATOMO_CONTAINER_ID: z.string()
@@ -34,6 +35,7 @@ export const env = createEnv({
     DATA_SOURCE: process.env.DATA_SOURCE,
     DATA_SOURCE_LOCAL_DIR: process.env.DATA_SOURCE_LOCAL_DIR,
     DATA_SOURCE_API_URL: process.env.DATA_SOURCE_API_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_DATA_SOURCE_API_URL:
       process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL,
     NEXT_PUBLIC_MATOMO_URL: process.env.NEXT_PUBLIC_MATOMO_URL,

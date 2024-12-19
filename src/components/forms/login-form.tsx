@@ -73,7 +73,7 @@ export default function LoginForm() {
     }
 
     fetchAuthModes()
-  }, [toast])
+  }, [])
 
   useEffect(() => {
     if (state.data) {
@@ -91,6 +91,7 @@ export default function LoginForm() {
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
       const response = await getOAuthUrl(mode.openid.id)
+
       if (response.error) {
         toast({
           title: "Couldn't initiate login",
@@ -99,10 +100,20 @@ export default function LoginForm() {
         })
         return
       }
+
       if (response.data) {
         window.location.href = response.data
       }
     }
+  }
+
+  const error = searchParams.get('error')
+  if (error) {
+    toast({
+      title: 'Authentication Error',
+      description: error,
+      variant: 'destructive'
+    })
   }
 
   return (

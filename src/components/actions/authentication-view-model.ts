@@ -8,12 +8,15 @@ import { AuthenticationLocalStorageDataSourceImpl } from '@/data/data-source/loc
 import { AuthenticationRepositoryImpl } from '@/data/repository'
 import {
   AuthenticationModesResponse,
+  AuthenticationOAuthRedirectRequest,
+  AuthenticationOAuthRedirectResponse,
   AuthenticationOAuthResponse
 } from '@/domain/model'
 import {
   AuthenticationGetModes,
   AuthenticationGetOAuthUrl,
-  AuthenticationLogin
+  AuthenticationLogin,
+  AuthenticationOAuthRedirect
 } from '@/domain/use-cases'
 import { env } from '@/env'
 
@@ -46,13 +49,6 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
     }
 
   cookies().set('session', login.data, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 24 * 7, // One week
-    path: '/'
-  })
-
-  cookies().set('jwttoken', login.data, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 7, // One week
@@ -122,25 +118,38 @@ export async function getOAuthUrl(
   }
 }
 
-export async function handleOAuthToken(token: string) {
-  'use server'
+export async function handleOAuthRedirect(
+  data: AuthenticationOAuthRedirectRequest
+): Promise<AuthenticationOAuthRedirectResponse> {
+  try {
+    const dataSource = new AuthenticationApiDataSourceImpl()
+    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const useCase = new AuthenticationOAuthRedirect(repository)
 
-  // Set both session and JWT token cookies
-  cookies().set('session', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 24 * 7, // One week
-    path: '/'
-  })
+    const response = await useCase.execute(data)
 
-  cookies().set('jwttoken', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 24 * 7, // One week
-    path: '/'
-  })
+    if (response.error) {
+      return response
+    }
 
-  return {
-    data: token
+    if (!response.data) {
+      return { error: 'No token received' }
+    }
+
+    if (!response.data) {
+      throw new Error('No token received')
+    }
+
+    cookies().set('session', response.data || '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7, // One week
+      path: '/'
+    })
+
+    return response
+  } catch (error) {
+    console.error('Error handling OAuth redirect:', error)
+    return { error: 'Failed to handle OAuth redirect' }
   }
 }
