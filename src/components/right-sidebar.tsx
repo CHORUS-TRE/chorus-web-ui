@@ -5,8 +5,6 @@ import Link from 'next/link'
 import { Frown, Github, Meh, Smile } from 'lucide-react'
 
 import packageInfo from '../../package.json'
-
-import packageInfo from '../../package.json'
 import { useNavigation } from './store/navigation-context'
 import {
   Card,
