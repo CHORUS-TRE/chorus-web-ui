@@ -46,6 +46,7 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
             height={32}
             className="aspect-auto cursor-pointer"
             id="logo"
+            priority
           />
         </Link>
         <div className="min-w-0 flex-1">

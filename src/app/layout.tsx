@@ -64,7 +64,7 @@ export default function RootLayout({
               src={cover}
               placeholder="blur"
               quality={75}
-              priority={true}
+              priority={false}
               sizes="100vw"
               id="background"
               className="fixed left-0 top-0 h-full w-full"

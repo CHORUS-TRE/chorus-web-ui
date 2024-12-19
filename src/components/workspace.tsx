@@ -283,25 +283,25 @@ export function Workspace({
       <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle>Footprint</CardTitle>
-          <CardDescription className="text-sm">
-            <p className="mb-2">
+          <div className="text-sm text-muted-foreground">
+            <div className="mb-2">
               <strong>
                 Your group produced an average of 320g carbon per day since last
                 week.
               </strong>
-            </p>
-            <p className="mt-2">
+            </div>
+            <div className="mt-2">
               <strong>Which is equivalent to:</strong>
-            </p>
-            <p>1.6 km by car</p>
-            <p>a flight to the moon</p>
-            <p className="mt-2">
-              <strong className="mt-2">Tips</strong>
-            </p>
-            <p>Use public transportation</p>
-            <p>Use a bike</p>
-            <p>Plant a tree</p>
-          </CardDescription>
+            </div>
+            <div>1.6 km by car</div>
+            <div>a flight to the moon</div>
+            <div className="mt-2">
+              <strong>Tips</strong>
+            </div>
+            <div>Use public transportation</div>
+            <div>Use a bike</div>
+            <div>Plant a tree</div>
+          </div>
         </CardHeader>
         <CardContent className="flex flex-row items-baseline gap-4 pt-2">
           <div className="flex items-baseline gap-2 text-3xl font-bold tabular-nums leading-none">
