@@ -59,7 +59,7 @@ export default async function AppDetailsPage({
               <dl className="grid grid-cols-2 gap-4">
                 <div>
                   <dt className="text-sm text-muted-foreground">Version</dt>
-                  <dd>{app.version || 'N/A'}</dd>
+                  <dd>N/A</dd>
                 </div>
                 <div>
                   <dt className="text-sm text-muted-foreground">Type</dt>
