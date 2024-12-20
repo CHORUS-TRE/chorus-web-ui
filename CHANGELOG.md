@@ -1,3 +1,37 @@
+# [1.0.0-alpha.11](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2024-12-20)
+
+
+### Bug Fixes
+
+* **chart:** bump chart version ([1c5b7e2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1c5b7e23596e983b5b14e7575a501097e80ecc03))
+* **chart:** replaced registry by harbor ([16ae388](https://github.com/CHORUS-TRE/chorus-web-ui/commit/16ae38820c86bae43a8acaf7d7174884a4516d4f))
+* **chart:** undo bump chart version ([1eefd5a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1eefd5a84a667cda1b9ab850a7e9e6b99f314a57))
+* correct logo import path in header component ([0665d29](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0665d292f2c3b12ff43444f3281f41db4020d78c))
+* defer image loading ([dc43711](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dc437111e6cf4cb04b8f3517c0549a2aeff7f6dc))
+* duplicate import ([40f6944](https://github.com/CHORUS-TRE/chorus-web-ui/commit/40f694424d62c5b5ca96ef097bc06c248878fc3b))
+* import package ([b3b0d66](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b3b0d66ef3df881b9ed4dad2d39de558b940ba7a))
+* removed app.version ([893cd00](https://github.com/CHORUS-TRE/chorus-web-ui/commit/893cd0093c9bd8325fb9af84394f5051f09eae16))
+
+
+### Features
+
+* add app create, update, delete, get ([96b5bab](https://github.com/CHORUS-TRE/chorus-web-ui/commit/96b5babd9798d29ae7cce9e8673be83da1818282))
+* add Matomo analytics integration and update environment configuration ([4aec697](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4aec697d9da5e9770e41516c531854e91298de08))
+* add mocked services ([78312ad](https://github.com/CHORUS-TRE/chorus-web-ui/commit/78312ad58b23e5ed524b198143c679026c266f21))
+* add NotFound component ([cb6b26e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cb6b26ea8f9bbc3bd30dbf6a9709458394273c56))
+* add OAuth URL retrieval functionality in authentication module ([d2377bf](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d2377bf133a3e3a964f44b7ff34ae25eec5f7821))
+* add toast notification component ([25de42f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/25de42fa8a0b9d56d45e3d790f5e8af847d339a2))
+* app api implementation ([0343745](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0343745e45e43f29ad7260c9cb6ffd70ff83dbd6))
+* app store structure ([f897ef2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f897ef201641710ec4a5c22ed47cb6cd76669e82))
+* enhance WorkbenchCreateForm with random scientist name generation and UI improvements ([50688c1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/50688c119b83e4445e10bd45311f8677c4056f13))
+* implement app store UI with create, edit, and delete functionality ([69f80e5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/69f80e5635d22ca9fde131fcc27227d58c3693fd))
+* implement authentication modes retrieval in data sources and repository ([5ebb023](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5ebb023d3f6b560ef31198b2ad57fafbc9f7447e))
+* implement OAuth redirect handling in authentication data sources and repository ([7cd5454](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7cd545488a66db3a128feeb4b43d5d157a651cca))
+* implement OAuth token handling in login flow and enhance session management ([39a1bfb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/39a1bfbd87a9a091439e9f724402380fa0b635ff))
+* integrate Toaster component and enhance login form UI with improved OAuth handling ([3bcefed](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3bcefed789d36379f516ed1b3578a595675f0520))
+* keep the providerId in the redirect URL construction ([03db2b9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/03db2b905656fca5734de5baef9f5046633f4c60))
+* OAuth redirect handling in middleware and login flow ([70ded30](https://github.com/CHORUS-TRE/chorus-web-ui/commit/70ded30492838c18ca4ec11f8811f1dfe10c6677))
+
 # [1.0.0-alpha.10](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2024-12-11)
 
 
