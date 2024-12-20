@@ -4,7 +4,6 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source/chorus-api'
-import { AuthenticationLocalStorageDataSourceImpl } from '@/data/data-source/local-storage/authentication-local-storage-data-source-impl'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
 import {
   AuthenticationModesResponse,
@@ -18,16 +17,10 @@ import {
   AuthenticationLogin,
   AuthenticationOAuthRedirect
 } from '@/domain/use-cases'
-import { env } from '@/env'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function authenticationLogin(prevState: any, formData: FormData) {
-  const dataSource =
-    env.DATA_SOURCE === 'local'
-      ? await AuthenticationLocalStorageDataSourceImpl.getInstance(
-          env.DATA_SOURCE_LOCAL_DIR
-        )
-      : new AuthenticationApiDataSourceImpl()
+  const dataSource = new AuthenticationApiDataSourceImpl()
   const repository = new AuthenticationRepositoryImpl(dataSource)
   const useCase = new AuthenticationLogin(repository)
 
@@ -63,13 +56,7 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
 
 export async function getAuthenticationModes(): Promise<AuthenticationModesResponse> {
   try {
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await AuthenticationLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new AuthenticationApiDataSourceImpl()
-
+    const dataSource = new AuthenticationApiDataSourceImpl()
     const repository = new AuthenticationRepositoryImpl(dataSource)
     const useCase = new AuthenticationGetModes(repository)
 

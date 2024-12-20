@@ -9,8 +9,6 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']),
-    DATA_SOURCE: z.enum(['local', 'api']),
-    DATA_SOURCE_LOCAL_DIR: z.string(),
     DATA_SOURCE_API_URL: z.string().url()
   },
 
@@ -32,8 +30,6 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    DATA_SOURCE: process.env.DATA_SOURCE,
-    DATA_SOURCE_LOCAL_DIR: process.env.DATA_SOURCE_LOCAL_DIR,
     DATA_SOURCE_API_URL: process.env.DATA_SOURCE_API_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_DATA_SOURCE_API_URL:

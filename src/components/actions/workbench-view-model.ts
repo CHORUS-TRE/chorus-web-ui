@@ -6,7 +6,6 @@ import { cookies } from 'next/headers'
 import { env } from '@/env'
 
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
-import { WorkbenchLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import {
   WorkbenchCreate as WorkbenchCreateModel,
@@ -28,13 +27,7 @@ function delay(ms: number) {
 
 const getRepository = async () => {
   const session = cookies().get('session')?.value || ''
-  const dataSource =
-    env.DATA_SOURCE === 'local'
-      ? await WorkbenchLocalStorageDataSourceImpl.getInstance(
-          env.DATA_SOURCE_LOCAL_DIR
-        )
-      : new WorkbenchDataSourceImpl(session)
-
+  const dataSource = new WorkbenchDataSourceImpl(session)
   return new WorkbenchRepositoryImpl(dataSource)
 }
 

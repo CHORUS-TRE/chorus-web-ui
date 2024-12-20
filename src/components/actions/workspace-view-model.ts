@@ -7,7 +7,6 @@ import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
 import { env } from '@/env'
 
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-api-data-source-impl'
-import { WorkspaceLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
   WorkspaceCreateModel,
@@ -23,13 +22,7 @@ import { IFormState } from './utils'
 
 const getRepository = async () => {
   const session = cookies().get('session')?.value || ''
-  const dataSource =
-    env.DATA_SOURCE === 'local'
-      ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
-          env.DATA_SOURCE_LOCAL_DIR
-        )
-      : new WorkspaceDataSourceImpl(session)
-
+  const dataSource = new WorkspaceDataSourceImpl(session)
   return new WorkspaceRepositoryImpl(dataSource)
 }
 

@@ -129,53 +129,36 @@ cd chorus-web-ui
 **Environment variables**
 
 Server side variables:
-- `DATA_SOURCE` is either api, or local if you want to use a local storage.
-- `DATA_SOURCE_LOCAL_DIR` is used if DATA_SOURCE=local. It is the path to store the local data files
 - `DATA_SOURCE_API_URL` is the API backend. Note that the generated files are prefixed with /api/rest/v1/ so generally you want to have something like
 DATA_SOURCE_API_URL=https://api.chorus-tre.com/
 
 Client side variable:
 - `NEXT_PUBLIC_DATA_SOURCE_API_URL` is exposed to the web-ui and should contains the prefix to the API, like https://api.chorus-tre.com/api/rest/v1/ Used for the iframe streams
 
+**Local Production Testing**
 
- **Local Production Testing**
-
-   Build and run the production application locally:
-
-```bash
-   docker build -t chorus/web-ui .
-   ```
-
-
-
-   Local storage mode
+Build and run the production application locally:
 
 ```bash
-	echo "DATA_SOURCE=local" > .env
-	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
-	echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com/" >> .env
-	echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
-
-	docker run --rm  --env-file .env  -v $(pwd)/.local-storage:/app/.local-storage  -p3000:3000 chorus/web-ui
- ```
-
-   API mode
-
-```bash
-	echo "DATA_SOURCE=api" > .env
-	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
-	echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
-	echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
-
-   docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui
+docker build -t chorus/web-ui .
 ```
 
-inline
+```bash
+echo "NEXT_PUBLIC_APP_URL=http://localhost:3000" > .env
+echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
+echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
+echo "NEXT_PUBLIC_MATOMO_URL=https://matomo.chorus-tre.com" >> .env
+echo "NEXT_PUBLIC_MATOMO_CONTAINER_ID=xxx" >> .env
+echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
 
-`docker run -e DATA_SOURCE=api -e DATA_SOURCE_API_URL=https://api.chorus-tre.com -e DATA_SOURCE_LOCAL_DIR=./.local-storage -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/`
+docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui
+```
 
+inline:
 
-   Access your application at `localhost:3000`.
+`docker run -e DATA_SOURCE_API_URL=https://api.chorus-tre.com -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/ -e NEXT_PUBLIC_APP_URL=http://localhost:3000 -e NEXT_PUBLIC_MATOMO_URL=https://matomo.dev.chorus-tre.ch -e NEXT_PUBLIC_MATOMO_CONTAINER_ID=XHnjFrGP`
+
+Access your application at `localhost:3000`.
 
 For further assistance or inquiries, feel free to open an issue in the repository.
 

@@ -5,7 +5,6 @@ import { cookies } from 'next/headers'
 import { env } from '@/env'
 
 import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
-import { UserLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/user-local-storage-data-source-impl'
 import { UserRepositoryImpl } from '~/data/repository'
 import { UserResponse } from '~/domain/model'
 import { UserCreateSchema } from '~/domain/model/user'
@@ -17,12 +16,7 @@ import { IFormState } from './utils'
 
 const getRepository = async () => {
   const session = cookies().get('session')?.value || ''
-  const dataSource =
-    env.DATA_SOURCE === 'local'
-      ? await UserLocalStorageDataSourceImpl.getInstance(
-          env.DATA_SOURCE_LOCAL_DIR
-        )
-      : new UserApiDataSourceImpl(session)
+  const dataSource = new UserApiDataSourceImpl(session)
 
   return new UserRepositoryImpl(dataSource)
 }
