@@ -1,6 +1,10 @@
 import { AuthenticationDataSource } from '@/data/data-source/'
-import { AuthenticationRequest } from '@/domain/model'
-import { AuthenticationServiceApi } from '@/internal/client/apis'
+import {
+  AuthenticationMode,
+  AuthenticationOAuthRedirectRequest,
+  AuthenticationRequest
+} from '@/domain/model'
+import { AuthenticationModeType } from '@/domain/model/authentication'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const storage = require('node-persist')
@@ -8,7 +12,6 @@ const storage = require('node-persist')
 class AuthenticationLocalStorageDataSourceImpl
   implements AuthenticationDataSource
 {
-  authService = new AuthenticationServiceApi()
   private static instance: AuthenticationLocalStorageDataSourceImpl
 
   static async getInstance(
@@ -35,6 +38,28 @@ class AuthenticationLocalStorageDataSourceImpl
       console.error(error)
       throw error
     }
+  }
+
+  async getAuthenticationModes(): Promise<AuthenticationMode[]> {
+    // For local development, return a simple internal authentication mode
+    return [
+      {
+        type: AuthenticationModeType.INTERNAL,
+        internal: {
+          enabled: true
+        }
+      }
+    ]
+  }
+
+  async getOAuthUrl(id: string): Promise<string> {
+    throw new Error('OAuth not supported in local storage mode')
+  }
+
+  async handleOAuthRedirect(
+    data: AuthenticationOAuthRedirectRequest
+  ): Promise<string> {
+    throw new Error('OAuth not supported in local storage mode')
   }
 }
 

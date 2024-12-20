@@ -91,7 +91,7 @@ export function AppInstanceCreateForm({
       setOpen(false)
       if (cb) cb()
     }
-  }, [state])
+  }, [state, cb])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -185,7 +185,7 @@ export function AppInstanceCreateForm({
                     </div>
                   </div>
                   <div className="grid hidden gap-2">
-                    <Label htmlFor="name">Workbench</Label>
+                    <Label htmlFor="name">Desktop</Label>
                     <Input
                       id="workbenchId"
                       name="workbenchId"

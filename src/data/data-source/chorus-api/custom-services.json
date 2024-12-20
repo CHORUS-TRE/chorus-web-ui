@@ -1,0 +1,38 @@
+[
+  {
+    "id": "didata-service",
+    "name": "DiData",
+    "description": "Patient registries and Biological samples data",
+    "dockerImageName": "didata",
+    "dockerImageTag": "latest",
+    "tenantId": "default",
+    "ownerId": "system",
+    "status": "ACTIVE",
+    "type": "SERVICE",
+    "url": "https://didata.dev.chorus-tre.ch/login/"
+  },
+  {
+    "id": "i2b2-service",
+    "name": "i2b2",
+    "description": "i2b2 Cohort Explorer",
+    "dockerImageName": "i2b2",
+    "dockerImageTag": "latest",
+    "tenantId": "default",
+    "ownerId": "system",
+    "status": "ACTIVE",
+    "type": "SERVICE",
+    "url": "https://i2b2.horus-tools.intranet.chuv/webclient2/"
+  },
+  {
+    "id": "horus-catalog-service",
+    "name": "Horus Catalog",
+    "description": "Horus Catalog Service",
+    "dockerImageName": "horus-catalog",
+    "dockerImageTag": "latest",
+    "tenantId": "default",
+    "ownerId": "system",
+    "status": "ACTIVE",
+    "type": "SERVICE",
+    "url": "https://horus-catalog.chuv.ch/"
+  }
+]

@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 
-import { updateSession } from '@/components/actions/authentication-login-view-model'
+import { updateSession } from '@/components/actions/authentication-view-model'
 
 export async function middleware(request: NextRequest) {
   await updateSession(request)
@@ -22,7 +22,8 @@ export async function middleware(request: NextRequest) {
   if (
     !session &&
     !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/register')
+    !request.nextUrl.pathname.startsWith('/register') &&
+    !request.nextUrl.pathname.startsWith('/oauthredirect')
   ) {
     return Response.redirect(new URL('/login', request.url))
   }

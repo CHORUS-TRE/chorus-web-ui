@@ -1,3 +1,6 @@
+export * from './authentication/authentication-get-modes'
+export * from './authentication/authentication-get-oauth-url'
 export * from './authentication/authentication-login'
+export * from './authentication/authentication-oauth-redirect'
 export * from './user/user-me'
 export * from './workspace/workspace-create'

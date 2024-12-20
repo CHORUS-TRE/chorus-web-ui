@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CircleHelp, User } from 'lucide-react'
 
-import { logout } from '@/components/actions/authentication-login-view-model'
+import { logout } from '@/components/actions/authentication-view-model'
 import { userMe } from '@/components/actions/user-view-model'
 import { useAuth } from '@/components/store/auth-context'
 import { Button } from '@/components/ui/button'

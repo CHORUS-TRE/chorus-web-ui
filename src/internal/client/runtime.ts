@@ -156,10 +156,7 @@ export class BaseAPI {
     if (response && response.status >= 200 && response.status < 300) {
       return response
     }
-    throw new ResponseError(
-      response,
-      `${response.status} ${response.statusText}`
-    )
+    throw new ResponseError(response, 'Response returned an error code')
   }
 
   private async createFetchParams(

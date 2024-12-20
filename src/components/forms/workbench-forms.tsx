@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
-import { CirclePlus, TriangleAlert } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { CirclePlus, RefreshCw, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import {
@@ -17,7 +17,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-import { Button } from '~/components/button'
+import { Button } from '~/components/ui/button'
 import {
   Card,
   CardContent,
@@ -29,6 +29,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { App } from '~/domain/model'
+import { generateScientistName } from '~/lib/utils'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
@@ -44,7 +45,11 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button className="ml-auto" type="submit" disabled={pending}>
+    <Button
+      className="ml-auto flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
+      type="submit"
+      disabled={pending}
+    >
       Start
     </Button>
   )
@@ -67,6 +72,7 @@ export function WorkbenchCreateForm({
   const [open, setOpen] = useState(false)
   const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
+  const [scientistName, setScientistName] = useState(generateScientistName())
 
   useEffect(() => {
     appList().then((res) => {
@@ -98,7 +104,12 @@ export function WorkbenchCreateForm({
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button
+          className="flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
+          size="sm"
+          type="button"
+          variant="default"
+        >
           <CirclePlus className="h-3.5 w-3.5" />
           Start new app
         </Button>
@@ -124,14 +135,27 @@ export function WorkbenchCreateForm({
                     </Alert>
                   )}
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      required
-                      placeholder="Enter workbench name"
-                      defaultValue={'workbench' + workspaceId + useId()}
-                    />
+                    <Label htmlFor="name">Name of the Desktop</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="name"
+                        name="name"
+                        required
+                        placeholder="Enter workbench name"
+                        value={scientistName}
+                        onChange={(e) => setScientistName(e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                          setScientistName(generateScientistName())
+                        }
+                        aria-label="Generate random scientist name"
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <div className="grid gap-3">
                       <Label htmlFor="name">App</Label>
                       <select
