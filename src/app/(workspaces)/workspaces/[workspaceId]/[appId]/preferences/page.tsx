@@ -7,11 +7,11 @@ import { CircleX } from 'lucide-react'
 
 import { workbenchGet } from '@/components/actions/workbench-view-model'
 import { WorksbenchDeleteForm } from '@/components/forms/workbench-forms'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 import { Button } from '~/components/button'
 import { useNavigation } from '~/components/store/navigation-context'
 import { Workbench } from '~/domain/model'
+import { useToast } from '~/hooks/use-toast'
 
 export default function WorkbenchPreferencesPage() {
   const [error, setError] = useState<string | null>(null)
@@ -21,6 +21,7 @@ export default function WorkbenchPreferencesPage() {
   const router = useRouter()
   const params = useParams<{ workspaceId: string; appId: string }>()
   const { setBackground } = useNavigation()
+  const { toast } = useToast()
 
   const workspaceId = params?.workspaceId
   const workbenchId = params?.appId
@@ -38,22 +39,29 @@ export default function WorkbenchPreferencesPage() {
       })
   }, [workbenchId])
 
+  useEffect(() => {
+    if (deleted) {
+      toast({
+        title: 'Success!',
+        description: 'Desktop was deleted, redirecting to workspace...',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [deleted])
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error!',
+        description: error,
+        variant: 'destructive',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [error])
+
   return (
     <div>
-      {deleted && (
-        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
-          <AlertTitle>Success !</AlertTitle>
-          <AlertDescription>
-            Desktop was deleted, redirecting to workspace...
-          </AlertDescription>
-        </Alert>
-      )}
-      {error && (
-        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
-          <AlertTitle>Error ! </AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
       <div className="mb-6 flex items-center justify-between pb-2">
         <h2 className="mt-5 text-muted">
           <span className="font-semibold text-white">{workbench?.name}</span>

@@ -7,7 +7,6 @@ import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
 
 import { workbenchList } from '@/components/actions/workbench-view-model'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -36,6 +35,7 @@ import {
 } from '~/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workbench } from '~/domain/model'
+import { useToast } from '~/hooks/use-toast'
 
 import { WorksbenchDeleteForm } from './forms/workbench-forms'
 import { useNavigation } from './store/navigation-context'
@@ -44,6 +44,7 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
   const [error, setError] = useState<string | null>(null)
   const [workbenches, setWorkbenches] = useState<Workbench[]>([])
   const [deleted, setDeleted] = useState<boolean>(false)
+  const { toast } = useToast()
 
   const params = useParams<{ workspaceId: string }>()
   const { setBackground, background } = useNavigation()
@@ -66,11 +67,23 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
   useEffect(() => {
     workbenchList()
       .then((response) => {
-        if (response?.error) setError(response.error)
+        if (response?.error) {
+          setError(response.error)
+          toast({
+            title: 'Error!',
+            description: response.error,
+            variant: 'destructive'
+          })
+        }
         if (response?.data) setWorkbenches(response?.data)
       })
       .catch((error) => {
         setError(error.message)
+        toast({
+          title: 'Error!',
+          description: error.message,
+          variant: 'destructive'
+        })
       })
   }, [])
 
@@ -125,6 +138,11 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
                   id={workbench?.id}
                   cb={() => {
                     setDeleted(true)
+                    toast({
+                      title: 'Success!',
+                      description: 'Desktop deleted',
+                      className: 'bg-background text-white'
+                    })
 
                     if (background?.workbenchId === workbench?.id)
                       setBackground(undefined)
@@ -174,18 +192,6 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
 
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
-      {deleted && (
-        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
-          <AlertTitle>Success !</AlertTitle>
-          <AlertDescription>Desktop deleted</AlertDescription>
-        </Alert>
-      )}
-      {error && (
-        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
-          <AlertTitle>Error ! </AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
       <Tabs defaultValue="all">
         <div className="flex items-center">
           <TabsList>

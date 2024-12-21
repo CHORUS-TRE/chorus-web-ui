@@ -6,7 +6,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { userGet } from '@/components/actions/user-view-model'
 import { workbenchList } from '@/components/actions/workbench-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
 
 import { Workspace } from '~/components/workspace'

@@ -79,7 +79,7 @@ export function Workspace({
           <CardTitle className="flex items-center justify-between">
             Apps
           </CardTitle>
-          <CardDescription>Run and start apps.</CardDescription>
+          <CardDescription>Your running apps.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2">
@@ -88,17 +88,9 @@ export function Workspace({
                 <Link
                   key={workspace.id}
                   href={`/workspaces/${workspace.id}/${id}`}
-                  onClick={() => {
-                    setBackground({
-                      workspaceId: workspace.id,
-                      workbenchId: id
-                    })
-                  }}
+                  className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                 >
-                  <Button>
-                    <Play className="h-3.5 w-3.5" />
-                    {shortName}
-                  </Button>
+                  {shortName}
                 </Link>
                 <p className="text-xs">{formatDistanceToNow(createdAt)} ago</p>
               </div>

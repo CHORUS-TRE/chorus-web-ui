@@ -29,11 +29,11 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { App } from '~/domain/model'
+import { useToast } from '~/hooks/use-toast'
 import { generateScientistName } from '~/lib/utils'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Textarea } from '../ui/textarea'
 
 const initialState: IFormState = {
@@ -67,12 +67,13 @@ export function WorkbenchCreateForm({
   const [state, formAction] = useFormState(
     workbenchCreate,
     initialState,
-    '/workspaces/8'
+    `/workspaces/${workspaceId}`
   )
   const [open, setOpen] = useState(false)
   const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
+  const { toast } = useToast()
 
   useEffect(() => {
     appList().then((res) => {
@@ -101,6 +102,17 @@ export function WorkbenchCreateForm({
     }
   }, [state])
 
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [error])
+
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -127,13 +139,6 @@ export function WorkbenchCreateForm({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                  {error && (
-                    <Alert variant="destructive">
-                      <TriangleAlert className="h-4 w-4" />
-                      <AlertTitle>Error</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
                   <div className="grid gap-2">
                     <Label htmlFor="name">Name of the Desktop</Label>
                     <div className="flex gap-2">

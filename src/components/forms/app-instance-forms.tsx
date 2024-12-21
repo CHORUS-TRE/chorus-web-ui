@@ -5,7 +5,6 @@ import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -26,6 +25,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { App } from '~/domain/model'
+import { useToast } from '~/hooks/use-toast'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
@@ -65,6 +65,7 @@ export function AppInstanceCreateForm({
   const [open, setOpen] = useState(false)
   const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
+  const { toast } = useToast()
 
   useEffect(() => {
     appList().then((res) => {
@@ -93,6 +94,17 @@ export function AppInstanceCreateForm({
     }
   }, [state, cb])
 
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [error])
+
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -113,16 +125,7 @@ export function AppInstanceCreateForm({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                  {error && (
-                    <Alert variant="destructive">
-                      <TriangleAlert className="h-4 w-4" />
-                      <AlertTitle>Error</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
                   <div className="grid gap-2">
-                    {/* <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" placeholder="Enter workbench name" /> */}
                     <div className="grid gap-3">
                       <Label htmlFor="name">Name</Label>
                       <select
@@ -137,22 +140,7 @@ export function AppInstanceCreateForm({
                             {app.name}
                           </option>
                         ))}
-                        {/* <option value="vscode">VS Code</option>
-                        <option value="arx">arx</option>
-                        <option value="wezterm">wezterm</option>
-                        <option value="jupyterlab">jupyterlab</option> */}
                       </select>
-                      {/* <Select>
-                <FormControl>
-                  <SelectTrigger id="name" name="name" aria-label="Select an app">
-                    <SelectValue placeholder="Select an app" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="vscode">VSCode</SelectItem>
-                  <SelectItem value="wezterm">Wezterm</SelectItem>
-                </SelectContent>
-              </Select> */}
                     </div>
                     <div className="text-xs text-red-500">
                       {
@@ -161,13 +149,6 @@ export function AppInstanceCreateForm({
                       }
                     </div>
                   </div>
-                  {/* <div className="grid gap-2">
-            <Label htmlFor="name">App Id</Label>
-            <Input id="appId" name="appId" placeholder="Enter workbench name" />
-            <div className="text-xs text-red-500">
-              {state?.issues?.find((e) => e.path.includes('appId'))?.message}
-            </div>
-          </div> */}
                   <div className="grid hidden gap-2">
                     <Label htmlFor="name">Workspace</Label>
                     <Input

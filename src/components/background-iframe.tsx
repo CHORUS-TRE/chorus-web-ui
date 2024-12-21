@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { env } from 'next-runtime-env'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { useToast } from '~/hooks/use-toast'
 
 import { useNavigation } from './store/navigation-context'
 
@@ -11,6 +11,7 @@ export default function BackgroundIframe() {
   const [iframeURLIsOK, setIframeURLIsOK] = useState(false)
   const [url, setUrl] = useState<string>()
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const { background } = useNavigation()
   const intervalRef = useRef<NodeJS.Timeout>()
@@ -71,17 +72,19 @@ export default function BackgroundIframe() {
     }
   }, [url, background])
 
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error!',
+        description: error,
+        variant: 'destructive',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [error])
+
   return (
     <>
-      {error && (
-        <Alert
-          variant="destructive"
-          className="absolute bottom-2 right-2 z-10 w-96 bg-background text-white"
-        >
-          <AlertTitle>Error !</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
       {background && (
         <iframe
           title="Background Iframe"
