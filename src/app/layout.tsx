@@ -58,7 +58,6 @@ export default function RootLayout({
             {children}
             <RightSidebar show={true} />
             <BackgroundIframe /> {/* z-10 */}
-            <HUD />
             <Image
               alt="Background"
               src={cover}

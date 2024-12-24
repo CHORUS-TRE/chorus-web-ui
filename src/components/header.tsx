@@ -1,10 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import { formatDistanceToNow } from 'date-fns'
 import { Search } from 'lucide-react'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from '@/components/ui/input'
 import customServices from '@/data/data-source/chorus-api/custom-services.json'
 
@@ -17,7 +20,12 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
+import { Workbench, Workspace } from '~/domain/model'
 
+import { workbenchList } from './actions/workbench-view-model'
+import { workspaceList } from './actions/workspace-view-model'
+import { useAuth } from './store/auth-context'
+import { useNavigation } from './store/navigation-context'
 import { navigationMenuTriggerStyle } from './ui/navigation-menu'
 import Breadcrumb from './breadcrumb'
 import { HeaderButtons } from './header-buttons'
@@ -29,6 +37,52 @@ interface HeaderProps {
 }
 
 export function Header({ additionalHeaderButtons }: HeaderProps) {
+  const [workbenches, setWorkbenches] = useState<Workbench[]>()
+  const [workspaces, setWorkspaces] = useState<Workspace[]>()
+  const [error, setError] = useState<string>()
+
+  const params = useParams<{ workspaceId: string; appId: string }>()
+  const [isPending, startTransition] = useTransition()
+  const { background, setBackground } = useNavigation()
+  const { isAuthenticated } = useAuth()
+
+  const workspaceId = params?.workspaceId
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setWorkspaces(undefined)
+      setWorkbenches(undefined)
+
+      return
+    }
+    startTransition(async () => {
+      workspaceList()
+        .then((response) => {
+          if (response?.error) setError(response.error)
+          if (response?.data) setWorkspaces(response.data)
+
+          workbenchList()
+            .then((response) => {
+              if (response?.error) setError(response.error)
+              if (response?.data) setWorkbenches(response.data)
+            })
+            .catch((error) => {
+              setError(error.message)
+            })
+        })
+        .catch((error) => {
+          setError(error.message)
+        })
+    })
+  }, [background?.workbenchId, isAuthenticated])
+
+  const workspacesWithWorkbenches = workspaces?.filter((workspace) =>
+    workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
+  )
+
+  const sortedWorkspacesWithWorkbenches = workspacesWithWorkbenches?.sort(
+    (a, b) => (a.id === workspaceId ? 1 : 0)
+  )
   // Transform the static services data
   const services = customServices.map((app) => ({
     title: app.name,
@@ -59,6 +113,13 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
           <NavigationMenuItem>
             <Link href="/" legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                My Workspace
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Link href="/workspaces" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Workspaces
               </NavigationMenuLink>
             </Link>
@@ -71,7 +132,7 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Services</NavigationMenuTrigger>
+            <NavigationMenuTrigger>Open Desktops</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 <li className="row-span-3">
@@ -96,14 +157,35 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
                     </a>
                   </NavigationMenuLink>
                 </li>
-                {services.map((component) => (
-                  <ListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                  >
-                    {component.description}
-                  </ListItem>
+                {sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                  <div className="" key={workspace.id}>
+                    {workspace.shortName}
+                    {workbenches
+                      ?.filter(
+                        (workbench) => workbench.workspaceId === workspace.id
+                      )
+                      .map((workbench) => (
+                        <ListItem
+                          className={`{background?.workbenchId === workbench.id ? 'hover:bg-primary' : 'hover:bg-accent'} ${background?.workbenchId === workbench.id ? 'bg-primary' : ''}`}
+                          key={workbench.name}
+                          title={workbench.name}
+                          href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
+                        >
+                          <Avatar>
+                            {workbench.name === 'vscode' && (
+                              <AvatarImage
+                                src="/vscode.png"
+                                className="m-auto h-8 w-8"
+                              />
+                            )}
+                            <AvatarFallback>
+                              {workbench.name.slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          {formatDistanceToNow(workbench.createdAt)} ago
+                        </ListItem>
+                      ))}
+                  </div>
                 ))}
               </ul>
             </NavigationMenuContent>

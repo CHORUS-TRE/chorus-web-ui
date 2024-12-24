@@ -1,8 +1,32 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useTransition } from 'react'
+import { useParams } from 'next/navigation'
+
+import { useAuth } from '~/components/store/auth-context'
+import { useNavigation } from '~/components/store/navigation-context'
+
 import { Header } from './header'
 
 export default function WorkbenchPage() {
+  const params = useParams<{ workspaceId: string; appId: string }>()
+  const [isPending, startTransition] = useTransition()
+  const { background, setBackground } = useNavigation()
+  const { isAuthenticated } = useAuth()
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setBackground(undefined)
+      return
+    }
+
+    setBackground({
+      workbenchId: params.appId,
+      workspaceId: params.workspaceId
+    })
+  }, [])
+
   return (
     <>
       <div

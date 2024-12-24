@@ -28,7 +28,13 @@ export default function Layout({
           <div
             className="fixed left-0 top-0 z-20 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
             id="iframe-overlay"
-          ></div>
+          >
+            <div className="p-16">
+              <p className="font-bold text-white">
+                {`/workspaces/${background.workspaceId}/${background?.workbenchId}`}
+              </p>
+            </div>
+          </div>
         </Link>
       )}
 
