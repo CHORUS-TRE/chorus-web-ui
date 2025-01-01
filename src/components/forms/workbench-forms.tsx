@@ -58,11 +58,11 @@ function SubmitButton() {
 export function WorkbenchCreateForm({
   workspaceId,
   userId,
-  cb
+  onUpdate
 }: {
   workspaceId?: string
   userId?: string
-  cb?: (id: string) => void
+  onUpdate?: (id: string) => void
 }) {
   const [state, formAction] = useFormState(
     workbenchCreate,
@@ -98,7 +98,7 @@ export function WorkbenchCreateForm({
 
     if (state?.data) {
       setOpen(false)
-      if (cb) cb(state?.data as string)
+      if (onUpdate) onUpdate(state?.data as string)
     }
   }, [state])
 
@@ -123,7 +123,7 @@ export function WorkbenchCreateForm({
           variant="default"
         >
           <CirclePlus className="h-3.5 w-3.5" />
-          Start new app
+          Start new desktop
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -133,9 +133,9 @@ export function WorkbenchCreateForm({
             <form action={formAction}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
-                  <CardTitle>Start App</CardTitle>
+                  <CardTitle>Start Desktop</CardTitle>
                   <CardDescription>
-                    Fill out the form to start a new app.
+                    Start a new desktop with a specific app.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
@@ -296,10 +296,10 @@ export function WorkbenchCreateForm({
 
 export function WorksbenchDeleteForm({
   id,
-  cb
+  onUpdate
 }: {
   id?: string
-  cb?: () => void
+  onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(workbenchDelete, initialState)
 
@@ -307,7 +307,7 @@ export function WorksbenchDeleteForm({
     const { pending } = useFormStatus()
 
     useEffect(() => {
-      if (cb && pending) cb()
+      if (onUpdate && pending) onUpdate()
     }, [pending])
 
     return (

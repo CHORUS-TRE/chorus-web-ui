@@ -40,7 +40,11 @@ import { useToast } from '~/hooks/use-toast'
 import { WorksbenchDeleteForm } from './forms/workbench-forms'
 import { useNavigation } from './store/navigation-context'
 
-export default function WorkbenchTable({ cb }: { cb?: () => void }) {
+export default function WorkbenchTable({
+  onUpdate
+}: {
+  onUpdate?: () => void
+}) {
   const [error, setError] = useState<string | null>(null)
   const [workbenches, setWorkbenches] = useState<Workbench[]>([])
   const [deleted, setDeleted] = useState<boolean>(false)
@@ -130,13 +134,13 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-black text-white">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem disabled>Edit</DropdownMenuItem>
               <DropdownMenuItem>
                 <WorksbenchDeleteForm
                   id={workbench?.id}
-                  cb={() => {
+                  onUpdate={() => {
                     setDeleted(true)
                     toast({
                       title: 'Success!',
@@ -146,7 +150,7 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
 
                     if (background?.workbenchId === workbench?.id)
                       setBackground(undefined)
-                    if (cb) cb()
+                    if (onUpdate) onUpdate()
 
                     list()
                   }}
@@ -162,8 +166,8 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
   const CardContainer = ({ workbenches }: { workbenches?: Workbench[] }) => (
     <Card className="border-0 border-r-0 bg-background text-white">
       <CardHeader>
-        <CardTitle>Apps</CardTitle>
-        <CardDescription>Your running apps</CardDescription>
+        <CardTitle>Desktops</CardTitle>
+        <CardDescription>Your running desktops</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

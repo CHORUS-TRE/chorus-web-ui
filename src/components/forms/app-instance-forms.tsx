@@ -50,12 +50,12 @@ export function AppInstanceCreateForm({
   workspaceId,
   workbenchId,
   userId,
-  cb
+  onUpdate
 }: {
   workspaceId?: string
   workbenchId?: string
   userId?: string
-  cb?: () => void
+  onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(
     appInstanceCreate,
@@ -90,9 +90,9 @@ export function AppInstanceCreateForm({
 
     if (state?.data) {
       setOpen(false)
-      if (cb) cb()
+      if (onUpdate) onUpdate()
     }
-  }, [state, cb])
+  }, [state, onUpdate])
 
   useEffect(() => {
     if (error) {
@@ -110,7 +110,7 @@ export function AppInstanceCreateForm({
       <DialogTrigger asChild>
         <Button>
           <CirclePlus className="h-3.5 w-3.5" />
-          Start new app
+          Start new desktop
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -119,7 +119,7 @@ export function AppInstanceCreateForm({
             <form action={formAction}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
-                  <CardTitle>Start App</CardTitle>
+                  <CardTitle>Start Desktop</CardTitle>
                   <CardDescription>
                     Fill out the form to start a new app.
                   </CardDescription>

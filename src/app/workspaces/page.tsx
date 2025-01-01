@@ -1,19 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight, LayoutGrid, Rows3, Settings } from 'lucide-react'
+import {
+  ArrowRight,
+  CirclePlus,
+  EllipsisVerticalIcon,
+  LayoutGrid,
+  Rows3,
+  Settings
+} from 'lucide-react'
 
+import { useNavigation } from '@/components/store/navigation-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 
 import { userMe } from '~/components/actions/user-view-model'
 import { workbenchList } from '~/components/actions/workbench-view-model'
 import { workspaceList } from '~/components/actions/workspace-view-model'
-import { Button as ThemedButton } from '~/components/button'
+import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import { Button } from '~/components/ui/button'
+import {
+  WorkspaceDeleteForm,
+  WorkspaceUpdateForm
+} from '~/components/forms/workspace-forms'
+import { Button as UIButton } from '~/components/ui/button'
 import {
   Card,
   CardContent,
@@ -21,34 +33,53 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu'
 import WorkspaceTable from '~/components/workspace-table'
+import WorkspacesGrid from '~/components/workspaces-grid'
 
 export default function Portal() {
-  const [showGrid, setShowGrid] = useState(true)
+  const { showWorkspacesTable, toggleWorkspaceView } = useNavigation()
   const [user, setUser] = useState<User | null>(null)
   const [workspaces, setWorkspaces] = useState<WorkspaceType[] | null>(null)
   const [workbenches, setWorkbenches] = useState<Workbench[]>()
   const [error, setError] = useState<string | null>(null)
+  const [updateOpen, setUpdateOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [deleted, setDeleted] = useState(false)
+  const [updated, setUpdated] = useState(false)
+
+  const refreshWorkspaces = useCallback(() => {
+    workspaceList()
+      .then((response) => {
+        if (response?.error) setError(response.error)
+        if (response?.data) setWorkspaces(response.data)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
+  }, [])
+
+  const refreshWorkbenches = useCallback(() => {
+    workbenchList()
+      .then((response) => {
+        if (response?.error) setError(response.error)
+        if (response?.data) setWorkbenches(response.data)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
+  }, [])
 
   useEffect(() => {
     try {
-      workspaceList()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkspaces(response.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
-
-      workbenchList()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkbenches(response.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
+      refreshWorkspaces()
+      refreshWorkbenches()
 
       userMe().then((response) => {
         if (response?.error) setError(response.error)
@@ -61,43 +92,28 @@ export default function Portal() {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-12 flex items-end justify-between">
         <h2 className="mt-5 text-white">Workspaces</h2>
-        <Link href="#" className="mt-5 cursor-default text-muted">
-          <Settings />
-        </Link>
+        <Button
+          onClick={() => setCreateOpen(true)}
+          className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+        >
+          <CirclePlus className="h-3.5 w-3.5" />
+          Create Workspace
+        </Button>
       </div>
-      {error && <p className="mt-4 text-red-500">{error}</p>}
 
       <div className="w-full">
-        <div className="flex items-center justify-between">
-          <h3 className="mb-3 mr-8 flex-grow text-muted">Workspaces</h3>
-          <div className="mb-4 flex justify-end">
-            <WorkspaceCreateForm
-              userId={user?.id}
-              cb={() => {
-                workspaceList()
-                  .then((response) => {
-                    if (response?.error) setError(response.error)
-                    if (response?.data) setWorkspaces(response.data)
-                  })
-                  .catch((error) => {
-                    setError(error.message)
-                  })
-              }}
-            />
-          </div>
-        </div>
         <Tabs defaultValue="all" className="">
-          <div className="mb-4 grid grid-flow-col grid-rows-1 gap-4">
+          <div className="grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="all">My Workspaces</TabsTrigger>
               <TabsTrigger
                 disabled
                 value="active"
                 className="cursor-default hover:border-b-transparent"
               >
-                Active
+                All
               </TabsTrigger>
               <TabsTrigger
                 disabled
@@ -108,86 +124,51 @@ export default function Portal() {
               </TabsTrigger>
             </TabsList>
             <div className="flex items-center justify-end gap-0">
-              <Button
+              <UIButton
                 variant="ghost"
                 size="sm"
-                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${showGrid ? 'border-accent' : ''}`}
-                onClick={() => setShowGrid(true)}
+                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${!showWorkspacesTable ? 'border-accent' : ''}`}
+                onClick={toggleWorkspaceView}
                 id="grid-button"
-                disabled={showGrid}
+                disabled={!showWorkspacesTable}
               >
                 <LayoutGrid />
-              </Button>
-              <Button
+              </UIButton>
+              <UIButton
                 variant="ghost"
                 size="sm"
-                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${!showGrid ? 'border-accent' : ''}`}
-                onClick={() => setShowGrid(false)}
+                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${showWorkspacesTable ? 'border-accent' : ''}`}
+                onClick={toggleWorkspaceView}
                 id="table-button"
-                disabled={!showGrid}
+                disabled={showWorkspacesTable}
               >
                 <Rows3 />
-              </Button>
+              </UIButton>
             </div>
           </div>
+          {error && <p className="mt-4 text-red-500">{error}</p>}
           <TabsContent value="all" className="border-none">
-            {!showGrid && (
-              <WorkspaceTable
-                cb={() => {
-                  workspaceList()
-                    .then((response) => {
-                      if (response?.error) setError(response.error)
-                      if (response?.data) setWorkspaces(response.data)
-                    })
-                    .catch((error) => {
-                      setError(error.message)
-                    })
-                }}
+            {showWorkspacesTable ? (
+              <WorkspaceTable onUpdate={refreshWorkspaces} />
+            ) : (
+              <WorkspacesGrid
+                workspaces={workspaces}
+                workbenches={workbenches}
+                user={user}
+                onUpdate={refreshWorkspaces}
               />
-            )}
-            {showGrid && (
-              <div
-                className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-                id="grid"
-              >
-                {workspaces?.map((workspace) => (
-                  <Link key={workspace.id} href={`/workspaces/${workspace.id}`}>
-                    <Card
-                      className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background text-white transition duration-300 hover:border-accent hover:shadow-lg"
-                      key={workspace.id}
-                    >
-                      <CardHeader className="">
-                        <CardTitle>{workspace.shortName}</CardTitle>
-                        <CardDescription>
-                          {workspace.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-xs text-muted-foreground">
-                          {
-                            workbenches?.filter(
-                              (w) => w.workspaceId === workspace.id
-                            )?.length
-                          }{' '}
-                          apps running
-                        </p>
-                        <p>
-                          {user?.firstName} {user?.lastName}
-                        </p>
-                        <p className="text-xs">
-                          Updated {formatDistanceToNow(workspace.updatedAt)} ago
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
             )}
           </TabsContent>
           <TabsContent value="active"></TabsContent>
           <TabsContent value="archived"></TabsContent>
         </Tabs>
       </div>
+
+      <WorkspaceCreateForm
+        state={[createOpen, setCreateOpen]}
+        userId={user?.id}
+        onUpdate={refreshWorkspaces}
+      />
     </>
   )
 }

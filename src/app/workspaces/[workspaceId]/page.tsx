@@ -87,7 +87,7 @@ const WorkspacePage = () => {
             workspace={workspace}
             workbenches={workbenches}
             workspaceOwner={user}
-            cb={(id) => {
+            onUpdate={(id) => {
               getWorkbenchList()
               router.push(`/workspaces/${workspaceId}/${id}`)
             }}

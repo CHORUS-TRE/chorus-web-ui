@@ -83,7 +83,7 @@ export function HeaderButtons() {
             </Button>
           </DropdownMenuTrigger>
           {isAuthenticated ? (
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-black text-white">
               <DropdownMenuItem asChild>
                 {!error ? (
                   <Link href="/users/me">
@@ -107,7 +107,7 @@ export function HeaderButtons() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           ) : (
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-black text-white">
               <DropdownMenuItem asChild>
                 <Link href="/login">Login</Link>
               </DropdownMenuItem>

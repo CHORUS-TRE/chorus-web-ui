@@ -2,12 +2,14 @@
 
 import { Suspense, useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { CirclePlus } from 'lucide-react'
 
 import { userGet } from '@/components/actions/user-view-model'
 import { workbenchList } from '@/components/actions/workbench-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
 
+import { Button } from '~/components/button'
 import { Workspace } from '~/components/workspace'
 import { Workbench } from '~/domain/model/workbench'
 
@@ -19,7 +21,7 @@ const WorkspacePage = () => {
 
   const router = useRouter()
   const params = useParams<{ workspaceId: string; appId: string }>()
-  const workspaceId = '1'
+  const workspaceId = '35'
 
   const getWorkbenchList = useCallback(() => {
     workbenchList()
@@ -74,6 +76,9 @@ const WorkspacePage = () => {
 
   return (
     <>
+      <div className="mb-12 flex items-end justify-between">
+        <h2 className="mt-5 text-white">My Workspace</h2>
+      </div>
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
         <Suspense
@@ -87,7 +92,7 @@ const WorkspacePage = () => {
             workspace={workspace}
             workbenches={workbenches}
             workspaceOwner={user}
-            cb={(id) => {
+            onUpdate={(id) => {
               getWorkbenchList()
               router.push(`/workspaces/${workspaceId}/${id}`)
             }}

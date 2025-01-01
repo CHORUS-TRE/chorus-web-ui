@@ -57,8 +57,8 @@ const WorkspaceHeader = ({
         <StyledNavLink href={`/workspaces/${params?.workspaceId}`}>
           Dashboard
         </StyledNavLink>
-        <StyledNavLink href={`/workspaces/${params?.workspaceId}/apps`}>
-          Apps
+        <StyledNavLink href={`/workspaces/${params?.workspaceId}/desktops`}>
+          Desktops
         </StyledNavLink>
         <StyledNavLink disabled href={`#`}>
           Data

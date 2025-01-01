@@ -353,6 +353,9 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
       initOverrides
     )
 
+    // console.log(ChorusUpdateWorkspaceRequestToJSON(requestParameters.body))
+    // console.log({ response })
+
     return new runtime.JSONApiResponse(response, (jsonValue) =>
       ChorusUpdateWorkspaceReplyFromJSON(jsonValue)
     )

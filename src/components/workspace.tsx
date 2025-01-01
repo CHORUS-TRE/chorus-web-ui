@@ -25,12 +25,12 @@ export function Workspace({
   workspace,
   workbenches,
   workspaceOwner,
-  cb
+  onUpdate
 }: {
   workspace?: WorkspaceType | null
   workbenches?: Workbench[]
   workspaceOwner?: User
-  cb?: (id: string) => void
+  onUpdate?: (id: string) => void
 }) {
   const { setBackground } = useNavigation()
 
@@ -77,9 +77,9 @@ export function Workspace({
       <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Apps
+            Desktops
           </CardTitle>
-          <CardDescription>Your running apps.</CardDescription>
+          <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2">
@@ -99,7 +99,7 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <WorkbenchCreateForm workspaceId={workspace.id} cb={cb} />
+          <WorkbenchCreateForm workspaceId={workspace.id} onUpdate={onUpdate} />
         </CardFooter>
       </Card>
 

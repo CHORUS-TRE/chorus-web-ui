@@ -58,11 +58,11 @@
   }
 
   h2 {
-    @apply text-4xl font-medium leading-10;
+    @apply border-b border-dotted border-muted pb-2 text-4xl font-medium leading-10;
   }
 
   h3 {
-    @apply border-b border-dotted border-muted pb-2 text-2xl font-medium tracking-tight;
+    @apply text-2xl font-medium tracking-tight;
   }
 
   h4 {

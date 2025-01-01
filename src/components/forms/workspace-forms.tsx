@@ -6,15 +6,19 @@ import { useFormState, useFormStatus } from 'react-dom'
 
 import {
   workspaceCreate,
-  workspaceDelete
+  workspaceDelete,
+  workspaceUpdate
 } from '@/components/actions/workspace-view-model'
 import {
   Dialog as DialogContainer,
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { Workspace } from '@/domain/model'
+import { WorkspaceState } from '@/domain/model/workspace'
 
 import { Button } from '~/components/button'
 import {
@@ -27,9 +31,17 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
 
 import { IFormState } from '../actions/utils'
+import { DeleteDialog } from '../delete-dialog'
 
 const initialState: IFormState = {
   data: undefined,
@@ -47,14 +59,17 @@ function SubmitButton() {
 }
 
 export function WorkspaceCreateForm({
+  state: [open, setOpen],
   userId,
-  cb
+  trigger,
+  onUpdate
 }: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
   userId?: string
-  cb?: () => void
+  trigger?: React.ReactNode
+  onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(workspaceCreate, initialState)
-  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (state?.error) {
@@ -63,18 +78,13 @@ export function WorkspaceCreateForm({
 
     if (state?.data) {
       setOpen(false)
-      if (cb) cb()
+      if (onUpdate) onUpdate()
     }
   }, [state])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <CirclePlus className="h-3.5 w-3.5" />
-          Create Workspace
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogDescription asChild>
@@ -212,35 +222,185 @@ export function WorkspaceCreateForm({
 }
 
 export function WorkspaceDeleteForm({
+  state: [open, setOpen],
   id,
-  cb
+  onUpdate
 }: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
   id?: string
-  cb?: () => void
+  onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(workspaceDelete, initialState)
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  function DeleteButton() {
-    const { pending } = useFormStatus()
-
-    useEffect(() => {
-      if (cb && pending) cb()
-    }, [pending])
-
-    return (
-      <button type="submit" aria-disabled={pending}>
-        Delete
-      </button>
-    )
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true)
+      const formData = new FormData()
+      formData.append('id', id || '')
+      await formAction(formData)
+      setIsDeleting(false)
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    } catch (error) {
+      console.error(error)
+      setIsDeleting(false)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
+  useEffect(() => {
+    if (!open) {
+      setIsDeleting(false)
+    }
+  }, [open])
+
   return (
-    <form action={formAction}>
-      <input type="hidden" name="id" value={id} />
-      <DeleteButton />
-      <p aria-live="polite" className="sr-only" role="status">
-        {JSON.stringify(state?.data, null, 2)}
-      </p>
-    </form>
+    <DeleteDialog
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (!isDeleting) {
+          setOpen(newOpen)
+        }
+      }}
+      onConfirm={handleDelete}
+      title="Delete Workspace"
+      description="Are you sure you want to delete this workspace? This action cannot be undone."
+      isDeleting={isDeleting}
+    />
+  )
+}
+
+export function WorkspaceUpdateForm({
+  state: [open, setOpen],
+  trigger,
+  workspace,
+  onUpdate
+}: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
+  trigger?: React.ReactNode
+  workspace?: Workspace
+  onUpdate?: () => void
+}) {
+  const [formState, formAction] = useFormState(workspaceUpdate, initialState)
+
+  useEffect(() => {
+    if (formState?.error) return
+    if (formState?.data) {
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    }
+  }, [formState])
+
+  return (
+    <DialogContainer open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent>
+        <DialogTitle>
+          <h3 className="text-white">Update Workspace</h3>
+        </DialogTitle>
+        <DialogDescription>Update workspace information.</DialogDescription>
+        <DialogHeader className="mt-4">
+          <DialogDescription asChild>
+            <form action={formAction}>
+              <Card className="w-full max-w-md border-none bg-background text-white">
+                <CardContent className="grid gap-4">
+                  <input type="hidden" name="id" value={workspace?.id} />
+                  <input type="hidden" name="tenantId" value="1" />
+                  <input
+                    type="hidden"
+                    name="userId"
+                    value={workspace?.ownerId}
+                  />
+                  <input
+                    type="hidden"
+                    name="memberIds"
+                    value={workspace?.memberIds.join(',')}
+                  />
+                  <input
+                    type="hidden"
+                    name="tags"
+                    value={workspace?.tags.join(',')}
+                  />
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      defaultValue={workspace?.name}
+                      className="bg-background text-neutral-400"
+                    />
+                    <div className="text-xs text-red-500">
+                      {
+                        formState?.issues?.find((e) => e.path.includes('name'))
+                          ?.message
+                      }
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="shortName">Short Name</Label>
+                    <Input
+                      id="shortName"
+                      name="shortName"
+                      defaultValue={workspace?.shortName}
+                      className="bg-background text-neutral-400"
+                    />
+                    <div className="text-xs text-red-500">
+                      {
+                        formState?.issues?.find((e) =>
+                          e.path.includes('shortName')
+                        )?.message
+                      }
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      defaultValue={workspace?.description}
+                      className="min-h-[100px] bg-background text-neutral-400"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="status">Status</Label>
+                    <Select name="status" defaultValue={workspace?.status}>
+                      <SelectTrigger className="bg-background text-neutral-400">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[
+                          WorkspaceState.ACTIVE,
+                          WorkspaceState.INACTIVE,
+                          WorkspaceState.ARCHIVED
+                        ].map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {formState?.error && (
+                    <p className="text-red-500">{formState.error}</p>
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <Button className="ml-auto" type="submit">
+                    Update
+                  </Button>
+                </CardFooter>
+              </Card>
+            </form>
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </DialogContainer>
   )
 }
