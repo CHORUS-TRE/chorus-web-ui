@@ -3,7 +3,8 @@ import {
   WorkbenchCreate as WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
-  WorkbenchResponse
+  WorkbenchResponse,
+  WorkbenchUpdate
 } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
@@ -58,6 +59,15 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       return { data }
     } catch (error) {
       console.error(error)
+      return { error: error.message }
+    }
+  }
+
+  async update(workbench: WorkbenchUpdate): Promise<WorkbenchResponse> {
+    try {
+      const data = await this.dataSource.update(workbench)
+      return { data }
+    } catch (error) {
       return { error: error.message }
     }
   }

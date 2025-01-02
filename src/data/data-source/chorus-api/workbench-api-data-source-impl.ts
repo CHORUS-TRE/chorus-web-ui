@@ -3,12 +3,14 @@ import { z } from 'zod'
 import { WorkbenchDataSource } from '@/data/data-source/'
 import {
   Workbench,
-  WorkbenchCreate as WorkbenchCreateModel
+  WorkbenchCreateModel,
+  WorkbenchUpdateModel
 } from '@/domain/model'
 import {
   WorkbenchCreateSchema,
   WorkbenchSchema,
-  WorkbenchState
+  WorkbenchState,
+  WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
 
 import { env } from '~/env'
@@ -56,8 +58,11 @@ const apiToDomain = (w: ChorusWorkbenchApi): Workbench => {
   }
 }
 
-const domainToApi = (w: WorkbenchCreateModel): ChorusWorkbenchApi => {
+const domainToApi = (
+  w: WorkbenchCreateModel | WorkbenchUpdateModel
+): ChorusWorkbenchApi => {
   return {
+    id: 'id' in w ? w.id : undefined,
     tenantId: w.tenantId,
     userId: w.ownerId,
     workspaceId: w.workspaceId,
@@ -82,8 +87,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
   async create(workbench: WorkbenchCreateModel): Promise<string> {
     try {
-      const validatedInput: WorkbenchCreateModel =
-        WorkbenchCreateSchema.parse(workbench)
+      const validatedInput = WorkbenchCreateSchema.parse(workbench)
       const w = domainToApi(validatedInput)
       const validatedRequest: ChorusWorkbenchApi =
         WorkbenchApiCreateSchema.parse(w)
@@ -153,6 +157,29 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
       const workbenchs = parsed.map(apiToDomain)
 
       return workbenchs.map((w) => WorkbenchSchema.parse(w))
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  async update(workbench: WorkbenchUpdateModel): Promise<Workbench> {
+    try {
+      const validatedInput = WorkbenchUpdateSchema.parse(workbench)
+      const w = domainToApi(validatedInput)
+      const validatedRequest = WorkbenchApiSchema.parse(w)
+
+      const response = await this.service.workbenchServiceUpdateWorkbench({
+        body: {
+          workbench: validatedRequest
+        }
+      })
+
+      if (!response.result) {
+        throw new Error('Error updating workbench')
+      }
+
+      return this.get(workbench.id)
     } catch (error) {
       console.error(error)
       throw error

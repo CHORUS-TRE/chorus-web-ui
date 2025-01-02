@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { CirclePlus, TriangleAlert } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
@@ -42,28 +43,26 @@ function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button className="ml-auto" type="submit" disabled={pending}>
+      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
       Start
     </Button>
   )
 }
 
 export function AppInstanceCreateForm({
+  state: [open, setOpen],
   workspaceId,
   workbenchId,
   userId,
   onUpdate
 }: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
   workspaceId?: string
   workbenchId?: string
   userId?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(
-    appInstanceCreate,
-    initialState,
-    '/workspaces/8'
-  )
-  const [open, setOpen] = useState(false)
+  const [state, formAction] = useFormState(appInstanceCreate, initialState)
   const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
   const { toast } = useToast()
@@ -109,19 +108,14 @@ export function AppInstanceCreateForm({
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <CirclePlus className="h-3.5 w-3.5" />
-          Start new desktop
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
-                  <CardTitle>Start Desktop</CardTitle>
+                  <CardTitle>Start App</CardTitle>
                   <CardDescription>
                     Fill out the form to start a new app.
                   </CardDescription>

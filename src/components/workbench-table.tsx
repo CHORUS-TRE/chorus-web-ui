@@ -36,7 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
-import { WorksbenchDeleteForm } from './forms/workbench-forms'
+import { WorkbenchDeleteForm } from './forms/workbench-forms'
 
 export default function WorkbenchTable({
   workspaceId,
@@ -110,7 +110,7 @@ export default function WorkbenchTable({
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem disabled>Edit</DropdownMenuItem>
               <DropdownMenuItem>
-                <WorksbenchDeleteForm
+                <WorkbenchDeleteForm
                   id={workbench?.id}
                   onUpdate={() => {
                     setDeleted(true)
