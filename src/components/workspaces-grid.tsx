@@ -70,7 +70,7 @@ export default function WorkspacesGrid({
       {workspaces?.map((workspace) => (
         <div key={workspace.id} className="group relative">
           <div className="absolute right-4 top-4 z-10">
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button
                   aria-haspopup="true"

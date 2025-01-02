@@ -118,55 +118,57 @@ export default function WorkspaceTable({
             if (onUpdate) onUpdate()
           }}
         />
-        <Link href={`/workspaces/${workspace?.id}`} legacyBehavior>
-          <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
-            <TableCell className="p-1 font-medium">{workspace?.name}</TableCell>
-            <TableCell className="p-1 font-medium">
+        <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
+          <TableCell className="p-1 font-medium">
+            <Link href={`/workspaces/${workspace?.id}`}>{workspace?.name}</Link>
+          </TableCell>
+          <TableCell className="p-1 font-medium">
+            <Link href={`/workspaces/${workspace?.id}`}>
               {workspace?.shortName}
-            </TableCell>
-            <TableCell className="font-xs p-1">
+            </Link>
+          </TableCell>
+          <TableCell className="font-xs p-1">
+            <Link href={`/workspaces/${workspace?.id}`}>
               {workspace?.description}
-            </TableCell>
-            <TableCell className="p-1">
+            </Link>
+          </TableCell>
+          <TableCell className="p-1">
+            <Link href={`/workspaces/${workspace?.id}`}>
               <Badge variant="outline">{workspace?.status}</Badge>
-            </TableCell>
-            {/* <TableCell className="p-1 font-medium">
-          {workspace?.memberIds?.toString()}
-        </TableCell> */}
-            <TableCell className="hidden p-1 md:table-cell">
+            </Link>
+          </TableCell>
+          <TableCell className="hidden p-1 md:table-cell">
+            <Link href={`/workspaces/${workspace?.id}`}>
               {workspace?.createdAt.toLocaleDateString()}
-            </TableCell>
-            <TableCell className="p-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button aria-haspopup="true" size="icon" variant="ghost">
-                    <EllipsisVerticalIcon className="h-4 w-4" />
-                    <span className="sr-only">Toggle menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="bg-black text-white"
+            </Link>
+          </TableCell>
+          <TableCell className="p-1">
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button aria-haspopup="true" size="icon" variant="ghost">
+                  <EllipsisVerticalIcon className="h-4 w-4" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black text-white">
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(true)
+                  }}
                 >
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setOpen(true)
-                    }}
-                  >
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setDeleteOpen(true)}
-                    className="text-red-500 focus:text-red-500"
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
-          </TableRowComponent>
-        </Link>
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setDeleteOpen(true)}
+                  className="text-red-500 focus:text-red-500"
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableCell>
+        </TableRowComponent>
       </>
     )
   }
