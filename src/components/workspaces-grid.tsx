@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
@@ -26,10 +26,10 @@ import {
 import { User, Workbench, Workspace } from '@/domain/model'
 
 interface WorkspacesGridProps {
-  workspaces: Workspace[] | null
+  workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
-  user: User | null
-  onUpdate: () => void
+  user: User | undefined
+  onUpdate?: () => void
 }
 
 export default function WorkspacesGrid({

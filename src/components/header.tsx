@@ -4,10 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
-import { Maximize, Search, Settings } from 'lucide-react'
+import { Maximize, Search } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Menubar,
@@ -24,21 +23,15 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
-import { Workbench, Workspace } from '~/domain/model'
-import { UserResponse } from '~/domain/model'
+import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
-import { userMe } from './actions/user-view-model'
-import { workbenchList } from './actions/workbench-view-model'
-import { workspaceList } from './actions/workspace-view-model'
 import { WorksbenchDeleteForm } from './forms/workbench-forms'
+import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
-import { useNavigation } from './store/navigation-context'
-import { navigationMenuTriggerStyle } from './ui/navigation-menu'
 import Breadcrumb from './breadcrumb'
 import { HeaderButtons } from './header-buttons'
 import NavLink from './nav-link'
@@ -50,48 +43,42 @@ interface HeaderProps {
 }
 
 export function Header({ additionalHeaderButtons }: HeaderProps) {
-  const [workbenches, setWorkbenches] = useState<Workbench[]>()
-  const [workspaces, setWorkspaces] = useState<Workspace[]>()
-  const [error, setError] = useState<string>()
-  const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
-  const [user, setUser] = useState<UserResponse['data']>()
-  const { toast } = useToast()
+  const {
+    workbenches,
+    workspaces,
+    error,
+    setError,
+    background,
+    setBackground,
+    refreshWorkspaces,
+    refreshWorkbenches
+  } = useAppState()
+  const { user, refreshUser } = useAuth()
+
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
-
+  const { toast } = useToast()
   const params = useParams<{ workspaceId: string; appId: string }>()
   const [isPending, startTransition] = useTransition()
-  const { background, setBackground } = useNavigation()
   const { isAuthenticated } = useAuth()
   const isInAppContext = params?.workspaceId && params?.appId
-
   const workspaceId = params?.workspaceId
+  const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setWorkspaces(undefined)
-      setWorkbenches(undefined)
-
       return
     }
     startTransition(async () => {
-      workspaceList()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkspaces(response.data)
-
-          workbenchList()
-            .then((response) => {
-              if (response?.error) setError(response.error)
-              if (response?.data) setWorkbenches(response.data)
-            })
-            .catch((error) => {
-              setError(error.message)
-            })
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
+      try {
+        await Promise.all([
+          refreshWorkspaces(),
+          refreshWorkbenches(),
+          refreshUser()
+        ])
+      } catch (error) {
+        setError(error.message)
+      }
     })
   }, [background?.workbenchId, isAuthenticated])
 
@@ -103,12 +90,6 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
       }
     }
   }, [isInAppContext, workbenches, params.appId])
-
-  useEffect(() => {
-    userMe().then((response) => {
-      if (response?.data) setUser(response.data)
-    })
-  }, [])
 
   useEffect(() => {
     if (error) {
@@ -202,81 +183,15 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
       <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
         <NavigationMenuList className="flex items-center justify-center gap-4">
           <NavigationMenuItem>
-            <NavigationMenuTrigger>
-              <NavLink
-                href="/"
-                exact
-                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-              >
-                My Workspace
-              </NavLink>
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                {/* <li className="row-span-3">
-                  <NavigationMenuLink asChild>
-                    <a
-                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href="/services"
-                    >
-                      <Image
-                        src="/chuv.png"
-                        alt="CHUV"
-                        width={126}
-                        height={66}
-                        className=""
-                      />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        CHUV Services
-                      </div>
-                      <p className="text-sm leading-tight text-muted-foreground">
-                        Data explorer and cohort builder
-                      </p>
-                    </a>
-                  </NavigationMenuLink>
-                </li> */}
-                {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                  <div className="" key={workspace.id}>
-                    {workspace.shortName}
-                    {workbenches
-                      ?.filter(
-                        (workbench) => workbench.workspaceId === workspace.id
-                      )
-                      .map((workbench) => (
-                        <ListItem
-                          className={`{background?.workbenchId === workbench.id ? 'hover:bg-primary' : 'hover:bg-accent'} ${background?.workbenchId === workbench.id ? 'bg-primary' : ''}`}
-                          key={workbench.name}
-                          title={''}
-                          href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <Avatar>
-                              {workbench.name === 'vscode' && (
-                                <AvatarImage
-                                  src="/vscode.png"
-                                  className="m-auto h-8 w-8"
-                                />
-                              )}
-                              <AvatarFallback>
-                                {workbench.name.slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium leading-none">
-                                {workbench.name}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                {formatDistanceToNow(workbench.createdAt)} ago
-                              </span>
-                            </div>
-                          </div>
-                        </ListItem>
-                      ))}
-                  </div>
-                ))}
-              </ul>
-            </NavigationMenuContent>
+            <NavLink
+              href="/"
+              exact
+              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+            >
+              My Workspace
+            </NavLink>
           </NavigationMenuItem>
+
           <NavigationMenuItem>
             <NavLink
               href="/workspaces"
@@ -294,8 +209,8 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
             </NavLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Desktops</NavigationMenuTrigger>
-            <NavigationMenuContent>
+            <NavigationMenuTrigger>My Desktops</NavigationMenuTrigger>
+            <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
               <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 {/* <li className="row-span-3">
                   <NavigationMenuLink asChild>

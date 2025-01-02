@@ -1,93 +1,47 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
-import {
-  ArrowRight,
-  CirclePlus,
-  EllipsisVerticalIcon,
-  LayoutGrid,
-  Rows3,
-  Settings
-} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
 
-import { useNavigation } from '@/components/store/navigation-context'
+import { useAppState } from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 
-import { userMe } from '~/components/actions/user-view-model'
-import { workbenchList } from '~/components/actions/workbench-view-model'
-import { workspaceList } from '~/components/actions/workspace-view-model'
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import {
-  WorkspaceDeleteForm,
-  WorkspaceUpdateForm
-} from '~/components/forms/workspace-forms'
+import { useAuth } from '~/components/store/auth-context'
 import { Button as UIButton } from '~/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
-import WorkspaceTable from '~/components/workspace-table'
 import WorkspacesGrid from '~/components/workspaces-grid'
+import WorkspaceTable from '~/components/workspaces-table'
 
 export default function Portal() {
-  const { showWorkspacesTable, toggleWorkspaceView } = useNavigation()
-  const [user, setUser] = useState<User | null>(null)
-  const [workspaces, setWorkspaces] = useState<WorkspaceType[] | null>(null)
-  const [workbenches, setWorkbenches] = useState<Workbench[]>()
-  const [error, setError] = useState<string | null>(null)
-  const [updateOpen, setUpdateOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
+  const {
+    showWorkspacesTable,
+    toggleWorkspaceView,
+    workspaces,
+    workbenches,
+    error,
+    setError,
+    refreshWorkspaces,
+    refreshWorkbenches
+  } = useAppState()
+  const { user, refreshUser } = useAuth()
+
   const [createOpen, setCreateOpen] = useState(false)
-  const [deleted, setDeleted] = useState(false)
-  const [updated, setUpdated] = useState(false)
-
-  const refreshWorkspaces = useCallback(() => {
-    workspaceList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkspaces(response.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
-
-  const refreshWorkbenches = useCallback(() => {
-    workbenchList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkbenches(response.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
 
   useEffect(() => {
-    try {
-      refreshWorkspaces()
-      refreshWorkbenches()
-
-      userMe().then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setUser(response.data)
-      })
-    } catch (error) {
-      setError(error.message)
+    const initializeData = async () => {
+      try {
+        await Promise.all([
+          refreshWorkspaces(),
+          refreshWorkbenches(),
+          refreshUser()
+        ])
+      } catch (error) {
+        setError(error.message)
+      }
     }
+
+    initializeData()
   }, [])
 
   return (
@@ -107,13 +61,13 @@ export default function Portal() {
         <Tabs defaultValue="all" className="">
           <div className="grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
-              <TabsTrigger value="all">My Workspaces</TabsTrigger>
+              <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger
                 disabled
                 value="active"
                 className="cursor-default hover:border-b-transparent"
               >
-                All
+                Active
               </TabsTrigger>
               <TabsTrigger
                 disabled
@@ -149,7 +103,11 @@ export default function Portal() {
           {error && <p className="mt-4 text-red-500">{error}</p>}
           <TabsContent value="all" className="border-none">
             {showWorkspacesTable ? (
-              <WorkspaceTable onUpdate={refreshWorkspaces} />
+              <WorkspaceTable
+                workspaces={workspaces}
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
             ) : (
               <WorkspacesGrid
                 workspaces={workspaces}

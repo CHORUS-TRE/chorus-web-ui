@@ -1,12 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
 
-import { workbenchList } from '@/components/actions/workbench-view-model'
+import { useAppState } from '@/components/store/app-state-context'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -38,58 +37,31 @@ import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
 import { WorksbenchDeleteForm } from './forms/workbench-forms'
-import { useNavigation } from './store/navigation-context'
 
 export default function WorkbenchTable({
+  workspaceId,
   onUpdate
 }: {
+  workspaceId: string
   onUpdate?: () => void
 }) {
-  const [error, setError] = useState<string | null>(null)
-  const [workbenches, setWorkbenches] = useState<Workbench[]>([])
+  const { workbenches, refreshWorkbenches } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
   const { toast } = useToast()
 
-  const params = useParams<{ workspaceId: string }>()
-  const { setBackground, background } = useNavigation()
-
-  const workspaceId = params?.workspaceId
-
-  const list = useCallback(() => {
-    setTimeout(() => {
-      workbenchList()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkbenches(response?.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
-    }, 2000)
-  }, [])
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === workspaceId
+  )
 
   useEffect(() => {
-    workbenchList()
-      .then((response) => {
-        if (response?.error) {
-          setError(response.error)
-          toast({
-            title: 'Error!',
-            description: response.error,
-            variant: 'destructive'
-          })
-        }
-        if (response?.data) setWorkbenches(response?.data)
+    if (deleted) {
+      toast({
+        title: 'Success!',
+        description: 'Workbench deleted',
+        className: 'bg-background text-white'
       })
-      .catch((error) => {
-        setError(error.message)
-        toast({
-          title: 'Error!',
-          description: error.message,
-          variant: 'destructive'
-        })
-      })
-  }, [])
+    }
+  }, [deleted])
 
   const TableHeads = () => (
     <>
@@ -190,10 +162,6 @@ export default function WorkbenchTable({
     </Card>
   )
 
-  const nextWorkbenches = workbenches?.filter(
-    (w) => w.workspaceId === workspaceId
-  )
-
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
       <Tabs defaultValue="all">
@@ -207,16 +175,20 @@ export default function WorkbenchTable({
           </TabsList>
         </div>
         <TabsContent value="all">
-          <CardContainer workbenches={nextWorkbenches} />
+          <CardContainer workbenches={filteredWorkbenches} />
         </TabsContent>
         <TabsContent value="active">
           <CardContainer
-            workbenches={nextWorkbenches?.filter((a) => a.status === 'active')}
+            workbenches={filteredWorkbenches?.filter(
+              (a) => a.status === 'active'
+            )}
           />
         </TabsContent>
         <TabsContent value="archived">
           <CardContainer
-            workbenches={nextWorkbenches?.filter((a) => a.status !== 'active')}
+            workbenches={filteredWorkbenches?.filter(
+              (a) => a.status !== 'active'
+            )}
           />
         </TabsContent>
       </Tabs>

@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { CalendarIcon } from 'lucide-react'
 
+import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,14 +14,13 @@ import {
 } from '@/components/ui/hover-card'
 
 import { Header } from '~/components/header'
-import { useNavigation } from '~/components/store/navigation-context'
 
 export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { background } = useNavigation()
+  const { background } = useAppState()
 
   return (
     <>

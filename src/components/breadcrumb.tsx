@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 
+import { useAppState } from '@/components/store/app-state-context'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,8 +13,7 @@ import {
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 
-import { workbenchGet } from './actions/workbench-view-model'
-import { workspaceGet } from './actions/workspace-view-model'
+import { useAuth } from './store/auth-context'
 
 interface BreadcrumbItem {
   name: string
@@ -48,8 +48,18 @@ export default function Breadcrumbs() {
   const paths = usePathname()
   const params = useParams<{ workspaceId: string; appId: string }>()
   const [items, setItems] = useState<BreadcrumbItem[]>([])
+  const {
+    workbenches,
+    workspaces,
+    error,
+    setError,
+    background,
+    setBackground,
+    refreshWorkspaces,
+    refreshWorkbenches
+  } = useAppState()
+  const { refreshUser } = useAuth()
 
-  // Memoize path parsing
   const pathNames = useMemo(
     () => paths?.split('/').filter(Boolean) || [],
     [paths]
@@ -81,11 +91,11 @@ export default function Breadcrumbs() {
 
     if (params?.workspaceId) {
       try {
-        const workspaceResponse = await workspaceGet(params.workspaceId)
-        if (workspaceResponse?.data?.shortName) {
+        const workspace = workspaces?.find((w) => w.id === params.workspaceId)
+        if (workspace?.shortName) {
           updatedItems[1] = {
             ...updatedItems[1],
-            name: workspaceResponse.data.shortName
+            name: workspace.shortName
           }
         }
       } catch (error) {
@@ -95,11 +105,11 @@ export default function Breadcrumbs() {
 
     if (params?.appId) {
       try {
-        const workbenchResponse = await workbenchGet(params.appId)
-        if (workbenchResponse?.data?.shortName) {
+        const workbench = workbenches?.find((w) => w.id === params.appId)
+        if (workbench?.shortName) {
           updatedItems[2] = {
             ...updatedItems[2],
-            name: workbenchResponse.data.shortName
+            name: workbench.shortName
           }
         }
       } catch (error) {
@@ -114,6 +124,10 @@ export default function Breadcrumbs() {
     setItems(initialItems)
     updateBreadcrumbItems()
   }, [updateBreadcrumbItems, initialItems])
+
+  useEffect(() => {
+    refreshUser()
+  }, [])
 
   return (
     <Breadcrumb className="pl-2">

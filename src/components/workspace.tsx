@@ -5,6 +5,7 @@ import { ArrowRight, Play } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
+import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
@@ -18,7 +19,6 @@ import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
 import { WorkbenchCreateForm } from './forms/workbench-forms'
-import { useNavigation } from './store/navigation-context'
 import { ChartContainer } from './ui/chart'
 
 export function Workspace({
@@ -32,7 +32,7 @@ export function Workspace({
   workspaceOwner?: User
   onUpdate?: (id: string) => void
 }) {
-  const { setBackground } = useNavigation()
+  const { setBackground } = useAppState()
 
   if (!workspace) {
     return <></>

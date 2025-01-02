@@ -8,6 +8,7 @@ import {
   workbenchCreate,
   workbenchDelete
 } from '@/components/actions/workbench-view-model'
+import { useAppState } from '@/components/store/app-state-context'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -74,6 +75,7 @@ export function WorkbenchCreateForm({
   const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
   const { toast } = useToast()
+  const { refreshWorkbenches } = useAppState()
 
   useEffect(() => {
     appList().then((res) => {

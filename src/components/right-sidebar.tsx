@@ -4,9 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Frown, Github, Meh, Smile } from 'lucide-react'
 
+import { useAppState } from '@/components/store/app-state-context'
+
 import packageInfo from '../../package.json'
 
-import { useNavigation } from './store/navigation-context'
 import {
   Card,
   CardDescription,
@@ -19,7 +20,7 @@ import { Button as CButton } from './button'
 import placeholder from '/public/placeholder.svg'
 
 export default function RightSidebar({ show }: { show?: boolean }) {
-  const { showRightSidebar, toggleRightSidebar } = useNavigation()
+  const { showRightSidebar, toggleRightSidebar } = useAppState()
 
   return (
     <div

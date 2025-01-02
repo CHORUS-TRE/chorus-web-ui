@@ -5,14 +5,14 @@ import { useTransition } from 'react'
 import { useParams } from 'next/navigation'
 
 import { Header } from '@/components/header'
+import { useAppState } from '@/components/store/app-state-context'
 
 import { useAuth } from '~/components/store/auth-context'
-import { useNavigation } from '~/components/store/navigation-context'
 
 export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; appId: string }>()
   const [isPending, startTransition] = useTransition()
-  const { background, setBackground } = useNavigation()
+  const { background, setBackground } = useAppState()
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {

@@ -1,0 +1,183 @@
+'use client'
+
+import {
+  createContext,
+  Dispatch,
+  ReactElement,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+
+import { Workbench, Workspace } from '@/domain/model'
+
+import { workbenchList } from '../actions/workbench-view-model'
+import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
+
+import { useAuth } from './auth-context'
+
+type AppStateContextType = {
+  showRightSidebar: boolean
+  toggleRightSidebar: () => void
+  showWorkspacesTable: boolean
+  toggleWorkspaceView: () => void
+  background:
+    | {
+        workbenchId: string
+        workspaceId: string
+      }
+    | undefined
+  setBackground: Dispatch<
+    SetStateAction<
+      | {
+          workbenchId: string
+          workspaceId: string
+        }
+      | undefined
+    >
+  >
+  workspaces: Workspace[] | undefined
+  setWorkspaces: Dispatch<SetStateAction<Workspace[] | undefined>>
+  workbenches: Workbench[] | undefined
+  setWorkbenches: Dispatch<SetStateAction<Workbench[] | undefined>>
+  error: string | undefined
+  setError: Dispatch<SetStateAction<string | undefined>>
+  refreshWorkspaces: () => Promise<void>
+  refreshWorkbenches: () => Promise<void>
+  myWorkspace: Workspace | undefined
+  setMyWorkspace: Dispatch<SetStateAction<Workspace | undefined>>
+  refreshMyWorkspace: () => Promise<void>
+  clearState: () => void
+}
+
+const AppStateContext = createContext<AppStateContextType>({
+  showRightSidebar: false,
+  toggleRightSidebar: () => {},
+  showWorkspacesTable: true,
+  toggleWorkspaceView: () => {},
+  background: undefined,
+  setBackground: () => {},
+  workspaces: undefined,
+  setWorkspaces: () => {},
+  workbenches: undefined,
+  setWorkbenches: () => {},
+  error: undefined,
+  setError: () => {},
+  refreshWorkspaces: async () => {},
+  refreshWorkbenches: async () => {},
+  myWorkspace: undefined,
+  setMyWorkspace: () => {},
+  refreshMyWorkspace: async () => {},
+  clearState: () => {}
+})
+
+export const AppStateProvider = ({
+  children
+}: {
+  children: ReactNode
+}): ReactElement => {
+  const [showRightSidebar, setShowRightSidebar] = useState(false)
+  const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
+  const [background, setBackground] = useState<{
+    workbenchId: string
+    workspaceId: string
+  }>()
+  const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>(
+    undefined
+  )
+  const [workbenches, setWorkbenches] = useState<Workbench[] | undefined>(
+    undefined
+  )
+  const [error, setError] = useState<string | undefined>(undefined)
+  const [myWorkspace, setMyWorkspace] = useState<Workspace | undefined>(
+    undefined
+  )
+  const { isAuthenticated } = useAuth()
+
+  const refreshWorkspaces = useCallback(async () => {
+    try {
+      const response = await workspaceList()
+      if (response?.error) setError(response.error)
+      if (response?.data) setWorkspaces(response.data)
+    } catch (error) {
+      setError(error.message)
+    }
+  }, [])
+
+  const refreshWorkbenches = useCallback(async () => {
+    try {
+      const response = await workbenchList()
+      if (response?.error) setError(response.error)
+      if (response?.data) setWorkbenches(response.data)
+    } catch (error) {
+      setError(error.message)
+    }
+  }, [])
+
+  const refreshMyWorkspace = useCallback(async () => {
+    try {
+      const response = await workspaceGet('35')
+      if (response?.error) setError(response.error)
+      if (response?.data) setMyWorkspace(response.data)
+    } catch (error) {
+      setError(error.message)
+    }
+  }, [])
+
+  const clearState = useCallback(() => {
+    setWorkspaces(undefined)
+    setWorkbenches(undefined)
+    setMyWorkspace(undefined)
+    setBackground(undefined)
+    setError(undefined)
+  }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      clearState()
+      return
+    }
+
+    refreshWorkspaces()
+    refreshWorkbenches()
+    refreshMyWorkspace()
+  }, [isAuthenticated])
+
+  return (
+    <AppStateContext.Provider
+      value={{
+        showRightSidebar,
+        toggleRightSidebar: () => setShowRightSidebar(!showRightSidebar),
+        showWorkspacesTable,
+        toggleWorkspaceView: () => setShowWorkspacesTable(!showWorkspacesTable),
+        background,
+        setBackground,
+        workspaces,
+        setWorkspaces,
+        workbenches,
+        setWorkbenches,
+        error,
+        setError,
+        refreshWorkspaces,
+        refreshWorkbenches,
+        myWorkspace,
+        setMyWorkspace,
+        refreshMyWorkspace,
+        clearState
+      }}
+    >
+      {children}
+    </AppStateContext.Provider>
+  )
+}
+
+export function useAppState(): AppStateContextType {
+  const context = useContext(AppStateContext)
+  if (context === undefined) {
+    throw new Error('useAppState must be used within an AppStateProvider')
+  }
+  return context
+}

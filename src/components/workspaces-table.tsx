@@ -1,10 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { EllipsisVerticalIcon } from 'lucide-react'
 
-import { workspaceList } from '@/components/actions/workspace-view-model'
 import { User, Workspace } from '@/domain/model'
 
 import { Badge } from '~/components/ui/badge'
@@ -14,7 +13,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
@@ -27,46 +25,24 @@ import {
 } from '~/components/ui/table'
 import { useToast } from '~/hooks/use-toast'
 
-import { userMe } from './actions/user-view-model'
-import { WorkspaceDeleteForm } from './forms/workspace-forms'
-import { WorkspaceUpdateForm } from './forms/workspace-forms'
-import { useNavigation } from './store/navigation-context'
+import {
+  WorkspaceDeleteForm,
+  WorkspaceUpdateForm
+} from './forms/workspace-forms'
 
 export default function WorkspaceTable({
+  workspaces,
+  user,
   onUpdate
 }: {
+  workspaces: Workspace[] | undefined
+  user: User | undefined
   onUpdate?: () => void
 }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [workspaces, setWorkspaces] = useState<Workspace[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
   const { toast } = useToast()
-
-  const refreshWorkspaces = useCallback(() => {
-    workspaceList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkspaces(response.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
-
-  useEffect(() => {
-    try {
-      refreshWorkspaces()
-
-      userMe().then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setUser(response.data)
-      })
-    } catch (error) {
-      setError(error.message)
-    }
-  }, [])
 
   useEffect(() => {
     if (deleted) {
@@ -127,7 +103,7 @@ export default function WorkspaceTable({
               setUpdated(false)
             }, 3000)
 
-            refreshWorkspaces()
+            if (onUpdate) onUpdate()
           }}
         />
 
@@ -139,7 +115,7 @@ export default function WorkspaceTable({
             setTimeout(() => {
               setDeleted(false)
             }, 3000)
-            refreshWorkspaces()
+            if (onUpdate) onUpdate()
           }}
         />
         <Link href={`/workspaces/${workspace?.id}`} legacyBehavior>
@@ -197,7 +173,7 @@ export default function WorkspaceTable({
 
   return (
     <>
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white duration-300">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
         <CardContent className="mt-4">
           <Table>
             <TableHeader>

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { redirect, RedirectType, useSearchParams } from 'next/navigation'
-import { ArrowRight, KeyRound, Loader2 } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { AuthenticationMode } from '@/domain/model'
@@ -48,13 +48,14 @@ function SubmitButton() {
 }
 
 export default function LoginForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()!
   const [state, formAction] = useFormState(authenticationLogin, initialState)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
 
-  const { isAuthenticated, setAuthenticated } = useAuth()
+  const { isAuthenticated, setAuthenticated, refreshUser } = useAuth()
 
   useEffect(() => {
     const fetchAuthModes = async () => {
@@ -85,7 +86,7 @@ export default function LoginForm() {
     if (!isAuthenticated) return
 
     const path = searchParams.get('redirect') || '/'
-    redirect(path, RedirectType.replace)
+    window.location.href = path
   }, [isAuthenticated, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {

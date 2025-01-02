@@ -1,76 +1,52 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 
 import { userGet } from '@/components/actions/user-view-model'
-import { workbenchList } from '@/components/actions/workbench-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
+import { useAppState } from '@/components/store/app-state-context'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
 
 import { Workspace } from '~/components/workspace'
-import { Workbench } from '~/domain/model/workbench'
 
 const WorkspacePage = () => {
+  const { workbenches, refreshWorkbenches } = useAppState()
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [user, setUser] = useState<User>()
-  const [workbenches, setWorkbenches] = useState<Workbench[]>()
   const [error, setError] = useState<string>()
 
   const router = useRouter()
   const params = useParams<{ workspaceId: string; appId: string }>()
   const workspaceId = params?.workspaceId
 
-  const getWorkbenchList = useCallback(() => {
-    workbenchList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data)
-          setWorkbenches(
-            response.data?.filter((w) => w.workspaceId === workspaceId)
-          )
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [workspaceId])
-
   useEffect(() => {
     if (!workspaceId) return
 
-    workspaceGet(workspaceId)
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) {
-          setWorkspace(response.data)
-          userGet(response?.data?.ownerId).then((user) => {
-            setUser(user.data)
-          })
+    const initializeData = async () => {
+      try {
+        const [workspaceResponse] = await Promise.all([
+          workspaceGet(workspaceId),
+          refreshWorkbenches()
+        ])
+
+        if (workspaceResponse.error) setError(workspaceResponse.error)
+        if (workspaceResponse.data) {
+          setWorkspace(workspaceResponse.data)
+          const userResponse = await userGet(workspaceResponse.data.ownerId)
+          if (userResponse.data) setUser(userResponse.data)
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         setError(error.message)
-      })
+      }
+    }
 
-    getWorkbenchList()
-  }, [getWorkbenchList, workspaceId])
+    initializeData()
+  }, [workspaceId])
 
-  // TODO: react use in not yet ready in NextJS
-  // const fetchWorkspace = async () => {
-  //   if (!params?.workspaceId) return
-
-  //   return await workspaceGet(params.workspaceId)
-  // }
-
-  // function WSH() {
-  //   const response = use(fetchWorkspace())
-  //   return <WorkspaceHeader workspace={response?.data} />
-  // }
-
-  // function WS() {
-  //   const response = use(fetchWorkspace())
-  //   return <Workspace workspace={response?.data} workbenches={workbenches}/>
-  // }
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === workspaceId
+  )
 
   return (
     <>
@@ -85,10 +61,10 @@ const WorkspacePage = () => {
         >
           <Workspace
             workspace={workspace}
-            workbenches={workbenches}
+            workbenches={filteredWorkbenches}
             workspaceOwner={user}
             onUpdate={(id) => {
-              getWorkbenchList()
+              refreshWorkbenches()
               router.push(`/workspaces/${workspaceId}/${id}`)
             }}
           />

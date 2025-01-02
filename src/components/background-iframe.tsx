@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { env } from 'next-runtime-env'
 
-import { useToast } from '~/hooks/use-toast'
+import { useAppState } from '@/components/store/app-state-context'
 
-import { useNavigation } from './store/navigation-context'
+import { useToast } from '~/hooks/use-toast'
 
 export default function BackgroundIframe() {
   const [iframeURLIsOK, setIframeURLIsOK] = useState(false)
@@ -13,7 +13,7 @@ export default function BackgroundIframe() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  const { background } = useNavigation()
+  const { background } = useAppState()
   const intervalRef = useRef<NodeJS.Timeout>()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 

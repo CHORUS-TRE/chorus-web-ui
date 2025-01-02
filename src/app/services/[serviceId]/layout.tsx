@@ -3,15 +3,16 @@
 import React from 'react'
 import Link from 'next/link'
 
+import { useAppState } from '@/components/store/app-state-context'
+
 import { Header } from '~/components/header'
-import { useNavigation } from '~/components/store/navigation-context'
 
 export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { background } = useNavigation()
+  const { background } = useAppState()
 
   return (
     <>

@@ -5,6 +5,7 @@ import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
+import { useAppState } from '@/components/store/app-state-context'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -66,6 +67,7 @@ export function AppInstanceCreateForm({
   const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
   const { toast } = useToast()
+  const { refreshWorkbenches, setBackground } = useAppState()
 
   useEffect(() => {
     appList().then((res) => {

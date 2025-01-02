@@ -1,78 +1,40 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { CirclePlus } from 'lucide-react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { userGet } from '@/components/actions/user-view-model'
-import { workbenchList } from '@/components/actions/workbench-view-model'
-import { workspaceGet } from '@/components/actions/workspace-view-model'
-import { User, Workspace as WorkspaceType } from '@/domain/model'
+import { useAppState } from '@/components/store/app-state-context'
+import { useAuth } from '@/components/store/auth-context'
 
-import { Button } from '~/components/button'
-import { Workspace } from '~/components/workspace'
-import { Workbench } from '~/domain/model/workbench'
+import { Workspace } from '~/components/my-workspace'
 
 const WorkspacePage = () => {
-  const [workspace, setWorkspace] = useState<WorkspaceType>()
-  const [user, setUser] = useState<User>()
-  const [workbenches, setWorkbenches] = useState<Workbench[]>()
-  const [error, setError] = useState<string>()
-
+  const {
+    workbenches,
+    error,
+    setError,
+    refreshWorkbenches,
+    myWorkspace,
+    refreshMyWorkspace
+  } = useAppState()
+  const { user } = useAuth()
   const router = useRouter()
-  const params = useParams<{ workspaceId: string; appId: string }>()
-  const workspaceId = '35'
-
-  const getWorkbenchList = useCallback(() => {
-    workbenchList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data)
-          setWorkbenches(
-            response.data?.filter((w) => w.workspaceId === workspaceId)
-          )
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [workspaceId])
 
   useEffect(() => {
-    if (!workspaceId) return
-
-    workspaceGet(workspaceId)
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) {
-          setWorkspace(response.data)
-          userGet(response?.data?.ownerId).then((user) => {
-            setUser(user.data)
-          })
-        }
-      })
-      .catch((error) => {
+    const initializeData = async () => {
+      try {
+        await Promise.all([refreshMyWorkspace(), refreshWorkbenches()])
+      } catch (error) {
         setError(error.message)
-      })
+      }
+    }
 
-    getWorkbenchList()
-  }, [getWorkbenchList, workspaceId])
+    initializeData()
+  }, [])
 
-  // TODO: react use in not yet ready in NextJS
-  // const fetchWorkspace = async () => {
-  //   if (!params?.workspaceId) return
-
-  //   return await workspaceGet(params.workspaceId)
-  // }
-
-  // function WSH() {
-  //   const response = use(fetchWorkspace())
-  //   return <WorkspaceHeader workspace={response?.data} />
-  // }
-
-  // function WS() {
-  //   const response = use(fetchWorkspace())
-  //   return <Workspace workspace={response?.data} workbenches={workbenches}/>
-  // }
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === myWorkspace?.id
+  )
 
   return (
     <>
@@ -81,25 +43,16 @@ const WorkspacePage = () => {
       </div>
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
-        <Suspense
-          fallback={
-            <div className="w-full text-xs text-white">
-              Loading workspace...
-            </div>
-          }
-        >
-          <Workspace
-            workspace={workspace}
-            workbenches={workbenches}
-            workspaceOwner={user}
-            onUpdate={(id) => {
-              getWorkbenchList()
-              router.push(`/workspaces/${workspaceId}/${id}`)
-            }}
-          />
-        </Suspense>
+        <Workspace
+          workspace={myWorkspace}
+          workbenches={filteredWorkbenches}
+          workspaceOwner={user}
+          onUpdate={(id) => {
+            refreshWorkbenches()
+            router.push(`/workspaces/${myWorkspace?.id}/${id}`)
+          }}
+        />
       </div>
-
       <footer>{/* Footer content */}</footer>
     </>
   )
