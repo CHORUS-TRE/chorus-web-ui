@@ -12,6 +12,7 @@ import { useAuth } from '~/components/store/auth-context'
 import { Button as UIButton } from '~/components/ui/button'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
+import { toast } from '~/hooks/use-toast'
 
 export default function Portal() {
   const {
@@ -125,7 +126,14 @@ export default function Portal() {
       <WorkspaceCreateForm
         state={[createOpen, setCreateOpen]}
         userId={user?.id}
-        onUpdate={refreshWorkspaces}
+        onUpdate={async () => {
+          await refreshWorkspaces()
+          toast({
+            title: 'Success!',
+            description: 'Workspace created',
+            className: 'bg-background text-white'
+          })
+        }}
       />
     </>
   )

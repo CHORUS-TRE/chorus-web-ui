@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
 
+import { toast } from '~/hooks/use-toast'
+
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
@@ -38,10 +40,30 @@ export default function WorkspacesGrid({
   user,
   onUpdate
 }: WorkspacesGridProps) {
-  const [updateOpen, setUpdateOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
+  const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [deleted, setDeleted] = useState(false)
   const [updated, setUpdated] = useState(false)
+
+  useEffect(() => {
+    if (deleted) {
+      toast({
+        title: 'Success!',
+        description: 'Workspace deleted',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [deleted])
+
+  useEffect(() => {
+    if (updated) {
+      toast({
+        title: 'Success!',
+        description: 'Workspace updated',
+        className: 'bg-background text-white'
+      })
+    }
+  }, [updated])
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
@@ -61,11 +83,13 @@ export default function WorkspacesGrid({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-black text-white">
-                <DropdownMenuItem onClick={() => setUpdateOpen(true)}>
+                <DropdownMenuItem
+                  onClick={() => setActiveUpdateId(workspace.id)}
+                >
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setDeleteOpen(true)}
+                  onClick={() => setActiveDeleteId(workspace.id)}
                   className="text-red-500 focus:text-red-500"
                 >
                   Delete
@@ -99,25 +123,27 @@ export default function WorkspacesGrid({
 
           <WorkspaceUpdateForm
             workspace={workspace}
-            state={[updateOpen, setUpdateOpen]}
+            state={[
+              activeUpdateId === workspace.id,
+              () => setActiveUpdateId(null)
+            ]}
             onUpdate={() => {
               setUpdated(true)
-              setTimeout(() => {
-                setUpdated(false)
-              }, 3000)
-              onUpdate()
+              setTimeout(() => setUpdated(false), 3000)
+              if (onUpdate) onUpdate()
             }}
           />
 
           <WorkspaceDeleteForm
             id={workspace.id}
-            state={[deleteOpen, setDeleteOpen]}
+            state={[
+              activeDeleteId === workspace.id,
+              () => setActiveDeleteId(null)
+            ]}
             onUpdate={() => {
               setDeleted(true)
-              setTimeout(() => {
-                setDeleted(false)
-              }, 3000)
-              onUpdate()
+              setTimeout(() => setDeleted(false), 3000)
+              if (onUpdate) onUpdate()
             }}
           />
         </div>
