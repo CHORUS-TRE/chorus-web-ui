@@ -1,19 +1,36 @@
 'use client'
 import React, { useEffect, useState, useTransition } from 'react'
+import { Fragment, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
-import { Maximize, Search } from 'lucide-react'
+import { Maximize, Play, Search, Trash } from 'lucide-react'
 
+import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
 import { Input } from '@/components/ui/input'
 import {
   Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
   MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
   MenubarTrigger
 } from '@/components/ui/menubar'
 
@@ -29,10 +46,11 @@ import {
 import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
-import { WorksbenchDeleteForm } from './forms/workbench-forms'
-import { useAppState } from './store/app-state-context'
+import {
+  WorkbenchDeleteForm,
+  WorkbenchUpdateForm
+} from './forms/workbench-forms'
 import { useAuth } from './store/auth-context'
-import Breadcrumb from './breadcrumb'
 import { HeaderButtons } from './header-buttons'
 import NavLink from './nav-link'
 
@@ -42,7 +60,19 @@ interface HeaderProps {
   additionalHeaderButtons?: React.ReactNode
 }
 
+interface BreadcrumbItem {
+  name: string
+  href?: string
+}
+
+interface ItemProps {
+  name: string
+  href?: string
+}
+
 export function Header({ additionalHeaderButtons }: HeaderProps) {
+  const paths = usePathname()
+  const [items, setItems] = useState<BreadcrumbItem[]>([])
   const {
     workbenches,
     workspaces,
@@ -64,7 +94,9 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
   const isInAppContext = params?.workspaceId && params?.appId
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
-
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [updateOpen, setUpdateOpen] = useState(false)
   useEffect(() => {
     if (!isAuthenticated) {
       return
@@ -81,6 +113,67 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
       }
     })
   }, [background?.workbenchId, isAuthenticated])
+
+  const pathNames = useMemo(
+    () => paths?.split('/').filter(Boolean) || [],
+    [paths]
+  )
+
+  // Utility function for capitalizing
+  const capitalize = useCallback(
+    (str: string) =>
+      str
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+    []
+  )
+
+  // Generate initial breadcrumb items
+  const initialItems = useMemo(
+    () =>
+      pathNames.map((path, i) => ({
+        name: capitalize(path),
+        href: pathNames.slice(0, i + 1).join('/')
+      })),
+    [pathNames, capitalize]
+  )
+
+  // Handle data fetching and updates
+  const updateBreadcrumbItems = useCallback(async () => {
+    const updatedItems: BreadcrumbItem[] = [...initialItems]
+
+    if (params?.workspaceId) {
+      const workspace = workspaces?.find((w) => w.id === params.workspaceId)
+      if (workspace?.shortName) {
+        updatedItems[1] = {
+          ...updatedItems[1],
+          name: workspace.shortName
+        }
+      }
+    }
+
+    if (params?.appId) {
+      try {
+        const workbench = workbenches?.find((w) => w.id === params.appId)
+        if (workbench?.shortName) {
+          updatedItems[2] = {
+            ...updatedItems[2],
+            name: workbench.shortName
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch workbench:', error)
+      }
+    }
+
+    setItems(updatedItems)
+  }, [initialItems, params?.workspaceId])
+
+  useEffect(() => {
+    setItems(initialItems)
+    updateBreadcrumbItems()
+  }, [updateBreadcrumbItems, initialItems])
 
   useEffect(() => {
     if (isInAppContext && workbenches) {
@@ -112,6 +205,25 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
     }
   }, [deleted])
 
+  // Extract Item component
+  const BreadcrumbItemComponent = ({ name, href }: ItemProps) => (
+    <BreadcrumbItem>
+      <BreadcrumbLink asChild>
+        {href ? (
+          <Link
+            href={href}
+            prefetch={false}
+            className="border-b-2 border-transparent text-sm text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+          >
+            {name}
+          </Link>
+        ) : (
+          <span>{name}</span>
+        )}
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+  )
+
   const workspacesWithWorkbenches = workspaces?.filter((workspace) =>
     workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
   )
@@ -133,36 +245,64 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
             priority
           />
         </Link>
-        <div className="min-w-0 flex-1">
-          <Breadcrumb />
+        <div className="min-w-0 flex-1 pr-4">
+          {!isInAppContext && (
+            <Breadcrumb className="pl-2">
+              <BreadcrumbList className="text-primary-foreground">
+                {paths && paths.length > 1 && <BreadcrumbSeparator />}
+                {items.map((item, index) => (
+                  <Fragment key={item.href}>
+                    <BreadcrumbItemComponent
+                      href={item.href ? `/${item.href}` : undefined}
+                      name={item.name}
+                    />
+                    {index < items.length - 1 && <BreadcrumbSeparator />}
+                  </Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
+          )}
         </div>
+
         {isInAppContext && currentWorkbench && (
           <Menubar className="border-none bg-transparent">
             <MenubarMenu>
-              <MenubarTrigger className="font-medium text-muted hover:text-accent data-[state=open]:text-accent">
-                {currentWorkbench.name}
-              </MenubarTrigger>
-              <MenubarContent align="start" className="min-w-[180px]">
-                <MenubarItem asChild>
-                  <AppInstanceCreateForm
-                    workbenchId={params.appId}
-                    userId={user?.id}
-                    workspaceId={params.workspaceId}
-                  />
+              <MenubarTrigger>{currentWorkbench.name}</MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem>About {currentWorkbench.name}</MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem onClick={() => setUpdateOpen(true)}>
+                  Settings...
                 </MenubarItem>
                 <MenubarSeparator />
-                <MenubarItem asChild>
-                  <WorksbenchDeleteForm
-                    id={params.appId}
-                    onUpdate={() => {
-                      setDeleted(true)
-                      setTimeout(() => {
-                        setBackground(undefined)
-                        router.replace(`/workspaces/${workspaceId}`)
-                      }, 2000)
-                    }}
-                  />
+                <MenubarItem onClick={() => setDeleteOpen(true)}>
+                  <Trash className="mr-2 h-4 w-4" />
+                  Quit
                 </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger>File</MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem onClick={() => setCreateOpen(true)}>
+                  <Play className="mr-2 h-4 w-4" />
+                  Start New App <MenubarShortcut>⌘A</MenubarShortcut>
+                </MenubarItem>
+                <MenubarSeparator />
+                <MenubarSub>
+                  <MenubarSubTrigger disabled>Share</MenubarSubTrigger>
+                  <MenubarSubContent>
+                    <MenubarItem>Email link</MenubarItem>
+                    <MenubarItem>Messages</MenubarItem>
+                    <MenubarItem>Notes</MenubarItem>
+                  </MenubarSubContent>
+                </MenubarSub>
+              </MenubarContent>
+            </MenubarMenu>
+
+            <MenubarMenu>
+              <MenubarTrigger>View</MenubarTrigger>
+              <MenubarContent>
                 <MenubarItem
                   onClick={() => {
                     const iframe = document.getElementById('iframe')
@@ -172,7 +312,7 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
                   }}
                 >
                   <Maximize className="mr-2 h-4 w-4" />
-                  <span>Fullscreen</span>
+                  <span>Toggle Fullscreen</span>
                 </MenubarItem>
               </MenubarContent>
             </MenubarMenu>
@@ -293,6 +433,33 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
           <HeaderButtons />
         </div>
       </div>
+
+      <WorkbenchDeleteForm
+        id={params.appId}
+        state={[deleteOpen, setDeleteOpen]}
+        onUpdate={() => {
+          setDeleted(true)
+          setTimeout(() => {
+            setBackground(undefined)
+            router.replace(`/workspaces/${workspaceId}`)
+          }, 2000)
+        }}
+      />
+
+      <AppInstanceCreateForm
+        state={[createOpen, setCreateOpen]}
+        workbenchId={params.appId}
+        userId={user?.id}
+        workspaceId={params.workspaceId}
+      />
+
+      {currentWorkbench && (
+        <WorkbenchUpdateForm
+          state={[updateOpen, setUpdateOpen]}
+          workbench={currentWorkbench}
+          onUpdate={() => {}}
+        />
+      )}
     </nav>
   )
 }
