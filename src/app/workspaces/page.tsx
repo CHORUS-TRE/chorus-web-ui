@@ -3,7 +3,10 @@
 import { useEffect, useState } from 'react'
 import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
 
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { Button } from '~/components/button'
@@ -105,13 +108,17 @@ export default function Portal() {
           <TabsContent value="all" className="border-none">
             {showWorkspacesTable ? (
               <WorkspaceTable
-                workspaces={workspaces}
+                workspaces={workspaces?.filter(
+                  (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
+                )}
                 user={user}
                 onUpdate={refreshWorkspaces}
               />
             ) : (
               <WorkspacesGrid
-                workspaces={workspaces}
+                workspaces={workspaces?.filter(
+                  (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
+                )}
                 workbenches={workbenches}
                 user={user}
                 onUpdate={refreshWorkspaces}

@@ -39,7 +39,7 @@ const WorkspacePage = () => {
   return (
     <>
       <div className="mb-12 flex items-end justify-between">
-        <h2 className="mt-5 text-white">My Workspace</h2>
+        <h2 className="mt-5 text-white">Home</h2>
       </div>
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}

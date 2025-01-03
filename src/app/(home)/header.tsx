@@ -36,7 +36,7 @@ const WorkspaceHeader = ({
 }: {
   workspace?: WorkspaceType | null
 }) => {
-  const params = useParams<{ workspaceId: string; appId: string }>()
+  const params = useParams<{ workspaceId: string; desktopId: string }>()
 
   return (
     <>

@@ -14,7 +14,7 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const params = useParams<{ workspaceId: string; appId: string }>()
+  const params = useParams<{ workspaceId: string; desktopId: string }>()
 
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [error, setError] = useState<string>()

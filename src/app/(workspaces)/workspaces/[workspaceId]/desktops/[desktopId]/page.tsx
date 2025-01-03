@@ -10,7 +10,7 @@ import { useAppState } from '@/components/store/app-state-context'
 import { useAuth } from '~/components/store/auth-context'
 
 export default function WorkbenchPage() {
-  const params = useParams<{ workspaceId: string; appId: string }>()
+  const params = useParams<{ workspaceId: string; desktopId: string }>()
   const [isPending, startTransition] = useTransition()
   const { background, setBackground } = useAppState()
   const { isAuthenticated } = useAuth()
@@ -22,7 +22,7 @@ export default function WorkbenchPage() {
     }
 
     setBackground({
-      workbenchId: params.appId,
+      workbenchId: params.desktopId,
       workspaceId: params.workspaceId
     })
   }, [])

@@ -5,7 +5,10 @@ import { ArrowRight } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 import {
   Card,
   CardContent,
@@ -31,7 +34,7 @@ export function Workspace({
   workspaceOwner?: User
   onUpdate?: (id: string) => void
 }) {
-  const { setBackground } = useAppState()
+  const { setBackground, workspaces } = useAppState()
 
   if (!workspace) {
     return <></>
@@ -76,7 +79,38 @@ export function Workspace({
       <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Desktops
+            Workspaces
+          </CardTitle>
+          <CardDescription>Your workspaces.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2">
+            {workspaces
+              ?.filter((w) => w.id !== workspace.id)
+              .map(({ shortName, createdAt, id }) => (
+                <div className="flex items-center justify-between" key={id}>
+                  <Link
+                    key={id}
+                    href={`/workspaces/${id}`}
+                    className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                  >
+                    {shortName}
+                  </Link>
+                  <p className="text-xs">
+                    {formatDistanceToNow(createdAt)} ago
+                  </p>
+                </div>
+              ))}
+          </div>
+        </CardContent>
+        <div className="flex-grow" />
+        <CardFooter></CardFooter>
+      </Card>
+
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Home Desktops
           </CardTitle>
           <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
@@ -86,7 +120,7 @@ export function Workspace({
               <div className="flex items-center justify-between" key={id}>
                 <Link
                   key={workspace.id}
-                  href={`/workspaces/${workspace.id}/${id}`}
+                  href={`/workspaces/${workspace.id}/desktops/${id}`}
                   className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                 >
                   {shortName}

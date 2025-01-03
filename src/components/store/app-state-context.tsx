@@ -19,6 +19,8 @@ import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
 
 import { useAuth } from './auth-context'
 
+export const ALBERT_WORKSPACE_ID = '35'
+
 type AppStateContextType = {
   showRightSidebar: boolean
   toggleRightSidebar: () => void
@@ -119,7 +121,7 @@ export const AppStateProvider = ({
 
   const refreshMyWorkspace = useCallback(async () => {
     try {
-      const response = await workspaceGet('35')
+      const response = await workspaceGet(ALBERT_WORKSPACE_ID)
       if (response?.error) setError(response.error)
       if (response?.data) setMyWorkspace(response.data)
     } catch (error) {

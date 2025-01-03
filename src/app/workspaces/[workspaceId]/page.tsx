@@ -17,7 +17,7 @@ const WorkspacePage = () => {
   const [error, setError] = useState<string>()
 
   const router = useRouter()
-  const params = useParams<{ workspaceId: string; appId: string }>()
+  const params = useParams<{ workspaceId: string; desktopId: string }>()
   const workspaceId = params?.workspaceId
 
   useEffect(() => {

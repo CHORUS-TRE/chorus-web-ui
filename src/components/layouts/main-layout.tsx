@@ -26,7 +26,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       {background && (
         <Link
-          href={`/workspaces/${background.workspaceId}/${background?.workbenchId}`}
+          href={`/workspaces/${background.workspaceId}/desktops/${background?.workbenchId}`}
           passHref
           className="hover:bg-accent"
         >

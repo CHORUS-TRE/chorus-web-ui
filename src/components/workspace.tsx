@@ -87,7 +87,7 @@ export function Workspace({
               <div className="flex items-center justify-between" key={id}>
                 <Link
                   key={workspace.id}
-                  href={`/workspaces/${workspace.id}/${id}`}
+                  href={`/workspaces/${workspace.id}/desktops/${id}`}
                   className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                 >
                   {shortName}

@@ -12,6 +12,7 @@ import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Breadcrumb,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -33,6 +34,12 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from '@/components/ui/menubar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@radix-ui/react-dropdown-menu'
 
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
@@ -50,15 +57,12 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 import { HeaderButtons } from './header-buttons'
 import NavLink from './nav-link'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
-
-interface HeaderProps {
-  additionalHeaderButtons?: React.ReactNode
-}
 
 interface BreadcrumbItem {
   name: string
@@ -70,7 +74,7 @@ interface ItemProps {
   href?: string
 }
 
-export function Header({ additionalHeaderButtons }: HeaderProps) {
+export function Header() {
   const paths = usePathname()
   const [items, setItems] = useState<BreadcrumbItem[]>([])
   const {
@@ -88,15 +92,17 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
   const { toast } = useToast()
-  const params = useParams<{ workspaceId: string; appId: string }>()
+  const params = useParams<{ workspaceId: string; desktopId: string }>()
   const [isPending, startTransition] = useTransition()
   const { isAuthenticated } = useAuth()
-  const isInAppContext = params?.workspaceId && params?.appId
+  const isInAppContext = params?.workspaceId && params?.desktopId
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
+  const isAlbertWorkspace = params?.workspaceId === ALBERT_WORKSPACE_ID
+
   useEffect(() => {
     if (!isAuthenticated) {
       return
@@ -136,39 +142,63 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
         name: capitalize(path),
         href: pathNames.slice(0, i + 1).join('/')
       })),
-    [pathNames, capitalize]
+    [pathNames, capitalize, workspaces, currentWorkbench]
   )
 
   // Handle data fetching and updates
   const updateBreadcrumbItems = useCallback(async () => {
-    const updatedItems: BreadcrumbItem[] = [...initialItems]
+    let updatedItems: BreadcrumbItem[] = [...initialItems]
 
     if (params?.workspaceId) {
-      const workspace = workspaces?.find((w) => w.id === params.workspaceId)
-      if (workspace?.shortName) {
-        updatedItems[1] = {
-          ...updatedItems[1],
-          name: workspace.shortName
+      // Special handling for ALBERT_WORKSPACE_ID
+      if (params.workspaceId === ALBERT_WORKSPACE_ID) {
+        // For desktop view: Home > Desktops > [desktop-name]
+        if (params.desktopId) {
+          const workbench = workbenches?.find((w) => w.id === params.desktopId)
+          updatedItems = [
+            { name: 'Home', href: '/' },
+            { name: 'Desktops', href: `workspaces/${ALBERT_WORKSPACE_ID}` }
+          ]
+          if (workbench?.shortName) {
+            updatedItems.push({
+              name: workbench.shortName,
+              href: `workspaces/${ALBERT_WORKSPACE_ID}/desktops/${params.desktopId}`
+            })
+          }
+        } else {
+          // For workspace view: Just show Home
+          updatedItems = [{ name: 'Home', href: '/' }]
         }
-      }
-    }
-
-    if (params?.appId) {
-      try {
-        const workbench = workbenches?.find((w) => w.id === params.appId)
-        if (workbench?.shortName) {
-          updatedItems[2] = {
-            ...updatedItems[2],
-            name: workbench.shortName
+      } else {
+        // Regular workspace handling
+        const workspace = workspaces?.find((w) => w.id === params.workspaceId)
+        if (workspace?.shortName) {
+          updatedItems[1] = {
+            ...updatedItems[1],
+            name: workspace.shortName
           }
         }
-      } catch (error) {
-        console.error('Failed to fetch workbench:', error)
+
+        if (params?.desktopId) {
+          const workbench = workbenches?.find((w) => w.id === params.desktopId)
+          if (workbench?.shortName) {
+            updatedItems[3] = {
+              ...updatedItems[3],
+              name: workbench.shortName
+            }
+          }
+        }
       }
     }
 
     setItems(updatedItems)
-  }, [initialItems, params?.workspaceId])
+  }, [
+    initialItems,
+    params?.workspaceId,
+    params?.desktopId,
+    workbenches,
+    workspaces
+  ])
 
   useEffect(() => {
     setItems(initialItems)
@@ -177,12 +207,12 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
 
   useEffect(() => {
     if (isInAppContext && workbenches) {
-      const workbench = workbenches.find((w) => w.id === params.appId)
+      const workbench = workbenches.find((w) => w.id === params.desktopId)
       if (workbench) {
         setCurrentWorkbench(workbench)
       }
     }
-  }, [isInAppContext, workbenches, params.appId])
+  }, [isInAppContext, workbenches, params.desktopId])
 
   useEffect(() => {
     if (error) {
@@ -233,23 +263,34 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
   )
 
   return (
-    <nav className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap">
-      <div className="flex min-w-0 flex-shrink flex-nowrap items-center justify-start">
-        <Link href="/" passHref className="">
-          <Image
-            src={logo}
-            alt="Chorus"
-            height={32}
-            className="aspect-auto cursor-pointer"
-            id="logo"
-            priority
-          />
-        </Link>
-        <div className="min-w-0 flex-1 pr-4">
-          {!isInAppContext && (
-            <Breadcrumb className="pl-2">
+    <>
+      <nav className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap">
+        <div className="flex min-w-0 flex-shrink flex-nowrap items-center justify-start">
+          <Link href="/" passHref className="">
+            <Image
+              src={logo}
+              alt="Chorus"
+              height={32}
+              className="mt-1 aspect-auto cursor-pointer"
+              id="logo"
+              priority
+            />
+          </Link>
+          <div className="min-w-0 flex-1 pr-4">
+            <Breadcrumb className="mt-1 pl-2">
               <BreadcrumbList className="text-primary-foreground">
                 {paths && paths.length > 1 && <BreadcrumbSeparator />}
+                {/* <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1">
+              <BreadcrumbEllipsis className="h-4 w-4" />
+              <span className="sr-only">Toggle menu</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem>Documentation</DropdownMenuItem>
+              <DropdownMenuItem>Themes</DropdownMenuItem>
+              <DropdownMenuItem>GitHub</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
                 {items.map((item, index) => (
                   <Fragment key={item.href}>
                     <BreadcrumbItemComponent
@@ -261,15 +302,160 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
                 ))}
               </BreadcrumbList>
             </Breadcrumb>
-          )}
+          </div>
         </div>
 
-        {isInAppContext && currentWorkbench && (
-          <Menubar className="border-none bg-transparent">
+        <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
+          <NavigationMenuList className="flex items-center justify-center gap-3">
+            <NavigationMenuItem>
+              <NavLink
+                href="/"
+                exact={!isAlbertWorkspace}
+                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              >
+                Home
+              </NavLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavLink
+                href="/workspaces"
+                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                exact={isAlbertWorkspace}
+              >
+                Workspaces
+              </NavLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavLink
+                href="/app-store"
+                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              >
+                App Store
+              </NavLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>My Desktops</NavigationMenuTrigger>
+              <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
+                  {/* <li className="row-span-3">
+                  <NavigationMenuLink asChild>
+                    <a
+                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                      href="/services"
+                    >
+                      <Image
+                        src="/chuv.png"
+                        alt="CHUV"
+                        width={126}
+                        height={66}
+                        className=""
+                      />
+                      <div className="mb-2 mt-4 text-lg font-medium">
+                        CHUV Services
+                      </div>
+                      <p className="text-sm leading-tight text-muted-foreground">
+                        Data explorer and cohort builder
+                      </p>
+                    </a>
+                  </NavigationMenuLink>
+                </li> */}
+                  {sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                    <div className="" key={workspace.id}>
+                      {workspace.id === ALBERT_WORKSPACE_ID
+                        ? 'Home'
+                        : workspace.shortName}
+                      {workbenches
+                        ?.filter(
+                          (workbench) => workbench.workspaceId === workspace.id
+                        )
+                        .map((workbench) => (
+                          <ListItem
+                            className={`{background?.workbenchId === workbench.id ? 'hover:bg-primary' : 'hover:bg-accent'} ${background?.workbenchId === workbench.id ? 'bg-primary' : ''}`}
+                            key={workbench.name}
+                            title={''}
+                            href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <Avatar>
+                                {workbench.name === 'vscode' && (
+                                  <AvatarImage
+                                    src="/vscode.png"
+                                    className="m-auto h-8 w-8"
+                                  />
+                                )}
+                                <AvatarFallback>
+                                  {workbench.name.slice(0, 2)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium leading-none">
+                                  {workbench.name}
+                                </span>
+                                <span className="text-sm text-muted-foreground">
+                                  {formatDistanceToNow(workbench.createdAt)} ago
+                                </span>
+                              </div>
+                            </div>
+                          </ListItem>
+                        ))}
+                    </div>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <div className="flex items-center justify-end">
+          <div className="relative flex-1 md:grow-0">
+            <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              disabled
+              type="search"
+              placeholder="Find workspaces, apps, content ..."
+              className="h-7 w-full border-none bg-background pl-8 md:w-[240px] lg:w-[360px]"
+            />
+          </div>
+          <div className="ml-4 flex items-center gap-2">
+            <HeaderButtons />
+          </div>
+        </div>
+
+        <WorkbenchDeleteForm
+          id={params.desktopId}
+          state={[deleteOpen, setDeleteOpen]}
+          onUpdate={() => {
+            setDeleted(true)
+            setTimeout(() => {
+              setBackground(undefined)
+              router.replace(`/workspaces/${workspaceId}`)
+            }, 2000)
+          }}
+        />
+
+        <AppInstanceCreateForm
+          state={[createOpen, setCreateOpen]}
+          workbenchId={params.desktopId}
+          userId={user?.id}
+          workspaceId={params.workspaceId}
+        />
+
+        {currentWorkbench && (
+          <WorkbenchUpdateForm
+            state={[updateOpen, setUpdateOpen]}
+            workbench={currentWorkbench}
+            onUpdate={() => {}}
+          />
+        )}
+      </nav>
+      {isInAppContext && currentWorkbench && (
+        <nav>
+          <Menubar className="h-8 rounded-none bg-white">
             <MenubarMenu>
-              <MenubarTrigger>{currentWorkbench.name}</MenubarTrigger>
+              <MenubarTrigger>{currentWorkbench?.name}</MenubarTrigger>
               <MenubarContent>
-                <MenubarItem>About {currentWorkbench.name}</MenubarItem>
+                <MenubarItem>About {currentWorkbench?.name}</MenubarItem>
                 <MenubarSeparator />
                 <MenubarItem onClick={() => setUpdateOpen(true)}>
                   Settings...
@@ -317,149 +503,8 @@ export function Header({ additionalHeaderButtons }: HeaderProps) {
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
-        )}
-      </div>
-
-      <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-        <NavigationMenuList className="flex items-center justify-center gap-4">
-          <NavigationMenuItem>
-            <NavLink
-              href="/"
-              exact
-              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-            >
-              My Workspace
-            </NavLink>
-          </NavigationMenuItem>
-
-          <NavigationMenuItem>
-            <NavLink
-              href="/workspaces"
-              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-            >
-              Workspaces
-            </NavLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavLink
-              href="/app-store"
-              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-            >
-              App Store
-            </NavLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>My Desktops</NavigationMenuTrigger>
-            <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                {/* <li className="row-span-3">
-                  <NavigationMenuLink asChild>
-                    <a
-                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href="/services"
-                    >
-                      <Image
-                        src="/chuv.png"
-                        alt="CHUV"
-                        width={126}
-                        height={66}
-                        className=""
-                      />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        CHUV Services
-                      </div>
-                      <p className="text-sm leading-tight text-muted-foreground">
-                        Data explorer and cohort builder
-                      </p>
-                    </a>
-                  </NavigationMenuLink>
-                </li> */}
-                {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                  <div className="" key={workspace.id}>
-                    {workspace.shortName}
-                    {workbenches
-                      ?.filter(
-                        (workbench) => workbench.workspaceId === workspace.id
-                      )
-                      .map((workbench) => (
-                        <ListItem
-                          className={`{background?.workbenchId === workbench.id ? 'hover:bg-primary' : 'hover:bg-accent'} ${background?.workbenchId === workbench.id ? 'bg-primary' : ''}`}
-                          key={workbench.name}
-                          title={''}
-                          href={`/workspaces/${workbench.workspaceId}/${workbench.id}`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <Avatar>
-                              {workbench.name === 'vscode' && (
-                                <AvatarImage
-                                  src="/vscode.png"
-                                  className="m-auto h-8 w-8"
-                                />
-                              )}
-                              <AvatarFallback>
-                                {workbench.name.slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium leading-none">
-                                {workbench.name}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                {formatDistanceToNow(workbench.createdAt)} ago
-                              </span>
-                            </div>
-                          </div>
-                        </ListItem>
-                      ))}
-                  </div>
-                ))}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-
-      <div className="flex items-center justify-end">
-        <div className="relative flex-1 md:grow-0">
-          <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            disabled
-            type="search"
-            placeholder="Find workspaces, apps, content ..."
-            className="h-7 w-full border-none bg-background pl-8 md:w-[240px] lg:w-[360px]"
-          />
-        </div>
-        <div className="ml-4 flex items-center gap-2">
-          <HeaderButtons />
-        </div>
-      </div>
-
-      <WorkbenchDeleteForm
-        id={params.appId}
-        state={[deleteOpen, setDeleteOpen]}
-        onUpdate={() => {
-          setDeleted(true)
-          setTimeout(() => {
-            setBackground(undefined)
-            router.replace(`/workspaces/${workspaceId}`)
-          }, 2000)
-        }}
-      />
-
-      <AppInstanceCreateForm
-        state={[createOpen, setCreateOpen]}
-        workbenchId={params.appId}
-        userId={user?.id}
-        workspaceId={params.workspaceId}
-      />
-
-      {currentWorkbench && (
-        <WorkbenchUpdateForm
-          state={[updateOpen, setUpdateOpen]}
-          workbench={currentWorkbench}
-          onUpdate={() => {}}
-        />
+        </nav>
       )}
-    </nav>
+    </>
   )
 }

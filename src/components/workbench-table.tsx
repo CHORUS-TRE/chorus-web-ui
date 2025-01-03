@@ -76,7 +76,8 @@ export default function WorkbenchTable({
   )
 
   const TableRow = ({ workbench }: { workbench?: Workbench }) => {
-    const link = `/workspaces/${workbench?.workspaceId}/${workbench?.id}`
+    const [open, setOpen] = useState(false)
+    const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
 
     return (
       <TableRowComponent>
@@ -112,6 +113,7 @@ export default function WorkbenchTable({
               <DropdownMenuItem>
                 <WorkbenchDeleteForm
                   id={workbench?.id}
+                  state={[open, setOpen]}
                   onUpdate={() => {
                     setDeleted(true)
                     toast({
