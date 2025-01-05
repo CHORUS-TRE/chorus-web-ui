@@ -98,7 +98,7 @@ export default function WorkspacesGrid({
             </DropdownMenu>
           </div>
           <Link href={`/workspaces/${workspace.id}`}>
-            <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
+            <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
               <CardHeader>
                 <CardTitle>{workspace.shortName}</CardTitle>
                 <CardDescription>{workspace.description}</CardDescription>

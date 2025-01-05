@@ -1,9 +1,11 @@
 'use client'
 
+// https://ui.shadcn.com/docs/components/data-table
+
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon } from 'lucide-react'
+import { EllipsisVerticalIcon, MonitorPlay } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 
@@ -65,6 +67,9 @@ export default function WorkbenchTable({
 
   const TableHeads = () => (
     <>
+      <TableHead>
+        <span className="sr-only">Desktop</span>
+      </TableHead>
       <TableHead>Name</TableHead>
       <TableHead className="hidden md:table-cell">Created</TableHead>
 
@@ -80,7 +85,11 @@ export default function WorkbenchTable({
     const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
 
     return (
-      <TableRowComponent>
+      <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
+        <TableCell className="p-1">
+          {' '}
+          <MonitorPlay className="h-3.5 w-3.5" />
+        </TableCell>
         <TableCell className="p-1 font-medium">
           <Link
             href={link}
@@ -138,7 +147,7 @@ export default function WorkbenchTable({
   }
 
   const CardContainer = ({ workbenches }: { workbenches?: Workbench[] }) => (
-    <Card className="border-0 border-r-0 bg-background text-white">
+    <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
       <CardHeader>
         <CardTitle>Desktops</CardTitle>
         <CardDescription>Your running desktops</CardDescription>
@@ -146,7 +155,8 @@ export default function WorkbenchTable({
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRowComponent>
+            <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
+              {' '}
               <TableHeads />
             </TableRowComponent>
           </TableHeader>

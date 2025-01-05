@@ -19,7 +19,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -122,8 +122,7 @@ export function WorkbenchCreateForm({
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="flex items-center justify-start gap-1 rounded-full bg-transparent text-sm text-accent text-black ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-accent-background focus:ring-2 focus:ring-accent"
-          size="sm"
+          className="flex items-center justify-start gap-1 rounded-full bg-transparent text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-accent-background focus:ring-2 focus:ring-accent"
           type="button"
           variant="default"
         >
@@ -343,8 +342,8 @@ export function WorkbenchDeleteForm({
         }
       }}
       onConfirm={handleDelete}
-      title="Delete Desktop"
-      description="Are you sure you want to delete this desktop? This action cannot be undone."
+      title="Quit Desktop"
+      description="The Desktop will be stopped and the apps will be closed. Are you sure you want to delete this desktop and it's apps? This action cannot be undone."
       isDeleting={isDeleting}
     />
   )
@@ -390,10 +389,8 @@ export function WorkbenchUpdateForm({
             <form action={formAction}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
-                  <CardTitle>Update Desktop</CardTitle>
-                  <CardDescription>
-                    Update the desktop settings.
-                  </CardDescription>
+                  <CardTitle>Settings</CardTitle>
+                  <CardDescription>Edit desktop settings.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                   <div className="grid gap-2">

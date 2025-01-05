@@ -297,9 +297,7 @@ export function WorkspaceUpdateForm({
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogTitle>
-          <h3 className="text-white">Update Workspace</h3>
-        </DialogTitle>
+        <DialogTitle className="text-white">Update Workspace</DialogTitle>
         <DialogDescription>Update workspace information.</DialogDescription>
         <DialogHeader className="mt-4">
           <DialogDescription asChild>
