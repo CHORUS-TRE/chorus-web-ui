@@ -6,9 +6,19 @@ import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
-import { Maximize, Play, Search, Trash } from 'lucide-react'
+import { formatDistance } from 'date-fns'
+import { Maximize, MonitorPlay, Play, Search, Trash } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Breadcrumb,
@@ -102,6 +112,8 @@ export function Header() {
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
   const isAlbertWorkspace = params?.workspaceId === ALBERT_WORKSPACE_ID
+  const [showAboutDialog, setShowAboutDialog] = useState(false)
+  const [showSecondNav, setShowSecondNav] = useState(true)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -235,6 +247,16 @@ export function Header() {
     }
   }, [deleted])
 
+  useEffect(() => {
+    if (isInAppContext && currentWorkbench) {
+      const timer = setTimeout(() => {
+        setShowSecondNav(false)
+      }, 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isInAppContext, currentWorkbench])
+
   // Extract Item component
   const BreadcrumbItemComponent = ({ name, href }: ItemProps) => (
     <BreadcrumbItem>
@@ -293,6 +315,9 @@ export function Header() {
           </DropdownMenu> */}
                 {items.map((item, index) => (
                   <Fragment key={item.href}>
+                    {index === 3 && (
+                      <MonitorPlay className="h-3.5 w-3.5 text-muted-foreground" />
+                    )}
                     <BreadcrumbItemComponent
                       href={item.href ? `/${item.href}` : undefined}
                       name={item.name}
@@ -335,31 +360,14 @@ export function Header() {
               </NavLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>My Desktops</NavigationMenuTrigger>
+              <NavigationMenuTrigger>
+                <div className="mt-1 flex items-center gap-1">
+                  <MonitorPlay className="h-3.5 w-3.5" />
+                  <span>Open Desktops</span>
+                </div>
+              </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
-                  {/* <li className="row-span-3">
-                  <NavigationMenuLink asChild>
-                    <a
-                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href="/services"
-                    >
-                      <Image
-                        src="/chuv.png"
-                        alt="CHUV"
-                        width={126}
-                        height={66}
-                        className=""
-                      />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        CHUV Services
-                      </div>
-                      <p className="text-sm leading-tight text-muted-foreground">
-                        Data explorer and cohort builder
-                      </p>
-                    </a>
-                  </NavigationMenuLink>
-                </li> */}
+                <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr] bg-black bg-opacity-85">
                   {sortedWorkspacesWithWorkbenches?.map((workspace) => (
                     <div className="" key={workspace.id}>
                       {workspace.id === ALBERT_WORKSPACE_ID
@@ -389,9 +397,13 @@ export function Header() {
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex flex-col">
-                                <span className="text-sm font-medium leading-none">
-                                  {workbench.name}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  <MonitorPlay className="h-3.5 w-3.5" />
+                                  <span className="text-sm font-medium leading-none">
+                                    {workbench.name}
+                                  </span>
+                                </div>
+
                                 <span className="text-sm text-muted-foreground">
                                   {formatDistanceToNow(workbench.createdAt)} ago
                                 </span>
@@ -450,12 +462,18 @@ export function Header() {
         )}
       </nav>
       {isInAppContext && currentWorkbench && (
-        <nav>
+        <nav
+          className={`transition-transform duration-300 ease-in-out ${
+            showSecondNav ? 'translate-y-0' : '-translate-y-full'
+          }`}
+        >
           <Menubar className="h-8 rounded-none bg-white">
             <MenubarMenu>
               <MenubarTrigger>{currentWorkbench?.name}</MenubarTrigger>
               <MenubarContent>
-                <MenubarItem>About {currentWorkbench?.name}</MenubarItem>
+                <MenubarItem onSelect={() => setShowAboutDialog(true)}>
+                  About {currentWorkbench?.name}
+                </MenubarItem>
                 <MenubarSeparator />
                 <MenubarItem onClick={() => setUpdateOpen(true)}>
                   Settings...
@@ -505,6 +523,43 @@ export function Header() {
           </Menubar>
         </nav>
       )}
+
+      <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
+        <AlertDialogContent className="bg-black bg-opacity-85 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>About {currentWorkbench?.name}</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  {currentWorkbench?.name === 'vscode' && (
+                    <AvatarImage src="/vscode.png" className="m-auto" />
+                  )}
+                  <AvatarFallback className="text-lg">
+                    {currentWorkbench?.name?.slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <p className="font-medium">{currentWorkbench?.shortName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Created{' '}
+                    {formatDistance(
+                      currentWorkbench?.createdAt ?? 0,
+                      new Date()
+                    )}{' '}
+                    ago
+                  </p>
+                </div>
+              </div>
+              {currentWorkbench?.description && (
+                <p className="text-sm">{currentWorkbench.description}</p>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
