@@ -138,7 +138,8 @@ export default function Portal() {
           toast({
             title: 'Success!',
             description: 'Workspace created',
-            className: 'bg-background text-white'
+            className: 'bg-background text-white',
+            duration: 1000
           })
         }}
       />

@@ -113,7 +113,8 @@ export function WorkbenchCreateForm({
         title: 'Error',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [error])
@@ -122,7 +123,7 @@ export function WorkbenchCreateForm({
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="flex items-center justify-start gap-1 rounded-full bg-transparent text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-accent-background focus:ring-2 focus:ring-accent"
+          className="flex items-center justify-start gap-1 rounded-full bg-background text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-background focus:ring-2 focus:ring-accent"
           type="button"
           variant="default"
         >
@@ -368,7 +369,8 @@ export function WorkbenchUpdateForm({
         title: 'Error',
         description: state.error,
         variant: 'destructive',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
       return
     }

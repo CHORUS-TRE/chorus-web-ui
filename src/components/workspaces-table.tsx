@@ -50,7 +50,8 @@ export default function WorkspaceTable({
       toast({
         title: 'Success!',
         description: 'Workspace deleted',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [deleted])
@@ -60,7 +61,8 @@ export default function WorkspaceTable({
       toast({
         title: 'Success!',
         description: 'Workspace updated',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [updated])
@@ -71,7 +73,8 @@ export default function WorkspaceTable({
         title: 'Error!',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [error])

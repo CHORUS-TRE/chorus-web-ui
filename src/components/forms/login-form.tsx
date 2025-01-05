@@ -66,7 +66,8 @@ export default function LoginForm() {
         toast({
           title: "Couldn't load authentication methods",
           description: 'Please try again later',
-          variant: 'destructive'
+          variant: 'destructive',
+          duration: 1000
         })
       } finally {
         setIsLoading(false)
@@ -96,7 +97,8 @@ export default function LoginForm() {
         toast({
           title: "Couldn't initiate login",
           description: response.error,
-          variant: 'destructive'
+          variant: 'destructive',
+          duration: 1000
         })
         return
       }
@@ -115,7 +117,8 @@ export default function LoginForm() {
     toast({
       title: 'Authentication Error',
       description: error,
-      variant: 'destructive'
+      variant: 'destructive',
+      duration: 1000
     })
   }
 

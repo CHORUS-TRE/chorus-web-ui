@@ -101,7 +101,8 @@ export function AppInstanceCreateForm({
         title: 'Error',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [error])

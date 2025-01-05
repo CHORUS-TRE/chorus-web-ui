@@ -232,7 +232,8 @@ export function Header() {
         title: 'Error!',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [error])
@@ -242,7 +243,8 @@ export function Header() {
       toast({
         title: 'Success!',
         description: 'Desktop was deleted, redirecting to workspace...',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     }
   }, [deleted])
@@ -363,7 +365,7 @@ export function Header() {
               <NavigationMenuTrigger>
                 <div className="mt-1 flex items-center gap-1">
                   <MonitorPlay className="h-3.5 w-3.5" />
-                  <span>Open Desktops</span>
+                  <span>Desktops</span>
                 </div>
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">

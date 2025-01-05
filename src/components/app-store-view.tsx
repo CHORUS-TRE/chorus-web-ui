@@ -33,7 +33,8 @@ export function AppStoreView() {
           title: 'Error',
           description: result.error,
           variant: 'destructive',
-          className: 'bg-background text-white'
+          className: 'bg-background text-white',
+          duration: 1000
         })
         return
       }
@@ -44,7 +45,8 @@ export function AppStoreView() {
           title: 'Error',
           description: 'No apps available',
           variant: 'destructive',
-          className: 'bg-background text-white'
+          className: 'bg-background text-white',
+          duration: 1000
         })
         return
       }
@@ -58,7 +60,8 @@ export function AppStoreView() {
         title: 'Error',
         description: errorMessage,
         variant: 'destructive',
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 1000
       })
     } finally {
       setIsLoading(false)
