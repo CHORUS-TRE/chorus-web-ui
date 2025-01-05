@@ -1,43 +1,46 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'next/navigation'
 
-import { Workspace as WorkspaceType } from '@/domain/model'
+import MyWorkspaceMenu from '@/app/(home)/menu'
 
-import { workspaceGet } from '~/components/actions/workspace-view-model'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '~/components/store/app-state-context'
 
-import WorkspaceHeader from './header'
+import WorkspaceMenu from './menu'
 
 export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const params = useParams<{ workspaceId: string; desktopId: string }>()
-
-  const [workspace, setWorkspace] = useState<WorkspaceType>()
-  const [error, setError] = useState<string>()
-
-  const workspaceId = params?.workspaceId
-
-  useEffect(() => {
-    if (!workspaceId) return
-
-    workspaceGet(workspaceId)
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkspace(response.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
-
+  const params = useParams<{ workspaceId: string }>()
+  const { workspaces } = useAppState()
+  const workspace = workspaces?.find((w) => w.id === params?.workspaceId)
   return (
     <>
-      <WorkspaceHeader workspace={workspace} />
-      {error && <p className="mt-4 text-red-500">{error}</p>}
+      <div className="">
+        <h2 className="mb-8 mt-5 text-white">
+          {workspace ? (
+            params?.workspaceId === ALBERT_WORKSPACE_ID ? (
+              'Home'
+            ) : (
+              workspace.shortName
+            )
+          ) : (
+            <span className="animate-pulse">Loading workspace...</span>
+          )}
+        </h2>
+      </div>
+      {params?.workspaceId === ALBERT_WORKSPACE_ID ? (
+        <MyWorkspaceMenu id={ALBERT_WORKSPACE_ID} />
+      ) : (
+        <WorkspaceMenu id={params?.workspaceId} />
+      )}
+
       {children}
     </>
   )

@@ -1,14 +1,21 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 
 import { userGet } from '@/components/actions/user-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
 
+import { MyWorkspace } from '~/components/my-workspace'
 import { Workspace } from '~/components/workspace'
+import { toast } from '~/hooks/use-toast'
+
+import WorkspaceMenu from './menu'
 
 const WorkspacePage = () => {
   const { workbenches, refreshWorkbenches } = useAppState()
@@ -21,8 +28,6 @@ const WorkspacePage = () => {
   const workspaceId = params?.workspaceId
 
   useEffect(() => {
-    if (!workspaceId) return
-
     const initializeData = async () => {
       try {
         const [workspaceResponse] = await Promise.all([
@@ -52,23 +57,25 @@ const WorkspacePage = () => {
     <>
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
-        <Suspense
-          fallback={
-            <div className="w-full text-xs text-white">
-              Loading workspace...
-            </div>
-          }
-        >
+        {workspaceId === ALBERT_WORKSPACE_ID ? (
+          <MyWorkspace />
+        ) : (
           <Workspace
             workspace={workspace}
             workbenches={filteredWorkbenches}
             workspaceOwner={user}
             onUpdate={(id) => {
+              toast({
+                title: 'Workspace updated',
+                description: 'Workspace updated',
+                variant: 'default',
+                className: 'bg-background text-white',
+                duration: 1000
+              })
               refreshWorkbenches()
-              router.push(`/workspaces/${workspaceId}/${id}`)
             }}
           />
-        </Suspense>
+        )}
       </div>
 
       <footer>{/* Footer content */}</footer>
