@@ -61,12 +61,12 @@ function SubmitButton() {
 export function WorkspaceCreateForm({
   state: [open, setOpen],
   userId,
-  trigger,
+  children,
   onUpdate
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   userId?: string
-  trigger?: React.ReactNode
+  children?: React.ReactNode
   onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(workspaceCreate, initialState)
@@ -84,7 +84,7 @@ export function WorkspaceCreateForm({
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogDescription asChild>

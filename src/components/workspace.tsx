@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import {
   ArrowRight,
@@ -26,6 +27,8 @@ import {
 import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
+import { toast } from '~/hooks/use-toast'
+
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'
 import { ChartContainer } from './ui/chart'
@@ -50,6 +53,7 @@ export function Workspace({
 }) {
   const { setBackground } = useAppState()
   const [openEdit, setOpenEdit] = useState(false)
+  const router = useRouter()
 
   if (!workspace) {
     return <></>
@@ -71,8 +75,8 @@ export function Workspace({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-black text-white">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                 Edit
               </DropdownMenuItem>
               {/* <DropdownMenuItem
@@ -142,7 +146,7 @@ export function Workspace({
                 <Link
                   key={workspace.id}
                   href={`/workspaces/${workspace.id}/desktops/${id}`}
-                  className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                  className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                 >
                   <MonitorPlay className="mr-2 h-3.5 w-3.5" />
                   {shortName}
@@ -154,7 +158,23 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <WorkbenchCreateForm workspaceId={workspace.id} onUpdate={onUpdate} />
+          <WorkbenchCreateForm
+            workspaceId={workspace.id}
+            onUpdate={(workbenchId) => {
+              if (onUpdate) {
+                onUpdate(workbenchId)
+              }
+              toast({
+                title: 'Success!',
+                description: 'Desktop created successfully',
+                className: 'bg-background text-white',
+                duration: 1000
+              })
+              router.push(
+                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
+              )
+            }}
+          />
         </CardFooter>
       </Card>
 

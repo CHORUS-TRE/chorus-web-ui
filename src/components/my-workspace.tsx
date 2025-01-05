@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import { ArrowRight, EllipsisVerticalIcon, MonitorPlay } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
@@ -17,6 +18,8 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ResponsiveLine } from '@nivo/line'
 
+import { toast } from '~/hooks/use-toast'
+
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'
 import { useAuth } from './store/auth-context'
@@ -31,14 +34,23 @@ import {
 
 export function MyWorkspace() {
   const [openEdit, setOpenEdit] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const router = useRouter()
   const {
     setBackground,
+    refreshWorkbenches,
     workspaces,
     refreshMyWorkspace,
     myWorkspace,
     workbenches
   } = useAppState()
   const { user } = useAuth()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   return (
     <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -56,7 +68,7 @@ export function MyWorkspace() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-black text-white">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                 Edit
               </DropdownMenuItem>
@@ -103,6 +115,7 @@ export function MyWorkspace() {
           workspace={myWorkspace}
           state={[openEdit, setOpenEdit]}
           onUpdate={() => {
+            refreshWorkbenches()
             refreshMyWorkspace()
           }}
         />
@@ -118,36 +131,50 @@ export function MyWorkspace() {
         <CardContent>
           <ScrollArea className="h-[200px] pr-4">
             <div className="grid gap-2">
-              {workbenches?.map(({ shortName, createdAt, id }) => (
-                <div className="flex items-center justify-between" key={id}>
-                  <Link
-                    key={myWorkspace?.id}
-                    href={`/workspaces/${myWorkspace?.id}/desktops/${id}`}
-                    className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
-                  >
-                    <MonitorPlay className="mr-2 h-3.5 w-3.5" />
-                    {shortName}
-                  </Link>
-                  <p className="text-xs text-muted">
-                    {formatDistanceToNow(createdAt)} ago
-                  </p>
-                </div>
-              ))}
+              {workbenches
+                ?.filter(
+                  (workbench) => workbench.workspaceId === myWorkspace?.id
+                )
+                .map(({ shortName, createdAt, id }) => (
+                  <div className="flex items-center justify-between" key={id}>
+                    <Link
+                      key={myWorkspace?.id}
+                      href={`/workspaces/${myWorkspace?.id}/desktops/${id}`}
+                      className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                    >
+                      <MonitorPlay className="mr-2 h-3.5 w-3.5" />
+                      {shortName}
+                    </Link>
+                    <p className="text-xs text-muted">
+                      {formatDistanceToNow(createdAt)} ago
+                    </p>
+                  </div>
+                ))}
             </div>
           </ScrollArea>
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <WorkbenchCreateForm workspaceId={myWorkspace?.id} />
+          <WorkbenchCreateForm
+            workspaceId={myWorkspace?.id}
+            onUpdate={(workbenchId) => {
+              refreshMyWorkspace()
+              router.push(
+                `/workspaces/${myWorkspace?.id}/desktops/${workbenchId}`
+              )
+            }}
+          />
         </CardFooter>
       </Card>
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/60 text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            All your workspaces
+            Your workspaces
           </CardTitle>
-          <CardDescription>Workspaces and associated desktops.</CardDescription>
+          <CardDescription>
+            Workspaces you have access to and associated desktops.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[240px] pr-4">
@@ -282,28 +309,6 @@ export function MyWorkspace() {
           <Button disabled className="cursor-default">
             <ArrowRight className="h-3.5 w-3.5" />
             View Resources
-          </Button>
-        </CardFooter>
-      </Card>
-
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
-        <CardHeader>
-          <CardTitle>Wiki</CardTitle>
-          <CardDescription>Share and view latest news</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* <iframe
-            name="embed_readwrite"
-            src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
-            width="100%"
-            height="100%"
-          ></iframe> */}
-        </CardContent>
-        <div className="flex-grow" />
-        <CardFooter>
-          <Button disabled className="cursor-default">
-            <ArrowRight className="h-3.5 w-3.5" />
-            View Wiki
           </Button>
         </CardFooter>
       </Card>

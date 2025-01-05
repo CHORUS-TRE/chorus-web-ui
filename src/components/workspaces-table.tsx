@@ -8,7 +8,7 @@ import { User, Workspace } from '@/domain/model'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardFooter } from '~/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +33,15 @@ import {
 
 export default function WorkspaceTable({
   workspaces,
+  title,
+  description,
   user,
   onUpdate
 }: {
   workspaces: Workspace[] | undefined
   user: User | undefined
+  title?: string
+  description?: string
   onUpdate?: () => void
 }) {
   const [error, setError] = useState<string | null>(null)
@@ -181,6 +185,10 @@ export default function WorkspaceTable({
   return (
     <>
       <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
+      {title && <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>}
         <CardContent className="mt-4">
           <Table>
             <TableHeader>
