@@ -367,7 +367,7 @@ export function Header() {
                 </div>
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr] bg-black bg-opacity-85">
+                <ul className="grid gap-3 bg-black bg-opacity-85 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
                   {sortedWorkspacesWithWorkbenches?.map((workspace) => (
                     <div className="" key={workspace.id}>
                       {workspace.id === ALBERT_WORKSPACE_ID

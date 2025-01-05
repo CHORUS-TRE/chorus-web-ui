@@ -1,14 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, EllipsisVerticalIcon, MonitorPlay } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 import {
   Card,
   CardContent,
@@ -17,126 +14,187 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { ResponsiveLine } from '@nivo/line'
 
 import { WorkbenchCreateForm } from './forms/workbench-forms'
+import { WorkspaceUpdateForm } from './forms/workspace-forms'
+import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from './ui/dropdown-menu'
 
-export function Workspace({
-  workspace,
-  workbenches,
-  workspaceOwner,
-  onUpdate
-}: {
-  workspace?: WorkspaceType | null
-  workbenches?: Workbench[]
-  workspaceOwner?: User
-  onUpdate?: (id: string) => void
-}) {
-  const { setBackground, workspaces } = useAppState()
-
-  if (!workspace) {
-    return <></>
-  }
+export function MyWorkspace() {
+  const [openEdit, setOpenEdit] = useState(false)
+  const {
+    setBackground,
+    workspaces,
+    refreshMyWorkspace,
+    myWorkspace,
+    workbenches
+  } = useAppState()
+  const { user } = useAuth()
 
   return (
     <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card className="flex h-full flex-col justify-between rounded-2xl border border-muted bg-black text-white">
-        <CardHeader>
-          <CardTitle className="text-white">{workspace?.name}</CardTitle>
-          <CardDescription>{workspace?.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs">
-            <strong>Owner: </strong>
-            {workspaceOwner?.firstName} {workspaceOwner?.lastName}
-          </p>
-          <div>
-            <p className="text-xs">
-              <strong>Status: </strong>
-              {workspace?.status}
-            </p>
-            <p className="text-xs">
-              <strong>Creation date: </strong>
-              {formatDistanceToNow(workspace.createdAt)} ago
-            </p>
-            <p className="text-xs">
-              <strong>Updated: </strong>
-              {formatDistanceToNow(workspace.updatedAt)} ago
-            </p>
-          </div>
-        </CardContent>
-        <div className="flex-grow" />
-        <CardFooter>
-          <Button disabled>
-            <ArrowRight className="h-3.5 w-3.5" />
-            Settings
-          </Button>
-        </CardFooter>
-      </Card>
+      <div key={myWorkspace?.id} className="group relative">
+        <div className="absolute right-4 top-4 z-10">
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-haspopup="true"
+                variant="ghost"
+                className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
+              >
+                <EllipsisVerticalIcon className="h-4 w-4" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+                Edit
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+        <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-black/40 text-white">
+          <CardHeader>
+            <CardTitle className="text-white">
+              {user && (
+                <span>
+                  {user?.firstName} {user?.lastName}&apos;s Home
+                </span>
+              )}
+            </CardTitle>
+            <CardDescription className="mt-4 text-muted">
+              {myWorkspace?.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs">
+              <strong>Owner: </strong>
+              {user?.firstName} {user?.lastName}
+            </p>
+            <div>
+              <p className="text-xs">
+                <strong>Status: </strong>
+                {myWorkspace?.status}
+              </p>
+              <p className="text-xs">
+                <strong>Creation date: </strong>
+                {formatDistanceToNow(myWorkspace?.createdAt ?? new Date())} ago
+              </p>
+              <p className="text-xs">
+                <strong>Updated: </strong>
+                {formatDistanceToNow(myWorkspace?.updatedAt ?? new Date())} ago
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <WorkspaceUpdateForm
+          workspace={myWorkspace}
+          state={[openEdit, setOpenEdit]}
+          onUpdate={() => {
+            refreshMyWorkspace()
+          }}
+        />
+      </div>
+
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Workspaces
+            Desktops
           </CardTitle>
-          <CardDescription>Your workspaces.</CardDescription>
+          <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-2">
-            {workspaces
-              ?.filter((w) => w.id !== workspace.id)
-              .map(({ shortName, createdAt, id }) => (
+          <ScrollArea className="h-[200px] pr-4">
+            <div className="grid gap-2">
+              {workbenches?.map(({ shortName, createdAt, id }) => (
                 <div className="flex items-center justify-between" key={id}>
                   <Link
-                    key={id}
-                    href={`/workspaces/${id}`}
+                    key={myWorkspace?.id}
+                    href={`/workspaces/${myWorkspace?.id}/desktops/${id}`}
                     className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                   >
+                    <MonitorPlay className="mr-2 h-3.5 w-3.5" />
                     {shortName}
                   </Link>
-                  <p className="text-xs">
+                  <p className="text-xs text-muted">
                     {formatDistanceToNow(createdAt)} ago
                   </p>
                 </div>
               ))}
-          </div>
+            </div>
+          </ScrollArea>
+        </CardContent>
+        <div className="flex-grow" />
+        <CardFooter>
+          <WorkbenchCreateForm workspaceId={myWorkspace?.id} />
+        </CardFooter>
+      </Card>
+
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/60 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            All your workspaces
+          </CardTitle>
+          <CardDescription>Workspaces and associated desktops.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[240px] pr-4">
+            <div className="grid gap-2">
+              {workspaces
+                ?.filter((w) => w.id !== myWorkspace?.id)
+                .map(({ shortName, createdAt, id }) => (
+                  <div key={id} className="mb-2">
+                    <div className="flex items-center justify-between">
+                      <Link
+                        href={`/workspaces/${id}`}
+                        className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                      >
+                        {/* <FolderKanban className="h-3.5 w-3.5 mr-2" /> */}
+                        {shortName}
+                      </Link>
+                      <span className="text-xs text-muted">
+                        {formatDistanceToNow(createdAt)} ago
+                      </span>
+                    </div>
+                    {workbenches
+                      ?.filter((workbench) => workbench.workspaceId === id)
+                      .map((workbench) => (
+                        <div
+                          key={workbench.id}
+                          className="ml-4 mt-1 flex items-center justify-between text-xs"
+                        >
+                          <Link
+                            href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                            className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-normal text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                          >
+                            <MonitorPlay className="mr-2 h-3.5 w-3.5" />
+                            <span>{workbench.shortName}</span>
+                          </Link>
+                          <span className="text-xs text-muted">
+                            {formatDistanceToNow(workbench.createdAt)} ago
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                ))}
+            </div>
+          </ScrollArea>
         </CardContent>
         <div className="flex-grow" />
         <CardFooter></CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Home Desktops
-          </CardTitle>
-          <CardDescription>Your running desktops.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-2">
-            {workbenches?.map(({ shortName, createdAt, id }) => (
-              <div className="flex items-center justify-between" key={id}>
-                <Link
-                  key={workspace.id}
-                  href={`/workspaces/${workspace.id}/desktops/${id}`}
-                  className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
-                >
-                  {shortName}
-                </Link>
-                <p className="text-xs">{formatDistanceToNow(createdAt)} ago</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-        <div className="flex-grow" />
-        <CardFooter>
-          <WorkbenchCreateForm workspaceId={workspace.id} onUpdate={onUpdate} />
-        </CardFooter>
-      </Card>
-
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Data</CardTitle>
           <CardDescription>View and manage your data sources.</CardDescription>
@@ -166,7 +224,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Resources</CardTitle>
           <CardDescription>
@@ -226,7 +284,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Wiki</CardTitle>
           <CardDescription>Share and view latest news</CardDescription>
@@ -248,7 +306,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Activities</CardTitle>
           <CardDescription>Events, analytics & monitoring.</CardDescription>
@@ -265,7 +323,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Footprint</CardTitle>
           <div className="text-sm text-muted-foreground">

@@ -26,7 +26,7 @@ export function HeaderButtons() {
   const [error, setError] = useState<UserResponse['error']>()
 
   const router = useRouter()
-  const { showRightSidebar, toggleRightSidebar } = useAppState()
+  const { showRightSidebar, toggleRightSidebar, setBackground } = useAppState()
 
   const { isAuthenticated, setAuthenticated, user } = useAuth()
 
