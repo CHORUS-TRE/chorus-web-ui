@@ -13,6 +13,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
@@ -151,6 +152,7 @@ export default function WorkspaceTable({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-black text-white">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault()

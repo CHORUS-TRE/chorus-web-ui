@@ -21,6 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
@@ -83,6 +84,7 @@ export default function WorkspacesGrid({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-black text-white">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() => setActiveUpdateId(workspace.id)}
                 >

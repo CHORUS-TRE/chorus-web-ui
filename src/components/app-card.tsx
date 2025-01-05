@@ -21,6 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { App } from '~/domain/model'
@@ -105,6 +106,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => setShowEditDialog(true)}
                 disabled={isDeleting}

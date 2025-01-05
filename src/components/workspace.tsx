@@ -33,6 +33,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 
@@ -70,7 +71,8 @@ export function Workspace({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-black text-white">
-              <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                 Edit
               </DropdownMenuItem>
               {/* <DropdownMenuItem
