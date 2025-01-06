@@ -1,10 +1,10 @@
 import { WorkbenchDataSource } from '@/data/data-source'
 import {
-  WorkbenchCreate as WorkbenchCreateModel,
+  WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
   WorkbenchResponse,
-  WorkbenchUpdate
+  WorkbenchUpdateModel
 } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
@@ -63,7 +63,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     }
   }
 
-  async update(workbench: WorkbenchUpdate): Promise<WorkbenchResponse> {
+  async update(workbench: WorkbenchUpdateModel): Promise<WorkbenchResponse> {
     try {
       const data = await this.dataSource.update(workbench)
       return { data }

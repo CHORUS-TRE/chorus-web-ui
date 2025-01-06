@@ -1,9 +1,9 @@
 import {
-  WorkbenchCreate as WorkbenchCreateModel,
+  WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
   WorkbenchResponse,
-  WorkbenchUpdate
+  WorkbenchUpdateModel
 } from '@/domain/model'
 
 interface WorkbenchRepository {
@@ -11,7 +11,7 @@ interface WorkbenchRepository {
   get: (id: string) => Promise<WorkbenchResponse>
   delete: (id: string) => Promise<WorkbenchDeleteResponse>
   list: () => Promise<WorkbenchesResponse>
-  update: (workbench: WorkbenchUpdate) => Promise<WorkbenchResponse>
+  update: (workbench: WorkbenchUpdateModel) => Promise<WorkbenchResponse>
 }
 
 export type { WorkbenchRepository }
