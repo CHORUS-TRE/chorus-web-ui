@@ -8,7 +8,14 @@ import { User, Workspace } from '@/domain/model'
 
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -185,10 +192,12 @@ export default function WorkspaceTable({
   return (
     <>
       <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
-      {title && <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>}
+        {title && (
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+          </CardHeader>
+        )}
         <CardContent className="mt-4">
           <Table>
             <TableHeader>

@@ -50,38 +50,35 @@ export default function Portal() {
 
   return (
     <>
-
-
       <div className="w-full">
-          {error && <p className="mt-4 text-red-500">{error}</p>}
-          <div className="flex justify-end mb-4">
-            <WorkspaceCreateForm
-              state={[createOpen, setCreateOpen]}
-              userId={user?.id}
-              onUpdate={async () => {
-                await refreshWorkspaces()
-                toast({
-                  title: 'Success!',
-                  description: 'Workspace created',
-                  className: 'bg-background text-white'
-                })
-              }}
-            >
-              <Button>
-                <CirclePlus className="h-3.5 w-3.5" />
-                Create Workspace
-              </Button>
-            </WorkspaceCreateForm>
-          </div>
-          <WorkspaceTable
-                workspaces={workspaces?.filter(
-                  (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
-                )}
-                user={user}
-                onUpdate={refreshWorkspaces}
-              />
+        {error && <p className="mt-4 text-red-500">{error}</p>}
+        <div className="mb-4 flex justify-end">
+          <WorkspaceCreateForm
+            state={[createOpen, setCreateOpen]}
+            userId={user?.id}
+            onUpdate={async () => {
+              await refreshWorkspaces()
+              toast({
+                title: 'Success!',
+                description: 'Workspace created',
+                className: 'bg-background text-white'
+              })
+            }}
+          >
+            <Button>
+              <CirclePlus className="h-3.5 w-3.5" />
+              Create Workspace
+            </Button>
+          </WorkspaceCreateForm>
+        </div>
+        <WorkspaceTable
+          workspaces={workspaces?.filter(
+            (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
+          )}
+          user={user}
+          onUpdate={refreshWorkspaces}
+        />
       </div>
     </>
   )
 }
-

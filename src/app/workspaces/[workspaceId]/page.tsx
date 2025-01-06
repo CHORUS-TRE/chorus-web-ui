@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 import { userGet } from '@/components/actions/user-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
@@ -15,37 +15,34 @@ import { MyWorkspace } from '~/components/my-workspace'
 import { Workspace } from '~/components/workspace'
 import { toast } from '~/hooks/use-toast'
 
-import WorkspaceMenu from './menu'
-
 const WorkspacePage = () => {
   const { workbenches, refreshWorkbenches } = useAppState()
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [user, setUser] = useState<User>()
   const [error, setError] = useState<string>()
 
-  const router = useRouter()
   const params = useParams<{ workspaceId: string; desktopId: string }>()
   const workspaceId = params?.workspaceId
 
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        const [workspaceResponse] = await Promise.all([
-          workspaceGet(workspaceId),
-          refreshWorkbenches()
-        ])
+  const initializeData = async () => {
+    try {
+      const [workspaceResponse] = await Promise.all([
+        workspaceGet(workspaceId),
+        refreshWorkbenches()
+      ])
 
-        if (workspaceResponse.error) setError(workspaceResponse.error)
-        if (workspaceResponse.data) {
-          setWorkspace(workspaceResponse.data)
-          const userResponse = await userGet(workspaceResponse.data.ownerId)
-          if (userResponse.data) setUser(userResponse.data)
-        }
-      } catch (error) {
-        setError(error.message)
+      if (workspaceResponse.error) setError(workspaceResponse.error)
+      if (workspaceResponse.data) {
+        setWorkspace(workspaceResponse.data)
+        const userResponse = await userGet(workspaceResponse.data.ownerId)
+        if (userResponse.data) setUser(userResponse.data)
       }
+    } catch (error) {
+      setError(error.message)
     }
+  }
 
+  useEffect(() => {
     initializeData()
   }, [workspaceId])
 
@@ -72,7 +69,7 @@ const WorkspacePage = () => {
                 className: 'bg-background text-white',
                 duration: 1000
               })
-              refreshWorkbenches()
+              initializeData()
             }}
           />
         )}

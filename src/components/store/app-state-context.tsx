@@ -103,7 +103,12 @@ export const AppStateProvider = ({
     try {
       const response = await workspaceList()
       if (response?.error) setError(response.error)
-      if (response?.data) setWorkspaces(response.data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
+      if (response?.data)
+        setWorkspaces(
+          response.data.sort(
+            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+          )
+        )
     } catch (error) {
       setError(error.message)
     }
@@ -112,7 +117,12 @@ export const AppStateProvider = ({
   const refreshWorkbenches = useCallback(async () => {
     try {
       const response = await workbenchList()
-      if (response?.data) setWorkbenches(response.data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
+      if (response?.data)
+        setWorkbenches(
+          response.data.sort(
+            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+          )
+        )
       if (response?.error) setError(response.error)
     } catch (error) {
       setError(error.message)

@@ -86,7 +86,15 @@ export default function WorkbenchTable({
     </>
   )
 
-  const TableRow = ({ workbench, title, description }: { workbench?: Workbench, title?: string, description?: string }) => {
+  const TableRow = ({
+    workbench,
+    title,
+    description
+  }: {
+    workbench?: Workbench
+    title?: string
+    description?: string
+  }) => {
     const [open, setOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
     const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
@@ -179,12 +187,22 @@ export default function WorkbenchTable({
     )
   }
 
-  const CardContainer = ({ workbenches, title, description }: { workbenches?: Workbench[], title?: string, description?: string }) => (
+  const CardContainer = ({
+    workbenches,
+    title,
+    description
+  }: {
+    workbenches?: Workbench[]
+    title?: string
+    description?: string
+  }) => (
     <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
-      {title && <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>}
+      {title && (
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+      )}
       <CardContent>
         <Table>
           <TableHeader>

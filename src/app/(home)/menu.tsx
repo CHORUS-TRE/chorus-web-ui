@@ -32,7 +32,7 @@ const WorkspaceMenu = ({ id }: { id: string }) => {
         Desktops
       </StyledNavLink>
       <StyledNavLink href={`/workspaces/${id}/workspaces`}>
-        Your Workspaces
+        Your workspaces
       </StyledNavLink>
       <StyledNavLink disabled href={`#`}>
         Data
