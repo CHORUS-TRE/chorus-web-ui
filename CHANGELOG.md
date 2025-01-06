@@ -1,3 +1,25 @@
+# [1.0.0-alpha.12](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.11...v1.0.0-alpha.12) (2025-01-06)
+
+
+### Bug Fixes
+
+* DropdownMenu behaviors ([73ecead](https://github.com/CHORUS-TRE/chorus-web-ui/commit/73ecead1adbfa939479f6137b7dee16c7b60752c))
+
+
+### Features
+
+* add @radix-ui/react-scroll-area ([e3ced53](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e3ced531ea4b039f33a8494875ead103b69214a1))
+* add DropdownMenuLabel ([c4b771a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c4b771af780d1faf325230f39a8861fc8527b794))
+* add workspaces page ([ebff163](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ebff163e02a5e0d91abe27f1440f3454931dd7d7))
+* app contextual menu ([50ccac4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/50ccac47ebd3b0dc2ceba8b37ba1dcaabe719230))
+* enhance header component ([a5f171c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a5f171c397e03b5d770793ca5e50230deb81dc5d))
+* enhance layout components with workspace and workbench details ([1158fd8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1158fd80d4c7666e2b1ae8065f80ef32fb4cbd64))
+* implement workbench update functionality ([cfadc1f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cfadc1ffcfd1b8df014a67b14e8cdc9528e21bb5))
+* integrate toast notifications for error and success messages in Workbench and Workspace components ([aec489b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/aec489b355ef4507fcc930059d1b5f7b6bd99f4c))
+* toast notifications ([83c0a1e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/83c0a1efdce77920ff28beddd91c701d0523674f))
+* updated navigation: desktops, home ([8f02921](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8f02921175f3af2ee210ca0b32df3384fec0864b))
+* workspaces layout ([d2e4148](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d2e41489f50392e055eedc8ba2c3c739f7462c23))
+
 # [1.0.0-alpha.11](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2024-12-20)
 
 
