@@ -144,7 +144,6 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
 
     console.log({ validatedRequest })
     const response = await this.service.workspaceServiceUpdateWorkspace({
-      id: workspace.id,
       body: {
         workspace: validatedRequest
       }
