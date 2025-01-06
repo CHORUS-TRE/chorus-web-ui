@@ -1,10 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight, Play } from 'lucide-react'
+import {
+  ArrowRight,
+  EllipsisVerticalIcon,
+  MonitorPlay,
+  Play
+} from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
@@ -17,22 +27,33 @@ import {
 import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
+import { toast } from '~/hooks/use-toast'
+
 import { WorkbenchCreateForm } from './forms/workbench-forms'
-import { useNavigation } from './store/navigation-context'
+import { WorkspaceUpdateForm } from './forms/workspace-forms'
 import { ChartContainer } from './ui/chart'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger
+} from './ui/dropdown-menu'
 
 export function Workspace({
   workspace,
   workbenches,
   workspaceOwner,
-  cb
+  onUpdate
 }: {
   workspace?: WorkspaceType | null
   workbenches?: Workbench[]
   workspaceOwner?: User
-  cb?: (id: string) => void
+  onUpdate?: (id: string) => void
 }) {
-  const { setBackground } = useNavigation()
+  const { setBackground } = useAppState()
+  const [openEdit, setOpenEdit] = useState(false)
+  const router = useRouter()
 
   if (!workspace) {
     return <></>
@@ -40,46 +61,83 @@ export function Workspace({
 
   return (
     <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card className="flex h-full flex-col justify-between rounded-2xl border border-muted bg-black text-white">
-        <CardHeader>
-          <CardTitle className="text-white">{workspace?.name}</CardTitle>
-          <CardDescription>{workspace?.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs">
-            <strong>Owner: </strong>
-            {workspaceOwner?.firstName} {workspaceOwner?.lastName}
-          </p>
-          <div>
+      <div key={workspace.id} className="group relative">
+        <div className="absolute right-4 top-4 z-10">
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-haspopup="true"
+                variant="ghost"
+                className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
+              >
+                <EllipsisVerticalIcon className="h-4 w-4" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+                Edit
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem
+                  onClick={() => setActiveDeleteId(workspace.id)}
+                  className="text-red-500 focus:text-red-500"
+                >
+                  Delete
+                </DropdownMenuItem> */}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
+          <CardHeader>
+            <CardTitle className="text-white">{workspace?.name}</CardTitle>
+            <CardDescription>{workspace?.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
             <p className="text-xs">
-              <strong>Status: </strong>
-              {workspace?.status}
+              <strong>Owner: </strong>
+              {workspaceOwner?.firstName} {workspaceOwner?.lastName}
             </p>
-            <p className="text-xs">
-              <strong>Creation date: </strong>
-              {formatDistanceToNow(workspace.createdAt)} ago
-            </p>
-            <p className="text-xs">
-              <strong>Updated: </strong>
-              {formatDistanceToNow(workspace.updatedAt)} ago
-            </p>
-          </div>
-        </CardContent>
-        <div className="flex-grow" />
-        <CardFooter>
+            <div>
+              <p className="text-xs">
+                <strong>Status: </strong>
+                {workspace?.status}
+              </p>
+              <p className="text-xs">
+                <strong>Creation date: </strong>
+                {formatDistanceToNow(workspace.createdAt)} ago
+              </p>
+              <p className="text-xs">
+                <strong>Updated: </strong>
+                {formatDistanceToNow(workspace.updatedAt)} ago
+              </p>
+            </div>
+          </CardContent>
+          <div className="flex-grow" />
+          {/* <CardFooter>
           <Button disabled>
             <ArrowRight className="h-3.5 w-3.5" />
             Settings
           </Button>
-        </CardFooter>
-      </Card>
+        </CardFooter> */}
+        </Card>
+        <WorkspaceUpdateForm
+          workspace={workspace}
+          state={[openEdit, setOpenEdit]}
+          onUpdate={() => {
+            if (onUpdate) {
+              onUpdate(workspace.id)
+            }
+          }}
+        />
+      </div>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Apps
+            Desktops
           </CardTitle>
-          <CardDescription>Run and start apps.</CardDescription>
+          <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2">
@@ -87,18 +145,11 @@ export function Workspace({
               <div className="flex items-center justify-between" key={id}>
                 <Link
                   key={workspace.id}
-                  href={`/workspaces/${workspace.id}/${id}`}
-                  onClick={() => {
-                    setBackground({
-                      workspaceId: workspace.id,
-                      workbenchId: id
-                    })
-                  }}
+                  href={`/workspaces/${workspace.id}/desktops/${id}`}
+                  className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                 >
-                  <Button>
-                    <Play className="h-3.5 w-3.5" />
-                    {shortName}
-                  </Button>
+                  <MonitorPlay className="mr-2 h-3.5 w-3.5" />
+                  {shortName}
                 </Link>
                 <p className="text-xs">{formatDistanceToNow(createdAt)} ago</p>
               </div>
@@ -107,11 +158,27 @@ export function Workspace({
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
-          <WorkbenchCreateForm workspaceId={workspace.id} cb={cb} />
+          <WorkbenchCreateForm
+            workspaceId={workspace.id}
+            onUpdate={(workbenchId) => {
+              if (onUpdate) {
+                onUpdate(workbenchId)
+              }
+              toast({
+                title: 'Success!',
+                description: 'Desktop created successfully',
+                className: 'bg-background text-white',
+                duration: 1000
+              })
+              router.push(
+                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
+              )
+            }}
+          />
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Data</CardTitle>
           <CardDescription>View and manage your data sources.</CardDescription>
@@ -141,7 +208,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Resources</CardTitle>
           <CardDescription>
@@ -201,7 +268,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Team</CardTitle>
           <CardDescription>
@@ -241,7 +308,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Wiki</CardTitle>
           <CardDescription>Share and view latest news</CardDescription>
@@ -263,7 +330,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Activities</CardTitle>
           <CardDescription>Events, analytics & monitoring.</CardDescription>
@@ -280,7 +347,7 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Footprint</CardTitle>
           <div className="text-sm text-muted-foreground">

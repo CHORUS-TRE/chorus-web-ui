@@ -1,13 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CirclePlus, RefreshCw, TriangleAlert } from 'lucide-react'
+import { CirclePlus, Loader2, RefreshCw, TriangleAlert } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import {
   workbenchCreate,
-  workbenchDelete
+  workbenchDelete,
+  workbenchUpdate
 } from '@/components/actions/workbench-view-model'
+import { useAppState } from '@/components/store/app-state-context'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -17,7 +19,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -28,12 +30,13 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { App } from '~/domain/model'
+import { App, Workbench } from '~/domain/model'
+import { useToast } from '~/hooks/use-toast'
 import { generateScientistName } from '~/lib/utils'
 
 import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
 
 const initialState: IFormState = {
@@ -50,6 +53,7 @@ function SubmitButton() {
       type="submit"
       disabled={pending}
     >
+      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
       Start
     </Button>
   )
@@ -58,21 +62,23 @@ function SubmitButton() {
 export function WorkbenchCreateForm({
   workspaceId,
   userId,
-  cb
+  onUpdate
 }: {
   workspaceId?: string
   userId?: string
-  cb?: (id: string) => void
+  onUpdate?: (id: string) => void
 }) {
   const [state, formAction] = useFormState(
     workbenchCreate,
     initialState,
-    '/workspaces/8'
+    `/workspaces/${workspaceId}`
   )
   const [open, setOpen] = useState(false)
   const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
+  const { toast } = useToast()
+  const { refreshWorkbenches } = useAppState()
 
   useEffect(() => {
     appList().then((res) => {
@@ -97,21 +103,32 @@ export function WorkbenchCreateForm({
 
     if (state?.data) {
       setOpen(false)
-      if (cb) cb(state?.data as string)
+      if (onUpdate) onUpdate(state?.data as string)
     }
   }, [state])
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+        className: 'bg-background text-white',
+        duration: 1000
+      })
+    }
+  }, [error])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
-          size="sm"
+          className="flex items-center justify-start gap-1 rounded-full bg-background text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-background focus:ring-2 focus:ring-accent"
           type="button"
           variant="default"
         >
           <CirclePlus className="h-3.5 w-3.5" />
-          Start new app
+          Start new desktop
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -121,19 +138,12 @@ export function WorkbenchCreateForm({
             <form action={formAction}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
-                  <CardTitle>Start App</CardTitle>
+                  <CardTitle>Start Desktop</CardTitle>
                   <CardDescription>
-                    Fill out the form to start a new app.
+                    Start a new desktop with a specific app.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                  {error && (
-                    <Alert variant="destructive">
-                      <TriangleAlert className="h-4 w-4" />
-                      <AlertTitle>Error</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
                   <div className="grid gap-2">
                     <Label htmlFor="name">Name of the Desktop</Label>
                     <div className="flex gap-2">
@@ -289,36 +299,170 @@ export function WorkbenchCreateForm({
   )
 }
 
-export function WorksbenchDeleteForm({
+export function WorkbenchDeleteForm({
+  state: [open, setOpen],
   id,
-  cb
+  onUpdate
 }: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
   id?: string
-  cb?: () => void
+  onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(workbenchDelete, initialState)
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  function DeleteButton() {
-    const { pending } = useFormStatus()
-
-    useEffect(() => {
-      if (cb && pending) cb()
-    }, [pending])
-
-    return (
-      <Button type="submit" aria-disabled={pending}>
-        Delete
-      </Button>
-    )
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true)
+      const formData = new FormData()
+      formData.append('id', id || '')
+      await formAction(formData)
+      setIsDeleting(false)
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    } catch (error) {
+      console.error(error)
+      setIsDeleting(false)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
+  useEffect(() => {
+    if (!open) {
+      setIsDeleting(false)
+    }
+  }, [open])
+
   return (
-    <form action={formAction}>
-      <input type="hidden" name="id" value={id} />
-      <DeleteButton />
-      <p aria-live="polite" className="sr-only" role="status">
-        {JSON.stringify(state?.data, null, 2)}
-      </p>
-    </form>
+    <DeleteDialog
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (!isDeleting) {
+          setOpen(newOpen)
+        }
+      }}
+      onConfirm={handleDelete}
+      title="Quit Desktop"
+      description="The Desktop will be stopped and the apps will be closed. Are you sure you want to delete this desktop and it's apps? This action cannot be undone."
+      isDeleting={isDeleting}
+    />
+  )
+}
+
+export function WorkbenchUpdateForm({
+  state: [open, setOpen],
+  workbench,
+  onUpdate
+}: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
+  workbench: Workbench
+  onUpdate?: () => void
+}) {
+  const [state, formAction] = useFormState(workbenchUpdate, initialState)
+  const { toast } = useToast()
+  const [scientistName, setScientistName] = useState(workbench.name)
+
+  useEffect(() => {
+    if (state?.error) {
+      toast({
+        title: 'Error',
+        description: state.error,
+        variant: 'destructive',
+        className: 'bg-background text-white',
+        duration: 1000
+      })
+      return
+    }
+
+    if (state?.data) {
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    }
+  }, [state, onUpdate, setOpen])
+
+  return (
+    <DialogContainer open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild></DialogTrigger>
+      <DialogContent>
+        <DialogTitle className="hidden">Update Desktop</DialogTitle>
+        <DialogHeader>
+          <DialogDescription asChild>
+            <form action={formAction}>
+              <Card className="w-full max-w-md border-none bg-background text-white">
+                <CardHeader>
+                  <CardTitle>Settings</CardTitle>
+                  <CardDescription>Edit desktop settings.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Name of the Desktop</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="name"
+                        name="name"
+                        required
+                        placeholder="Enter workbench name"
+                        value={scientistName}
+                        onChange={(e) => setScientistName(e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                          setScientistName(generateScientistName())
+                        }
+                        aria-label="Generate random scientist name"
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="grid hidden gap-2">
+                    <Input id="id" name="id" defaultValue={workbench.id} />
+                    <Input
+                      id="workspaceId"
+                      name="workspaceId"
+                      defaultValue={workbench.workspaceId}
+                    />
+                    <Input
+                      id="tenantId"
+                      name="tenantId"
+                      defaultValue={workbench.tenantId}
+                    />
+                    <Input
+                      id="ownerId"
+                      name="ownerId"
+                      defaultValue={workbench.ownerId}
+                    />
+                  </div>
+                  <div className="grid hidden gap-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      placeholder="Enter description"
+                      className="min-h-[100px]"
+                      defaultValue={workbench.description}
+                    />
+                  </div>
+                  {state?.error && (
+                    <p className="text-red-500">{state.error}</p>
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    className="ml-auto flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
+                    type="submit"
+                  >
+                    Update
+                  </Button>
+                </CardFooter>
+              </Card>
+            </form>
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </DialogContainer>
   )
 }

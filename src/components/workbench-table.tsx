@@ -1,16 +1,16 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+// https://ui.shadcn.com/docs/components/data-table
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon } from 'lucide-react'
+import { EllipsisVerticalIcon, MonitorPlay, PlusIcon } from 'lucide-react'
 
-import { workbenchList } from '@/components/actions/workbench-view-model'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { useAppState } from '@/components/store/app-state-context'
 
+import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
 import {
   Card,
   CardContent,
@@ -36,46 +36,46 @@ import {
 } from '~/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workbench } from '~/domain/model'
+import { useToast } from '~/hooks/use-toast'
 
-import { WorksbenchDeleteForm } from './forms/workbench-forms'
-import { useNavigation } from './store/navigation-context'
+import {
+  WorkbenchCreateForm,
+  WorkbenchDeleteForm,
+  WorkbenchUpdateForm
+} from './forms/workbench-forms'
 
-export default function WorkbenchTable({ cb }: { cb?: () => void }) {
-  const [error, setError] = useState<string | null>(null)
-  const [workbenches, setWorkbenches] = useState<Workbench[]>([])
+export default function WorkbenchTable({
+  workspaceId,
+  onUpdate
+}: {
+  workspaceId: string
+  onUpdate?: (id: string) => void
+}) {
+  const { workbenches, refreshWorkbenches, background, setBackground } =
+    useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
+  const { toast } = useToast()
 
-  const params = useParams<{ workspaceId: string }>()
-  const { setBackground, background } = useNavigation()
-
-  const workspaceId = params?.workspaceId
-
-  const list = useCallback(() => {
-    setTimeout(() => {
-      workbenchList()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setWorkbenches(response?.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
-    }, 2000)
-  }, [])
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === workspaceId
+  )
 
   useEffect(() => {
-    workbenchList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setWorkbenches(response?.data)
+    if (deleted) {
+      toast({
+        title: 'Success!',
+        description: 'Desktop deleted',
+        className: 'bg-background text-white',
+        duration: 1000
       })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
+    }
+  }, [deleted])
 
   const TableHeads = () => (
     <>
+      <TableHead>
+        <span className="sr-only">Desktop</span>
+      </TableHead>
       <TableHead>Name</TableHead>
       <TableHead className="hidden md:table-cell">Created</TableHead>
 
@@ -86,71 +86,128 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
     </>
   )
 
-  const TableRow = ({ workbench }: { workbench?: Workbench }) => {
-    const link = `/workspaces/${workbench?.workspaceId}/${workbench?.id}`
+  const TableRow = ({
+    workbench,
+    title,
+    description
+  }: {
+    workbench?: Workbench
+    title?: string
+    description?: string
+  }) => {
+    const [open, setOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
 
     return (
-      <TableRowComponent>
-        <TableCell className="p-1 font-medium">
-          <Link
-            href={link}
-            className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
+      <>
+        {workbench && (
+          <WorkbenchUpdateForm
+            workbench={workbench}
+            state={[open, setOpen]}
+            onUpdate={() => {
+              refreshWorkbenches()
+              toast({
+                title: 'Success!',
+                description: 'Desktop updated successfully',
+                className: 'bg-background text-white',
+                duration: 1000
+              })
+            }}
+          />
+        )}
+
+        <WorkbenchDeleteForm
+          id={workbench?.id}
+          state={[deleteOpen, setDeleteOpen]}
+          onUpdate={() => {
+            setDeleted(true)
+            setTimeout(() => {
+              setDeleted(false)
+            }, 3000)
+            refreshWorkbenches()
+          }}
+        />
+
+        <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
+          <TableCell className="p-1" align="center">
+            <MonitorPlay className="h-3.5 w-3.5" />
+          </TableCell>
+          <TableCell className="p-1 font-medium">
+            <Link
+              href={link}
+              className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
+            >
+              {workbench?.shortName}
+            </Link>
+          </TableCell>
+
+          <TableCell
+            className="hidden p-1 md:table-cell"
+            title={workbench?.createdAt.toLocaleDateString()}
           >
-            {workbench?.shortName}
-          </Link>
-        </TableCell>
-
-        <TableCell
-          className="hidden p-1 md:table-cell"
-          title={workbench?.createdAt.toLocaleDateString()}
-        >
-          {workbench && formatDistanceToNow(workbench?.createdAt)} ago
-        </TableCell>
-        <TableCell className="p-1">
-          <Badge variant="outline">{workbench?.status}</Badge>
-        </TableCell>
-        <TableCell className="p-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button aria-haspopup="true" size="icon" variant="ghost">
-                <EllipsisVerticalIcon className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem disabled>Edit</DropdownMenuItem>
-              <DropdownMenuItem>
-                <WorksbenchDeleteForm
-                  id={workbench?.id}
-                  cb={() => {
-                    setDeleted(true)
-
-                    if (background?.workbenchId === workbench?.id)
-                      setBackground(undefined)
-                    if (cb) cb()
-
-                    list()
+            {workbench && formatDistanceToNow(workbench?.createdAt)} ago
+          </TableCell>
+          <TableCell className="p-1">
+            <Badge variant="outline">{workbench?.status}</Badge>
+          </TableCell>
+          <TableCell className="p-1">
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-haspopup="true"
+                  variant="ghost"
+                  className="text-muted ring-0"
+                >
+                  <EllipsisVerticalIcon className="h-4 w-4" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black text-white">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(true)
                   }}
-                />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TableCell>
-      </TableRowComponent>
+                >
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setDeleteOpen(true)}
+                  className="text-red-500 focus:text-red-500"
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableCell>
+        </TableRowComponent>
+      </>
     )
   }
 
-  const CardContainer = ({ workbenches }: { workbenches?: Workbench[] }) => (
-    <Card className="border-0 border-r-0 bg-background text-white">
-      <CardHeader>
-        <CardTitle>Apps</CardTitle>
-        <CardDescription>Your running apps</CardDescription>
-      </CardHeader>
+  const CardContainer = ({
+    workbenches,
+    title,
+    description
+  }: {
+    workbenches?: Workbench[]
+    title?: string
+    description?: string
+  }) => (
+    <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
+      {title && (
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+      )}
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRowComponent>
+            <TableRowComponent className="cursor-pointer transition-colors hover:border-accent hover:bg-background/80">
+              {' '}
               <TableHeads />
             </TableRowComponent>
           </TableHeader>
@@ -168,26 +225,10 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
     </Card>
   )
 
-  const nextWorkbenches = workbenches?.filter(
-    (w) => w.workspaceId === workspaceId
-  )
-
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
-      {deleted && (
-        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
-          <AlertTitle>Success !</AlertTitle>
-          <AlertDescription>Desktop deleted</AlertDescription>
-        </Alert>
-      )}
-      {error && (
-        <Alert className="absolute bottom-2 right-2 z-10 w-96 bg-white text-black">
-          <AlertTitle>Error ! </AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
       <Tabs defaultValue="all">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="active">Active</TabsTrigger>
@@ -195,18 +236,36 @@ export default function WorkbenchTable({ cb }: { cb?: () => void }) {
               Archived
             </TabsTrigger>
           </TabsList>
+          <WorkbenchCreateForm
+            workspaceId={workspaceId}
+            onUpdate={(workbenchId) => {
+              refreshWorkbenches()
+              toast({
+                title: 'Success!',
+                description: 'Desktop created successfully',
+                className: 'bg-background text-white',
+                duration: 1000
+              })
+              setBackground({ workbenchId, workspaceId })
+              if (onUpdate) onUpdate(workbenchId)
+            }}
+          />
         </div>
         <TabsContent value="all">
-          <CardContainer workbenches={nextWorkbenches} />
+          <CardContainer workbenches={filteredWorkbenches} />
         </TabsContent>
         <TabsContent value="active">
           <CardContainer
-            workbenches={nextWorkbenches?.filter((a) => a.status === 'active')}
+            workbenches={filteredWorkbenches?.filter(
+              (a) => a.status === 'active'
+            )}
           />
         </TabsContent>
         <TabsContent value="archived">
           <CardContainer
-            workbenches={nextWorkbenches?.filter((a) => a.status !== 'active')}
+            workbenches={filteredWorkbenches?.filter(
+              (a) => a.status !== 'active'
+            )}
           />
         </TabsContent>
       </Tabs>

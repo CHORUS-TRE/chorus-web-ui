@@ -2,7 +2,8 @@ import {
   WorkspaceCreateModel,
   WorkspaceDeleteResponse,
   WorkspaceResponse,
-  WorkspacesResponse
+  WorkspacesResponse,
+  WorkspaceUpdateModel
 } from '@/domain/model'
 
 interface WorkspaceRepository {
@@ -10,6 +11,7 @@ interface WorkspaceRepository {
   get: (id: string) => Promise<WorkspaceResponse>
   delete: (id: string) => Promise<WorkspaceDeleteResponse>
   list: () => Promise<WorkspacesResponse>
+  update: (workspace: WorkspaceUpdateModel) => Promise<WorkspaceResponse>
 }
 
 export type { WorkspaceRepository }

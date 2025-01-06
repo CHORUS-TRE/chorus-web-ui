@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CircleHelp, User } from 'lucide-react'
 
 import { logout } from '@/components/actions/authentication-view-model'
-import { userMe } from '@/components/actions/user-view-model'
+import { useAppState } from '@/components/store/app-state-context'
 import { useAuth } from '@/components/store/auth-context'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,18 +20,15 @@ import {
 
 import { UserResponse } from '~/domain/model'
 
-import { useNavigation } from './store/navigation-context'
-
 import userPlaceholder from '/public/placeholder-user.jpg'
 
 export function HeaderButtons() {
-  const [user, setUser] = useState<UserResponse['data']>()
   const [error, setError] = useState<UserResponse['error']>()
 
   const router = useRouter()
-  const { setBackground, toggleRightSidebar } = useNavigation()
+  const { showRightSidebar, toggleRightSidebar, setBackground } = useAppState()
 
-  const { isAuthenticated, setAuthenticated } = useAuth()
+  const { isAuthenticated, setAuthenticated, user } = useAuth()
 
   const handleLogoutClick = async () => {
     await logout()
@@ -39,17 +36,6 @@ export function HeaderButtons() {
     setAuthenticated(false)
     router.push('/')
   }
-
-  useEffect(() => {
-    userMe()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) setUser(response?.data)
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
 
   return (
     <>
@@ -83,7 +69,7 @@ export function HeaderButtons() {
             </Button>
           </DropdownMenuTrigger>
           {isAuthenticated ? (
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-black text-white">
               <DropdownMenuItem asChild>
                 {!error ? (
                   <Link href="/users/me">
@@ -107,7 +93,7 @@ export function HeaderButtons() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           ) : (
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-black text-white">
               <DropdownMenuItem asChild>
                 <Link href="/login">Login</Link>
               </DropdownMenuItem>

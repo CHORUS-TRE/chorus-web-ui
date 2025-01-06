@@ -19,9 +19,9 @@ async function getAppById(id: string): Promise<App | undefined> {
 export default async function AppDetailsPage({
   params
 }: {
-  params: { appId: string }
+  params: { desktopId: string }
 }) {
-  const app = await getAppById(params.appId)
+  const app = await getAppById(params.desktopId)
 
   if (!app) {
     return <div>App not found</div>

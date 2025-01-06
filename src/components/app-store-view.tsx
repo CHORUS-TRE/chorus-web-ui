@@ -6,10 +6,10 @@ import { CirclePlus } from 'lucide-react'
 import { AppCard } from '~/components/app-card'
 import { AppCreateDialog } from '~/components/app-create-dialog'
 import { Button } from '~/components/button'
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { App } from '~/domain/model'
 import { AppType } from '~/domain/model/app'
+import { useToast } from '~/hooks/use-toast'
 
 import { appList } from './actions/app-view-model'
 
@@ -19,6 +19,7 @@ export function AppStoreView() {
   const [selectedType, setSelectedType] = useState<AppType>('app' as AppType)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
 
   const loadApps = async () => {
     try {
@@ -28,17 +29,40 @@ export function AppStoreView() {
 
       if (result.error) {
         setError(result.error)
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive',
+          className: 'bg-background text-white',
+          duration: 1000
+        })
         return
       }
 
       if (!result.data) {
         setError('No apps available')
+        toast({
+          title: 'Error',
+          description: 'No apps available',
+          variant: 'destructive',
+          className: 'bg-background text-white',
+          duration: 1000
+        })
         return
       }
 
       setApps(result.data)
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to load apps')
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to load apps'
+      setError(errorMessage)
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive',
+        className: 'bg-background text-white',
+        duration: 1000
+      })
     } finally {
       setIsLoading(false)
     }
@@ -58,13 +82,6 @@ export function AppStoreView() {
     <div className="flex min-h-screen flex-col">
       <section className="w-full py-12">
         <div className="container px-4 md:px-6">
-          {error && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
               <Tabs
@@ -74,6 +91,12 @@ export function AppStoreView() {
               >
                 <div className="mb-8 flex items-center justify-between">
                   <TabsList className="bg-background">
+                    <TabsTrigger
+                      value="myapps"
+                      className="data-[state=active]:text-primary-foreground"
+                    >
+                      My Apps
+                    </TabsTrigger>
                     <TabsTrigger
                       value="app"
                       className="data-[state=active]:text-primary-foreground"

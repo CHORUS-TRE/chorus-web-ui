@@ -6,11 +6,11 @@ import Image from 'next/image'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 
+import { AppStateProvider } from '@/components/store/app-state-context'
+
 import BackgroundIframe from '~/components/background-iframe'
-import HUD from '~/components/HUD'
 import RightSidebar from '~/components/right-sidebar'
 import { AuthProvider } from '~/components/store/auth-context'
-import { NavigationProvider } from '~/components/store/navigation-context'
 import { Toaster } from '~/components/ui/toaster'
 import { env } from '~/env'
 
@@ -54,11 +54,10 @@ export default function RootLayout({
       </head>
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider authenticated={authenticated}>
-          <NavigationProvider>
+          <AppStateProvider>
             {children}
             <RightSidebar show={true} />
-            <BackgroundIframe /> {/* z-10 */}
-            <HUD />
+            <BackgroundIframe />
             <Image
               alt="Background"
               src={cover}
@@ -69,7 +68,7 @@ export default function RootLayout({
               id="background"
               className="fixed left-0 top-0 h-full w-full"
             />
-          </NavigationProvider>
+          </AppStateProvider>
         </AuthProvider>
         <Toaster />
       </body>

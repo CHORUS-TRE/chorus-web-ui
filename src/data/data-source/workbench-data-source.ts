@@ -1,6 +1,7 @@
 import {
   Workbench,
-  WorkbenchCreate as WorkbenchCreateModel
+  WorkbenchCreateModel,
+  WorkbenchUpdateModel
 } from '@/domain/model'
 
 interface WorkbenchDataSource {
@@ -8,6 +9,7 @@ interface WorkbenchDataSource {
   get: (id: string) => Promise<Workbench>
   delete: (id: string) => Promise<boolean>
   list: () => Promise<Workbench[]>
+  update: (workbench: WorkbenchUpdateModel) => Promise<Workbench>
 }
 
 export type { WorkbenchDataSource }

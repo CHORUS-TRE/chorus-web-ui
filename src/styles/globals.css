@@ -58,11 +58,11 @@
   }
 
   h2 {
-    @apply text-4xl font-medium leading-10;
+    @apply border-b border-dotted border-muted pb-2 text-4xl font-medium leading-10;
   }
 
   h3 {
-    @apply border-b border-dotted border-muted pb-2 text-2xl font-medium tracking-tight;
+    @apply text-2xl font-medium tracking-tight;
   }
 
   h4 {
@@ -99,3 +99,19 @@
 /* .flex {
   border: 1px solid rgba(0, 0, 0, 0.2);
 } */
+
+nav {
+  position: relative;
+  z-index: 10;
+}
+
+nav + nav {
+  z-index: 9;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+nav:hover + nav,
+nav + nav:hover {
+  transform: translateY(0);
+}

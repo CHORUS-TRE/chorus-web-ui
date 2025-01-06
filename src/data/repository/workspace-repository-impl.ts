@@ -3,7 +3,8 @@ import {
   WorkspaceCreateModel,
   WorkspaceDeleteResponse,
   WorkspaceResponse,
-  WorkspacesResponse
+  WorkspacesResponse,
+  WorkspaceUpdateModel
 } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 
@@ -40,7 +41,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async delete(id: string): Promise<WorkspaceDeleteResponse> {
     try {
       const data = await this.dataSource.delete(id)
-      if (!data) return { error: 'Error deleting workbench' }
+      if (!data) return { error: 'Error deleting workspace' }
 
       return { data: true }
     } catch (error) {
@@ -52,12 +53,21 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async list(): Promise<WorkspacesResponse> {
     try {
       const data = await this.dataSource.list()
-
       if (!data) return { data: [] }
 
       return { data }
     } catch (error) {
       return { data: [], error: error.message }
+    }
+  }
+
+  async update(workspace: WorkspaceUpdateModel): Promise<WorkspaceResponse> {
+    try {
+      const data = await this.dataSource.update(workspace)
+      return { data }
+    } catch (error) {
+      console.error(error)
+      return { error: error.message }
     }
   }
 }
