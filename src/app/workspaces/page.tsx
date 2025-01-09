@@ -50,36 +50,36 @@ export default function Portal() {
 
   return (
     <>
-      <div className="mb-12 flex items-end justify-between">
+      <div className="">
         <h2 className="mt-5 text-white">Workspaces</h2>
-        <Button
-          onClick={() => setCreateOpen(true)}
-          className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-        >
-          <CirclePlus className="h-3.5 w-3.5" />
-          Create Workspace
-        </Button>
       </div>
 
       <div className="w-full">
+        <div className="mb-4 mt-2 flex justify-end">
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+          >
+            <CirclePlus className="h-3.5 w-3.5" />
+            Create Workspace
+          </Button>
+        </div>
         <Tabs defaultValue="all" className="">
           <div className="grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="all">My workspaces</TabsTrigger>
               <TabsTrigger
                 disabled
                 value="active"
                 className="cursor-default hover:border-b-transparent"
               >
-                Active
+                All
               </TabsTrigger>
               <TabsTrigger
                 disabled
                 value="archived"
                 className="hidden cursor-default hover:border-b-transparent sm:flex"
-              >
-                Archived
-              </TabsTrigger>
+              ></TabsTrigger>
             </TabsList>
             <div className="flex items-center justify-end gap-0">
               <UIButton
@@ -108,17 +108,13 @@ export default function Portal() {
           <TabsContent value="all" className="border-none">
             {showWorkspacesTable ? (
               <WorkspaceTable
-                workspaces={workspaces?.filter(
-                  (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
-                )}
+                workspaces={workspaces}
                 user={user}
                 onUpdate={refreshWorkspaces}
               />
             ) : (
               <WorkspacesGrid
-                workspaces={workspaces?.filter(
-                  (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
-                )}
+                workspaces={workspaces}
                 workbenches={workbenches}
                 user={user}
                 onUpdate={refreshWorkspaces}

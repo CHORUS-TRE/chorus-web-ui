@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight, EllipsisVerticalIcon, MonitorPlay } from 'lucide-react'
+import {
+  ArrowRight,
+  EllipsisVerticalIcon,
+  LaptopMinimal,
+  Rows3
+} from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
@@ -18,8 +22,6 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ResponsiveLine } from '@nivo/line'
 
-import { toast } from '~/hooks/use-toast'
-
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'
 import { useAuth } from './store/auth-context'
@@ -34,7 +36,6 @@ import {
 
 export function MyWorkspace() {
   const [openEdit, setOpenEdit] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const {
     setBackground,
@@ -42,15 +43,11 @@ export function MyWorkspace() {
     workspaces,
     refreshMyWorkspace,
     myWorkspace,
-    workbenches
+    workbenches,
+    appInstances,
+    apps
   } = useAppState()
   const { user } = useAuth()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
 
   return (
     <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -90,7 +87,7 @@ export function MyWorkspace() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-xs">
+            {/* <p className="text-xs">
               <strong>Owner: </strong>
               {user?.firstName} {user?.lastName}
             </p>
@@ -107,7 +104,7 @@ export function MyWorkspace() {
                 <strong>Updated: </strong>
                 {formatDistanceToNow(myWorkspace?.updatedAt ?? new Date())} ago
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 
@@ -123,10 +120,21 @@ export function MyWorkspace() {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle
+            className="flex cursor-pointer items-center justify-between"
+            onClick={() =>
+              router.push(`/workspaces/${myWorkspace?.id}/desktops`)
+            }
+          >
             Desktops
+            <Link
+              href={`/workspaces/${myWorkspace?.id}/desktops`}
+              className="text-muted hover:bg-inherit hover:text-accent"
+            >
+              <Rows3 className="h-3.5 w-3.5 shrink-0" />
+            </Link>
           </CardTitle>
-          <CardDescription>Your running desktops.</CardDescription>
+          <CardDescription>My running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[200px] pr-4">
@@ -136,19 +144,39 @@ export function MyWorkspace() {
                   (workbench) => workbench.workspaceId === myWorkspace?.id
                 )
                 .map(({ shortName, createdAt, id }) => (
-                  <div className="flex items-center justify-between" key={id}>
-                    <Link
-                      key={myWorkspace?.id}
-                      href={`/workspaces/${myWorkspace?.id}/desktops/${id}`}
-                      className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
-                    >
-                      <MonitorPlay className="mr-2 h-3.5 w-3.5" />
-                      {shortName}
-                    </Link>
-                    <p className="text-xs text-muted">
-                      {formatDistanceToNow(createdAt)} ago
-                    </p>
-                  </div>
+                  <Link
+                    key={myWorkspace?.id}
+                    href={`/workspaces/${myWorkspace?.id}/desktops/${id}`}
+                    className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent/75 hover:text-primary hover:shadow-lg"
+                  >
+                    <div className="flex-grow text-sm">
+                      <div className="flex items-center gap-2">
+                        <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                        {shortName}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {appInstances
+                          ?.filter(
+                            (instance) =>
+                              myWorkspace?.id === instance.workspaceId
+                          )
+                          ?.filter((instance) => id === instance.workbenchId)
+                          .map((instance, index, array) => {
+                            const appName =
+                              apps?.find((app) => app.id === instance.appId)
+                                ?.name || ''
+                            const isLast = index === array.length - 1
+
+                            return (
+                              <>
+                                {appName}
+                                {!isLast && ', '}
+                              </>
+                            )
+                          })}
+                      </div>
+                    </div>
+                  </Link>
                 ))}
             </div>
           </ScrollArea>
@@ -167,10 +195,10 @@ export function MyWorkspace() {
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/60 text-white">
+      {/* <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/60 text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Your workspaces
+            <Link href="/workspaces">My workspaces</Link>
           </CardTitle>
           <CardDescription>
             Workspaces you have access to and associated desktops.
@@ -188,7 +216,6 @@ export function MyWorkspace() {
                         href={`/workspaces/${id}`}
                         className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                       >
-                        {/* <FolderKanban className="h-3.5 w-3.5 mr-2" /> */}
                         {shortName}
                       </Link>
                       <span className="text-xs text-muted">
@@ -221,7 +248,7 @@ export function MyWorkspace() {
         </CardContent>
         <div className="flex-grow" />
         <CardFooter></CardFooter>
-      </Card>
+      </Card> */}
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>

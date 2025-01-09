@@ -1,4 +1,15 @@
 'use client'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition
+} from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { formatDistance } from 'date-fns'
 import {
   AppWindow,
@@ -7,10 +18,6 @@ import {
   LaptopMinimal,
   Search
 } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useParams, usePathname, useRouter } from 'next/navigation'
-import { Fragment, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
 import {
@@ -49,10 +56,10 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
-import { HeaderButtons } from './header-buttons'
-import NavLink from './nav-link'
 import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
+import { HeaderButtons } from './header-buttons'
+import NavLink from './nav-link'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
 
@@ -296,12 +303,16 @@ export function Header() {
                         <NavigationMenuList>
                           <NavigationMenuItem>
                             <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
-                            <Link href={`/workspaces/`} legacyBehavior passHref>
-                              <span className="flex items-center gap-2">
-                                <Folder className="h-3.5 w-3.5" />
-                                <span>My workspaces</span>
-                              </span>
-                            </Link>
+                              <Link
+                                href={`/workspaces/`}
+                                legacyBehavior
+                                passHref
+                              >
+                                <span className="flex items-center gap-2">
+                                  <Folder className="h-3.5 w-3.5" />
+                                  <span>My workspaces</span>
+                                </span>
+                              </Link>
                             </NavigationMenuTrigger>
                             <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                               <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
@@ -321,11 +332,18 @@ export function Header() {
                                           ) : (
                                             <Folder className="h-3.5 w-3.5" />
                                           )}
-                                          {workspace?.id === ALBERT_WORKSPACE_ID ? 'Home' : workspace?.shortName}
+                                          {workspace?.id === ALBERT_WORKSPACE_ID
+                                            ? 'Home'
+                                            : workspace?.shortName}
                                         </div>
                                         <span className="text-sm leading-snug text-muted-foreground">
                                           {(() => {
-                                            const w = workbenches?.filter((workbench) => workbench.workspaceId === workspace.id)?.length || 0
+                                            const w =
+                                              workbenches?.filter(
+                                                (workbench) =>
+                                                  workbench.workspaceId ===
+                                                  workspace.id
+                                              )?.length || 0
                                             return `${w} open ${w <= 1 ? 'desktop' : 'desktops'}`
                                           })()}
                                         </span>
@@ -346,7 +364,11 @@ export function Header() {
                         <NavigationMenuList>
                           <NavigationMenuItem>
                             <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
-                              <Link href={`/workspaces/${workspaceId}/desktops/`} legacyBehavior passHref>
+                              <Link
+                                href={`/workspaces/${workspaceId}/desktops/`}
+                                legacyBehavior
+                                passHref
+                              >
                                 <span className="flex items-center gap-2">
                                   <LaptopMinimal className="h-3.5 w-3.5" />
                                   <span>Desktops</span>
@@ -372,19 +394,32 @@ export function Header() {
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                           <div className="flex items-center gap-2">
-                                            {workbench.id === background?.workbenchId ? (
+                                            {workbench.id ===
+                                            background?.workbenchId ? (
                                               <LaptopMinimal className="h-3.5 w-3.5 text-accent" />
                                             ) : (
                                               <LaptopMinimal className="h-3.5 w-3.5" />
                                             )}
                                             {workbench.name}
                                           </div>
-                                          <span className="text-sm leading-snug text-muted-foreground font-semibold">
+                                          <span className="text-sm font-semibold leading-snug text-muted-foreground">
                                             {(() => {
-                                              const filteredApps = appInstances
-                                                ?.filter(instance => instance.workbenchId === workbench.id)
-                                                ?.map(instance => apps?.find(app => app.id === instance.appId)?.name)
-                                                ?.filter(Boolean) || []
+                                              const filteredApps =
+                                                appInstances
+                                                  ?.filter(
+                                                    (instance) =>
+                                                      instance.workbenchId ===
+                                                      workbench.id
+                                                  )
+                                                  ?.map(
+                                                    (instance) =>
+                                                      apps?.find(
+                                                        (app) =>
+                                                          app.id ===
+                                                          instance.appId
+                                                      )?.name
+                                                  )
+                                                  ?.filter(Boolean) || []
 
                                               return `${filteredApps.length} ${filteredApps.length === 1 ? 'app' : 'apps'}: ${filteredApps.join(', ')}`
                                             })()}
@@ -421,12 +456,23 @@ export function Header() {
                                     className="p-1 font-semibold"
                                     onClick={() => setShowAboutDialog(true)}
                                   ></ListItem>
-                                  <span className="pl-1 text-sm leading-snug text-muted-foreground font-semibold">
+                                  <span className="pl-1 text-sm font-semibold leading-snug text-muted-foreground">
                                     {(() => {
-                                      const filteredApps = appInstances
-                                        ?.filter(instance => instance.workbenchId === currentWorkbench.id)
-                                        ?.map(instance => apps?.find(app => app.id === instance.appId)?.name)
-                                        ?.filter(Boolean) || []
+                                      const filteredApps =
+                                        appInstances
+                                          ?.filter(
+                                            (instance) =>
+                                              instance.workbenchId ===
+                                              currentWorkbench.id
+                                          )
+                                          ?.map(
+                                            (instance) =>
+                                              apps?.find(
+                                                (app) =>
+                                                  app.id === instance.appId
+                                              )?.name
+                                          )
+                                          ?.filter(Boolean) || []
 
                                       return `${filteredApps.length} ${filteredApps.length === 1 ? 'app' : 'apps'}: ${filteredApps.join(', ')}`
                                     })()}
@@ -475,7 +521,9 @@ export function Header() {
                       </NavigationMenu>
                     )}
 
-                    {index === 1 && <BreadcrumbSeparator className="text-muted" />}
+                    {index === 1 && (
+                      <BreadcrumbSeparator className="text-muted" />
+                    )}
                   </Fragment>
                 ))}
               </BreadcrumbList>
@@ -713,7 +761,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => { }}
+            onUpdate={() => {}}
           />
         )}
       </nav>

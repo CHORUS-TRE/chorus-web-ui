@@ -2,8 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
-import { TvMinimalPlay } from 'lucide-react'
+import { FolderOpen, LaptopMinimal } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 
@@ -35,14 +34,16 @@ export function MainLayout({ children }: MainLayoutProps) {
             id="iframe-overlay"
           >
             <div className="pl-4 pt-32 text-white">
-              <p className="text-sm opacity-50">{workspace?.shortName}</p>
-              <p className="font-bold opacity-50">{workbench?.name}</p>
               <div className="flex items-center pt-2">
-                <TvMinimalPlay className="mr-2 h-4 w-4 opacity-70" />
-                <span className="text-xs text-muted-foreground">
-                  {workbench?.createdAt
-                    ? formatDistanceToNow(workbench?.createdAt)
-                    : ''}
+                <FolderOpen className="mr-2 h-4 w-4 opacity-70" />
+                <span className="text-sm opacity-50">
+                  {workspace?.shortName}
+                </span>
+              </div>
+              <div className="flex items-center">
+                <LaptopMinimal className="mr-2 h-4 w-4 opacity-70" />
+                <span className="font-semibold opacity-50">
+                  {workbench?.name}
                 </span>
               </div>
             </div>

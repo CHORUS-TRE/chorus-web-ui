@@ -13,7 +13,9 @@ export default async function Page({
 
   return (
     <div className="flex flex-col">
-      {workspaceId && <WorkbenchTable workspaceId={workspaceId} />}
+      {workspaceId && (
+        <WorkbenchTable workspaceId={workspaceId} title="Desktops" />
+      )}
     </div>
   )
 }

@@ -3,18 +3,16 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  AppWindow,
   ArrowRight,
   EllipsisVerticalIcon,
-  MonitorPlay,
-  Play
+  LaptopMinimal,
+  Rows3
 } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
@@ -51,7 +49,7 @@ export function Workspace({
   workspaceOwner?: User
   onUpdate?: (id: string) => void
 }) {
-  const { setBackground } = useAppState()
+  const { setBackground, appInstances, workspaces, apps } = useAppState()
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
 
@@ -134,25 +132,59 @@ export function Workspace({
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle
+            className="flex cursor-pointer items-center justify-between"
+            onClick={() => router.push(`/workspaces/${workspace.id}/desktops`)}
+          >
             Desktops
+            <Link
+              href={`/workspaces/${workspace.id}/desktops`}
+              className="text-muted hover:bg-inherit hover:text-accent"
+            >
+              <Rows3 className="h-3.5 w-3.5 shrink-0" />
+            </Link>
           </CardTitle>
           <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2">
             {workbenches?.map(({ shortName, createdAt, id }) => (
-              <div className="flex items-center justify-between" key={id}>
-                <Link
-                  key={workspace.id}
-                  href={`/workspaces/${workspace.id}/desktops/${id}`}
-                  className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
-                >
-                  <MonitorPlay className="mr-2 h-3.5 w-3.5" />
-                  {shortName}
-                </Link>
-                <p className="text-xs">{formatDistanceToNow(createdAt)} ago</p>
-              </div>
+              <>
+                <div className="flex items-center justify-between" key={id}>
+                  <Link
+                    key={workspace.id}
+                    href={`/workspaces/${workspace.id}/desktops/${id}`}
+                    className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                  >
+                    <LaptopMinimal className="mr-2 h-3.5 w-3.5" />
+                    {shortName}
+                  </Link>
+                  <p className="text-xs">
+                    {formatDistanceToNow(createdAt)} ago
+                  </p>
+                </div>
+                <blockquote>
+                  {appInstances
+                    ?.filter(
+                      (instance) => workspace?.id === instance.workspaceId
+                    )
+                    ?.filter((instance) => id === instance.workbenchId)
+                    .map((instance) => {
+                      return (
+                        <span
+                          key={instance.id}
+                          className="flex items-center gap-2"
+                        >
+                          <AppWindow className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">
+                            {apps?.find((app) => app.id === instance.appId)
+                              ?.name || ''}
+                          </span>
+                        </span>
+                      )
+                    })}
+                </blockquote>
+              </>
             ))}
           </div>
         </CardContent>

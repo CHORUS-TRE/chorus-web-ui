@@ -1,18 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { MoreVertical, Pencil, Trash } from 'lucide-react'
+import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
 
 import { AppEditDialog } from '~/components/app-edit-dialog'
+import { Button } from '~/components/button'
 import { DeleteDialog } from '~/components/delete-dialog'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
@@ -78,8 +74,8 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
   return (
     <>
-      <Card className="flex flex-col overflow-hidden border bg-background/40 transition-colors hover:bg-background/80">
-        <CardHeader className="flex-row items-start justify-between space-y-0 border-b border-border pb-2">
+      <Card className="flex flex-col overflow-hidden border border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+        <CardHeader className="flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2">
           <div className="flex items-center space-x-4">
             <Avatar className="h-12 w-12">
               <AvatarImage
@@ -90,7 +86,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
                 {app.name?.slice(0, 2)}
               </AvatarFallback>
             </Avatar>
-            <CardTitle className="text-xl font-semibold text-white">
+            <CardTitle className="border-b-0 text-xl font-semibold text-white">
               {app.name || 'Unnamed App'}
             </CardTitle>
           </div>
@@ -98,7 +94,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-8 w-8 p-0 text-white hover:bg-background/20"
+                className="h-8 w-8 p-0 text-white ring-0 hover:bg-background/20"
                 disabled={isDeleting}
               >
                 <span className="sr-only">Open menu</span>
@@ -140,6 +136,16 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         </CardContent>
         <CardFooter className="mt-auto">
           {error && <p className="text-sm text-destructive">{error}</p>}
+          <Button
+            onClick={() => {
+              /* TODO: Implement add to my apps */
+            }}
+            className=""
+            disabled={isDeleting}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add to My Apps
+          </Button>
         </CardFooter>
       </Card>
 

@@ -72,9 +72,7 @@ export default function Portal() {
           </WorkspaceCreateForm>
         </div>
         <WorkspaceTable
-          workspaces={workspaces?.filter(
-            (workspace) => workspace.id !== ALBERT_WORKSPACE_ID
-          )}
+          workspaces={workspaces}
           user={user}
           onUpdate={refreshWorkspaces}
         />
