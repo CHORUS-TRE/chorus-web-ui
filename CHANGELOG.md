@@ -1,3 +1,11 @@
+# [1.0.0-alpha.13](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2025-01-09)
+
+
+### Features
+
+* add AppStoreHero component ([1bbfa4e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1bbfa4ed9a3d7a2e77cf7cccde04581a59a2754e))
+* implement CRUD operations for AppInstance with listing, updating, and deleting functionalities ([db2b177](https://github.com/CHORUS-TRE/chorus-web-ui/commit/db2b177b7ec518f823702ae309dd24a3cd03f4e4))
+
 # [1.0.0-alpha.12](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.11...v1.0.0-alpha.12) (2025-01-06)
 
 
