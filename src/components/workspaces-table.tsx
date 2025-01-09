@@ -37,6 +37,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
+import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
 
 export default function WorkspaceTable({
   workspaces,
@@ -133,9 +134,11 @@ export default function WorkspaceTable({
             if (onUpdate) onUpdate()
           }}
         />
-        <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
+        <TableRowComponent className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
           <TableCell className="p-1 font-medium">
-            <Link href={`/workspaces/${workspace?.id}`}>{workspace?.name}</Link>
+            <Link href={`/workspaces/${workspace?.id}`}>
+              {workspace?.id === ALBERT_WORKSPACE_ID ? 'Home' : workspace?.name}
+            </Link>
           </TableCell>
           <TableCell className="p-1 font-medium">
             <Link href={`/workspaces/${workspace?.id}`}>
@@ -191,7 +194,7 @@ export default function WorkspaceTable({
 
   return (
     <>
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
         {title && (
           <CardHeader>
             <CardTitle>{title}</CardTitle>

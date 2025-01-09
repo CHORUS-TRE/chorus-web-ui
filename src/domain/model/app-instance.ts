@@ -30,3 +30,17 @@ export interface AppInstanceResponse {
   data?: AppInstance
   error?: string
 }
+
+export interface AppInstanceDeleteResponse {
+  data?: boolean
+  error?: string
+}
+
+export interface AppInstancesResponse {
+  data?: AppInstance[]
+  error?: string
+}
+
+export interface AppInstanceUpdateModel extends AppInstanceCreateModel {
+  id: string
+}

@@ -1,16 +1,13 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
-
-import MyWorkspaceMenu from '@/app/(home)/menu'
 
 import {
   ALBERT_WORKSPACE_ID,
   useAppState
 } from '~/components/store/app-state-context'
-
-import WorkspaceMenu from './menu'
 
 export default function Layout({
   children
@@ -24,23 +21,22 @@ export default function Layout({
     <>
       <div className="">
         <h2 className="mb-8 mt-5 text-white">
-          {workspace ? (
-            params?.workspaceId === ALBERT_WORKSPACE_ID ? (
-              'Home'
+          <Link
+            href={`/workspaces/${workspace?.id}`}
+            className="text-white hover:bg-inherit hover:text-accent"
+          >
+            {workspace ? (
+              params?.workspaceId === ALBERT_WORKSPACE_ID ? (
+                'Home'
+              ) : (
+                workspace.shortName
+              )
             ) : (
-              workspace.shortName
-            )
-          ) : (
-            <span className="animate-pulse">Loading workspace...</span>
-          )}
+              <span className="animate-pulse">Loading workspace...</span>
+            )}
+          </Link>
         </h2>
       </div>
-      {params?.workspaceId === ALBERT_WORKSPACE_ID ? (
-        <MyWorkspaceMenu id={ALBERT_WORKSPACE_ID} />
-      ) : (
-        <WorkspaceMenu id={params?.workspaceId} />
-      )}
-
       {children}
     </>
   )

@@ -1,13 +1,14 @@
 'use client'
 
-// https://ui.shadcn.com/docs/components/data-table
-
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon, MonitorPlay, PlusIcon } from 'lucide-react'
+import { ArrowRight, EllipsisVerticalIcon } from 'lucide-react'
 
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
@@ -34,7 +35,6 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
@@ -46,19 +46,30 @@ import {
 
 export default function WorkbenchTable({
   workspaceId,
+  title,
+  description,
   onUpdate
 }: {
   workspaceId: string
+  title?: string
+  description?: string
   onUpdate?: (id: string) => void
 }) {
-  const { workbenches, refreshWorkbenches, background, setBackground } =
-    useAppState()
+  const {
+    workbenches,
+    refreshWorkbenches,
+    background,
+    setBackground,
+    appInstances,
+    apps
+  } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
   const { toast } = useToast()
 
-  const filteredWorkbenches = workbenches?.filter(
-    (w) => w.workspaceId === workspaceId
-  )
+  const filteredWorkbenches =
+    workspaceId === ALBERT_WORKSPACE_ID
+      ? workbenches
+      : workbenches?.filter((w) => w.workspaceId === workspaceId)
 
   useEffect(() => {
     if (deleted) {
@@ -73,28 +84,21 @@ export default function WorkbenchTable({
 
   const TableHeads = () => (
     <>
-      <TableHead>
+      {/* <TableHead className="text-white">
         <span className="sr-only">Desktop</span>
-      </TableHead>
-      <TableHead>Name</TableHead>
-      <TableHead className="hidden md:table-cell">Created</TableHead>
+      </TableHead> */}
+      <TableHead className="text-white">Desktop</TableHead>
+      <TableHead className="text-white">Running Apps</TableHead>
+      <TableHead className="hidden text-white md:table-cell">Created</TableHead>
 
-      <TableHead>Status</TableHead>
-      <TableHead>
-        <span className="sr-only">Actions</span>
+      <TableHead className="text-white">Status</TableHead>
+      <TableHead className="text-white" colSpan={2}>
+        <span className="text-white">Actions</span>
       </TableHead>
     </>
   )
 
-  const TableRow = ({
-    workbench,
-    title,
-    description
-  }: {
-    workbench?: Workbench
-    title?: string
-    description?: string
-  }) => {
+  const TableRow = ({ workbench }: { workbench?: Workbench }) => {
     const [open, setOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
     const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
@@ -129,19 +133,29 @@ export default function WorkbenchTable({
           }}
         />
 
-        <TableRowComponent className="cursor-pointer bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
-          <TableCell className="p-1" align="center">
+        <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+          {/* <TableCell className="p-1" align="center">
             <MonitorPlay className="h-3.5 w-3.5" />
-          </TableCell>
+          </TableCell> */}
           <TableCell className="p-1 font-medium">
-            <Link
-              href={link}
-              className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
-            >
-              {workbench?.shortName}
-            </Link>
+            {workbench?.shortName}
           </TableCell>
+          <TableCell className="hidden p-1 md:table-cell">
+            {appInstances
+              ?.filter((instance) => workbench?.id === instance.workbenchId)
+              .map((instance, index, array) => {
+                const appName =
+                  apps?.find((app) => app.id === instance.appId)?.name || ''
+                const isLast = index === array.length - 1
 
+                return (
+                  <>
+                    {appName}
+                    {!isLast && ', '}
+                  </>
+                )
+              })}
+          </TableCell>
           <TableCell
             className="hidden p-1 md:table-cell"
             title={workbench?.createdAt.toLocaleDateString()}
@@ -150,6 +164,17 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell className="p-1">
             <Badge variant="outline">{workbench?.status}</Badge>
+          </TableCell>
+          <TableCell className="p-1">
+            <Link
+              href={link}
+              className="text-accent hover:border-b-2 hover:border-accent"
+            >
+              <div className="flex items-center gap-2">
+                <ArrowRight className="h-3.5 w-3.5" />
+                <span>Go</span>
+              </div>
+            </Link>
           </TableCell>
           <TableCell className="p-1">
             <DropdownMenu modal={false}>
@@ -196,7 +221,7 @@ export default function WorkbenchTable({
     title?: string
     description?: string
   }) => (
-    <Card className="flex h-full flex-col justify-between rounded-2xl border-secondary bg-background/40 text-white duration-300">
+    <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
       {title && (
         <CardHeader>
           <CardTitle>{title}</CardTitle>
@@ -206,8 +231,7 @@ export default function WorkbenchTable({
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRowComponent className="cursor-pointer transition-colors hover:border-accent hover:bg-background/80">
-              {' '}
+            <TableRowComponent className="hover:bg-background/80">
               <TableHeads />
             </TableRowComponent>
           </TableHeader>
@@ -227,48 +251,27 @@ export default function WorkbenchTable({
 
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
-      <Tabs defaultValue="all">
-        <div className="flex items-center justify-between">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="archived" className="hidden sm:flex">
-              Archived
-            </TabsTrigger>
-          </TabsList>
-          <WorkbenchCreateForm
-            workspaceId={workspaceId}
-            onUpdate={(workbenchId) => {
-              refreshWorkbenches()
-              toast({
-                title: 'Success!',
-                description: 'Desktop created successfully',
-                className: 'bg-background text-white',
-                duration: 1000
-              })
-              setBackground({ workbenchId, workspaceId })
-              if (onUpdate) onUpdate(workbenchId)
-            }}
-          />
-        </div>
-        <TabsContent value="all">
-          <CardContainer workbenches={filteredWorkbenches} />
-        </TabsContent>
-        <TabsContent value="active">
-          <CardContainer
-            workbenches={filteredWorkbenches?.filter(
-              (a) => a.status === 'active'
-            )}
-          />
-        </TabsContent>
-        <TabsContent value="archived">
-          <CardContainer
-            workbenches={filteredWorkbenches?.filter(
-              (a) => a.status !== 'active'
-            )}
-          />
-        </TabsContent>
-      </Tabs>
+      <div className="flex items-center justify-end">
+        <WorkbenchCreateForm
+          workspaceId={workspaceId}
+          onUpdate={(workbenchId) => {
+            refreshWorkbenches()
+            toast({
+              title: 'Success!',
+              description: 'Desktop created successfully',
+              className: 'bg-background text-white',
+              duration: 1000
+            })
+            setBackground({ workbenchId, workspaceId })
+            if (onUpdate) onUpdate(workbenchId)
+          }}
+        />
+      </div>
+      <CardContainer
+        workbenches={filteredWorkbenches}
+        title={title}
+        description={description}
+      />
     </div>
   )
 }
