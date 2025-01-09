@@ -61,6 +61,8 @@ type AppStateContextType = {
   appInstances: AppInstance[] | undefined
   setAppInstances: Dispatch<SetStateAction<AppInstance[] | undefined>>
   refreshAppInstances: () => Promise<void>
+  showAppStoreHero: boolean
+  toggleAppStoreHero: () => void
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -87,7 +89,9 @@ const AppStateContext = createContext<AppStateContextType>({
   refreshApps: async () => {},
   appInstances: undefined,
   setAppInstances: () => {},
-  refreshAppInstances: async () => {}
+  refreshAppInstances: async () => {},
+  showAppStoreHero: true,
+  toggleAppStoreHero: () => {}
 })
 
 export const AppStateProvider = ({
@@ -115,7 +119,22 @@ export const AppStateProvider = ({
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
   )
+  const [showAppStoreHero, setShowAppStoreHero] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('showAppStoreHero')
+      return saved !== null ? JSON.parse(saved) : true
+    }
+    return true
+  })
   const { isAuthenticated } = useAuth()
+
+  useEffect(() => {
+    localStorage.setItem('showAppStoreHero', JSON.stringify(showAppStoreHero))
+  }, [showAppStoreHero])
+
+  const toggleAppStoreHero = useCallback(() => {
+    setShowAppStoreHero((prev) => !prev)
+  }, [])
 
   const refreshWorkspaces = useCallback(async () => {
     try {
@@ -192,6 +211,8 @@ export const AppStateProvider = ({
     setError(undefined)
     setApps(undefined)
     setAppInstances(undefined)
+    setShowAppStoreHero(true)
+    localStorage.removeItem('showAppStoreHero')
   }, [])
 
   useEffect(() => {
@@ -233,7 +254,9 @@ export const AppStateProvider = ({
         refreshApps,
         appInstances,
         setAppInstances,
-        refreshAppInstances
+        refreshAppInstances,
+        showAppStoreHero,
+        toggleAppStoreHero
       }}
     >
       {children}
