@@ -100,18 +100,3 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
 } */
 
-nav {
-  position: relative;
-  z-index: 10;
-}
-
-nav + nav {
-  z-index: 9;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease-in-out;
-}
-
-nav:hover + nav,
-nav + nav:hover {
-  transform: translateY(0);
-}

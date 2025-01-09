@@ -1,13 +1,16 @@
 'use client'
-import React, { useEffect, useState, useTransition } from 'react'
-import { Fragment, useCallback, useMemo } from 'react'
+import { formatDistance } from 'date-fns'
+import {
+  AppWindow,
+  Folder,
+  FolderOpen,
+  LaptopMinimal,
+  Search
+} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
-import { formatDistanceToNow } from 'date-fns'
-import { formatDistance } from 'date-fns'
-import { Maximize, MonitorPlay, Play, Search, Trash } from 'lucide-react'
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { Fragment, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
 import {
@@ -22,34 +25,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { Input } from '@/components/ui/input'
-import {
-  Menubar,
-  MenubarCheckboxItem,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger
-} from '@/components/ui/menubar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@radix-ui/react-dropdown-menu'
+import { Separator } from '@/components/ui/separator'
 
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
@@ -67,10 +49,10 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
-import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
-import { useAuth } from './store/auth-context'
 import { HeaderButtons } from './header-buttons'
 import NavLink from './nav-link'
+import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
+import { useAuth } from './store/auth-context'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
 
@@ -90,6 +72,8 @@ export function Header() {
   const {
     workbenches,
     workspaces,
+    apps,
+    appInstances,
     error,
     setError,
     background,
@@ -113,7 +97,6 @@ export function Header() {
   const [updateOpen, setUpdateOpen] = useState(false)
   const isAlbertWorkspace = params?.workspaceId === ALBERT_WORKSPACE_ID
   const [showAboutDialog, setShowAboutDialog] = useState(false)
-  const [showSecondNav, setShowSecondNav] = useState(true)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -159,37 +142,40 @@ export function Header() {
 
   // Handle data fetching and updates
   const updateBreadcrumbItems = useCallback(async () => {
-    let updatedItems: BreadcrumbItem[] = [...initialItems]
+    const updatedItems: BreadcrumbItem[] = [...initialItems]
 
     if (params?.workspaceId) {
       // Special handling for ALBERT_WORKSPACE_ID
-      if (params.workspaceId === ALBERT_WORKSPACE_ID) {
-        // For desktop view: Home > Desktops > [desktop-name]
-        if (params.desktopId) {
-          const workbench = workbenches?.find((w) => w.id === params.desktopId)
-          updatedItems = [
-            { name: 'Home', href: '/' },
-            { name: 'Desktops', href: `workspaces/${ALBERT_WORKSPACE_ID}` }
-          ]
-          if (workbench?.shortName) {
-            updatedItems.push({
-              name: workbench.shortName,
-              href: `workspaces/${ALBERT_WORKSPACE_ID}/desktops/${params.desktopId}`
-            })
-          }
-        } else {
-          // For workspace view: Just show Home
-          updatedItems = [{ name: 'Home', href: '/' }]
+      // if (params.workspaceId === ALBERT_WORKSPACE_ID) {
+      // For desktop view: Home > Desktops > [desktop-name]
+      // if (params.desktopId) {
+      //   const workbench = workbenches?.find((w) => w.id === params.desktopId)
+      //   updatedItems = [
+      //     { name: 'Home', href: '/' },
+      //     { name: 'Desktops', href: `workspaces/${ALBERT_WORKSPACE_ID}` }
+      //   ]
+      //   if (workbench?.shortName) {
+      //     updatedItems.push({
+      //       name: workbench.shortName,
+      //       href: `workspaces/${ALBERT_WORKSPACE_ID}/desktops/${params.desktopId}`
+      //     })
+      //   }
+      // } else {
+      //   // For workspace view: Just show Home
+      //   updatedItems = [{ nam  e: 'Home', href: '/' }]
+      // }
+      // } else {
+      // Regular workspace handling
+      const workspace = workspaces?.find((w) => w.id === params.workspaceId)
+      if (workspace?.shortName) {
+        updatedItems[1] = {
+          ...updatedItems[1],
+          name:
+            params.workspaceId === ALBERT_WORKSPACE_ID
+              ? 'Home'
+              : workspace.shortName
         }
-      } else {
-        // Regular workspace handling
-        const workspace = workspaces?.find((w) => w.id === params.workspaceId)
-        if (workspace?.shortName) {
-          updatedItems[1] = {
-            ...updatedItems[1],
-            name: workspace.shortName
-          }
-        }
+        // }
 
         if (params?.desktopId) {
           const workbench = workbenches?.find((w) => w.id === params.desktopId)
@@ -249,16 +235,6 @@ export function Header() {
     }
   }, [deleted])
 
-  useEffect(() => {
-    if (isInAppContext && currentWorkbench) {
-      const timer = setTimeout(() => {
-        setShowSecondNav(false)
-      }, 3000)
-
-      return () => clearTimeout(timer)
-    }
-  }, [isInAppContext, currentWorkbench])
-
   // Extract Item component
   const BreadcrumbItemComponent = ({ name, href }: ItemProps) => (
     <BreadcrumbItem>
@@ -304,27 +280,202 @@ export function Header() {
             <Breadcrumb className="mt-1 pl-2">
               <BreadcrumbList className="text-primary-foreground">
                 {paths && paths.length > 1 && <BreadcrumbSeparator />}
-                {/* <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1">
-              <BreadcrumbEllipsis className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>Documentation</DropdownMenuItem>
-              <DropdownMenuItem>Themes</DropdownMenuItem>
-              <DropdownMenuItem>GitHub</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
                 {items.map((item, index) => (
                   <Fragment key={item.href}>
-                    {index === 3 && (
-                      <MonitorPlay className="h-3.5 w-3.5 text-muted-foreground" />
+                    {/* Home and Workspaces Menu */}
+                    {index === 1 && (
+                      <BreadcrumbItemComponent
+                        href={item.href ? `/${item.href}` : undefined}
+                        name={item.name}
+                      />
                     )}
-                    <BreadcrumbItemComponent
-                      href={item.href ? `/${item.href}` : undefined}
-                      name={item.name}
-                    />
-                    {index < items.length - 1 && <BreadcrumbSeparator />}
+
+                    {/* Workspaces Menu */}
+                    {index === 0 && (
+                      <NavigationMenu>
+                        <NavigationMenuList>
+                          <NavigationMenuItem>
+                            <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
+                            <Link href={`/workspaces/`} legacyBehavior passHref>
+                              <span className="flex items-center gap-2">
+                                <Folder className="h-3.5 w-3.5" />
+                                <span>My workspaces</span>
+                              </span>
+                            </Link>
+                            </NavigationMenuTrigger>
+                            <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                              <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                                {workspaces?.map((workspace) => (
+                                  <NavigationMenuItem
+                                    key={workspace.id}
+                                    className="group/workspace relative"
+                                  >
+                                    <ListItem
+                                      className="p-1 font-semibold"
+                                      href={`/workspaces/${workspace.id}`}
+                                    >
+                                      <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
+                                        <div className="flex items-center gap-2">
+                                          {workspace.id === workspaceId ? (
+                                            <FolderOpen className="h-3.5 w-3.5 text-accent" />
+                                          ) : (
+                                            <Folder className="h-3.5 w-3.5" />
+                                          )}
+                                          {workspace?.id === ALBERT_WORKSPACE_ID ? 'Home' : workspace?.shortName}
+                                        </div>
+                                        <span className="text-sm leading-snug text-muted-foreground">
+                                          {(() => {
+                                            const w = workbenches?.filter((workbench) => workbench.workspaceId === workspace.id)?.length || 0
+                                            return `${w} open ${w <= 1 ? 'desktop' : 'desktops'}`
+                                          })()}
+                                        </span>
+                                      </div>
+                                    </ListItem>
+                                  </NavigationMenuItem>
+                                ))}
+                              </ul>
+                            </NavigationMenuContent>
+                          </NavigationMenuItem>
+                        </NavigationMenuList>
+                      </NavigationMenu>
+                    )}
+
+                    {/* Desktops Menu */}
+                    {index === 2 && (
+                      <NavigationMenu>
+                        <NavigationMenuList>
+                          <NavigationMenuItem>
+                            <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
+                              <Link href={`/workspaces/${workspaceId}/desktops/`} legacyBehavior passHref>
+                                <span className="flex items-center gap-2">
+                                  <LaptopMinimal className="h-3.5 w-3.5" />
+                                  <span>Desktops</span>
+                                </span>
+                              </Link>
+                            </NavigationMenuTrigger>
+                            <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                              <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                                {/* Desktop Info Section */}
+                                {workbenches
+                                  ?.filter(
+                                    (workbench) =>
+                                      workbench.workspaceId === workspaceId
+                                  )
+                                  .map((workbench) => (
+                                    <NavigationMenuItem
+                                      key={workbench.id}
+                                      className="group/desktop relative"
+                                    >
+                                      <ListItem
+                                        className="p-1 font-semibold"
+                                        href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                      >
+                                        <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
+                                          <div className="flex items-center gap-2">
+                                            {workbench.id === background?.workbenchId ? (
+                                              <LaptopMinimal className="h-3.5 w-3.5 text-accent" />
+                                            ) : (
+                                              <LaptopMinimal className="h-3.5 w-3.5" />
+                                            )}
+                                            {workbench.name}
+                                          </div>
+                                          <span className="text-sm leading-snug text-muted-foreground font-semibold">
+                                            {(() => {
+                                              const filteredApps = appInstances
+                                                ?.filter(instance => instance.workbenchId === workbench.id)
+                                                ?.map(instance => apps?.find(app => app.id === instance.appId)?.name)
+                                                ?.filter(Boolean) || []
+
+                                              return `${filteredApps.length} ${filteredApps.length === 1 ? 'app' : 'apps'}: ${filteredApps.join(', ')}`
+                                            })()}
+                                          </span>
+                                        </div>
+                                      </ListItem>
+                                      {/* </NavigationMenuLink> */}
+                                    </NavigationMenuItem>
+                                  ))}
+                              </ul>
+                            </NavigationMenuContent>
+                          </NavigationMenuItem>
+                        </NavigationMenuList>
+                      </NavigationMenu>
+                    )}
+
+                    {/* Desktop Menu */}
+                    {index === 3 && (
+                      <NavigationMenu>
+                        <NavigationMenuList>
+                          {isInAppContext && currentWorkbench && (
+                            <NavigationMenuItem>
+                              <NavigationMenuTrigger className="xtext-sm border-b-2 border-accent font-normal text-white hover:border-b-2 hover:border-accent">
+                                <span className="flex items-center gap-2">
+                                  <LaptopMinimal className="h-3.5 w-3.5" />
+                                  <span>{currentWorkbench.name}</span>
+                                </span>
+                              </NavigationMenuTrigger>
+                              <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                                <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                                  {/* Desktop Info Section */}
+                                  <ListItem
+                                    title={`About ${currentWorkbench?.name}`}
+                                    className="p-1 font-semibold"
+                                    onClick={() => setShowAboutDialog(true)}
+                                  ></ListItem>
+                                  <span className="pl-1 text-sm leading-snug text-muted-foreground font-semibold">
+                                    {(() => {
+                                      const filteredApps = appInstances
+                                        ?.filter(instance => instance.workbenchId === currentWorkbench.id)
+                                        ?.map(instance => apps?.find(app => app.id === instance.appId)?.name)
+                                        ?.filter(Boolean) || []
+
+                                      return `${filteredApps.length} ${filteredApps.length === 1 ? 'app' : 'apps'}: ${filteredApps.join(', ')}`
+                                    })()}
+                                  </span>
+                                  <Separator className="m-1 my-2" />
+                                  {/* Settings Section */}
+                                  <ListItem
+                                    title="Settings..."
+                                    className="cursor-pointer p-1 hover:bg-accent"
+                                    onClick={() => setUpdateOpen(true)}
+                                  ></ListItem>
+
+                                  {/* Start New App Section */}
+                                  <ListItem
+                                    title="Start New App..."
+                                    className="cursor-pointer p-1 hover:bg-accent"
+                                    onClick={() => setCreateOpen(true)}
+                                  ></ListItem>
+                                  <Separator className="m-1 my-2" />
+                                  {/* Fullscreen Section */}
+                                  <ListItem
+                                    title="Toggle Fullscreen"
+                                    className="cursor-pointer p-1 hover:bg-accent"
+                                    onClick={() => {
+                                      const iframe =
+                                        document.getElementById('iframe')
+                                      if (iframe) {
+                                        iframe.requestFullscreen()
+                                      }
+                                    }}
+                                  ></ListItem>
+
+                                  <Separator className="m-1 my-2" />
+
+                                  {/* Quit Section */}
+                                  <ListItem
+                                    title="Quit ..."
+                                    className="cursor-pointer p-1"
+                                    onClick={() => setDeleteOpen(true)}
+                                  ></ListItem>
+                                </ul>
+                              </NavigationMenuContent>
+                            </NavigationMenuItem>
+                          )}
+                        </NavigationMenuList>
+                      </NavigationMenu>
+                    )}
+
+                    {index === 1 && <BreadcrumbSeparator className="text-muted" />}
                   </Fragment>
                 ))}
               </BreadcrumbList>
@@ -350,7 +501,10 @@ export function Header() {
                 className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                 exact={isAlbertWorkspace}
               >
-                Workspaces
+                <div className="mt-1 flex items-center gap-2">
+                  <Folder className="h-3.5 w-3.5" />
+                  Workspaces
+                </div>
               </NavLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
@@ -362,6 +516,74 @@ export function Header() {
               </NavLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <NavigationMenuTrigger>
+                <div className="mt-1 flex items-center gap-2">
+                  <AppWindow className="h-3.5 w-3.5" />
+                  <span>My Apps</span>
+                </div>
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                <ul className="grid gap-3 bg-black bg-opacity-85 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
+                  {apps?.map((app) => (
+                    <ListItem key={app.name} title={''}>
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          {app.name === 'vscode' && (
+                            <AvatarImage
+                              src="/vscode.png"
+                              className="m-auto h-8 w-8"
+                            />
+                          )}
+                          <AvatarFallback>
+                            {app?.name?.slice(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <AppWindow className="h-3.5 w-3.5" />
+                            <span className="text-sm font-medium leading-none">
+                              {app.name}
+                            </span>
+                          </div>
+
+                          <span className="text-sm text-muted-foreground">
+                            {app.dockerImageName}:{app.dockerImageTag}
+                          </span>
+
+                          {/* <div className="ml-auto flex flex-col items-center gap-2">
+                            {appInstances
+                              ?.filter((instance) => instance.appId === app.id)
+                              ?.filter((instance) => workspaces?.some((w) => w.id === instance.workspaceId))
+                              ?.filter((instance) => workbenches?.some((w) => w.id === instance.workbenchId))
+                              .map((instance) => {
+                                const workbench = workbenches?.find(
+                                  (w) => w.id === instance.workbenchId
+                                )
+                                const workspace = workspaces?.find(
+                                  (w) => w.id === instance.workspaceId
+                                )
+                                return (
+                                  <Link
+                                    key={instance.id}
+                                    href={`/workspaces/${instance.workspaceId}/desktops/${instance.workbenchId}`}
+                                    className="flex items-center gap-1 rounded bg-accent px-2 py-1 text-xs hover:bg-accent/80"
+                                  >
+                                    <Play className="h-3 w-3" />
+                                    <span>{workspace?.shortName || ''}</span>
+                                    <span className="text-muted-foreground">/</span>
+                                    <span>{workbench?.name || ''}</span>
+                                  </Link>
+                                )
+                              })}
+                          </div> */}
+                        </div>
+                      </div>
+                    </ListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <NavigationMenuTrigger>
                 <div className="mt-1 flex items-center gap-1">
                   <MonitorPlay className="h-3.5 w-3.5" />
@@ -409,6 +631,30 @@ export function Header() {
                                 <span className="text-sm text-muted-foreground">
                                   {formatDistanceToNow(workbench.createdAt)} ago
                                 </span>
+
+                                <div className="pl-4">
+                                  {appInstances
+                                    ?.filter(
+                                      (appInstance) =>
+                                        appInstance.workbenchId === workbench.id
+                                    )
+                                    ?.map((appInstance) => (
+                                      <div
+                                        key={appInstance.id}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <AppWindow className="h-3.5 w-3.5" />
+                                        <span className="text-sm font-medium leading-none">
+                                          {
+                                            apps?.find(
+                                              (app) =>
+                                                app.id === appInstance.appId
+                                            )?.name
+                                          }
+                                        </span>
+                                      </div>
+                                    ))}
+                                </div>
                               </div>
                             </div>
                           </ListItem>
@@ -417,7 +663,15 @@ export function Header() {
                   ))}
                 </ul>
               </NavigationMenuContent>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
+            {/* <NavigationMenuItem>
+              <NavLink
+                href="/admin"
+                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              >
+                Admin
+              </NavLink>
+            </NavigationMenuItem> */}
           </NavigationMenuList>
         </NavigationMenu>
 
@@ -459,15 +713,14 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>
-      {isInAppContext && currentWorkbench && (
+      {/* {isInAppContext && currentWorkbench && (
         <nav
-          className={`transition-transform duration-300 ease-in-out ${
-            showSecondNav ? 'translate-y-0' : '-translate-y-full'
-          }`}
+          className={`transition-transform duration-300 ease-in-out ${showSecondNav ? 'translate-y-0' : '-translate-y-full'
+            }`}
         >
           <Menubar className="h-8 rounded-none bg-white">
             <MenubarMenu>
@@ -524,7 +777,7 @@ export function Header() {
             </MenubarMenu>
           </Menubar>
         </nav>
-      )}
+      )} */}
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
         <AlertDialogContent className="bg-black bg-opacity-85 text-white">

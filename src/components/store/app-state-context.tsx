@@ -12,8 +12,10 @@ import {
   useState
 } from 'react'
 
-import { Workbench, Workspace } from '@/domain/model'
+import { App, AppInstance, Workbench, Workspace } from '@/domain/model'
 
+import { appInstanceList } from '../actions/app-instance-view-model'
+import { appList } from '../actions/app-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
 
@@ -53,6 +55,12 @@ type AppStateContextType = {
   setMyWorkspace: Dispatch<SetStateAction<Workspace | undefined>>
   refreshMyWorkspace: () => Promise<void>
   clearState: () => void
+  apps: App[] | undefined
+  setApps: Dispatch<SetStateAction<App[] | undefined>>
+  refreshApps: () => Promise<void>
+  appInstances: AppInstance[] | undefined
+  setAppInstances: Dispatch<SetStateAction<AppInstance[] | undefined>>
+  refreshAppInstances: () => Promise<void>
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -73,7 +81,13 @@ const AppStateContext = createContext<AppStateContextType>({
   myWorkspace: undefined,
   setMyWorkspace: () => {},
   refreshMyWorkspace: async () => {},
-  clearState: () => {}
+  clearState: () => {},
+  apps: undefined,
+  setApps: () => {},
+  refreshApps: async () => {},
+  appInstances: undefined,
+  setAppInstances: () => {},
+  refreshAppInstances: async () => {}
 })
 
 export const AppStateProvider = ({
@@ -95,6 +109,10 @@ export const AppStateProvider = ({
   )
   const [error, setError] = useState<string | undefined>(undefined)
   const [myWorkspace, setMyWorkspace] = useState<Workspace | undefined>(
+    undefined
+  )
+  const [apps, setApps] = useState<App[] | undefined>(undefined)
+  const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
   )
   const { isAuthenticated } = useAuth()
@@ -139,12 +157,41 @@ export const AppStateProvider = ({
     }
   }, [])
 
+  const refreshApps = useCallback(async () => {
+    try {
+      const response = await appList()
+      if (response?.error) setError(response.error)
+      if (response?.data) {
+        setApps(
+          response.data.sort(
+            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+          )
+        )
+      }
+    } catch (error) {
+      setError(error.message)
+    }
+  }, [])
+
+  const refreshAppInstances = useCallback(async () => {
+    try {
+      const response = await appInstanceList()
+      setAppInstances(
+        response.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      )
+    } catch (error) {
+      setError(error.message)
+    }
+  }, [])
+
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
     setMyWorkspace(undefined)
     setBackground(undefined)
     setError(undefined)
+    setApps(undefined)
+    setAppInstances(undefined)
   }, [])
 
   useEffect(() => {
@@ -156,6 +203,8 @@ export const AppStateProvider = ({
     refreshWorkspaces()
     refreshWorkbenches()
     refreshMyWorkspace()
+    refreshApps()
+    refreshAppInstances()
   }, [isAuthenticated])
 
   return (
@@ -178,7 +227,13 @@ export const AppStateProvider = ({
         myWorkspace,
         setMyWorkspace,
         refreshMyWorkspace,
-        clearState
+        clearState,
+        apps,
+        setApps,
+        refreshApps,
+        appInstances,
+        setAppInstances,
+        refreshAppInstances
       }}
     >
       {children}
