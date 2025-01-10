@@ -1,3 +1,10 @@
+# [1.0.0-alpha.14](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.13...v1.0.0-alpha.14) (2025-01-10)
+
+
+### Bug Fixes
+
+* build errors ([a6c674c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a6c674c8387347ce39aa869645bfc17134450400))
+
 # [1.0.0-alpha.13](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2025-01-09)
 
 
