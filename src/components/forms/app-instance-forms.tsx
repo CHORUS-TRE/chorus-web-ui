@@ -29,7 +29,6 @@ import { Label } from '~/components/ui/label'
 import { App } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
-import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { Textarea } from '../ui/textarea'
 
@@ -63,26 +62,9 @@ export function AppInstanceCreateForm({
   onUpdate?: () => void
 }) {
   const [state, formAction] = useFormState(appInstanceCreate, initialState)
-  const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
   const { toast } = useToast()
-  const { refreshWorkbenches, setBackground } = useAppState()
-
-  useEffect(() => {
-    appList().then((res) => {
-      if (res.error) {
-        setError(res.error)
-        return
-      }
-
-      if (!res.data) {
-        setError('There is no apps available')
-        return
-      }
-
-      setApps(res.data)
-    })
-  }, [])
+  const { refreshWorkbenches, setBackground, apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
@@ -132,7 +114,7 @@ export function AppInstanceCreateForm({
                         required
                       >
                         <option value="">Choose an app</option>
-                        {apps.map((app) => (
+                        {apps?.map((app) => (
                           <option key={app.id} value={app.id}>
                             {app.name}
                           </option>

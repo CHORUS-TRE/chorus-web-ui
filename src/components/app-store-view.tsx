@@ -1,82 +1,23 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CirclePlus } from 'lucide-react'
 
 import { AppCard } from '~/components/app-card'
 import { AppCreateDialog } from '~/components/app-create-dialog'
 import { Button } from '~/components/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { App } from '~/domain/model'
 import { AppType } from '~/domain/model/app'
-import { useToast } from '~/hooks/use-toast'
 
-import { appList } from './actions/app-view-model'
+import { useAppState } from './store/app-state-context'
 
 export function AppStoreView() {
-  const [apps, setApps] = useState<App[]>([])
-  const [error, setError] = useState<string>()
   const [selectedType, setSelectedType] = useState<AppType>('app' as AppType)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
+  const { apps, refreshApps } = useAppState()
 
-  const loadApps = async () => {
-    try {
-      setIsLoading(true)
-      setError(undefined)
-      const result = await appList()
-
-      if (result.error) {
-        setError(result.error)
-        toast({
-          title: 'Error',
-          description: result.error,
-          variant: 'destructive',
-          className: 'bg-background text-white',
-          duration: 1000
-        })
-        return
-      }
-
-      if (!result.data) {
-        setError('No apps available')
-        toast({
-          title: 'Error',
-          description: 'No apps available',
-          variant: 'destructive',
-          className: 'bg-background text-white',
-          duration: 1000
-        })
-        return
-      }
-
-      setApps(result.data)
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to load apps'
-      setError(errorMessage)
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 1000
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadApps()
-  }, [selectedType])
-
-  const handleUpdate = useCallback(async () => {
-    await loadApps()
-  }, [])
-
-  const filteredApps = apps.filter((app) => app.type === selectedType)
+  const filteredApps = apps?.filter((app) => app.type === selectedType)
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -135,8 +76,8 @@ export function AppStoreView() {
                       Loading...
                     </div>
                   ) : (
-                    filteredApps.map((app) => (
-                      <AppCard key={app.id} app={app} onUpdate={handleUpdate} />
+                    filteredApps?.map((app) => (
+                      <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                     ))
                   )}
                 </div>
@@ -144,8 +85,8 @@ export function AppStoreView() {
 
               <TabsContent value="service" className="mt-0">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredApps.map((app) => (
-                    <AppCard key={app.id} app={app} onUpdate={handleUpdate} />
+                  {filteredApps?.map((app) => (
+                    <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
                 </div>
               </TabsContent>

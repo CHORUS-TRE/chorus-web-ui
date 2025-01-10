@@ -264,341 +264,319 @@ export function Header() {
               priority
             />
           </Link>
-          <div className="min-w-0 flex-1 pr-4">
-            <Breadcrumb className="mt-1 pl-2">
-              <BreadcrumbList className="text-primary-foreground">
-                {paths && paths.length > 1 && (
-                  <BreadcrumbSeparator className="text-muted" />
-                )}
-                {items.map((item, index) => (
-                  <Fragment key={item.href}>
-                    {/* Home and Workspaces Menu */}
-                    {index === 1 && (
-                      <BreadcrumbItemComponent
-                        href={item.href ? `/${item.href}` : undefined}
-                        name={item.name}
-                      />
-                    )}
+          {isAuthenticated && (
+            <div className="min-w-0 flex-1 pr-4">
+              <Breadcrumb className="mt-1 pl-2">
+                <BreadcrumbList className="text-primary-foreground">
+                  {paths && paths.length > 1 && (
+                    <BreadcrumbSeparator className="text-muted" />
+                  )}
+                  {items.map((item, index) => (
+                    <Fragment key={item.href}>
+                      {/* Home and Workspaces Menu */}
+                      {index === 1 && (
+                        <BreadcrumbItemComponent
+                          href={item.href ? `/${item.href}` : undefined}
+                          name={item.name}
+                        />
+                      )}
 
-                    {/* Workspaces Menu */}
-                    {index === 0 && (
-                      <NavigationMenu>
-                        <NavigationMenuList>
-                          <NavigationMenuItem>
-                            <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
-                              <Link
-                                href={`/workspaces/`}
-                                legacyBehavior
-                                passHref
-                              >
-                                <span className="flex items-center gap-2">
-                                  <Folder className="h-3.5 w-3.5" />
-                                  <span>My workspaces</span>
-                                </span>
-                              </Link>
-                            </NavigationMenuTrigger>
-                            <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                              <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                                {workspaces?.map((workspace) => (
-                                  <NavigationMenuItem
-                                    key={workspace.id}
-                                    className="group/workspace relative"
-                                  >
-                                    <ListItem
-                                      className="p-1 font-semibold"
-                                      href={`/workspaces/${workspace.id}`}
-                                    >
-                                      <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
-                                        <div
-                                          className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
-                                        >
-                                          {workspace.id === workspaceId ? (
-                                            <FolderOpen className="h-3.5 w-3.5 text-accent" />
-                                          ) : (
-                                            <Folder className="h-3.5 w-3.5" />
-                                          )}
-                                          {workspace?.id === ALBERT_WORKSPACE_ID
-                                            ? 'Home'
-                                            : workspace?.shortName}
-                                        </div>
-                                        <span className="text-sm leading-snug text-muted-foreground">
-                                          {(() => {
-                                            const w =
-                                              workbenches?.filter(
-                                                (workbench) =>
-                                                  workbench.workspaceId ===
-                                                  workspace.id
-                                              )?.length || 0
-                                            return `${w} open ${w <= 1 ? 'desktop' : 'desktops'}`
-                                          })()}
-                                        </span>
-                                      </div>
-                                    </ListItem>
-                                  </NavigationMenuItem>
-                                ))}
-                              </ul>
-                            </NavigationMenuContent>
-                          </NavigationMenuItem>
-                        </NavigationMenuList>
-                      </NavigationMenu>
-                    )}
-
-                    {/* Desktops Menu */}
-                    {index === 2 && (
-                      <NavigationMenu>
-                        <NavigationMenuList>
-                          <NavigationMenuItem>
-                            <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
-                              <Link
-                                href={`/workspaces/${workspaceId}/desktops/`}
-                                legacyBehavior
-                                passHref
-                              >
-                                <span className="flex items-center gap-2">
-                                  <LaptopMinimal className="h-3.5 w-3.5" />
-                                  <span>Desktops</span>
-                                </span>
-                              </Link>
-                            </NavigationMenuTrigger>
-                            <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                              <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                                {/* Desktop Info Section */}
-                                {workbenches
-                                  ?.filter(
-                                    (workbench) =>
-                                      workbench.workspaceId === workspaceId
-                                  )
-                                  .map((workbench) => (
+                      {/* Workspaces Menu */}
+                      {index === 0 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            <NavigationMenuItem>
+                              <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
+                                <Link
+                                  href={`/workspaces/`}
+                                  legacyBehavior
+                                  passHref
+                                >
+                                  <span className="flex items-center gap-2">
+                                    <Folder className="h-3.5 w-3.5" />
+                                    <span>My workspaces</span>
+                                  </span>
+                                </Link>
+                              </NavigationMenuTrigger>
+                              <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                                <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                                  {workspaces?.map((workspace) => (
                                     <NavigationMenuItem
-                                      key={workbench.id}
-                                      className="group/desktop relative"
+                                      key={workspace.id}
+                                      className="group/workspace relative"
                                     >
                                       <ListItem
                                         className="p-1 font-semibold"
-                                        href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                        href={`/workspaces/${workspace.id}`}
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                           <div
-                                            className={`flex items-center gap-2 ${workbench.id === background?.workbenchId ? 'text-accent' : ''}`}
+                                            className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
                                           >
-                                            <LaptopMinimal className="h-3.5 w-3.5" />
-                                            {workbench.name}
+                                            {workspace.id === workspaceId ? (
+                                              <FolderOpen className="h-3.5 w-3.5 text-accent" />
+                                            ) : (
+                                              <Folder className="h-3.5 w-3.5" />
+                                            )}
+                                            {workspace?.id ===
+                                            ALBERT_WORKSPACE_ID
+                                              ? 'Home'
+                                              : workspace?.shortName}
                                           </div>
-                                          <span className="text-sm font-semibold leading-snug text-muted-foreground">
+                                          <span className="text-sm leading-snug text-muted-foreground">
                                             {(() => {
-                                              const filteredApps =
-                                                appInstances
-                                                  ?.filter(
-                                                    (instance) =>
-                                                      instance.workbenchId ===
-                                                      workbench.id
-                                                  )
-                                                  ?.map(
-                                                    (instance) =>
-                                                      apps?.find(
-                                                        (app) =>
-                                                          app.id ===
-                                                          instance.appId
-                                                      )?.name
-                                                  )
-                                                  ?.filter(Boolean) || []
-
-                                              return (
-                                                <div className="flex items-center gap-2 text-xs">
-                                                  <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
-                                                  {filteredApps.join(', ')}
-                                                </div>
-                                              )
+                                              const w =
+                                                workbenches?.filter(
+                                                  (workbench) =>
+                                                    workbench.workspaceId ===
+                                                    workspace.id
+                                                )?.length || 0
+                                              return `${w} open ${w <= 1 ? 'desktop' : 'desktops'}`
                                             })()}
                                           </span>
                                         </div>
                                       </ListItem>
-                                      {/* </NavigationMenuLink> */}
                                     </NavigationMenuItem>
                                   ))}
-                              </ul>
-                            </NavigationMenuContent>
-                          </NavigationMenuItem>
-                        </NavigationMenuList>
-                      </NavigationMenu>
-                    )}
+                                </ul>
+                              </NavigationMenuContent>
+                            </NavigationMenuItem>
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
 
-                    {/* Desktop Menu */}
-                    {index === 3 && (
-                      <NavigationMenu>
-                        <NavigationMenuList>
-                          {isInAppContext && currentWorkbench && (
+                      {/* Desktops Menu */}
+                      {index === 2 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
                             <NavigationMenuItem>
-                              <NavigationMenuTrigger className="xtext-sm border-b-2 border-accent font-normal text-white hover:border-b-2 hover:border-accent">
-                                <span className="flex items-center gap-2">
-                                  <LaptopMinimal className="h-3.5 w-3.5" />
-                                  <span>{currentWorkbench.name}</span>
-                                </span>
+                              <NavigationMenuTrigger className="xtext-sm border-b-2 font-normal hover:border-b-2 hover:border-accent">
+                                <Link
+                                  href={`/workspaces/${workspaceId}/desktops/`}
+                                  legacyBehavior
+                                  passHref
+                                >
+                                  <span className="flex items-center gap-2">
+                                    <LaptopMinimal className="h-3.5 w-3.5" />
+                                    <span>Desktops</span>
+                                  </span>
+                                </Link>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                                   {/* Desktop Info Section */}
-                                  <ListItem
-                                    title={`About ${currentWorkbench?.name}`}
-                                    className="p-1 font-semibold"
-                                    onClick={() => setShowAboutDialog(true)}
-                                  ></ListItem>
-                                  <span className="pl-1 text-sm font-semibold leading-snug text-muted-foreground">
-                                    {(() => {
-                                      const filteredApps =
-                                        appInstances
-                                          ?.filter(
-                                            (instance) =>
-                                              instance.workbenchId ===
-                                              currentWorkbench.id
-                                          )
-                                          ?.map(
-                                            (instance) =>
-                                              apps?.find(
-                                                (app) =>
-                                                  app.id === instance.appId
-                                              )?.name
-                                          )
-                                          ?.filter(Boolean) || []
+                                  {workbenches
+                                    ?.filter(
+                                      (workbench) =>
+                                        workbench.workspaceId === workspaceId
+                                    )
+                                    .map((workbench) => (
+                                      <NavigationMenuItem
+                                        key={workbench.id}
+                                        className="group/desktop relative"
+                                      >
+                                        <ListItem
+                                          className="p-1 font-semibold"
+                                          href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                        >
+                                          <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
+                                            <div
+                                              className={`flex items-center gap-2 ${workbench.id === background?.workbenchId ? 'text-accent' : ''}`}
+                                            >
+                                              <LaptopMinimal className="h-3.5 w-3.5" />
+                                              {workbench.name}
+                                            </div>
+                                            <span className="text-sm font-semibold leading-snug text-muted-foreground">
+                                              {(() => {
+                                                const filteredApps =
+                                                  appInstances
+                                                    ?.filter(
+                                                      (instance) =>
+                                                        instance.workbenchId ===
+                                                        workbench.id
+                                                    )
+                                                    ?.map(
+                                                      (instance) =>
+                                                        apps?.find(
+                                                          (app) =>
+                                                            app.id ===
+                                                            instance.appId
+                                                        )?.name
+                                                    )
+                                                    ?.filter(Boolean) || []
 
-                                      return (
-                                        <div className="flex items-center gap-2 text-xs">
-                                          <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
-                                          {filteredApps.join(', ')}
-                                        </div>
-                                      )
-                                    })()}
-                                  </span>
-                                  <Separator className="m-1 my-2" />
-                                  {/* Settings Section */}
-                                  <ListItem
-                                    title="Settings..."
-                                    className="cursor-pointer p-1 hover:bg-accent"
-                                    onClick={() => setUpdateOpen(true)}
-                                  ></ListItem>
-
-                                  {/* Start New App Section */}
-                                  <ListItem
-                                    title="Start New App..."
-                                    className="cursor-pointer p-1 hover:bg-accent"
-                                    onClick={() => setCreateOpen(true)}
-                                  ></ListItem>
-                                  <Separator className="m-1 my-2" />
-                                  {/* Fullscreen Section */}
-                                  <ListItem
-                                    title="Toggle Fullscreen"
-                                    className="cursor-pointer p-1 hover:bg-accent"
-                                    onClick={() => {
-                                      const iframe =
-                                        document.getElementById('iframe')
-                                      if (iframe) {
-                                        iframe.requestFullscreen()
-                                      }
-                                    }}
-                                  ></ListItem>
-
-                                  <Separator className="m-1 my-2" />
-
-                                  {/* Quit Section */}
-                                  <ListItem
-                                    title="Quit ..."
-                                    className="cursor-pointer p-1"
-                                    onClick={() => setDeleteOpen(true)}
-                                  ></ListItem>
+                                                return (
+                                                  <div className="flex items-center gap-2 text-xs">
+                                                    <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                                    {filteredApps.join(', ')}
+                                                  </div>
+                                                )
+                                              })()}
+                                            </span>
+                                          </div>
+                                        </ListItem>
+                                        {/* </NavigationMenuLink> */}
+                                      </NavigationMenuItem>
+                                    ))}
                                 </ul>
                               </NavigationMenuContent>
                             </NavigationMenuItem>
-                          )}
-                        </NavigationMenuList>
-                      </NavigationMenu>
-                    )}
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
 
-                    {index === 1 && (
-                      <BreadcrumbSeparator className="text-muted" />
-                    )}
-                  </Fragment>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+                      {/* Desktop Menu */}
+                      {index === 3 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            {isInAppContext && currentWorkbench && (
+                              <NavigationMenuItem>
+                                <NavigationMenuTrigger className="xtext-sm border-b-2 border-accent font-normal text-white hover:border-b-2 hover:border-accent">
+                                  <span className="flex items-center gap-2">
+                                    <LaptopMinimal className="h-3.5 w-3.5" />
+                                    <span>{currentWorkbench.name}</span>
+                                  </span>
+                                </NavigationMenuTrigger>
+                                <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                                  <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                                    {/* Desktop Info Section */}
+                                    <ListItem
+                                      title={`About ${currentWorkbench?.name}`}
+                                      className="p-1 font-semibold"
+                                      onClick={() => setShowAboutDialog(true)}
+                                    ></ListItem>
+                                    <span className="pl-1 text-sm font-semibold leading-snug text-muted-foreground">
+                                      {(() => {
+                                        const filteredApps =
+                                          appInstances
+                                            ?.filter(
+                                              (instance) =>
+                                                instance.workbenchId ===
+                                                currentWorkbench.id
+                                            )
+                                            ?.map(
+                                              (instance) =>
+                                                apps?.find(
+                                                  (app) =>
+                                                    app.id === instance.appId
+                                                )?.name
+                                            )
+                                            ?.filter(Boolean) || []
+
+                                        return (
+                                          <div className="flex items-center gap-2 text-xs">
+                                            <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                            {filteredApps.join(', ')}
+                                          </div>
+                                        )
+                                      })()}
+                                    </span>
+                                    <Separator className="m-1 my-2" />
+                                    {/* Settings Section */}
+                                    <ListItem
+                                      title="Settings..."
+                                      className="cursor-pointer p-1 hover:bg-accent"
+                                      onClick={() => setUpdateOpen(true)}
+                                    ></ListItem>
+
+                                    {/* Start New App Section */}
+                                    <ListItem
+                                      title="Start New App..."
+                                      className="cursor-pointer p-1 hover:bg-accent"
+                                      onClick={() => setCreateOpen(true)}
+                                    ></ListItem>
+                                    <Separator className="m-1 my-2" />
+                                    {/* Fullscreen Section */}
+                                    <ListItem
+                                      title="Toggle Fullscreen"
+                                      className="cursor-pointer p-1 hover:bg-accent"
+                                      onClick={() => {
+                                        const iframe =
+                                          document.getElementById('iframe')
+                                        if (iframe) {
+                                          iframe.requestFullscreen()
+                                        }
+                                      }}
+                                    ></ListItem>
+
+                                    <Separator className="m-1 my-2" />
+
+                                    {/* Quit Section */}
+                                    <ListItem
+                                      title="Quit ..."
+                                      className="cursor-pointer p-1"
+                                      onClick={() => setDeleteOpen(true)}
+                                    ></ListItem>
+                                  </ul>
+                                </NavigationMenuContent>
+                              </NavigationMenuItem>
+                            )}
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
+
+                      {index === 1 && (
+                        <BreadcrumbSeparator className="text-muted" />
+                      )}
+                    </Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          )}
         </div>
 
-        <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-          <NavigationMenuList className="flex items-center justify-center gap-3">
-            <NavigationMenuItem>
-              <NavLink
-                href="/"
-                exact={!isAlbertWorkspace}
-                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-              >
-                Home
-              </NavLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavLink
-                href="/workspaces"
-                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                exact={isAlbertWorkspace}
-              >
-                <div className="mt-1 flex items-center gap-[6px]">
-                  <Folder className="h-3.5 w-3.5" />
-                  Workspaces
-                </div>
-              </NavLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavLink
-                href="/app-store"
-                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-              >
-                App Store
-              </NavLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>
-                <div className="mt-1 flex items-center gap-[6px]">
-                  <DraftingCompass className="h-3.5 w-3.5" />
-                  <span>My Apps</span>
-                </div>
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                <ul className="grid gap-3 bg-black bg-opacity-85 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
-                  {apps?.map((app) => (
-                    <ListItem
-                      key={app.name}
-                      className="cursor-pointer"
-                      onClick={async () => {
-                        if (!currentWorkbench) {
-                          toast({
-                            title: 'Select a desktop first',
-                            description:
-                              'You must select a desktop to launch an app',
-                            variant: 'destructive',
-                            className: 'bg-background text-white'
-                          })
-                          return
-                        }
-
-                        toast({
-                          title: 'Launching app...',
-                          description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
-                          className: 'bg-background text-white'
-                        })
-
-                        const formData = new FormData()
-                        formData.append('id', app.id)
-                        formData.append('tenantId', '1')
-                        formData.append('ownerId', user?.id || '')
-                        formData.append('workspaceId', params.workspaceId)
-                        formData.append('workbenchId', params.desktopId)
-
-                        try {
-                          const result = await appInstanceCreate({}, formData)
-
-                          if (result.error) {
+        {isAuthenticated && (
+          <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
+            <NavigationMenuList className="flex items-center justify-center gap-3">
+              <NavigationMenuItem>
+                <NavLink
+                  href="/"
+                  exact={!isAlbertWorkspace}
+                  className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                >
+                  Home
+                </NavLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavLink
+                  href="/workspaces"
+                  className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  exact={isAlbertWorkspace}
+                >
+                  <div className="mt-1 flex items-center gap-[6px]">
+                    <Folder className="h-3.5 w-3.5" />
+                    Workspaces
+                  </div>
+                </NavLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavLink
+                  href="/app-store"
+                  className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                >
+                  App Store
+                </NavLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>
+                  <div className="mt-1 flex items-center gap-[6px]">
+                    <DraftingCompass className="h-3.5 w-3.5" />
+                    <span>My Apps</span>
+                  </div>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                  <ul className="grid gap-3 bg-black bg-opacity-85 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
+                    {apps?.map((app) => (
+                      <ListItem
+                        key={app.name}
+                        className="cursor-pointer"
+                        onClick={async () => {
+                          if (!currentWorkbench) {
                             toast({
-                              title: 'Error launching app',
-                              description: result.error,
+                              title: 'Select a desktop first',
+                              description:
+                                'You must select a desktop to launch an app',
                               variant: 'destructive',
                               className: 'bg-background text-white'
                             })
@@ -606,131 +584,165 @@ export function Header() {
                           }
 
                           toast({
-                            title: 'Success!',
-                            description: `${app.name} launched successfully`,
+                            title: 'Launching app...',
+                            description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
                             className: 'bg-background text-white'
                           })
 
-                          refreshWorkbenches()
-                          refreshWorkspaces()
-                        } catch (error) {
-                          toast({
-                            title: 'Error launching app',
-                            description: error.message,
-                            variant: 'destructive',
-                            className: 'bg-background text-white'
-                          })
-                        }
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          {app.name === 'vscode' && (
-                            <AvatarImage
-                              src="/vscode.png"
-                              className="m-auto h-8 w-8"
-                            />
-                          )}
-                          <AvatarFallback>
-                            {app?.name?.slice(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col text-white">
-                          <div className="flex items-center gap-[6px]">
-                            <DraftingCompass className="h-3.5 w-3.5" />
-                            <span className="text-sm font-medium leading-none">
-                              {app.name}
+                          const formData = new FormData()
+                          formData.append('id', app.id)
+                          formData.append('tenantId', '1')
+                          formData.append('ownerId', user?.id || '')
+                          formData.append('workspaceId', params.workspaceId)
+                          formData.append('workbenchId', params.desktopId)
+
+                          try {
+                            const result = await appInstanceCreate({}, formData)
+
+                            if (result.error) {
+                              toast({
+                                title: 'Error launching app',
+                                description: result.error,
+                                variant: 'destructive',
+                                className: 'bg-background text-white'
+                              })
+                              return
+                            }
+
+                            toast({
+                              title: 'Success!',
+                              description: `${app.name} launched successfully`,
+                              className: 'bg-background text-white'
+                            })
+
+                            refreshWorkbenches()
+                            refreshWorkspaces()
+                          } catch (error) {
+                            toast({
+                              title: 'Error launching app',
+                              description: error.message,
+                              variant: 'destructive',
+                              className: 'bg-background text-white'
+                            })
+                          }
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            {app.name === 'vscode' && (
+                              <AvatarImage
+                                src="/vscode.png"
+                                className="m-auto h-8 w-8"
+                              />
+                            )}
+                            <AvatarFallback>
+                              {app?.name?.slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col text-white">
+                            <div className="flex items-center gap-[6px]">
+                              <DraftingCompass className="h-3.5 w-3.5" />
+                              <span className="text-sm font-medium leading-none">
+                                {app.name}
+                              </span>
+                            </div>
+
+                            <span className="text-sm text-muted-foreground">
+                              {app.dockerImageName}:{app.dockerImageTag}
                             </span>
                           </div>
-
-                          <span className="text-sm text-muted-foreground">
-                            {app.dockerImageName}:{app.dockerImageTag}
-                          </span>
                         </div>
-                      </div>
-                    </ListItem>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+                      </ListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        )}
 
         <div className="flex items-center justify-end">
-          <NavigationMenu>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="mr-3 mt-2">
-                <LaptopMinimal className="h-3.5 w-3.5" />
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="min-w-96 bg-black bg-opacity-85 p-2 text-white">
-                {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                  <div className="mb-4 p-2" key={workspace.id}>
-                    <div className="text-sm font-semibold">
-                      {workspace.id === ALBERT_WORKSPACE_ID
-                        ? 'Home'
-                        : workspace.shortName}
-                    </div>
-                    <div className="text-sm">
-                      {workbenches
-                        ?.filter(
-                          (workbench) => workbench.workspaceId === workspace?.id
-                        )
-                        .map(({ shortName, createdAt, id }) => (
-                          <Link
-                            key={workspace?.id}
-                            href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                            className={`flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg`}
-                          >
-                            <div className="flex-grow text-sm">
-                              <div className="flex items-center justify-between">
-                                <div
-                                  className={`flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
-                                >
-                                  <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
-                                  {shortName}
+          {isAuthenticated && (
+            <NavigationMenu>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="mr-3 mt-2">
+                  <LaptopMinimal className="h-3.5 w-3.5" />
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="min-w-96 bg-black bg-opacity-85 p-2 text-white">
+                  {sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                    <div className="mb-4 p-2" key={workspace.id}>
+                      <div className="text-sm font-semibold">
+                        {workspace.id === ALBERT_WORKSPACE_ID
+                          ? 'Home'
+                          : workspace.shortName}
+                      </div>
+                      <div className="text-sm">
+                        {workbenches
+                          ?.filter(
+                            (workbench) =>
+                              workbench.workspaceId === workspace?.id
+                          )
+                          .map(({ shortName, createdAt, id }) => (
+                            <Link
+                              key={workspace?.id}
+                              href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                              className={`flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg`}
+                            >
+                              <div className="flex-grow text-sm">
+                                <div className="flex items-center justify-between">
+                                  <div
+                                    className={`flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                  >
+                                    <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                                    {shortName}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    {formatDistanceToNow(createdAt)} ago
+                                  </p>
                                 </div>
-                                <p className="text-xs text-muted-foreground">
-                                  {formatDistanceToNow(createdAt)} ago
-                                </p>
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                <div className="flex items-center gap-2 text-xs">
-                                  <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
-                                  {appInstances
-                                    ?.filter(
-                                      (instance) =>
-                                        workspace?.id === instance.workspaceId
-                                    )
-                                    ?.filter(
-                                      (instance) => id === instance.workbenchId
-                                    )
-                                    .map(
-                                      (instance) =>
-                                        apps?.find(
-                                          (app) => app.id === instance.appId
-                                        )?.name || ''
-                                    )
-                                    .join(', ')}
+                                <div className="text-xs text-muted-foreground">
+                                  <div className="flex items-center gap-2 text-xs">
+                                    <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                    {appInstances
+                                      ?.filter(
+                                        (instance) =>
+                                          workspace?.id === instance.workspaceId
+                                      )
+                                      ?.filter(
+                                        (instance) =>
+                                          id === instance.workbenchId
+                                      )
+                                      .map(
+                                        (instance) =>
+                                          apps?.find(
+                                            (app) => app.id === instance.appId
+                                          )?.name || ''
+                                      )
+                                      .join(', ')}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </Link>
-                        ))}
+                            </Link>
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenu>
-          <div className="relative flex-1 md:grow-0">
-            <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              disabled
-              type="search"
-              placeholder="Find workspaces, apps, content ..."
-              className="h-7 w-full border-none bg-background pl-8 md:w-[240px] lg:w-[360px]"
-            />
-          </div>
+                  ))}
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenu>
+          )}
+
+          {isAuthenticated && (
+            <div className="relative flex-1 md:grow-0">
+              <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                disabled
+                type="search"
+                placeholder="Find workspaces, apps, content ..."
+                className="h-7 w-full border-none bg-background pl-8 md:w-[240px] lg:w-[360px]"
+              />
+            </div>
+          )}
           <div className="ml-4 flex items-center gap-2">
             <HeaderButtons />
           </div>

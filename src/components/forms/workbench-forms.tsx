@@ -34,7 +34,6 @@ import { App, Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 import { generateScientistName } from '~/lib/utils'
 
-import { appList } from '../actions/app-view-model'
 import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
@@ -74,27 +73,10 @@ export function WorkbenchCreateForm({
     `/workspaces/${workspaceId}`
   )
   const [open, setOpen] = useState(false)
-  const [apps, setApps] = useState<App[]>([])
   const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
   const { toast } = useToast()
-  const { refreshWorkbenches } = useAppState()
-
-  useEffect(() => {
-    appList().then((res) => {
-      if (res.error) {
-        setError(res.error)
-        return
-      }
-
-      if (!res.data) {
-        setError('There is no apps available')
-        return
-      }
-
-      setApps(res.data)
-    })
-  }, [])
+  const { refreshWorkbenches, apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
@@ -175,7 +157,7 @@ export function WorkbenchCreateForm({
                         className="bg-background text-white"
                       >
                         <option value="">Choose an app</option>
-                        {apps.map((app) => (
+                        {apps?.map((app) => (
                           <option key={app.id} value={app.id}>
                             {app.name}
                           </option>

@@ -1,4 +1,3 @@
-import { appList } from '@/components/actions/app-view-model'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,19 +8,15 @@ import {
   CardTitle
 } from '@/components/ui/card'
 
-import { App } from '~/domain/model'
-
-async function getAppById(id: string): Promise<App | undefined> {
-  const apps = await appList()
-  return apps.data?.find((app) => app.id === id)
-}
+import { useAppState } from '~/components/store/app-state-context'
 
 export default async function AppDetailsPage({
   params
 }: {
-  params: { desktopId: string }
+  params: { appId: string }
 }) {
-  const app = await getAppById(params.desktopId)
+  const { apps } = useAppState()
+  const app = apps?.find((app) => app.id === params.appId)
 
   if (!app) {
     return <div>App not found</div>

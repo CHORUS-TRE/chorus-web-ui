@@ -31,9 +31,9 @@ export function HeaderButtons() {
   const { isAuthenticated, setAuthenticated, user } = useAuth()
 
   const handleLogoutClick = async () => {
-    await logout()
     setBackground(undefined)
     setAuthenticated(false)
+    await logout()
     router.push('/')
   }
 
