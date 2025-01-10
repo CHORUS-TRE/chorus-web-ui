@@ -54,25 +54,7 @@ const WorkspacePage = () => {
     <>
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
-        {workspaceId === ALBERT_WORKSPACE_ID ? (
-          <MyWorkspace />
-        ) : (
-          <Workspace
-            workspace={workspace}
-            workbenches={filteredWorkbenches}
-            workspaceOwner={user}
-            onUpdate={(id) => {
-              toast({
-                title: 'Workspace updated',
-                description: 'Workspace updated',
-                variant: 'default',
-                className: 'bg-background text-white',
-                duration: 1000
-              })
-              initializeData()
-            }}
-          />
-        )}
+        <Workspace workspaceId={workspaceId} />
       </div>
 
       <footer>{/* Footer content */}</footer>

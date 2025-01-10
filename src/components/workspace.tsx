@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import {
-  AppWindow,
   ArrowRight,
+  DraftingCompass,
   EllipsisVerticalIcon,
   LaptopMinimal,
   Rows3
@@ -12,7 +12,10 @@ import {
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
@@ -27,8 +30,11 @@ import { ResponsiveLine } from '@nivo/line'
 
 import { toast } from '~/hooks/use-toast'
 
+import { userGet } from './actions/user-view-model'
+import { workspaceGet } from './actions/workspace-view-model'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'
+import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
 import {
   DropdownMenu,
@@ -37,29 +43,58 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
+import { ScrollArea } from './ui/scroll-area'
 
-export function Workspace({
-  workspace,
-  workbenches,
-  workspaceOwner,
-  onUpdate
-}: {
-  workspace?: WorkspaceType | null
-  workbenches?: Workbench[]
-  workspaceOwner?: User
-  onUpdate?: (id: string) => void
-}) {
-  const { setBackground, appInstances, workspaces, apps } = useAppState()
+export function Workspace({ workspaceId }: { workspaceId: string }) {
+  const [workspace, setWorkspace] = useState<WorkspaceType>()
+
+  const {
+    setBackground,
+    refreshWorkbenches,
+    workspaces,
+    refreshMyWorkspace,
+    myWorkspace,
+    workbenches,
+    appInstances,
+    apps
+  } = useAppState()
+
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
+  const [user, setUser] = useState<User>()
+  const [error, setError] = useState<string>()
 
-  if (!workspace) {
-    return <></>
+  const isMyWorkspace = workspaceId === ALBERT_WORKSPACE_ID
+
+  const initializeData = async () => {
+    try {
+      const [workspaceResponse] = await Promise.all([
+        workspaceGet(workspaceId),
+        refreshWorkbenches()
+      ])
+
+      if (workspaceResponse.error) setError(workspaceResponse.error)
+      if (workspaceResponse.data) {
+        setWorkspace(workspaceResponse.data)
+        const userResponse = await userGet(workspaceResponse.data.ownerId)
+        if (userResponse.data) setUser(userResponse.data)
+      }
+    } catch (error) {
+      setError(error.message)
+    }
   }
+
+  useEffect(() => {
+    initializeData()
+  }, [workspaceId])
+
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === workspaceId
+  )
 
   return (
     <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <div key={workspace.id} className="group relative">
+      <div key={workspace?.id} className="group relative">
         <div className="absolute right-4 top-4 z-10">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
@@ -91,26 +126,28 @@ export function Workspace({
             <CardTitle className="text-white">{workspace?.name}</CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-xs">
-              <strong>Owner: </strong>
-              {workspaceOwner?.firstName} {workspaceOwner?.lastName}
-            </p>
-            <div>
+          {!isMyWorkspace && (
+            <CardContent>
               <p className="text-xs">
-                <strong>Status: </strong>
-                {workspace?.status}
+                <strong>Owner: </strong>
+                {user?.firstName} {user?.lastName}
               </p>
-              <p className="text-xs">
-                <strong>Creation date: </strong>
-                {formatDistanceToNow(workspace.createdAt)} ago
-              </p>
-              <p className="text-xs">
-                <strong>Updated: </strong>
-                {formatDistanceToNow(workspace.updatedAt)} ago
-              </p>
-            </div>
-          </CardContent>
+              <div>
+                <p className="text-xs">
+                  <strong>Status: </strong>
+                  {workspace?.status}
+                </p>
+                <p className="text-xs">
+                  <strong>Creation date: </strong>
+                  {formatDistanceToNow(workspace?.createdAt || new Date())} ago
+                </p>
+                <p className="text-xs">
+                  <strong>Updated: </strong>
+                  {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
+                </p>
+              </div>
+            </CardContent>
+          )}
           <div className="flex-grow" />
           {/* <CardFooter>
           <Button disabled>
@@ -123,9 +160,14 @@ export function Workspace({
           workspace={workspace}
           state={[openEdit, setOpenEdit]}
           onUpdate={() => {
-            if (onUpdate) {
-              onUpdate(workspace.id)
-            }
+            toast({
+              title: 'Workspace updated',
+              description: 'Workspace updated',
+              variant: 'default',
+              className: 'bg-background text-white',
+              duration: 1000
+            })
+            initializeData()
           }}
         />
       </div>
@@ -134,11 +176,11 @@ export function Workspace({
         <CardHeader>
           <CardTitle
             className="flex cursor-pointer items-center justify-between"
-            onClick={() => router.push(`/workspaces/${workspace.id}/desktops`)}
+            onClick={() => router.push(`/workspaces/${workspace?.id}/desktops`)}
           >
             Desktops
             <Link
-              href={`/workspaces/${workspace.id}/desktops`}
+              href={`/workspaces/${workspace?.id}/desktops`}
               className="text-muted hover:bg-inherit hover:text-accent"
             >
               <Rows3 className="h-3.5 w-3.5 shrink-0" />
@@ -147,63 +189,57 @@ export function Workspace({
           <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-2">
-            {workbenches?.map(({ shortName, createdAt, id }) => (
-              <>
-                <div className="flex items-center justify-between" key={id}>
+          <ScrollArea className="h-[160px] pr-4">
+            <div className="grid gap-1">
+              {filteredWorkbenches
+                ?.filter((workbench) => workbench.workspaceId === workspace?.id)
+                .map(({ shortName, createdAt, id }) => (
                   <Link
-                    key={workspace.id}
-                    href={`/workspaces/${workspace.id}/desktops/${id}`}
-                    className="mr-4 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-medium text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                    key={workspace?.id}
+                    href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                    className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                   >
-                    <LaptopMinimal className="mr-2 h-3.5 w-3.5" />
-                    {shortName}
+                    <div className="flex-grow text-sm">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                          {shortName}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(createdAt)} ago
+                        </p>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 text-xs">
+                          <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                          {appInstances
+                            ?.filter(
+                              (instance) =>
+                                workspace?.id === instance.workspaceId
+                            )
+                            ?.filter((instance) => id === instance.workbenchId)
+                            .map(
+                              (instance) =>
+                                apps?.find((app) => app.id === instance.appId)
+                                  ?.name || ''
+                            )
+                            .join(', ')}
+                        </div>
+                      </div>
+                    </div>
                   </Link>
-                  <p className="text-xs">
-                    {formatDistanceToNow(createdAt)} ago
-                  </p>
-                </div>
-                <blockquote>
-                  {appInstances
-                    ?.filter(
-                      (instance) => workspace?.id === instance.workspaceId
-                    )
-                    ?.filter((instance) => id === instance.workbenchId)
-                    .map((instance) => {
-                      return (
-                        <span
-                          key={instance.id}
-                          className="flex items-center gap-2"
-                        >
-                          <AppWindow className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">
-                            {apps?.find((app) => app.id === instance.appId)
-                              ?.name || ''}
-                          </span>
-                        </span>
-                      )
-                    })}
-                </blockquote>
-              </>
-            ))}
-          </div>
+                ))}
+            </div>
+          </ScrollArea>
         </CardContent>
         <div className="flex-grow" />
         <CardFooter>
           <WorkbenchCreateForm
-            workspaceId={workspace.id}
+            workspaceId={myWorkspace?.id}
             onUpdate={(workbenchId) => {
-              if (onUpdate) {
-                onUpdate(workbenchId)
-              }
-              toast({
-                title: 'Success!',
-                description: 'Desktop created successfully',
-                className: 'bg-background text-white',
-                duration: 1000
-              })
+              refreshMyWorkspace()
               router.push(
-                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
+                `/workspaces/${myWorkspace?.id}/desktops/${workbenchId}`
               )
             }}
           />
@@ -300,68 +336,72 @@ export function Workspace({
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
-        <CardHeader>
-          <CardTitle>Team</CardTitle>
-          <CardDescription>
-            See who&apos;s on your team and their roles.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src="/placeholder-user.jpg" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm">John Doe</p>
-                <p className="text-sm text-muted-foreground">Project Manager</p>
+      {!isMyWorkspace && (
+        <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+          <CardHeader>
+            <CardTitle>Team</CardTitle>
+            <CardDescription>
+              See who&apos;s on your team and their roles.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage src="/placeholder-user.jpg" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm">John Doe</p>
+                  <p className="text-sm text-muted-foreground">
+                    Project Manager
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage src="/placeholder-user.jpg" />
+                  <AvatarFallback>JS</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm">Jane Smith</p>
+                  <p className="text-sm text-muted-foreground">Designer</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src="/placeholder-user.jpg" />
-                <AvatarFallback>JS</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm">Jane Smith</p>
-                <p className="text-sm text-muted-foreground">Designer</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        <div className="flex-grow" />
-        <CardFooter>
-          <Button disabled className="cursor-default">
-            <ArrowRight className="h-3.5 w-3.5" />
-            View Team
-          </Button>
-        </CardFooter>
-      </Card>
-
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
-        <CardHeader>
-          <CardTitle>Wiki</CardTitle>
-          <CardDescription>Share and view latest news</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* <iframe
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter>
+            <Button disabled className="cursor-default">
+              <ArrowRight className="h-3.5 w-3.5" />
+              View Team
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+      {!isMyWorkspace && (
+        <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+          <CardHeader>
+            <CardTitle>Wiki</CardTitle>
+            <CardDescription>Share and view latest news</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* <iframe
             name="embed_readwrite"
             src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
             width="100%"
             height="100%"
           ></iframe> */}
-        </CardContent>
-        <div className="flex-grow" />
-        <CardFooter>
-          <Button disabled className="cursor-default">
-            <ArrowRight className="h-3.5 w-3.5" />
-            View Wiki
-          </Button>
-        </CardFooter>
-      </Card>
-
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter>
+            <Button disabled className="cursor-default">
+              <ArrowRight className="h-3.5 w-3.5" />
+              View Wiki
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Activities</CardTitle>

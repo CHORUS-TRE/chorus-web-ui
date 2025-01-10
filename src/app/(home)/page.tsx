@@ -1,8 +1,11 @@
 'use client'
 
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 
-import { MyWorkspace } from '~/components/my-workspace'
+import { Workspace } from '~/components/workspace'
 
 const HomePage = () => {
   const { error } = useAppState()
@@ -11,7 +14,7 @@ const HomePage = () => {
     <>
       <div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
-        <MyWorkspace />
+        <Workspace workspaceId={ALBERT_WORKSPACE_ID} />
       </div>
       <footer>{/* Footer content */}</footer>
     </>
