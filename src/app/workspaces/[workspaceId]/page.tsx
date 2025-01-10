@@ -5,15 +5,10 @@ import { useParams } from 'next/navigation'
 
 import { userGet } from '@/components/actions/user-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
 
-import { MyWorkspace } from '~/components/my-workspace'
 import { Workspace } from '~/components/workspace'
-import { toast } from '~/hooks/use-toast'
 
 const WorkspacePage = () => {
   const { workbenches, refreshWorkbenches } = useAppState()

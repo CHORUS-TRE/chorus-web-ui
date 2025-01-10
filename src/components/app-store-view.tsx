@@ -93,7 +93,7 @@ export function AppStoreView() {
             </Tabs>
           </div>
 
-          {filteredApps.length === 0 && (
+          {filteredApps?.length === 0 && (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <p className="text-lg text-muted-foreground">
                 No {selectedType} available.
@@ -114,7 +114,7 @@ export function AppStoreView() {
       <AppCreateDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
-        onSuccess={handleUpdate}
+        onSuccess={refreshApps}
         defaultType={selectedType}
       />
     </div>
