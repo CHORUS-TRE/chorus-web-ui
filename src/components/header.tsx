@@ -4,15 +4,16 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition
 } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { formatDistance } from 'date-fns'
+import { formatDistance, formatDistanceToNow } from 'date-fns'
 import {
-  AppWindow,
+  DraftingCompass,
   Folder,
   FolderOpen,
   LaptopMinimal,
@@ -37,7 +38,6 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
@@ -52,12 +52,14 @@ import {
 import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
+import { appInstanceCreate } from './actions/app-instance-view-model'
 import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
 import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
+import { Input } from './ui/input'
 import { HeaderButtons } from './header-buttons'
 import NavLink from './nav-link'
 
@@ -152,27 +154,6 @@ export function Header() {
     const updatedItems: BreadcrumbItem[] = [...initialItems]
 
     if (params?.workspaceId) {
-      // Special handling for ALBERT_WORKSPACE_ID
-      // if (params.workspaceId === ALBERT_WORKSPACE_ID) {
-      // For desktop view: Home > Desktops > [desktop-name]
-      // if (params.desktopId) {
-      //   const workbench = workbenches?.find((w) => w.id === params.desktopId)
-      //   updatedItems = [
-      //     { name: 'Home', href: '/' },
-      //     { name: 'Desktops', href: `workspaces/${ALBERT_WORKSPACE_ID}` }
-      //   ]
-      //   if (workbench?.shortName) {
-      //     updatedItems.push({
-      //       name: workbench.shortName,
-      //       href: `workspaces/${ALBERT_WORKSPACE_ID}/desktops/${params.desktopId}`
-      //     })
-      //   }
-      // } else {
-      //   // For workspace view: Just show Home
-      //   updatedItems = [{ nam  e: 'Home', href: '/' }]
-      // }
-      // } else {
-      // Regular workspace handling
       const workspace = workspaces?.find((w) => w.id === params.workspaceId)
       if (workspace?.shortName) {
         updatedItems[1] = {
@@ -286,7 +267,9 @@ export function Header() {
           <div className="min-w-0 flex-1 pr-4">
             <Breadcrumb className="mt-1 pl-2">
               <BreadcrumbList className="text-primary-foreground">
-                {paths && paths.length > 1 && <BreadcrumbSeparator />}
+                {paths && paths.length > 1 && (
+                  <BreadcrumbSeparator className="text-muted" />
+                )}
                 {items.map((item, index) => (
                   <Fragment key={item.href}>
                     {/* Home and Workspaces Menu */}
@@ -326,7 +309,9 @@ export function Header() {
                                       href={`/workspaces/${workspace.id}`}
                                     >
                                       <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
-                                        <div className="flex items-center gap-2">
+                                        <div
+                                          className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
+                                        >
                                           {workspace.id === workspaceId ? (
                                             <FolderOpen className="h-3.5 w-3.5 text-accent" />
                                           ) : (
@@ -393,13 +378,10 @@ export function Header() {
                                         href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
-                                          <div className="flex items-center gap-2">
-                                            {workbench.id ===
-                                            background?.workbenchId ? (
-                                              <LaptopMinimal className="h-3.5 w-3.5 text-accent" />
-                                            ) : (
-                                              <LaptopMinimal className="h-3.5 w-3.5" />
-                                            )}
+                                          <div
+                                            className={`flex items-center gap-2 ${workbench.id === background?.workbenchId ? 'text-accent' : ''}`}
+                                          >
+                                            <LaptopMinimal className="h-3.5 w-3.5" />
                                             {workbench.name}
                                           </div>
                                           <span className="text-sm font-semibold leading-snug text-muted-foreground">
@@ -421,7 +403,12 @@ export function Header() {
                                                   )
                                                   ?.filter(Boolean) || []
 
-                                              return `${filteredApps.length} ${filteredApps.length === 1 ? 'app' : 'apps'}: ${filteredApps.join(', ')}`
+                                              return (
+                                                <div className="flex items-center gap-2 text-xs">
+                                                  <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                                  {filteredApps.join(', ')}
+                                                </div>
+                                              )
                                             })()}
                                           </span>
                                         </div>
@@ -474,7 +461,12 @@ export function Header() {
                                           )
                                           ?.filter(Boolean) || []
 
-                                      return `${filteredApps.length} ${filteredApps.length === 1 ? 'app' : 'apps'}: ${filteredApps.join(', ')}`
+                                      return (
+                                        <div className="flex items-center gap-2 text-xs">
+                                          <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                          {filteredApps.join(', ')}
+                                        </div>
+                                      )
                                     })()}
                                   </span>
                                   <Separator className="m-1 my-2" />
@@ -542,14 +534,13 @@ export function Header() {
                 Home
               </NavLink>
             </NavigationMenuItem>
-
             <NavigationMenuItem>
               <NavLink
                 href="/workspaces"
                 className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                 exact={isAlbertWorkspace}
               >
-                <div className="mt-1 flex items-center gap-2">
+                <div className="mt-1 flex items-center gap-[6px]">
                   <Folder className="h-3.5 w-3.5" />
                   Workspaces
                 </div>
@@ -565,15 +556,73 @@ export function Header() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>
-                <div className="mt-1 flex items-center gap-2">
-                  <AppWindow className="h-3.5 w-3.5" />
+                <div className="mt-1 flex items-center gap-[6px]">
+                  <DraftingCompass className="h-3.5 w-3.5" />
                   <span>My Apps</span>
                 </div>
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                 <ul className="grid gap-3 bg-black bg-opacity-85 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
                   {apps?.map((app) => (
-                    <ListItem key={app.name} title={''}>
+                    <ListItem
+                      key={app.name}
+                      className="cursor-pointer"
+                      onClick={async () => {
+                        if (!currentWorkbench) {
+                          toast({
+                            title: 'Select a desktop first',
+                            description:
+                              'You must select a desktop to launch an app',
+                            variant: 'destructive',
+                            className: 'bg-background text-white'
+                          })
+                          return
+                        }
+
+                        toast({
+                          title: 'Launching app...',
+                          description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
+                          className: 'bg-background text-white'
+                        })
+
+                        const formData = new FormData()
+                        formData.append('id', app.id)
+                        formData.append('tenantId', '1')
+                        formData.append('ownerId', user?.id || '')
+                        formData.append('workspaceId', params.workspaceId)
+                        formData.append('workbenchId', params.desktopId)
+
+                        try {
+                          const result = await appInstanceCreate({}, formData)
+
+                          if (result.error) {
+                            toast({
+                              title: 'Error launching app',
+                              description: result.error,
+                              variant: 'destructive',
+                              className: 'bg-background text-white'
+                            })
+                            return
+                          }
+
+                          toast({
+                            title: 'Success!',
+                            description: `${app.name} launched successfully`,
+                            className: 'bg-background text-white'
+                          })
+
+                          refreshWorkbenches()
+                          refreshWorkspaces()
+                        } catch (error) {
+                          toast({
+                            title: 'Error launching app',
+                            description: error.message,
+                            variant: 'destructive',
+                            className: 'bg-background text-white'
+                          })
+                        }
+                      }}
+                    >
                       <div className="flex items-center gap-3">
                         <Avatar>
                           {app.name === 'vscode' && (
@@ -586,9 +635,9 @@ export function Header() {
                             {app?.name?.slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <AppWindow className="h-3.5 w-3.5" />
+                        <div className="flex flex-col text-white">
+                          <div className="flex items-center gap-[6px]">
+                            <DraftingCompass className="h-3.5 w-3.5" />
                             <span className="text-sm font-medium leading-none">
                               {app.name}
                             </span>
@@ -597,33 +646,6 @@ export function Header() {
                           <span className="text-sm text-muted-foreground">
                             {app.dockerImageName}:{app.dockerImageTag}
                           </span>
-
-                          {/* <div className="ml-auto flex flex-col items-center gap-2">
-                            {appInstances
-                              ?.filter((instance) => instance.appId === app.id)
-                              ?.filter((instance) => workspaces?.some((w) => w.id === instance.workspaceId))
-                              ?.filter((instance) => workbenches?.some((w) => w.id === instance.workbenchId))
-                              .map((instance) => {
-                                const workbench = workbenches?.find(
-                                  (w) => w.id === instance.workbenchId
-                                )
-                                const workspace = workspaces?.find(
-                                  (w) => w.id === instance.workspaceId
-                                )
-                                return (
-                                  <Link
-                                    key={instance.id}
-                                    href={`/workspaces/${instance.workspaceId}/desktops/${instance.workbenchId}`}
-                                    className="flex items-center gap-1 rounded bg-accent px-2 py-1 text-xs hover:bg-accent/80"
-                                  >
-                                    <Play className="h-3 w-3" />
-                                    <span>{workspace?.shortName || ''}</span>
-                                    <span className="text-muted-foreground">/</span>
-                                    <span>{workbench?.name || ''}</span>
-                                  </Link>
-                                )
-                              })}
-                          </div> */}
                         </div>
                       </div>
                     </ListItem>
@@ -631,99 +653,75 @@ export function Header() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {/* <NavigationMenuItem>
-              <NavigationMenuTrigger>
-                <div className="mt-1 flex items-center gap-1">
-                  <MonitorPlay className="h-3.5 w-3.5" />
-                  <span>Desktops</span>
-                </div>
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                <ul className="grid gap-3 bg-black bg-opacity-85 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
-                  {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                    <div className="" key={workspace.id}>
-                      {workspace.id === ALBERT_WORKSPACE_ID
-                        ? 'Home'
-                        : workspace.shortName}
-                      {workbenches
-                        ?.filter(
-                          (workbench) => workbench.workspaceId === workspace.id
-                        )
-                        .map((workbench) => (
-                          <ListItem
-                            className={`{background?.workbenchId === workbench.id ? 'hover:bg-primary' : 'hover:bg-accent'} ${background?.workbenchId === workbench.id ? 'bg-primary' : ''}`}
-                            key={workbench.name}
-                            title={''}
-                            href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <Avatar>
-                                {workbench.name === 'vscode' && (
-                                  <AvatarImage
-                                    src="/vscode.png"
-                                    className="m-auto h-8 w-8"
-                                  />
-                                )}
-                                <AvatarFallback>
-                                  {workbench.name.slice(0, 2)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex flex-col">
-                                <div className="flex items-center gap-2">
-                                  <MonitorPlay className="h-3.5 w-3.5" />
-                                  <span className="text-sm font-medium leading-none">
-                                    {workbench.name}
-                                  </span>
-                                </div>
-
-                                <span className="text-sm text-muted-foreground">
-                                  {formatDistanceToNow(workbench.createdAt)} ago
-                                </span>
-
-                                <div className="pl-4">
-                                  {appInstances
-                                    ?.filter(
-                                      (appInstance) =>
-                                        appInstance.workbenchId === workbench.id
-                                    )
-                                    ?.map((appInstance) => (
-                                      <div
-                                        key={appInstance.id}
-                                        className="flex items-center gap-2"
-                                      >
-                                        <AppWindow className="h-3.5 w-3.5" />
-                                        <span className="text-sm font-medium leading-none">
-                                          {
-                                            apps?.find(
-                                              (app) =>
-                                                app.id === appInstance.appId
-                                            )?.name
-                                          }
-                                        </span>
-                                      </div>
-                                    ))}
-                                </div>
-                              </div>
-                            </div>
-                          </ListItem>
-                        ))}
-                    </div>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem> */}
-            {/* <NavigationMenuItem>
-              <NavLink
-                href="/admin"
-                className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-              >
-                Admin
-              </NavLink>
-            </NavigationMenuItem> */}
           </NavigationMenuList>
         </NavigationMenu>
 
         <div className="flex items-center justify-end">
+          <NavigationMenu>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="mr-3 mt-2">
+                <LaptopMinimal className="h-3.5 w-3.5" />
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-96 bg-black bg-opacity-85 p-2 text-white">
+                {sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                  <div className="mb-4 p-2" key={workspace.id}>
+                    <div className="text-sm font-semibold">
+                      {workspace.id === ALBERT_WORKSPACE_ID
+                        ? 'Home'
+                        : workspace.shortName}
+                    </div>
+                    <div className="text-sm">
+                      {workbenches
+                        ?.filter(
+                          (workbench) => workbench.workspaceId === workspace?.id
+                        )
+                        .map(({ shortName, createdAt, id }) => (
+                          <Link
+                            key={workspace?.id}
+                            href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                            className={`flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg`}
+                          >
+                            <div className="flex-grow text-sm">
+                              <div className="flex items-center justify-between">
+                                <div
+                                  className={`flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                >
+                                  <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                                  {shortName}
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {formatDistanceToNow(createdAt)} ago
+                                </p>
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                <div className="flex items-center gap-2 text-xs">
+                                  <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                  {appInstances
+                                    ?.filter(
+                                      (instance) =>
+                                        workspace?.id === instance.workspaceId
+                                    )
+                                    ?.filter(
+                                      (instance) => id === instance.workbenchId
+                                    )
+                                    .map(
+                                      (instance) =>
+                                        apps?.find(
+                                          (app) => app.id === instance.appId
+                                        )?.name || ''
+                                    )
+                                    .join(', ')}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenu>
           <div className="relative flex-1 md:grow-0">
             <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -765,67 +763,6 @@ export function Header() {
           />
         )}
       </nav>
-      {/* {isInAppContext && currentWorkbench && (
-        <nav
-          className={`transition-transform duration-300 ease-in-out ${showSecondNav ? 'translate-y-0' : '-translate-y-full'
-            }`}
-        >
-          <Menubar className="h-8 rounded-none bg-white">
-            <MenubarMenu>
-              <MenubarTrigger>{currentWorkbench?.name}</MenubarTrigger>
-              <MenubarContent>
-                <MenubarItem onSelect={() => setShowAboutDialog(true)}>
-                  About {currentWorkbench?.name}
-                </MenubarItem>
-                <MenubarSeparator />
-                <MenubarItem onClick={() => setUpdateOpen(true)}>
-                  Settings...
-                </MenubarItem>
-                <MenubarSeparator />
-                <MenubarItem onClick={() => setDeleteOpen(true)}>
-                  <Trash className="mr-2 h-4 w-4" />
-                  Quit
-                </MenubarItem>
-              </MenubarContent>
-            </MenubarMenu>
-            <MenubarMenu>
-              <MenubarTrigger>File</MenubarTrigger>
-              <MenubarContent>
-                <MenubarItem onClick={() => setCreateOpen(true)}>
-                  <Play className="mr-2 h-4 w-4" />
-                  Start New App <MenubarShortcut>⌘A</MenubarShortcut>
-                </MenubarItem>
-                <MenubarSeparator />
-                <MenubarSub>
-                  <MenubarSubTrigger disabled>Share</MenubarSubTrigger>
-                  <MenubarSubContent>
-                    <MenubarItem>Email link</MenubarItem>
-                    <MenubarItem>Messages</MenubarItem>
-                    <MenubarItem>Notes</MenubarItem>
-                  </MenubarSubContent>
-                </MenubarSub>
-              </MenubarContent>
-            </MenubarMenu>
-
-            <MenubarMenu>
-              <MenubarTrigger>View</MenubarTrigger>
-              <MenubarContent>
-                <MenubarItem
-                  onClick={() => {
-                    const iframe = document.getElementById('iframe')
-                    if (iframe) {
-                      iframe.requestFullscreen()
-                    }
-                  }}
-                >
-                  <Maximize className="mr-2 h-4 w-4" />
-                  <span>Toggle Fullscreen</span>
-                </MenubarItem>
-              </MenubarContent>
-            </MenubarMenu>
-          </Menubar>
-        </nav>
-      )} */}
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
         <AlertDialogContent className="bg-black bg-opacity-85 text-white">
