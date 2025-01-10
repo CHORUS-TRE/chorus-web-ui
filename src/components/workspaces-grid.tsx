@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon, LaptopMinimal } from 'lucide-react'
+import {
+  DraftingCompass,
+  EllipsisVerticalIcon,
+  LaptopMinimal
+} from 'lucide-react'
 
 import {
   WorkspaceDeleteForm,
@@ -14,6 +18,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
@@ -29,6 +34,7 @@ import { User, Workbench, Workspace } from '@/domain/model'
 import { toast } from '~/hooks/use-toast'
 
 import { ALBERT_WORKSPACE_ID, useAppState } from './store/app-state-context'
+import { ScrollArea } from './ui/scroll-area'
 
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
@@ -116,64 +122,57 @@ export default function WorkspacesGrid({
                 <CardDescription>{workspace.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="mb-2 text-xs text-muted-foreground">
-                  {
-                    workbenches?.filter((w) => w.workspaceId === workspace.id)
-                      ?.length
-                  }{' '}
-                  desktops running
-                </p>
-                <div className="mb-2 h-[120px] overflow-y-auto rounded-lg border border-muted/40 p-2">
-                  {workbenches
-                    ?.filter(
-                      (workbench) => workbench.workspaceId === workspace?.id
-                    )
-                    .map(({ shortName, createdAt, id }) => (
-                      <Link
-                        key={workspace?.id}
-                        href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                        className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent/75 hover:text-primary hover:shadow-lg"
-                      >
-                        <div className="flex-grow text-sm">
-                          <div className="flex items-center gap-2">
-                            {background?.workbenchId === id ? (
-                              <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0 text-accent" />
-                            ) : (
-                              <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
-                            )}
-                            {shortName}
+                <ScrollArea className="mb-4 h-[160px] pr-4">
+                  <div className="grid gap-1">
+                    {workbenches
+                      ?.filter(
+                        (workbench) => workbench.workspaceId === workspace?.id
+                      )
+                      .map(({ shortName, createdAt, id }) => (
+                        <Link
+                          key={workspace?.id}
+                          href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                          className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
+                        >
+                          <div className="flex-grow text-sm">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                                {shortName}
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(createdAt)} ago
+                              </p>
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              <div className="flex items-center gap-2 text-xs">
+                                <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                {appInstances
+                                  ?.filter(
+                                    (instance) =>
+                                      workspace?.id === instance.workspaceId
+                                  )
+                                  ?.filter(
+                                    (instance) => id === instance.workbenchId
+                                  )
+                                  .map(
+                                    (instance) =>
+                                      apps?.find(
+                                        (app) => app.id === instance.appId
+                                      )?.name || ''
+                                  )
+                                  .join(', ')}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {appInstances
-                              ?.filter(
-                                (instance) =>
-                                  workspace?.id === instance.workspaceId
-                              )
-                              ?.filter(
-                                (instance) => id === instance.workbenchId
-                              )
-                              .map((instance, index, array) => {
-                                const appName =
-                                  apps?.find((app) => app.id === instance.appId)
-                                    ?.name || ''
-                                const isLast = index === array.length - 1
-
-                                return (
-                                  <>
-                                    {appName}
-                                    {!isLast && ', '}
-                                  </>
-                                )
-                              })}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                </div>
-                <p>
-                  {user?.firstName} {user?.lastName}
+                        </Link>
+                      ))}
+                  </div>
+                </ScrollArea>
+                <p className="text-xs text-muted-foreground">
+                  Owner: {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs">
+                <p className="text-xs text-muted-foreground">
                   Updated {formatDistanceToNow(workspace.updatedAt)} ago
                 </p>
               </CardContent>

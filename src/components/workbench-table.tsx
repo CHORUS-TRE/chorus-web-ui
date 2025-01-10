@@ -137,8 +137,13 @@ export default function WorkbenchTable({
           {/* <TableCell className="p-1" align="center">
             <MonitorPlay className="h-3.5 w-3.5" />
           </TableCell> */}
-          <TableCell className="p-1 font-medium">
-            {workbench?.shortName}
+          <TableCell className="p-1 font-semibold">
+            <Link
+              href={`/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`}
+              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+            >
+              {workbench?.shortName}
+            </Link>
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">
             {appInstances
@@ -165,17 +170,7 @@ export default function WorkbenchTable({
           <TableCell className="p-1">
             <Badge variant="outline">{workbench?.status}</Badge>
           </TableCell>
-          <TableCell className="p-1">
-            <Link
-              href={link}
-              className="text-accent hover:border-b-2 hover:border-accent"
-            >
-              <div className="flex items-center gap-2">
-                <ArrowRight className="h-3.5 w-3.5" />
-                <span>Go</span>
-              </div>
-            </Link>
-          </TableCell>
+          <TableCell className="p-1"></TableCell>
           <TableCell className="p-1">
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>

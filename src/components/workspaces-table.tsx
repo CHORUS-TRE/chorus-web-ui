@@ -98,7 +98,9 @@ export default function WorkspaceTable({
       <TableHead className="font-semibold text-white">Description</TableHead>
       <TableHead className="font-semibold text-white">Status</TableHead>
       {/* <TableHead className="hidden md:table-cell">Members</TableHead> */}
-      <TableHead className="hidden md:table-cell">Created at</TableHead>
+      <TableHead className="hidden font-semibold text-white md:table-cell">
+        Created at
+      </TableHead>
       <TableHead>
         <span className="sr-only">Actions</span>
       </TableHead>
@@ -134,31 +136,26 @@ export default function WorkspaceTable({
             if (onUpdate) onUpdate()
           }}
         />
-        <TableRowComponent className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:border-accent hover:bg-background/80">
-          <TableCell className="p-1 font-medium">
-            <Link href={`/workspaces/${workspace?.id}`}>
-              {workspace?.id === ALBERT_WORKSPACE_ID ? 'Home' : workspace?.name}
-            </Link>
-          </TableCell>
-          <TableCell className="p-1 font-medium">
-            <Link href={`/workspaces/${workspace?.id}`}>
+        <TableRowComponent className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+          <TableCell className="p-1 font-semibold">
+            <Link
+              href={`/workspaces/${workspace?.id}`}
+              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+            >
               {workspace?.shortName}
             </Link>
           </TableCell>
+          <TableCell className="p-1 font-normal">
+            {workspace?.id === ALBERT_WORKSPACE_ID ? 'Home' : workspace?.name}
+          </TableCell>
           <TableCell className="font-xs p-1">
-            <Link href={`/workspaces/${workspace?.id}`}>
-              {workspace?.description}
-            </Link>
+            {workspace?.description}
           </TableCell>
           <TableCell className="p-1">
-            <Link href={`/workspaces/${workspace?.id}`}>
-              <Badge variant="outline">{workspace?.status}</Badge>
-            </Link>
+            <Badge variant="outline">{workspace?.status}</Badge>
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">
-            <Link href={`/workspaces/${workspace?.id}`}>
-              {workspace?.createdAt.toLocaleDateString()}
-            </Link>
+            {workspace?.createdAt.toLocaleDateString()}
           </TableCell>
           <TableCell className="p-1">
             <DropdownMenu modal={false}>

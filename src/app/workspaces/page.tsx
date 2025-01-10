@@ -64,22 +64,16 @@ export default function Portal() {
             Create Workspace
           </Button>
         </div>
-        <Tabs defaultValue="all" className="">
+        <Tabs defaultValue="mine" className="">
           <div className="grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
-              <TabsTrigger value="all">My workspaces</TabsTrigger>
+              <TabsTrigger value="mine">My workspaces</TabsTrigger>
               <TabsTrigger
-                disabled
-                value="active"
+                value="all"
                 className="cursor-default hover:border-b-transparent"
               >
                 All
               </TabsTrigger>
-              <TabsTrigger
-                disabled
-                value="archived"
-                className="hidden cursor-default hover:border-b-transparent sm:flex"
-              ></TabsTrigger>
             </TabsList>
             <div className="flex items-center justify-end gap-0">
               <UIButton
@@ -105,7 +99,7 @@ export default function Portal() {
             </div>
           </div>
           {error && <p className="mt-4 text-red-500">{error}</p>}
-          <TabsContent value="all" className="border-none">
+          <TabsContent value="mine" className="border-none">
             {showWorkspacesTable ? (
               <WorkspaceTable
                 workspaces={workspaces}
@@ -121,8 +115,22 @@ export default function Portal() {
               />
             )}
           </TabsContent>
-          <TabsContent value="active"></TabsContent>
-          <TabsContent value="archived"></TabsContent>
+          <TabsContent value="all">
+            {showWorkspacesTable ? (
+              <WorkspaceTable
+                workspaces={workspaces}
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
+            ) : (
+              <WorkspacesGrid
+                workspaces={workspaces}
+                workbenches={workbenches}
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
+            )}
+          </TabsContent>
         </Tabs>
       </div>
 
