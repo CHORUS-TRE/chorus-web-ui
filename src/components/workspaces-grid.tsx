@@ -137,7 +137,7 @@ export default function WorkspacesGrid({
                           <div className="flex-grow text-sm">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                                <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                 {shortName}
                               </div>
                               <p className="text-xs text-muted-foreground">
@@ -146,7 +146,7 @@ export default function WorkspacesGrid({
                             </div>
                             <div className="text-xs text-muted-foreground">
                               <div className="flex items-center gap-2 text-xs">
-                                <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                <DraftingCompass className="h-4 w-4 shrink-0" />
                                 {appInstances
                                   ?.filter(
                                     (instance) =>

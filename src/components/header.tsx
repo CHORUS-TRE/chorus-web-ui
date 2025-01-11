@@ -4,7 +4,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   useTransition
 } from 'react'
@@ -16,8 +15,10 @@ import {
   DraftingCompass,
   Folder,
   FolderOpen,
+  House,
   LaptopMinimal,
-  Search
+  Search,
+  Store
 } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
@@ -293,7 +294,7 @@ export function Header() {
                                   passHref
                                 >
                                   <span className="flex items-center gap-2">
-                                    <Folder className="h-3.5 w-3.5" />
+                                    <Folder className="h-4 w-4" />
                                     <span>My workspaces</span>
                                   </span>
                                 </Link>
@@ -314,9 +315,9 @@ export function Header() {
                                             className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
                                           >
                                             {workspace.id === workspaceId ? (
-                                              <FolderOpen className="h-3.5 w-3.5 text-accent" />
+                                              <FolderOpen className="h-4 w-4 text-accent" />
                                             ) : (
-                                              <Folder className="h-3.5 w-3.5" />
+                                              <Folder className="h-4 w-4" />
                                             )}
                                             {workspace?.id ===
                                             ALBERT_WORKSPACE_ID
@@ -357,7 +358,7 @@ export function Header() {
                                   passHref
                                 >
                                   <span className="flex items-center gap-2">
-                                    <LaptopMinimal className="h-3.5 w-3.5" />
+                                    <LaptopMinimal className="h-4 w-4" />
                                     <span>Desktops</span>
                                   </span>
                                 </Link>
@@ -383,7 +384,7 @@ export function Header() {
                                             <div
                                               className={`flex items-center gap-2 ${workbench.id === background?.workbenchId ? 'text-accent' : ''}`}
                                             >
-                                              <LaptopMinimal className="h-3.5 w-3.5" />
+                                              <LaptopMinimal className="h-4 w-4" />
                                               {workbench.name}
                                             </div>
                                             <span className="text-sm font-semibold leading-snug text-muted-foreground">
@@ -407,7 +408,7 @@ export function Header() {
 
                                                 return (
                                                   <div className="flex items-center gap-2 text-xs">
-                                                    <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                                    <DraftingCompass className="h-4 w-4 shrink-0" />
                                                     {filteredApps.join(', ')}
                                                   </div>
                                                 )
@@ -433,7 +434,7 @@ export function Header() {
                               <NavigationMenuItem>
                                 <NavigationMenuTrigger className="xtext-sm border-b-2 border-accent font-normal text-white hover:border-b-2 hover:border-accent">
                                   <span className="flex items-center gap-2">
-                                    <LaptopMinimal className="h-3.5 w-3.5" />
+                                    <LaptopMinimal className="h-4 w-4" />
                                     <span>{currentWorkbench.name}</span>
                                   </span>
                                 </NavigationMenuTrigger>
@@ -465,7 +466,7 @@ export function Header() {
 
                                         return (
                                           <div className="flex items-center gap-2 text-xs">
-                                            <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                            <DraftingCompass className="h-4 w-4 shrink-0" />
                                             {filteredApps.join(', ')}
                                           </div>
                                         )
@@ -535,7 +536,10 @@ export function Header() {
                   exact={!isAlbertWorkspace}
                   className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                 >
-                  Home
+                  <div className="mt-1 flex items-center gap-[6px]">
+                    <House className="h-4 w-4" />
+                    Home
+                  </div>
                 </NavLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
@@ -545,7 +549,7 @@ export function Header() {
                   exact={isAlbertWorkspace}
                 >
                   <div className="mt-1 flex items-center gap-[6px]">
-                    <Folder className="h-3.5 w-3.5" />
+                    <Folder className="h-4 w-4" />
                     Workspaces
                   </div>
                 </NavLink>
@@ -555,13 +559,16 @@ export function Header() {
                   href="/app-store"
                   className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                 >
-                  App Store
+                  <div className="mt-1 flex items-center gap-[6px]">
+                    <Store className="h-4 w-4" />
+                    App Store
+                  </div>
                 </NavLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
                   <div className="mt-1 flex items-center gap-[6px]">
-                    <DraftingCompass className="h-3.5 w-3.5" />
+                    <DraftingCompass className="h-4 w-4" />
                     <span>My Apps</span>
                   </div>
                 </NavigationMenuTrigger>
@@ -641,7 +648,7 @@ export function Header() {
                           </Avatar>
                           <div className="flex flex-col text-white">
                             <div className="flex items-center gap-[6px]">
-                              <DraftingCompass className="h-3.5 w-3.5" />
+                              <DraftingCompass className="h-4 w-4" />
                               <span className="text-sm font-medium leading-none">
                                 {app.name}
                               </span>
@@ -666,7 +673,7 @@ export function Header() {
             <NavigationMenu>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="mr-3 mt-2">
-                  <LaptopMinimal className="h-3.5 w-3.5" />
+                  <LaptopMinimal className="h-4 w-4" />
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="min-w-96 bg-black bg-opacity-85 p-2 text-white">
                   {sortedWorkspacesWithWorkbenches?.map((workspace) => (
@@ -693,7 +700,7 @@ export function Header() {
                                   <div
                                     className={`flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
                                   >
-                                    <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                                    <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                     {shortName}
                                   </div>
                                   <p className="text-xs text-muted-foreground">
@@ -702,7 +709,7 @@ export function Header() {
                                 </div>
                                 <div className="text-xs text-muted-foreground">
                                   <div className="flex items-center gap-2 text-xs">
-                                    <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                    <DraftingCompass className="h-4 w-4 shrink-0" />
                                     {appInstances
                                       ?.filter(
                                         (instance) =>

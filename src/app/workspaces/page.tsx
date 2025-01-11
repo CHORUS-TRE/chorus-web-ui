@@ -60,7 +60,7 @@ export default function Portal() {
             onClick={() => setCreateOpen(true)}
             className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
           >
-            <CirclePlus className="h-3.5 w-3.5" />
+            <CirclePlus className="h-4 w-4" />
             Create Workspace
           </Button>
         </div>

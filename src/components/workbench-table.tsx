@@ -135,7 +135,7 @@ export default function WorkbenchTable({
 
         <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
           {/* <TableCell className="p-1" align="center">
-            <MonitorPlay className="h-3.5 w-3.5" />
+            <MonitorPlay className="h-4 w-4" />
           </TableCell> */}
           <TableCell className="p-1 font-semibold">
             <Link
