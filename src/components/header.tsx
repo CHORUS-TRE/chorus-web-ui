@@ -237,37 +237,6 @@ export function Header() {
     }
   }, [deleted])
 
-  // Extract Item component
-  const BreadcrumbItemComponent = ({ name, href }: ItemProps) => (
-    <BreadcrumbItem>
-      <BreadcrumbLink asChild>
-        {href ? (
-          <Link
-            href={href}
-            prefetch={false}
-            className="border-b-2 border-transparent text-sm text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-          >
-            {name}
-          </Link>
-        ) : (
-          <span>{name}</span>
-        )}
-      </BreadcrumbLink>
-    </BreadcrumbItem>
-  )
-
-  // Memoize filteredApps for breadcrumb and desktop sections
-  const filteredApps = useMemo(() => {
-    return (
-      appInstances
-        ?.filter((instance) => instance.workbenchId === currentWorkbench?.id)
-        ?.map(
-          (instance) => apps?.find((app) => app.id === instance.appId)?.name
-        )
-        ?.filter(Boolean) || []
-    )
-  }, [appInstances, apps, currentWorkbench])
-
   return (
     <>
       <nav className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap">
@@ -658,14 +627,16 @@ export function Header() {
                       >
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            {app.name === 'vscode' && (
-                              <AvatarImage
-                                src="/vscode.png"
-                                className="m-auto h-8 w-8"
-                              />
-                            )}
-                            <AvatarFallback>
-                              {app?.name?.slice(0, 2)}
+                            <AvatarImage
+                              src={
+                                app.name === 'vscode'
+                                  ? '/vscode.png'
+                                  : '/placeholder.svg'
+                              }
+                              className="m-auto h-8 w-8"
+                            />
+                            <AvatarFallback className="min-h-8 text-2xl">
+                              {app.name?.slice(0, 2)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col">
