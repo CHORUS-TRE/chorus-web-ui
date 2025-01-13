@@ -122,15 +122,12 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
           </DropdownMenu>
         </CardHeader>
         <CardContent>
-          <div className="mt-4 flex flex-col space-y-2">
+          <div className="mt-4 flex flex-col">
             <p className="text-white">
               {app.description || 'No description available'}
             </p>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <span className="font-medium">Image:</span>
-              <code className="ml-1 rounded px-1 py-0.5">
-                {app.dockerImageName}:{app.dockerImageTag}
-              </code>
+            <div className="text-sm text-muted-foreground">
+              {app.dockerImageName}:{app.dockerImageTag}
             </div>
           </div>
         </CardContent>
