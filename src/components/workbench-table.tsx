@@ -231,7 +231,9 @@ export default function WorkbenchTable({
             </TableRowComponent>
           </TableHeader>
           <TableBody>
-            {workbenches?.map((w) => <TableRow key={w.id} workbench={w} />)}
+            {workbenches?.map((w) => (
+              <TableRow key={`workbench-table-${w.id}`} workbench={w} />
+            ))}
           </TableBody>
         </Table>
       </CardContent>

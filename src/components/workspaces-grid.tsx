@@ -81,7 +81,7 @@ export default function WorkspacesGrid({
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
       {workspaces?.map((workspace) => (
-        <div key={workspace.id} className="group relative">
+        <div key={`workspace-grid-${workspace.id}`} className="group relative">
           <div className="absolute right-4 top-4 z-10">
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
@@ -130,7 +130,7 @@ export default function WorkspacesGrid({
                       )
                       .map(({ shortName, createdAt, id }) => (
                         <Link
-                          key={workspace?.id}
+                          key={`workspace-grid-desktops-${id}`}
                           href={`/workspaces/${workspace?.id}/desktops/${id}`}
                           className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                         >

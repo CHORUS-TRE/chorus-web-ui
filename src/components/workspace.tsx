@@ -195,7 +195,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 ?.filter((workbench) => workbench.workspaceId === workspace?.id)
                 .map(({ shortName, createdAt, id }) => (
                   <Link
-                    key={workspace?.id}
+                    key={`workspace-desktops-${id}`}
                     href={`/workspaces/${workspace?.id}/desktops/${id}`}
                     className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                   >

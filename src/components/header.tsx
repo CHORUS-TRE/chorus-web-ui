@@ -303,7 +303,7 @@ export function Header() {
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                                   {workspaces?.map((workspace) => (
                                     <NavigationMenuItem
-                                      key={workspace.id}
+                                      key={`my-workspace-${workspace.id}`}
                                       className="group/workspace relative"
                                     >
                                       <ListItem
@@ -677,7 +677,7 @@ export function Header() {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="min-w-96 bg-black bg-opacity-85 p-2 text-white">
                   {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                    <div className="mb-4 p-2" key={workspace.id}>
+                    <div className="mb-4 p-2" key={`dock-${workspace.id}`}>
                       <div className="text-sm font-semibold">
                         {workspace.id === ALBERT_WORKSPACE_ID
                           ? 'Home'
