@@ -4,7 +4,31 @@
  */
 await import('./src/env.js')
 
+import NextPWA from 'next-pwa'
+
 /** @type {import("next").NextConfig} */
+const withPWA = NextPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/api\.your-domain\.com/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'api-cache',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60 * 24 // 24 hours
+        }
+      }
+    }
+  ],
+  buildExcludes: [/middleware-manifest\.json$/],
+  customWorkerDir: 'worker'
+})
+
 const config = {
   reactStrictMode: true,
   output: 'standalone',
@@ -17,20 +41,10 @@ const config = {
     }
   },
   compiler: {
-    // Remove console logs only in production, excluding error logs
     removeConsole:
       process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false
   },
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core']
-  /**
-   * If you are using `appDir` then you must comment the below `i18n` config out.
-   *
-   * @see https://github.com/vercel/next.js/issues/41980
-   */
-  // i18n: {
-  //   locales: ["en"],
-  //   defaultLocale: "en",
-  // },
 }
 
-export default config
+export default withPWA(config)
