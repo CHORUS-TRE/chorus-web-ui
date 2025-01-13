@@ -11,13 +11,11 @@ const HomePage = () => {
   const { error } = useAppState()
 
   return (
-    <>
-      <div>
-        {error && <p className="mt-4 text-red-500">{error}</p>}
-        <Workspace workspaceId={ALBERT_WORKSPACE_ID} />
-      </div>
-      <footer>{/* Footer content */}</footer>
-    </>
+    <div>
+      <h2 className="mb-8 mt-5 text-white">Home</h2>
+      {error && <p className="mt-4 text-red-500">{error}</p>}
+      <Workspace workspaceId={ALBERT_WORKSPACE_ID} />
+    </div>
   )
 }
 

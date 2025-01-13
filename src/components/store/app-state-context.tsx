@@ -14,6 +14,8 @@ import {
 
 import { App, AppInstance, Workbench, Workspace } from '@/domain/model'
 
+import { env } from '~/env'
+
 import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
@@ -21,7 +23,7 @@ import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
 
 import { useAuth } from './auth-context'
 
-export const ALBERT_WORKSPACE_ID = '35'
+export const ALBERT_WORKSPACE_ID = env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID || '35'
 
 type AppStateContextType = {
   showRightSidebar: boolean

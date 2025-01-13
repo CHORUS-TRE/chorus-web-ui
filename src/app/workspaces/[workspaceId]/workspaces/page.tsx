@@ -66,7 +66,7 @@ export default function Portal() {
             }}
           >
             <Button>
-              <CirclePlus className="h-3.5 w-3.5" />
+              <CirclePlus className="h-4 w-4" />
               Create Workspace
             </Button>
           </WorkspaceCreateForm>

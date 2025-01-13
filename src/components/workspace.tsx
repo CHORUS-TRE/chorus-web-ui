@@ -151,7 +151,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           <div className="flex-grow" />
           {/* <CardFooter>
           <Button disabled>
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-4 w-4" />
             Settings
           </Button>
         </CardFooter> */}
@@ -183,7 +183,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               href={`/workspaces/${workspace?.id}/desktops`}
               className="text-muted hover:bg-inherit hover:text-accent"
             >
-              <Rows3 className="h-3.5 w-3.5 shrink-0" />
+              <Rows3 className="h-4 w-4 shrink-0" />
             </Link>
           </CardTitle>
           <CardDescription>Your running desktops.</CardDescription>
@@ -195,14 +195,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 ?.filter((workbench) => workbench.workspaceId === workspace?.id)
                 .map(({ shortName, createdAt, id }) => (
                   <Link
-                    key={workspace?.id}
+                    key={`workspace-desktops-${id}`}
                     href={`/workspaces/${workspace?.id}/desktops/${id}`}
                     className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                   >
                     <div className="flex-grow text-sm">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                          <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                           {shortName}
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -211,7 +211,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                       </div>
                       <div className="text-xs text-muted-foreground">
                         <div className="flex items-center gap-2 text-xs">
-                          <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                          <DraftingCompass className="h-4 w-4 shrink-0" />
                           {appInstances
                             ?.filter(
                               (instance) =>
@@ -270,7 +270,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <Button disabled className="cursor-default">
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-4 w-4" />
             View Data
           </Button>
         </CardFooter>
@@ -330,7 +330,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <Button disabled className="cursor-default">
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-4 w-4" />
             View Resources
           </Button>
         </CardFooter>
@@ -373,7 +373,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           <div className="flex-grow" />
           <CardFooter>
             <Button disabled className="cursor-default">
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-4 w-4" />
               View Team
             </Button>
           </CardFooter>
@@ -396,7 +396,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           <div className="flex-grow" />
           <CardFooter>
             <Button disabled className="cursor-default">
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-4 w-4" />
               View Wiki
             </Button>
           </CardFooter>
@@ -413,7 +413,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <Button disabled className="cursor-default">
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-4 w-4" />
             View Activities
           </Button>
         </CardFooter>

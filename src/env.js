@@ -21,7 +21,8 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: z.string().url(),
     NEXT_PUBLIC_DATA_SOURCE_API_URL: z.string().url().optional(),
     NEXT_PUBLIC_MATOMO_URL: z.string().url(),
-    NEXT_PUBLIC_MATOMO_CONTAINER_ID: z.string()
+    NEXT_PUBLIC_MATOMO_CONTAINER_ID: z.string(),
+    NEXT_PUBLIC_ALBERT_WORKSPACE_ID: z.string()
   },
 
   /**
@@ -35,7 +36,9 @@ export const env = createEnv({
     NEXT_PUBLIC_DATA_SOURCE_API_URL:
       process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL,
     NEXT_PUBLIC_MATOMO_URL: process.env.NEXT_PUBLIC_MATOMO_URL,
-    NEXT_PUBLIC_MATOMO_CONTAINER_ID: process.env.NEXT_PUBLIC_MATOMO_CONTAINER_ID
+    NEXT_PUBLIC_MATOMO_CONTAINER_ID:
+      process.env.NEXT_PUBLIC_MATOMO_CONTAINER_ID,
+    NEXT_PUBLIC_ALBERT_WORKSPACE_ID: process.env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

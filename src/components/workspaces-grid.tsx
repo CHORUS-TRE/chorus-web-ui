@@ -81,7 +81,7 @@ export default function WorkspacesGrid({
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
       {workspaces?.map((workspace) => (
-        <div key={workspace.id} className="group relative">
+        <div key={`workspace-grid-${workspace.id}`} className="group relative">
           <div className="absolute right-4 top-4 z-10">
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
@@ -130,14 +130,14 @@ export default function WorkspacesGrid({
                       )
                       .map(({ shortName, createdAt, id }) => (
                         <Link
-                          key={workspace?.id}
+                          key={`workspace-grid-desktops-${id}`}
                           href={`/workspaces/${workspace?.id}/desktops/${id}`}
                           className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                         >
                           <div className="flex-grow text-sm">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <LaptopMinimal className="h-3.5 w-3.5 flex-shrink-0" />
+                                <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                 {shortName}
                               </div>
                               <p className="text-xs text-muted-foreground">
@@ -146,7 +146,7 @@ export default function WorkspacesGrid({
                             </div>
                             <div className="text-xs text-muted-foreground">
                               <div className="flex items-center gap-2 text-xs">
-                                <DraftingCompass className="h-3.5 w-3.5 shrink-0" />
+                                <DraftingCompass className="h-4 w-4 shrink-0" />
                                 {appInstances
                                   ?.filter(
                                     (instance) =>

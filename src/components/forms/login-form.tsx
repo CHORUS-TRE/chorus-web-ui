@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { AuthenticationMode } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
@@ -48,7 +48,6 @@ function SubmitButton() {
 }
 
 export default function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()!
   const [state, formAction] = useFormState(authenticationLogin, initialState)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
@@ -123,12 +122,12 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="mx-auto grid w-[380px] gap-6 text-white">
+    <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
       <div className="grid gap-4 text-center">
-        <h2>Login</h2>
+        <h1>Login</h1>
         <h5 className="text-muted">Login to your account</h5>
       </div>
-      <Separator className="mb-4" />
+      <Separator className="mb-1" />
 
       {isLoading ? (
         <div className="flex justify-center">
@@ -149,7 +148,7 @@ export default function LoginForm() {
                 </p>
               </div>
               <form action={formAction}>
-                <div className="mb-6 grid gap-4">
+                <div className="mb-6 grid gap-6">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -158,7 +157,7 @@ export default function LoginForm() {
                       name="username"
                       required
                       disabled={isAuthenticated}
-                      className="border-none bg-background text-muted"
+                      className="border border-muted/40 bg-background text-white"
                       defaultValue={searchParams.get('email') || ''}
                     />
                   </div>
@@ -170,7 +169,7 @@ export default function LoginForm() {
                       id="password"
                       type="password"
                       name="password"
-                      className="border-none bg-background text-muted"
+                      className="border border-muted/40 bg-background text-muted"
                       required
                       autoComplete="current-password"
                       disabled={isAuthenticated}
@@ -187,23 +186,24 @@ export default function LoginForm() {
 
           {/* OAuth Providers */}
           <div className="grid gap-4">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+            {authModes.length > 0 && (
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted">
+                    Or continue with
+                  </span>
+                </div>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted">
-                  Or continue with
-                </span>
-              </div>
-            </div>
+            )}
             {authModes
               .filter((mode) => mode.type === AuthenticationModeType.OPENID)
               .map((mode) => (
                 <Button
                   key={mode.openid?.id}
-                  variant="outline"
-                  className="w-full justify-center gap-1 rounded-full text-sm transition-[gap] duration-500 ease-in-out hover:gap-2 focus:ring-2 focus:ring-accent"
+                  className="w-full justify-center"
                   onClick={() => handleOAuthLogin(mode)}
                 >
                   {mode.openid?.id}

@@ -206,7 +206,9 @@ export default function WorkspaceTable({
               </TableRowComponent>
             </TableHeader>
             <TableBody>
-              {workspaces?.map((w) => <TableRow key={w.id} workspace={w} />)}
+              {workspaces?.map((w) => (
+                <TableRow key={`workspace-table-${w.id}`} workspace={w} />
+              ))}
             </TableBody>
           </Table>
         </CardContent>

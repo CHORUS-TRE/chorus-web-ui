@@ -109,7 +109,7 @@ export function WorkbenchCreateForm({
           type="button"
           variant="default"
         >
-          <CirclePlus className="h-3.5 w-3.5" />
+          <CirclePlus className="h-4 w-4" />
           Start new desktop
         </Button>
       </DialogTrigger>
