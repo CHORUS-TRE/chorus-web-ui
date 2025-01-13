@@ -9,8 +9,6 @@ import { Configuration } from '~/internal/client'
 
 import { AppDataSource } from '../app-data-source'
 
-import customServicesData from './custom-services.json'
-
 // see src/internal/client/models/ChorusApp.ts
 export const AppApiCreateSchema = z.object({
   tenantId: z.string(),
