@@ -1,3 +1,10 @@
+# [1.0.0-alpha.15](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.14...v1.0.0-alpha.15) (2025-01-13)
+
+
+### Bug Fixes
+
+* avatar handling ([cab96a0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cab96a06e6a5bc35f4030264817d9e1110c3b81b))
+
 # [1.0.0-alpha.14](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.13...v1.0.0-alpha.14) (2025-01-10)
 
 
