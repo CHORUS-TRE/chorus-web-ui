@@ -53,9 +53,6 @@ type AppStateContextType = {
   setError: Dispatch<SetStateAction<string | undefined>>
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
-  myWorkspace: Workspace | undefined
-  setMyWorkspace: Dispatch<SetStateAction<Workspace | undefined>>
-  refreshMyWorkspace: () => Promise<void>
   clearState: () => void
   apps: App[] | undefined
   setApps: Dispatch<SetStateAction<App[] | undefined>>
@@ -82,9 +79,6 @@ const AppStateContext = createContext<AppStateContextType>({
   setError: () => {},
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
-  myWorkspace: undefined,
-  setMyWorkspace: () => {},
-  refreshMyWorkspace: async () => {},
   clearState: () => {},
   apps: undefined,
   setApps: () => {},
@@ -114,9 +108,6 @@ export const AppStateProvider = ({
     undefined
   )
   const [error, setError] = useState<string | undefined>(undefined)
-  const [myWorkspace, setMyWorkspace] = useState<Workspace | undefined>(
-    undefined
-  )
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
@@ -168,16 +159,6 @@ export const AppStateProvider = ({
     }
   }, [])
 
-  const refreshMyWorkspace = useCallback(async () => {
-    try {
-      const response = await workspaceGet(ALBERT_WORKSPACE_ID)
-      if (response?.error) setError(response.error)
-      if (response?.data) setMyWorkspace(response.data)
-    } catch (error) {
-      setError(error.message)
-    }
-  }, [])
-
   const refreshApps = useCallback(async () => {
     try {
       const response = await appList()
@@ -208,7 +189,6 @@ export const AppStateProvider = ({
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
-    setMyWorkspace(undefined)
     setBackground(undefined)
     setError(undefined)
     setApps(undefined)
@@ -225,7 +205,6 @@ export const AppStateProvider = ({
 
     refreshWorkspaces()
     refreshWorkbenches()
-    refreshMyWorkspace()
     refreshApps()
     refreshAppInstances()
   }, [isAuthenticated])
@@ -247,9 +226,6 @@ export const AppStateProvider = ({
         setError,
         refreshWorkspaces,
         refreshWorkbenches,
-        myWorkspace,
-        setMyWorkspace,
-        refreshMyWorkspace,
         clearState,
         apps,
         setApps,

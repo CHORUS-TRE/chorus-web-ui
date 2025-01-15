@@ -1,33 +1,19 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
+import { CirclePlus } from 'lucide-react'
 
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAppState } from '@/components/store/app-state-context'
 
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { useAuth } from '~/components/store/auth-context'
-import { Button as UIButton } from '~/components/ui/button'
-import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 import { toast } from '~/hooks/use-toast'
 
 export default function Portal() {
-  const {
-    showWorkspacesTable,
-    toggleWorkspaceView,
-    workspaces,
-    workbenches,
-    error,
-    setError,
-    refreshWorkspaces,
-    refreshWorkbenches
-  } = useAppState()
+  const { workspaces, error, setError, refreshWorkspaces, refreshWorkbenches } =
+    useAppState()
   const { user, refreshUser } = useAuth()
 
   const [createOpen, setCreateOpen] = useState(false)

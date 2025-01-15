@@ -48,16 +48,7 @@ import { ScrollArea } from './ui/scroll-area'
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
 
-  const {
-    setBackground,
-    refreshWorkbenches,
-    workspaces,
-    refreshMyWorkspace,
-    myWorkspace,
-    workbenches,
-    appInstances,
-    apps
-  } = useAppState()
+  const { refreshWorkbenches, workbenches, appInstances, apps } = useAppState()
 
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
@@ -123,8 +114,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </div>
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
-            <CardTitle className="text-white">{workspace?.name}</CardTitle>
-            <CardDescription>{workspace?.description}</CardDescription>
+            {workspace ? (
+              <>
+                <CardTitle className="text-white">{workspace?.name}</CardTitle>
+                <CardDescription>{workspace?.description}</CardDescription>
+              </>
+            ) : (
+              <span className="animate-pulse">Loading workspace...</span>
+            )}
           </CardHeader>
           {!isMyWorkspace && (
             <CardContent>
@@ -235,11 +232,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <WorkbenchCreateForm
-            workspaceId={myWorkspace?.id}
+            workspaceId={workspace?.id}
             onUpdate={(workbenchId) => {
-              refreshMyWorkspace()
+              initializeData()
               router.push(
-                `/workspaces/${myWorkspace?.id}/desktops/${workbenchId}`
+                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
               )
             }}
           />

@@ -4,7 +4,10 @@ import React from 'react'
 import Link from 'next/link'
 import { FolderOpen, LaptopMinimal } from 'lucide-react'
 
-import { useAppState } from '@/components/store/app-state-context'
+import {
+  ALBERT_WORKSPACE_ID,
+  useAppState
+} from '@/components/store/app-state-context'
 
 import { Header } from '~/components/header'
 
@@ -37,7 +40,9 @@ export function MainLayout({ children }: MainLayoutProps) {
               <div className="flex items-center pt-2">
                 <FolderOpen className="mr-2 h-4 w-4 opacity-70" />
                 <span className="text-sm opacity-50">
-                  {workspace?.shortName}
+                  {workspace?.id === ALBERT_WORKSPACE_ID
+                    ? 'Home'
+                    : workspace?.shortName}
                 </span>
               </div>
               <div className="flex items-center">
