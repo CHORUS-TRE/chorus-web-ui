@@ -193,8 +193,6 @@ export const AppStateProvider = ({
     setError(undefined)
     setApps(undefined)
     setAppInstances(undefined)
-    setShowAppStoreHero(true)
-    localStorage.removeItem('showAppStoreHero')
   }, [])
 
   useEffect(() => {
