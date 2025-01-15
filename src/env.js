@@ -1,5 +1,7 @@
+/* eslint-disable simple-import-sort/imports */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* prettier-ignore */
 import { z } from 'zod'
-
 import { createEnv } from '@t3-oss/env-nextjs'
 
 export const env = createEnv({

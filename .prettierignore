@@ -15,3 +15,6 @@ coverage
 # Ignore all YAML files:
 **/*.yaml
 **/*.yml
+
+# Add to existing .prettierignore
+src/env.js
