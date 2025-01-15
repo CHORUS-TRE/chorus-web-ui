@@ -1,3 +1,10 @@
+# [1.0.0-alpha.18](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.17...v1.0.0-alpha.18) (2025-01-15)
+
+
+### Bug Fixes
+
+* **env:** make environment variables optional in env.js ([3512f04](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3512f044e496220bf7f5a1a9269d60d5175dd4d5))
+
 # [1.0.0-alpha.17](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.16...v1.0.0-alpha.17) (2025-01-15)
 
 
