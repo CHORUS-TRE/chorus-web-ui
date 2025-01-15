@@ -1,3 +1,10 @@
+# [1.0.0-alpha.17](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.16...v1.0.0-alpha.17) (2025-01-15)
+
+
+### Bug Fixes
+
+* line return in env.js ([9981e1e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9981e1e539de951aa1b8c8214517fd9ed7951c1a))
+
 # [1.0.0-alpha.16](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.15...v1.0.0-alpha.16) (2025-01-14)
 
 
