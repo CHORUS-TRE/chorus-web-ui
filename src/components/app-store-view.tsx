@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { CirclePlus } from 'lucide-react'
 
 import { AppCard } from '~/components/app-card'
-import { AppCreateDialog } from '~/components/app-create-dialog'
 import { Button } from '~/components/button'
+import { AppCreateDialog } from '~/components/forms/app-forms'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { AppType } from '~/domain/model/app'
 

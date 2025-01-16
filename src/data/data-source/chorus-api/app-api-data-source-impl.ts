@@ -15,6 +15,7 @@ export const AppApiCreateSchema = z.object({
   userId: z.string(),
   name: z.string().optional(),
   description: z.string().optional(),
+  dockerImageRegistry: z.string().optional(),
   dockerImageName: z.string(),
   dockerImageTag: z.string()
 })
@@ -26,26 +27,27 @@ export const AppApiSchema = AppApiCreateSchema.extend({
   updatedAt: z.date()
 })
 
-const apiToDomain = (app: ChorusApp): App => {
-  return {
-    id: app.id || '',
-    name: app.name || '',
-    description: app.description || '',
-    dockerImageName: app.dockerImageName || '',
-    dockerImageTag: app.dockerImageTag || '',
-    tenantId: app.tenantId || '',
-    ownerId: app.userId || '',
-    status: AppState[app.status?.toUpperCase() as keyof typeof AppState],
-    type: AppType.APP,
-    prettyName: '',
-    url: '',
-    createdAt: app.createdAt ? new Date(app.createdAt) : new Date(),
-    updatedAt: app.updatedAt ? new Date(app.updatedAt) : new Date()
-  }
-}
-
 export class AppDataSourceImpl implements AppDataSource {
   private client: AppServiceApi
+
+  private apiToDomain(app: ChorusApp): App {
+    return {
+      id: app.id || '',
+      name: app.name || '',
+      description: app.description || '',
+      dockerImageRegistry: app.dockerImageRegistry || '',
+      dockerImageName: app.dockerImageName || '',
+      dockerImageTag: app.dockerImageTag || '',
+      tenantId: app.tenantId || '',
+      ownerId: app.userId || '',
+      status: AppState[app.status?.toUpperCase() as keyof typeof AppState],
+      type: AppType.APP,
+      prettyName: '',
+      url: '',
+      createdAt: app.createdAt ? new Date(app.createdAt) : new Date(),
+      updatedAt: app.updatedAt ? new Date(app.updatedAt) : new Date()
+    }
+  }
 
   constructor(session: string) {
     const configuration = new Configuration({
@@ -58,7 +60,7 @@ export class AppDataSourceImpl implements AppDataSource {
   async list(): Promise<App[]> {
     const response = await this.client.appServiceListApps({})
     const apps = response.result || []
-    return apps.map(apiToDomain)
+    return apps.map((app) => this.apiToDomain(app))
   }
 
   async create(app: AppCreate): Promise<App> {
@@ -68,6 +70,7 @@ export class AppDataSourceImpl implements AppDataSource {
         userId: app.ownerId,
         name: app.name,
         description: app.description,
+        dockerImageRegistry: app.dockerImageRegistry,
         dockerImageName: app.dockerImageName,
         dockerImageTag: app.dockerImageTag,
         status: AppState.ACTIVE.toLowerCase()
@@ -91,6 +94,7 @@ export class AppDataSourceImpl implements AppDataSource {
           userId: app.ownerId,
           name: app.name,
           description: app.description,
+          dockerImageRegistry: app.dockerImageRegistry,
           dockerImageName: app.dockerImageName,
           dockerImageTag: app.dockerImageTag,
           status: AppState.ACTIVE.toLowerCase()
@@ -113,6 +117,6 @@ export class AppDataSourceImpl implements AppDataSource {
     if (!response.result?.app) {
       throw new Error('App not found')
     }
-    return apiToDomain(response.result.app)
+    return this.apiToDomain(response.result.app)
   }
 }

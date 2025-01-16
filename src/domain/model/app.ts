@@ -19,6 +19,7 @@ export const AppCreateSchema = z.object({
   name: z.string().optional(),
   prettyName: z.string().optional(),
   description: z.string().optional(),
+  dockerImageRegistry: z.string(),
   dockerImageName: z.string(),
   dockerImageTag: z.string(),
   type: z.nativeEnum(AppType),
@@ -28,7 +29,6 @@ export const AppCreateSchema = z.object({
 export const AppSchema = AppCreateSchema.extend({
   id: z.string(),
   status: z.nativeEnum(AppState),
-
   createdAt: z.date(),
   updatedAt: z.date()
 })

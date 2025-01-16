@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
 
-import { AppEditDialog } from '~/components/app-edit-dialog'
 import { Button } from '~/components/button'
 import { DeleteDialog } from '~/components/delete-dialog'
+import { AppEditDialog } from '~/components/forms/app-forms'
 import {
   Card,
   CardContent,
