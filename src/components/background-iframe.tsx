@@ -14,7 +14,7 @@ export default function BackgroundIframe() {
   const { toast } = useToast()
 
   const { background } = useAppState()
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const focusOnIframe = (t: number) => {
@@ -31,7 +31,7 @@ export default function BackgroundIframe() {
         if (result.status === 200) {
           if (intervalRef.current) {
             clearInterval(intervalRef.current)
-            intervalRef.current = undefined
+            intervalRef.current = null
           }
 
           setIframeURLIsOK(true)
@@ -68,7 +68,7 @@ export default function BackgroundIframe() {
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
-      intervalRef.current = undefined
+      intervalRef.current = null
     }
   }, [url, background])
 
