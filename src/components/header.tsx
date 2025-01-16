@@ -671,9 +671,9 @@ export function Header() {
                 <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                   <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                     {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                      <div className="mb-3 p-2" key={`dock-${workspace.id}`}>
+                      <div className="p-2" key={`dock-${workspace.id}`}>
                         <div
-                          className={`mb-2 flex items-center gap-2 font-semibold text-muted-foreground`}
+                          className={`flex items-center gap-2 font-semibold text-muted-foreground`}
                         >
                           {workspace.id === workspaceId ? (
                             <FolderOpen className="h-4 w-4" />
@@ -692,7 +692,7 @@ export function Header() {
                             )
                             .map(({ shortName, createdAt, id }) => (
                               <Link
-                                key={workspace?.id}
+                                key={id}
                                 href={`/workspaces/${workspace?.id}/desktops/${id}`}
                                 className={`flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg`}
                               >
