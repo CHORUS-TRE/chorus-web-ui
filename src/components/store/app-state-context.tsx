@@ -23,7 +23,7 @@ import { useAuth } from './auth-context'
 
 export const ALBERT_WORKSPACE_ID =
   process.env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID ||
-  'This id is required in the alpha version of CHORUS'
+  '35'
 
 type AppStateContextType = {
   showRightSidebar: boolean
