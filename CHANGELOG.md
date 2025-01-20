@@ -1,3 +1,10 @@
+# [1.0.0-alpha.20](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.19...v1.0.0-alpha.20) (2025-01-20)
+
+
+### Bug Fixes
+
+* hardcode for dev ([74db828](https://github.com/CHORUS-TRE/chorus-web-ui/commit/74db828868fbe6200df15f089ae78424c283c2cd))
+
 # [1.0.0-alpha.19](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.18...v1.0.0-alpha.19) (2025-01-20)
 
 
