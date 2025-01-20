@@ -13,7 +13,6 @@ import {
   WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
 
-import { env } from '~/env'
 import {
   ChorusWorkbench as ChorusWorkbenchApi,
   WorkbenchServiceApi
@@ -80,7 +79,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: process.env.DATA_SOURCE_API_URL
     })
     this.service = new WorkbenchServiceApi(this.configuration)
   }

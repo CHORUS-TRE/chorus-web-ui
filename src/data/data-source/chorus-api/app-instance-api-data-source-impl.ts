@@ -11,7 +11,6 @@ import {
   AppInstanceSchema
 } from '@/domain/model/app-instance'
 
-import { env } from '~/env'
 import {
   AppInstanceServiceApi,
   ChorusAppInstance as ChorusAppInstanceApi
@@ -64,7 +63,7 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: process.env.DATA_SOURCE_API_URL
     })
     this.service = new AppInstanceServiceApi(this.configuration)
   }

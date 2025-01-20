@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { App, AppCreate } from '@/domain/model'
 import { AppSchema, AppState, AppType } from '@/domain/model/app'
 
-import { env } from '~/env'
 import { AppServiceApi, ChorusApp } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
@@ -49,7 +48,7 @@ export class AppDataSourceImpl implements AppDataSource {
 
   constructor(session: string) {
     const configuration = new Configuration({
-      basePath: env.DATA_SOURCE_API_URL,
+      basePath: process.env.DATA_SOURCE_API_URL,
       apiKey: `Bearer ${session}`
     })
     this.client = new AppServiceApi(configuration)

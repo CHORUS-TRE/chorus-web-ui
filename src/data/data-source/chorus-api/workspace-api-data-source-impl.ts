@@ -12,7 +12,6 @@ import {
   WorkspaceState
 } from '@/domain/model/workspace'
 
-import { env } from '~/env'
 import {
   ChorusWorkspace as ChorusWorkspaceApi,
   WorkspaceServiceApi
@@ -84,7 +83,7 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: process.env.DATA_SOURCE_API_URL
     })
     this.service = new WorkspaceServiceApi(this.configuration)
   }

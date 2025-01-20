@@ -38,8 +38,9 @@ export default function Layout({
                 priority
               />
               <div className="max-w-xs text-white">
-                <h1 className="mb-2 text-2xl font-extrabold">
-                  CHORUS, trusted analytical platform for sensitive data
+                <h1 className="mb-2 text-2xl font-bold">
+                  A secure, open-source platform revolutionizing collaborative
+                  medical research and AI development.
                 </h1>
                 <p className="text-md mb-4 text-muted-foreground">
                   Your One-Stop Shop for Data, Applications, and AI

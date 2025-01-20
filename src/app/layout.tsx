@@ -12,7 +12,6 @@ import BackgroundIframe from '~/components/background-iframe'
 import RightSidebar from '~/components/right-sidebar'
 import { AuthProvider } from '~/components/store/auth-context'
 import { Toaster } from '~/components/ui/toaster'
-import { env } from '~/env'
 
 import '@/app/build.css'
 import '@/styles/globals.css'
@@ -36,8 +35,8 @@ export default function RootLayout({
 }>) {
   const session = cookies().get('session')
   const authenticated = session !== undefined
-  const matomoUrl = env.NEXT_PUBLIC_MATOMO_URL
-  const containerId = env.NEXT_PUBLIC_MATOMO_CONTAINER_ID
+  const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL
+  const containerId = process.env.NEXT_PUBLIC_MATOMO_CONTAINER_ID
 
   return (
     <html lang="en">
