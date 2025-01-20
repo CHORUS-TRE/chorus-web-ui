@@ -2,8 +2,6 @@
 
 import { cookies } from 'next/headers'
 
-import { env } from '@/env'
-
 import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { UserRepositoryImpl } from '~/data/repository'
 import { UserResponse } from '~/domain/model'

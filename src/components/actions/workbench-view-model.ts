@@ -9,7 +9,6 @@ import {
   WorkbenchUpdateModel,
   WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
-import { env } from '@/env'
 
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
 import { WorkbenchRepositoryImpl } from '~/data/repository'

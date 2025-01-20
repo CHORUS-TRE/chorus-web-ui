@@ -10,7 +10,6 @@ import {
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
 
-import { env } from '~/env'
 import { Configuration } from '~/internal/client'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
@@ -19,7 +18,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
 
   constructor() {
     this.configuration = new Configuration({
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: process.env.DATA_SOURCE_API_URL
     })
     this.service = new AuthenticationServiceApi(this.configuration)
   }

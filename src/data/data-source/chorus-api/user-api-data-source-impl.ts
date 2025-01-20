@@ -11,8 +11,6 @@ import {
 import { ChorusUser as ChorusUserApi, Configuration } from '@/internal/client'
 import { UserServiceApi } from '@/internal/client/apis'
 
-import { env } from '~/env'
-
 const ChorusUserApiSchema = z.object({
   id: z.string().optional(),
   firstName: z.string().optional(),
@@ -48,7 +46,7 @@ class UserApiDataSourceImpl implements UserDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: process.env.DATA_SOURCE_API_URL
     })
     this.service = new UserServiceApi(this.configuration)
   }
