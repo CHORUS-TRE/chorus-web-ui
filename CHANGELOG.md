@@ -1,3 +1,10 @@
+# [1.0.0-alpha.19](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.18...v1.0.0-alpha.19) (2025-01-20)
+
+
+### Bug Fixes
+
+* update environment variable handling and remove unused env.js ([bcd2056](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bcd205606bf5a4be3eecf1cc446b694275162716))
+
 # [1.0.0-alpha.18](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.17...v1.0.0-alpha.18) (2025-01-15)
 
 
