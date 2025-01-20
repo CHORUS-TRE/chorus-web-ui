@@ -144,19 +144,21 @@ docker build -t chorus/web-ui .
 ```
 
 ```bash
-echo "NEXT_PUBLIC_APP_URL=http://localhost:3000" > .env
-echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
-echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
-echo "NEXT_PUBLIC_MATOMO_URL=https://matomo.chorus-tre.com" >> .env
-echo "NEXT_PUBLIC_MATOMO_CONTAINER_ID=xxx" >> .env
-echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
-
-docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui
+docker run -e DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch \
+          -e REACT_EDITOR=cursor \
+          -e NODE_ENV=development \
+          -e NEXT_PUBLIC_APP_URL=http://localhost:3000 \
+          -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch/api/rest/v1 \
+          -e NEXT_PUBLIC_MATOMO_URL=https://matomo.dev.chorus-tre.ch \
+          -e NEXT_PUBLIC_MATOMO_CONTAINER_ID=XHnjFrGP \
+          -e NEXT_PUBLIC_ALBERT_WORKSPACE_ID=35 \
+          -p 3000:3000 \
+          chorus/web-ui:latest
 ```
 
-inline:
+or
 
-`docker run -e DATA_SOURCE_API_URL=https://api.chorus-tre.com -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/ -e NEXT_PUBLIC_APP_URL=http://localhost:3000 -e NEXT_PUBLIC_MATOMO_URL=https://matomo.dev.chorus-tre.ch -e NEXT_PUBLIC_MATOMO_CONTAINER_ID=XHnjFrGP`
+`docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui:latest`
 
 Access your application at `localhost:3000`.
 

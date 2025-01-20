@@ -5,10 +5,7 @@ import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { ArrowRight, EllipsisVerticalIcon } from 'lucide-react'
 
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
@@ -43,6 +40,7 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import { useAuth } from './store/auth-context'
 
 export default function WorkbenchTable({
   workspaceId,
@@ -63,11 +61,12 @@ export default function WorkbenchTable({
     appInstances,
     apps
   } = useAppState()
+  const { user } = useAuth()
   const [deleted, setDeleted] = useState<boolean>(false)
   const { toast } = useToast()
 
   const filteredWorkbenches =
-    workspaceId === ALBERT_WORKSPACE_ID
+    workspaceId === user?.workspaceId
       ? workbenches
       : workbenches?.filter((w) => w.workspaceId === workspaceId)
 

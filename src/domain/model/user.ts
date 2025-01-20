@@ -27,7 +27,8 @@ export const UserSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   passwordChanged: z.boolean().optional(),
-  avatar: z.string().optional()
+  avatar: z.string().optional(),
+  workspaceId: z.string().optional()
 })
 
 export type User = z.infer<typeof UserSchema>

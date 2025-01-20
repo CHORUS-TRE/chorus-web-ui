@@ -13,6 +13,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
+import { useAppState } from '@/components/store/app-state-context'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -29,12 +30,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
 
 import { toast } from '~/hooks/use-toast'
-
-import { ALBERT_WORKSPACE_ID, useAppState } from './store/app-state-context'
-import { ScrollArea } from './ui/scroll-area'
 
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
@@ -54,7 +53,7 @@ export default function WorkspacesGrid({
   const [deleted, setDeleted] = useState(false)
   const [updated, setUpdated] = useState(false)
 
-  const { apps, appInstances, background } = useAppState()
+  const { apps, appInstances } = useAppState()
 
   useEffect(() => {
     if (deleted) {
@@ -115,7 +114,7 @@ export default function WorkspacesGrid({
             <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
               <CardHeader>
                 <CardTitle>
-                  {workspace?.id === ALBERT_WORKSPACE_ID
+                  {workspace?.id === user?.workspaceId
                     ? 'Home'
                     : workspace?.name}
                 </CardTitle>

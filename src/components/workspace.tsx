@@ -12,10 +12,7 @@ import {
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
@@ -47,24 +44,24 @@ import { ScrollArea } from './ui/scroll-area'
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
+  const [workspaceUser, setWorkspaceUser] = useState<User>()
 
   const {
-    setBackground,
-    refreshWorkbenches,
     workspaces,
-    refreshMyWorkspace,
-    myWorkspace,
     workbenches,
+    error,
+    setError,
+    refreshWorkspaces,
+    refreshWorkbenches,
     appInstances,
     apps
   } = useAppState()
+  const { user } = useAuth()
 
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
-  const [user, setUser] = useState<User>()
-  const [error, setError] = useState<string>()
 
-  const isMyWorkspace = workspaceId === ALBERT_WORKSPACE_ID
+  const userWorkspace = workspaces?.find((w) => w.id === user?.workspaceId)
 
   const initializeData = async () => {
     try {
@@ -77,7 +74,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       if (workspaceResponse.data) {
         setWorkspace(workspaceResponse.data)
         const userResponse = await userGet(workspaceResponse.data.ownerId)
-        if (userResponse.data) setUser(userResponse.data)
+        if (userResponse.data) setWorkspaceUser(userResponse.data)
       }
     } catch (error) {
       setError(error.message)
@@ -126,11 +123,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardTitle className="text-white">{workspace?.name}</CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
-          {!isMyWorkspace && (
+          {!userWorkspace && (
             <CardContent>
               <p className="text-xs">
                 <strong>Owner: </strong>
-                {user?.firstName} {user?.lastName}
+                {workspaceUser?.firstName} {workspaceUser?.lastName}
               </p>
               <div>
                 <p className="text-xs">
@@ -235,11 +232,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <WorkbenchCreateForm
-            workspaceId={myWorkspace?.id}
+            workspaceId={userWorkspace?.id}
             onUpdate={(workbenchId) => {
-              refreshMyWorkspace()
+              refreshWorkspaces()
               router.push(
-                `/workspaces/${myWorkspace?.id}/desktops/${workbenchId}`
+                `/workspaces/${userWorkspace?.id}/desktops/${workbenchId}`
               )
             }}
           />
@@ -336,7 +333,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </CardFooter>
       </Card>
 
-      {!isMyWorkspace && (
+      {!userWorkspace && (
         <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
           <CardHeader>
             <CardTitle>Team</CardTitle>
@@ -379,7 +376,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
       )}
-      {!isMyWorkspace && (
+      {!userWorkspace && (
         <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
           <CardHeader>
             <CardTitle>Wiki</CardTitle>

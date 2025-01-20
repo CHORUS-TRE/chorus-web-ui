@@ -37,7 +37,8 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
-import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
+import { useAppState } from './store/app-state-context'
+import { useAuth } from './store/auth-context'
 
 export default function WorkspaceTable({
   workspaces,
@@ -146,7 +147,7 @@ export default function WorkspaceTable({
             </Link>
           </TableCell>
           <TableCell className="p-1 font-normal">
-            {workspace?.id === ALBERT_WORKSPACE_ID ? 'Home' : workspace?.name}
+            {workspace?.id === user?.workspaceId ? 'Home' : workspace?.name}
           </TableCell>
           <TableCell className="font-xs p-1">
             {workspace?.description}

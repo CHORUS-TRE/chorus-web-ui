@@ -4,10 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '~/components/store/app-state-context'
+import { useAppState } from '~/components/store/app-state-context'
+import { useAuth } from '~/components/store/auth-context'
 
 export default function Layout({
   children
@@ -16,6 +14,7 @@ export default function Layout({
 }>) {
   const params = useParams<{ workspaceId: string }>()
   const { workspaces } = useAppState()
+  const { user } = useAuth()
   const workspace = workspaces?.find((w) => w.id === params?.workspaceId)
   return (
     <>
@@ -26,13 +25,15 @@ export default function Layout({
             className="text-white hover:bg-inherit hover:text-accent"
           >
             {workspace ? (
-              params?.workspaceId === ALBERT_WORKSPACE_ID ? (
+              params?.workspaceId === user?.workspaceId ? (
                 'Home'
               ) : (
                 workspace.shortName
               )
             ) : (
-              <span className="animate-pulse">Loading workspace...</span>
+              <span className="animate-pulse text-muted-foreground">
+                Loading workspace...
+              </span>
             )}
           </Link>
         </h2>

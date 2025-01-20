@@ -1,20 +1,24 @@
 'use client'
 
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 
+import { useAuth } from '~/components/store/auth-context'
 import { Workspace } from '~/components/workspace'
 
 const HomePage = () => {
   const { error } = useAppState()
+  const { user } = useAuth()
 
   return (
     <div>
       <h2 className="mb-8 mt-5 text-white">Home</h2>
       {error && <p className="mt-4 text-red-500">{error}</p>}
-      <Workspace workspaceId={ALBERT_WORKSPACE_ID} />
+      {!user?.workspaceId && (
+        <span className="animate-pulse text-muted-foreground">
+          Loading workspace...
+        </span>
+      )}
+      {user?.workspaceId && <Workspace workspaceId={user.workspaceId} />}
     </div>
   )
 }

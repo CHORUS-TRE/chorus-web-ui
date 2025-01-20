@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react'
 import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
 
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAppState } from '@/components/store/app-state-context'
 
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
@@ -17,7 +13,7 @@ import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 import { toast } from '~/hooks/use-toast'
 
-export default function Portal() {
+export default function WorkspacesPage() {
   const {
     showWorkspacesTable,
     toggleWorkspaceView,

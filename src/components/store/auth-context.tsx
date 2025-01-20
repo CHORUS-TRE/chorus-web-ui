@@ -46,12 +46,23 @@ export const AuthProvider = ({
         return
       }
 
-      const response = await userMe()
-      if (response?.data) setUser(response.data)
+      const me = await userMe()
+      setUser(
+        me.data
+          ? {
+              ...me.data,
+              workspaceId:
+                me.data.workspaceId ||
+                process.env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID ||
+                localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+                undefined
+            }
+          : undefined
+      )
     } catch (error) {
       console.error(error)
     }
-  }, [])
+  }, [isAuthenticated])
 
   return (
     <AuthContext.Provider
