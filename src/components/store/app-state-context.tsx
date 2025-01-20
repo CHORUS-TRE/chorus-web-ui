@@ -209,9 +209,7 @@ export const AppStateProvider = ({
         await refreshWorkbenches()
         await refreshApps()
         await refreshAppInstances()
-        const userWorkspaceId =
-          process.env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID ||
-          (await user?.workspaceId)
+        const userWorkspaceId = await user?.workspaceId
         setUserWorkspaceId(userWorkspaceId)
       } catch (error) {
         console.error(error)

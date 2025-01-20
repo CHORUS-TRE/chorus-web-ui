@@ -10,6 +10,7 @@ import {
   useContext,
   useState
 } from 'react'
+import { env } from 'next-runtime-env'
 
 import { User } from '@/domain/model'
 
@@ -53,7 +54,7 @@ export const AuthProvider = ({
               ...me.data,
               workspaceId:
                 me.data.workspaceId ||
-                process.env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID ||
+                env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
                 localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
                 undefined
             }

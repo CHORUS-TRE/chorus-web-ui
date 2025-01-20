@@ -1,3 +1,4 @@
+import { env } from 'next-runtime-env'
 import { z } from 'zod'
 
 import { App, AppCreate } from '@/domain/model'
@@ -48,7 +49,7 @@ export class AppDataSourceImpl implements AppDataSource {
 
   constructor(session: string) {
     const configuration = new Configuration({
-      basePath: process.env.DATA_SOURCE_API_URL,
+      basePath: env('DATA_SOURCE_API_URL'),
       apiKey: `Bearer ${session}`
     })
     this.client = new AppServiceApi(configuration)

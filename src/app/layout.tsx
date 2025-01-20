@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
+import { env } from 'next-runtime-env'
 
 import { AppStateProvider } from '@/components/store/app-state-context'
 
@@ -35,8 +36,8 @@ export default function RootLayout({
 }>) {
   const session = cookies().get('session')
   const authenticated = session !== undefined
-  const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL
-  const containerId = process.env.NEXT_PUBLIC_MATOMO_CONTAINER_ID
+  const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
+  const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
 
   return (
     <html lang="en">

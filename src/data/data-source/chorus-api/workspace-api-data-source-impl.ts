@@ -1,3 +1,4 @@
+import { env } from 'next-runtime-env'
 import { z } from 'zod'
 
 import { WorkspaceDataSource } from '@/data/data-source/'
@@ -83,7 +84,7 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: process.env.DATA_SOURCE_API_URL
+      basePath: env('DATA_SOURCE_API_URL')
     })
     this.service = new WorkspaceServiceApi(this.configuration)
   }
