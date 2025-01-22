@@ -1,3 +1,10 @@
+# [1.0.0-alpha.21](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.20...v1.0.0-alpha.21) (2025-01-22)
+
+
+### Bug Fixes
+
+* workspace icon ([0329d2e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0329d2e37a0b5633127170d6bf81540f5c9221d6))
+
 # [1.0.0-alpha.20](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.19...v1.0.0-alpha.20) (2025-01-20)
 
 
