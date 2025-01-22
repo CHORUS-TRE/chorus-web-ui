@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { FolderOpen, LaptopMinimal } from 'lucide-react'
+import { LaptopMinimal, PackageOpen } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 
@@ -35,7 +35,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           >
             <div className="pl-4 pt-32 text-white">
               <div className="flex items-center pt-2">
-                <FolderOpen className="mr-2 h-4 w-4 opacity-70" />
+                <PackageOpen className="mr-2 h-4 w-4 opacity-70" />
                 <span className="text-sm opacity-50">
                   {workspace?.shortName}
                 </span>

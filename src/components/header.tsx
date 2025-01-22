@@ -13,10 +13,10 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { formatDistance, formatDistanceToNow } from 'date-fns'
 import {
   DraftingCompass,
-  Folder,
-  FolderOpen,
   House,
   LaptopMinimal,
+  Package,
+  PackageOpen,
   Search,
   Store
 } from 'lucide-react'
@@ -274,7 +274,7 @@ export function Header() {
                                   passHref
                                 >
                                   <span className="flex items-center gap-2">
-                                    <Folder className="h-4 w-4" />
+                                    <Package className="h-4 w-4" />
                                     <span>My workspaces</span>
                                   </span>
                                 </Link>
@@ -295,9 +295,9 @@ export function Header() {
                                             className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent text-white' : ''}`}
                                           >
                                             {workspace.id === workspaceId ? (
-                                              <FolderOpen className="h-4 w-4 text-accent" />
+                                              <PackageOpen className="h-4 w-4 text-accent" />
                                             ) : (
-                                              <Folder className="h-4 w-4" />
+                                              <Package className="h-4 w-4" />
                                             )}
                                             {workspace?.id === user?.workspaceId
                                               ? 'Home'
@@ -339,7 +339,7 @@ export function Header() {
                                   passHref
                                 >
                                   <span className="flex items-center gap-2">
-                                    <FolderOpen className="h-4 w-4" />
+                                    <PackageOpen className="h-4 w-4" />
                                     <span>{item.name}</span>
                                   </span>
                                 </Link>
@@ -539,7 +539,7 @@ export function Header() {
                   exact={isUserWorkspace}
                 >
                   <div className="mt-1 flex items-center gap-[6px]">
-                    <Folder className="h-4 w-4" />
+                    <Package className="h-4 w-4" />
                     Workspaces
                   </div>
                 </NavLink>
@@ -675,9 +675,9 @@ export function Header() {
                           className={`mb-2 flex items-center gap-2 font-semibold text-muted-foreground`}
                         >
                           {workspace.id === workspaceId ? (
-                            <FolderOpen className="h-4 w-4" />
+                            <PackageOpen className="h-4 w-4" />
                           ) : (
-                            <Folder className="h-4 w-4" />
+                            <Package className="h-4 w-4" />
                           )}
                           {workspace?.id === user?.workspaceId
                             ? 'Home'
