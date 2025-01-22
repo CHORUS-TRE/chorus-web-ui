@@ -21,10 +21,6 @@ import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
 
 import { useAuth } from './auth-context'
 
-export const ALBERT_WORKSPACE_ID =
-  process.env.NEXT_PUBLIC_ALBERT_WORKSPACE_ID ||
-  '35'
-
 type AppStateContextType = {
   showRightSidebar: boolean
   toggleRightSidebar: () => void
@@ -53,9 +49,6 @@ type AppStateContextType = {
   setError: Dispatch<SetStateAction<string | undefined>>
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
-  myWorkspace: Workspace | undefined
-  setMyWorkspace: Dispatch<SetStateAction<Workspace | undefined>>
-  refreshMyWorkspace: () => Promise<void>
   clearState: () => void
   apps: App[] | undefined
   setApps: Dispatch<SetStateAction<App[] | undefined>>
@@ -82,9 +75,6 @@ const AppStateContext = createContext<AppStateContextType>({
   setError: () => {},
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
-  myWorkspace: undefined,
-  setMyWorkspace: () => {},
-  refreshMyWorkspace: async () => {},
   clearState: () => {},
   apps: undefined,
   setApps: () => {},
@@ -114,9 +104,6 @@ export const AppStateProvider = ({
     undefined
   )
   const [error, setError] = useState<string | undefined>(undefined)
-  const [myWorkspace, setMyWorkspace] = useState<Workspace | undefined>(
-    undefined
-  )
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
@@ -128,7 +115,10 @@ export const AppStateProvider = ({
     }
     return true
   })
-  const { isAuthenticated } = useAuth()
+  const [userWorkspaceId, setUserWorkspaceId] = useState<string | undefined>(
+    undefined
+  )
+  const { isAuthenticated, user } = useAuth()
 
   useEffect(() => {
     localStorage.setItem('showAppStoreHero', JSON.stringify(showAppStoreHero))
@@ -168,16 +158,6 @@ export const AppStateProvider = ({
     }
   }, [])
 
-  const refreshMyWorkspace = useCallback(async () => {
-    try {
-      const response = await workspaceGet(ALBERT_WORKSPACE_ID)
-      if (response?.error) setError(response.error)
-      if (response?.data) setMyWorkspace(response.data)
-    } catch (error) {
-      setError(error.message)
-    }
-  }, [])
-
   const refreshApps = useCallback(async () => {
     try {
       const response = await appList()
@@ -208,13 +188,13 @@ export const AppStateProvider = ({
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
-    setMyWorkspace(undefined)
     setBackground(undefined)
     setError(undefined)
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
     localStorage.removeItem('showAppStoreHero')
+    setUserWorkspaceId(undefined)
   }, [])
 
   useEffect(() => {
@@ -223,12 +203,21 @@ export const AppStateProvider = ({
       return
     }
 
-    refreshWorkspaces()
-    refreshWorkbenches()
-    refreshMyWorkspace()
-    refreshApps()
-    refreshAppInstances()
-  }, [isAuthenticated])
+    const initializeState = async () => {
+      try {
+        await refreshWorkspaces()
+        await refreshWorkbenches()
+        await refreshApps()
+        await refreshAppInstances()
+        const userWorkspaceId = await user?.workspaceId
+        setUserWorkspaceId(userWorkspaceId)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    initializeState()
+  }, [isAuthenticated, user?.workspaceId])
 
   return (
     <AppStateContext.Provider
@@ -247,9 +236,6 @@ export const AppStateProvider = ({
         setError,
         refreshWorkspaces,
         refreshWorkbenches,
-        myWorkspace,
-        setMyWorkspace,
-        refreshMyWorkspace,
         clearState,
         apps,
         setApps,

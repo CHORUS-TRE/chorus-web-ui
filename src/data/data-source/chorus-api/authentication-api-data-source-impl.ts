@@ -1,3 +1,5 @@
+import { env } from 'next-runtime-env'
+
 import { AuthenticationDataSource } from '@/data/data-source/'
 import {
   AuthenticationInternal,
@@ -18,7 +20,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
 
   constructor() {
     this.configuration = new Configuration({
-      basePath: process.env.DATA_SOURCE_API_URL
+      basePath: env('DATA_SOURCE_API_URL')
     })
     this.service = new AuthenticationServiceApi(this.configuration)
   }

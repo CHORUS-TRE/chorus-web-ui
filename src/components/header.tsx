@@ -58,7 +58,6 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
-import { ALBERT_WORKSPACE_ID } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 import { Input } from './ui/input'
 import { HeaderButtons } from './header-buttons'
@@ -105,7 +104,7 @@ export function Header() {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
-  const isAlbertWorkspace = params?.workspaceId === ALBERT_WORKSPACE_ID
+  const isUserWorkspace = params?.workspaceId === user?.workspaceId
   const [showAboutDialog, setShowAboutDialog] = useState(false)
 
   const pathNames = useMemo(
@@ -174,7 +173,7 @@ export function Header() {
         updatedItems[1] = {
           ...updatedItems[1],
           name:
-            params.workspaceId === ALBERT_WORKSPACE_ID
+            params.workspaceId === user?.workspaceId
               ? 'Home'
               : workspace.shortName
         }
@@ -197,7 +196,8 @@ export function Header() {
     params?.workspaceId,
     params?.desktopId,
     workbenches,
-    workspaces
+    workspaces,
+    user?.workspaceId
   ])
 
   useEffect(() => {
@@ -299,8 +299,7 @@ export function Header() {
                                             ) : (
                                               <Folder className="h-4 w-4" />
                                             )}
-                                            {workspace?.id ===
-                                            ALBERT_WORKSPACE_ID
+                                            {workspace?.id === user?.workspaceId
                                               ? 'Home'
                                               : workspace?.shortName}
                                           </div>
@@ -524,7 +523,7 @@ export function Header() {
               <NavigationMenuItem>
                 <NavLink
                   href="/"
-                  exact={!isAlbertWorkspace}
+                  exact={!isUserWorkspace}
                   className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                 >
                   <div className="mt-1 flex items-center gap-[6px]">
@@ -537,7 +536,7 @@ export function Header() {
                 <NavLink
                   href="/workspaces"
                   className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  exact={isAlbertWorkspace}
+                  exact={isUserWorkspace}
                 >
                   <div className="mt-1 flex items-center gap-[6px]">
                     <Folder className="h-4 w-4" />
@@ -680,7 +679,7 @@ export function Header() {
                           ) : (
                             <Folder className="h-4 w-4" />
                           )}
-                          {workspace?.id === ALBERT_WORKSPACE_ID
+                          {workspace?.id === user?.workspaceId
                             ? 'Home'
                             : workspace?.shortName}
                         </div>

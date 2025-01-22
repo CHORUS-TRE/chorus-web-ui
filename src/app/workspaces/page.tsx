@@ -3,10 +3,7 @@
 import { useEffect, useState } from 'react'
 import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
 
-import {
-  ALBERT_WORKSPACE_ID,
-  useAppState
-} from '@/components/store/app-state-context'
+import { useAppState } from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { Button } from '~/components/button'

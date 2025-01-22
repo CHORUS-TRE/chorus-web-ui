@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { env } from 'next-runtime-env'
 
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source/chorus-api'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
@@ -43,7 +44,7 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
 
   cookies().set('session', login.data, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: env('NODE_ENV') === 'production',
     maxAge: 60 * 60 * 24 * 7, // One week
     path: '/'
   })
@@ -129,7 +130,7 @@ export async function handleOAuthRedirect(
 
     cookies().set('session', response.data || '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: env('NODE_ENV') === 'production',
       maxAge: 60 * 60 * 24 * 7, // One week
       path: '/'
     })
