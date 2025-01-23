@@ -121,13 +121,16 @@ export default function LoginForm() {
     })
   }
 
+  const internalLogin = authModes.some(
+    (mode) =>
+      mode.type === AuthenticationModeType.INTERNAL && mode.internal?.enabled
+  )
+
   return (
     <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
       <div className="grid gap-4 text-center">
-        <h1>Login</h1>
-        <h5 className="text-muted">Login to your account</h5>
+        <h2>Login</h2>
       </div>
-      <Separator className="mb-1" />
 
       {isLoading ? (
         <div className="flex justify-center">
@@ -136,11 +139,7 @@ export default function LoginForm() {
       ) : (
         <>
           {/* Internal Login Form */}
-          {authModes.some(
-            (mode) =>
-              mode.type === AuthenticationModeType.INTERNAL &&
-              mode.internal?.enabled
-          ) && (
+          {internalLogin && (
             <>
               <div className="grid gap-4 text-center">
                 <p className="text-muted">
@@ -187,13 +186,15 @@ export default function LoginForm() {
           {/* OAuth Providers */}
           <div className="grid gap-4">
             {authModes.length > 0 && (
-              <div className="relative">
+              <div className="relative my-2">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted">
-                    Or continue with
+                    {internalLogin
+                      ? 'Or choose an account'
+                      : 'Choose an account'}
                   </span>
                 </div>
               </div>

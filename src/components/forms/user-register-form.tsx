@@ -49,7 +49,7 @@ export default function UserRegisterForm() {
   return (
     <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
       <div className="grid gap-4 text-center">
-        <h1>Create an account</h1>
+        <h2>Create an account</h2>
         <h5 className="text-muted">
           Enter your email below to create your account
         </h5>
