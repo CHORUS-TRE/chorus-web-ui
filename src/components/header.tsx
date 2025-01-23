@@ -126,6 +126,14 @@ export function Header() {
     [workspacesWithWorkbenches, workspaceId]
   )
 
+  const handleLogoutClick = async () => {
+    setBackground(undefined)
+    setAuthenticated(false)
+    logout().then(() => {
+      window.location.href = '/'
+    })
+  }
+
   useEffect(() => {
     if (!isAuthenticated) {
       return
