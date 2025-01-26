@@ -101,13 +101,12 @@ export function Header() {
     refreshWorkbenches,
     toggleRightSidebar
   } = useAppState()
-  const { user, refreshUser, setAuthenticated } = useAuth()
+  const { user, setAuthenticated } = useAuth()
 
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
   const { toast } = useToast()
   const params = useParams<{ workspaceId: string; desktopId: string }>()
-  const [isPending, startTransition] = useTransition()
   const { isAuthenticated } = useAuth()
   const isInAppContext = params?.workspaceId && params?.desktopId
   const workspaceId = params?.workspaceId
@@ -144,23 +143,6 @@ export function Header() {
       window.location.href = '/'
     })
   }
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return
-    }
-    startTransition(async () => {
-      try {
-        await Promise.all([
-          refreshWorkspaces(),
-          refreshWorkbenches(),
-          refreshUser()
-        ])
-      } catch (error) {
-        setError(error.message)
-      }
-    })
-  }, [background?.workbenchId, isAuthenticated])
 
   // Utility function for capitalizing
   const capitalize = useCallback(

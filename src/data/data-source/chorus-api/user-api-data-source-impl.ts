@@ -25,7 +25,7 @@ const ChorusUserApiSchema = z.object({
   totpEnabled: z.boolean().optional()
 })
 
-const apiToDomain = (user: ChorusUserApi): User => {
+const apiToDomain = (user: ChorusUserApi & { workspaceId?: string }): User => {
   return {
     id: user.id || '',
     firstName: user.firstName || '',
@@ -36,7 +36,12 @@ const apiToDomain = (user: ChorusUserApi): User => {
     createdAt: new Date(user.createdAt || ''),
     updatedAt: new Date(user.updatedAt || ''),
     passwordChanged: user.passwordChanged || false,
-    totpEnabled: user.totpEnabled || false
+    totpEnabled: user.totpEnabled || false,
+    workspaceId:
+      user.workspaceId ||
+      env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+      localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+      undefined
   }
 }
 
