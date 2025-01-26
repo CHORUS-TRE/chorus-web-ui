@@ -114,7 +114,7 @@ export const AppStateProvider = ({
     setShowAppStoreHero((prev) => !prev)
   }, [])
 
-  const refreshWorkspaces = async () => {
+  const refreshWorkspaces = useCallback(async () => {
     if (!user) {
       return
     }
@@ -131,7 +131,7 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }
+  }, [user])
 
   const refreshWorkbenches = useCallback(async () => {
     if (!user) {
@@ -150,7 +150,7 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const refreshApps = useCallback(async () => {
     if (!user) {
@@ -170,7 +170,7 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const refreshAppInstances = useCallback(async () => {
     if (!user) {
@@ -184,7 +184,7 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
@@ -206,6 +206,7 @@ export const AppStateProvider = ({
         return
       }
 
+      console.log('initializing state')
       try {
         await refreshWorkspaces()
         await refreshWorkbenches()

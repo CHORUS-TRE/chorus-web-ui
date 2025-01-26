@@ -99,15 +99,16 @@ export function Header() {
     setBackground,
     refreshWorkspaces,
     refreshWorkbenches,
+    refreshApps,
+    refreshAppInstances,
     toggleRightSidebar
   } = useAppState()
-  const { user, setAuthenticated } = useAuth()
+  const { user, isAuthenticated, setAuthenticated } = useAuth()
 
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
   const { toast } = useToast()
   const params = useParams<{ workspaceId: string; desktopId: string }>()
-  const { isAuthenticated } = useAuth()
   const isInAppContext = params?.workspaceId && params?.desktopId
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
