@@ -206,7 +206,6 @@ export const AppStateProvider = ({
         return
       }
 
-      console.log('initializing state')
       try {
         await refreshWorkspaces()
         await refreshWorkbenches()

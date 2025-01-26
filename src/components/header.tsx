@@ -74,6 +74,7 @@ import NavLink from './nav-link'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import userPlaceholder from '/public/placeholder-user.jpg'
+import { getAppIcon } from '~/utils/app-icon'
 
 interface BreadcrumbItem {
   name: string
@@ -627,19 +628,9 @@ export function Header() {
                         }}
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage
-                              src={
-                                app.name === 'vscode'
-                                  ? '/vscode.png'
-                                  : '/placeholder.svg'
-                              }
-                              className="m-auto h-8 w-8"
-                            />
-                            <AvatarFallback className="min-h-8 text-2xl">
-                              {app.name?.slice(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div className="flex items-center x-4">
+                            {app.name && getAppIcon(app.name, { id: 'header-my-apps' })}
+                          </div>
                           <div className="flex flex-col">
                             <div className="flex items-center gap-[6px]">
                               <DraftingCompass className="h-4 w-4" />
@@ -856,7 +847,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>
@@ -868,12 +859,7 @@ export function Header() {
             <AlertDialogDescription className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  {currentWorkbench?.name === 'vscode' && (
-                    <AvatarImage src="/vscode.png" className="m-auto" />
-                  )}
-                  <AvatarFallback className="text-lg">
-                    {currentWorkbench?.name?.slice(0, 2)}
-                  </AvatarFallback>
+                  {currentWorkbench?.name?.slice(0, 2)}
                 </Avatar>
                 <div className="space-y-1">
                   <p className="font-medium">{currentWorkbench?.shortName}</p>

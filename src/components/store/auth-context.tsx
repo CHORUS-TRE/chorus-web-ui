@@ -47,7 +47,6 @@ export const AuthProvider = ({
   const refreshUser = useCallback(async () => {
     try {
       if (!isAuthenticated) {
-        console.log('AuthProvider: clearing user due to not authenticated')
         setUser(undefined)
         return
       }

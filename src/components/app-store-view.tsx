@@ -32,7 +32,7 @@ export function AppStoreView() {
               <div className="mb-8 flex items-center justify-between">
                 <TabsList className="bg-background">
                   <TabsTrigger
-                    value="myapps"
+                    value="app"
                     className="data-[state=active]:text-primary-foreground"
                   >
                     My Apps
