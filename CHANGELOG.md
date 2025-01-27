@@ -1,3 +1,18 @@
+# [1.0.0-alpha.22](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.21...v1.0.0-alpha.22) (2025-01-27)
+
+
+### Bug Fixes
+
+* **header:** logout ([23020cc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/23020cc741493889cef731d1d5a4793537d33188))
+* init at start, simplify state management and auth ([acd29f8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/acd29f80c640e30d681f58f08815cf8e052b0851))
+* layout + warnings ([30468f5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/30468f5b3ed5b8b43db7decd8d4795fd9cd69c81))
+* update state management with user-dependent callbacks ([47ed167](https://github.com/CHORUS-TRE/chorus-web-ui/commit/47ed16764362e7957c2441de2ee7d0a30b98a436))
+
+
+### Features
+
+* Add app icons and create dynamic app icon utility ([f4c89c9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f4c89c9d49dcdc6ab6209eb6c0964bf6aa5e6738))
+
 # [1.0.0-alpha.21](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.20...v1.0.0-alpha.21) (2025-01-22)
 
 
