@@ -123,16 +123,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardTitle className="text-white">{workspace?.name}</CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
-          {workspace && user?.workspaceId !== workspace?.id && (
+
             <CardContent>
               <p className="text-xs">
                 <strong>Owner: </strong>
                 {workspaceUser?.firstName} {workspaceUser?.lastName}
               </p>
+              {workspace && user?.workspaceId !== workspace?.id && (
               <p className="mb-2 text-xs">
                 <strong>Members: </strong>
                 {workspace?.memberIds.length}
-              </p>
+              </p>)}
               <div>
                 <p className="text-xs">
                   <strong>Status: </strong>
@@ -148,7 +149,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 </p>
               </div>
             </CardContent>
-          )}
           <div className="flex-grow" />
           {/* <CardFooter>
           <Button disabled>
@@ -277,6 +277,74 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </CardFooter>
       </Card>
 
+      {workspace && user?.workspaceId !== workspace?.id && (
+        <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+          <CardHeader>
+            <CardTitle>Team</CardTitle>
+            <CardDescription>
+              See who&apos;s on your team and their roles.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage src="/placeholder-user.jpg" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm">John Doe</p>
+                  <p className="text-sm text-muted-foreground">
+                    Project Manager
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage src="/placeholder-user.jpg" />
+                  <AvatarFallback>JS</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm">Jane Smith</p>
+                  <p className="text-sm text-muted-foreground">Designer</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter>
+            <Button disabled className="cursor-default">
+              <ArrowRight className="h-4 w-4" />
+              View Team
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+
+      {workspace && user?.workspaceId !== workspace?.id && (
+        <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+          <CardHeader>
+            <CardTitle>Wiki</CardTitle>
+            <CardDescription>Share and view latest news</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* <iframe
+            name="embed_readwrite"
+            src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
+            width="100%"
+            height="100%"
+          ></iframe> */}
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter>
+            <Button disabled className="cursor-default">
+              <ArrowRight className="h-4 w-4" />
+              View Wiki
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Resources</CardTitle>
@@ -337,72 +405,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </CardFooter>
       </Card>
 
-      {!userWorkspace && (
-        <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
-          <CardHeader>
-            <CardTitle>Team</CardTitle>
-            <CardDescription>
-              See who&apos;s on your team and their roles.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <div className="flex items-center gap-4">
-                <Avatar>
-                  <AvatarImage src="/placeholder-user.jpg" />
-                  <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm">John Doe</p>
-                  <p className="text-sm text-muted-foreground">
-                    Project Manager
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Avatar>
-                  <AvatarImage src="/placeholder-user.jpg" />
-                  <AvatarFallback>JS</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm">Jane Smith</p>
-                  <p className="text-sm text-muted-foreground">Designer</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <div className="flex-grow" />
-          <CardFooter>
-            <Button disabled className="cursor-default">
-              <ArrowRight className="h-4 w-4" />
-              View Team
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
-      {!userWorkspace && (
-        <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
-          <CardHeader>
-            <CardTitle>Wiki</CardTitle>
-            <CardDescription>Share and view latest news</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {/* <iframe
-            name="embed_readwrite"
-            src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
-            width="100%"
-            height="100%"
-          ></iframe> */}
-          </CardContent>
-          <div className="flex-grow" />
-          <CardFooter>
-            <Button disabled className="cursor-default">
-              <ArrowRight className="h-4 w-4" />
-              View Wiki
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
           <CardTitle>Activities</CardTitle>
