@@ -1,3 +1,17 @@
+# [1.0.0-alpha.23](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.22...v1.0.0-alpha.23) (2025-01-27)
+
+
+### Bug Fixes
+
+* Adjust workspace card content rendering logic ([31c8682](https://github.com/CHORUS-TRE/chorus-web-ui/commit/31c86823a03a8ce46c81c02d6ffd638683227711))
+* app order ([1587129](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1587129f119d92c45f6160a5dcdc5e182bddfec8))
+* make team & wiki appears on shared workspaces ([f6ffd06](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f6ffd06f3b9a38c57ac8cfbe86395efc5df904c7))
+
+
+### Features
+
+* Update app icons for ARX and JupyterLab ([d67eea7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d67eea762cf80fabe32030c039aaa814864302c1))
+
 # [1.0.0-alpha.22](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.21...v1.0.0-alpha.22) (2025-01-27)
 
 
