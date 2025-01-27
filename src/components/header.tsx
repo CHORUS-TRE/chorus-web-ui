@@ -62,6 +62,7 @@ import {
 } from '~/components/ui/navigation-menu'
 import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
+import { getAppIcon } from '~/utils/app-icon'
 
 import { appInstanceCreate } from './actions/app-instance-view-model'
 import {
@@ -74,7 +75,6 @@ import NavLink from './nav-link'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import userPlaceholder from '/public/placeholder-user.jpg'
-import { getAppIcon } from '~/utils/app-icon'
 
 interface BreadcrumbItem {
   name: string
@@ -249,14 +249,14 @@ export function Header() {
               src={logo}
               alt="Chorus"
               height={32}
-              className="mt-1 aspect-auto cursor-pointer"
+              className="aspect-auto cursor-pointer"
               id="logo"
               priority
             />
           </Link>
           {isAuthenticated && (
             <div className="min-w-0 flex-1 pr-4">
-              <Breadcrumb className="mt-1 pl-2">
+              <Breadcrumb className="pl-2">
                 <BreadcrumbList className="text-primary-foreground">
                   {paths && paths.length > 1 && (
                     <BreadcrumbSeparator className="text-muted" />
@@ -264,23 +264,39 @@ export function Header() {
                   {items.map((item, index) => (
                     <Fragment key={item.href}>
                       {/* Workspaces Menu */}
+
+                      {index === 0 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            <NavigationMenuItem>
+                              <NavLink
+                                href={`/workspaces/`}
+                                exact
+                                className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces' ? 'border-accent' : ''}`}
+                              >
+                                <div className="flex items-center gap-[6px]">
+                                  <Package className="h-4 w-4" />
+                                  <span>My workspaces</span>
+                                </div>
+                              </NavLink>
+                            </NavigationMenuItem>
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
+
                       {index === 0 && (
                         <NavigationMenu>
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger
-                                className={`border-b-2 text-sm font-light hover:border-b-2 hover:border-accent ${paths === '/workspaces' ? 'border-accent' : ''}`}
+                                className={`mb-1 border-b-2 text-sm font-light hover:border-b-2 hover:border-accent`}
                               >
-                                <Link
-                                  href={`/workspaces/`}
-                                  legacyBehavior
-                                  passHref
+                                <NavLink
+                                  href={`#`}
+                                  className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent px-[0.5px] py-1 text-sm font-light text-muted transition-colors hover:border-b-2 data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white`}
                                 >
-                                  <span className="flex items-center gap-2">
-                                    <Package className="h-4 w-4" />
-                                    <span>My workspaces</span>
-                                  </span>
-                                </Link>
+                                  {''}
+                                </NavLink>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
@@ -329,23 +345,39 @@ export function Header() {
                       )}
 
                       {/* Workspace Desktops Menu */}
+
+                      {index === 1 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            <NavigationMenuItem>
+                              <NavLink
+                                href={`/workspaces/${workspaceId}`}
+                                exact
+                                className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces/${workspaceId}' ? 'border-accent' : ''}`}
+                              >
+                                <div className="flex items-center gap-[6px]">
+                                  <PackageOpen className="h-4 w-4" />
+                                  <span>{item.name}</span>
+                                </div>
+                              </NavLink>
+                            </NavigationMenuItem>
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
+
                       {index === 1 && (
                         <NavigationMenu>
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger
-                                className={`border-b-2 border-transparent text-sm font-light text-muted hover:border-b-2 hover:border-accent ${paths === `/workspaces/${workspaceId}` ? 'border-accent text-white' : ''}`}
+                                className={`mb-1 border-b-2 text-sm font-light hover:border-b-2 hover:border-accent`}
                               >
-                                <Link
-                                  href={`/workspaces/${workspaceId}`}
-                                  legacyBehavior
-                                  passHref
+                                <NavLink
+                                  href={`#`}
+                                  className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent px-[0.5px] py-1 text-sm font-light text-muted transition-colors hover:border-b-2 data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white`}
                                 >
-                                  <span className="flex items-center gap-2">
-                                    <PackageOpen className="h-4 w-4" />
-                                    <span>{item.name}</span>
-                                  </span>
-                                </Link>
+                                  {''}
+                                </NavLink>
                               </NavigationMenuTrigger>
                               {workbenches &&
                                 workbenches.filter(
@@ -425,7 +457,7 @@ export function Header() {
                           <NavigationMenuList>
                             {isInAppContext && currentWorkbench && (
                               <NavigationMenuItem>
-                                <NavigationMenuTrigger className="border-b-2 border-accent text-sm font-light text-white hover:border-b-2 hover:border-accent">
+                                <NavigationMenuTrigger className="ml-1 border-b-2 border-accent text-sm font-light text-white hover:border-b-2 hover:border-accent">
                                   <span className="flex items-center gap-2">
                                     <LaptopMinimal className="h-4 w-4" />
                                     <span>{currentWorkbench.name}</span>
@@ -628,8 +660,9 @@ export function Header() {
                         }}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex items-center x-4">
-                            {app.name && getAppIcon(app.name, { id: 'header-my-apps' })}
+                          <div className="x-4 flex items-center">
+                            {app.name &&
+                              getAppIcon(app.name, { id: 'header-my-apps' })}
                           </div>
                           <div className="flex flex-col">
                             <div className="flex items-center gap-[6px]">
@@ -847,7 +880,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => { }}
+            onUpdate={() => {}}
           />
         )}
       </nav>

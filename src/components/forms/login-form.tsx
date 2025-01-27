@@ -54,7 +54,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
 
-  const { isAuthenticated, setAuthenticated, refreshUser } = useAuth()
+  const { isAuthenticated, setAuthenticated } = useAuth()
 
   useEffect(() => {
     const fetchAuthModes = async () => {

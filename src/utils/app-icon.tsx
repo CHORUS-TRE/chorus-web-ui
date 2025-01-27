@@ -1,4 +1,5 @@
 import Image from 'next/image'
+
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 
 type AppIconConfig = {
@@ -8,7 +9,13 @@ type AppIconConfig = {
   id?: string
 }
 
-const FORCE_AVATAR_APPS = new Set(['jupyterlab', 'didata', 'rstudio', 'jupyter', 'sciterminal'])
+const FORCE_AVATAR_APPS = new Set([
+  'jupyterlab',
+  'didata',
+  'rstudio',
+  'jupyter',
+  'sciterminal'
+])
 const SVG_APPS = new Set(['zenodo-public', 'sciterminal'])
 
 const SIZE_MAPS = {
@@ -17,7 +24,10 @@ const SIZE_MAPS = {
   lg: { avatar: 'h-20 w-20', image: 80 }
 }
 
-export function getAppIcon(appName: string, config: AppIconConfig = {}): React.ReactNode {
+export function getAppIcon(
+  appName: string,
+  config: AppIconConfig = {}
+): React.ReactNode {
   const { forceAvatar = false, size = 'md', className = '', id = '' } = config
   const dimensions = SIZE_MAPS[size]
 
@@ -47,7 +57,9 @@ export function getAppIcon(appName: string, config: AppIconConfig = {}): React.R
       height={dimensions.image}
       className={className}
       onError={(e) => {
-        const target = document.getElementsByClassName(`${id}-${appName}-icon`)[0]
+        const target = document.getElementsByClassName(
+          `${id}-${appName}-icon`
+        )[0]
 
         e.currentTarget.style.display = 'none'
         const fallback = document.createElement('div')
