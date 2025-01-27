@@ -123,16 +123,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardTitle className="text-white">{workspace?.name}</CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
-          {workspace && user?.workspaceId !== workspace?.id && (
+
             <CardContent>
               <p className="text-xs">
                 <strong>Owner: </strong>
                 {workspaceUser?.firstName} {workspaceUser?.lastName}
               </p>
+              {workspace && user?.workspaceId !== workspace?.id && (
               <p className="mb-2 text-xs">
                 <strong>Members: </strong>
                 {workspace?.memberIds.length}
-              </p>
+              </p>)}
               <div>
                 <p className="text-xs">
                   <strong>Status: </strong>
@@ -148,7 +149,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 </p>
               </div>
             </CardContent>
-          )}
           <div className="flex-grow" />
           {/* <CardFooter>
           <Button disabled>
