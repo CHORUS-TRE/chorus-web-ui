@@ -12,10 +12,11 @@ import {
   useState
 } from 'react'
 
-import { App, AppInstance, Workbench, Workspace } from '@/domain/model'
+import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
 
 import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
+import { userMe } from '../actions/user-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
 
@@ -42,19 +43,15 @@ type AppStateContextType = {
     >
   >
   workspaces: Workspace[] | undefined
-  setWorkspaces: Dispatch<SetStateAction<Workspace[] | undefined>>
   workbenches: Workbench[] | undefined
-  setWorkbenches: Dispatch<SetStateAction<Workbench[] | undefined>>
   error: string | undefined
   setError: Dispatch<SetStateAction<string | undefined>>
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   clearState: () => void
   apps: App[] | undefined
-  setApps: Dispatch<SetStateAction<App[] | undefined>>
   refreshApps: () => Promise<void>
   appInstances: AppInstance[] | undefined
-  setAppInstances: Dispatch<SetStateAction<AppInstance[] | undefined>>
   refreshAppInstances: () => Promise<void>
   showAppStoreHero: boolean
   toggleAppStoreHero: () => void
@@ -68,19 +65,15 @@ const AppStateContext = createContext<AppStateContextType>({
   background: undefined,
   setBackground: () => {},
   workspaces: undefined,
-  setWorkspaces: () => {},
   workbenches: undefined,
-  setWorkbenches: () => {},
   error: undefined,
   setError: () => {},
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
   clearState: () => {},
   apps: undefined,
-  setApps: () => {},
   refreshApps: async () => {},
   appInstances: undefined,
-  setAppInstances: () => {},
   refreshAppInstances: async () => {},
   showAppStoreHero: true,
   toggleAppStoreHero: () => {}
@@ -91,6 +84,7 @@ export const AppStateProvider = ({
 }: {
   children: ReactNode
 }): ReactElement => {
+  const { user } = useAuth()
   const [showRightSidebar, setShowRightSidebar] = useState(false)
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [background, setBackground] = useState<{
@@ -115,35 +109,35 @@ export const AppStateProvider = ({
     }
     return true
   })
-  const [userWorkspaceId, setUserWorkspaceId] = useState<string | undefined>(
-    undefined
-  )
-  const { isAuthenticated, user } = useAuth()
-
-  useEffect(() => {
-    localStorage.setItem('showAppStoreHero', JSON.stringify(showAppStoreHero))
-  }, [showAppStoreHero])
 
   const toggleAppStoreHero = useCallback(() => {
     setShowAppStoreHero((prev) => !prev)
   }, [])
 
   const refreshWorkspaces = useCallback(async () => {
+    if (!user) {
+      return
+    }
+
     try {
       const response = await workspaceList()
       if (response?.error) setError(response.error)
       if (response?.data)
         setWorkspaces(
-          response.data.sort(
-            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-          )
+          response.data
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .sort((a, b) => (a.id === user?.workspaceId ? -1 : 0))
         )
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const refreshWorkbenches = useCallback(async () => {
+    if (!user) {
+      return
+    }
+
     try {
       const response = await workbenchList()
       if (response?.data)
@@ -156,9 +150,13 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const refreshApps = useCallback(async () => {
+    if (!user) {
+      return
+    }
+
     try {
       const response = await appList()
       if (response?.error) setError(response.error)
@@ -172,9 +170,12 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const refreshAppInstances = useCallback(async () => {
+    if (!user) {
+      return
+    }
     try {
       const response = await appInstanceList()
       setAppInstances(
@@ -183,7 +184,7 @@ export const AppStateProvider = ({
     } catch (error) {
       setError(error.message)
     }
-  }, [])
+  }, [user])
 
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
@@ -193,31 +194,30 @@ export const AppStateProvider = ({
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
-    localStorage.removeItem('showAppStoreHero')
-    setUserWorkspaceId(undefined)
   }, [])
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      clearState()
-      return
-    }
+    localStorage.setItem('showAppStoreHero', JSON.stringify(showAppStoreHero))
+  }, [showAppStoreHero])
 
+  useEffect(() => {
     const initializeState = async () => {
+      if (!user) {
+        return
+      }
+
       try {
         await refreshWorkspaces()
         await refreshWorkbenches()
         await refreshApps()
         await refreshAppInstances()
-        const userWorkspaceId = await user?.workspaceId
-        setUserWorkspaceId(userWorkspaceId)
       } catch (error) {
         console.error(error)
       }
     }
 
     initializeState()
-  }, [isAuthenticated, user?.workspaceId])
+  }, [user])
 
   return (
     <AppStateContext.Provider
@@ -229,19 +229,15 @@ export const AppStateProvider = ({
         background,
         setBackground,
         workspaces,
-        setWorkspaces,
         workbenches,
-        setWorkbenches,
         error,
         setError,
         refreshWorkspaces,
         refreshWorkbenches,
         clearState,
         apps,
-        setApps,
         refreshApps,
         appInstances,
-        setAppInstances,
         refreshAppInstances,
         showAppStoreHero,
         toggleAppStoreHero

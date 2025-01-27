@@ -14,7 +14,7 @@ import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 import { toast } from '~/hooks/use-toast'
 
-export default function Portal() {
+export default function WorkspacesPage() {
   const {
     showWorkspacesTable,
     toggleWorkspaceView,
@@ -22,28 +22,11 @@ export default function Portal() {
     workbenches,
     error,
     setError,
-    refreshWorkspaces,
-    refreshWorkbenches
+    refreshWorkspaces
   } = useAppState()
-  const { user, refreshUser } = useAuth()
+  const { user } = useAuth()
 
   const [createOpen, setCreateOpen] = useState(false)
-
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await Promise.all([
-          refreshWorkspaces(),
-          refreshWorkbenches(),
-          refreshUser()
-        ])
-      } catch (error) {
-        setError(error.message)
-      }
-    }
-
-    initializeData()
-  }, [])
 
   return (
     <>
@@ -97,6 +80,11 @@ export default function Portal() {
           </div>
           {error && <p className="mt-4 text-red-500">{error}</p>}
           <TabsContent value="mine" className="border-none">
+            {!workspaces && (
+              <span className="animate-pulse text-muted-foreground">
+                Loading workspaces...
+              </span>
+            )}
             {showWorkspacesTable ? (
               <WorkspaceTable
                 workspaces={workspaces}

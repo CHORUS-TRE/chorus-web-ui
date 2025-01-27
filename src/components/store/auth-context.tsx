@@ -8,9 +8,9 @@ import {
   SetStateAction,
   useCallback,
   useContext,
+  useEffect,
   useState
 } from 'react'
-import { env } from 'next-runtime-env'
 
 import { User } from '@/domain/model'
 
@@ -20,14 +20,12 @@ type AuthContextType = {
   isAuthenticated: boolean
   setAuthenticated: Dispatch<SetStateAction<boolean>>
   user: User | undefined
-  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   setAuthenticated: () => {},
-  user: undefined,
-  refreshUser: async () => {}
+  user: undefined
 })
 
 export const AuthProvider = ({
@@ -40,6 +38,12 @@ export const AuthProvider = ({
   const [isAuthenticated, setAuthenticated] = useState<boolean>(authenticated)
   const [user, setUser] = useState<User | undefined>(undefined)
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshUser()
+    }
+  }, [isAuthenticated])
+
   const refreshUser = useCallback(async () => {
     try {
       if (!isAuthenticated) {
@@ -48,18 +52,7 @@ export const AuthProvider = ({
       }
 
       const me = await userMe()
-      setUser(
-        me.data
-          ? {
-              ...me.data,
-              workspaceId:
-                me.data.workspaceId ||
-                env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-                localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-                undefined
-            }
-          : undefined
-      )
+      setUser(me.data)
     } catch (error) {
       console.error(error)
     }
@@ -70,8 +63,7 @@ export const AuthProvider = ({
       value={{
         isAuthenticated,
         setAuthenticated,
-        user,
-        refreshUser
+        user
       }}
     >
       {children}

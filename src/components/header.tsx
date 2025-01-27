@@ -12,15 +12,18 @@ import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { formatDistance, formatDistanceToNow } from 'date-fns'
 import {
+  CircleHelp,
   DraftingCompass,
   House,
   LaptopMinimal,
   Package,
   PackageOpen,
   Search,
-  Store
+  Store,
+  User
 } from 'lucide-react'
 
+import { logout } from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
 import {
   AlertDialog,
@@ -35,10 +38,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
@@ -52,6 +62,7 @@ import {
 } from '~/components/ui/navigation-menu'
 import { Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
+import { getAppIcon } from '~/utils/app-icon'
 
 import { appInstanceCreate } from './actions/app-instance-view-model'
 import {
@@ -60,10 +71,10 @@ import {
 } from './forms/workbench-forms'
 import { useAuth } from './store/auth-context'
 import { Input } from './ui/input'
-import { HeaderButtons } from './header-buttons'
 import NavLink from './nav-link'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import userPlaceholder from '/public/placeholder-user.jpg'
 
 interface BreadcrumbItem {
   name: string
@@ -88,16 +99,17 @@ export function Header() {
     background,
     setBackground,
     refreshWorkspaces,
-    refreshWorkbenches
+    refreshWorkbenches,
+    refreshApps,
+    refreshAppInstances,
+    toggleRightSidebar
   } = useAppState()
-  const { user, refreshUser } = useAuth()
+  const { user, isAuthenticated, setAuthenticated } = useAuth()
 
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
   const { toast } = useToast()
   const params = useParams<{ workspaceId: string; desktopId: string }>()
-  const [isPending, startTransition] = useTransition()
-  const { isAuthenticated } = useAuth()
   const isInAppContext = params?.workspaceId && params?.desktopId
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
@@ -126,22 +138,13 @@ export function Header() {
     [workspacesWithWorkbenches, workspaceId]
   )
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return
-    }
-    startTransition(async () => {
-      try {
-        await Promise.all([
-          refreshWorkspaces(),
-          refreshWorkbenches(),
-          refreshUser()
-        ])
-      } catch (error) {
-        setError(error.message)
-      }
+  const handleLogoutClick = async () => {
+    setBackground(undefined)
+    setAuthenticated(false)
+    logout().then(() => {
+      window.location.href = '/'
     })
-  }, [background?.workbenchId, isAuthenticated])
+  }
 
   // Utility function for capitalizing
   const capitalize = useCallback(
@@ -246,14 +249,14 @@ export function Header() {
               src={logo}
               alt="Chorus"
               height={32}
-              className="mt-1 aspect-auto cursor-pointer"
+              className="aspect-auto cursor-pointer"
               id="logo"
               priority
             />
           </Link>
           {isAuthenticated && (
             <div className="min-w-0 flex-1 pr-4">
-              <Breadcrumb className="mt-1 pl-2">
+              <Breadcrumb className="pl-2">
                 <BreadcrumbList className="text-primary-foreground">
                   {paths && paths.length > 1 && (
                     <BreadcrumbSeparator className="text-muted" />
@@ -261,23 +264,39 @@ export function Header() {
                   {items.map((item, index) => (
                     <Fragment key={item.href}>
                       {/* Workspaces Menu */}
+
+                      {index === 0 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            <NavigationMenuItem>
+                              <NavLink
+                                href={`/workspaces/`}
+                                exact
+                                className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces' ? 'border-accent' : ''}`}
+                              >
+                                <div className="flex items-center gap-[6px]">
+                                  <Package className="h-4 w-4" />
+                                  <span>My workspaces</span>
+                                </div>
+                              </NavLink>
+                            </NavigationMenuItem>
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
+
                       {index === 0 && (
                         <NavigationMenu>
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger
-                                className={`border-b-2 text-sm font-light hover:border-b-2 hover:border-accent ${paths === '/workspaces' ? 'border-accent' : ''}`}
+                                className={`mb-1 border-b-2 text-sm font-light hover:border-b-2 hover:border-accent`}
                               >
-                                <Link
-                                  href={`/workspaces/`}
-                                  legacyBehavior
-                                  passHref
+                                <NavLink
+                                  href={`#`}
+                                  className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent px-[0.5px] py-1 text-sm font-light text-muted transition-colors hover:border-b-2 data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white`}
                                 >
-                                  <span className="flex items-center gap-2">
-                                    <Package className="h-4 w-4" />
-                                    <span>My workspaces</span>
-                                  </span>
-                                </Link>
+                                  {''}
+                                </NavLink>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
@@ -326,23 +345,39 @@ export function Header() {
                       )}
 
                       {/* Workspace Desktops Menu */}
+
+                      {index === 1 && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            <NavigationMenuItem>
+                              <NavLink
+                                href={`/workspaces/${workspaceId}`}
+                                exact
+                                className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces/${workspaceId}' ? 'border-accent' : ''}`}
+                              >
+                                <div className="flex items-center gap-[6px]">
+                                  <PackageOpen className="h-4 w-4" />
+                                  <span>{item.name}</span>
+                                </div>
+                              </NavLink>
+                            </NavigationMenuItem>
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
+
                       {index === 1 && (
                         <NavigationMenu>
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger
-                                className={`border-b-2 border-transparent text-sm font-light text-muted hover:border-b-2 hover:border-accent ${paths === `/workspaces/${workspaceId}` ? 'border-accent text-white' : ''}`}
+                                className={`mb-1 border-b-2 text-sm font-light hover:border-b-2 hover:border-accent`}
                               >
-                                <Link
-                                  href={`/workspaces/${workspaceId}`}
-                                  legacyBehavior
-                                  passHref
+                                <NavLink
+                                  href={`#`}
+                                  className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent px-[0.5px] py-1 text-sm font-light text-muted transition-colors hover:border-b-2 data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white`}
                                 >
-                                  <span className="flex items-center gap-2">
-                                    <PackageOpen className="h-4 w-4" />
-                                    <span>{item.name}</span>
-                                  </span>
-                                </Link>
+                                  {''}
+                                </NavLink>
                               </NavigationMenuTrigger>
                               {workbenches &&
                                 workbenches.filter(
@@ -422,7 +457,7 @@ export function Header() {
                           <NavigationMenuList>
                             {isInAppContext && currentWorkbench && (
                               <NavigationMenuItem>
-                                <NavigationMenuTrigger className="border-b-2 border-accent text-sm font-light text-white hover:border-b-2 hover:border-accent">
+                                <NavigationMenuTrigger className="ml-1 border-b-2 border-accent text-sm font-light text-white hover:border-b-2 hover:border-accent">
                                   <span className="flex items-center gap-2">
                                     <LaptopMinimal className="h-4 w-4" />
                                     <span>{currentWorkbench.name}</span>
@@ -625,19 +660,10 @@ export function Header() {
                         }}
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage
-                              src={
-                                app.name === 'vscode'
-                                  ? '/vscode.png'
-                                  : '/placeholder.svg'
-                              }
-                              className="m-auto h-8 w-8"
-                            />
-                            <AvatarFallback className="min-h-8 text-2xl">
-                              {app.name?.slice(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div className="x-4 flex items-center">
+                            {app.name &&
+                              getAppIcon(app.name, { id: 'header-my-apps' })}
+                          </div>
                           <div className="flex flex-col">
                             <div className="flex items-center gap-[6px]">
                               <DraftingCompass className="h-4 w-4" />
@@ -753,7 +779,81 @@ export function Header() {
             </div>
           )}
           <div className="ml-4 flex items-center gap-2">
-            <HeaderButtons />
+            <div className="flex items-center justify-end">
+              {isAuthenticated && (
+                <Button
+                  size="icon"
+                  className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+                  variant="ghost"
+                  onClick={toggleRightSidebar}
+                >
+                  <CircleHelp />
+                </Button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="icon"
+                    className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+                    variant="ghost"
+                  >
+                    {user?.avatar && (
+                      <Image
+                        src={user?.avatar || userPlaceholder}
+                        width={24}
+                        height={24}
+                        alt="Avatar"
+                        className="overflow-hidden rounded-full"
+                        style={{ aspectRatio: '24/24', objectFit: 'cover' }}
+                      />
+                    )}
+                    {!user?.avatar && <User />}
+                  </Button>
+                </DropdownMenuTrigger>
+                {isAuthenticated ? (
+                  <DropdownMenuContent
+                    align="end"
+                    className="bg-black text-white"
+                  >
+                    <DropdownMenuItem asChild>
+                      {!error ? (
+                        <Link href="/users/me">
+                          <p className="leading-7 [&:not(:first-child)]:mt-6">
+                            {user?.firstName} {user?.lastName}
+                          </p>
+                        </Link>
+                      ) : (
+                        <p className="text-red-500">{error}</p>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="#" passHref>
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogoutClick}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                ) : (
+                  <DropdownMenuContent
+                    align="end"
+                    className="bg-black text-white"
+                  >
+                    <DropdownMenuItem asChild>
+                      <Link href="/login">Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/register" passHref>
+                        Register
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                )}
+              </DropdownMenu>
+            </div>
           </div>
         </div>
 
@@ -792,12 +892,7 @@ export function Header() {
             <AlertDialogDescription className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  {currentWorkbench?.name === 'vscode' && (
-                    <AvatarImage src="/vscode.png" className="m-auto" />
-                  )}
-                  <AvatarFallback className="text-lg">
-                    {currentWorkbench?.name?.slice(0, 2)}
-                  </AvatarFallback>
+                  {currentWorkbench?.name?.slice(0, 2)}
                 </Avatar>
                 <div className="space-y-1">
                   <p className="font-medium">{currentWorkbench?.shortName}</p>

@@ -21,9 +21,9 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { App } from '~/domain/model'
+import { getAppIcon } from '~/utils/app-icon'
 
 import { appDelete } from './actions/app-view-model'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 interface AppCardProps {
   app: App
@@ -77,15 +77,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
       <Card className="flex flex-col overflow-hidden border border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2">
           <div className="flex items-center space-x-4">
-            <Avatar className="h-12 w-12">
-              <AvatarImage
-                src={app.name === 'vscode' ? '/vscode.png' : undefined}
-                className="m-auto"
-              />
-              <AvatarFallback className="text-2xl">
-                {app.name?.slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
+            {app.name && getAppIcon(app.name, { id: 'app-card' })}
             <CardTitle className="border-b-0 text-xl font-semibold text-white">
               {app.name || 'Unnamed App'}
             </CardTitle>
@@ -138,7 +130,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
               /* TODO: Implement add to my apps */
             }}
             className=""
-            disabled={isDeleting}
+            disabled={true}
           >
             <Plus className="mr-2 h-4 w-4" />
             Add to My Apps

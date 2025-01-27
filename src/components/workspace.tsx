@@ -123,11 +123,15 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardTitle className="text-white">{workspace?.name}</CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
-          {!userWorkspace && (
+          {workspace && user?.workspaceId !== workspace?.id && (
             <CardContent>
               <p className="text-xs">
                 <strong>Owner: </strong>
                 {workspaceUser?.firstName} {workspaceUser?.lastName}
+              </p>
+              <p className="mb-2 text-xs">
+                <strong>Members: </strong>
+                {workspace?.memberIds.length}
               </p>
               <div>
                 <p className="text-xs">

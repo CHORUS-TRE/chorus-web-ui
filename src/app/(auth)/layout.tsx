@@ -25,16 +25,28 @@ export default function Layout({
         className="fixed left-1/2 top-1/2 z-30 w-full max-w-[960px] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-black bg-opacity-85"
         id="content"
       >
-        <div className="grid grid-cols-1 place-items-center gap-8 p-8 md:grid-cols-2 lg:grid-cols-2">
+        <div className="grid grid-cols-1 place-items-center gap-8 md:grid-cols-2 lg:grid-cols-2">
           {/* Left Column - Brand Info */}
-          <div className="hidden h-full min-h-[600px] flex-col items-center justify-between md:flex lg:flex">
-            <div className="flex flex-1 flex-col items-center justify-center">
+          <div className="hidden h-full min-h-[600px] flex-col items-center justify-between py-8 md:flex lg:flex">
+            <div className="flex flex-1 flex-col items-center justify-start">
+              <div className="mb-16 w-full">
+                <a
+                  href="https://chorus-tre.ch"
+                  className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Chorus website"
+                >
+                  <Link className="size-4" />
+                  CHORUS Website
+                </a>
+              </div>
               <Image
                 src={logo}
                 alt="Chorus Logo"
                 width={320}
                 height={180}
-                className="mb-12 h-auto w-full max-w-xs"
+                className="mb-12 h-36 w-full max-w-xs"
                 priority
               />
               <div className="max-w-xs text-white">
@@ -50,25 +62,19 @@ export default function Layout({
 
             <div className="w-full">
               <div className="flex items-center justify-between">
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-muted">
                   Web-UI Version: {packageInfo.version}
                 </div>
                 <div className="flex justify-start gap-3">
                   <a
-                    href="https://chorus-tre.ch"
-                    className="flex items-center gap-2 text-xs font-medium text-muted hover:text-accent"
-                    target="_blank"
-                    aria-label="Chorus website"
-                  >
-                    <Link className="size-4" />
-                  </a>
-                  <a
                     href="https://github.com/CHORUS-TRE/"
-                    className="flex items-center gap-2 text-xs font-medium text-muted hover:text-accent"
+                    className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
                     target="_blank"
+                    rel="noopener noreferrer"
                     aria-label="GITHUB"
                   >
                     <Github className="size-4" />
+                    <span>Github</span>
                   </a>
                 </div>
               </div>
