@@ -162,9 +162,10 @@ export const AppStateProvider = ({
       if (response?.error) setError(response.error)
       if (response?.data) {
         setApps(
-          response.data.sort(
-            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-          )
+          response.data.sort((a, b) => {
+            if (!a.name || !b.name) return 0
+            return a.name.localeCompare(b.name)
+          })
         )
       }
     } catch (error) {
