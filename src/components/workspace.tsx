@@ -238,6 +238,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             workspaceId={workspace?.id}
             onUpdate={(workbenchId) => {
               refreshWorkspaces()
+              refreshWorkbenches()
               router.push(
                 `/workspaces/${workspace?.id}/desktops/${workbenchId}`
               )
