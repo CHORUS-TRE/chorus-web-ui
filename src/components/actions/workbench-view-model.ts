@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
+import { env } from 'next-runtime-env'
 
 import {
   WorkbenchCreateModel,
@@ -85,7 +86,7 @@ export async function workbenchCreate(
 
     const createdWorkbench = await useCase.execute(validation.data)
 
-    await delay(8 * 1000)
+    await delay((Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) || 8) * 1000)
 
     if (createdWorkbench.error) {
       return { error: createdWorkbench.error }

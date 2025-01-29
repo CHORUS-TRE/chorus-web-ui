@@ -87,6 +87,8 @@ interface ItemProps {
 }
 
 export function Header() {
+  const router = useRouter()
+  const { toast } = useToast()
   const paths = usePathname()
   const [items, setItems] = useState<BreadcrumbItem[]>([])
   const {
@@ -107,17 +109,16 @@ export function Header() {
   const { user, isAuthenticated, setAuthenticated } = useAuth()
 
   const [deleted, setDeleted] = useState<boolean>(false)
-  const router = useRouter()
-  const { toast } = useToast()
   const params = useParams<{ workspaceId: string; desktopId: string }>()
-  const isInAppContext = params?.workspaceId && params?.desktopId
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
-  const isUserWorkspace = params?.workspaceId === user?.workspaceId
   const [showAboutDialog, setShowAboutDialog] = useState(false)
+
+  const isInAppContext = params?.workspaceId && params?.desktopId
+  const isUserWorkspace = params?.workspaceId === user?.workspaceId
 
   const pathNames = useMemo(
     () => paths?.split('/').filter(Boolean) || [],
@@ -211,6 +212,7 @@ export function Header() {
   useEffect(() => {
     if (isInAppContext && workbenches) {
       const workbench = workbenches.find((w) => w.id === params.desktopId)
+      console.log('workbench', workbench)
       if (workbench) {
         setCurrentWorkbench(workbench)
       }
@@ -240,6 +242,10 @@ export function Header() {
     }
   }, [deleted])
 
+  useEffect(() => {
+    refreshWorkbenches()
+  }, [isInAppContext])
+
   return (
     <>
       <nav className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap">
@@ -263,8 +269,8 @@ export function Header() {
                   )}
                   {items.map((item, index) => (
                     <Fragment key={item.href}>
-                      {/* Workspaces Menu */}
 
+                      {/* Workspaces Menu */}
                       {index === 0 && (
                         <NavigationMenu>
                           <NavigationMenuList>
@@ -284,6 +290,7 @@ export function Header() {
                         </NavigationMenu>
                       )}
 
+                      {/* Workspace Menu  Dropdown */}
                       {index === 0 && (
                         <NavigationMenu>
                           <NavigationMenuList>
@@ -344,8 +351,7 @@ export function Header() {
                         </NavigationMenu>
                       )}
 
-                      {/* Workspace Desktops Menu */}
-
+                      {/* Workspace's desktops Menu */}
                       {index === 1 && (
                         <NavigationMenu>
                           <NavigationMenuList>
@@ -365,6 +371,7 @@ export function Header() {
                         </NavigationMenu>
                       )}
 
+                      {/* Workspace's desktops Menu  Dropdown*/}
                       {index === 1 && (
                         <NavigationMenu>
                           <NavigationMenuList>
@@ -880,7 +887,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>
