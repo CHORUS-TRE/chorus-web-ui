@@ -61,8 +61,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
 
-  const userWorkspace = workspaces?.find((w) => w.id === user?.workspaceId)
-
   const initializeData = async () => {
     try {
       const [workspaceResponse] = await Promise.all([
@@ -124,31 +122,32 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
 
-            <CardContent>
-              <p className="text-xs">
-                <strong>Owner: </strong>
-                {workspaceUser?.firstName} {workspaceUser?.lastName}
-              </p>
-              {workspace && user?.workspaceId !== workspace?.id && (
+          <CardContent>
+            <p className="text-xs">
+              <strong>Owner: </strong>
+              {workspaceUser?.firstName} {workspaceUser?.lastName}
+            </p>
+            {workspace && user?.workspaceId !== workspace?.id && (
               <p className="mb-2 text-xs">
                 <strong>Members: </strong>
                 {workspace?.memberIds.length}
-              </p>)}
-              <div>
-                <p className="text-xs">
-                  <strong>Status: </strong>
-                  {workspace?.status}
-                </p>
-                <p className="text-xs">
-                  <strong>Creation date: </strong>
-                  {formatDistanceToNow(workspace?.createdAt || new Date())} ago
-                </p>
-                <p className="text-xs">
-                  <strong>Updated: </strong>
-                  {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
-                </p>
-              </div>
-            </CardContent>
+              </p>
+            )}
+            <div>
+              <p className="text-xs">
+                <strong>Status: </strong>
+                {workspace?.status}
+              </p>
+              <p className="text-xs">
+                <strong>Creation date: </strong>
+                {formatDistanceToNow(workspace?.createdAt || new Date())} ago
+              </p>
+              <p className="text-xs">
+                <strong>Updated: </strong>
+                {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
+              </p>
+            </div>
+          </CardContent>
           <div className="flex-grow" />
           {/* <CardFooter>
           <Button disabled>
@@ -236,11 +235,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <WorkbenchCreateForm
-            workspaceId={userWorkspace?.id}
+            workspaceId={workspace?.id}
             onUpdate={(workbenchId) => {
               refreshWorkspaces()
               router.push(
-                `/workspaces/${userWorkspace?.id}/desktops/${workbenchId}`
+                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
               )
             }}
           />
