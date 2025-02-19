@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { env } from 'next-runtime-env'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
@@ -18,7 +19,8 @@ import { useToast } from '~/hooks/use-toast'
 import {
   authenticationLogin,
   getAuthenticationModes,
-  getOAuthUrl
+  getOAuthUrl,
+  getSession
 } from '../actions/authentication-view-model'
 import { IFormState } from '../actions/utils'
 import { useAuth } from '../store/auth-context'
@@ -85,8 +87,47 @@ export default function LoginForm() {
   useEffect(() => {
     if (!isAuthenticated) return
 
+    // const checkAuthOnBackend = async () => {
+    // Authenticate on backend to set the session cookie
+    // const session = await getSession()
+    // if (session) {
+    // const authOnBackend = await fetch(`${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`, {
+    // method: 'POST',
+    // headers: {
+    // Authorization: `Bearer ${session}`
+    // }
+    // })
+
+    // const data = await authOnBackend.json()
+    // console.log('Session cookie set', data)
+
+    // if (authOnBackend.status !== 200) {
+    // toast({
+    // title: "Couldn't authenticate on backend",
+    // description: 'Please try again later',
+    // variant: 'destructive',
+    // duration: 1000
+    // })
+
+    // await new Promise(resolve => setTimeout(resolve, 2000))
+    // }
+
+    // const testCookie = await fetch(`${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`, {
+    // headers: {
+    // Authorization: `Bearer ${data.result.token}`
+    // }
+    // })
+
+    // const data2 = await testCookie.json()
+    // console.log('Test cookie', data2)
+
+    // }
+
     const path = searchParams.get('redirect') || '/'
     window.location.href = path
+    // }
+
+    // checkAuthOnBackend()
   }, [isAuthenticated, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
@@ -215,16 +256,18 @@ export default function LoginForm() {
         </>
       )}
 
-      <div className="mt-4 text-center text-sm text-white">
-        Don&apos;t have an account?{' '}
-        <Link
-          href="/register"
-          className="text-muted underline hover:text-accent"
-          prefetch={false}
-        >
-          Register
-        </Link>
-      </div>
+      {internalLogin && (
+        <div className="mt-4 text-center text-sm text-white">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/register"
+            className="text-muted underline hover:text-accent"
+            prefetch={false}
+          >
+            Register
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

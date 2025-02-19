@@ -667,7 +667,7 @@ export function Header() {
                           <div className="flex flex-col">
                             <div className="flex items-center gap-[6px]">
                               <DraftingCompass className="h-4 w-4" />
-                              <span className="text-sm font-medium leading-none">
+                              <span className="text-sm font-medium leading-none text-white">
                                 {app.name}
                               </span>
                             </div>
