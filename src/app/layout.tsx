@@ -53,6 +53,7 @@ export default function RootLayout({
             g.async=true; g.src='${matomoUrl}/js/container_${containerId}.js'; s.parentNode.insertBefore(g,s);
           `}
         </Script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider authenticated={authenticated}>
