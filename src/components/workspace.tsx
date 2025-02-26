@@ -173,8 +173,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           }}
         />
       </div>
-
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+      <Card
+        className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white"
+        id="getting-started-step2"
+      >
         <CardHeader>
           <CardTitle
             className="flex cursor-pointer items-center justify-between"

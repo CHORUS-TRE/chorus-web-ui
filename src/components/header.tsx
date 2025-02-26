@@ -555,7 +555,7 @@ export function Header() {
         {isAuthenticated && (
           <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
             <NavigationMenuList className="flex items-center justify-center gap-3">
-              <NavigationMenuItem>
+              <NavigationMenuItem id="getting-started-step-home">
                 <NavLink
                   href="/"
                   exact={!isUserWorkspace}
@@ -567,7 +567,7 @@ export function Header() {
                   </div>
                 </NavLink>
               </NavigationMenuItem>
-              <NavigationMenuItem>
+              <NavigationMenuItem id="getting-started-step3">
                 <NavLink
                   href="/workspaces"
                   className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
@@ -579,7 +579,7 @@ export function Header() {
                   </div>
                 </NavLink>
               </NavigationMenuItem>
-              <NavigationMenuItem>
+              <NavigationMenuItem id="getting-started-step4">
                 <NavLink
                   href="/app-store"
                   className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"

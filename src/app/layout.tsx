@@ -6,13 +6,15 @@ import Image from 'next/image'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
+import { NextStep, NextStepProvider } from 'nextstepjs'
 
 import { AppStateProvider } from '@/components/store/app-state-context'
 
 import BackgroundIframe from '~/components/background-iframe'
-import RightSidebar from '~/components/right-sidebar'
+import GettingStartedCard from '~/components/getting-started-card'
 import { AuthProvider } from '~/components/store/auth-context'
 import { Toaster } from '~/components/ui/toaster'
+import { steps } from '~/lib/tours'
 
 import '@/app/build.css'
 import '@/styles/globals.css'
@@ -55,8 +57,17 @@ export default function RootLayout({
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider authenticated={authenticated}>
           <AppStateProvider>
-            {children}
-            <RightSidebar show={true} />
+            <NextStepProvider>
+              <NextStep
+                steps={steps}
+                showNextStep={false}
+                displayArrow={true}
+                clickThroughOverlay={true}
+                cardComponent={GettingStartedCard}
+              >
+                {children}
+              </NextStep>
+            </NextStepProvider>
             <BackgroundIframe />
             <Image
               alt="Background"
