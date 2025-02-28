@@ -258,7 +258,7 @@ export function Header() {
             />
           </Link>
           {isAuthenticated && (
-            <div className="hidden min-w-0 flex-1 pr-4 lg:block">
+            <div className="min-w-0 flex-1 pr-4">
               <Breadcrumb className="pl-2">
                 <BreadcrumbList className="text-primary-foreground">
                   {paths && paths.length > 1 && (
@@ -269,7 +269,7 @@ export function Header() {
                       {/* Workspaces Menu */}
 
                       {index === 0 && (
-                        <NavigationMenu>
+                        <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavLink
@@ -350,7 +350,7 @@ export function Header() {
                       {/* Workspace Desktops Menu */}
 
                       {index === 1 && (
-                        <NavigationMenu>
+                        <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavLink
@@ -369,7 +369,7 @@ export function Header() {
                       )}
 
                       {index === 1 && (
-                        <NavigationMenu>
+                        <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger
@@ -822,7 +822,7 @@ export function Header() {
           )}
 
           {isAuthenticated && (
-            <div className="relative mr-2 hidden flex-1 lg:block">
+            <div className="relative mr-2 hidden flex-1 xl:block">
               <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
               <Input
                 disabled
