@@ -14,6 +14,7 @@
 
 import * as runtime from '../runtime'
 import type {
+  AuthenticationServiceAuthenticateOauthRedirectBody,
   ChorusAuthenticateOauthRedirectReply,
   ChorusAuthenticateOauthReply,
   ChorusAuthenticationReply,
@@ -22,6 +23,8 @@ import type {
   RpcStatus
 } from '../models/index'
 import {
+  AuthenticationServiceAuthenticateOauthRedirectBodyFromJSON,
+  AuthenticationServiceAuthenticateOauthRedirectBodyToJSON,
   ChorusAuthenticateOauthRedirectReplyFromJSON,
   ChorusAuthenticateOauthRedirectReplyToJSON,
   ChorusAuthenticateOauthReplyFromJSON,
@@ -49,6 +52,15 @@ export interface AuthenticationServiceAuthenticateOauthRedirectRequest {
   state?: string
   sessionState?: string
   code?: string
+}
+
+export interface AuthenticationServiceAuthenticateOauthRedirect2Request {
+  id: string
+  body: AuthenticationServiceAuthenticateOauthRedirectBody
+}
+
+export interface AuthenticationServiceRefreshTokenRequest {
+  body: object
 }
 
 /**
@@ -228,6 +240,74 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
   }
 
   /**
+   * This endpoint is called by the provider after auth for the backend to retrieve the user profile
+   * Authenticate redirect using Auth 2.0
+   */
+  async authenticationServiceAuthenticateOauthRedirect2Raw(
+    requestParameters: AuthenticationServiceAuthenticateOauthRedirect2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusAuthenticateOauthRedirectReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling authenticationServiceAuthenticateOauthRedirect2.'
+      )
+    }
+
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling authenticationServiceAuthenticateOauthRedirect2.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/authentication/oauth2/{id}/redirect`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: AuthenticationServiceAuthenticateOauthRedirectBodyToJSON(
+          requestParameters.body
+        )
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusAuthenticateOauthRedirectReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint is called by the provider after auth for the backend to retrieve the user profile
+   * Authenticate redirect using Auth 2.0
+   */
+  async authenticationServiceAuthenticateOauthRedirect2(
+    requestParameters: AuthenticationServiceAuthenticateOauthRedirect2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusAuthenticateOauthRedirectReply> {
+    const response =
+      await this.authenticationServiceAuthenticateOauthRedirect2Raw(
+        requestParameters,
+        initOverrides
+      )
+    return await response.value()
+  }
+
+  /**
    * This endpoint list all the way the backend accept authentication
    * Get list of possible way to authenticate
    */
@@ -262,6 +342,66 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
   ): Promise<ChorusGetAuthenticationModesReply> {
     const response =
       await this.authenticationServiceGetAuthenticationModesRaw(initOverrides)
+    return await response.value()
+  }
+
+  /**
+   * This endpoint refreshes a user token
+   * Refresh token
+   */
+  async authenticationServiceRefreshTokenRaw(
+    requestParameters: AuthenticationServiceRefreshTokenRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusAuthenticationReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling authenticationServiceRefreshToken.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/authentication/refresh-token`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: requestParameters.body as any
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusAuthenticationReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint refreshes a user token
+   * Refresh token
+   */
+  async authenticationServiceRefreshToken(
+    requestParameters: AuthenticationServiceRefreshTokenRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusAuthenticationReply> {
+    const response = await this.authenticationServiceRefreshTokenRaw(
+      requestParameters,
+      initOverrides
+    )
     return await response.value()
   }
 }

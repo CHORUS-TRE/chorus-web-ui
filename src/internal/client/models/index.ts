@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './AuthenticationServiceAuthenticateOauthRedirectBody'
 export * from './ChorusApp'
 export * from './ChorusAppInstance'
 export * from './ChorusAuthenticateOauthRedirectReply'

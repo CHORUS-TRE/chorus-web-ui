@@ -9,6 +9,7 @@ apis/WorkbenchServiceApi.ts
 apis/WorkspaceServiceApi.ts
 apis/index.ts
 index.ts
+models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
 models/ChorusAuthenticateOauthRedirectReply.ts
