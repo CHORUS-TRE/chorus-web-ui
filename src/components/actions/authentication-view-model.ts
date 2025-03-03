@@ -90,6 +90,11 @@ export async function updateSession(request: NextRequest) {
   return res
 }
 
+export async function getSession() {
+  const session = cookies().get('session')?.value
+  return session
+}
+
 export async function getOAuthUrl(
   id: string
 ): Promise<AuthenticationOAuthResponse> {

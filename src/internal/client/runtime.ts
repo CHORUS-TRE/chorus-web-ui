@@ -152,10 +152,55 @@ export class BaseAPI {
     initOverrides?: RequestInit | InitOverrideFunction
   ): Promise<Response> {
     const { url, init } = await this.createFetchParams(context, initOverrides)
+
+    // Build curl command
+    let curlCommand = `curl -X ${init.method} '${url}'`
+
+    if (init.headers) {
+      Object.entries(init.headers).forEach(([key, value]) => {
+        curlCommand += ` -H '${key}: ${value}'`
+      })
+    }
+
+    // Add body if present
+    if (init.body) {
+      const bodyStr =
+        typeof init.body === 'string' ? init.body : JSON.stringify(init.body)
+      curlCommand += ` -d '${bodyStr}'`
+    }
+
+    // log request
+    console.log('\n\n=== Request ===')
+    console.log(`\n${init.method} ${url}`)
+    if (init.body) {
+      console.log(
+        'Body:',
+        typeof init.body === 'string' ? JSON.parse(init.body) : init.body
+      )
+    }
+    console.log('\n')
+    console.log(curlCommand)
+    console.log('\n')
+
     const response = await this.fetchApi(url, init)
     if (response && response.status >= 200 && response.status < 300) {
+      // Log response body
+      const responseClone = response.clone()
+      responseClone
+        .json()
+        .then((body) =>
+          console.log('Response:', responseClone.status, JSON.stringify(body))
+        )
+        .catch(() => console.log('Response body could not be parsed as JSON'))
+
       return response
     }
+
+    // log error
+    console.log('\n=== error ===')
+    console.log('Response returned an error code', response.status)
+    console.log('\n')
+
     throw new ResponseError(response, 'Response returned an error code')
   }
 
