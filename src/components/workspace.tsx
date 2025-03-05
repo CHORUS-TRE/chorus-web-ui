@@ -166,8 +166,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               title: 'Workspace updated',
               description: 'Workspace updated',
               variant: 'default',
-              className: 'bg-background text-white',
-              duration: 1000
+              className: 'bg-background text-white'
             })
             initializeData()
           }}

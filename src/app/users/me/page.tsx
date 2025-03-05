@@ -1,18 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-
 import { useAuth } from '~/components/store/auth-context'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { UserResponse } from '~/domain/model'
 
 export default function Me() {
-  const [error, setError] = useState<UserResponse['error']>()
   const { user } = useAuth()
 
   return (
     <div className="grid gap-6">
-      {error && <p className="mt-4 text-red-500">{error}</p>}
       {user && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

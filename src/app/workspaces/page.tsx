@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
+import { useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -20,8 +20,6 @@ export default function WorkspacesPage() {
     toggleWorkspaceView,
     workspaces,
     workbenches,
-    error,
-    setError,
     refreshWorkspaces
   } = useAppState()
   const { user } = useAuth()
@@ -78,7 +76,6 @@ export default function WorkspacesPage() {
               </UIButton>
             </div>
           </div>
-          {error && <p className="mt-4 text-red-500">{error}</p>}
           <TabsContent value="mine" className="border-none">
             {!workspaces && (
               <span className="animate-pulse text-muted-foreground">

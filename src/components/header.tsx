@@ -84,11 +84,6 @@ interface BreadcrumbItem {
   href?: string
 }
 
-interface ItemProps {
-  name: string
-  href?: string
-}
-
 export function Header() {
   const paths = usePathname()
   const [items, setItems] = useState<BreadcrumbItem[]>([])
@@ -98,13 +93,10 @@ export function Header() {
     apps,
     appInstances,
     error,
-    setError,
     background,
     setBackground,
     refreshWorkspaces,
     refreshWorkbenches,
-    refreshApps,
-    refreshAppInstances,
     toggleRightSidebar
   } = useAppState()
   const { user, isAuthenticated, setAuthenticated } = useAuth()
@@ -226,8 +218,7 @@ export function Header() {
         title: 'Error!',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [error])
@@ -237,8 +228,7 @@ export function Header() {
       toast({
         title: 'Success!',
         description: 'Desktop was deleted, redirecting to workspace...',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [deleted])
@@ -871,15 +861,11 @@ export function Header() {
                     className="bg-black text-white"
                   >
                     <DropdownMenuItem asChild>
-                      {!error ? (
-                        <Link href="/users/me">
-                          <p className="leading-7 [&:not(:first-child)]:mt-6">
-                            {user?.firstName} {user?.lastName}
-                          </p>
-                        </Link>
-                      ) : (
-                        <p className="text-red-500">{error}</p>
-                      )}
+                      <Link href="/users/me">
+                        <p className="leading-7 [&:not(:first-child)]:mt-6">
+                          {user?.firstName} {user?.lastName}
+                        </p>
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>

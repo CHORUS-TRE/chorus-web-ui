@@ -60,8 +60,7 @@ export default function WorkspacesGrid({
       toast({
         title: 'Success!',
         description: 'Workspace deleted',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [deleted])
@@ -71,8 +70,7 @@ export default function WorkspacesGrid({
       toast({
         title: 'Success!',
         description: 'Workspace updated',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [updated])
