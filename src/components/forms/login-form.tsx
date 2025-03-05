@@ -84,36 +84,42 @@ export default function LoginForm() {
 
       const checkAuthOnBackend = async () => {
         // Authenticate on backend to set the session cookie
-        const session = await getSession()
-        if (session) {
-          const authOnBackend = await fetch(
-            `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
-            {
-              method: 'POST',
-              headers: {
-                Authorization: `Bearer ${session}`
-              }
-            }
-          )
+        // const session = await getSession()
+        // if (session) {
+        //   const authOnBackend = await fetch(
+        //     `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
+        //     {
+        //       method: 'POST',
+        //       headers: {
+        //         Authorization: `Bearer ${session}`
+        //       }
+        //     }
+        //   )
 
-          const data = await authOnBackend.json()
-          console.log('Session cookie set', data)
+        //   const data = await authOnBackend.json()
+        //   console.log('Session cookie set', data)
 
-          const testCookie = await fetch(
-            `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
-            {
-              headers: {
-                Authorization: `Bearer ${data.result.token}`
-              }
-            }
-          )
+        //   const testCookie = await fetch(
+        //     `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
+        //     {
+        //       headers: {
+        //         Authorization: `Bearer ${data.result.token}`
+        //       }
+        //     }
+        //   )
 
-          const data2 = await testCookie.json()
-          console.log('Test cookie', data2)
+        // const data2 = await testCookie.json()
+        // console.log('Test cookie', data2)
 
-          // const path = searchParams.get('redirect') || '/'
-          // window.location.href = path
-        }
+        // Get the redirect path and validate it
+        const redirectPath = searchParams.get('redirect') || '/'
+        // Ensure the redirect URL is relative and doesn't contain protocol/domain
+        const isValidRedirect =
+          redirectPath.startsWith('/') && !redirectPath.includes('//')
+
+        // Redirect to the validated path or fallback to home
+        window.location.href = isValidRedirect ? redirectPath : '/'
+        // }
       }
 
       checkAuthOnBackend()
@@ -177,7 +183,13 @@ export default function LoginForm() {
                   Enter your email below to login to your account
                 </p>
               </div>
-              <form action={formAction}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.currentTarget)
+                  formAction(formData)
+                }}
+              >
                 <div className="mb-6 grid gap-6">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>

@@ -6,16 +6,11 @@ export async function middleware(request: NextRequest) {
   await updateSession(request)
   const session = request.cookies.get('session')?.value
 
-  // Allow browsing the '/' page without restrictions
-  // if (request.nextUrl.pathname === '/') {
-  //   return
-  // }
-
   // Disallow browsing '/' if not authenticated, redirect to login page
   if (!session && request.nextUrl.pathname === '/') {
-    return Response.redirect(
-      new URL('/login' + '?redirect=' + request.nextUrl.pathname, request.url)
-    )
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
+    return Response.redirect(loginUrl)
   }
 
   // Redirect to authentication page if not authenticated and trying to access other pages
@@ -25,7 +20,13 @@ export async function middleware(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/register') &&
     !request.nextUrl.pathname.startsWith('/oauthredirect')
   ) {
-    return Response.redirect(new URL('/login', request.url))
+    const loginUrl = new URL('/login', request.url)
+    // Encode the full URL to prevent manipulation
+    loginUrl.searchParams.set(
+      'redirect',
+      request.nextUrl.pathname + request.nextUrl.search
+    )
+    return Response.redirect(loginUrl)
   }
 }
 
