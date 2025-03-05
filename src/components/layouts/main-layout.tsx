@@ -62,7 +62,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       )}
 
       <div
-        className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-7xl -translate-x-1/2 grid-cols-[1fr_300px] gap-2 ${showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]'}`}
+        className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-7xl -translate-x-1/2 gap-2 ${showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]'}`}
       >
         <div
           id="content"
@@ -72,7 +72,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div className="flex justify-end p-2">
             <Button
               size="icon"
-              className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+              className={`overflow-hidden text-muted hover:bg-inherit hover:text-accent ${showRightSidebar ? 'hidden' : 'visible'}`}
               variant="ghost"
               onClick={toggleRightSidebar}
             >
