@@ -234,24 +234,30 @@ export const AppStateProvider = ({
     )
   }, [hasSeenGettingStartedTour])
 
-  useEffect(() => {
-    const initializeState = async () => {
-      if (!user) {
-        return
-      }
-
-      try {
-        await refreshWorkspaces()
-        await refreshWorkbenches()
-        await refreshApps()
-        await refreshAppInstances()
-      } catch (error) {
-        console.error(error)
-      }
+  const initializeState = useCallback(async () => {
+    if (!user) {
+      return
     }
 
+    try {
+      await refreshWorkspaces()
+      await refreshWorkbenches()
+      await refreshApps()
+      await refreshAppInstances()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [
+    user,
+    refreshWorkspaces,
+    refreshWorkbenches,
+    refreshApps,
+    refreshAppInstances
+  ])
+
+  useEffect(() => {
     initializeState()
-  }, [user])
+  }, [initializeState])
 
   return (
     <AppStateContext.Provider
