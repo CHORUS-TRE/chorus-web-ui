@@ -49,7 +49,7 @@ export default function RightSidebar({ show }: { show?: boolean }) {
           </h2>
           <div className="flex flex-col gap-4">
             <Link
-              href="https://docs.chorus-tre.ch/docs/getting-started"
+              href="https://docs.chorus-tre.ch/docs/category/getting-started"
               className="cursor"
               target="_blank"
             >
@@ -58,8 +58,8 @@ export default function RightSidebar({ show }: { show?: boolean }) {
                 id="getting-started-step1"
               >
                 <CardHeader>
-                  <CardTitle>Getting started</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-base">Getting started</CardTitle>
+                  <CardDescription className="text-sm">
                     Get started with your research.
                   </CardDescription>
                 </CardHeader>
@@ -79,10 +79,12 @@ export default function RightSidebar({ show }: { show?: boolean }) {
               target="_blank"
               className="cursor"
             >
-              <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 bg-black bg-opacity-85 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
+              <Card
+                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+              >
                 <CardHeader>
-                  <CardTitle>Documentation</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-base">Documentation</CardTitle>
+                  <CardDescription className="text-sm">
                     Learn more about the platform.
                   </CardDescription>
                 </CardHeader>
@@ -183,22 +185,6 @@ export default function RightSidebar({ show }: { show?: boolean }) {
                 </CardHeader>
               </Card> */}
           </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-white">
-            Web-UI: {packageInfo.version}
-          </div>
-          <Button
-            size="icon"
-            className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
-            variant="ghost"
-            onClick={() =>
-              window.open('https://github.com/CHORUS-TRE/chorus-web-ui/')
-            }
-            aria-label="CHORUS github repository"
-          >
-            <Github className="h-4 w-4" />
-          </Button>
         </div>
       </div>
     </>

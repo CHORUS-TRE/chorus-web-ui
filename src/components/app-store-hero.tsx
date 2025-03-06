@@ -13,7 +13,7 @@ export default function AppStoreHero() {
       <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8">
         <div className="relative flex items-center">
           <div className="flex-1">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-8">
               <div className="hidden lg:block lg:w-[300px]">
                 <Image
                   src="/logo-chorus-primaire-white@2x.svg"
