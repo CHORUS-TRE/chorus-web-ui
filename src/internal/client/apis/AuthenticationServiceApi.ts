@@ -20,6 +20,7 @@ import type {
   ChorusAuthenticationReply,
   ChorusCredentials,
   ChorusGetAuthenticationModesReply,
+  ChorusLogoutReply,
   RpcStatus
 } from '../models/index'
 import {
@@ -35,6 +36,8 @@ import {
   ChorusCredentialsToJSON,
   ChorusGetAuthenticationModesReplyFromJSON,
   ChorusGetAuthenticationModesReplyToJSON,
+  ChorusLogoutReplyFromJSON,
+  ChorusLogoutReplyToJSON,
   RpcStatusFromJSON,
   RpcStatusToJSON
 } from '../models/index'
@@ -57,6 +60,10 @@ export interface AuthenticationServiceAuthenticateOauthRedirectRequest {
 export interface AuthenticationServiceAuthenticateOauthRedirect2Request {
   id: string
   body: AuthenticationServiceAuthenticateOauthRedirectBody
+}
+
+export interface AuthenticationServiceLogoutRequest {
+  body: object
 }
 
 export interface AuthenticationServiceRefreshTokenRequest {
@@ -342,6 +349,66 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
   ): Promise<ChorusGetAuthenticationModesReply> {
     const response =
       await this.authenticationServiceGetAuthenticationModesRaw(initOverrides)
+    return await response.value()
+  }
+
+  /**
+   * This endpoint logs out a user
+   * Logout
+   */
+  async authenticationServiceLogoutRaw(
+    requestParameters: AuthenticationServiceLogoutRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusLogoutReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling authenticationServiceLogout.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/authentication/logout`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: requestParameters.body as any
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusLogoutReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint logs out a user
+   * Logout
+   */
+  async authenticationServiceLogout(
+    requestParameters: AuthenticationServiceLogoutRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusLogoutReply> {
+    const response = await this.authenticationServiceLogoutRaw(
+      requestParameters,
+      initOverrides
+    )
     return await response.value()
   }
 

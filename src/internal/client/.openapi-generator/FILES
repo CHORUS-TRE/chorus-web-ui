@@ -59,6 +59,7 @@ models/ChorusListAppInstancesReply.ts
 models/ChorusListAppsReply.ts
 models/ChorusListWorkbenchsReply.ts
 models/ChorusListWorkspacesReply.ts
+models/ChorusLogoutReply.ts
 models/ChorusMarkNotificationsAsReadRequest.ts
 models/ChorusNotification.ts
 models/ChorusOpenID.ts
