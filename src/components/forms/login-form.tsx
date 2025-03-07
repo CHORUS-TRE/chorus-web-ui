@@ -247,7 +247,7 @@ export default function LoginForm() {
                   className="w-full justify-center"
                   onClick={() => handleOAuthLogin(mode)}
                 >
-                  {mode.openid?.id}
+                  {mode.buttonText || mode.openid?.id || 'Open ID'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ))}

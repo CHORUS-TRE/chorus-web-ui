@@ -28,6 +28,7 @@ export interface AuthenticationMode {
   type: AuthenticationModeType
   internal?: AuthenticationInternal
   openid?: AuthenticationOpenID
+  buttonText?: string
 }
 
 export interface AuthenticationModesResponse {
