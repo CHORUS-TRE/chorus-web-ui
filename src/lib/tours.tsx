@@ -25,14 +25,15 @@ export const steps: Tour[] = [
             </h5>
             {/* <Image src={'/placeholder.svg'} alt="Chorus" height={160} width={480} className="h-48 w-[480px]" id="logo-tour" /> */}
             <p className="mb-4">
-              CHORUS brings together shared resources to create a secure and
-              robust environment where you can analyze data, use specialized
-              software, and access computing power for your research.
+              Whether you are exploring data, setting up a workspace, or
+              integrating your own applications our guides and documentation
+              will help you get started. Explore them to make the most of
+              CHORUS, streamline your research, and drive innovation.
             </p>
-            <p className="mb-4">
+            {/* <p className="mb-4">
               Start by hitting{' '}
               <span className="font-bold">Getting Started</span>{' '}
-            </p>
+            </p> */}
             {/* <p className="mb-4">CHORUS is your gateway to collaborative medical research and AI-driven innovation.</p> */}
             {/* <p className="mb-4">CHORUS is open source and free to use, but resources are limited.</p> */}
             {/* <p className="mb-4">Whether you’re analyzing sensitive health data, developing and testing AI tools, or sharing insights with the research community, CHORUS provides a secure, scalable, and user-friendly environment to support your work.</p> */}
