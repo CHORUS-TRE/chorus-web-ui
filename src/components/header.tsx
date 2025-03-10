@@ -271,7 +271,6 @@ export function Header() {
                   )}
                   {items.map((item, index) => (
                     <Fragment key={item.href}>
-
                       {/* Workspaces Menu */}
                       {index === 0 && (
                         <NavigationMenu className="hidden xl:block">
@@ -939,7 +938,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => { }}
+            onUpdate={() => {}}
           />
         )}
       </nav>
