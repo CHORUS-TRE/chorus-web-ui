@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:20-bookworm-slim AS base
+FROM node:22-bookworm-slim AS base
 SHELL ["/bin/bash", "-xe", "-o", "pipefail", "-c"]
 
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
 
 ENV NODE_ENV=production
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs22-debian12
 
 WORKDIR /app
 
