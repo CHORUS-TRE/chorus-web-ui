@@ -83,42 +83,43 @@ export default function LoginForm() {
 
       const checkAuthOnBackend = async () => {
         // Authenticate on backend to set the session cookie
-        // const session = await getSession()
-        // if (session) {
-        //   const authOnBackend = await fetch(
-        //     `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
-        //     {
-        //       method: 'POST',
-        //       headers: {
-        //         Authorization: `Bearer ${session}`
-        //       }
-        //     }
-        //   )
+        const session = await getSession()
+        if (session) {
+          // const authOnBackend = await fetch(
+          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
+          //   {
+          //     method: 'POST',
+          //     headers: {
+          //       Authorization: `Bearer ${session}`
+          //     }
+          //   }
+          // )
 
-        //   const data = await authOnBackend.json()
-        //   console.log('Session cookie set', data)
+          // const data = await authOnBackend.json()
+          // console.log('Session cookie set', data)
 
-        //   const testCookie = await fetch(
-        //     `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
-        //     {
-        //       headers: {
-        //         Authorization: `Bearer ${data.result.token}`
-        //       }
-        //     }
-        //   )
+          // const testCookie = await fetch(
+          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
+          //   {
+          //     headers: {
+          //       Authorization: `Bearer ${data.result.token}`
+          //     },
+          //     credentials: 'include',
+          //   }
+          // )
 
-        // const data2 = await testCookie.json()
-        // console.log('Test cookie', data2)
+          // const data2 = await testCookie.json()
+          // console.log('Test cookie', data2)
 
-        // Get the redirect path and validate it
-        const redirectPath = searchParams.get('redirect') || '/'
-        // Ensure the redirect URL is relative and doesn't contain protocol/domain
-        const isValidRedirect =
-          redirectPath.startsWith('/') && !redirectPath.includes('//')
+          // Get the redirect path and validate it
+          const redirectPath = searchParams.get('redirect') || '/'
+          // Ensure the redirect URL is relative and doesn't contain protocol/domain
+          const isValidRedirect =
+            redirectPath.startsWith('/') && !redirectPath.includes('//')
 
-        // Redirect to the validated path or fallback to home
-        window.location.href = isValidRedirect ? redirectPath : '/'
-        // }
+          // Redirect to the validated path or fallback to home
+          window.location.href = isValidRedirect ? redirectPath : '/'
+        }
       }
 
       checkAuthOnBackend()
@@ -161,7 +162,7 @@ export default function LoginForm() {
   )
 
   return (
-    <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
+    <div className="grid w-full gap-2 text-white">
       <div className="grid gap-4 text-center">
         <h2>Login</h2>
       </div>
@@ -186,8 +187,9 @@ export default function LoginForm() {
                   const formData = new FormData(e.currentTarget)
                   formAction(formData)
                 }}
+                className="w-full"
               >
-                <div className="mb-6 grid gap-6">
+                <div className="grid gap-4 py-8">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -200,7 +202,7 @@ export default function LoginForm() {
                       defaultValue={searchParams.get('email') || ''}
                     />
                   </div>
-                  <div className="grid gap-2">
+                  <div className="mb-2 grid gap-2">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                     </div>
@@ -214,8 +216,9 @@ export default function LoginForm() {
                       disabled={isAuthenticated}
                     />
                   </div>
+
+                  <SubmitButton />
                 </div>
-                <SubmitButton />
                 {state?.error && (
                   <p className="mt-4 text-red-500">{state?.error}</p>
                 )}

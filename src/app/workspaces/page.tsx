@@ -28,11 +28,8 @@ export default function WorkspacesPage() {
 
   return (
     <>
-      <div className="">
+      <div className="toot w-full">
         <h2 className="mt-5 text-white">Workspaces</h2>
-      </div>
-
-      <div className="w-full">
         <div className="mb-4 mt-2 flex justify-end">
           <Button
             onClick={() => setCreateOpen(true)}
@@ -42,6 +39,9 @@ export default function WorkspacesPage() {
             Create Workspace
           </Button>
         </div>
+      </div>
+
+      <div className="w-full">
         <Tabs defaultValue="mine" className="">
           <div className="grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>

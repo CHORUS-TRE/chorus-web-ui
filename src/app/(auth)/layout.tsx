@@ -17,72 +17,68 @@ export default function Layout({
 }>) {
   return (
     <>
-      <div className="fixed left-0 top-0 z-40 h-11 min-w-full" id="header">
+      <header className="fixed left-0 top-0 z-40 h-11 min-w-full" id="header">
         <Header />
-      </div>
+      </header>
 
       <div
-        className="fixed left-1/2 top-1/2 z-30 w-full max-w-[960px] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-black bg-opacity-85"
+        className="fixed left-1/2 top-1/2 z-30 m-4 flex w-3/4 max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-row items-stretch justify-between rounded-2xl bg-black bg-opacity-75"
         id="content"
       >
-        <div className="grid grid-cols-1 place-items-center gap-8 md:grid-cols-2 lg:grid-cols-2">
-          {/* Left Column - Brand Info */}
-          <div className="hidden h-full min-h-[600px] flex-col items-center justify-between py-8 md:flex lg:flex">
-            <div className="flex flex-1 flex-col items-center justify-start">
-              <div className="mb-16 w-full">
-                <a
-                  href="https://chorus-tre.ch"
-                  className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Chorus website"
-                >
-                  <Link className="size-4" />
-                  CHORUS Website
-                </a>
-              </div>
-              <Image
-                src={logo}
-                alt="Chorus Logo"
-                width={320}
-                height={180}
-                className="mb-12 h-36 w-full max-w-xs"
-                priority
-              />
-              <div className="max-w-xs text-white">
-                <h1 className="mb-2 text-2xl font-bold">
-                  A secure, open-source platform revolutionizing collaborative
-                  medical research and AI development.
-                </h1>
-                <p className="text-md mb-4 text-muted-foreground">
-                  Your One-Stop Shop for Data, Applications, and AI
-                </p>
-              </div>
-            </div>
-
-            <div className="w-full">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-muted">
-                  Web-UI Version: {packageInfo.version}
-                </div>
-                <div className="flex justify-start gap-3">
-                  <a
-                    href="https://github.com/CHORUS-TRE/"
-                    className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="GITHUB"
-                  >
-                    <Github className="size-4" />
-                    <span>Github</span>
-                  </a>
-                </div>
-              </div>
+        {/* Left Column - Brand Info */}
+        <div className="hidden h-full w-1/2 flex-col items-center justify-center p-8 md:flex">
+          <div className="mt-8 flex flex-col items-center justify-center">
+            <Image
+              src={logo}
+              alt="Chorus Logo"
+              width={320}
+              height={180}
+              className="mb-12 h-36 w-auto max-w-full flex-grow"
+              priority
+            />
+            <div className="max-w-xs text-center text-white">
+              <h1 className="mb-2 text-2xl font-bold">
+                A secure, open-source platform revolutionizing collaborative
+                medical research and AI development.
+              </h1>
+              <p className="text-md mb-4 text-muted">
+                Your One-Stop Shop for Data, Applications, and AI
+              </p>
             </div>
           </div>
+          <div className="mb-8 flex-grow"></div>
+          <div className="flex w-full flex-col gap-1 text-center">
+            <a
+              href="https://chorus-tre.ch"
+              className="flex items-center justify-center gap-2 text-center text-xs font-medium text-muted underline hover:text-accent"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chorus website"
+            >
+              <Link className="size-4" />
+              CHORUS Website
+            </a>
+            <p className="flex justify-center gap-3">
+              <a
+                href="https://github.com/CHORUS-TRE/"
+                className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GITHUB"
+              >
+                <Github className="size-4" />
+                <span>Github</span>
+              </a>
+            </p>
+            <p className="text-xs text-muted">
+              Web-UI Version: {packageInfo.version}
+            </p>
+          </div>
+        </div>
 
-          {/* Right Column - Content */}
-          <div className="w-full self-center p-8">{children}</div>
+        {/* Right Column - Content */}
+        <div className="flex w-full flex-col items-center justify-center bg-black bg-opacity-20 p-8 md:w-1/2">
+          <div className="w-full max-w-xs">{children}</div>
         </div>
       </div>
     </>

@@ -18,9 +18,7 @@ import {
 } from 'lucide-react'
 
 import { logout } from '@/components/actions/authentication-view-model'
-import {
-  getAuthenticationModes
-} from '@/components/actions/authentication-view-model'
+import { getAuthenticationModes } from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
 import {
   AlertDialog,
@@ -95,7 +93,7 @@ export function Header() {
     refreshWorkbenches,
     toggleRightSidebar
   } = useAppState()
-  const { user, isAuthenticated, setAuthenticated} = useAuth()
+  const { user, isAuthenticated, setAuthenticated } = useAuth()
 
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
@@ -241,6 +239,7 @@ export function Header() {
         const response = await getAuthenticationModes()
         setAuthModes(response.data || [])
       } catch (error) {
+        console.error('Error fetching auth modes:', error)
       }
     }
 
@@ -900,11 +899,13 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/login">Login</Link>
                     </DropdownMenuItem>
-                    {internalLogin && (<DropdownMenuItem asChild>
-                      <Link href="/register" passHref>
-                        Register
-                      </Link>
-                    </DropdownMenuItem>)}
+                    {internalLogin && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/register" passHref>
+                          Register
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 )}
               </DropdownMenu>
@@ -935,7 +936,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => { }}
+            onUpdate={() => {}}
           />
         )}
       </nav>
