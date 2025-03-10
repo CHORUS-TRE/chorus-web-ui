@@ -7,11 +7,13 @@ WORKDIR /app
 FROM base AS builder
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV COREPACK_INTEGRITY_KEYS=0
 
 COPY . .
 
 RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
-    corepack enable pnpm && \
+    corepack enable && \
+    corepack prepare pnpm@9.15.3 --activate && \
     pnpm config set store-dir /tmp/pnpm-store && \
     pnpm i --frozen-lockfile && \
     pnpm build
