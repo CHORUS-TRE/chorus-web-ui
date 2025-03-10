@@ -61,8 +61,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
 
-  const userWorkspace = workspaces?.find((w) => w.id === user?.workspaceId)
-
   const initializeData = async () => {
     try {
       const [workspaceResponse] = await Promise.all([
@@ -238,11 +236,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div className="flex-grow" />
         <CardFooter>
           <WorkbenchCreateForm
-            workspaceId={userWorkspace?.id}
+            workspaceId={workspace?.id}
             onUpdate={(workbenchId) => {
               refreshWorkspaces()
+              refreshWorkbenches()
               router.push(
-                `/workspaces/${userWorkspace?.id}/desktops/${workbenchId}`
+                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
               )
             }}
           />

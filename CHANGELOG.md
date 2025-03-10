@@ -1,3 +1,16 @@
+# [1.0.0-alpha.24](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.23...v1.0.0-alpha.24) (2025-01-29)
+
+
+### Bug Fixes
+
+* user.workspaceId -> params.workspaceId ([7c6860b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7c6860bc90da1fa57a8d309747bdea4d12015af1))
+
+
+### Features
+
+* Add configurable app delay time and improve header component ([7539d63](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7539d6305aa19df4b8a632b3744b808f6032750d))
+* Add TRC Anonymizer app icon ([a920ff2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a920ff203b81c1084576f9cde6ac154383dc4448))
+
 # [1.0.0-alpha.23](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.22...v1.0.0-alpha.23) (2025-01-27)
 
 
