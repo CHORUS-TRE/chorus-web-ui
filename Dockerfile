@@ -18,7 +18,7 @@ RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
 
 ENV NODE_ENV=production
 
-FROM gcr.io/distroless/nodejs20-debian12:debug
+FROM gcr.io/distroless/nodejs20-debian12
 
 WORKDIR /app
 
