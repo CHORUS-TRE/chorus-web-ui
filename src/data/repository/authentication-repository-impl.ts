@@ -4,7 +4,8 @@ import {
   AuthenticationOAuthRedirectResponse,
   AuthenticationOAuthResponse,
   AuthenticationRequest,
-  AuthenticationResponse
+  AuthenticationResponse,
+  LogoutResponse
 } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
@@ -51,6 +52,15 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     try {
       const token = await this.dataSource.handleOAuthRedirect(data)
       return { data: token }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async logout(): Promise<LogoutResponse> {
+    try {
+      await this.dataSource.logout()
+      return {}
     } catch (error) {
       return { error: error.message }
     }

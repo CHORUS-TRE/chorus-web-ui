@@ -52,3 +52,7 @@ export interface AuthenticationOAuthRedirectResponse {
   data?: string
   error?: string
 }
+
+export interface LogoutResponse {
+  error?: string
+}

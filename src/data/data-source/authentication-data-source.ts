@@ -11,6 +11,7 @@ interface AuthenticationDataSource {
   handleOAuthRedirect: (
     data: AuthenticationOAuthRedirectRequest
   ) => Promise<string>
+  logout: () => Promise<void>
 }
 
 export type { AuthenticationDataSource }

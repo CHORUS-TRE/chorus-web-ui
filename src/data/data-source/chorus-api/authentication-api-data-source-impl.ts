@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers'
 import { env } from 'next-runtime-env'
 
 import { AuthenticationDataSource } from '@/data/data-source/'
@@ -7,7 +8,8 @@ import {
   AuthenticationModeType,
   AuthenticationOAuthRedirectRequest,
   AuthenticationOpenID,
-  AuthenticationRequest
+  AuthenticationRequest,
+  LogoutResponse
 } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
@@ -117,6 +119,23 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
     } catch (error) {
       console.error('Error handling OAuth redirect:', error)
       throw error
+    }
+  }
+
+  async logout(): Promise<void> {
+    const session = cookies().get('session')?.value || ''
+    const configuration = new Configuration({
+      apiKey: `Bearer ${session}`,
+      basePath: env('DATA_SOURCE_API_URL')
+    })
+    const service = new AuthenticationServiceApi(configuration)
+
+    const response = await service.authenticationServiceLogout({
+      body: {}
+    })
+
+    if (!response) {
+      throw new Error('Failed to logout')
     }
   }
 }

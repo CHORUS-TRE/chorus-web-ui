@@ -18,6 +18,9 @@ import {
 } from 'lucide-react'
 
 import { logout } from '@/components/actions/authentication-view-model'
+import {
+  getAuthenticationModes
+} from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
 import {
   AlertDialog,
@@ -45,6 +48,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { AuthenticationModeType } from '@/domain/model/authentication'
 
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
@@ -55,7 +59,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
-import { Workbench } from '~/domain/model'
+import { AuthenticationMode, Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 import { getAppIcon } from '~/utils/app-icon'
 
@@ -91,7 +95,7 @@ export function Header() {
     refreshWorkbenches,
     toggleRightSidebar
   } = useAppState()
-  const { user, isAuthenticated, setAuthenticated } = useAuth()
+  const { user, isAuthenticated, setAuthenticated} = useAuth()
 
   const [deleted, setDeleted] = useState<boolean>(false)
   const router = useRouter()
@@ -105,6 +109,7 @@ export function Header() {
   const [updateOpen, setUpdateOpen] = useState(false)
   const isUserWorkspace = params?.workspaceId === user?.workspaceId
   const [showAboutDialog, setShowAboutDialog] = useState(false)
+  const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
 
   const pathNames = useMemo(
     () => paths?.split('/').filter(Boolean) || [],
@@ -123,6 +128,11 @@ export function Header() {
     () =>
       workspacesWithWorkbenches?.sort((a, b) => (a.id === workspaceId ? 1 : 0)),
     [workspacesWithWorkbenches, workspaceId]
+  )
+
+  const internalLogin = authModes.some(
+    (mode) =>
+      mode.type === AuthenticationModeType.INTERNAL && mode.internal?.enabled
   )
 
   const handleLogoutClick = async () => {
@@ -224,6 +234,18 @@ export function Header() {
       })
     }
   }, [deleted])
+
+  useEffect(() => {
+    const fetchAuthModes = async () => {
+      try {
+        const response = await getAuthenticationModes()
+        setAuthModes(response.data || [])
+      } catch (error) {
+      }
+    }
+
+    fetchAuthModes()
+  }, [])
 
   return (
     <>
@@ -878,11 +900,11 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/login">Login</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                    {internalLogin && (<DropdownMenuItem asChild>
                       <Link href="/register" passHref>
                         Register
                       </Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem>)}
                   </DropdownMenuContent>
                 )}
               </DropdownMenu>
@@ -913,7 +935,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>
