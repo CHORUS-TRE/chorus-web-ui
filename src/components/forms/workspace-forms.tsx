@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { CirclePlus } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 
 import {
   workspaceCreate,
@@ -69,7 +69,7 @@ export function WorkspaceCreateForm({
   children?: React.ReactNode
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workspaceCreate, initialState)
+  const [state, formAction] = useActionState(workspaceCreate, initialState)
 
   useEffect(() => {
     if (state?.error) {
@@ -230,7 +230,7 @@ export function WorkspaceDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workspaceDelete, initialState)
+  const [state, formAction] = useActionState(workspaceDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -283,7 +283,7 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onUpdate?: () => void
 }) {
-  const [formState, formAction] = useFormState(workspaceUpdate, initialState)
+  const [formState, formAction] = useActionState(workspaceUpdate, initialState)
 
   useEffect(() => {
     if (formState?.error) return

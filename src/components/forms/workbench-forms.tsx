@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { CirclePlus, Loader2, RefreshCw, TriangleAlert } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 
 import {
   workbenchCreate,
@@ -67,7 +67,7 @@ export function WorkbenchCreateForm({
   userId?: string
   onUpdate?: (id: string) => void
 }) {
-  const [state, formAction] = useFormState(
+  const [state, formAction] = useActionState(
     workbenchCreate,
     initialState,
     `/workspaces/${workspaceId}`
@@ -289,7 +289,7 @@ export function WorkbenchDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workbenchDelete, initialState)
+  const [state, formAction] = useActionState(workbenchDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -340,7 +340,7 @@ export function WorkbenchUpdateForm({
   workbench: Workbench
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workbenchUpdate, initialState)
+  const [state, formAction] = useActionState(workbenchUpdate, initialState)
   const { toast } = useToast()
   const [scientistName, setScientistName] = useState(workbench.name)
 

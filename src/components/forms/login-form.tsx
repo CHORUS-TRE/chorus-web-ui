@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { env } from 'next-runtime-env'
 import { ArrowRight, Loader2 } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 
 import { AuthenticationMode } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
@@ -13,7 +12,6 @@ import { AuthenticationModeType } from '@/domain/model/authentication'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Separator } from '~/components/ui/separator'
 import { useToast } from '~/hooks/use-toast'
 
 import {
@@ -51,7 +49,7 @@ function SubmitButton() {
 
 export default function LoginForm() {
   const searchParams = useSearchParams()!
-  const [state, formAction] = useFormState(authenticationLogin, initialState)
+  const [state, formAction] = useActionState(authenticationLogin, initialState)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()

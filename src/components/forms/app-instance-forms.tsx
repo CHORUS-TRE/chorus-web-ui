@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
 import { useAppState } from '@/components/store/app-state-context'
@@ -61,7 +61,7 @@ export function AppInstanceCreateForm({
   userId?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(appInstanceCreate, initialState)
+  const [state, formAction] = useActionState(appInstanceCreate, initialState)
   const [error, setError] = useState<string>()
   const { toast } = useToast()
   const { refreshWorkbenches, setBackground, apps } = useAppState()

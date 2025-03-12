@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useActionState, useEffect } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowRight, Loader2 } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 
 import { userCreate } from '@/components/actions/user-view-model'
 
@@ -38,7 +38,7 @@ function SubmitButton() {
 }
 
 export default function UserRegisterForm() {
-  const [state, formAction] = useFormState(userCreate, initialState)
+  const [state, formAction] = useActionState(userCreate, initialState)
 
   useEffect(() => {
     if (state?.data && !state.error) {
