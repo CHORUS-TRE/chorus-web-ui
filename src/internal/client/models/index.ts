@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './AuthenticationServiceAuthenticateOauthRedirectBody'
 export * from './ChorusApp'
 export * from './ChorusAppInstance'
 export * from './ChorusAuthenticateOauthRedirectReply'
@@ -49,6 +50,7 @@ export * from './ChorusListAppInstancesReply'
 export * from './ChorusListAppsReply'
 export * from './ChorusListWorkbenchsReply'
 export * from './ChorusListWorkspacesReply'
+export * from './ChorusLogoutReply'
 export * from './ChorusMarkNotificationsAsReadRequest'
 export * from './ChorusNotification'
 export * from './ChorusOpenID'

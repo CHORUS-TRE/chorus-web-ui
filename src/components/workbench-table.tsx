@@ -75,8 +75,7 @@ export default function WorkbenchTable({
       toast({
         title: 'Success!',
         description: 'Desktop deleted',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [deleted])
@@ -113,8 +112,7 @@ export default function WorkbenchTable({
               toast({
                 title: 'Success!',
                 description: 'Desktop updated successfully',
-                className: 'bg-background text-white',
-                duration: 1000
+                className: 'bg-background text-white'
               })
             }}
           />
@@ -255,8 +253,7 @@ export default function WorkbenchTable({
             toast({
               title: 'Success!',
               description: 'Desktop created successfully',
-              className: 'bg-background text-white',
-              duration: 1000
+              className: 'bg-background text-white'
             })
             setBackground({ workbenchId, workspaceId })
             if (onUpdate) onUpdate(workbenchId)

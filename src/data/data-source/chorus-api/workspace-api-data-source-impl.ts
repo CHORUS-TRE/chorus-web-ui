@@ -142,7 +142,6 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
     const w = domainToApiUpdateMapper(workspace)
     const validatedRequest = WorkspaceApiSchema.parse(w)
 
-    console.log({ validatedRequest })
     const response = await this.service.workspaceServiceUpdateWorkspace({
       body: {
         workspace: validatedRequest

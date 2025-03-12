@@ -9,6 +9,7 @@ apis/WorkbenchServiceApi.ts
 apis/WorkspaceServiceApi.ts
 apis/index.ts
 index.ts
+models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
 models/ChorusAuthenticateOauthRedirectReply.ts
@@ -58,6 +59,7 @@ models/ChorusListAppInstancesReply.ts
 models/ChorusListAppsReply.ts
 models/ChorusListWorkbenchsReply.ts
 models/ChorusListWorkspacesReply.ts
+models/ChorusLogoutReply.ts
 models/ChorusMarkNotificationsAsReadRequest.ts
 models/ChorusNotification.ts
 models/ChorusOpenID.ts

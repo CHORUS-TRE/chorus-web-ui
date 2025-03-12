@@ -12,13 +12,12 @@ import {
   useState
 } from 'react'
 
-import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
+import { App, AppInstance, Workbench, Workspace } from '@/domain/model'
 
 import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
-import { userMe } from '../actions/user-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
-import { workspaceGet, workspaceList } from '../actions/workspace-view-model'
+import { workspaceList } from '../actions/workspace-view-model'
 
 import { useAuth } from './auth-context'
 
@@ -55,6 +54,8 @@ type AppStateContextType = {
   refreshAppInstances: () => Promise<void>
   showAppStoreHero: boolean
   toggleAppStoreHero: () => void
+  hasSeenGettingStartedTour: boolean
+  setHasSeenGettingStartedTour: Dispatch<SetStateAction<boolean>>
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -76,7 +77,9 @@ const AppStateContext = createContext<AppStateContextType>({
   appInstances: undefined,
   refreshAppInstances: async () => {},
   showAppStoreHero: true,
-  toggleAppStoreHero: () => {}
+  toggleAppStoreHero: () => {},
+  hasSeenGettingStartedTour: false,
+  setHasSeenGettingStartedTour: () => {}
 })
 
 export const AppStateProvider = ({
@@ -85,7 +88,14 @@ export const AppStateProvider = ({
   children: ReactNode
 }): ReactElement => {
   const { user } = useAuth()
-  const [showRightSidebar, setShowRightSidebar] = useState(false)
+  const [showRightSidebar, setShowRightSidebar] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('showRightSidebar')
+
+      return saved !== null ? JSON.parse(saved) : true
+    }
+    return true
+  })
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [background, setBackground] = useState<{
     workbenchId: string
@@ -187,6 +197,18 @@ export const AppStateProvider = ({
     }
   }, [user])
 
+  const [hasSeenGettingStartedTour, setHasSeenGettingStartedTour] =
+    useState<boolean>(() => {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('hasSeenGettingStartedTour')
+        const state = saved !== null ? JSON.parse(saved) : false
+
+        return state
+      }
+
+      return false
+    })
+
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
@@ -202,23 +224,40 @@ export const AppStateProvider = ({
   }, [showAppStoreHero])
 
   useEffect(() => {
-    const initializeState = async () => {
-      if (!user) {
-        return
-      }
+    localStorage.setItem('showRightSidebar', JSON.stringify(showRightSidebar))
+  }, [showRightSidebar])
 
-      try {
-        await refreshWorkspaces()
-        await refreshWorkbenches()
-        await refreshApps()
-        await refreshAppInstances()
-      } catch (error) {
-        console.error(error)
-      }
+  useEffect(() => {
+    localStorage.setItem(
+      'hasSeenGettingStartedTour',
+      JSON.stringify(hasSeenGettingStartedTour)
+    )
+  }, [hasSeenGettingStartedTour])
+
+  const initializeState = useCallback(async () => {
+    if (!user) {
+      return
     }
 
+    try {
+      await refreshWorkspaces()
+      await refreshWorkbenches()
+      await refreshApps()
+      await refreshAppInstances()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [
+    user,
+    refreshWorkspaces,
+    refreshWorkbenches,
+    refreshApps,
+    refreshAppInstances
+  ])
+
+  useEffect(() => {
     initializeState()
-  }, [user])
+  }, [initializeState])
 
   return (
     <AppStateContext.Provider
@@ -241,7 +280,9 @@ export const AppStateProvider = ({
         appInstances,
         refreshAppInstances,
         showAppStoreHero,
-        toggleAppStoreHero
+        toggleAppStoreHero,
+        hasSeenGettingStartedTour,
+        setHasSeenGettingStartedTour
       }}
     >
       {children}

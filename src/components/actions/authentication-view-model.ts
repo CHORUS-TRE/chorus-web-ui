@@ -16,6 +16,7 @@ import {
   AuthenticationGetModes,
   AuthenticationGetOAuthUrl,
   AuthenticationLogin,
+  AuthenticationLogout,
   AuthenticationOAuthRedirect
 } from '@/domain/use-cases'
 
@@ -69,8 +70,26 @@ export async function getAuthenticationModes(): Promise<AuthenticationModesRespo
 }
 
 export async function logout() {
-  // Destroy the session
-  await cookies().set('session', '', { expires: new Date(0) })
+  try {
+    const dataSource = new AuthenticationApiDataSourceImpl()
+    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const useCase = new AuthenticationLogout(repository)
+
+    const result = await useCase.execute()
+
+    console.log('result', result)
+    if (result.error) {
+      console.error('Error during logout:', result.error)
+    }
+  } catch (error) {
+    console.error('Error during logout:', error)
+  } finally {
+    // Always clear the local session, even if the backend call fails
+    cookies().set('session', '', {
+      expires: new Date(0),
+      path: '/'
+    })
+  }
 }
 
 export async function updateSession(request: NextRequest) {
@@ -88,6 +107,11 @@ export async function updateSession(request: NextRequest) {
   })
 
   return res
+}
+
+export async function getSession() {
+  const session = cookies().get('session')?.value
+  return session
 }
 
 export async function getOAuthUrl(

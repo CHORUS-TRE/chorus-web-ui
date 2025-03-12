@@ -95,8 +95,7 @@ export function WorkbenchCreateForm({
         title: 'Error',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [error])
@@ -351,8 +350,7 @@ export function WorkbenchUpdateForm({
         title: 'Error',
         description: state.error,
         variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
       return
     }

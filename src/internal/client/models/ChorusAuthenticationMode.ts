@@ -50,6 +50,18 @@ export interface ChorusAuthenticationMode {
    * @memberof ChorusAuthenticationMode
    */
   openid?: ChorusOpenID
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAuthenticationMode
+   */
+  buttonText?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAuthenticationMode
+   */
+  iconURL?: string
 }
 
 /**
@@ -81,7 +93,9 @@ export function ChorusAuthenticationModeFromJSONTyped(
       : ChorusInternalFromJSON(json['internal']),
     openid: !exists(json, 'openid')
       ? undefined
-      : ChorusOpenIDFromJSON(json['openid'])
+      : ChorusOpenIDFromJSON(json['openid']),
+    buttonText: !exists(json, 'ButtonText') ? undefined : json['ButtonText'],
+    iconURL: !exists(json, 'IconURL') ? undefined : json['IconURL']
   }
 }
 
@@ -97,6 +111,8 @@ export function ChorusAuthenticationModeToJSON(
   return {
     type: value.type,
     internal: ChorusInternalToJSON(value.internal),
-    openid: ChorusOpenIDToJSON(value.openid)
+    openid: ChorusOpenIDToJSON(value.openid),
+    ButtonText: value.buttonText,
+    IconURL: value.iconURL
   }
 }

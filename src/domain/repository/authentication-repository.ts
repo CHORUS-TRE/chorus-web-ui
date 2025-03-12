@@ -4,7 +4,8 @@ import {
   AuthenticationOAuthRedirectResponse,
   AuthenticationOAuthResponse,
   AuthenticationRequest,
-  AuthenticationResponse
+  AuthenticationResponse,
+  LogoutResponse
 } from '@/domain/model'
 
 interface AuthenticationRepository {
@@ -14,6 +15,7 @@ interface AuthenticationRepository {
   handleOAuthRedirect: (
     data: AuthenticationOAuthRedirectRequest
   ) => Promise<AuthenticationOAuthRedirectResponse>
+  logout: () => Promise<LogoutResponse>
 }
 
 export type { AuthenticationRepository }

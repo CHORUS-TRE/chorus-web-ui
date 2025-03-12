@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { env } from 'next-runtime-env'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
@@ -18,7 +19,8 @@ import { useToast } from '~/hooks/use-toast'
 import {
   authenticationLogin,
   getAuthenticationModes,
-  getOAuthUrl
+  getOAuthUrl,
+  getSession
 } from '../actions/authentication-view-model'
 import { IFormState } from '../actions/utils'
 import { useAuth } from '../store/auth-context'
@@ -65,8 +67,7 @@ export default function LoginForm() {
         toast({
           title: "Couldn't load authentication methods",
           description: 'Please try again later',
-          variant: 'destructive',
-          duration: 1000
+          variant: 'destructive'
         })
       } finally {
         setIsLoading(false)
@@ -79,15 +80,51 @@ export default function LoginForm() {
   useEffect(() => {
     if (state.data) {
       setAuthenticated(true)
+
+      const checkAuthOnBackend = async () => {
+        // Authenticate on backend to set the session cookie
+        const session = await getSession()
+        if (session) {
+          // const authOnBackend = await fetch(
+          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
+          //   {
+          //     method: 'POST',
+          //     headers: {
+          //       Authorization: `Bearer ${session}`
+          //     }
+          //   }
+          // )
+
+          // const data = await authOnBackend.json()
+          // console.log('Session cookie set', data)
+
+          // const testCookie = await fetch(
+          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
+          //   {
+          //     headers: {
+          //       Authorization: `Bearer ${data.result.token}`
+          //     },
+          //     credentials: 'include',
+          //   }
+          // )
+
+          // const data2 = await testCookie.json()
+          // console.log('Test cookie', data2)
+
+          // Get the redirect path and validate it
+          const redirectPath = searchParams.get('redirect') || '/'
+          // Ensure the redirect URL is relative and doesn't contain protocol/domain
+          const isValidRedirect =
+            redirectPath.startsWith('/') && !redirectPath.includes('//')
+
+          // Redirect to the validated path or fallback to home
+          window.location.href = isValidRedirect ? redirectPath : '/'
+        }
+      }
+
+      checkAuthOnBackend()
     }
   }, [state?.data, setAuthenticated])
-
-  useEffect(() => {
-    if (!isAuthenticated) return
-
-    const path = searchParams.get('redirect') || '/'
-    window.location.href = path
-  }, [isAuthenticated, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
@@ -96,8 +133,7 @@ export default function LoginForm() {
         toast({
           title: "Couldn't initiate login",
           description: response.error,
-          variant: 'destructive',
-          duration: 1000
+          variant: 'destructive'
         })
         return
       }
@@ -116,8 +152,7 @@ export default function LoginForm() {
     toast({
       title: 'Authentication Error',
       description: error,
-      variant: 'destructive',
-      duration: 1000
+      variant: 'destructive'
     })
   }
 
@@ -127,7 +162,7 @@ export default function LoginForm() {
   )
 
   return (
-    <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
+    <div className="grid w-full gap-2 text-white">
       <div className="grid gap-4 text-center">
         <h2>Login</h2>
       </div>
@@ -146,8 +181,15 @@ export default function LoginForm() {
                   Enter your email below to login to your account
                 </p>
               </div>
-              <form action={formAction}>
-                <div className="mb-6 grid gap-6">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.currentTarget)
+                  formAction(formData)
+                }}
+                className="w-full"
+              >
+                <div className="grid gap-4 py-8">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -160,7 +202,7 @@ export default function LoginForm() {
                       defaultValue={searchParams.get('email') || ''}
                     />
                   </div>
-                  <div className="grid gap-2">
+                  <div className="mb-2 grid gap-2">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                     </div>
@@ -174,8 +216,9 @@ export default function LoginForm() {
                       disabled={isAuthenticated}
                     />
                   </div>
+
+                  <SubmitButton />
                 </div>
-                <SubmitButton />
                 {state?.error && (
                   <p className="mt-4 text-red-500">{state?.error}</p>
                 )}
@@ -207,7 +250,7 @@ export default function LoginForm() {
                   className="w-full justify-center"
                   onClick={() => handleOAuthLogin(mode)}
                 >
-                  {mode.openid?.id}
+                  {mode.buttonText || mode.openid?.id || 'Open ID'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ))}
@@ -215,16 +258,18 @@ export default function LoginForm() {
         </>
       )}
 
-      <div className="mt-4 text-center text-sm text-white">
-        Don&apos;t have an account?{' '}
-        <Link
-          href="/register"
-          className="text-muted underline hover:text-accent"
-          prefetch={false}
-        >
-          Register
-        </Link>
-      </div>
+      {internalLogin && (
+        <div className="mt-4 text-center text-sm text-white">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/register"
+            className="text-muted underline hover:text-accent"
+            prefetch={false}
+          >
+            Register
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

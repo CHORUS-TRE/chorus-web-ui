@@ -2,19 +2,29 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { LaptopMinimal, PackageOpen } from 'lucide-react'
+import { CircleHelp, LaptopMinimal, PackageOpen } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 
 import { Header } from '~/components/header'
+
+import RightSidebar from '../right-sidebar'
+import { Button } from '../ui/button'
 
 interface MainLayoutProps {
   children: React.ReactNode
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const { background, workspaces, workbenches } = useAppState()
+  const {
+    background,
+    workspaces,
+    workbenches,
+    showRightSidebar,
+    toggleRightSidebar
+  } = useAppState()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
+
   const workbench = workbenches?.find((w) => w.id === background?.workbenchId)
 
   return (
@@ -52,10 +62,30 @@ export function MainLayout({ children }: MainLayoutProps) {
       )}
 
       <div
-        className="absolute left-1/2 top-24 z-30 min-h-[75vh] w-full max-w-6xl -translate-x-1/2 rounded-2xl border border-secondary bg-black bg-opacity-85 p-8"
-        id="content"
+        className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-[80vw] -translate-x-1/2 gap-2 ${showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]'} `}
       >
-        {children}
+        <div
+          id="content"
+          className="flex items-start justify-between rounded-2xl border border-secondary bg-black bg-opacity-85"
+        >
+          <div className="p-8 pr-0">{children}</div>
+          <div className="flex justify-end p-2">
+            <Button
+              size="icon"
+              className={`overflow-hidden text-muted hover:bg-inherit hover:text-accent ${showRightSidebar ? 'hidden' : 'visible'}`}
+              variant="ghost"
+              onClick={toggleRightSidebar}
+            >
+              <CircleHelp />
+            </Button>
+          </div>
+        </div>
+        <div
+          className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
+          id="sidebar"
+        >
+          <RightSidebar />
+        </div>
       </div>
     </>
   )

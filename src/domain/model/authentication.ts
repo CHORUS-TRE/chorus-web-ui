@@ -28,6 +28,7 @@ export interface AuthenticationMode {
   type: AuthenticationModeType
   internal?: AuthenticationInternal
   openid?: AuthenticationOpenID
+  buttonText?: string
 }
 
 export interface AuthenticationModesResponse {
@@ -49,5 +50,9 @@ export interface AuthenticationOAuthRedirectRequest {
 
 export interface AuthenticationOAuthRedirectResponse {
   data?: string
+  error?: string
+}
+
+export interface LogoutResponse {
   error?: string
 }

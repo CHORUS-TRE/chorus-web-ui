@@ -1,12 +1,5 @@
 'use client'
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition
-} from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
@@ -16,6 +9,7 @@ import {
   DraftingCompass,
   House,
   LaptopMinimal,
+  Menu,
   Package,
   PackageOpen,
   Search,
@@ -24,6 +18,7 @@ import {
 } from 'lucide-react'
 
 import { logout } from '@/components/actions/authentication-view-model'
+import { getAuthenticationModes } from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
 import {
   AlertDialog,
@@ -34,7 +29,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -50,6 +45,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { AuthenticationModeType } from '@/domain/model/authentication'
 
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
@@ -60,7 +57,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
-import { Workbench } from '~/domain/model'
+import { AuthenticationMode, Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 import { getAppIcon } from '~/utils/app-icon'
 
@@ -81,11 +78,6 @@ interface BreadcrumbItem {
   href?: string
 }
 
-interface ItemProps {
-  name: string
-  href?: string
-}
-
 export function Header() {
   const router = useRouter()
   const { toast } = useToast()
@@ -97,13 +89,10 @@ export function Header() {
     apps,
     appInstances,
     error,
-    setError,
     background,
     setBackground,
     refreshWorkspaces,
     refreshWorkbenches,
-    refreshApps,
-    refreshAppInstances,
     toggleRightSidebar
   } = useAppState()
   const { user, isAuthenticated, setAuthenticated } = useAuth()
@@ -116,6 +105,7 @@ export function Header() {
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
+  const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
 
   const isInAppContext = params?.workspaceId && params?.desktopId
   const isUserWorkspace = params?.workspaceId === user?.workspaceId
@@ -137,6 +127,11 @@ export function Header() {
     () =>
       workspacesWithWorkbenches?.sort((a, b) => (a.id === workspaceId ? 1 : 0)),
     [workspacesWithWorkbenches, workspaceId]
+  )
+
+  const internalLogin = authModes.some(
+    (mode) =>
+      mode.type === AuthenticationModeType.INTERNAL && mode.internal?.enabled
   )
 
   const handleLogoutClick = async () => {
@@ -225,8 +220,7 @@ export function Header() {
         title: 'Error!',
         description: error,
         variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [error])
@@ -236,15 +230,23 @@ export function Header() {
       toast({
         title: 'Success!',
         description: 'Desktop was deleted, redirecting to workspace...',
-        className: 'bg-background text-white',
-        duration: 1000
+        className: 'bg-background text-white'
       })
     }
   }, [deleted])
 
   useEffect(() => {
-    refreshWorkbenches()
-  }, [isInAppContext])
+    const fetchAuthModes = async () => {
+      try {
+        const response = await getAuthenticationModes()
+        setAuthModes(response.data || [])
+      } catch (error) {
+        console.error('Error fetching auth modes:', error)
+      }
+    }
+
+    fetchAuthModes()
+  }, [])
 
   return (
     <>
@@ -269,10 +271,9 @@ export function Header() {
                   )}
                   {items.map((item, index) => (
                     <Fragment key={item.href}>
-
                       {/* Workspaces Menu */}
                       {index === 0 && (
-                        <NavigationMenu>
+                        <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavLink
@@ -353,7 +354,7 @@ export function Header() {
 
                       {/* Workspace's desktops Menu */}
                       {index === 1 && (
-                        <NavigationMenu>
+                        <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavLink
@@ -373,7 +374,7 @@ export function Header() {
 
                       {/* Workspace's desktops Menu  Dropdown*/}
                       {index === 1 && (
-                        <NavigationMenu>
+                        <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger
@@ -560,88 +561,63 @@ export function Header() {
         </div>
 
         {isAuthenticated && (
-          <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-            <NavigationMenuList className="flex items-center justify-center gap-3">
-              <NavigationMenuItem>
-                <NavLink
-                  href="/"
-                  exact={!isUserWorkspace}
-                  className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                >
-                  <div className="mt-1 flex items-center gap-[6px]">
-                    <House className="h-4 w-4" />
-                    Home
-                  </div>
-                </NavLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavLink
-                  href="/workspaces"
-                  className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  exact={isUserWorkspace}
-                >
-                  <div className="mt-1 flex items-center gap-[6px]">
-                    <Package className="h-4 w-4" />
-                    Workspaces
-                  </div>
-                </NavLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavLink
-                  href="/app-store"
-                  className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                >
-                  <div className="mt-1 flex items-center gap-[6px]">
-                    <Store className="h-4 w-4" />
-                    App Store
-                  </div>
-                </NavLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>
-                  <div className="mt-1 flex items-center gap-[6px]">
-                    <DraftingCompass className="h-4 w-4" />
-                    <span>My Apps</span>
-                  </div>
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                  <ul className="grid gap-1 bg-black bg-opacity-85 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
-                    {apps?.map((app) => (
-                      <ListItem
-                        key={app.name}
-                        className="cursor-pointer text-white hover:text-primary"
-                        onClick={async () => {
-                          if (!currentWorkbench) {
-                            toast({
-                              title: 'Select a desktop first',
-                              description:
-                                'You must select a desktop to launch an app',
-                              variant: 'destructive',
-                              className: 'bg-background text-white'
-                            })
-                            return
-                          }
-
-                          toast({
-                            title: 'Launching app...',
-                            description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
-                            className: 'bg-background text-white'
-                          })
-
-                          const formData = new FormData()
-                          formData.append('id', app.id)
-                          formData.append('tenantId', '1')
-                          formData.append('ownerId', user?.id || '')
-                          formData.append('workspaceId', params.workspaceId)
-                          formData.append('workbenchId', params.desktopId)
-
-                          try {
-                            const result = await appInstanceCreate({}, formData)
-
-                            if (result.error) {
+          <>
+            <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
+              <NavigationMenuList className="flex items-center justify-center gap-3">
+                <NavigationMenuItem id="getting-started-step-home">
+                  <NavLink
+                    href="/"
+                    exact={!isUserWorkspace}
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <House className="h-4 w-4" />
+                      Home
+                    </div>
+                  </NavLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem id="getting-started-step3">
+                  <NavLink
+                    href="/workspaces"
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                    exact={isUserWorkspace}
+                  >
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <Package className="h-4 w-4" />
+                      Workspaces
+                    </div>
+                  </NavLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem id="getting-started-step4">
+                  <NavLink
+                    href="/app-store"
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <Store className="h-4 w-4" />
+                      App Store
+                    </div>
+                  </NavLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <DraftingCompass className="h-4 w-4" />
+                      <span>My Apps</span>
+                    </div>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                    <ul className="grid gap-1 bg-black bg-opacity-85 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
+                      {apps?.map((app) => (
+                        <ListItem
+                          key={app.name}
+                          className="cursor-pointer text-white hover:text-primary"
+                          onClick={async () => {
+                            if (!currentWorkbench) {
                               toast({
-                                title: 'Error launching app',
-                                description: result.error,
+                                title: 'Select a desktop first',
+                                description:
+                                  'You must select a desktop to launch an app',
                                 variant: 'destructive',
                                 className: 'bg-background text-white'
                               })
@@ -649,55 +625,131 @@ export function Header() {
                             }
 
                             toast({
-                              title: 'Success!',
-                              description: `${app.name} launched successfully`,
+                              title: 'Launching app...',
+                              description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
                               className: 'bg-background text-white'
                             })
 
-                            refreshWorkbenches()
-                            refreshWorkspaces()
-                          } catch (error) {
-                            toast({
-                              title: 'Error launching app',
-                              description: error.message,
-                              variant: 'destructive',
-                              className: 'bg-background text-white'
-                            })
-                          }
-                        }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="x-4 flex items-center">
-                            {app.name &&
-                              getAppIcon(app.name, { id: 'header-my-apps' })}
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-[6px]">
-                              <DraftingCompass className="h-4 w-4" />
-                              <span className="text-sm font-medium leading-none">
-                                {app.name}
+                            const formData = new FormData()
+                            formData.append('id', app.id)
+                            formData.append('tenantId', '1')
+                            formData.append('ownerId', user?.id || '')
+                            formData.append('workspaceId', params.workspaceId)
+                            formData.append('workbenchId', params.desktopId)
+
+                            try {
+                              const result = await appInstanceCreate(
+                                {},
+                                formData
+                              )
+
+                              if (result.error) {
+                                toast({
+                                  title: 'Error launching app',
+                                  description: result.error,
+                                  variant: 'destructive',
+                                  className: 'bg-background text-white'
+                                })
+                                return
+                              }
+
+                              toast({
+                                title: 'Success!',
+                                description: `${app.name} launched successfully`,
+                                className: 'bg-background text-white'
+                              })
+
+                              refreshWorkbenches()
+                              refreshWorkspaces()
+                            } catch (error) {
+                              toast({
+                                title: 'Error launching app',
+                                description: error.message,
+                                variant: 'destructive',
+                                className: 'bg-background text-white'
+                              })
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="x-4 flex items-center">
+                              {app.name &&
+                                getAppIcon(app.name, { id: 'header-my-apps' })}
+                            </div>
+                            <div className="flex flex-col">
+                              <div className="flex items-center gap-[6px]">
+                                <DraftingCompass className="h-4 w-4" />
+                                <span className="text-sm font-medium leading-none text-white">
+                                  {app.name}
+                                </span>
+                              </div>
+
+                              <span className="text-sm text-muted-foreground">
+                                {app.dockerImageName}:{app.dockerImageTag}
                               </span>
                             </div>
-
-                            <span className="text-sm text-muted-foreground">
-                              {app.dockerImageName}:{app.dockerImageTag}
-                            </span>
                           </div>
-                        </div>
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  size="icon"
+                  className="overflow-hidden text-muted hover:bg-inherit hover:text-accent md:hidden"
+                  variant="ghost"
+                  onClick={toggleRightSidebar}
+                >
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="text-white md:hidden">
+                <div className="grid gap-4 p-4">
+                  <NavLink
+                    href="/"
+                    exact={!isUserWorkspace}
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <House className="h-4 w-4" />
+                      Home
+                    </div>
+                  </NavLink>
+                  <NavLink
+                    href="/workspaces"
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                    exact={isUserWorkspace}
+                  >
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <Package className="h-4 w-4" />
+                      Workspaces
+                    </div>
+                  </NavLink>
+                  <NavLink
+                    href="/app-store"
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex items-center gap-[6px]">
+                      <Store className="h-4 w-4" />
+                      App Store
+                    </div>
+                  </NavLink>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </>
         )}
 
         <div className="flex items-center justify-end">
           {isAuthenticated && (
-            <NavigationMenu>
+            <NavigationMenu className="">
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="mr-3 mt-2">
+                <NavigationMenuTrigger className="mr-2 mt-2">
                   <LaptopMinimal className="h-6 w-6" />
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
@@ -775,7 +827,7 @@ export function Header() {
           )}
 
           {isAuthenticated && (
-            <div className="relative flex-1 md:grow-0">
+            <div className="relative mr-2 hidden flex-1 xl:block">
               <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
               <Input
                 disabled
@@ -785,7 +837,8 @@ export function Header() {
               />
             </div>
           )}
-          <div className="ml-4 flex items-center gap-2">
+
+          <div className="ml-1 flex items-center gap-2">
             <div className="flex items-center justify-end">
               {isAuthenticated && (
                 <Button
@@ -823,15 +876,11 @@ export function Header() {
                     className="bg-black text-white"
                   >
                     <DropdownMenuItem asChild>
-                      {!error ? (
-                        <Link href="/users/me">
-                          <p className="leading-7 [&:not(:first-child)]:mt-6">
-                            {user?.firstName} {user?.lastName}
-                          </p>
-                        </Link>
-                      ) : (
-                        <p className="text-red-500">{error}</p>
-                      )}
+                      <Link href="/users/me">
+                        <p className="leading-7 [&:not(:first-child)]:mt-6">
+                          {user?.firstName} {user?.lastName}
+                        </p>
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
@@ -852,11 +901,13 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/login">Login</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/register" passHref>
-                        Register
-                      </Link>
-                    </DropdownMenuItem>
+                    {internalLogin && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/register" passHref>
+                          Register
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 )}
               </DropdownMenu>
@@ -887,7 +938,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => { }}
+            onUpdate={() => {}}
           />
         )}
       </nav>

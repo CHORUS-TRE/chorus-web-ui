@@ -164,15 +164,16 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               title: 'Workspace updated',
               description: 'Workspace updated',
               variant: 'default',
-              className: 'bg-background text-white',
-              duration: 1000
+              className: 'bg-background text-white'
             })
             initializeData()
           }}
         />
       </div>
-
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+      <Card
+        className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white"
+        id="getting-started-step2"
+      >
         <CardHeader>
           <CardTitle
             className="flex cursor-pointer items-center justify-between"

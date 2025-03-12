@@ -6,13 +6,17 @@ import Image from 'next/image'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
+import { NextStep, NextStepProvider } from 'nextstepjs'
 
 import { AppStateProvider } from '@/components/store/app-state-context'
 
 import BackgroundIframe from '~/components/background-iframe'
-import RightSidebar from '~/components/right-sidebar'
+import GettingStartedCard from '~/components/getting-started-card'
 import { AuthProvider } from '~/components/store/auth-context'
 import { Toaster } from '~/components/ui/toaster'
+import { steps } from '~/lib/tours'
+
+import { Providers } from './providers'
 
 import '@/app/build.css'
 import '@/styles/globals.css'
@@ -31,9 +35,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   const session = cookies().get('session')
   const authenticated = session !== undefined
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
@@ -51,25 +55,37 @@ export default function RootLayout({
             g.async=true; g.src='${matomoUrl}/js/container_${containerId}.js'; s.parentNode.insertBefore(g,s);
           `}
         </Script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${rubik.variable} antialiased`}>
-        <AuthProvider authenticated={authenticated}>
-          <AppStateProvider>
-            {children}
-            <RightSidebar show={true} />
-            <BackgroundIframe />
-            <Image
-              alt="Background"
-              src={cover}
-              placeholder="blur"
-              quality={75}
-              priority={false}
-              sizes="100vw"
-              id="background"
-              className="fixed left-0 top-0 h-full w-full"
-            />
-          </AppStateProvider>
-        </AuthProvider>
+        <Providers>
+          <AuthProvider authenticated={authenticated}>
+            <AppStateProvider>
+              <NextStepProvider>
+                <NextStep
+                  steps={steps}
+                  showNextStep={false}
+                  displayArrow={true}
+                  clickThroughOverlay={true}
+                  cardComponent={GettingStartedCard}
+                >
+                  {children}
+                </NextStep>
+              </NextStepProvider>
+              <BackgroundIframe />
+              <Image
+                alt="Background"
+                src={cover}
+                placeholder="blur"
+                quality={75}
+                priority={false}
+                sizes="100vw"
+                id="background"
+                className="fixed left-0 top-0 h-full w-full"
+              />
+            </AppStateProvider>
+          </AuthProvider>
+        </Providers>
         <Toaster />
       </body>
     </html>

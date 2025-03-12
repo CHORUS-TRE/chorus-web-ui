@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
@@ -20,8 +20,6 @@ export default function WorkspacesPage() {
     toggleWorkspaceView,
     workspaces,
     workbenches,
-    error,
-    setError,
     refreshWorkspaces
   } = useAppState()
   const { user } = useAuth()
@@ -30,11 +28,8 @@ export default function WorkspacesPage() {
 
   return (
     <>
-      <div className="">
+      <div className="toot w-full">
         <h2 className="mt-5 text-white">Workspaces</h2>
-      </div>
-
-      <div className="w-full">
         <div className="mb-4 mt-2 flex justify-end">
           <Button
             onClick={() => setCreateOpen(true)}
@@ -44,6 +39,9 @@ export default function WorkspacesPage() {
             Create Workspace
           </Button>
         </div>
+      </div>
+
+      <div className="w-full">
         <Tabs defaultValue="mine" className="">
           <div className="grid grid-flow-col grid-rows-1 gap-4">
             <TabsList>
@@ -78,7 +76,6 @@ export default function WorkspacesPage() {
               </UIButton>
             </div>
           </div>
-          {error && <p className="mt-4 text-red-500">{error}</p>}
           <TabsContent value="mine" className="border-none">
             {!workspaces && (
               <span className="animate-pulse text-muted-foreground">

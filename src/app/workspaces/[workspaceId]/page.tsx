@@ -48,7 +48,6 @@ const WorkspacePage = () => {
   return (
     <>
       <div>
-        {error && <p className="mt-4 text-red-500">{error}</p>}
         <Workspace workspaceId={workspaceId} />
       </div>
 
