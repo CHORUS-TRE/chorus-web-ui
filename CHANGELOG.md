@@ -1,3 +1,23 @@
+# [1.0.0-alpha.25](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.24...v1.0.0-alpha.25) (2025-03-12)
+
+
+### Bug Fixes
+
+* cookies wip ([73bf7fc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/73bf7fca32b9d972d8f56ea38aa0e099aed1b2b7))
+
+
+### Features
+
+* Add getting started tour and right sidebar improvements ([b6af409](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b6af409f1abde69d28683848ea013aeb390d1d75))
+* Add logout endpoint and related client-side models ([6d4debb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6d4debb01ab6d058686da69854f79cebc4f42d8d))
+* Add mobile navigation and responsive header improvements ([9accdb6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9accdb68973b405fd5b0d8c49eafe1125bd820cc))
+* Add OAuth 2.0 authentication redirect and token refresh endpoints ([5b4155a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5b4155a1947dab8ad92fca8b17b76c6e6bcb3542))
+* Enhance right sidebar toggle button visibility and layout ([b62b9eb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b62b9ebda83f48eb5c07854295183ecfdb18d635))
+* Implement comprehensive logout functionality with backend integration ([537bdae](https://github.com/CHORUS-TRE/chorus-web-ui/commit/537bdae8cec6bbae5de891383f68df2ea8b6acc0))
+* Implement server-side providers and improve authentication state management ([3cd0a2d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3cd0a2d5ccdb00407173c878326475d72cdff977))
+* Improve OAuth login button text ([017adc8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/017adc8b3ee1f8eed877861617af3dc3fcf34c1e))
+* toast only error handling ([17e84dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/17e84dc30cc60e1487a060967529c9d3316d673a))
+
 # [1.0.0-alpha.24](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.23...v1.0.0-alpha.24) (2025-01-29)
 
 
