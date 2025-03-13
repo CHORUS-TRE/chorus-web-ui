@@ -126,10 +126,14 @@ export default function WorkspacesGrid({
                         (workbench) => workbench.workspaceId === workspace?.id
                       )
                       .map(({ shortName, createdAt, id }) => (
-                        <Link
+                        <div
                           key={`workspace-grid-desktops-${id}`}
-                          href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                          className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            window.location.href = `/workspaces/${workspace?.id}/desktops/${id}`
+                          }}
+                          className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg cursor-pointer"
                         >
                           <div className="flex-grow text-sm">
                             <div className="flex items-center justify-between">
@@ -162,7 +166,7 @@ export default function WorkspacesGrid({
                               </div>
                             </div>
                           </div>
-                        </Link>
+                        </div>
                       ))}
                   </div>
                 </ScrollArea>

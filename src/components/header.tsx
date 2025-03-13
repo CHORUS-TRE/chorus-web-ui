@@ -316,6 +316,7 @@ export function Header() {
                                       <ListItem
                                         className="p-1 font-semibold"
                                         href={`/workspaces/${workspace.id}`}
+                                        wrapWithLi={false}
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                           <div
@@ -409,6 +410,7 @@ export function Header() {
                                             <ListItem
                                               className="p-1 font-semibold"
                                               href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                              wrapWithLi={false}
                                             >
                                               <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                                 <div
@@ -479,6 +481,7 @@ export function Header() {
                                         title={`About ${currentWorkbench?.name}`}
                                         className="p-1 font-semibold"
                                         onClick={() => setShowAboutDialog(true)}
+                                        wrapWithLi={false}
                                       >
                                         <div className="pl-1 text-sm font-semibold text-muted-foreground">
                                           {(() => {
@@ -515,6 +518,7 @@ export function Header() {
                                       title="Settings..."
                                       className="cursor-pointer p-1 font-semibold hover:bg-accent"
                                       onClick={() => setUpdateOpen(true)}
+                                      wrapWithLi={false}
                                     ></ListItem>
 
                                     {/* Start New App Section */}
@@ -522,6 +526,7 @@ export function Header() {
                                       title="Start New App..."
                                       className="cursor-pointer p-1 font-semibold hover:bg-accent"
                                       onClick={() => setCreateOpen(true)}
+                                      wrapWithLi={false}
                                     ></ListItem>
                                     <Separator className="m-1" />
                                     {/* Fullscreen Section */}
@@ -535,6 +540,7 @@ export function Header() {
                                           iframe.requestFullscreen()
                                         }
                                       }}
+                                      wrapWithLi={false}
                                     ></ListItem>
 
                                     <Separator className="m-1" />
@@ -544,6 +550,7 @@ export function Header() {
                                       title="Quit ..."
                                       className="cursor-pointer p-1 font-semibold"
                                       onClick={() => setDeleteOpen(true)}
+                                      wrapWithLi={false}
                                     ></ListItem>
                                   </ul>
                                 </NavigationMenuContent>
