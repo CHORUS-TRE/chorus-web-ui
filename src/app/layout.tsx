@@ -33,12 +33,13 @@ export const metadata: Metadata = {
   description: 'A secure anayltics platform for your data'
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode
 }) {
-  const session = cookies().get('session')
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')
   const authenticated = session !== undefined
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')

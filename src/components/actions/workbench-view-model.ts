@@ -28,7 +28,8 @@ function delay(ms: number) {
 }
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   const dataSource = new WorkbenchDataSourceImpl(session)
   return new WorkbenchRepositoryImpl(dataSource)
 }

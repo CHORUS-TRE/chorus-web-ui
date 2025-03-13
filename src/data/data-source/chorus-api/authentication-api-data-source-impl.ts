@@ -64,13 +64,13 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
             type: mode.type as AuthenticationModeType,
             internal: mode.internal
               ? ({
-                  enabled: mode.internal.publicRegistrationEnabled ?? false
-                } as AuthenticationInternal)
+                enabled: mode.internal.publicRegistrationEnabled ?? false
+              } as AuthenticationInternal)
               : undefined,
             openid: mode.openid
               ? ({
-                  id: mode.openid.id ?? ''
-                } as AuthenticationOpenID)
+                id: mode.openid.id ?? ''
+              } as AuthenticationOpenID)
               : undefined
           }
           return authMode
@@ -123,7 +123,9 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 
   async logout(): Promise<void> {
-    const session = cookies().get('session')?.value || ''
+
+    const cookieStore = await cookies()
+    const session = cookieStore.get('session')
     const configuration = new Configuration({
       apiKey: `Bearer ${session}`,
       basePath: env('DATA_SOURCE_API_URL')

@@ -22,8 +22,9 @@ import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
-  const dataSource = new WorkspaceDataSourceImpl(session)
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
+    const dataSource = new WorkspaceDataSourceImpl(session)
   return new WorkspaceRepositoryImpl(dataSource)
 }
 

@@ -13,7 +13,8 @@ import { UserMe } from '~/domain/use-cases/user/user-me'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   const dataSource = new UserApiDataSourceImpl(session)
 
   return new UserRepositoryImpl(dataSource)

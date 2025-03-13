@@ -16,7 +16,8 @@ import { AppUpdate } from '~/domain/use-cases/app/app-update'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   const dataSource = new AppDataSourceImpl(session)
   return new AppRepositoryImpl(dataSource)
 }

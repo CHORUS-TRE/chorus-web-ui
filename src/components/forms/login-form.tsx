@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowRight, Loader2 } from 'lucide-react'
@@ -53,6 +53,7 @@ export default function LoginForm() {
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
+  const [isPending, startTransition] = useTransition()
 
   const { isAuthenticated, setAuthenticated } = useAuth()
 
@@ -183,7 +184,9 @@ export default function LoginForm() {
                 onSubmit={(e) => {
                   e.preventDefault()
                   const formData = new FormData(e.currentTarget)
-                  formAction(formData)
+                  startTransition(() => {
+                    formAction(formData)
+                  })
                 }}
                 className="w-full"
               >

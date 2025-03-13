@@ -43,7 +43,8 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
       error: 'Something went wrong, please try again'
     }
 
-  cookies().set('session', login.data, {
+  const cookieStore = await cookies()
+  cookieStore.set('session', login.data, {
     httpOnly: true,
     secure: env('NODE_ENV') === 'production',
     maxAge: 60 * 60 * 24 * 7, // One week
@@ -85,7 +86,8 @@ export async function logout() {
     console.error('Error during logout:', error)
   } finally {
     // Always clear the local session, even if the backend call fails
-    cookies().set('session', '', {
+    const cookieStore = await cookies()
+    cookieStore.set('session', '', {
       expires: new Date(0),
       path: '/'
     })
@@ -110,7 +112,8 @@ export async function updateSession(request: NextRequest) {
 }
 
 export async function getSession() {
-  const session = cookies().get('session')?.value
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   return session
 }
 
@@ -151,8 +154,8 @@ export async function handleOAuthRedirect(
     if (!response.data) {
       throw new Error('No token received')
     }
-
-    cookies().set('session', response.data || '', {
+    const cookieStore = await cookies()
+    cookieStore.set('session', response.data || '', {
       httpOnly: true,
       secure: env('NODE_ENV') === 'production',
       maxAge: 60 * 60 * 24 * 7, // One week
