@@ -3,19 +3,17 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { useNextStep } from 'nextstepjs'
-import { CircleX, Github } from 'lucide-react'
+import { CircleX } from 'lucide-react'
 import { Icon } from 'lucide-react'
 
 import { owl } from '@lucide/lab'
 
 import { Button } from '~/components/ui/button'
 
-import packageInfo from '../../package.json'
-
 import { useAppState } from './store/app-state-context'
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
 
-export default function RightSidebar({ show }: { show?: boolean }) {
+export default function RightSidebar() {
   const { startNextStep } = useNextStep()
   const { toggleRightSidebar, showRightSidebar, hasSeenGettingStartedTour } =
     useAppState()

@@ -12,8 +12,7 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
   totalSteps,
   nextStep,
   prevStep,
-  skipTour,
-  arrow
+  skipTour
 }) => {
   const { setHasSeenGettingStartedTour } = useAppState()
 

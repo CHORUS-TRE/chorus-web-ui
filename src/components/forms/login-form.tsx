@@ -53,7 +53,7 @@ export default function LoginForm() {
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   const { isAuthenticated, setAuthenticated } = useAuth()
 
@@ -74,7 +74,7 @@ export default function LoginForm() {
     }
 
     fetchAuthModes()
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     if (state.data) {
@@ -84,32 +84,6 @@ export default function LoginForm() {
         // Authenticate on backend to set the session cookie
         const session = await getSession()
         if (session) {
-          // const authOnBackend = await fetch(
-          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
-          //   {
-          //     method: 'POST',
-          //     headers: {
-          //       Authorization: `Bearer ${session}`
-          //     }
-          //   }
-          // )
-
-          // const data = await authOnBackend.json()
-          // console.log('Session cookie set', data)
-
-          // const testCookie = await fetch(
-          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
-          //   {
-          //     headers: {
-          //       Authorization: `Bearer ${data.result.token}`
-          //     },
-          //     credentials: 'include',
-          //   }
-          // )
-
-          // const data2 = await testCookie.json()
-          // console.log('Test cookie', data2)
-
           // Get the redirect path and validate it
           const redirectPath = searchParams.get('redirect') || '/'
           // Ensure the redirect URL is relative and doesn't contain protocol/domain
@@ -123,7 +97,7 @@ export default function LoginForm() {
 
       checkAuthOnBackend()
     }
-  }, [state?.data, setAuthenticated])
+  }, [state?.data, setAuthenticated, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {

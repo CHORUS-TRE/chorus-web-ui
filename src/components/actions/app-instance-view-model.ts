@@ -20,10 +20,6 @@ import { AppInstanceUpdate } from '~/domain/use-cases/app-instance/app-instance-
 
 import { IFormState } from './utils'
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 const getRepository = async () => {
   const cookieStore = await cookies()
   const session = cookieStore.get('session')?.value || ''

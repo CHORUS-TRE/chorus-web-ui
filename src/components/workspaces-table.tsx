@@ -37,8 +37,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
-import { useAppState } from './store/app-state-context'
-import { useAuth } from './store/auth-context'
+
 
 export default function WorkspaceTable({
   workspaces,

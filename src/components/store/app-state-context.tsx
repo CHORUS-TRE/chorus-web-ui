@@ -136,7 +136,7 @@ export const AppStateProvider = ({
         setWorkspaces(
           response.data
             .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .sort((a, b) => (a.id === user?.workspaceId ? -1 : 0))
+            .sort((a) => (a.id === user?.workspaceId ? -1 : 0))
         )
     } catch (error) {
       setError(error.message)

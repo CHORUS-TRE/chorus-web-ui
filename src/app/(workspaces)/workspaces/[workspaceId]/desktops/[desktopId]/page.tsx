@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useTransition } from 'react'
 import { useParams } from 'next/navigation'
 
 import { Header } from '@/components/header'
@@ -11,8 +10,7 @@ import { useAuth } from '~/components/store/auth-context'
 
 export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; desktopId: string }>()
-  const [isPending, startTransition] = useTransition()
-  const { background, setBackground } = useAppState()
+  const { setBackground } = useAppState()
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {
@@ -25,7 +23,7 @@ export default function WorkbenchPage() {
       workbenchId: params.desktopId,
       workspaceId: params.workspaceId
     })
-  }, [])
+  }, [isAuthenticated, params.desktopId, params.workspaceId, setBackground])
 
   return (
     <>

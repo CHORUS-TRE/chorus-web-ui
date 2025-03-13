@@ -22,7 +22,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
+import { User, Workspace as WorkspaceType } from '@/domain/model'
 import { ResponsiveLine } from '@nivo/line'
 
 import { toast } from '~/hooks/use-toast'
@@ -47,7 +47,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspaceUser, setWorkspaceUser] = useState<User>()
 
   const {
-    workspaces,
     workbenches,
     error,
     setError,

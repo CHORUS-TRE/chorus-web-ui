@@ -125,7 +125,7 @@ export function Header() {
 
   const sortedWorkspacesWithWorkbenches = useMemo(
     () =>
-      workspacesWithWorkbenches?.sort((a, b) => (a.id === workspaceId ? 1 : 0)),
+      workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
     [workspacesWithWorkbenches, workspaceId]
   )
 

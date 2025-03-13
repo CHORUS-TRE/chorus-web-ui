@@ -1,7 +1,6 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
-import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 
@@ -26,7 +25,6 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { App } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 
 import { IFormState } from '../actions/utils'

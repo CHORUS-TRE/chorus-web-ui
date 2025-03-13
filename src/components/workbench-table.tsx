@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight, EllipsisVerticalIcon } from 'lucide-react'
+import { EllipsisVerticalIcon } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 
@@ -56,7 +56,6 @@ export default function WorkbenchTable({
   const {
     workbenches,
     refreshWorkbenches,
-    background,
     setBackground,
     appInstances,
     apps
@@ -99,7 +98,6 @@ export default function WorkbenchTable({
   const TableRow = ({ workbench }: { workbench?: Workbench }) => {
     const [open, setOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
-    const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
 
     return (
       <>

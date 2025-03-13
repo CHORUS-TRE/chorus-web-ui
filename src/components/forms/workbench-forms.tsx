@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
-import { CirclePlus, Loader2, RefreshCw, TriangleAlert } from 'lucide-react'
+import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 
 import {
@@ -30,7 +30,7 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { App, Workbench } from '~/domain/model'
+import {  Workbench } from '~/domain/model'
 import { useToast } from '~/hooks/use-toast'
 import { generateScientistName } from '~/lib/utils'
 
@@ -76,7 +76,7 @@ export function WorkbenchCreateForm({
   const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
   const { toast } = useToast()
-  const { refreshWorkbenches, apps } = useAppState()
+  const { apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {

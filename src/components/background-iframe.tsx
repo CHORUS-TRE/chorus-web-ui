@@ -32,18 +32,17 @@ export default function BackgroundIframe() {
     (ai) => ai.workbenchId === background?.workbenchId
   )
 
-  const pingIframeURL = async (urlToCheck: string) => {
-    if (!urlToCheck || isUrlValid) return
+  const pingIframeURL = async (urlToCheck: string): Promise<boolean> => {
+    if (!urlToCheck || isUrlValid) return false;
 
     try {
       const result = await fetch(urlToCheck, { method: 'HEAD' })
-      if (result.status === 200) {
-        return true
-      }
+      return result.status === 200;
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : 'Unknown error occurred'
       setError(`Error loading app: ${errorMessage}`)
+      return false;
     }
   }
 
@@ -67,31 +66,35 @@ export default function BackgroundIframe() {
 
   // URL validation effect
   useEffect(() => {
-    if (!url || isUrlValid) return
+    if (!url) return
 
     const validateURL = async () => {
       if (attemptCount >= MAX_ATTEMPTS) {
+        setError('Max attempts reached. Please check the URL and try again.')
         clearInterval(intervalRef.current)
-        setError('Failed to connect after maximum attempts')
         return
       }
 
-      if (url) {
+      try {
         const isValid = await pingIframeURL(url)
+        setIsUrlValid(Boolean(isValid))
+
         if (isValid) {
           clearInterval(intervalRef.current)
-          setIsUrlValid(true)
-          setError(null)
+        } else {
+          setAttemptCount((prev) => prev + 1)
         }
+      } catch (err) {
+        setError(err.message)
+        clearInterval(intervalRef.current)
       }
-      setAttemptCount((prev) => prev + 1)
     }
 
     validateURL()
     intervalRef.current = setInterval(validateURL, RETRY_INTERVAL)
 
     return () => clearInterval(intervalRef.current)
-  }, [url, isUrlValid, attemptCount])
+  }, [url, isUrlValid, attemptCount, pingIframeURL])
 
   // Error notification effect
   useEffect(() => {

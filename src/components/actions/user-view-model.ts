@@ -52,7 +52,11 @@ export async function userCreate(
     }
 
     const nextUser = UserCreateSchema.parse(user)
-    const u = await useCase.execute(nextUser)
+    const result = await useCase.execute(nextUser)
+
+    if (result.error) {
+      return { error: result.error }
+    }
 
     return { data: nextUser.email }
   } catch (error) {

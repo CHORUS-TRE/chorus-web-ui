@@ -1,3 +1,5 @@
+'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,7 +12,7 @@ import {
 
 import { useAppState } from '~/components/store/app-state-context'
 
-export default async function AppDetailsPage({
+export default function AppDetailsPage({
   params
 }: {
   params: { appId: string }

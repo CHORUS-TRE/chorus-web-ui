@@ -8,8 +8,7 @@ import {
   AuthenticationModeType,
   AuthenticationOAuthRedirectRequest,
   AuthenticationOpenID,
-  AuthenticationRequest,
-  LogoutResponse
+  AuthenticationRequest
 } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
