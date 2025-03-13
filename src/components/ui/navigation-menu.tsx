@@ -134,9 +134,9 @@ const ListItem = React.forwardRef<
             <div className="text-sm font-medium leading-none">{title}</div>
           )}
           {children && (
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
               {children}
-            </p>
+            </div>
           )}
         </Link>
       </NavigationMenuLink>
