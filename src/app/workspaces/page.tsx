@@ -28,10 +28,9 @@ export default function WorkspacesPage() {
 
   return (
     <>
-
       <div className="w-full">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 text-white w-full text-start flex flex-row items-center gap-3">
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
             <Package className="h-9 w-9 text-white" />
             Workspaces
           </h2>

@@ -86,9 +86,9 @@ export function MainLayout({ children }: MainLayoutProps) {
       >
         <div
           id="content"
-          className="flex items-start justify-between rounded-2xl border border-secondary bg-black bg-opacity-85 w-full"
+          className="flex w-full items-start justify-between rounded-2xl border border-secondary bg-black bg-opacity-85"
         >
-          <div className="p-8 pr-0 w-full">{children}</div>
+          <div className="w-full p-8 pr-0">{children}</div>
           <div className="flex justify-end p-2">
             <Button
               size="icon"

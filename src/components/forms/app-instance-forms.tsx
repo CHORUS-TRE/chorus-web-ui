@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 
@@ -60,7 +60,7 @@ export function AppInstanceCreateForm({
 }) {
   const [state, formAction] = useActionState(appInstanceCreate, initialState)
   const { setNotification } = useAppState()
-  const { refreshWorkbenches, setBackground, apps } = useAppState()
+  const { apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
@@ -76,7 +76,7 @@ export function AppInstanceCreateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state, onUpdate])
+  }, [setNotification, state, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>

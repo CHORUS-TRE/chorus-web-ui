@@ -112,10 +112,7 @@ const RichNavigationList = ({ item }: { item: Item }) => (
           </li>
         )}
         {item.links?.map((component) => (
-          <ListItem
-            key={component.name}
-            title={component.name}
-          >
+          <ListItem key={component.name} title={component.name}>
             {component.name}
           </ListItem>
         ))}

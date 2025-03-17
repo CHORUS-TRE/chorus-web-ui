@@ -80,26 +80,25 @@ export default function LoginForm() {
           description: 'Please try again later',
           variant: 'destructive'
         })
+        console.error(error)
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchAuthModes()
-  }, [])
+  }, [setNotification])
 
   useEffect(() => {
-
     if (isAuthenticated) {
       router.push('/')
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, router])
 
   useEffect(() => {
-
     if (state.error) {
       setNotification({
-        title: "Login failed",
+        title: 'Login failed',
         description: state.error,
         variant: 'destructive'
       })
@@ -127,7 +126,7 @@ export default function LoginForm() {
 
       checkAuthOnBackend()
     }
-  }, [state, setAuthenticated, searchParams])
+  }, [state, setAuthenticated, searchParams, router, setNotification])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
@@ -224,7 +223,6 @@ export default function LoginForm() {
 
                   <SubmitButton />
                 </div>
-
               </form>
             </>
           )}

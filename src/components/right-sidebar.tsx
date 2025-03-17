@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { useNextStep } from 'nextstepjs'
 import { CircleX } from 'lucide-react'
@@ -18,16 +18,16 @@ export default function RightSidebar() {
   const { toggleRightSidebar, showRightSidebar, hasSeenGettingStartedTour } =
     useAppState()
 
-  const handleStartTour = () => {
+  const handleStartTour = useCallback(() => {
     startNextStep('gettingStartedTour')
-  }
+  }, [startNextStep])
 
   useEffect(() => {
     if (!showRightSidebar) return
     if (hasSeenGettingStartedTour) return
 
     handleStartTour()
-  }, [showRightSidebar, hasSeenGettingStartedTour])
+  }, [showRightSidebar, hasSeenGettingStartedTour, handleStartTour])
 
   return (
     <>

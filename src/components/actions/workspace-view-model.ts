@@ -23,7 +23,7 @@ import { IFormState } from './utils'
 const getRepository = async () => {
   const cookieStore = await cookies()
   const session = cookieStore.get('session')?.value || ''
-    const dataSource = new WorkspaceDataSourceImpl(session)
+  const dataSource = new WorkspaceDataSourceImpl(session)
   return new WorkspaceRepositoryImpl(dataSource)
 }
 

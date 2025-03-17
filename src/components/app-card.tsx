@@ -63,7 +63,8 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
       setNotification({
         title: 'App deletion failed',
         variant: 'destructive',
-        description: error instanceof Error ? error.message : 'An error occurred'
+        description:
+          error instanceof Error ? error.message : 'An error occurred'
       })
       setIsDeleting(false)
     }

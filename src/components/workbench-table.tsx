@@ -51,13 +51,8 @@ export default function WorkbenchTable({
   description?: string
   onUpdate?: (id: string) => void
 }) {
-  const {
-    workbenches,
-    refreshWorkbenches,
-    setBackground,
-    appInstances,
-    apps
-  } = useAppState()
+  const { workbenches, refreshWorkbenches, setBackground, appInstances, apps } =
+    useAppState()
   const { user } = useAuth()
   const { setNotification } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
@@ -71,10 +66,10 @@ export default function WorkbenchTable({
     if (deleted) {
       setNotification({
         title: 'Success!',
-        description: 'Desktop deleted',
+        description: 'Desktop deleted'
       })
     }
-  }, [deleted])
+  }, [deleted, setNotification])
 
   const TableHeads = () => (
     <>
@@ -246,7 +241,7 @@ export default function WorkbenchTable({
             refreshWorkbenches()
             setNotification({
               title: 'Success!',
-              description: 'Desktop created successfully',
+              description: 'Desktop created successfully'
             })
             setBackground({ workbenchId, workspaceId })
             if (onUpdate) onUpdate(workbenchId)

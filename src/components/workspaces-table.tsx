@@ -38,7 +38,6 @@ import {
 } from './forms/workspace-forms'
 import { useAppState } from './store/app-state-context'
 
-
 export default function WorkspaceTable({
   workspaces,
   title,
@@ -64,7 +63,7 @@ export default function WorkspaceTable({
         variant: 'default'
       })
     }
-  }, [deleted])
+  }, [deleted, setNotification])
 
   useEffect(() => {
     if (updated) {
@@ -74,7 +73,7 @@ export default function WorkspaceTable({
         variant: 'default'
       })
     }
-  }, [updated])
+  }, [updated, setNotification])
 
   const TableHeads = () => (
     <>

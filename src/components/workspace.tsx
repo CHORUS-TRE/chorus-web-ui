@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
@@ -13,10 +13,9 @@ import {
   Footprints,
   Info,
   LaptopMinimal,
-  PackageIcon,
   Rows3,
-  Users  } from 'lucide-react'
-import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
+  Users
+} from 'lucide-react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
@@ -49,6 +48,39 @@ import {
 } from './ui/dropdown-menu'
 import { ScrollArea } from './ui/scroll-area'
 
+// Add a simple custom bar chart component
+function SimpleBarChart({
+  data,
+  height = 36,
+  width = 72,
+  color = 'hsl(var(--chart-1))'
+}: {
+  data: Array<{ value: number }>
+  height?: number
+  width?: number
+  color?: string
+}) {
+  const maxValue = Math.max(...data.map((item) => item.value))
+
+  return (
+    <div style={{ width, height }} className="flex items-end space-x-1">
+      {data.map((item, index) => {
+        const barHeight = (item.value / maxValue) * height
+        return (
+          <div
+            key={index}
+            style={{
+              height: `${barHeight}px`,
+              backgroundColor: color
+            }}
+            className="flex-1 rounded-t-sm"
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [workspaceUser, setWorkspaceUser] = useState<User>()
@@ -66,18 +98,19 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
 
-  const initializeData = async () => {
+  const initializeData = useCallback(async () => {
     try {
       const [workspaceResponse] = await Promise.all([
         workspaceGet(workspaceId),
         refreshWorkbenches()
       ])
 
-      if (workspaceResponse.error) setNotification({
-        title: 'Error loading workspace',
-        description: workspaceResponse.error,
-        variant: 'destructive'
-      })
+      if (workspaceResponse.error)
+        setNotification({
+          title: 'Error loading workspace',
+          description: workspaceResponse.error,
+          variant: 'destructive'
+        })
       if (workspaceResponse.data) {
         setWorkspace(workspaceResponse.data)
         const userResponse = await userGet(workspaceResponse.data.ownerId)
@@ -90,11 +123,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         variant: 'destructive'
       })
     }
-  }
+  }, [workspaceId, setNotification, refreshWorkbenches])
 
   useEffect(() => {
     initializeData()
-  }, [workspaceId])
+  }, [workspaceId, initializeData])
 
   const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
@@ -131,7 +164,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </div>
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
-            <CardTitle className="text-white flex items-start gap-3">
+            <CardTitle className="flex items-start gap-3 text-white">
               <Info className="h-6 w-6 text-white" />
               {workspace?.name}
             </CardTitle>
@@ -398,35 +431,15 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             }}
             className="ml-auto w-[72px]"
           >
-            <BarChart
-              accessibilityLayer
-              margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            <SimpleBarChart
               data={[
-                { date: '2024-01-01', steps: 2000 },
-                { date: '2024-01-02', steps: 2100 },
-                { date: '2024-01-03', steps: 2200 },
-                { date: '2024-01-04', steps: 1300 },
-                { date: '2024-01-05', steps: 1400 },
-                { date: '2024-01-06', steps: 2500 },
-                { date: '2024-01-07', steps: 1600 }
+                { value: 2000 },
+                { value: 2100 },
+                { value: 2200 },
+                { value: 1300 },
+                { value: 1400 }
               ]}
-            >
-              <Bar
-                dataKey="steps"
-                fill="var(--color-steps)"
-                radius={2}
-                fillOpacity={0.2}
-                activeIndex={6}
-                activeBar={<Rectangle fillOpacity={0.8} />}
-              />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={4}
-                hide
-              />
-            </BarChart>
+            />
           </ChartContainer>
         </CardContent>
         <div className="flex-grow" />
@@ -497,35 +510,46 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             }}
             className="ml-auto w-[64px]"
           >
-            <BarChart
-              accessibilityLayer
-              margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            <SimpleBarChart
               data={[
-                { date: '2024-01-01', calories: 354 },
-                { date: '2024-01-02', calories: 514 },
-                { date: '2024-01-03', calories: 345 },
-                { date: '2024-01-04', calories: 734 },
-                { date: '2024-01-05', calories: 645 },
-                { date: '2024-01-06', calories: 456 },
-                { date: '2024-01-07', calories: 345 }
+                { value: 354 },
+                { value: 514 },
+                { value: 345 },
+                { value: 734 },
+                { value: 645 },
+                { value: 456 },
+                { value: 345 }
               ]}
-            >
-              <Bar
-                dataKey="calories"
-                fill="var(--color-calories)"
-                radius={2}
-                fillOpacity={0.2}
-                activeIndex={6}
-                activeBar={<Rectangle fillOpacity={0.8} />}
-              />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={4}
-                hide
-              />
-            </BarChart>
+            />
+          </ChartContainer>
+        </CardContent>
+        <CardContent className="px-6 pb-0 pt-3">
+          <div className="flex gap-4">
+            <CircleGauge className="h-4 w-4 text-muted-foreground" />
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-medium leading-none">Calories</p>
+              <div className="text-sm text-muted-foreground">
+                2452 cals. burned
+              </div>
+            </div>
+          </div>
+          <ChartContainer
+            config={{
+              calories: { label: 'Calories', color: 'hsl(var(--chart-2))' }
+            }}
+            className="ml-auto w-[64px]"
+          >
+            <SimpleBarChart
+              data={[
+                { value: 354 },
+                { value: 514 },
+                { value: 345 },
+                { value: 734 },
+                { value: 645 },
+                { value: 456 },
+                { value: 345 }
+              ]}
+            />
           </ChartContainer>
         </CardContent>
         <div className="flex-grow" />

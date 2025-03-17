@@ -1,13 +1,14 @@
 'use server'
 
+type Params = Promise<{ workspaceId: string }>
+
+import { use } from 'react'
+
 import WorkbenchTable from '~/components/workbench-table'
 
-export default async function Page({
-  params
-}: {
-  params: { desktopId: string; workspaceId: string }
-}) {
-  const workspaceId = params?.workspaceId
+export default async function Page(props: { params: Params }) {
+  const params = use(props.params)
+  const workspaceId = params.workspaceId
 
   return (
     <div className="flex flex-col">

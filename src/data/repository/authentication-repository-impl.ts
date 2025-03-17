@@ -24,7 +24,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
       return { data: d }
     } catch (error) {
-      console.error({error})
+      console.error({ error })
       return { error: error.statusText }
     }
   }

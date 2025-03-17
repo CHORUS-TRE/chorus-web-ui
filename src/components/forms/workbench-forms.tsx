@@ -30,13 +30,12 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import {  Workbench } from '~/domain/model'
+import { Workbench } from '~/domain/model'
 import { generateScientistName } from '~/lib/utils'
 
 import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
-
 
 const initialState: IFormState = {
   data: undefined,
@@ -91,7 +90,7 @@ export function WorkbenchCreateForm({
       setOpen(false)
       if (onUpdate) onUpdate(state?.data as string)
     }
-  }, [state])
+  }, [state, onUpdate, setOpen, setNotification])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -282,7 +281,7 @@ export function WorkbenchDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useActionState(workbenchDelete, initialState)
+  const [, formAction] = useActionState(workbenchDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -351,7 +350,7 @@ export function WorkbenchUpdateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state, onUpdate, setOpen])
+  }, [setNotification, state, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>

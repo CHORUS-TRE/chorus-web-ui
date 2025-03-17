@@ -79,7 +79,7 @@ export function WorkspaceCreateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state])
+  }, [state, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -229,7 +229,7 @@ export function WorkspaceDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useActionState(workspaceDelete, initialState)
+  const [, formAction] = useActionState(workspaceDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -290,7 +290,7 @@ export function WorkspaceUpdateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [formState])
+  }, [formState, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>

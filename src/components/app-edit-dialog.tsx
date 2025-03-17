@@ -105,6 +105,7 @@ export function AppEditDialog({
         })
       }
     } catch (error) {
+      console.error('App update error:', error)
       form.setError('root', {
         type: 'server',
         message: 'An unexpected error occurred'

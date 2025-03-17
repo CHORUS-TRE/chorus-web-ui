@@ -43,7 +43,9 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       return token
     } catch (error) {
       // console.error(error)
-      throw error
+      throw error instanceof Error
+        ? error
+        : new Error('Unknown authentication error occurred')
     }
   }
 
@@ -63,13 +65,13 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
             type: mode.type as AuthenticationModeType,
             internal: mode.internal
               ? ({
-                enabled: mode.internal.publicRegistrationEnabled ?? false
-              } as AuthenticationInternal)
+                  enabled: mode.internal.publicRegistrationEnabled ?? false
+                } as AuthenticationInternal)
               : undefined,
             openid: mode.openid
               ? ({
-                id: mode.openid.id ?? ''
-              } as AuthenticationOpenID)
+                  id: mode.openid.id ?? ''
+                } as AuthenticationOpenID)
               : undefined
           }
           return authMode
@@ -77,7 +79,10 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       )
       return r
     } catch (error) {
-      console.error(' data source getAuthenticationModes Error fetching authentication modes:', error)
+      console.error(
+        ' data source getAuthenticationModes Error fetching authentication modes:',
+        error
+      )
       throw error
     }
   }
@@ -122,7 +127,6 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 
   async logout(): Promise<void> {
-
     const cookieStore = await cookies()
     const session = cookieStore.get('session')
     const configuration = new Configuration({

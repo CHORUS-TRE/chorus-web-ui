@@ -21,11 +21,13 @@ import { workspaceList } from '../actions/workspace-view-model'
 
 import { useAuth } from './auth-context'
 
-type NotificationType = {
-  title: string
-  description?: string
-  variant?: 'default' | 'destructive'
-} | undefined
+type NotificationType =
+  | {
+      title: string
+      description?: string
+      variant?: 'default' | 'destructive'
+    }
+  | undefined
 
 type AppStateContextType = {
   showRightSidebar: boolean
@@ -137,7 +139,8 @@ export const AppStateProvider = ({
 
     try {
       const response = await workspaceList()
-      if (response?.error) setNotification({ title: response.error, variant: 'destructive' })
+      if (response?.error)
+        setNotification({ title: response.error, variant: 'destructive' })
       if (response?.data)
         setWorkspaces(
           response.data
@@ -162,7 +165,8 @@ export const AppStateProvider = ({
             (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
           )
         )
-      if (response?.error) setNotification({ title: response.error, variant: 'destructive' })
+      if (response?.error)
+        setNotification({ title: response.error, variant: 'destructive' })
     } catch (error) {
       setNotification({ title: error.message, variant: 'destructive' })
     }
@@ -175,7 +179,8 @@ export const AppStateProvider = ({
 
     try {
       const response = await appList()
-      if (response?.error) setNotification({ title: response.error, variant: 'destructive' })
+      if (response?.error)
+        setNotification({ title: response.error, variant: 'destructive' })
       if (response?.data) {
         setApps(
           response.data.sort((a, b) => {

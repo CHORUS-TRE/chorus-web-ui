@@ -14,7 +14,6 @@ import { useAppState } from './store/app-state-context'
 export function AppStoreView() {
   const [selectedType, setSelectedType] = useState<AppType>('app' as AppType)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const { apps, refreshApps } = useAppState()
 
   const filteredApps = apps?.filter((app) => app.type === selectedType)
@@ -71,15 +70,9 @@ export function AppStoreView() {
 
               <TabsContent value="app" className="mt-0">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {isLoading ? (
-                    <div className="col-span-full text-center text-muted-foreground">
-                      Loading...
-                    </div>
-                  ) : (
-                    filteredApps?.map((app) => (
-                      <AppCard key={app.id} app={app} onUpdate={refreshApps} />
-                    ))
-                  )}
+                  {filteredApps?.map((app) => (
+                    <AppCard key={app.id} app={app} onUpdate={refreshApps} />
+                  ))}
                 </div>
               </TabsContent>
 

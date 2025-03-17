@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Package, PackageOpen } from 'lucide-react'
+import { PackageOpen } from 'lucide-react'
 
 import { useAppState } from '~/components/store/app-state-context'
 import { useAuth } from '~/components/store/auth-context'
@@ -19,8 +19,8 @@ export default function Layout({
   const workspace = workspaces?.find((w) => w.id === params?.workspaceId)
   return (
     <>
-      <div className="flex items-center justify-start w-full flex-grow">
-        <h2 className="mb-8 mt-5 text-white w-full text-start flex flex-row items-center gap-3">
+      <div className="flex w-full flex-grow items-center justify-start">
+        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
           <PackageOpen className="h-9 w-9 text-white" />
           <Link
             href={`/workspaces/${workspace?.id}`}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ChevronDown, ChevronUp, CirclePlus, Package, Store } from 'lucide-react'
+import { ChevronDown, ChevronUp, Store } from 'lucide-react'
 
 import AppStoreHero from '~/components/app-store-hero'
 import { AppStoreView } from '~/components/app-store-view'
@@ -21,9 +21,8 @@ export default function Page() {
 
   return (
     <>
-
       <div className="flex items-center justify-between gap-3">
-        <h2 className="mb-8 mt-5 text-white w-full text-start flex flex-row items-center gap-3">
+        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
           <Store className="h-9 w-9 text-white" />
           App Store
         </h2>
@@ -32,7 +31,9 @@ export default function Page() {
           className={`mt-5 overflow-hidden text-muted hover:bg-inherit hover:text-accent`}
           aria-label={
             isClient
-              ? (showAppStoreHero ? 'Hide hero section' : 'Show hero section')
+              ? showAppStoreHero
+                ? 'Hide hero section'
+                : 'Show hero section'
               : 'Toggle hero section'
           }
         >
@@ -47,7 +48,7 @@ export default function Page() {
           )}
         </Button>
       </div>
-      {isClient ? (showAppStoreHero && <AppStoreHero />) : null}
+      {isClient ? showAppStoreHero && <AppStoreHero /> : null}
       <AppStoreView />
     </>
   )

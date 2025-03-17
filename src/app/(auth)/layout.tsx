@@ -19,9 +19,7 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const {
-    notification
-  } = useAppState()
+  const { notification } = useAppState()
 
   useEffect(() => {
     if (notification) {
@@ -65,19 +63,19 @@ export default function Layout({
               </p>
             </div>
           </div>
-          <div className="flex-grow mt-auto"></div>
-          <div className="flex w-full gap-2 items-end justify-between">
+          <div className="mt-auto flex-grow"></div>
+          <div className="flex w-full items-end justify-between gap-2">
             <div className="">
               <a
                 href="https://chorus-tre.ch"
-                className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent mb-1"
+                className="mb-1 flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chorus website"
-            >
-              <Link className="size-4" />
-              CHORUS Website
-            </a>
+              >
+                <Link className="size-4" />
+                CHORUS Website
+              </a>
               <a
                 href="https://github.com/CHORUS-TRE/"
                 className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"

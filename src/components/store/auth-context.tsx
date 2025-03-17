@@ -41,7 +41,7 @@ export const AuthProvider = ({
 }): ReactElement => {
   const [isAuthenticated, setAuthenticated] = useState<boolean>(authenticated)
   const [user, setUser] = useState<User | undefined>(initialUser)
-  const refreshInterval = useRef<NodeJS.Timeout>()
+  const refreshInterval = useRef<NodeJS.Timeout | undefined>(undefined)
 
   const { setBackground } = useAppState()
 

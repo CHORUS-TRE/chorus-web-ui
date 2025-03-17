@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback,useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 
 import { workspaceGet } from '@/components/actions/workspace-view-model'
@@ -15,14 +15,11 @@ const WorkspacePage = () => {
 
   const initializeData = useCallback(async () => {
     try {
-      await Promise.all([
-        workspaceGet(workspaceId),
-        refreshWorkbenches()
-      ])
+      await Promise.all([workspaceGet(workspaceId), refreshWorkbenches()])
     } catch (error) {
-      console.error("Error initializing data:", error.message);
+      console.error('Error initializing data:', error.message)
     }
-  }, [workspaceId, refreshWorkbenches]);
+  }, [workspaceId, refreshWorkbenches])
 
   useEffect(() => {
     initializeData()

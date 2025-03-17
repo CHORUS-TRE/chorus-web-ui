@@ -132,7 +132,7 @@ export default function WorkspacesGrid({
                             e.stopPropagation()
                             window.location.href = `/workspaces/${workspace?.id}/desktops/${id}`
                           }}
-                          className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg cursor-pointer"
+                          className="flex cursor-pointer flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                         >
                           <div className="flex-grow text-sm">
                             <div className="flex items-center justify-between">

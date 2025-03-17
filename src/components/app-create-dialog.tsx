@@ -70,7 +70,6 @@ export function AppCreateDialog({
 
   const { formState } = form
   const isSubmitting = formState.isSubmitting
-  const isValid = formState.isValid
 
   async function onSubmit(data: FormData) {
     try {
@@ -91,6 +90,7 @@ export function AppCreateDialog({
         })
       }
     } catch (error) {
+      console.error('App creation error:', error)
       form.setError('root', {
         type: 'server',
         message: 'An unexpected error occurred'

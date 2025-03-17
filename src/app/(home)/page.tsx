@@ -9,14 +9,12 @@ const HomePage = () => {
   const { user } = useAuth()
 
   return (
-    <div className="flex flex-col items-center justify-start w-full">
-      <div className="flex items-center justify-start w-full flex-grow">
-
-        <h2 className="mb-8 mt-5 text-white w-full text-start flex flex-row items-center gap-3">
+    <div className="flex w-full flex-col items-center justify-start">
+      <div className="flex w-full flex-grow items-center justify-start">
+        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
           <HomeIcon className="h-9 w-9 text-white" />
           Home
         </h2>
-
       </div>
 
       <div className="flex flex-col items-center justify-start">

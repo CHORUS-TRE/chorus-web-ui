@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { env } from 'next-runtime-env'
 
 import { useAppState } from '@/components/store/app-state-context'
@@ -10,41 +10,44 @@ const RETRY_INTERVAL = 1000
 
 export default function BackgroundIframe() {
   const { background, appInstances, setNotification } = useAppState()
-  const intervalRef = useRef<NodeJS.Timeout>(null)
+  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
   const [isUrlValid, setIsUrlValid] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
 
-  const resetState = () => {
+  const resetState = useCallback(() => {
     setUrl(null)
     setIsUrlValid(false)
     setNotification(undefined)
     setAttemptCount(0)
-  }
+  }, [setNotification])
 
   const workbenchAppInstances = appInstances?.filter(
     (ai) => ai.workbenchId === background?.workbenchId
   )
 
-  const pingIframeURL = async (urlToCheck: string): Promise<boolean> => {
-    if (!urlToCheck || isUrlValid) return false;
+  const pingIframeURL = useCallback(
+    async (urlToCheck: string): Promise<boolean> => {
+      if (!urlToCheck || isUrlValid) return false
 
-    try {
-      const result = await fetch(urlToCheck, { method: 'HEAD' })
-      return result.status === 200;
-    } catch (e) {
-      const errorMessage =
-        e instanceof Error ? e.message : 'Unknown error occurred'
-      setNotification({
-        title: 'Error loading app',
-        description: errorMessage,
-        variant: 'destructive'
-      })
-      return false;
-    }
-  }
+      try {
+        const result = await fetch(urlToCheck, { method: 'HEAD' })
+        return result.status === 200
+      } catch (e) {
+        const errorMessage =
+          e instanceof Error ? e.message : 'Unknown error occurred'
+        setNotification({
+          title: 'Error loading app',
+          description: errorMessage,
+          variant: 'destructive'
+        })
+        return false
+      }
+    },
+    [isUrlValid, setNotification]
+  )
 
   // URL initialization effect
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function BackgroundIframe() {
     setIsUrlValid(false)
     setNotification(undefined)
     setAttemptCount(0)
-  }, [background])
+  }, [background, setNotification, resetState])
 
   // URL validation effect
   useEffect(() => {
@@ -74,7 +77,10 @@ export default function BackgroundIframe() {
           title: 'Max attempts reached. Please check the URL and try again.',
           variant: 'destructive'
         })
-        clearInterval(intervalRef.current)
+
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+        }
         return
       }
 
@@ -83,7 +89,9 @@ export default function BackgroundIframe() {
         setIsUrlValid(Boolean(isValid))
 
         if (isValid) {
-          clearInterval(intervalRef.current)
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+          }
         } else {
           setAttemptCount((prev) => prev + 1)
         }
@@ -93,15 +101,21 @@ export default function BackgroundIframe() {
           description: err.message,
           variant: 'destructive'
         })
-        clearInterval(intervalRef.current)
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+        }
       }
     }
 
     validateURL()
     intervalRef.current = setInterval(validateURL, RETRY_INTERVAL)
 
-    return () => clearInterval(intervalRef.current)
-  }, [url, isUrlValid, attemptCount, pingIframeURL])
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [url, isUrlValid, attemptCount, pingIframeURL, setNotification])
 
   // Focus management effect
   useEffect(() => {
@@ -139,7 +153,7 @@ export default function BackgroundIframe() {
           if (isUrlValid) {
             setNotification({
               title: 'Workspace Ready',
-              description: 'Your workspace has been loaded successfully',
+              description: 'Your workspace has been loaded successfully'
             })
           }
         }}
