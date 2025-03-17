@@ -1,2 +1,2 @@
-// Re-export the TypeScript setup file
-import './jest.setup.ts'
+// Learn more: https://github.com/testing-library/jest-dom
+import '@testing-library/jest-dom'
