@@ -24,7 +24,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
       return { data: d }
     } catch (error) {
-      return { error: error.message }
+      console.error({error})
+      return { error: error.statusText }
     }
   }
 
@@ -33,7 +34,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       const modes = await this.dataSource.getAuthenticationModes()
       return { data: modes }
     } catch (error) {
-      return { error: error.message }
+      console.error(error)
+      return { error }
     }
   }
 

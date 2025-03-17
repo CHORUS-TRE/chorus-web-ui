@@ -42,7 +42,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
 
       return token
     } catch (error) {
-      console.error(error)
+      // console.error(error)
       throw error
     }
   }
@@ -77,7 +77,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       )
       return r
     } catch (error) {
-      console.error('Error fetching authentication modes:', error)
+      console.error(' data source getAuthenticationModes Error fetching authentication modes:', error)
       throw error
     }
   }

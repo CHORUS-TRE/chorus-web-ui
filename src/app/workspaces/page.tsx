@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
+import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -28,9 +28,13 @@ export default function WorkspacesPage() {
 
   return (
     <>
-      <div className="toot w-full">
-        <h2 className="mt-5 text-white">Workspaces</h2>
-        <div className="mb-4 mt-2 flex justify-end">
+
+      <div className="w-full">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="mb-8 mt-5 text-white w-full text-start flex flex-row items-center gap-3">
+            <Package className="h-9 w-9 text-white" />
+            Workspaces
+          </h2>
           <Button
             onClick={() => setCreateOpen(true)}
             className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"

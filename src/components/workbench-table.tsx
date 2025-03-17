@@ -5,8 +5,6 @@ import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
 
-import { useAppState } from '@/components/store/app-state-context'
-
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
 import {
@@ -33,13 +31,13 @@ import {
   TableRow as TableRowComponent
 } from '~/components/ui/table'
 import { Workbench } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
 
 import {
   WorkbenchCreateForm,
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 
 export default function WorkbenchTable({
@@ -61,8 +59,8 @@ export default function WorkbenchTable({
     apps
   } = useAppState()
   const { user } = useAuth()
+  const { setNotification } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
-  const { toast } = useToast()
 
   const filteredWorkbenches =
     workspaceId === user?.workspaceId
@@ -71,10 +69,9 @@ export default function WorkbenchTable({
 
   useEffect(() => {
     if (deleted) {
-      toast({
+      setNotification({
         title: 'Success!',
         description: 'Desktop deleted',
-        className: 'bg-background text-white'
       })
     }
   }, [deleted])
@@ -107,10 +104,9 @@ export default function WorkbenchTable({
             state={[open, setOpen]}
             onUpdate={() => {
               refreshWorkbenches()
-              toast({
+              setNotification({
                 title: 'Success!',
-                description: 'Desktop updated successfully',
-                className: 'bg-background text-white'
+                description: 'Desktop updated successfully'
               })
             }}
           />
@@ -248,10 +244,9 @@ export default function WorkbenchTable({
           workspaceId={workspaceId}
           onUpdate={(workbenchId) => {
             refreshWorkbenches()
-            toast({
+            setNotification({
               title: 'Success!',
               description: 'Desktop created successfully',
-              className: 'bg-background text-white'
             })
             setBackground({ workbenchId, workspaceId })
             if (onUpdate) onUpdate(workbenchId)

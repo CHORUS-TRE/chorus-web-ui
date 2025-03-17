@@ -7,9 +7,11 @@ import { CircleHelp, LaptopMinimal, PackageOpen } from 'lucide-react'
 import { useAppState } from '@/components/store/app-state-context'
 
 import { Header } from '~/components/header'
+import { toast } from '~/hooks/use-toast'
 
 import RightSidebar from '../right-sidebar'
 import { Button } from '../ui/button'
+import { Toaster } from '../ui/toaster'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -21,13 +23,24 @@ export function MainLayout({ children }: MainLayoutProps) {
     workspaces,
     workbenches,
     showRightSidebar,
-    toggleRightSidebar
+    toggleRightSidebar,
+    notification
   } = useAppState()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
   const workbench = workbenches?.find((w) => w.id === background?.workbenchId)
-
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    if (notification) {
+      toast({
+        title: notification.title,
+        description: notification.description || '',
+        variant: notification.variant,
+        className: 'bg-background text-white'
+      })
+    }
+  }, [notification])
 
   // Set isClient to true after component mounts
   useEffect(() => {
@@ -73,9 +86,9 @@ export function MainLayout({ children }: MainLayoutProps) {
       >
         <div
           id="content"
-          className="flex items-start justify-between rounded-2xl border border-secondary bg-black bg-opacity-85"
+          className="flex items-start justify-between rounded-2xl border border-secondary bg-black bg-opacity-85 w-full"
         >
-          <div className="p-8 pr-0">{children}</div>
+          <div className="p-8 pr-0 w-full">{children}</div>
           <div className="flex justify-end p-2">
             <Button
               size="icon"
@@ -96,6 +109,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           </div>
         )}
       </div>
+      <Toaster />
     </>
   )
 }

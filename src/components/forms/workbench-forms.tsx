@@ -31,12 +31,12 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import {  Workbench } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
 import { generateScientistName } from '~/lib/utils'
 
 import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
+
 
 const initialState: IFormState = {
   data: undefined,
@@ -73,13 +73,17 @@ export function WorkbenchCreateForm({
     `/workspaces/${workspaceId}`
   )
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
-  const { toast } = useToast()
+  const { setNotification } = useAppState()
   const { apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
+      setNotification({
+        title: 'Error',
+        description: state.error,
+        variant: 'destructive'
+      })
       return
     }
 
@@ -88,17 +92,6 @@ export function WorkbenchCreateForm({
       if (onUpdate) onUpdate(state?.data as string)
     }
   }, [state])
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -341,16 +334,15 @@ export function WorkbenchUpdateForm({
   onUpdate?: () => void
 }) {
   const [state, formAction] = useActionState(workbenchUpdate, initialState)
-  const { toast } = useToast()
   const [scientistName, setScientistName] = useState(workbench.name)
+  const { setNotification } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
-      toast({
+      setNotification({
         title: 'Error',
         description: state.error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
+        variant: 'destructive'
       })
       return
     }

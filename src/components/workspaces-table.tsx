@@ -31,12 +31,12 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
-import { useToast } from '~/hooks/use-toast'
 
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
+import { useAppState } from './store/app-state-context'
 
 
 export default function WorkspaceTable({
@@ -52,41 +52,29 @@ export default function WorkspaceTable({
   description?: string
   onUpdate?: () => void
 }) {
-  const [error, setError] = useState<string | null>(null)
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
-  const { toast } = useToast()
+  const { setNotification } = useAppState()
 
   useEffect(() => {
     if (deleted) {
-      toast({
+      setNotification({
         title: 'Success!',
         description: 'Workspace deleted',
-        className: 'bg-background text-white'
+        variant: 'default'
       })
     }
   }, [deleted])
 
   useEffect(() => {
     if (updated) {
-      toast({
+      setNotification({
         title: 'Success!',
         description: 'Workspace updated',
-        className: 'bg-background text-white'
+        variant: 'default'
       })
     }
   }, [updated])
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error!',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
 
   const TableHeads = () => (
     <>

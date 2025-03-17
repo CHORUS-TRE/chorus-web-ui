@@ -58,7 +58,6 @@ import {
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
 import { AuthenticationMode, Workbench } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
 import { getAppIcon } from '~/utils/app-icon'
 
 import { appInstanceCreate } from './actions/app-instance-view-model'
@@ -80,7 +79,6 @@ interface BreadcrumbItem {
 
 export function Header() {
   const router = useRouter()
-  const { toast } = useToast()
   const paths = usePathname()
   const [items, setItems] = useState<BreadcrumbItem[]>([])
   const {
@@ -88,7 +86,7 @@ export function Header() {
     workspaces,
     apps,
     appInstances,
-    error,
+    setNotification,
     background,
     setBackground,
     refreshWorkspaces,
@@ -97,7 +95,6 @@ export function Header() {
   } = useAppState()
   const { user, isAuthenticated, setAuthenticated } = useAuth()
 
-  const [deleted, setDeleted] = useState<boolean>(false)
   const params = useParams<{ workspaceId: string; desktopId: string }>()
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
@@ -215,32 +212,16 @@ export function Header() {
   }, [isInAppContext, workbenches, params.desktopId])
 
   useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error!',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
-
-  useEffect(() => {
-    if (deleted) {
-      toast({
-        title: 'Success!',
-        description: 'Desktop was deleted, redirecting to workspace...',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [deleted])
-
-  useEffect(() => {
     const fetchAuthModes = async () => {
       try {
         const response = await getAuthenticationModes()
         setAuthModes(response.data || [])
       } catch (error) {
+        setNotification({
+          title: 'Error fetching auth modes:',
+          description: error.message,
+          variant: 'destructive'
+        })
         console.error('Error fetching auth modes:', error)
       }
     }
@@ -281,7 +262,7 @@ export function Header() {
                                 exact
                                 className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces' ? 'border-accent' : ''}`}
                               >
-                                <div className="flex items-center gap-[6px]">
+                                <div className="flex items-center gap-2">
                                   <Package className="h-4 w-4" />
                                   <span>My workspaces</span>
                                 </div>
@@ -322,8 +303,8 @@ export function Header() {
                                           <div
                                             className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent text-white' : ''}`}
                                           >
-                                            {workspace.id === workspaceId ? (
-                                              <PackageOpen className="h-4 w-4 text-accent" />
+                                            {workspace.id === workspaceId || paths === '/' ? (
+                                              <PackageOpen className="h-4 w-4" />
                                             ) : (
                                               <Package className="h-4 w-4" />
                                             )}
@@ -363,7 +344,7 @@ export function Header() {
                                 exact
                                 className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces/${workspaceId}' ? 'border-accent' : ''}`}
                               >
-                                <div className="flex items-center gap-[6px]">
+                                <div className="flex items-center gap-2">
                                   <PackageOpen className="h-4 w-4" />
                                   <span>{item.name}</span>
                                 </div>
@@ -570,14 +551,14 @@ export function Header() {
         {isAuthenticated && (
           <>
             <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-              <NavigationMenuList className="flex items-center justify-center gap-3">
+              <NavigationMenuList className="flex items-center justify-center gap-4">
                 <NavigationMenuItem id="getting-started-step-home">
                   <NavLink
                     href="/"
                     exact={!isUserWorkspace}
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <House className="h-4 w-4" />
                       Home
                     </div>
@@ -589,18 +570,96 @@ export function Header() {
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                     exact={isUserWorkspace}
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="mt-1 flex items-center gap-2">
+                        <LaptopMinimal className="h-4 w-4" />
+                        <span>Open Desktops</span>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                        <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                          {sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                            <div className="mb-2 p-2" key={`dock-${workspace.id}`}>
+                              <div
+                                className={`flex items-center gap-2 font-semibold text-muted-foreground`}
+                              >
+                                {workspace.id === workspaceId || paths === '/' ? (
+                                  <PackageOpen className="h-4 w-4" />
+                                ) : (
+                                  <Package className="h-4 w-4" />
+                                )}
+                                {workspace?.id === user?.workspaceId
+                                  ? 'Home'
+                                  : workspace?.shortName}
+                              </div>
+                              <div className="text-sm">
+                                {workbenches
+                                  ?.filter(
+                                    (workbench) =>
+                                      workbench.workspaceId === workspace?.id
+                                  )
+                                  .map(({ shortName, createdAt, id }) => (
+                                    <div className="h-full" key={workspace?.id}>
+                                      <Link
+                                        href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                                        className={`p-2 flex flex-col rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:bg-background/80 hover:shadow-lg hover:border-accent h-full`}
+                                      >
+                                        <div className="text-sm font-semibold">
+                                          <div className="flex items-center justify-between">
+                                            <div
+                                              className={`mb-1 flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                            >
+                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                                              {shortName}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">
+                                              {formatDistanceToNow(createdAt)} ago
+                                            </p>
+                                          </div>
+                                          <div className="text-xs text-muted-foreground">
+                                            <div className="flex items-center gap-2 text-xs">
+                                              <DraftingCompass className="h-4 w-4 shrink-0" />
+                                              {appInstances
+                                                ?.filter(
+                                                  (instance) =>
+                                                    workspace?.id ===
+                                                    instance.workspaceId
+                                                )
+                                                ?.filter(
+                                                  (instance) =>
+                                                    id === instance.workbenchId
+                                                )
+                                                .map(
+                                                  (instance) =>
+                                                    apps?.find(
+                                                      (app) => app.id === instance.appId
+                                                    )?.name || ''
+                                                )
+                                                .join(', ')}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="mt-auto"></div>
+                                      </Link>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          ))}
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
                   <NavLink
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <Store className="h-4 w-4" />
                       App Store
                     </div>
@@ -608,7 +667,7 @@ export function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <DraftingCompass className="h-4 w-4" />
                       <span>My Apps</span>
                     </div>
@@ -621,20 +680,19 @@ export function Header() {
                           className="cursor-pointer text-white hover:text-primary"
                           onClick={async () => {
                             if (!currentWorkbench) {
-                              toast({
+                              setNotification({
                                 title: 'Select a desktop first',
                                 description:
                                   'You must select a desktop to launch an app',
-                                variant: 'destructive',
-                                className: 'bg-background text-white'
+                                variant: 'default',
                               })
                               return
                             }
 
-                            toast({
+                            setNotification({
                               title: 'Launching app...',
                               description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
-                              className: 'bg-background text-white'
+                              variant: 'default'
                             })
 
                             const formData = new FormData()
@@ -651,29 +709,27 @@ export function Header() {
                               )
 
                               if (result.error) {
-                                toast({
+                                setNotification({
                                   title: 'Error launching app',
                                   description: result.error,
                                   variant: 'destructive',
-                                  className: 'bg-background text-white'
+
                                 })
                                 return
                               }
 
-                              toast({
+                              setNotification({
                                 title: 'Success!',
                                 description: `${app.name} launched successfully`,
-                                className: 'bg-background text-white'
                               })
 
                               refreshWorkbenches()
                               refreshWorkspaces()
                             } catch (error) {
-                              toast({
+                              setNotification({
                                 title: 'Error launching app',
                                 description: error.message,
                                 variant: 'destructive',
-                                className: 'bg-background text-white'
                               })
                             }
                           }}
@@ -684,7 +740,7 @@ export function Header() {
                                 getAppIcon(app.name, { id: 'header-my-apps' })}
                             </div>
                             <div className="flex flex-col">
-                              <div className="flex items-center gap-[6px]">
+                              <div className="flex items-center gap-2">
                                 <DraftingCompass className="h-4 w-4" />
                                 <span className="text-sm font-medium leading-none text-white">
                                   {app.name}
@@ -722,7 +778,7 @@ export function Header() {
                     exact={!isUserWorkspace}
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex items-center gap-2">
                       <House className="h-4 w-4" />
                       Home
                     </div>
@@ -732,16 +788,17 @@ export function Header() {
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                     exact={isUserWorkspace}
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex items-center gap-2">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
                   </NavLink>
+
                   <NavLink
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex items-center gap-2">
                       <Store className="h-4 w-4" />
                       App Store
                     </div>
@@ -753,85 +810,6 @@ export function Header() {
         )}
 
         <div className="flex items-center justify-end">
-          {isAuthenticated && (
-            <NavigationMenu className="">
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="mr-2 mt-2">
-                  <LaptopMinimal className="h-6 w-6" />
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                  <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                    {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                      <div className="mb-3 p-2" key={`dock-${workspace.id}`}>
-                        <div
-                          className={`mb-2 flex items-center gap-2 font-semibold text-muted-foreground`}
-                        >
-                          {workspace.id === workspaceId ? (
-                            <PackageOpen className="h-4 w-4" />
-                          ) : (
-                            <Package className="h-4 w-4" />
-                          )}
-                          {workspace?.id === user?.workspaceId
-                            ? 'Home'
-                            : workspace?.shortName}
-                        </div>
-                        <div className="text-sm">
-                          {workbenches
-                            ?.filter(
-                              (workbench) =>
-                                workbench.workspaceId === workspace?.id
-                            )
-                            .map(({ shortName, createdAt, id }) => (
-                              <Link
-                                key={workspace?.id}
-                                href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                                className={`flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg`}
-                              >
-                                <div className="flex-grow text-sm font-semibold">
-                                  <div className="flex items-center justify-between">
-                                    <div
-                                      className={`flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
-                                    >
-                                      <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                      {shortName}
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                      {formatDistanceToNow(createdAt)} ago
-                                    </p>
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    <div className="flex items-center gap-2 text-xs">
-                                      <DraftingCompass className="h-4 w-4 shrink-0" />
-                                      {appInstances
-                                        ?.filter(
-                                          (instance) =>
-                                            workspace?.id ===
-                                            instance.workspaceId
-                                        )
-                                        ?.filter(
-                                          (instance) =>
-                                            id === instance.workbenchId
-                                        )
-                                        .map(
-                                          (instance) =>
-                                            apps?.find(
-                                              (app) => app.id === instance.appId
-                                            )?.name || ''
-                                        )
-                                        .join(', ')}
-                                    </div>
-                                  </div>
-                                </div>
-                              </Link>
-                            ))}
-                        </div>
-                      </div>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenu>
-          )}
 
           {isAuthenticated && (
             <div className="relative mr-2 hidden flex-1 xl:block">
@@ -926,7 +904,11 @@ export function Header() {
           id={params.desktopId}
           state={[deleteOpen, setDeleteOpen]}
           onUpdate={() => {
-            setDeleted(true)
+            setNotification({
+              title: 'Success!',
+              description: 'Desktop was deleted, redirecting to workspace...',
+              variant: 'default'
+            })
             setTimeout(() => {
               setBackground(undefined)
               router.replace(`/workspaces/${workspaceId}`)
@@ -945,7 +927,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>

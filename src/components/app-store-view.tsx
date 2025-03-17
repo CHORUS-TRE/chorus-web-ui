@@ -21,7 +21,7 @@ export function AppStoreView() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <section className="w-full py-12">
+      <section className="w-full">
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <Tabs

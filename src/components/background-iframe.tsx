@@ -5,26 +5,22 @@ import { env } from 'next-runtime-env'
 
 import { useAppState } from '@/components/store/app-state-context'
 
-import { useToast } from '~/hooks/use-toast'
-
 const MAX_ATTEMPTS = 10
 const RETRY_INTERVAL = 1000
 
 export default function BackgroundIframe() {
-  const { toast } = useToast()
-  const { background, appInstances } = useAppState()
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const { background, appInstances, setNotification } = useAppState()
+  const intervalRef = useRef<NodeJS.Timeout>(null)
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
   const [isUrlValid, setIsUrlValid] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [attemptCount, setAttemptCount] = useState(0)
 
   const resetState = () => {
     setUrl(null)
     setIsUrlValid(false)
-    setError(null)
+    setNotification(undefined)
     setAttemptCount(0)
   }
 
@@ -41,7 +37,11 @@ export default function BackgroundIframe() {
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : 'Unknown error occurred'
-      setError(`Error loading app: ${errorMessage}`)
+      setNotification({
+        title: 'Error loading app',
+        description: errorMessage,
+        variant: 'destructive'
+      })
       return false;
     }
   }
@@ -60,7 +60,7 @@ export default function BackgroundIframe() {
 
     setUrl(newUrl)
     setIsUrlValid(false)
-    setError(null)
+    setNotification(undefined)
     setAttemptCount(0)
   }, [background])
 
@@ -70,7 +70,10 @@ export default function BackgroundIframe() {
 
     const validateURL = async () => {
       if (attemptCount >= MAX_ATTEMPTS) {
-        setError('Max attempts reached. Please check the URL and try again.')
+        setNotification({
+          title: 'Max attempts reached. Please check the URL and try again.',
+          variant: 'destructive'
+        })
         clearInterval(intervalRef.current)
         return
       }
@@ -85,7 +88,11 @@ export default function BackgroundIframe() {
           setAttemptCount((prev) => prev + 1)
         }
       } catch (err) {
-        setError(err.message)
+        setNotification({
+          title: 'Error loading app',
+          description: err.message,
+          variant: 'destructive'
+        })
         clearInterval(intervalRef.current)
       }
     }
@@ -95,19 +102,6 @@ export default function BackgroundIframe() {
 
     return () => clearInterval(intervalRef.current)
   }, [url, isUrlValid, attemptCount, pingIframeURL])
-
-  // Error notification effect
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Connection Error',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 3000
-      })
-    }
-  }, [error, toast])
 
   // Focus management effect
   useEffect(() => {
@@ -143,11 +137,9 @@ export default function BackgroundIframe() {
         tabIndex={0}
         onLoad={() => {
           if (isUrlValid) {
-            toast({
+            setNotification({
               title: 'Workspace Ready',
               description: 'Your workspace has been loaded successfully',
-              className: 'bg-background text-white',
-              duration: 2000
             })
           }
         }}

@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 
@@ -12,7 +13,6 @@ import { AuthenticationModeType } from '@/domain/model/authentication'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { useToast } from '~/hooks/use-toast'
 
 import {
   authenticationLogin,
@@ -21,6 +21,7 @@ import {
   getSession
 } from '../actions/authentication-view-model'
 import { IFormState } from '../actions/utils'
+import { useAppState } from '../store/app-state-context'
 import { useAuth } from '../store/auth-context'
 
 const initialState: IFormState = {
@@ -49,10 +50,11 @@ function SubmitButton() {
 
 export default function LoginForm() {
   const searchParams = useSearchParams()!
+  const router = useRouter()
   const [state, formAction] = useActionState(authenticationLogin, initialState)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const { toast } = useToast()
+  const { setNotification } = useAppState()
   const [, startTransition] = useTransition()
 
   const { isAuthenticated, setAuthenticated } = useAuth()
@@ -61,9 +63,19 @@ export default function LoginForm() {
     const fetchAuthModes = async () => {
       try {
         const response = await getAuthenticationModes()
+
+        if (response.error) {
+          setNotification({
+            title: "Couldn't load authentication methods",
+            description: 'Please try again later',
+            variant: 'destructive'
+          })
+          return
+        }
+
         setAuthModes(response.data || [])
       } catch (error) {
-        toast({
+        setNotification({
           title: "Couldn't load authentication methods",
           description: 'Please try again later',
           variant: 'destructive'
@@ -74,9 +86,27 @@ export default function LoginForm() {
     }
 
     fetchAuthModes()
-  }, [toast])
+  }, [])
 
   useEffect(() => {
+
+    if (isAuthenticated) {
+      router.push('/')
+    }
+  }, [isAuthenticated])
+
+  useEffect(() => {
+
+    if (state.error) {
+      setNotification({
+        title: "Login failed",
+        description: state.error,
+        variant: 'destructive'
+      })
+
+      return
+    }
+
     if (state.data) {
       setAuthenticated(true)
 
@@ -97,13 +127,13 @@ export default function LoginForm() {
 
       checkAuthOnBackend()
     }
-  }, [state?.data, setAuthenticated, searchParams])
+  }, [state, setAuthenticated, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
       const response = await getOAuthUrl(mode.openid.id)
       if (response.error) {
-        toast({
+        setNotification({
           title: "Couldn't initiate login",
           description: response.error,
           variant: 'destructive'
@@ -122,7 +152,7 @@ export default function LoginForm() {
 
   const error = searchParams.get('error')
   if (error) {
-    toast({
+    setNotification({
       title: 'Authentication Error',
       description: error,
       variant: 'destructive'
@@ -194,9 +224,7 @@ export default function LoginForm() {
 
                   <SubmitButton />
                 </div>
-                {state?.error && (
-                  <p className="mt-4 text-red-500">{state?.error}</p>
-                )}
+
               </form>
             </>
           )}

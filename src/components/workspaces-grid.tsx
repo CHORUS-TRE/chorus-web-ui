@@ -118,7 +118,7 @@ export default function WorkspacesGrid({
                 <CardDescription>{workspace.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="mb-4 h-[160px] pr-4">
+                <ScrollArea className="mb-4 h-[160px] pr-2">
                   <div className="grid gap-1">
                     {workbenches
                       ?.filter(

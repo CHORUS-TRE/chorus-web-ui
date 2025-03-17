@@ -3,12 +3,19 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  Activity,
   ArrowRight,
+  Book,
+  CircleGauge,
+  Database,
   DraftingCompass,
   EllipsisVerticalIcon,
+  Footprints,
+  Info,
   LaptopMinimal,
-  Rows3
-} from 'lucide-react'
+  PackageIcon,
+  Rows3,
+  Users  } from 'lucide-react'
 import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
 
 import { Button } from '@/components/button'
@@ -48,8 +55,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   const {
     workbenches,
-    error,
-    setError,
+    setNotification,
     refreshWorkspaces,
     refreshWorkbenches,
     appInstances,
@@ -67,14 +73,22 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         refreshWorkbenches()
       ])
 
-      if (workspaceResponse.error) setError(workspaceResponse.error)
+      if (workspaceResponse.error) setNotification({
+        title: 'Error loading workspace',
+        description: workspaceResponse.error,
+        variant: 'destructive'
+      })
       if (workspaceResponse.data) {
         setWorkspace(workspaceResponse.data)
         const userResponse = await userGet(workspaceResponse.data.ownerId)
         if (userResponse.data) setWorkspaceUser(userResponse.data)
       }
     } catch (error) {
-      setError(error.message)
+      setNotification({
+        title: 'Error loading workspace',
+        description: error.message,
+        variant: 'destructive'
+      })
     }
   }
 
@@ -117,7 +131,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </div>
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
-            <CardTitle className="text-white">{workspace?.name}</CardTitle>
+            <CardTitle className="text-white flex items-start gap-3">
+              <Info className="h-6 w-6 text-white" />
+              {workspace?.name}
+            </CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
 
@@ -175,10 +192,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       >
         <CardHeader>
           <CardTitle
-            className="flex cursor-pointer items-center justify-between"
+            className="flex cursor-pointer items-center justify-between gap-2"
             onClick={() => router.push(`/workspaces/${workspace?.id}/desktops`)}
           >
-            Desktops
+            <div className="flex items-center gap-3">
+              <LaptopMinimal className="h-6 w-6 text-white" />
+              Desktops
+            </div>
+
             <Link
               href={`/workspaces/${workspace?.id}/desktops`}
               className="text-muted hover:bg-inherit hover:text-accent"
@@ -249,7 +270,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle>Data</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <Database className="h-6 w-6 text-white" />
+            Data
+          </CardTitle>
           <CardDescription>View and manage your data sources.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -280,7 +304,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       {workspace && user?.workspaceId !== workspace?.id && (
         <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
           <CardHeader>
-            <CardTitle>Team</CardTitle>
+            <CardTitle className="flex items-center gap-3">
+              <Users className="h-6 w-6 text-white" />
+              Team
+            </CardTitle>
             <CardDescription>
               See who&apos;s on your team and their roles.
             </CardDescription>
@@ -324,7 +351,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       {workspace && user?.workspaceId !== workspace?.id && (
         <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
           <CardHeader>
-            <CardTitle>Wiki</CardTitle>
+            <CardTitle className="flex items-center gap-3">
+              <Book className="h-6 w-6 text-white" />
+              Wiki
+            </CardTitle>
             <CardDescription>Share and view latest news</CardDescription>
           </CardHeader>
           <CardContent>
@@ -347,7 +377,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle>Resources</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <CircleGauge className="h-6 w-6 text-white" />
+            Resources
+          </CardTitle>
           <CardDescription>
             You&apos;re using 1.2GB of your 5GB storage limit.
           </CardDescription>
@@ -407,7 +440,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle>Activities</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <Activity className="h-6 w-6 text-white" />
+            Activities
+          </CardTitle>
           <CardDescription>Events, analytics & monitoring.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -422,9 +458,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
         <CardHeader>
-          <CardTitle>Footprint</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <Footprints className="h-6 w-6 text-white" />
+            Footprint
+          </CardTitle>
           <div className="text-sm text-muted-foreground">
             <div className="mb-2">
               <strong>

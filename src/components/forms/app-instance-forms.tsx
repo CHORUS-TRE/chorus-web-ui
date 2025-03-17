@@ -25,7 +25,6 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { useToast } from '~/hooks/use-toast'
 
 import { IFormState } from '../actions/utils'
 import { Textarea } from '../ui/textarea'
@@ -60,12 +59,16 @@ export function AppInstanceCreateForm({
   onUpdate?: () => void
 }) {
   const [state, formAction] = useActionState(appInstanceCreate, initialState)
-  const [error, setError] = useState<string>()
-  const { toast } = useToast()
+  const { setNotification } = useAppState()
   const { refreshWorkbenches, setBackground, apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
+      setNotification({
+        title: 'Error',
+        description: state.error,
+        variant: 'destructive'
+      })
       return
     }
 
@@ -74,17 +77,6 @@ export function AppInstanceCreateForm({
       if (onUpdate) onUpdate()
     }
   }, [state, onUpdate])
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>

@@ -65,7 +65,7 @@ export async function getAuthenticationModes(): Promise<AuthenticationModesRespo
 
     return await useCase.execute()
   } catch (error) {
-    console.error('Error fetching auth modes:', error)
+    console.error({ error })
     return { error: 'Failed to fetch authentication modes' }
   }
 }
@@ -78,7 +78,6 @@ export async function logout() {
 
     const result = await useCase.execute()
 
-    console.log('result', result)
     if (result.error) {
       console.error('Error during logout:', result.error)
     }
