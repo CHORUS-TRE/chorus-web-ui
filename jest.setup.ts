@@ -4,8 +4,9 @@ import { TextDecoder, TextEncoder } from 'util'
 import '@testing-library/jest-dom'
 
 // Add TextEncoder and TextDecoder to the global scope
-global.TextEncoder = TextEncoder as typeof global.TextEncoder
-global.TextDecoder = TextDecoder as typeof global.TextDecoder
+// Properly cast with 'as any' to avoid type errors
+global.TextEncoder = TextEncoder as any
+global.TextDecoder = TextDecoder as any
 
 // Mock fetch API
 class MockRequest implements Partial<Request> {
@@ -120,7 +121,8 @@ global.Request = MockRequest as unknown as typeof global.Request
 global.Response = MockResponse as unknown as typeof global.Response
 
 // Mock fetch function
-global.fetch = jest.fn().mockImplementation((url: RequestInfo | URL) => {
+global.fetch = jest.fn().mockImplementation((_url: RequestInfo | URL) => {
+  console.log('fetch', _url)
   return Promise.resolve(
     new MockResponse(JSON.stringify({ data: 'mock data' }), {
       status: 200,
