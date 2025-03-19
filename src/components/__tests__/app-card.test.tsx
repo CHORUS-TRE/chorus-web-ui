@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import React from 'react'
-import { render, screen, waitFor } from '../../utils/test-utils'
+
 import { AppCard } from '../../components/app-card'
+import { render, screen } from '../../utils/test-utils'
 
 // Mock the app-state-context
 jest.mock('../../components/store/app-state-context', () => ({
@@ -59,9 +60,10 @@ describe('AppCard Component', () => {
     const { user } = render(<AppCard app={mockApp} onUpdate={onUpdateMock} />)
 
     // Find the dropdown trigger button
-    const menuButton = screen.getByRole('button', { name: /More options/i }) ||
-                       screen.getByLabelText(/More options/i) ||
-                       screen.getByTestId('dropdown-menu-trigger')
+    const menuButton =
+      screen.getByRole('button', { name: /More options/i }) ||
+      screen.getByLabelText(/More options/i) ||
+      screen.getByTestId('dropdown-menu-trigger')
 
     // Click the menu button
     await user.click(menuButton)
@@ -75,9 +77,10 @@ describe('AppCard Component', () => {
     const { user } = render(<AppCard app={mockApp} onUpdate={onUpdateMock} />)
 
     // Open dropdown menu
-    const menuButton = screen.getByRole('button', { name: /More options/i }) ||
-                       screen.getByLabelText(/More options/i) ||
-                       screen.getByTestId('dropdown-menu-trigger')
+    const menuButton =
+      screen.getByRole('button', { name: /More options/i }) ||
+      screen.getByLabelText(/More options/i) ||
+      screen.getByTestId('dropdown-menu-trigger')
     await user.click(menuButton)
 
     // Click edit button
@@ -92,9 +95,10 @@ describe('AppCard Component', () => {
     const { user } = render(<AppCard app={mockApp} onUpdate={onUpdateMock} />)
 
     // Open dropdown menu
-    const menuButton = screen.getByRole('button', { name: /More options/i }) ||
-                       screen.getByLabelText(/More options/i) ||
-                       screen.getByTestId('dropdown-menu-trigger')
+    const menuButton =
+      screen.getByRole('button', { name: /More options/i }) ||
+      screen.getByLabelText(/More options/i) ||
+      screen.getByTestId('dropdown-menu-trigger')
     await user.click(menuButton)
 
     // Click delete button
@@ -103,6 +107,8 @@ describe('AppCard Component', () => {
 
     // Check if delete dialog is shown
     expect(screen.getByText('Confirm Deletion')).toBeInTheDocument()
-    expect(screen.getByText(/Are you sure you want to delete/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Are you sure you want to delete/i)
+    ).toBeInTheDocument()
   })
 })

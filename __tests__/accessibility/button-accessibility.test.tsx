@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import React from 'react'
-import { render, screen } from '../../src/utils/test-utils'
 import { axe, toHaveNoViolations } from 'jest-axe'
+
+import { render, screen } from '../../src/utils/test-utils'
 
 // Add jest-axe custom matchers
 expect.extend(toHaveNoViolations)
@@ -63,9 +64,7 @@ const IconButton = ({
 describe('Button Accessibility', () => {
   it('regular button should have no accessibility violations', async () => {
     const { container } = render(
-      <Button onClick={() => console.log('clicked')}>
-        Click Me
-      </Button>
+      <Button onClick={() => console.log('clicked')}>Click Me</Button>
     )
 
     const results = await axe(container)
@@ -157,12 +156,10 @@ describe('Button Accessibility', () => {
   it('should have sufficient color contrast (this would need a visual testing tool)', () => {
     // For actual color contrast testing, you would use a tool like Storybook with a11y addon
     // or Playwright, Cypress, or a dedicated tool like Axe DevTools
-
     // Here we're just illustrating what you'd test:
     // 1. Ensure text has sufficient contrast with its background
     // 2. Ensure focus indicators are visible
     // 3. Ensure disabled states are perceivable but clearly disabled
-
     // This test is a placeholder for where you'd implement visual accessibility testing
   })
 })

@@ -2,8 +2,15 @@
  * @jest-environment jsdom
  */
 import React from 'react'
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '../../src/components/ui/card'
 import { render } from '../../src/utils/test-utils'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../src/components/ui/card'
 
 /**
  * This is an example of a visual regression test.
@@ -44,10 +51,16 @@ describe('Card Component Visual Appearance', () => {
     expect(card).toBeInTheDocument()
 
     // Check that all parts of the card are rendered
-    expect(container.querySelector('[class*="card-header"]')).toBeInTheDocument()
+    expect(
+      container.querySelector('[class*="card-header"]')
+    ).toBeInTheDocument()
     expect(container.querySelector('[class*="card-title"]')).toBeInTheDocument()
-    expect(container.querySelector('[class*="card-content"]')).toBeInTheDocument()
-    expect(container.querySelector('[class*="card-footer"]')).toBeInTheDocument()
+    expect(
+      container.querySelector('[class*="card-content"]')
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector('[class*="card-footer"]')
+    ).toBeInTheDocument()
 
     // Check the content is correct
     expect(container).toHaveTextContent('Card Title')
@@ -90,7 +103,7 @@ describe('Card Component Visual Appearance', () => {
 
   it('renders a card with a custom width and height', () => {
     const { container } = render(
-      <Card className="w-[500px] h-[300px]">
+      <Card className="h-[300px] w-[500px]">
         <CardHeader>
           <CardTitle>Large Card</CardTitle>
         </CardHeader>

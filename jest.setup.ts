@@ -5,7 +5,9 @@ import '@testing-library/jest-dom'
 
 // Add TextEncoder and TextDecoder to the global scope
 // Properly cast with 'as any' to avoid type errors
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 global.TextEncoder = TextEncoder as any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 global.TextDecoder = TextDecoder as any
 
 // Mock fetch API

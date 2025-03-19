@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import React from 'react'
-import { render, screen, waitFor } from '../../src/utils/test-utils'
-import userEvent from '@testing-library/user-event'
+
+import { render, screen } from '../../src/utils/test-utils'
 
 // Mock the necessary modules
 jest.mock('next/navigation', () => ({
@@ -74,7 +74,13 @@ const MockWorkspacePage = () => (
   </div>
 )
 
-const MockWorkspaceCreateForm = ({ onSubmit }: { onSubmit: (data: any) => void }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MockWorkspaceCreateForm = ({
+  onSubmit
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSubmit: (data: any) => void
+}) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSubmit({
@@ -90,8 +96,13 @@ const MockWorkspaceCreateForm = ({ onSubmit }: { onSubmit: (data: any) => void }
       <form onSubmit={handleSubmit} data-testid="workspace-form">
         <input data-testid="name-input" defaultValue="New Workspace" />
         <input data-testid="shortname-input" defaultValue="new-ws" />
-        <textarea data-testid="description-input" defaultValue="E2E Test Workspace" />
-        <button type="submit" data-testid="submit-button">Create</button>
+        <textarea
+          data-testid="description-input"
+          defaultValue="E2E Test Workspace"
+        />
+        <button type="submit" data-testid="submit-button">
+          Create
+        </button>
       </form>
     </div>
   )
@@ -102,19 +113,20 @@ const MockCreateWorkspaceDialog = ({
   open,
   onOpenChange
 }: {
-  open: boolean,
+  open: boolean
   onOpenChange: (open: boolean) => void
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (data: any) => {
     // Simulate API call to create workspace
-    const workspaceRepo = require('../../src/data/repository').workspaceRepository
-    workspaceRepo.create(data)
-      .then(() => {
-        onOpenChange(false)
-        // Simulate navigation to the new workspace
-        const router = require('next/navigation').useRouter()
-        router.push(`/workspaces/new-workspace-123`)
-      })
+    const workspaceRepo =
+      require('../../src/data/repository').workspaceRepository
+    workspaceRepo.create(data).then(() => {
+      onOpenChange(false)
+      // Simulate navigation to the new workspace
+      const router = require('next/navigation').useRouter()
+      router.push(`/workspaces/new-workspace-123`)
+    })
   }
 
   if (!open) return null
@@ -180,7 +192,8 @@ describe('Workspace Creation E2E Flow', () => {
     await user.click(submitButton)
 
     // Verify the workspace was created
-    const workspaceRepo = require('../../src/data/repository').workspaceRepository
+    const workspaceRepo =
+      require('../../src/data/repository').workspaceRepository
     expect(workspaceRepo.create).toHaveBeenCalledWith({
       name: 'New Workspace',
       shortName: 'new-ws',
@@ -211,7 +224,8 @@ describe('Workspace Creation E2E Flow', () => {
     expect(screen.queryByTestId('create-dialog')).not.toBeInTheDocument()
 
     // Verify the create API was not called
-    const workspaceRepo = require('../../src/data/repository').workspaceRepository
+    const workspaceRepo =
+      require('../../src/data/repository').workspaceRepository
     expect(workspaceRepo.create).not.toHaveBeenCalled()
   })
 })

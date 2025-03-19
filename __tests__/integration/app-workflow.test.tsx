@@ -1,11 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import React from 'react'
-import { render, screen, waitFor } from '../../src/utils/test-utils'
-import { AppGet } from '../../src/domain/use-cases/app/app-get'
-import { AppCreate } from '../../src/domain/use-cases/app/app-create'
+
 import { AppRepository } from '../../src/domain/repository'
+import { AppCreate } from '../../src/domain/use-cases/app/app-create'
+import { AppGet } from '../../src/domain/use-cases/app/app-get'
 import { createMockRepository } from '../../src/utils/test-utils'
 
 // Mock the app repository for testing
@@ -36,7 +35,8 @@ const mockAppCreateRequest = {
   description: 'A newly created application',
   dockerImageName: 'new-image',
   dockerImageTag: 'latest',
-  type: 'app',
+  type: 'app'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any // Type assertion to avoid type errors
 
 const mockAppCreateResponse = {
@@ -117,6 +117,8 @@ describe('App Workflow Integration', () => {
     appRepository.create = jest.fn().mockRejectedValue(networkError)
 
     // Attempt to create an app and expect it to throw
-    await expect(appCreateUseCase.execute(mockAppCreateRequest)).rejects.toThrow('Network failure')
+    await expect(
+      appCreateUseCase.execute(mockAppCreateRequest)
+    ).rejects.toThrow('Network failure')
   })
 })

@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react'
+
 import { render, RenderOptions, RenderResult } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -98,5 +99,7 @@ export async function waitFor(
     await new Promise((resolve) => setTimeout(resolve, interval))
   }
 
-  throw new Error(`Timed out after ${timeout}ms waiting for condition to be true`)
+  throw new Error(
+    `Timed out after ${timeout}ms waiting for condition to be true`
+  )
 }

@@ -167,3 +167,101 @@ For further assistance or inquiries, feel free to open an issue in the repositor
 ## License and Usage Restrictions
 
 Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from [CHUV](mailto:pactt.legal@chuv.ch).
+
+## Testing Strategy
+
+### Test Directory Structure
+
+The project follows a comprehensive testing approach with the following test organization:
+
+```
+/
+├── src/
+│   ├── components/
+│   │   ├── __tests__/           # Component unit tests
+│   │   │   └── [ComponentName].test.tsx
+│   │   └── __snapshots__/        # Component snapshot tests
+│   │       └── [ComponentName].snap.tsx
+│   ├── domain/
+│   │   ├── use-cases/
+│   │   │   └── __tests__/        # Domain use case unit tests
+│   │   │       └── [UseCaseName].test.ts
+│   │   └── model/
+│   │       └── __tests__/        # Domain model unit tests
+│   │           └── [ModelName].test.ts
+│   └── data/
+│       ├── repository/
+│       │   └── __tests__/        # Repository implementation tests
+│       │       └── [RepositoryName].test.ts
+│       └── data-source/
+│           └── __tests__/        # Data source tests
+│               └── [DataSourceName].test.ts
+├── __tests__/
+│   ├── integration/              # Integration tests
+│   ├── e2e/                      # End-to-end tests
+│   ├── visual/                   # Visual regression tests
+│   └── accessibility/            # Accessibility tests
+└── performance/                  # Performance tests
+```
+
+### Testing Layers
+
+1. **Unit Tests**: Test individual components, functions, and classes in isolation.
+2. **Integration Tests**: Test interactions between different parts of the application.
+3. **Component Tests**: Test UI components in isolation.
+4. **End-to-End Tests**: Test complete user flows.
+5. **Visual Regression Tests**: Ensure UI appearance remains consistent.
+6. **Accessibility Tests**: Validate WCAG compliance.
+7. **Performance Tests**: Measure and ensure application performance.
+
+### Running Tests
+
+The project includes several npm scripts for running different types of tests:
+
+```bash
+# Run tests in watch mode (development)
+pnpm test
+
+# Run all tests once (CI/CD)
+pnpm test:run
+
+# Run only unit tests
+pnpm test:unit
+
+# Run only integration tests
+pnpm test:integration
+
+# Run only end-to-end tests
+pnpm test:e2e
+
+# Run only visual regression tests
+pnpm test:visual
+
+# Run only accessibility tests
+pnpm test:a11y
+
+# Generate test coverage report
+pnpm test:coverage
+
+# Run tests in CI mode
+pnpm test:ci
+```
+
+### Code Coverage Requirements
+
+We maintain the following code coverage thresholds:
+
+- **Global**: 70% statements, branches, functions, and lines
+- **Domain Layer**: 90% statements, 85% branches, 90% functions and lines
+
+### Test Utilities
+
+The project provides utility functions for testing in `src/utils/test-utils.tsx`, including:
+
+- A custom render function that includes common providers
+- Mock implementations for hooks and contexts
+- Helper functions for creating mock repositories and API responses
+
+### Testing Documentation
+
+For more detailed information about our testing strategy, including best practices and examples, see the [Testing Strategy Documentation](./docs/testing-strategy.md).
