@@ -1,7 +1,7 @@
 'use client'
 
-import { useActionState, useEffect, useState } from 'react'
 import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
+import { useActionState, useEffect, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import {
@@ -18,7 +18,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-
 import { Button } from '~/components/button'
 import {
   Card,
@@ -318,7 +317,6 @@ export function WorkbenchDeleteForm({
       onConfirm={handleDelete}
       title="Quit Desktop"
       description="The Desktop will be stopped and the apps will be closed. Are you sure you want to delete this desktop and it's apps? This action cannot be undone."
-      isDeleting={isDeleting}
     />
   )
 }

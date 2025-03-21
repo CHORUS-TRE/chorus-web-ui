@@ -18,7 +18,6 @@ import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceList } from '../actions/workspace-view-model'
-
 import { useAuth } from './auth-context'
 
 type NotificationType =

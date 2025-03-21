@@ -1,8 +1,4 @@
 'use client'
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useParams, usePathname, useRouter } from 'next/navigation'
 import { formatDistance, formatDistanceToNow } from 'date-fns'
 import {
   CircleHelp,
@@ -16,7 +12,13 @@ import {
   Store,
   User
 } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 
+import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import userPlaceholder from '/public/placeholder-user.jpg'
 import { logout } from '@/components/actions/authentication-view-model'
 import { getAuthenticationModes } from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
@@ -47,7 +49,6 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { AuthenticationModeType } from '@/domain/model/authentication'
-
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
   ListItem,
@@ -65,12 +66,9 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import NavLink from './nav-link'
 import { useAuth } from './store/auth-context'
 import { Input } from './ui/input'
-import NavLink from './nav-link'
-
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
-import userPlaceholder from '/public/placeholder-user.jpg'
 
 interface BreadcrumbItem {
   name: string

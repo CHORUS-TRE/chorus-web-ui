@@ -1,7 +1,7 @@
 'use client'
 
-import { useActionState, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTrigger
 } from '@/components/ui/dialog'
-
 import { Button } from '~/components/button'
 import {
   Card,

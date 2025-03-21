@@ -1,15 +1,14 @@
 'use client'
 
-import { useActionState, useEffect, useState, useTransition } from 'react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { useActionState, useEffect, useState, useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import { AuthenticationMode } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
-
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'

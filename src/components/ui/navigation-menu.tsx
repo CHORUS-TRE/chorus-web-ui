@@ -1,9 +1,8 @@
-import * as React from 'react'
-import Link from 'next/link'
+import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { cva } from 'class-variance-authority'
 import { ChevronDown } from 'lucide-react'
-
-import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
+import Link from 'next/link'
+import * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
@@ -120,24 +119,26 @@ const ListItem = React.forwardRef<
 >(({ className, title, children, wrapWithLi = true, ...props }, ref) => {
   const content = (
     <NavigationMenuLink asChild>
-      <Link
-        ref={ref}
-        href={props.href || '#'}
-        className={cn(
-          'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-          className
-        )}
-        {...props}
-      >
-        {title && (
-          <div className="text-sm font-medium leading-none">{title}</div>
-        )}
-        {children && (
-          <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </div>
-        )}
-      </Link>
+      {props.href && (
+        <Link
+          ref={ref}
+          href={props.href || '#'}
+          className={cn(
+            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+            className
+          )}
+          {...props}
+        >
+          {title && (
+            <div className="text-sm font-medium leading-none">{title}</div>
+          )}
+          {children && (
+            <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              {children}
+            </div>
+          )}
+        </Link>
+      )}
     </NavigationMenuLink>
   )
 

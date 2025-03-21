@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { EllipsisVerticalIcon } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 import { User, Workspace } from '@/domain/model'
-
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {

@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { CircleHelp, LaptopMinimal, PackageOpen } from 'lucide-react'
+import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
-
 import { Header } from '~/components/header'
 import { toast } from '~/hooks/use-toast'
 

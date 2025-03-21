@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-
-import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Button } from '~/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle
 } from '~/components/ui/dialog'
@@ -47,12 +47,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-export function AppEditDialog({
+export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   app,
   open,
   onOpenChange,
   onSuccess
-}: AppEditDialogProps) {
+}) => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,7 +68,7 @@ export function AppEditDialog({
   })
 
   const { formState } = form
-  const isSubmitting = formState.isSubmitting
+  // const isSubmitting = formState.isSubmitting
 
   // Reset form when app changes
   useEffect(() => {
@@ -113,130 +113,131 @@ export function AppEditDialog({
     }
   }
 
+  const handleSave = () => {
+    onSubmit(form.getValues())
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-background">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-white">Edit App</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Modify the application details
+          <DialogTitle>Edit App Details</DialogTitle>
+          <DialogDescription>
+            Make changes to your app details here. Click save when you&apos;re
+            done.
           </DialogDescription>
         </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter app name"
+                        className="bg-background text-white placeholder:text-muted-foreground"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter app name"
-                      className="bg-background text-white placeholder:text-muted-foreground"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-destructive" />
-                </FormItem>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Description</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter description"
+                        className="bg-background text-white placeholder:text-muted-foreground"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dockerImageName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Docker Image</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g., nginx"
+                        className="bg-background text-white placeholder:text-muted-foreground"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dockerImageTag"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Image Tag</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g., latest"
+                        className="bg-background text-white placeholder:text-muted-foreground"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <input
+                type="hidden"
+                {...form.register('type')}
+                value={app.type}
+              />
+              <input
+                type="hidden"
+                {...form.register('tenantId')}
+                value={app.tenantId}
+              />
+              <input
+                type="hidden"
+                {...form.register('ownerId')}
+                value={app.ownerId}
+              />
+
+              {formState.errors.root && (
+                <p className="text-sm text-destructive">
+                  {formState.errors.root.message}
+                </p>
               )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Description</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter description"
-                      className="bg-background text-white placeholder:text-muted-foreground"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-destructive" />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dockerImageName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Docker Image</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="e.g., nginx"
-                      className="bg-background text-white placeholder:text-muted-foreground"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-destructive" />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dockerImageTag"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Image Tag</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="e.g., latest"
-                      className="bg-background text-white placeholder:text-muted-foreground"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-destructive" />
-                </FormItem>
-              )}
-            />
-
-            <input type="hidden" {...form.register('type')} value={app.type} />
-            <input
-              type="hidden"
-              {...form.register('tenantId')}
-              value={app.tenantId}
-            />
-            <input
-              type="hidden"
-              {...form.register('ownerId')}
-              value={app.ownerId}
-            />
-
-            {formState.errors.root && (
-              <p className="text-sm text-destructive">
-                {formState.errors.root.message}
-              </p>
-            )}
-
-            <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  onOpenChange(false)
-                  form.reset()
-                }}
-                className="text-white hover:text-white"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                {isSubmitting ? 'Updating...' : 'Update'}
-              </Button>
-            </div>
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </div>
+        <DialogFooter>
+          <Button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            variant="outline"
+          >
+            Cancel
+          </Button>
+          <Button type="button" onClick={handleSave}>
+            Save changes
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

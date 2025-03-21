@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import {
   DraftingCompass,
   EllipsisVerticalIcon,
   LaptopMinimal
 } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 import {
   WorkspaceDeleteForm,
@@ -31,7 +31,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
-
 import { toast } from '~/hooks/use-toast'
 
 interface WorkspacesGridProps {

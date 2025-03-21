@@ -1,11 +1,10 @@
-import { useActionState, useEffect } from 'react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import { userCreate } from '@/components/actions/user-view-model'
-
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 

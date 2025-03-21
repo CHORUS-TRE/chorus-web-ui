@@ -12,7 +12,6 @@ import {
   WorkspaceSchema,
   WorkspaceState
 } from '@/domain/model/workspace'
-
 import {
   ChorusWorkspace as ChorusWorkspaceApi,
   WorkspaceServiceApi

@@ -12,7 +12,6 @@ import {
 } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
-
 import { Configuration } from '~/internal/client'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {

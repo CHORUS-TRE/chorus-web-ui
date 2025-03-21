@@ -13,7 +13,6 @@ import {
   WorkbenchState,
   WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
-
 import {
   ChorusWorkbench as ChorusWorkbenchApi,
   WorkbenchServiceApi

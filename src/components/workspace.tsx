@@ -1,6 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { ResponsiveLine } from '@nivo/line'
 import { formatDistanceToNow } from 'date-fns'
 import {
   Activity,
@@ -16,6 +14,9 @@ import {
   Rows3,
   Users
 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
@@ -29,8 +30,6 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
-import { ResponsiveLine } from '@nivo/line'
-
 import { toast } from '~/hooks/use-toast'
 
 import { userGet } from './actions/user-view-model'

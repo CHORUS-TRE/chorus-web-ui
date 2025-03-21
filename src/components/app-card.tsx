@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
+import { useState } from 'react'
 
 import { AppEditDialog } from '~/components/app-edit-dialog'
 import { Button } from '~/components/button'
@@ -159,7 +159,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         onConfirm={handleDelete}
         title="Delete App"
         description={`Are you sure you want to delete ${app.name || 'this app'}? This action cannot be undone.`}
-        isDeleting={isDeleting}
       />
     </>
   )

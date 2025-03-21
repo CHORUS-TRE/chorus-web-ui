@@ -787,10 +787,6 @@ body {
   z-index: 1;
 }
 
-.col-span-full {
-  grid-column: 1 / -1;
-}
-
 .row-span-3 {
   grid-row: span 3 / span 3;
 }
@@ -2755,11 +2751,6 @@ nav li {
   color: hsl(var(--primary));
 }
 
-.hover\:text-white:hover {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
 .hover\:underline:hover {
   text-decoration-line: underline;
 }
@@ -3331,6 +3322,10 @@ nav li {
 
   .sm\:mt-20 {
     margin-top: 5rem;
+  }
+
+  .sm\:max-w-\[425px\] {
+    max-width: 425px;
   }
 
   .sm\:max-w-sm {

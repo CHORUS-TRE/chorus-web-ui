@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/dialog'
 import { Workspace } from '@/domain/model'
 import { WorkspaceState } from '@/domain/model/workspace'
-
 import { Button } from '~/components/button'
 import {
   Card,
@@ -266,7 +265,6 @@ export function WorkspaceDeleteForm({
       onConfirm={handleDelete}
       title="Delete Workspace"
       description="Are you sure you want to delete this workspace? This action cannot be undone."
-      isDeleting={isDeleting}
     />
   )
 }

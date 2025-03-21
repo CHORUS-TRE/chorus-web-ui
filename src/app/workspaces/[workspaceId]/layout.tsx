@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
+import { PackageOpen } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { PackageOpen } from 'lucide-react'
+import React from 'react'
 
 import { useAppState } from '~/components/store/app-state-context'
 import { useAuth } from '~/components/store/auth-context'

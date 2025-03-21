@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 import { Header } from '@/components/header'
 import { useAppState } from '@/components/store/app-state-context'
-
 import { useAuth } from '~/components/store/auth-context'
 
 export default function WorkbenchPage() {

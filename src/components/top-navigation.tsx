@@ -1,8 +1,9 @@
 'use client'
 
-import * as React from 'react'
-import Link from 'next/link'
 import { Pyramid } from 'lucide-react'
+import Link from 'next/link'
+import * as React from 'react'
+import { UrlObject } from 'url'
 
 import {
   NavigationMenu,
@@ -60,7 +61,7 @@ export function Navigation() {
 
 const BasicNavigationItem = ({ item }: { item: Item }) => (
   <NavigationMenuItem>
-    <Link href={item.href || '#'} legacyBehavior passHref>
+    <Link href={item.href as unknown as UrlObject} legacyBehavior passHref>
       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
         {item.name}
       </NavigationMenuLink>
@@ -96,7 +97,7 @@ const RichNavigationList = ({ item }: { item: Item }) => (
           <li className="row-span-3">
             <NavigationMenuLink asChild>
               <Link
-                href={item.href || '#'}
+                href={item.href as unknown as UrlObject}
                 passHref
                 className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
               >

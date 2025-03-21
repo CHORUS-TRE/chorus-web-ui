@@ -15,7 +15,6 @@ import { logout } from '@/components/actions/authentication-view-model'
 import { User } from '@/domain/model'
 
 import { userMe } from '../actions/user-view-model'
-
 import { useAppState } from './app-state-context'
 
 type AuthContextType = {

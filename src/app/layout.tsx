@@ -1,5 +1,7 @@
-import React from 'react'
-import type { Metadata } from 'next'
+import '@/app/build.css'
+import '@/styles/globals.css'
+
+import { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
@@ -7,9 +9,10 @@ import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import { NextStep, NextStepProvider } from 'nextstepjs'
+import React from 'react'
 
+import cover from '/public/cover.jpeg'
 import { AppStateProvider } from '@/components/store/app-state-context'
-
 import BackgroundIframe from '~/components/background-iframe'
 import GettingStartedCard from '~/components/getting-started-card'
 import { AuthProvider } from '~/components/store/auth-context'
@@ -17,11 +20,6 @@ import { Toaster } from '~/components/ui/toaster'
 import { steps } from '~/lib/tours'
 
 import { Providers } from './providers'
-
-import '@/app/build.css'
-import '@/styles/globals.css'
-
-import cover from '/public/cover.jpeg'
 
 const rubik = Rubik({
   subsets: ['latin'],

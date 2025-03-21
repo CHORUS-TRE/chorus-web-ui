@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp, Store } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import AppStoreHero from '~/components/app-store-hero'
 import { AppStoreView } from '~/components/app-store-view'

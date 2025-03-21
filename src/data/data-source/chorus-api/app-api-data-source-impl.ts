@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 import { App, AppCreate } from '@/domain/model'
 import { AppState, AppType } from '@/domain/model/app'
-
 import { AppServiceApi, ChorusApp } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 

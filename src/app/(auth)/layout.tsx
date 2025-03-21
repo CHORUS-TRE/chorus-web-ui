@@ -1,18 +1,16 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import Image from 'next/image'
 import { Github, Link } from 'lucide-react'
+import Image from 'next/image'
+import React, { useEffect } from 'react'
 
+import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/components/store/app-state-context'
-
 import { Header } from '~/components/header'
 import { Toaster } from '~/components/ui/toaster'
 import { toast } from '~/hooks/use-toast'
 
 import packageInfo from '../../../package.json'
-
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
 
 export default function Layout({
   children

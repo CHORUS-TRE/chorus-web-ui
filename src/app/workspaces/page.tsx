@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
 import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
+import { useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { useAuth } from '~/components/store/auth-context'
