@@ -1,7 +1,7 @@
 // Learn more: https://github.com/testing-library/jest-dom
-import { TextDecoder, TextEncoder } from 'util'
-
 import '@testing-library/jest-dom'
+
+import { TextDecoder, TextEncoder } from 'util'
 
 // Add TextEncoder and TextDecoder to the global scope
 global.TextEncoder = TextEncoder

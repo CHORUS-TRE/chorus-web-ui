@@ -5,6 +5,13 @@ const createJestConfig = nextJest({
   dir: './'
 })
 
+// Common module name mapper configuration
+const moduleNameMapperConfig = {
+  '^~/(.*)$': '<rootDir>/src/$1',
+  '^@/(.*)$': '<rootDir>/src/$1',
+  '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
+}
+
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
@@ -13,12 +20,7 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
   },
-  moduleNameMapper: {
-    '^~/(.*)$': '<rootDir>/src/$1',
-    '^@/(.*)$': '<rootDir>/src/$1',
-    // Mock out CSS imports
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
-  },
+  moduleNameMapper: moduleNameMapperConfig,
   transformIgnorePatterns: [
     '/node_modules/(?!(next|next-runtime-env|@babel|@swc|next-font))'
   ],
@@ -50,6 +52,8 @@ const customJestConfig = {
       lines: 90
     }
   },
+  // E2E tests may take longer
+  testTimeout: 30000,
   // Group test runs by type
   projects: [
     {
@@ -66,30 +70,51 @@ const customJestConfig = {
         '/__tests__/visual/',
         '/__tests__/accessibility/',
         '/performance/'
-      ]
+      ],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      moduleNameMapper: moduleNameMapperConfig
     },
     {
       displayName: 'integration',
       testMatch: ['<rootDir>/__tests__/integration/**/*.test.{js,jsx,ts,tsx}'],
-      testPathIgnorePatterns: ['/node_modules/', '/.next/']
+      testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      moduleNameMapper: moduleNameMapperConfig
     },
     {
       displayName: 'e2e',
       testMatch: ['<rootDir>/__tests__/e2e/**/*.test.{js,jsx,ts,tsx}'],
       testPathIgnorePatterns: ['/node_modules/', '/.next/'],
-      testTimeout: 30000 // E2E tests may take longer
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      transform: {
+        '^.+\\.(js|jsx|ts|tsx)$': [
+          'babel-jest',
+          {
+            presets: [
+              ['@babel/preset-env', { targets: { node: 'current' } }],
+              '@babel/preset-typescript',
+              ['@babel/preset-react', { runtime: 'automatic' }]
+            ]
+          }
+        ]
+      },
+      moduleNameMapper: moduleNameMapperConfig
     },
     {
       displayName: 'visual',
       testMatch: ['<rootDir>/__tests__/visual/**/*.test.{js,jsx,ts,tsx}'],
-      testPathIgnorePatterns: ['/node_modules/', '/.next/']
+      testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      moduleNameMapper: moduleNameMapperConfig
     },
     {
       displayName: 'accessibility',
       testMatch: [
         '<rootDir>/__tests__/accessibility/**/*.test.{js,jsx,ts,tsx}'
       ],
-      testPathIgnorePatterns: ['/node_modules/', '/.next/']
+      testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      moduleNameMapper: moduleNameMapperConfig
     }
   ]
 }
