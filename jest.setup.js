@@ -1,9 +1,9 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
+import nodeFetch from 'node-fetch'
 import { TextDecoder, TextEncoder } from 'util'
 
-// Add TextEncoder and TextDecoder to the global scope
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder
 

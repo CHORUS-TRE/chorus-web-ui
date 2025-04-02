@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import React from 'react'
 import { axe, toHaveNoViolations } from 'jest-axe'
+import React from 'react'
 
-import { render, screen } from '../../src/utils/test-utils'
+import { render, screen } from '@/utils/test-utils'
 
 // Add jest-axe custom matchers
 expect.extend(toHaveNoViolations)

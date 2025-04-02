@@ -1,6 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+// Import commented out to avoid linter errors for missing modules
+// import { AuthenticationOAuthUrl } from '~/domain/use-cases/authentication/authentication-oauth-url'
+// import { AuthenticationOAuthRedirect } from '~/domain/use-cases/authentication/authentication-oauth-redirect'
+// import { AuthenticationLogout } from '~/domain/use-cases/authentication/authentication-logout'
+import '@testing-library/jest-dom'
+
 import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { AuthenticationRepositoryImpl } from '~/data/repository'
 import {
@@ -9,12 +15,6 @@ import {
 } from '~/domain/model'
 import { AuthenticationGetModes } from '~/domain/use-cases/authentication/authentication-get-modes'
 import { AuthenticationLogin } from '~/domain/use-cases/authentication/authentication-login'
-
-// Import commented out to avoid linter errors for missing modules
-// import { AuthenticationOAuthUrl } from '~/domain/use-cases/authentication/authentication-oauth-url'
-// import { AuthenticationOAuthRedirect } from '~/domain/use-cases/authentication/authentication-oauth-redirect'
-// import { AuthenticationLogout } from '~/domain/use-cases/authentication/authentication-logout'
-import '@testing-library/jest-dom'
 
 const MOCK_LOGIN_API_RESPONSE = {
   token: '2'

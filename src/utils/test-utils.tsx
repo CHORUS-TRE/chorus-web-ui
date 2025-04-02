@@ -1,7 +1,6 @@
-import React, { ReactElement } from 'react'
-
 import { render, RenderOptions, RenderResult } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import React, { ReactElement } from 'react'
 
 // Add any providers that components need during testing
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {

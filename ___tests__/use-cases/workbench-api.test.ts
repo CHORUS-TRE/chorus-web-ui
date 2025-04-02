@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import '@testing-library/jest-dom'
+
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import {
@@ -14,8 +16,6 @@ import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { ChorusAppInstance as ChorusAppInstanceApi } from '~/internal/client'
-
-import '@testing-library/jest-dom'
 
 const MOCK_API_RESPONSE = {
   id: '1',
@@ -52,7 +52,7 @@ const MOCK_API_UPDATE = {
 } as WorkbenchUpdateModel
 
 // Create a version of the API response without userId for test expectations
-const { ...apiResponseWithoutUserId } = MOCK_API_RESPONSE
+const { userId, ...apiResponseWithoutUserId } = MOCK_API_RESPONSE
 
 const MOCK_WORKBENCH_RESULT = {
   ...apiResponseWithoutUserId,

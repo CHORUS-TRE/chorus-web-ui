@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import '@testing-library/jest-dom'
+
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
@@ -12,8 +14,6 @@ import { WorkspaceCreate } from '~/domain/use-cases'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 import { ChorusWorkspace as ChorusWorkspaceApi } from '~/internal/client'
-
-import '@testing-library/jest-dom'
 
 const MOCK_API_RESPONSE = {
   id: '1',
