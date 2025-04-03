@@ -253,8 +253,8 @@ describe('WorkbenchDataSourceImpl', () => {
         })
       ) as jest.Mock
 
-      await expect(dataSource.create(MOCK_API_CREATE)).rejects.toThrow(
-        'Error creating workbench'
+      await expect(dataSource.delete('1')).rejects.toThrow(
+        'Error deleting workbench'
       )
     })
   })
