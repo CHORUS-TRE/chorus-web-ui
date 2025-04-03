@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import {
@@ -68,17 +68,24 @@ export function WorkspaceCreateForm({
   onUpdate?: () => void
 }) {
   const [state, formAction] = useActionState(workspaceCreate, initialState)
+  const hasHandledSuccess = useRef(false)
 
   useEffect(() => {
+    if (!open) {
+      hasHandledSuccess.current = false
+      return
+    }
+
     if (state?.error) {
       return
     }
 
-    if (state?.data) {
+    if (state?.data && !hasHandledSuccess.current) {
+      hasHandledSuccess.current = true
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state, onUpdate, setOpen])
+  }, [state, onUpdate, setOpen, open])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -283,9 +290,11 @@ export function WorkspaceUpdateForm({
   const [formState, formAction] = useActionState(workspaceUpdate, initialState)
 
   useEffect(() => {
+    console.log('formState', formState)
     if (formState?.error) return
     if (formState?.data) {
       setOpen(false)
+      console.log('open', open)
       if (onUpdate) onUpdate()
     }
   }, [formState, onUpdate, setOpen])
