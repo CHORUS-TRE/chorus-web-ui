@@ -202,7 +202,6 @@ export function Header() {
   useEffect(() => {
     if (isInAppContext && workbenches) {
       const workbench = workbenches.find((w) => w.id === params.desktopId)
-      console.log('workbench', workbench)
       if (workbench) {
         setCurrentWorkbench(workbench)
       }
@@ -210,6 +209,8 @@ export function Header() {
   }, [isInAppContext, workbenches, params.desktopId])
 
   useEffect(() => {
+    if (isAuthenticated) return
+
     const fetchAuthModes = async () => {
       try {
         const response = await getAuthenticationModes()
@@ -217,7 +218,10 @@ export function Header() {
       } catch (error) {
         setNotification({
           title: 'Error fetching auth modes:',
-          description: error.message,
+          description:
+            error instanceof Error
+              ? error.message
+              : 'Please retry later or contact support',
           variant: 'destructive'
         })
         console.error('Error fetching auth modes:', error)
@@ -225,7 +229,7 @@ export function Header() {
     }
 
     fetchAuthModes()
-  }, [setNotification])
+  }, [setNotification, isAuthenticated])
 
   return (
     <>
@@ -252,7 +256,7 @@ export function Header() {
                     <Fragment key={item.href}>
                       {/* Workspaces Menu */}
                       {index === 0 && (
-                        <NavigationMenu className="hidden xl:block">
+                        <NavigationMenu className="hidden 2xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavLink
@@ -299,7 +303,7 @@ export function Header() {
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                           <div
-                                            className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent text-white' : ''}`}
+                                            className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
                                           >
                                             {workspace.id === workspaceId ||
                                             paths === '/' ? (
@@ -583,9 +587,9 @@ export function Header() {
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                       {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                        <div className="mb-2 p-2" key={`dock-${workspace.id}`}>
+                        <div className="mb-0 p-2" key={`dock-${workspace.id}`}>
                           <div
-                            className={`flex items-center gap-2 font-semibold text-muted-foreground`}
+                            className={`mb-2 flex items-center gap-2 font-semibold text-muted`}
                           >
                             {workspace.id === workspaceId || paths === '/' ? (
                               <PackageOpen className="h-4 w-4" />
@@ -603,24 +607,27 @@ export function Header() {
                                   workbench.workspaceId === workspace?.id
                               )
                               .map(({ shortName, createdAt, id }) => (
-                                <div className="h-full" key={workspace?.id}>
+                                <div
+                                  className="mb-2 h-full pl-2"
+                                  key={`${workspace?.id}-${id}`}
+                                >
                                   <Link
                                     href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                                    className={`flex h-full flex-col rounded-2xl border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                                    className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
                                   >
                                     <div className="text-sm font-semibold">
                                       <div className="flex items-center justify-between">
                                         <div
-                                          className={`mb-1 flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                          className={`mb-1 flex items-center gap-2 text-white ${id === background?.workbenchId ? 'text-accent' : ''}`}
                                         >
                                           <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                           {shortName}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-muted">
                                           {formatDistanceToNow(createdAt)} ago
                                         </p>
                                       </div>
-                                      <div className="text-xs text-muted-foreground">
+                                      <div className="text-xs text-muted">
                                         <div className="flex items-center gap-2 text-xs">
                                           <DraftingCompass className="h-4 w-4 shrink-0" />
                                           {appInstances
