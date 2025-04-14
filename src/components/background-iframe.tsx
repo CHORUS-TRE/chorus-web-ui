@@ -134,11 +134,6 @@ export default function BackgroundIframe() {
 
   return (
     <>
-      <div
-        className="absolute left-44 top-44 z-50 h-8 w-8 bg-transparent"
-        id="tour-getting-started-step3"
-        role="presentation"
-      />
       <iframe
         title="Application Workspace"
         src={isUrlValid && url ? url : 'about:blank'}

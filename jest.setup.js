@@ -1,7 +1,6 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
-import nodeFetch from 'node-fetch'
 import { TextDecoder, TextEncoder } from 'util'
 
 global.TextEncoder = TextEncoder

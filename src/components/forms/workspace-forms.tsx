@@ -290,11 +290,9 @@ export function WorkspaceUpdateForm({
   const [formState, formAction] = useActionState(workspaceUpdate, initialState)
 
   useEffect(() => {
-    console.log('formState', formState)
     if (formState?.error) return
     if (formState?.data) {
       setOpen(false)
-      console.log('open', open)
       if (onUpdate) onUpdate()
     }
   }, [formState, onUpdate, setOpen])
