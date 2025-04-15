@@ -28,7 +28,8 @@ export async function appList(): Promise<AppsResponse> {
     const useCase = new AppList(repository)
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error listing apps', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -68,7 +69,8 @@ export async function appCreate(
       error: undefined
     }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error creating app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -102,7 +104,8 @@ export async function appUpdate(
       error: undefined
     }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error updating app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -122,7 +125,8 @@ export async function appDelete(id: string): Promise<IFormState> {
       error: undefined
     }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error deleting app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -132,6 +136,7 @@ export async function appGet(id: string): Promise<AppResponse> {
     const useCase = new AppGet(repository)
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

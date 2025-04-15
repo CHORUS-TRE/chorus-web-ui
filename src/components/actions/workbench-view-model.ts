@@ -56,7 +56,8 @@ export async function workbenchDelete(
 
     return { data: 'Successfully deleted workbench' }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error deleting workbench', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -110,7 +111,7 @@ export async function workbenchCreate(
     }
   } catch (error) {
     console.error('Error creating workbench', error)
-    return { error: error.message }
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -121,7 +122,8 @@ export async function workbenchList(): Promise<WorkbenchesResponse> {
 
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error listing workbenches', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -132,7 +134,8 @@ export async function workbenchGet(id: string): Promise<WorkbenchResponse> {
 
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting workbench', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -173,6 +176,6 @@ export async function workbenchUpdate(
     }
   } catch (error) {
     console.error('Error updating workbench', error)
-    return { error: error.message }
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

@@ -16,7 +16,11 @@ const WorkspacePage = () => {
     try {
       await Promise.all([workspaceGet(workspaceId), refreshWorkbenches()])
     } catch (error) {
-      console.error('Error initializing data:', error.message)
+      if (error instanceof Error) {
+        console.error('Error initializing data:', error.message)
+      } else {
+        console.error('Error initializing data:', String(error))
+      }
     }
   }, [workspaceId, refreshWorkbenches])
 

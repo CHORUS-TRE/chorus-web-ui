@@ -734,7 +734,10 @@ export function Header() {
                             } catch (error) {
                               setNotification({
                                 title: 'Error launching app',
-                                description: error.message,
+                                description:
+                                  error instanceof Error
+                                    ? error.message
+                                    : String(error),
                                 variant: 'destructive'
                               })
                             }

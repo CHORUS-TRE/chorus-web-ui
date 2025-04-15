@@ -23,7 +23,8 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       const w = await this.dataSource.get(response)
       return { data: w }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error creating workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -34,7 +35,8 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -45,8 +47,8 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
       return { data: true }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error deleting workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -57,7 +59,11 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
       return { data }
     } catch (error) {
-      return { data: [], error: error.message }
+      console.error('Error listing workspaces', error)
+      return {
+        data: [],
+        error: error instanceof Error ? error.message : String(error)
+      }
     }
   }
 
@@ -66,8 +72,8 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       const data = await this.dataSource.update(workspace)
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error updating workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

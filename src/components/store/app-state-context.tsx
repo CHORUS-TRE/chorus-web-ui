@@ -147,7 +147,10 @@ export const AppStateProvider = ({
             .sort((a) => (a.id === user?.workspaceId ? -1 : 0))
         )
     } catch (error) {
-      setNotification({ title: error.message, variant: 'destructive' })
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -167,7 +170,10 @@ export const AppStateProvider = ({
       if (response?.error)
         setNotification({ title: response.error, variant: 'destructive' })
     } catch (error) {
-      setNotification({ title: error.message, variant: 'destructive' })
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -189,7 +195,10 @@ export const AppStateProvider = ({
         )
       }
     } catch (error) {
-      setNotification({ title: error.message, variant: 'destructive' })
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -203,7 +212,10 @@ export const AppStateProvider = ({
         response.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       )
     } catch (error) {
-      setNotification({ title: error.message, variant: 'destructive' })
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -262,7 +274,7 @@ export const AppStateProvider = ({
     } catch (error) {
       setNotification({
         title: 'Error',
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
       })
       console.error(error)

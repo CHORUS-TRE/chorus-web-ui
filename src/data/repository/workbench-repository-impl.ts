@@ -24,7 +24,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data: w }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error creating workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -35,7 +36,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -46,7 +48,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data: true }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error deleting workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -58,8 +61,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error listing workbenches', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -68,7 +71,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       const data = await this.dataSource.update(workbench)
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error updating workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

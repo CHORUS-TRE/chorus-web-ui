@@ -118,7 +118,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     } catch (error) {
       setNotification({
         title: 'Error loading workspace',
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
       })
     }

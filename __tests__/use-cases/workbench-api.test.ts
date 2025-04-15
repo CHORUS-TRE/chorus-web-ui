@@ -52,6 +52,7 @@ const MOCK_API_UPDATE = {
 } as WorkbenchUpdateModel
 
 // Create a version of the API response without userId for test expectations
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { userId, ...apiResponseWithoutUserId } = MOCK_API_RESPONSE
 
 const MOCK_WORKBENCH_RESULT = {

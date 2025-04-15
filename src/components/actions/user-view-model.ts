@@ -27,7 +27,8 @@ export async function userMe(): Promise<UserResponse> {
 
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -60,7 +61,8 @@ export async function userCreate(
 
     return { data: nextUser.email }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error creating user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -71,6 +73,7 @@ export async function userGet(id: string): Promise<UserResponse> {
 
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

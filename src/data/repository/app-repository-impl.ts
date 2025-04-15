@@ -14,8 +14,8 @@ export class AppRepositoryImpl implements AppRepository {
       const data = await this.dataSource.list()
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error listing apps', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -24,8 +24,8 @@ export class AppRepositoryImpl implements AppRepository {
       const data = await this.dataSource.create(app)
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error creating app', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -34,8 +34,8 @@ export class AppRepositoryImpl implements AppRepository {
       const data = await this.dataSource.update(app)
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error updating app', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -44,8 +44,8 @@ export class AppRepositoryImpl implements AppRepository {
       const data = await this.dataSource.delete(id)
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error deleting app', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -54,8 +54,8 @@ export class AppRepositoryImpl implements AppRepository {
       const data = await this.dataSource.get(id)
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error getting app', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

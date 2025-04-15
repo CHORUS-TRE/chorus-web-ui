@@ -98,7 +98,7 @@ export default function BackgroundIframe() {
       } catch (err) {
         setNotification({
           title: 'Error loading app',
-          description: err.message,
+          description: err instanceof Error ? err.message : String(err),
           variant: 'destructive'
         })
         if (intervalRef.current) {

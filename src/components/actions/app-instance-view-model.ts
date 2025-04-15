@@ -65,7 +65,7 @@ export async function appInstanceCreate(
     }
   } catch (error) {
     console.error('Error creating appInstance', error)
-    return { error: error.message }
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -76,7 +76,8 @@ export async function appInstanceGet(id: string): Promise<AppInstanceResponse> {
 
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting appInstance', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -99,8 +100,8 @@ export async function appInstanceDelete(
     )
     return { data: 'Successfully deleted app instance' }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error deleting appInstance', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -130,8 +131,8 @@ export async function appInstanceUpdate(
     )
     return { data: 'Successfully updated app instance' }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error updating appInstance', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
