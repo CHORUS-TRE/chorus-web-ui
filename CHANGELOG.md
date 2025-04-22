@@ -1,3 +1,19 @@
+# [1.0.0-alpha.26](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.25...v1.0.0-alpha.26) (2025-04-22)
+
+
+### Bug Fixes
+
+* error logs and casting ([50dd4c9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/50dd4c9c5b6c379d0f92c2eab01bc1a72a14a108))
+* prevent multiple success handlers in workspace forms ([4e0be28](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4e0be2881b18013802b37e93e2ec6d33f930a818))
+* remove unused imports and fix warnings ([d0791aa](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d0791aa30efb7e183057b70d13a2fd02da186c33))
+* update ESLint, fix warnings ([8aa79d5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8aa79d5e2f7a77f21fe1a5315f534e888dcdd971))
+
+
+### Features
+
+* enhance app creation and editing forms with additional fields and validation ([140a048](https://github.com/CHORUS-TRE/chorus-web-ui/commit/140a04889affdc0924acc020a469e7b835dd25f3))
+* update API source ([2ccc9df](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2ccc9dfc81f3206970a528c594104313b4f966e2))
+
 # [1.0.0-alpha.25](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.24...v1.0.0-alpha.25) (2025-03-12)
 
 
