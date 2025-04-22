@@ -2,7 +2,8 @@
 
 import React from 'react'
 
-import { Button } from './button'
+import { Button } from '~/components/button'
+
 import {
   Dialog,
   DialogContent,
@@ -29,16 +30,19 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="bg-background sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle className="text-white">{title}</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            {description}
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button
             type="button"
             onClick={() => onOpenChange(false)}
             variant="outline"
+            className="bg-background text-white"
           >
             Cancel
           </Button>

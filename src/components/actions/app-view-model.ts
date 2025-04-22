@@ -43,12 +43,20 @@ export async function appCreate(
 
     const app: AppCreate = {
       name: formData.get('name') as string,
-      description: formData.get('description') as string,
+      description: (formData.get('description') as string) || '',
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
+      dockerImageRegistry:
+        (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
-      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP
+      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
+      shmSize: formData.get('shmSize') as string,
+      kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
+      maxCPU: formData.get('maxCPU') as string,
+      minCPU: formData.get('minCPU') as string,
+      maxMemory: formData.get('maxMemory') as string,
+      minMemory: formData.get('minMemory') as string
     }
 
     const validation = AppCreateSchema.safeParse(app)
@@ -88,9 +96,17 @@ export async function appUpdate(
       description: formData.get('description') as string,
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
+      dockerImageRegistry:
+        (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
-      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP
+      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
+      shmSize: formData.get('shmSize') as string,
+      kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
+      maxCPU: formData.get('maxCPU') as string,
+      minCPU: formData.get('minCPU') as string,
+      maxMemory: formData.get('maxMemory') as string,
+      minMemory: formData.get('minMemory') as string
     }
 
     const updatedApp = await useCase.execute(app)
