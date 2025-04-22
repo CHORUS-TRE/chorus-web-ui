@@ -1,51 +1,53 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import { env } from 'next-runtime-env'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
-
-import { useToast } from '~/hooks/use-toast'
 
 const MAX_ATTEMPTS = 10
 const RETRY_INTERVAL = 1000
 
 export default function BackgroundIframe() {
-  const { toast } = useToast()
-  const { background, appInstances } = useAppState()
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const { background, appInstances, setNotification } = useAppState()
+  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
   const [isUrlValid, setIsUrlValid] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [attemptCount, setAttemptCount] = useState(0)
 
-  const resetState = () => {
+  const resetState = useCallback(() => {
     setUrl(null)
     setIsUrlValid(false)
-    setError(null)
+    setNotification(undefined)
     setAttemptCount(0)
-  }
+  }, [setNotification])
 
   const workbenchAppInstances = appInstances?.filter(
     (ai) => ai.workbenchId === background?.workbenchId
   )
 
-  const pingIframeURL = async (urlToCheck: string) => {
-    if (!urlToCheck || isUrlValid) return
+  const pingIframeURL = useCallback(
+    async (urlToCheck: string): Promise<boolean> => {
+      if (!urlToCheck || isUrlValid) return false
 
-    try {
-      const result = await fetch(urlToCheck, { method: 'HEAD' })
-      if (result.status === 200) {
-        return true
+      try {
+        const result = await fetch(urlToCheck, { method: 'HEAD' })
+        return result.status === 200
+      } catch (e) {
+        const errorMessage =
+          e instanceof Error ? e.message : 'Unknown error occurred'
+        setNotification({
+          title: 'Error loading app',
+          description: errorMessage,
+          variant: 'destructive'
+        })
+        return false
       }
-    } catch (e) {
-      const errorMessage =
-        e instanceof Error ? e.message : 'Unknown error occurred'
-      setError(`Error loading app: ${errorMessage}`)
-    }
-  }
+    },
+    [isUrlValid, setNotification]
+  )
 
   // URL initialization effect
   useEffect(() => {
@@ -61,50 +63,59 @@ export default function BackgroundIframe() {
 
     setUrl(newUrl)
     setIsUrlValid(false)
-    setError(null)
+    setNotification(undefined)
     setAttemptCount(0)
-  }, [background])
+  }, [background, setNotification, resetState])
 
   // URL validation effect
   useEffect(() => {
-    if (!url || isUrlValid) return
+    if (!url) return
 
     const validateURL = async () => {
       if (attemptCount >= MAX_ATTEMPTS) {
-        clearInterval(intervalRef.current)
-        setError('Failed to connect after maximum attempts')
+        setNotification({
+          title: 'Max attempts reached. Please check the URL and try again.',
+          variant: 'destructive'
+        })
+
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+        }
         return
       }
 
-      if (url) {
+      try {
         const isValid = await pingIframeURL(url)
+        setIsUrlValid(Boolean(isValid))
+
         if (isValid) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+          }
+        } else {
+          setAttemptCount((prev) => prev + 1)
+        }
+      } catch (err) {
+        setNotification({
+          title: 'Error loading app',
+          description: err instanceof Error ? err.message : String(err),
+          variant: 'destructive'
+        })
+        if (intervalRef.current) {
           clearInterval(intervalRef.current)
-          setIsUrlValid(true)
-          setError(null)
         }
       }
-      setAttemptCount((prev) => prev + 1)
     }
 
     validateURL()
     intervalRef.current = setInterval(validateURL, RETRY_INTERVAL)
 
-    return () => clearInterval(intervalRef.current)
-  }, [url, isUrlValid, attemptCount])
-
-  // Error notification effect
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Connection Error',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white',
-        duration: 3000
-      })
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
     }
-  }, [error, toast])
+  }, [url, isUrlValid, attemptCount, pingIframeURL, setNotification])
 
   // Focus management effect
   useEffect(() => {
@@ -123,11 +134,6 @@ export default function BackgroundIframe() {
 
   return (
     <>
-      <div
-        className="absolute left-44 top-44 z-50 h-8 w-8 bg-transparent"
-        id="tour-getting-started-step3"
-        role="presentation"
-      />
       <iframe
         title="Application Workspace"
         src={isUrlValid && url ? url : 'about:blank'}
@@ -140,11 +146,9 @@ export default function BackgroundIframe() {
         tabIndex={0}
         onLoad={() => {
           if (isUrlValid) {
-            toast({
+            setNotification({
               title: 'Workspace Ready',
-              description: 'Your workspace has been loaded successfully',
-              className: 'bg-background text-white',
-              duration: 2000
+              description: 'Your workspace has been loaded successfully'
             })
           }
         }}

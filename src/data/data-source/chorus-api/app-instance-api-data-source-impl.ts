@@ -11,7 +11,6 @@ import {
   AppInstanceCreateSchema,
   AppInstanceSchema
 } from '@/domain/model/app-instance'
-
 import {
   AppInstanceServiceApi,
   ChorusAppInstance as ChorusAppInstanceApi

@@ -1,8 +1,9 @@
 'use client'
 
-import * as React from 'react'
-import Link from 'next/link'
 import { Pyramid } from 'lucide-react'
+import Link from 'next/link'
+import * as React from 'react'
+import { UrlObject } from 'url'
 
 import {
   NavigationMenu,
@@ -60,7 +61,7 @@ export function Navigation() {
 
 const BasicNavigationItem = ({ item }: { item: Item }) => (
   <NavigationMenuItem>
-    <Link href={item.href || '#'} legacyBehavior passHref>
+    <Link href={item.href as unknown as UrlObject} legacyBehavior passHref>
       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
         {item.name}
       </NavigationMenuLink>
@@ -96,7 +97,7 @@ const RichNavigationList = ({ item }: { item: Item }) => (
           <li className="row-span-3">
             <NavigationMenuLink asChild>
               <Link
-                href={item.href || '#'}
+                href={item.href as unknown as UrlObject}
                 passHref
                 className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
               >
@@ -123,26 +124,30 @@ const RichNavigationList = ({ item }: { item: Item }) => (
 
 const ListItem = React.forwardRef<
   React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
+  React.ComponentPropsWithoutRef<'a'> & { wrapWithLi?: boolean }
+>(({ className, title, children, wrapWithLi = true, ...props }, ref) => {
+  const content = (
+    <NavigationMenuLink asChild>
+      <a
+        ref={ref}
+        className={cn(
+          'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+          className
+        )}
+        {...props}
+      >
+        <div className="text-sm font-medium leading-none">{title}</div>
+        <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          {children}
+        </div>
+      </a>
+    </NavigationMenuLink>
   )
+
+  if (wrapWithLi) {
+    return <li>{content}</li>
+  }
+
+  return content
 })
 ListItem.displayName = 'ListItem'

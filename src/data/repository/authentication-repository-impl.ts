@@ -24,7 +24,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
       return { data: d }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error logging in', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -33,7 +34,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       const modes = await this.dataSource.getAuthenticationModes()
       return { data: modes }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting authentication modes', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -42,7 +44,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       const url = await this.dataSource.getOAuthUrl(id)
       return { data: url }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting OAuth URL', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -53,7 +56,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       const token = await this.dataSource.handleOAuthRedirect(data)
       return { data: token }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error handling OAuth redirect', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -62,7 +66,8 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       await this.dataSource.logout()
       return {}
     } catch (error) {
-      return { error: error.message }
+      console.error('Error logging out', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

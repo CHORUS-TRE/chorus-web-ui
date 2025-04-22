@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { CirclePlus, Loader2, RefreshCw, TriangleAlert } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
+import { useActionState, useEffect, useState } from 'react'
+import { useFormStatus } from 'react-dom'
 
 import {
   workbenchCreate,
@@ -18,7 +18,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-
 import { Button } from '~/components/button'
 import {
   Card,
@@ -30,8 +29,7 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { App, Workbench } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
+import { Workbench } from '~/domain/model'
 import { generateScientistName } from '~/lib/utils'
 
 import { IFormState } from '../actions/utils'
@@ -67,19 +65,23 @@ export function WorkbenchCreateForm({
   userId?: string
   onUpdate?: (id: string) => void
 }) {
-  const [state, formAction] = useFormState(
+  const [state, formAction] = useActionState(
     workbenchCreate,
     initialState,
     `/workspaces/${workspaceId}`
   )
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
   const [scientistName, setScientistName] = useState(generateScientistName())
-  const { toast } = useToast()
-  const { refreshWorkbenches, apps } = useAppState()
+  const { setNotification } = useAppState()
+  const { apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
+      setNotification({
+        title: 'Error',
+        description: state.error,
+        variant: 'destructive'
+      })
       return
     }
 
@@ -87,18 +89,7 @@ export function WorkbenchCreateForm({
       setOpen(false)
       if (onUpdate) onUpdate(state?.data as string)
     }
-  }, [state])
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
+  }, [state, onUpdate, setOpen, setNotification])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -289,7 +280,7 @@ export function WorkbenchDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workbenchDelete, initialState)
+  const [, formAction] = useActionState(workbenchDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -326,7 +317,6 @@ export function WorkbenchDeleteForm({
       onConfirm={handleDelete}
       title="Quit Desktop"
       description="The Desktop will be stopped and the apps will be closed. Are you sure you want to delete this desktop and it's apps? This action cannot be undone."
-      isDeleting={isDeleting}
     />
   )
 }
@@ -340,17 +330,16 @@ export function WorkbenchUpdateForm({
   workbench: Workbench
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workbenchUpdate, initialState)
-  const { toast } = useToast()
+  const [state, formAction] = useActionState(workbenchUpdate, initialState)
   const [scientistName, setScientistName] = useState(workbench.name)
+  const { setNotification } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
-      toast({
+      setNotification({
         title: 'Error',
         description: state.error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
+        variant: 'destructive'
       })
       return
     }
@@ -359,7 +348,7 @@ export function WorkbenchUpdateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state, onUpdate, setOpen])
+  }, [setNotification, state, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>

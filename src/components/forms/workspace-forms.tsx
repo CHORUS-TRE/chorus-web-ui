@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { CirclePlus } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useActionState, useEffect, useRef, useState } from 'react'
+import { useFormStatus } from 'react-dom'
 
 import {
   workspaceCreate,
@@ -19,7 +18,6 @@ import {
 } from '@/components/ui/dialog'
 import { Workspace } from '@/domain/model'
 import { WorkspaceState } from '@/domain/model/workspace'
-
 import { Button } from '~/components/button'
 import {
   Card,
@@ -69,23 +67,31 @@ export function WorkspaceCreateForm({
   children?: React.ReactNode
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workspaceCreate, initialState)
+  const [formState, formAction] = useActionState(workspaceCreate, initialState)
+  const hasHandledSuccess = useRef(false)
 
   useEffect(() => {
-    if (state?.error) {
+    if (!open) {
+      hasHandledSuccess.current = false
       return
     }
 
-    if (state?.data) {
+    if (formState?.error) {
+      return
+    }
+
+    if (formState?.data && !hasHandledSuccess.current) {
+      hasHandledSuccess.current = true
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state])
+  }, [formState, onUpdate, setOpen, open])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">Create Workspace</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
@@ -107,7 +113,7 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('name'))
+                        formState?.issues?.find((e) => e.path.includes('name'))
                           ?.message
                       }
                     </div>
@@ -122,8 +128,9 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('shortName'))
-                          ?.message
+                        formState?.issues?.find((e) =>
+                          e.path.includes('shortName')
+                        )?.message
                       }
                     </div>
                   </div>
@@ -137,7 +144,7 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) =>
+                        formState?.issues?.find((e) =>
                           e.path.includes('description')
                         )?.message
                       }
@@ -153,8 +160,9 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('ownerId'))
-                          ?.message
+                        formState?.issues?.find((e) =>
+                          e.path.includes('ownerId')
+                        )?.message
                       }
                     </div>
                   </div>
@@ -168,8 +176,9 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('memberIds'))
-                          ?.message
+                        formState?.issues?.find((e) =>
+                          e.path.includes('memberIds')
+                        )?.message
                       }
                     </div>
                   </div>
@@ -182,7 +191,7 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('tags'))
+                        formState?.issues?.find((e) => e.path.includes('tags'))
                           ?.message
                       }
                     </div>
@@ -197,16 +206,17 @@ export function WorkspaceCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('tenantId'))
-                          ?.message
+                        formState?.issues?.find((e) =>
+                          e.path.includes('tenantId')
+                        )?.message
                       }
                     </div>
                   </div>
                   <p aria-live="polite" className="sr-only" role="status">
-                    {JSON.stringify(state?.data, null, 2)}
+                    {JSON.stringify(formState?.data, null, 2)}
                   </p>
-                  {state?.error && (
-                    <p className="text-red-500">{state.error}</p>
+                  {formState?.error && (
+                    <p className="text-red-500">{formState.error}</p>
                   )}
                 </CardContent>
                 <CardFooter>
@@ -230,31 +240,29 @@ export function WorkspaceDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workspaceDelete, initialState)
+  const [formState, formAction] = useActionState(workspaceDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
-
-  const handleDelete = async () => {
-    try {
-      setIsDeleting(true)
-      const formData = new FormData()
-      formData.append('id', id || '')
-      await formAction(formData)
-      setIsDeleting(false)
-      setOpen(false)
-      if (onUpdate) onUpdate()
-    } catch (error) {
-      console.error(error)
-      setIsDeleting(false)
-    } finally {
-      setIsDeleting(false)
-    }
-  }
+  const hasHandledSuccess = useRef(false)
 
   useEffect(() => {
     if (!open) {
+      hasHandledSuccess.current = false
       setIsDeleting(false)
+      return
     }
-  }, [open])
+
+    if (formState?.error) {
+      setIsDeleting(false)
+      return
+    }
+
+    if (formState?.data && !hasHandledSuccess.current) {
+      hasHandledSuccess.current = true
+      setIsDeleting(false)
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    }
+  }, [formState, onUpdate, setOpen, open])
 
   return (
     <DeleteDialog
@@ -264,10 +272,14 @@ export function WorkspaceDeleteForm({
           setOpen(newOpen)
         }
       }}
-      onConfirm={handleDelete}
+      onConfirm={() => {
+        setIsDeleting(true)
+        const formData = new FormData()
+        formData.append('id', id || '')
+        formAction(formData)
+      }}
       title="Delete Workspace"
       description="Are you sure you want to delete this workspace? This action cannot be undone."
-      isDeleting={isDeleting}
     />
   )
 }
@@ -283,7 +295,7 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onUpdate?: () => void
 }) {
-  const [formState, formAction] = useFormState(workspaceUpdate, initialState)
+  const [formState, formAction] = useActionState(workspaceUpdate, initialState)
 
   useEffect(() => {
     if (formState?.error) return
@@ -291,7 +303,7 @@ export function WorkspaceUpdateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [formState])
+  }, [formState, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>

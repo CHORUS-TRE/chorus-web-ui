@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { CirclePlus, TriangleAlert } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useActionState, useEffect } from 'react'
+import { useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
 import { useAppState } from '@/components/store/app-state-context'
@@ -12,9 +11,9 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-
 import { Button } from '~/components/button'
 import {
   Card,
@@ -26,8 +25,6 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { App } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
 
 import { IFormState } from '../actions/utils'
 import { Textarea } from '../ui/textarea'
@@ -61,13 +58,17 @@ export function AppInstanceCreateForm({
   userId?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(appInstanceCreate, initialState)
-  const [error, setError] = useState<string>()
-  const { toast } = useToast()
-  const { refreshWorkbenches, setBackground, apps } = useAppState()
+  const [state, formAction] = useActionState(appInstanceCreate, initialState)
+  const { setNotification } = useAppState()
+  const { apps } = useAppState()
 
   useEffect(() => {
     if (state?.error) {
+      setNotification({
+        title: 'Error',
+        description: state.error,
+        variant: 'destructive'
+      })
       return
     }
 
@@ -75,23 +76,13 @@ export function AppInstanceCreateForm({
       setOpen(false)
       if (onUpdate) onUpdate()
     }
-  }, [state, onUpdate])
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
+  }, [setNotification, state, onUpdate, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">Start App</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>

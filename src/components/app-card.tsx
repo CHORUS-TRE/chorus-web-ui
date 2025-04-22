@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
+import { useState } from 'react'
 
 import { AppEditDialog } from '~/components/app-edit-dialog'
 import { Button } from '~/components/button'
@@ -24,6 +24,7 @@ import { App } from '~/domain/model'
 import { getAppIcon } from '~/utils/app-icon'
 
 import { appDelete } from './actions/app-view-model'
+import { useAppState } from './store/app-state-context'
 
 interface AppCardProps {
   app: App
@@ -33,20 +34,23 @@ interface AppCardProps {
 export function AppCard({ app, onUpdate }: AppCardProps) {
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [error, setError] = useState<string>()
   const [isDeleting, setIsDeleting] = useState(false)
-
+  const { setNotification } = useAppState()
   const handleDelete = async () => {
     if (isDeleting) return
 
     try {
       setIsDeleting(true)
-      setError(undefined)
+      setNotification(undefined)
 
       const result = await appDelete(app.id)
 
       if (result.error) {
-        setError(result.error)
+        setNotification({
+          title: 'App deletion failed',
+          variant: 'destructive',
+          description: result.error
+        })
         return
       }
 
@@ -56,13 +60,18 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         setIsDeleting(false)
       }, 100)
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
+      setNotification({
+        title: 'App deletion failed',
+        variant: 'destructive',
+        description:
+          error instanceof Error ? error.message : 'An error occurred'
+      })
       setIsDeleting(false)
     }
   }
 
   const handleDeleteClick = () => {
-    setError(undefined)
+    setNotification(undefined)
     setShowDeleteDialog(true)
   }
 
@@ -124,7 +133,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
           </div>
         </CardContent>
         <CardFooter className="mt-auto">
-          {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
             onClick={() => {
               /* TODO: Implement add to my apps */
@@ -151,7 +159,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         onConfirm={handleDelete}
         title="Delete App"
         description={`Are you sure you want to delete ${app.name || 'this app'}? This action cannot be undone.`}
-        isDeleting={isDeleting}
       />
     </>
   )

@@ -26,7 +26,8 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       return { data: w }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error creating appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -37,7 +38,8 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -48,7 +50,8 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       return { data: true }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error deleting appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -59,7 +62,11 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       return { data }
     } catch (error) {
-      return { data: [], error: error.message }
+      console.error('Error listing appInstances', error)
+      return {
+        data: [],
+        error: error instanceof Error ? error.message : String(error)
+      }
     }
   }
 
@@ -70,7 +77,8 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
       const data = await this.dataSource.update(appInstance)
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error updating appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

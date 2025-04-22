@@ -13,7 +13,8 @@ import { UserMe } from '~/domain/use-cases/user/user-me'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   const dataSource = new UserApiDataSourceImpl(session)
 
   return new UserRepositoryImpl(dataSource)
@@ -26,7 +27,8 @@ export async function userMe(): Promise<UserResponse> {
 
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -51,11 +53,16 @@ export async function userCreate(
     }
 
     const nextUser = UserCreateSchema.parse(user)
-    const u = await useCase.execute(nextUser)
+    const result = await useCase.execute(nextUser)
+
+    if (result.error) {
+      return { error: result.error }
+    }
 
     return { data: nextUser.email }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error creating user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -66,6 +73,7 @@ export async function userGet(id: string): Promise<UserResponse> {
 
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

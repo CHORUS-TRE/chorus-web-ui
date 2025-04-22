@@ -13,7 +13,6 @@ import {
   WorkbenchState,
   WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
-
 import {
   ChorusWorkbench as ChorusWorkbenchApi,
   WorkbenchServiceApi
@@ -86,25 +85,20 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   }
 
   async create(workbench: WorkbenchCreateModel): Promise<string> {
-    try {
-      const validatedInput = WorkbenchCreateSchema.parse(workbench)
-      const w = domainToApi(validatedInput)
-      const validatedRequest: ChorusWorkbenchApi =
-        WorkbenchApiCreateSchema.parse(w)
+    const validatedInput = WorkbenchCreateSchema.parse(workbench)
+    const w = domainToApi(validatedInput)
+    const validatedRequest: ChorusWorkbenchApi =
+      WorkbenchApiCreateSchema.parse(w)
 
-      const response = await this.service.workbenchServiceCreateWorkbench({
-        body: validatedRequest
-      })
+    const response = await this.service.workbenchServiceCreateWorkbench({
+      body: validatedRequest
+    })
 
-      if (!response.result?.id) {
-        throw new Error('Error creating workbench')
-      }
-
-      return response.result?.id
-    } catch (error) {
-      console.error(error)
-      throw error
+    if (!response.result?.id) {
+      throw new Error('Error creating workbench')
     }
+
+    return response.result.id
   }
 
   async get(id: string): Promise<Workbench> {
@@ -176,11 +170,20 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
       })
 
       if (!response.result) {
-        throw new Error('Error updating workbench')
+        const error = new Error('Error updating workbench')
+        // Don't log the error here since we want the exact error message to propagate
+        throw error
       }
 
       return this.get(workbench.id)
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Error updating workbench'
+      ) {
+        throw error // Re-throw our specific error without modification
+      }
+      // For other errors (validation, network, etc.), log and re-throw
       console.error(error)
       throw error
     }

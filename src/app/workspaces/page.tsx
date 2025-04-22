@@ -1,11 +1,10 @@
 'use client'
 
+import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
 import { useState } from 'react'
-import { CirclePlus, LayoutGrid, Rows3 } from 'lucide-react'
 
 import { useAppState } from '@/components/store/app-state-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { useAuth } from '~/components/store/auth-context'
@@ -28,9 +27,12 @@ export default function WorkspacesPage() {
 
   return (
     <>
-      <div className="toot w-full">
-        <h2 className="mt-5 text-white">Workspaces</h2>
-        <div className="mb-4 mt-2 flex justify-end">
+      <div className="w-full">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
+            <Package className="h-9 w-9 text-white" />
+            Workspaces
+          </h2>
           <Button
             onClick={() => setCreateOpen(true)}
             className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
@@ -116,18 +118,20 @@ export default function WorkspacesPage() {
         </Tabs>
       </div>
 
-      <WorkspaceCreateForm
-        state={[createOpen, setCreateOpen]}
-        userId={user?.id}
-        onUpdate={async () => {
-          await refreshWorkspaces()
-          toast({
-            title: 'Success!',
-            description: 'Workspace created',
-            className: 'bg-background text-white'
-          })
-        }}
-      />
+      {createOpen && (
+        <WorkspaceCreateForm
+          state={[createOpen, setCreateOpen]}
+          userId={user?.id}
+          onUpdate={async () => {
+            await refreshWorkspaces()
+            toast({
+              title: 'Success!',
+              description: 'Workspace created',
+              className: 'bg-background text-white'
+            })
+          }}
+        />
+      )}
     </>
   )
 }

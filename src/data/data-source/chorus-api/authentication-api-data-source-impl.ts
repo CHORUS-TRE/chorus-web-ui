@@ -8,12 +8,10 @@ import {
   AuthenticationModeType,
   AuthenticationOAuthRedirectRequest,
   AuthenticationOpenID,
-  AuthenticationRequest,
-  LogoutResponse
+  AuthenticationRequest
 } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
-
 import { Configuration } from '~/internal/client'
 
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
@@ -43,8 +41,10 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
 
       return token
     } catch (error) {
-      console.error(error)
-      throw error
+      // console.error(error)
+      throw error instanceof Error
+        ? error
+        : new Error('Unknown authentication error occurred')
     }
   }
 
@@ -78,7 +78,10 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       )
       return r
     } catch (error) {
-      console.error('Error fetching authentication modes:', error)
+      console.error(
+        ' data source getAuthenticationModes Error fetching authentication modes:',
+        error
+      )
       throw error
     }
   }
@@ -123,7 +126,8 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 
   async logout(): Promise<void> {
-    const session = cookies().get('session')?.value || ''
+    const cookieStore = await cookies()
+    const session = cookieStore.get('session')
     const configuration = new Configuration({
       apiKey: `Bearer ${session}`,
       basePath: env('DATA_SOURCE_API_URL')

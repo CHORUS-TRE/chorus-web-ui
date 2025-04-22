@@ -7,9 +7,6 @@
 const config = {
   reactStrictMode: true,
   output: 'standalone',
-  eslint: {
-    dirs: ['app']
-  },
   logging: {
     fetches: {
       fullUrl: true

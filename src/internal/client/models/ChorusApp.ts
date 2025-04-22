@@ -75,6 +75,48 @@ export interface ChorusApp {
   dockerImageTag?: string
   /**
    *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  shmSize?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  kioskConfigURL?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  maxCPU?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  minCPU?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  maxMemory?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  minMemory?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  iconURL?: string
+  /**
+   *
    * @type {Date}
    * @memberof ChorusApp
    */
@@ -129,6 +171,15 @@ export function ChorusAppFromJSONTyped(
     dockerImageTag: !exists(json, 'dockerImageTag')
       ? undefined
       : json['dockerImageTag'],
+    shmSize: !exists(json, 'shmSize') ? undefined : json['shmSize'],
+    kioskConfigURL: !exists(json, 'kioskConfigURL')
+      ? undefined
+      : json['kioskConfigURL'],
+    maxCPU: !exists(json, 'maxCPU') ? undefined : json['maxCPU'],
+    minCPU: !exists(json, 'minCPU') ? undefined : json['minCPU'],
+    maxMemory: !exists(json, 'maxMemory') ? undefined : json['maxMemory'],
+    minMemory: !exists(json, 'minMemory') ? undefined : json['minMemory'],
+    iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -156,6 +207,13 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     dockerImageRegistry: value.dockerImageRegistry,
     dockerImageName: value.dockerImageName,
     dockerImageTag: value.dockerImageTag,
+    shmSize: value.shmSize,
+    kioskConfigURL: value.kioskConfigURL,
+    maxCPU: value.maxCPU,
+    minCPU: value.minCPU,
+    maxMemory: value.maxMemory,
+    minMemory: value.minMemory,
+    iconURL: value.iconURL,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:

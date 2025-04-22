@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { ResponsiveLine } from '@nivo/line'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  Activity,
   ArrowRight,
+  Book,
+  CircleGauge,
+  Database,
   DraftingCompass,
   EllipsisVerticalIcon,
+  Footprints,
+  Home,
   LaptopMinimal,
-  Rows3
+  Rows3,
+  Users
 } from 'lucide-react'
-import { Bar, BarChart, Rectangle, XAxis } from 'recharts'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
@@ -22,9 +29,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { User, Workbench, Workspace as WorkspaceType } from '@/domain/model'
-import { ResponsiveLine } from '@nivo/line'
-
+import { User, Workspace as WorkspaceType } from '@/domain/model'
 import { toast } from '~/hooks/use-toast'
 
 import { userGet } from './actions/user-view-model'
@@ -42,15 +47,46 @@ import {
 } from './ui/dropdown-menu'
 import { ScrollArea } from './ui/scroll-area'
 
+// Add a simple custom bar chart component
+function SimpleBarChart({
+  data,
+  height = 36,
+  width = 72,
+  color = 'hsl(var(--chart-1))'
+}: {
+  data: Array<{ value: number }>
+  height?: number
+  width?: number
+  color?: string
+}) {
+  const maxValue = Math.max(...data.map((item) => item.value))
+
+  return (
+    <div style={{ width, height }} className="flex items-end space-x-1">
+      {data.map((item, index) => {
+        const barHeight = (item.value / maxValue) * height
+        return (
+          <div
+            key={index}
+            style={{
+              height: `${barHeight}px`,
+              backgroundColor: color
+            }}
+            className="flex-1 rounded-t-sm"
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [workspaceUser, setWorkspaceUser] = useState<User>()
 
   const {
-    workspaces,
     workbenches,
-    error,
-    setError,
+    setNotification,
     refreshWorkspaces,
     refreshWorkbenches,
     appInstances,
@@ -61,27 +97,36 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [openEdit, setOpenEdit] = useState(false)
   const router = useRouter()
 
-  const initializeData = async () => {
+  const initializeData = useCallback(async () => {
     try {
       const [workspaceResponse] = await Promise.all([
         workspaceGet(workspaceId),
         refreshWorkbenches()
       ])
 
-      if (workspaceResponse.error) setError(workspaceResponse.error)
+      if (workspaceResponse.error)
+        setNotification({
+          title: 'Error loading workspace',
+          description: workspaceResponse.error,
+          variant: 'destructive'
+        })
       if (workspaceResponse.data) {
         setWorkspace(workspaceResponse.data)
         const userResponse = await userGet(workspaceResponse.data.ownerId)
         if (userResponse.data) setWorkspaceUser(userResponse.data)
       }
     } catch (error) {
-      setError(error.message)
+      setNotification({
+        title: 'Error loading workspace',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
-  }
+  }, [workspaceId, setNotification, refreshWorkbenches])
 
   useEffect(() => {
     initializeData()
-  }, [workspaceId])
+  }, [workspaceId, initializeData])
 
   const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
@@ -118,7 +163,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </div>
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
-            <CardTitle className="text-white">{workspace?.name}</CardTitle>
+            <CardTitle className="flex items-start gap-3 text-white">
+              <Home className="h-6 w-6 text-white" />
+              {workspace?.name}
+            </CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
           </CardHeader>
 
@@ -176,10 +224,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       >
         <CardHeader>
           <CardTitle
-            className="flex cursor-pointer items-center justify-between"
+            className="flex cursor-pointer items-center justify-between gap-2"
             onClick={() => router.push(`/workspaces/${workspace?.id}/desktops`)}
           >
-            Desktops
+            <div className="flex items-center gap-3">
+              <LaptopMinimal className="h-6 w-6 text-white" />
+              Desktops
+            </div>
+
             <Link
               href={`/workspaces/${workspace?.id}/desktops`}
               className="text-muted hover:bg-inherit hover:text-accent"
@@ -250,7 +302,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle>Data</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <Database className="h-6 w-6 text-white" />
+            Data
+          </CardTitle>
           <CardDescription>View and manage your data sources.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -281,7 +336,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       {workspace && user?.workspaceId !== workspace?.id && (
         <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
           <CardHeader>
-            <CardTitle>Team</CardTitle>
+            <CardTitle className="flex items-center gap-3">
+              <Users className="h-6 w-6 text-white" />
+              Team
+            </CardTitle>
             <CardDescription>
               See who&apos;s on your team and their roles.
             </CardDescription>
@@ -325,7 +383,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       {workspace && user?.workspaceId !== workspace?.id && (
         <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
           <CardHeader>
-            <CardTitle>Wiki</CardTitle>
+            <CardTitle className="flex items-center gap-3">
+              <Book className="h-6 w-6 text-white" />
+              Wiki
+            </CardTitle>
             <CardDescription>Share and view latest news</CardDescription>
           </CardHeader>
           <CardContent>
@@ -348,7 +409,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle>Resources</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <CircleGauge className="h-6 w-6 text-white" />
+            Resources
+          </CardTitle>
           <CardDescription>
             You&apos;re using 1.2GB of your 5GB storage limit.
           </CardDescription>
@@ -366,35 +430,15 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             }}
             className="ml-auto w-[72px]"
           >
-            <BarChart
-              accessibilityLayer
-              margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            <SimpleBarChart
               data={[
-                { date: '2024-01-01', steps: 2000 },
-                { date: '2024-01-02', steps: 2100 },
-                { date: '2024-01-03', steps: 2200 },
-                { date: '2024-01-04', steps: 1300 },
-                { date: '2024-01-05', steps: 1400 },
-                { date: '2024-01-06', steps: 2500 },
-                { date: '2024-01-07', steps: 1600 }
+                { value: 2000 },
+                { value: 2100 },
+                { value: 2200 },
+                { value: 1300 },
+                { value: 1400 }
               ]}
-            >
-              <Bar
-                dataKey="steps"
-                fill="var(--color-steps)"
-                radius={2}
-                fillOpacity={0.2}
-                activeIndex={6}
-                activeBar={<Rectangle fillOpacity={0.8} />}
-              />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={4}
-                hide
-              />
-            </BarChart>
+            />
           </ChartContainer>
         </CardContent>
         <div className="flex-grow" />
@@ -408,7 +452,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
-          <CardTitle>Activities</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <Activity className="h-6 w-6 text-white" />
+            Activities
+          </CardTitle>
           <CardDescription>Events, analytics & monitoring.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -423,9 +470,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </CardFooter>
       </Card>
 
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
+      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
         <CardHeader>
-          <CardTitle>Footprint</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <Footprints className="h-6 w-6 text-white" />
+            Footprint
+          </CardTitle>
           <div className="text-sm text-muted-foreground">
             <div className="mb-2">
               <strong>
@@ -459,35 +509,46 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             }}
             className="ml-auto w-[64px]"
           >
-            <BarChart
-              accessibilityLayer
-              margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            <SimpleBarChart
               data={[
-                { date: '2024-01-01', calories: 354 },
-                { date: '2024-01-02', calories: 514 },
-                { date: '2024-01-03', calories: 345 },
-                { date: '2024-01-04', calories: 734 },
-                { date: '2024-01-05', calories: 645 },
-                { date: '2024-01-06', calories: 456 },
-                { date: '2024-01-07', calories: 345 }
+                { value: 354 },
+                { value: 514 },
+                { value: 345 },
+                { value: 734 },
+                { value: 645 },
+                { value: 456 },
+                { value: 345 }
               ]}
-            >
-              <Bar
-                dataKey="calories"
-                fill="var(--color-calories)"
-                radius={2}
-                fillOpacity={0.2}
-                activeIndex={6}
-                activeBar={<Rectangle fillOpacity={0.8} />}
-              />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={4}
-                hide
-              />
-            </BarChart>
+            />
+          </ChartContainer>
+        </CardContent>
+        <CardContent className="px-6 pb-0 pt-3">
+          <div className="flex gap-4">
+            <CircleGauge className="h-4 w-4 text-muted-foreground" />
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-medium leading-none">Calories</p>
+              <div className="text-sm text-muted-foreground">
+                2452 cals. burned
+              </div>
+            </div>
+          </div>
+          <ChartContainer
+            config={{
+              calories: { label: 'Calories', color: 'hsl(var(--chart-2))' }
+            }}
+            className="ml-auto w-[64px]"
+          >
+            <SimpleBarChart
+              data={[
+                { value: 354 },
+                { value: 514 },
+                { value: 345 },
+                { value: 734 },
+                { value: 645 },
+                { value: 456 },
+                { value: 345 }
+              ]}
+            />
           </ChartContainer>
         </CardContent>
         <div className="flex-grow" />

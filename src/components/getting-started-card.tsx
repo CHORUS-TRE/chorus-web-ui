@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react'
 import { CardComponentProps } from 'node_modules/nextstepjs/src/types'
+import React from 'react'
 
-import { useAppState } from './store/app-state-context'
 import { Button } from './button'
+import { useAppState } from './store/app-state-context'
 
 const GettingStartedCard: React.FC<CardComponentProps> = ({
   step,
@@ -12,8 +12,7 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
   totalSteps,
   nextStep,
   prevStep,
-  skipTour,
-  arrow
+  skipTour
 }) => {
   const { setHasSeenGettingStartedTour } = useAppState()
 

@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import {
   DraftingCompass,
   EllipsisVerticalIcon,
   LaptopMinimal
 } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 import {
   WorkspaceDeleteForm,
@@ -19,7 +19,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
@@ -32,7 +31,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
-
 import { toast } from '~/hooks/use-toast'
 
 interface WorkspacesGridProps {
@@ -119,17 +117,21 @@ export default function WorkspacesGrid({
                 <CardDescription>{workspace.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="mb-4 h-[160px] pr-4">
+                <ScrollArea className="mb-4 h-[160px] pr-2">
                   <div className="grid gap-1">
                     {workbenches
                       ?.filter(
                         (workbench) => workbench.workspaceId === workspace?.id
                       )
                       .map(({ shortName, createdAt, id }) => (
-                        <Link
+                        <div
                           key={`workspace-grid-desktops-${id}`}
-                          href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                          className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            window.location.href = `/workspaces/${workspace?.id}/desktops/${id}`
+                          }}
+                          className="flex cursor-pointer flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
                         >
                           <div className="flex-grow text-sm">
                             <div className="flex items-center justify-between">
@@ -162,7 +164,7 @@ export default function WorkspacesGrid({
                               </div>
                             </div>
                           </div>
-                        </Link>
+                        </div>
                       ))}
                   </div>
                 </ScrollArea>

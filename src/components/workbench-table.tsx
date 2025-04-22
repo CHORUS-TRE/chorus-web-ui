@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight, EllipsisVerticalIcon } from 'lucide-react'
-
-import { useAppState } from '@/components/store/app-state-context'
+import { EllipsisVerticalIcon } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import React from 'react'
 
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
@@ -33,13 +32,13 @@ import {
   TableRow as TableRowComponent
 } from '~/components/ui/table'
 import { Workbench } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
 
 import {
   WorkbenchCreateForm,
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 
 export default function WorkbenchTable({
@@ -53,17 +52,11 @@ export default function WorkbenchTable({
   description?: string
   onUpdate?: (id: string) => void
 }) {
-  const {
-    workbenches,
-    refreshWorkbenches,
-    background,
-    setBackground,
-    appInstances,
-    apps
-  } = useAppState()
+  const { workbenches, refreshWorkbenches, setBackground, appInstances, apps } =
+    useAppState()
   const { user } = useAuth()
+  const { setNotification } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
-  const { toast } = useToast()
 
   const filteredWorkbenches =
     workspaceId === user?.workspaceId
@@ -72,13 +65,12 @@ export default function WorkbenchTable({
 
   useEffect(() => {
     if (deleted) {
-      toast({
+      setNotification({
         title: 'Success!',
-        description: 'Desktop deleted',
-        className: 'bg-background text-white'
+        description: 'Desktop deleted'
       })
     }
-  }, [deleted])
+  }, [deleted, setNotification])
 
   const TableHeads = () => (
     <>
@@ -99,7 +91,6 @@ export default function WorkbenchTable({
   const TableRow = ({ workbench }: { workbench?: Workbench }) => {
     const [open, setOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
-    const link = `/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`
 
     return (
       <>
@@ -109,10 +100,9 @@ export default function WorkbenchTable({
             state={[open, setOpen]}
             onUpdate={() => {
               refreshWorkbenches()
-              toast({
+              setNotification({
                 title: 'Success!',
-                description: 'Desktop updated successfully',
-                className: 'bg-background text-white'
+                description: 'Desktop updated successfully'
               })
             }}
           />
@@ -151,10 +141,10 @@ export default function WorkbenchTable({
                 const isLast = index === array.length - 1
 
                 return (
-                  <>
+                  <React.Fragment key={`app-instance-${instance.id}`}>
                     {appName}
                     {!isLast && ', '}
-                  </>
+                  </React.Fragment>
                 )
               })}
           </TableCell>
@@ -250,10 +240,9 @@ export default function WorkbenchTable({
           workspaceId={workspaceId}
           onUpdate={(workbenchId) => {
             refreshWorkbenches()
-            toast({
+            setNotification({
               title: 'Success!',
-              description: 'Desktop created successfully',
-              className: 'bg-background text-white'
+              description: 'Desktop created successfully'
             })
             setBackground({ workbenchId, workspaceId })
             if (onUpdate) onUpdate(workbenchId)

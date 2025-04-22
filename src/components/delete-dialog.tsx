@@ -1,71 +1,56 @@
 'use client'
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '~/components/ui/alert-dialog'
+import React from 'react'
 
-interface DeleteDialogProps {
+import { Button } from '~/components/button'
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from './ui/dialog'
+
+export interface DeleteDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: () => void
   title: string
   description: string
-  isDeleting?: boolean
+  onConfirm: () => void
 }
 
-export function DeleteDialog({
+export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   open,
   onOpenChange,
-  onConfirm,
   title,
   description,
-  isDeleting
-}: DeleteDialogProps) {
-  const handleConfirm = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    await onConfirm()
-  }
-
-  const handleCancel = () => {
-    if (!isDeleting) {
-      onOpenChange(false)
-    }
-  }
-
+  onConfirm
+}) => {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-background">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-white">{title}</AlertDialogTitle>
-          <AlertDialogDescription className="text-muted-foreground">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-background sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="text-white">{title}</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             {description}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            className="text-white hover:text-white"
-            disabled={isDeleting}
-            onClick={handleCancel}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            variant="outline"
+            className="bg-background text-white"
           >
             Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            onClick={handleConfirm}
-            disabled={isDeleting}
-          >
-            {isDeleting ? 'Deleting...' : 'Delete'}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+          <Button type="button" onClick={onConfirm} variant="destructive">
+            Delete
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

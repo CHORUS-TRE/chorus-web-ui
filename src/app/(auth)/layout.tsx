@@ -1,20 +1,35 @@
 'use client'
 
-import React from 'react'
-import Image from 'next/image'
 import { Github, Link } from 'lucide-react'
-
-import { Header } from '~/components/header'
-
-import packageInfo from '../../../package.json'
+import Image from 'next/image'
+import React, { useEffect } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import { useAppState } from '@/components/store/app-state-context'
+import { Header } from '~/components/header'
+import { Toaster } from '~/components/ui/toaster'
+import { toast } from '~/hooks/use-toast'
+
+import packageInfo from '../../../package.json'
 
 export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const { notification } = useAppState()
+
+  useEffect(() => {
+    if (notification) {
+      toast({
+        title: notification.title,
+        description: notification.description || '',
+        variant: notification.variant,
+        className: 'bg-background text-white'
+      })
+    }
+  }, [notification])
+
   return (
     <>
       <header className="fixed left-0 top-0 z-40 h-11 min-w-full" id="header">
@@ -46,19 +61,19 @@ export default function Layout({
               </p>
             </div>
           </div>
-          <div className="mb-8 flex-grow"></div>
-          <div className="flex w-full flex-col gap-1 text-center">
-            <a
-              href="https://chorus-tre.ch"
-              className="flex items-center justify-center gap-2 text-center text-xs font-medium text-muted underline hover:text-accent"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Chorus website"
-            >
-              <Link className="size-4" />
-              CHORUS Website
-            </a>
-            <p className="flex justify-center gap-3">
+          <div className="mt-auto flex-grow"></div>
+          <div className="flex w-full items-end justify-between gap-2">
+            <div className="">
+              <a
+                href="https://chorus-tre.ch"
+                className="mb-1 flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Chorus website"
+              >
+                <Link className="size-4" />
+                CHORUS Website
+              </a>
               <a
                 href="https://github.com/CHORUS-TRE/"
                 className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
@@ -69,8 +84,8 @@ export default function Layout({
                 <Github className="size-4" />
                 <span>Github</span>
               </a>
-            </p>
-            <p className="text-xs text-muted">
+            </div>
+            <p className="text-xs text-muted-foreground">
               Web-UI Version: {packageInfo.version}
             </p>
           </div>
@@ -81,6 +96,7 @@ export default function Layout({
           <div className="w-full max-w-xs">{children}</div>
         </div>
       </div>
+      <Toaster />
     </>
   )
 }

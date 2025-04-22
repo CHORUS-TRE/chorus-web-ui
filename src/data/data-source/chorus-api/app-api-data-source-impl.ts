@@ -2,8 +2,7 @@ import { env } from 'next-runtime-env'
 import { z } from 'zod'
 
 import { App, AppCreate } from '@/domain/model'
-import { AppSchema, AppState, AppType } from '@/domain/model/app'
-
+import { AppState, AppType } from '@/domain/model/app'
 import { AppServiceApi, ChorusApp } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
@@ -16,7 +15,16 @@ export const AppApiCreateSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   dockerImageName: z.string(),
-  dockerImageTag: z.string()
+  dockerImageTag: z.string(),
+  dockerImageRegistry: z.string().optional(),
+  shmSize: z.string().optional(),
+  kioskConfigURL: z.string().optional(),
+  maxCPU: z.string().optional(),
+  minCPU: z.string().optional(),
+  maxMemory: z.string().optional(),
+  minMemory: z.string().optional(),
+  iconURL: z.string().optional(),
+  status: z.nativeEnum(AppState).optional()
 })
 
 export const AppApiSchema = AppApiCreateSchema.extend({
@@ -33,11 +41,19 @@ const apiToDomain = (app: ChorusApp): App => {
     description: app.description || '',
     dockerImageName: app.dockerImageName || '',
     dockerImageTag: app.dockerImageTag || '',
+    dockerImageRegistry: app.dockerImageRegistry || '',
+    shmSize: app.shmSize || '',
+    kioskConfigURL: app.kioskConfigURL || '',
+    maxCPU: app.maxCPU || '',
+    minCPU: app.minCPU || '',
+    maxMemory: app.maxMemory || '',
+    minMemory: app.minMemory || '',
+    iconURL: app.iconURL || '',
     tenantId: app.tenantId || '',
     ownerId: app.userId || '',
     status: AppState[app.status?.toUpperCase() as keyof typeof AppState],
     type: AppType.APP,
-    prettyName: '',
+    prettyName: app.prettyName || '',
     url: '',
     createdAt: app.createdAt ? new Date(app.createdAt) : new Date(),
     updatedAt: app.updatedAt ? new Date(app.updatedAt) : new Date()
@@ -70,6 +86,14 @@ export class AppDataSourceImpl implements AppDataSource {
         description: app.description,
         dockerImageName: app.dockerImageName,
         dockerImageTag: app.dockerImageTag,
+        dockerImageRegistry: app.dockerImageRegistry,
+        shmSize: app.shmSize,
+        kioskConfigURL: app.kioskConfigURL,
+        maxCPU: app.maxCPU,
+        minCPU: app.minCPU,
+        maxMemory: app.maxMemory,
+        minMemory: app.minMemory,
+        iconURL: app.iconURL,
         status: AppState.ACTIVE.toLowerCase()
       }
     })
@@ -93,6 +117,14 @@ export class AppDataSourceImpl implements AppDataSource {
           description: app.description,
           dockerImageName: app.dockerImageName,
           dockerImageTag: app.dockerImageTag,
+          dockerImageRegistry: app.dockerImageRegistry,
+          shmSize: app.shmSize,
+          kioskConfigURL: app.kioskConfigURL,
+          maxCPU: app.maxCPU,
+          minCPU: app.minCPU,
+          maxMemory: app.maxMemory,
+          minMemory: app.minMemory,
+          iconURL: app.iconURL,
           status: AppState.ACTIVE.toLowerCase()
         }
       }

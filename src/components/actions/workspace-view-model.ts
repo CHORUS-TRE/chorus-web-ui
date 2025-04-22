@@ -1,6 +1,5 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-api-data-source-impl'
@@ -22,7 +21,8 @@ import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   const dataSource = new WorkspaceDataSourceImpl(session)
   return new WorkspaceRepositoryImpl(dataSource)
 }
@@ -43,8 +43,8 @@ export async function workspaceDelete(
 
     return { data: 'Successfully deleted workspace' }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error deleting workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -54,7 +54,8 @@ export async function workspaceList(): Promise<WorkspacesResponse> {
     const useCase = new WorkspacesList(repository)
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error listing workspaces', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -87,8 +88,8 @@ export async function workspaceCreate(
       error: w.error
     }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error creating workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -98,7 +99,8 @@ export async function workspaceGet(id: string): Promise<WorkspaceResponse> {
     const useCase = new WorkspaceGet(repository)
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -133,7 +135,7 @@ export async function workspaceUpdate(
       error: w.error
     }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error updating workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

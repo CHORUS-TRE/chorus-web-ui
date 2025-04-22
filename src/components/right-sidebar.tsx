@@ -1,35 +1,32 @@
 'use client'
 
-import { useEffect } from 'react'
+import { owl } from '@lucide/lab'
+import { CircleX } from 'lucide-react'
+import { Icon } from 'lucide-react'
 import Link from 'next/link'
 import { useNextStep } from 'nextstepjs'
-import { CircleX, Github } from 'lucide-react'
-import { Icon } from 'lucide-react'
-
-import { owl } from '@lucide/lab'
+import { useCallback, useEffect } from 'react'
 
 import { Button } from '~/components/ui/button'
-
-import packageInfo from '../../package.json'
 
 import { useAppState } from './store/app-state-context'
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
 
-export default function RightSidebar({ show }: { show?: boolean }) {
+export default function RightSidebar() {
   const { startNextStep } = useNextStep()
   const { toggleRightSidebar, showRightSidebar, hasSeenGettingStartedTour } =
     useAppState()
 
-  const handleStartTour = () => {
+  const handleStartTour = useCallback(() => {
     startNextStep('gettingStartedTour')
-  }
+  }, [startNextStep])
 
   useEffect(() => {
     if (!showRightSidebar) return
     if (hasSeenGettingStartedTour) return
 
     handleStartTour()
-  }, [showRightSidebar, hasSeenGettingStartedTour])
+  }, [showRightSidebar, hasSeenGettingStartedTour, handleStartTour])
 
   return (
     <>

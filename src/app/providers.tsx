@@ -5,7 +5,7 @@ import { AppStateProvider } from '@/components/store/app-state-context'
 import { AuthProvider } from '@/components/store/auth-context'
 
 async function getInitialAuthState() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const session = cookieStore.get('session')
 
   if (!session?.value) {

@@ -15,7 +15,6 @@ import { logout } from '@/components/actions/authentication-view-model'
 import { User } from '@/domain/model'
 
 import { userMe } from '../actions/user-view-model'
-
 import { useAppState } from './app-state-context'
 
 type AuthContextType = {
@@ -41,7 +40,7 @@ export const AuthProvider = ({
 }): ReactElement => {
   const [isAuthenticated, setAuthenticated] = useState<boolean>(authenticated)
   const [user, setUser] = useState<User | undefined>(initialUser)
-  const refreshInterval = useRef<NodeJS.Timeout>()
+  const refreshInterval = useRef<NodeJS.Timeout | undefined>(undefined)
 
   const { setBackground } = useAppState()
 

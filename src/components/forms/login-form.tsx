@@ -1,20 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { env } from 'next-runtime-env'
-import { ArrowRight, Loader2 } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useRouter } from 'next/navigation'
+import { useActionState, useEffect, useState, useTransition } from 'react'
+import { useFormStatus } from 'react-dom'
 
 import { AuthenticationMode } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
-
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Separator } from '~/components/ui/separator'
-import { useToast } from '~/hooks/use-toast'
 
 import {
   authenticationLogin,
@@ -23,6 +20,7 @@ import {
   getSession
 } from '../actions/authentication-view-model'
 import { IFormState } from '../actions/utils'
+import { useAppState } from '../store/app-state-context'
 import { useAuth } from '../store/auth-context'
 
 const initialState: IFormState = {
@@ -51,10 +49,12 @@ function SubmitButton() {
 
 export default function LoginForm() {
   const searchParams = useSearchParams()!
-  const [state, formAction] = useFormState(authenticationLogin, initialState)
+  const router = useRouter()
+  const [state, formAction] = useActionState(authenticationLogin, initialState)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const { toast } = useToast()
+  const { setNotification } = useAppState()
+  const [, startTransition] = useTransition()
 
   const { isAuthenticated, setAuthenticated } = useAuth()
 
@@ -62,22 +62,49 @@ export default function LoginForm() {
     const fetchAuthModes = async () => {
       try {
         const response = await getAuthenticationModes()
+
+        if (response.error) {
+          setNotification({
+            title: "Couldn't load authentication methods",
+            description: 'Please try again later',
+            variant: 'destructive'
+          })
+          return
+        }
+
         setAuthModes(response.data || [])
       } catch (error) {
-        toast({
+        setNotification({
           title: "Couldn't load authentication methods",
           description: 'Please try again later',
           variant: 'destructive'
         })
+        console.error(error)
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchAuthModes()
-  }, [])
+  }, [setNotification])
 
   useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/')
+    }
+  }, [isAuthenticated, router])
+
+  useEffect(() => {
+    if (state.error) {
+      setNotification({
+        title: 'Login failed',
+        description: state.error,
+        variant: 'destructive'
+      })
+
+      return
+    }
+
     if (state.data) {
       setAuthenticated(true)
 
@@ -85,32 +112,6 @@ export default function LoginForm() {
         // Authenticate on backend to set the session cookie
         const session = await getSession()
         if (session) {
-          // const authOnBackend = await fetch(
-          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/authentication/refresh-token`,
-          //   {
-          //     method: 'POST',
-          //     headers: {
-          //       Authorization: `Bearer ${session}`
-          //     }
-          //   }
-          // )
-
-          // const data = await authOnBackend.json()
-          // console.log('Session cookie set', data)
-
-          // const testCookie = await fetch(
-          //   `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/workspaces`,
-          //   {
-          //     headers: {
-          //       Authorization: `Bearer ${data.result.token}`
-          //     },
-          //     credentials: 'include',
-          //   }
-          // )
-
-          // const data2 = await testCookie.json()
-          // console.log('Test cookie', data2)
-
           // Get the redirect path and validate it
           const redirectPath = searchParams.get('redirect') || '/'
           // Ensure the redirect URL is relative and doesn't contain protocol/domain
@@ -124,13 +125,13 @@ export default function LoginForm() {
 
       checkAuthOnBackend()
     }
-  }, [state?.data, setAuthenticated])
+  }, [state, setAuthenticated, searchParams, router, setNotification])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
     if (mode.openid?.id) {
       const response = await getOAuthUrl(mode.openid.id)
       if (response.error) {
-        toast({
+        setNotification({
           title: "Couldn't initiate login",
           description: response.error,
           variant: 'destructive'
@@ -149,7 +150,7 @@ export default function LoginForm() {
 
   const error = searchParams.get('error')
   if (error) {
-    toast({
+    setNotification({
       title: 'Authentication Error',
       description: error,
       variant: 'destructive'
@@ -185,7 +186,9 @@ export default function LoginForm() {
                 onSubmit={(e) => {
                   e.preventDefault()
                   const formData = new FormData(e.currentTarget)
-                  formAction(formData)
+                  startTransition(() => {
+                    formAction(formData)
+                  })
                 }}
                 className="w-full"
               >
@@ -219,9 +222,6 @@ export default function LoginForm() {
 
                   <SubmitButton />
                 </div>
-                {state?.error && (
-                  <p className="mt-4 text-red-500">{state?.error}</p>
-                )}
               </form>
             </>
           )}

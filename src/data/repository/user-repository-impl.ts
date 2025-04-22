@@ -23,8 +23,8 @@ export class UserRepositoryImpl implements UserRepository {
 
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error creating user', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -37,7 +37,8 @@ export class UserRepositoryImpl implements UserRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting user', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -50,7 +51,8 @@ export class UserRepositoryImpl implements UserRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting user', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

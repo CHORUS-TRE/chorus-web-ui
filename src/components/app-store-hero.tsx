@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import { Box, Cloud, Lock, Zap } from 'lucide-react'
+import Image from 'next/image'
 
 import { Button } from '@/components/button'
 

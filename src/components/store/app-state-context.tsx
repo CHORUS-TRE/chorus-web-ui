@@ -18,8 +18,15 @@ import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceList } from '../actions/workspace-view-model'
-
 import { useAuth } from './auth-context'
+
+type NotificationType =
+  | {
+      title: string
+      description?: string
+      variant?: 'default' | 'destructive'
+    }
+  | undefined
 
 type AppStateContextType = {
   showRightSidebar: boolean
@@ -43,8 +50,8 @@ type AppStateContextType = {
   >
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
-  error: string | undefined
-  setError: Dispatch<SetStateAction<string | undefined>>
+  notification: NotificationType
+  setNotification: Dispatch<SetStateAction<NotificationType>>
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   clearState: () => void
@@ -67,8 +74,8 @@ const AppStateContext = createContext<AppStateContextType>({
   setBackground: () => {},
   workspaces: undefined,
   workbenches: undefined,
-  error: undefined,
-  setError: () => {},
+  notification: undefined,
+  setNotification: () => {},
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
   clearState: () => {},
@@ -107,7 +114,7 @@ export const AppStateProvider = ({
   const [workbenches, setWorkbenches] = useState<Workbench[] | undefined>(
     undefined
   )
-  const [error, setError] = useState<string | undefined>(undefined)
+  const [notification, setNotification] = useState<NotificationType>(undefined)
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
@@ -131,15 +138,19 @@ export const AppStateProvider = ({
 
     try {
       const response = await workspaceList()
-      if (response?.error) setError(response.error)
+      if (response?.error)
+        setNotification({ title: response.error, variant: 'destructive' })
       if (response?.data)
         setWorkspaces(
           response.data
             .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .sort((a, b) => (a.id === user?.workspaceId ? -1 : 0))
+            .sort((a) => (a.id === user?.workspaceId ? -1 : 0))
         )
     } catch (error) {
-      setError(error.message)
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -156,9 +167,13 @@ export const AppStateProvider = ({
             (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
           )
         )
-      if (response?.error) setError(response.error)
+      if (response?.error)
+        setNotification({ title: response.error, variant: 'destructive' })
     } catch (error) {
-      setError(error.message)
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -169,7 +184,8 @@ export const AppStateProvider = ({
 
     try {
       const response = await appList()
-      if (response?.error) setError(response.error)
+      if (response?.error)
+        setNotification({ title: response.error, variant: 'destructive' })
       if (response?.data) {
         setApps(
           response.data.sort((a, b) => {
@@ -179,7 +195,10 @@ export const AppStateProvider = ({
         )
       }
     } catch (error) {
-      setError(error.message)
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -193,7 +212,10 @@ export const AppStateProvider = ({
         response.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       )
     } catch (error) {
-      setError(error.message)
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }, [user])
 
@@ -213,7 +235,7 @@ export const AppStateProvider = ({
     setWorkspaces(undefined)
     setWorkbenches(undefined)
     setBackground(undefined)
-    setError(undefined)
+    setNotification(undefined)
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
@@ -236,6 +258,11 @@ export const AppStateProvider = ({
 
   const initializeState = useCallback(async () => {
     if (!user) {
+      // setNotification({
+      //   title: 'Error',
+      //   description: 'User not found',
+      //   variant: 'destructive'
+      // })
       return
     }
 
@@ -245,6 +272,11 @@ export const AppStateProvider = ({
       await refreshApps()
       await refreshAppInstances()
     } catch (error) {
+      setNotification({
+        title: 'Error',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
       console.error(error)
     }
   }, [
@@ -270,8 +302,8 @@ export const AppStateProvider = ({
         setBackground,
         workspaces,
         workbenches,
-        error,
-        setError,
+        notification,
+        setNotification,
         refreshWorkspaces,
         refreshWorkbenches,
         clearState,

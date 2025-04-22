@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { EllipsisVerticalIcon } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 import { User, Workspace } from '@/domain/model'
-
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -31,14 +30,12 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
-import { useToast } from '~/hooks/use-toast'
 
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
 import { useAppState } from './store/app-state-context'
-import { useAuth } from './store/auth-context'
 
 export default function WorkspaceTable({
   workspaces,
@@ -53,41 +50,29 @@ export default function WorkspaceTable({
   description?: string
   onUpdate?: () => void
 }) {
-  const [error, setError] = useState<string | null>(null)
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
-  const { toast } = useToast()
+  const { setNotification } = useAppState()
 
   useEffect(() => {
     if (deleted) {
-      toast({
+      setNotification({
         title: 'Success!',
         description: 'Workspace deleted',
-        className: 'bg-background text-white'
+        variant: 'default'
       })
     }
-  }, [deleted])
+  }, [deleted, setNotification])
 
   useEffect(() => {
     if (updated) {
-      toast({
+      setNotification({
         title: 'Success!',
         description: 'Workspace updated',
-        className: 'bg-background text-white'
+        variant: 'default'
       })
     }
-  }, [updated])
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error!',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
+  }, [updated, setNotification])
 
   const TableHeads = () => (
     <>

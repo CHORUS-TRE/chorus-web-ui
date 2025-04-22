@@ -16,7 +16,8 @@ import { AppUpdate } from '~/domain/use-cases/app/app-update'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
   const dataSource = new AppDataSourceImpl(session)
   return new AppRepositoryImpl(dataSource)
 }
@@ -27,7 +28,8 @@ export async function appList(): Promise<AppsResponse> {
     const useCase = new AppList(repository)
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error listing apps', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -41,12 +43,20 @@ export async function appCreate(
 
     const app: AppCreate = {
       name: formData.get('name') as string,
-      description: formData.get('description') as string,
+      description: (formData.get('description') as string) || '',
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
+      dockerImageRegistry:
+        (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
-      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP
+      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
+      shmSize: formData.get('shmSize') as string,
+      kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
+      maxCPU: formData.get('maxCPU') as string,
+      minCPU: formData.get('minCPU') as string,
+      maxMemory: formData.get('maxMemory') as string,
+      minMemory: formData.get('minMemory') as string
     }
 
     const validation = AppCreateSchema.safeParse(app)
@@ -67,7 +77,8 @@ export async function appCreate(
       error: undefined
     }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error creating app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -85,9 +96,17 @@ export async function appUpdate(
       description: formData.get('description') as string,
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
+      dockerImageRegistry:
+        (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
-      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP
+      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
+      shmSize: formData.get('shmSize') as string,
+      kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
+      maxCPU: formData.get('maxCPU') as string,
+      minCPU: formData.get('minCPU') as string,
+      maxMemory: formData.get('maxMemory') as string,
+      minMemory: formData.get('minMemory') as string
     }
 
     const updatedApp = await useCase.execute(app)
@@ -101,7 +120,8 @@ export async function appUpdate(
       error: undefined
     }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error updating app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -121,7 +141,8 @@ export async function appDelete(id: string): Promise<IFormState> {
       error: undefined
     }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error deleting app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -131,6 +152,7 @@ export async function appGet(id: string): Promise<AppResponse> {
     const useCase = new AppGet(repository)
     return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting app', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

@@ -1,8 +1,4 @@
 'use client'
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useParams, usePathname, useRouter } from 'next/navigation'
 import { formatDistance, formatDistanceToNow } from 'date-fns'
 import {
   CircleHelp,
@@ -16,7 +12,13 @@ import {
   Store,
   User
 } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 
+import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import userPlaceholder from '/public/placeholder-user.jpg'
 import { logout } from '@/components/actions/authentication-view-model'
 import { getAuthenticationModes } from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
@@ -47,7 +49,6 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { AuthenticationModeType } from '@/domain/model/authentication'
-
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
   ListItem,
@@ -58,7 +59,6 @@ import {
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
 import { AuthenticationMode, Workbench } from '~/domain/model'
-import { useToast } from '~/hooks/use-toast'
 import { getAppIcon } from '~/utils/app-icon'
 
 import { appInstanceCreate } from './actions/app-instance-view-model'
@@ -66,12 +66,9 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import NavLink from './nav-link'
 import { useAuth } from './store/auth-context'
 import { Input } from './ui/input'
-import NavLink from './nav-link'
-
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
-import userPlaceholder from '/public/placeholder-user.jpg'
 
 interface BreadcrumbItem {
   name: string
@@ -80,7 +77,6 @@ interface BreadcrumbItem {
 
 export function Header() {
   const router = useRouter()
-  const { toast } = useToast()
   const paths = usePathname()
   const [items, setItems] = useState<BreadcrumbItem[]>([])
   const {
@@ -88,7 +84,7 @@ export function Header() {
     workspaces,
     apps,
     appInstances,
-    error,
+    setNotification,
     background,
     setBackground,
     refreshWorkspaces,
@@ -97,7 +93,6 @@ export function Header() {
   } = useAppState()
   const { user, isAuthenticated, setAuthenticated } = useAuth()
 
-  const [deleted, setDeleted] = useState<boolean>(false)
   const params = useParams<{ workspaceId: string; desktopId: string }>()
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
@@ -125,7 +120,7 @@ export function Header() {
 
   const sortedWorkspacesWithWorkbenches = useMemo(
     () =>
-      workspacesWithWorkbenches?.sort((a, b) => (a.id === workspaceId ? 1 : 0)),
+      workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
     [workspacesWithWorkbenches, workspaceId]
   )
 
@@ -159,7 +154,7 @@ export function Header() {
         name: capitalize(path),
         href: pathNames.slice(0, i + 1).join('/')
       })),
-    [pathNames, capitalize, workspaces, currentWorkbench]
+    [pathNames, capitalize]
   )
 
   // Handle data fetching and updates
@@ -207,7 +202,6 @@ export function Header() {
   useEffect(() => {
     if (isInAppContext && workbenches) {
       const workbench = workbenches.find((w) => w.id === params.desktopId)
-      console.log('workbench', workbench)
       if (workbench) {
         setCurrentWorkbench(workbench)
       }
@@ -215,38 +209,27 @@ export function Header() {
   }, [isInAppContext, workbenches, params.desktopId])
 
   useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error!',
-        description: error,
-        variant: 'destructive',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [error])
+    if (isAuthenticated) return
 
-  useEffect(() => {
-    if (deleted) {
-      toast({
-        title: 'Success!',
-        description: 'Desktop was deleted, redirecting to workspace...',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [deleted])
-
-  useEffect(() => {
     const fetchAuthModes = async () => {
       try {
         const response = await getAuthenticationModes()
         setAuthModes(response.data || [])
       } catch (error) {
+        setNotification({
+          title: 'Error fetching auth modes:',
+          description:
+            error instanceof Error
+              ? error.message
+              : 'Please retry later or contact support',
+          variant: 'destructive'
+        })
         console.error('Error fetching auth modes:', error)
       }
     }
 
     fetchAuthModes()
-  }, [])
+  }, [setNotification, isAuthenticated])
 
   return (
     <>
@@ -273,7 +256,7 @@ export function Header() {
                     <Fragment key={item.href}>
                       {/* Workspaces Menu */}
                       {index === 0 && (
-                        <NavigationMenu className="hidden xl:block">
+                        <NavigationMenu className="hidden 2xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavLink
@@ -281,7 +264,7 @@ export function Header() {
                                 exact
                                 className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces' ? 'border-accent' : ''}`}
                               >
-                                <div className="flex items-center gap-[6px]">
+                                <div className="flex items-center gap-2">
                                   <Package className="h-4 w-4" />
                                   <span>My workspaces</span>
                                 </div>
@@ -316,13 +299,15 @@ export function Header() {
                                       <ListItem
                                         className="p-1 font-semibold"
                                         href={`/workspaces/${workspace.id}`}
+                                        wrapWithLi={false}
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                           <div
-                                            className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent text-white' : ''}`}
+                                            className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
                                           >
-                                            {workspace.id === workspaceId ? (
-                                              <PackageOpen className="h-4 w-4 text-accent" />
+                                            {workspace.id === workspaceId ||
+                                            paths === '/' ? (
+                                              <PackageOpen className="h-4 w-4" />
                                             ) : (
                                               <Package className="h-4 w-4" />
                                             )}
@@ -362,7 +347,7 @@ export function Header() {
                                 exact
                                 className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces/${workspaceId}' ? 'border-accent' : ''}`}
                               >
-                                <div className="flex items-center gap-[6px]">
+                                <div className="flex items-center gap-2">
                                   <PackageOpen className="h-4 w-4" />
                                   <span>{item.name}</span>
                                 </div>
@@ -409,6 +394,7 @@ export function Header() {
                                             <ListItem
                                               className="p-1 font-semibold"
                                               href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                              wrapWithLi={false}
                                             >
                                               <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                                 <div
@@ -479,6 +465,7 @@ export function Header() {
                                         title={`About ${currentWorkbench?.name}`}
                                         className="p-1 font-semibold"
                                         onClick={() => setShowAboutDialog(true)}
+                                        wrapWithLi={false}
                                       >
                                         <div className="pl-1 text-sm font-semibold text-muted-foreground">
                                           {(() => {
@@ -515,6 +502,7 @@ export function Header() {
                                       title="Settings..."
                                       className="cursor-pointer p-1 font-semibold hover:bg-accent"
                                       onClick={() => setUpdateOpen(true)}
+                                      wrapWithLi={false}
                                     ></ListItem>
 
                                     {/* Start New App Section */}
@@ -522,6 +510,7 @@ export function Header() {
                                       title="Start New App..."
                                       className="cursor-pointer p-1 font-semibold hover:bg-accent"
                                       onClick={() => setCreateOpen(true)}
+                                      wrapWithLi={false}
                                     ></ListItem>
                                     <Separator className="m-1" />
                                     {/* Fullscreen Section */}
@@ -535,6 +524,7 @@ export function Header() {
                                           iframe.requestFullscreen()
                                         }
                                       }}
+                                      wrapWithLi={false}
                                     ></ListItem>
 
                                     <Separator className="m-1" />
@@ -544,6 +534,7 @@ export function Header() {
                                       title="Quit ..."
                                       className="cursor-pointer p-1 font-semibold"
                                       onClick={() => setDeleteOpen(true)}
+                                      wrapWithLi={false}
                                     ></ListItem>
                                   </ul>
                                 </NavigationMenuContent>
@@ -563,14 +554,14 @@ export function Header() {
         {isAuthenticated && (
           <>
             <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-              <NavigationMenuList className="flex items-center justify-center gap-3">
+              <NavigationMenuList className="flex items-center justify-center gap-4">
                 <NavigationMenuItem id="getting-started-step-home">
                   <NavLink
                     href="/"
                     exact={!isUserWorkspace}
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <House className="h-4 w-4" />
                       Home
                     </div>
@@ -582,18 +573,109 @@ export function Header() {
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                     exact={isUserWorkspace}
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
                   </NavLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="mt-[2px] flex items-center gap-2">
+                    <LaptopMinimal className="h-4 w-4" />
+                    <span>Open Desktops</span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                    <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                      {sortedWorkspacesWithWorkbenches?.length === 0 ? (
+                        <div className="p-2 text-muted-foreground">
+                          No desktops found
+                        </div>
+                      ) : (
+                        sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                          <div
+                            className="mb-0 p-2"
+                            key={`dock-${workspace.id}`}
+                          >
+                            <div
+                              className={`mb-2 flex items-center gap-2 font-semibold text-muted`}
+                            >
+                              {workspace.id === workspaceId || paths === '/' ? (
+                                <PackageOpen className="h-4 w-4" />
+                              ) : (
+                                <Package className="h-4 w-4" />
+                              )}
+                              {workspace?.id === user?.workspaceId
+                                ? 'Home'
+                                : workspace?.shortName}
+                            </div>
+                            <div className="text-sm">
+                              {workbenches
+                                ?.filter(
+                                  (workbench) =>
+                                    workbench.workspaceId === workspace?.id
+                                )
+                                .map(({ shortName, createdAt, id }) => (
+                                  <div
+                                    className="mb-2 h-full pl-2"
+                                    key={`${workspace?.id}-${id}`}
+                                  >
+                                    <Link
+                                      href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                                      className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
+                                    >
+                                      <div className="text-sm font-semibold">
+                                        <div className="flex items-center justify-between">
+                                          <div
+                                            className={`mb-1 flex items-center gap-2 text-white ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                          >
+                                            <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                                            {shortName}
+                                          </div>
+                                          <p className="text-xs text-muted">
+                                            {formatDistanceToNow(createdAt)} ago
+                                          </p>
+                                        </div>
+                                        <div className="text-xs text-muted">
+                                          <div className="flex items-center gap-2 text-xs">
+                                            <DraftingCompass className="h-4 w-4 shrink-0" />
+                                            {appInstances
+                                              ?.filter(
+                                                (instance) =>
+                                                  workspace?.id ===
+                                                  instance.workspaceId
+                                              )
+                                              ?.filter(
+                                                (instance) =>
+                                                  id === instance.workbenchId
+                                              )
+                                              .map(
+                                                (instance) =>
+                                                  apps?.find(
+                                                    (app) =>
+                                                      app.id === instance.appId
+                                                  )?.name || ''
+                                              )
+                                              .join(', ')}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="mt-auto"></div>
+                                    </Link>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </ul>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
                   <NavLink
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <Store className="h-4 w-4" />
                       App Store
                     </div>
@@ -601,7 +683,7 @@ export function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex place-items-center gap-2">
                       <DraftingCompass className="h-4 w-4" />
                       <span>My Apps</span>
                     </div>
@@ -614,20 +696,19 @@ export function Header() {
                           className="cursor-pointer text-white hover:text-primary"
                           onClick={async () => {
                             if (!currentWorkbench) {
-                              toast({
+                              setNotification({
                                 title: 'Select a desktop first',
                                 description:
                                   'You must select a desktop to launch an app',
-                                variant: 'destructive',
-                                className: 'bg-background text-white'
+                                variant: 'default'
                               })
                               return
                             }
 
-                            toast({
+                            setNotification({
                               title: 'Launching app...',
                               description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
-                              className: 'bg-background text-white'
+                              variant: 'default'
                             })
 
                             const formData = new FormData()
@@ -644,29 +725,29 @@ export function Header() {
                               )
 
                               if (result.error) {
-                                toast({
+                                setNotification({
                                   title: 'Error launching app',
                                   description: result.error,
-                                  variant: 'destructive',
-                                  className: 'bg-background text-white'
+                                  variant: 'destructive'
                                 })
                                 return
                               }
 
-                              toast({
+                              setNotification({
                                 title: 'Success!',
-                                description: `${app.name} launched successfully`,
-                                className: 'bg-background text-white'
+                                description: `${app.name} launched successfully`
                               })
 
                               refreshWorkbenches()
                               refreshWorkspaces()
                             } catch (error) {
-                              toast({
+                              setNotification({
                                 title: 'Error launching app',
-                                description: error.message,
-                                variant: 'destructive',
-                                className: 'bg-background text-white'
+                                description:
+                                  error instanceof Error
+                                    ? error.message
+                                    : String(error),
+                                variant: 'destructive'
                               })
                             }
                           }}
@@ -677,7 +758,7 @@ export function Header() {
                                 getAppIcon(app.name, { id: 'header-my-apps' })}
                             </div>
                             <div className="flex flex-col">
-                              <div className="flex items-center gap-[6px]">
+                              <div className="flex items-center gap-2">
                                 <DraftingCompass className="h-4 w-4" />
                                 <span className="text-sm font-medium leading-none text-white">
                                   {app.name}
@@ -715,7 +796,7 @@ export function Header() {
                     exact={!isUserWorkspace}
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex items-center gap-2">
                       <House className="h-4 w-4" />
                       Home
                     </div>
@@ -725,16 +806,17 @@ export function Header() {
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                     exact={isUserWorkspace}
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex items-center gap-2">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
                   </NavLink>
+
                   <NavLink
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex items-center gap-[6px]">
+                    <div className="mt-1 flex items-center gap-2">
                       <Store className="h-4 w-4" />
                       App Store
                     </div>
@@ -746,86 +828,6 @@ export function Header() {
         )}
 
         <div className="flex items-center justify-end">
-          {isAuthenticated && (
-            <NavigationMenu className="">
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="mr-2 mt-2">
-                  <LaptopMinimal className="h-6 w-6" />
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                  <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                    {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                      <div className="mb-3 p-2" key={`dock-${workspace.id}`}>
-                        <div
-                          className={`mb-2 flex items-center gap-2 font-semibold text-muted-foreground`}
-                        >
-                          {workspace.id === workspaceId ? (
-                            <PackageOpen className="h-4 w-4" />
-                          ) : (
-                            <Package className="h-4 w-4" />
-                          )}
-                          {workspace?.id === user?.workspaceId
-                            ? 'Home'
-                            : workspace?.shortName}
-                        </div>
-                        <div className="text-sm">
-                          {workbenches
-                            ?.filter(
-                              (workbench) =>
-                                workbench.workspaceId === workspace?.id
-                            )
-                            .map(({ shortName, createdAt, id }) => (
-                              <Link
-                                key={workspace?.id}
-                                href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                                className={`flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg`}
-                              >
-                                <div className="flex-grow text-sm font-semibold">
-                                  <div className="flex items-center justify-between">
-                                    <div
-                                      className={`flex items-center gap-2 ${id === background?.workbenchId ? 'text-accent' : ''}`}
-                                    >
-                                      <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                      {shortName}
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                      {formatDistanceToNow(createdAt)} ago
-                                    </p>
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    <div className="flex items-center gap-2 text-xs">
-                                      <DraftingCompass className="h-4 w-4 shrink-0" />
-                                      {appInstances
-                                        ?.filter(
-                                          (instance) =>
-                                            workspace?.id ===
-                                            instance.workspaceId
-                                        )
-                                        ?.filter(
-                                          (instance) =>
-                                            id === instance.workbenchId
-                                        )
-                                        .map(
-                                          (instance) =>
-                                            apps?.find(
-                                              (app) => app.id === instance.appId
-                                            )?.name || ''
-                                        )
-                                        .join(', ')}
-                                    </div>
-                                  </div>
-                                </div>
-                              </Link>
-                            ))}
-                        </div>
-                      </div>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenu>
-          )}
-
           {isAuthenticated && (
             <div className="relative mr-2 hidden flex-1 xl:block">
               <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
@@ -919,7 +921,11 @@ export function Header() {
           id={params.desktopId}
           state={[deleteOpen, setDeleteOpen]}
           onUpdate={() => {
-            setDeleted(true)
+            setNotification({
+              title: 'Success!',
+              description: 'Desktop was deleted, redirecting to workspace...',
+              variant: 'default'
+            })
             setTimeout(() => {
               setBackground(undefined)
               router.replace(`/workspaces/${workspaceId}`)
