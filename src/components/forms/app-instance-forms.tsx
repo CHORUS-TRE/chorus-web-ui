@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Button } from '~/components/button'
@@ -81,6 +82,7 @@ export function AppInstanceCreateForm({
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">Start App</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>

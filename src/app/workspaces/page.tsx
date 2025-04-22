@@ -118,18 +118,20 @@ export default function WorkspacesPage() {
         </Tabs>
       </div>
 
-      <WorkspaceCreateForm
-        state={[createOpen, setCreateOpen]}
-        userId={user?.id}
-        onUpdate={async () => {
-          await refreshWorkspaces()
-          toast({
-            title: 'Success!',
-            description: 'Workspace created',
-            className: 'bg-background text-white'
-          })
-        }}
-      />
+      {createOpen && (
+        <WorkspaceCreateForm
+          state={[createOpen, setCreateOpen]}
+          userId={user?.id}
+          onUpdate={async () => {
+            await refreshWorkspaces()
+            toast({
+              title: 'Success!',
+              description: 'Workspace created',
+              className: 'bg-background text-white'
+            })
+          }}
+        />
+      )}
     </>
   )
 }

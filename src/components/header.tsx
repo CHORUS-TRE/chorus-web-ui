@@ -580,84 +580,93 @@ export function Header() {
                   </NavLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mt-1 flex items-center gap-2">
+                  <NavigationMenuTrigger className="mt-[2px] flex items-center gap-2">
                     <LaptopMinimal className="h-4 w-4" />
                     <span>Open Desktops</span>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                      {sortedWorkspacesWithWorkbenches?.map((workspace) => (
-                        <div className="mb-0 p-2" key={`dock-${workspace.id}`}>
-                          <div
-                            className={`mb-2 flex items-center gap-2 font-semibold text-muted`}
-                          >
-                            {workspace.id === workspaceId || paths === '/' ? (
-                              <PackageOpen className="h-4 w-4" />
-                            ) : (
-                              <Package className="h-4 w-4" />
-                            )}
-                            {workspace?.id === user?.workspaceId
-                              ? 'Home'
-                              : workspace?.shortName}
-                          </div>
-                          <div className="text-sm">
-                            {workbenches
-                              ?.filter(
-                                (workbench) =>
-                                  workbench.workspaceId === workspace?.id
-                              )
-                              .map(({ shortName, createdAt, id }) => (
-                                <div
-                                  className="mb-2 h-full pl-2"
-                                  key={`${workspace?.id}-${id}`}
-                                >
-                                  <Link
-                                    href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                                    className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
-                                  >
-                                    <div className="text-sm font-semibold">
-                                      <div className="flex items-center justify-between">
-                                        <div
-                                          className={`mb-1 flex items-center gap-2 text-white ${id === background?.workbenchId ? 'text-accent' : ''}`}
-                                        >
-                                          <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                          {shortName}
-                                        </div>
-                                        <p className="text-xs text-muted">
-                                          {formatDistanceToNow(createdAt)} ago
-                                        </p>
-                                      </div>
-                                      <div className="text-xs text-muted">
-                                        <div className="flex items-center gap-2 text-xs">
-                                          <DraftingCompass className="h-4 w-4 shrink-0" />
-                                          {appInstances
-                                            ?.filter(
-                                              (instance) =>
-                                                workspace?.id ===
-                                                instance.workspaceId
-                                            )
-                                            ?.filter(
-                                              (instance) =>
-                                                id === instance.workbenchId
-                                            )
-                                            .map(
-                                              (instance) =>
-                                                apps?.find(
-                                                  (app) =>
-                                                    app.id === instance.appId
-                                                )?.name || ''
-                                            )
-                                            .join(', ')}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="mt-auto"></div>
-                                  </Link>
-                                </div>
-                              ))}
-                          </div>
+                      {sortedWorkspacesWithWorkbenches?.length === 0 ? (
+                        <div className="p-2 text-muted-foreground">
+                          No desktops found
                         </div>
-                      ))}
+                      ) : (
+                        sortedWorkspacesWithWorkbenches?.map((workspace) => (
+                          <div
+                            className="mb-0 p-2"
+                            key={`dock-${workspace.id}`}
+                          >
+                            <div
+                              className={`mb-2 flex items-center gap-2 font-semibold text-muted`}
+                            >
+                              {workspace.id === workspaceId || paths === '/' ? (
+                                <PackageOpen className="h-4 w-4" />
+                              ) : (
+                                <Package className="h-4 w-4" />
+                              )}
+                              {workspace?.id === user?.workspaceId
+                                ? 'Home'
+                                : workspace?.shortName}
+                            </div>
+                            <div className="text-sm">
+                              {workbenches
+                                ?.filter(
+                                  (workbench) =>
+                                    workbench.workspaceId === workspace?.id
+                                )
+                                .map(({ shortName, createdAt, id }) => (
+                                  <div
+                                    className="mb-2 h-full pl-2"
+                                    key={`${workspace?.id}-${id}`}
+                                  >
+                                    <Link
+                                      href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                                      className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
+                                    >
+                                      <div className="text-sm font-semibold">
+                                        <div className="flex items-center justify-between">
+                                          <div
+                                            className={`mb-1 flex items-center gap-2 text-white ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                          >
+                                            <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                                            {shortName}
+                                          </div>
+                                          <p className="text-xs text-muted">
+                                            {formatDistanceToNow(createdAt)} ago
+                                          </p>
+                                        </div>
+                                        <div className="text-xs text-muted">
+                                          <div className="flex items-center gap-2 text-xs">
+                                            <DraftingCompass className="h-4 w-4 shrink-0" />
+                                            {appInstances
+                                              ?.filter(
+                                                (instance) =>
+                                                  workspace?.id ===
+                                                  instance.workspaceId
+                                              )
+                                              ?.filter(
+                                                (instance) =>
+                                                  id === instance.workbenchId
+                                              )
+                                              .map(
+                                                (instance) =>
+                                                  apps?.find(
+                                                    (app) =>
+                                                      app.id === instance.appId
+                                                  )?.name || ''
+                                              )
+                                              .join(', ')}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="mt-auto"></div>
+                                    </Link>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>

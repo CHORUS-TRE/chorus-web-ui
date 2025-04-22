@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
 
@@ -33,6 +34,7 @@ export default function Dialog({
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">{triggerText}</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>{children}</DialogDescription>
         </DialogHeader>
