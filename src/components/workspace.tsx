@@ -9,7 +9,7 @@ import {
   DraftingCompass,
   EllipsisVerticalIcon,
   Footprints,
-  Info,
+  Home,
   LaptopMinimal,
   Rows3,
   Users
@@ -164,7 +164,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
             <CardTitle className="flex items-start gap-3 text-white">
-              <Info className="h-6 w-6 text-white" />
+              <Home className="h-6 w-6 text-white" />
               {workspace?.name}
             </CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>

@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import React from 'react'
 
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
@@ -140,10 +141,10 @@ export default function WorkbenchTable({
                 const isLast = index === array.length - 1
 
                 return (
-                  <>
+                  <React.Fragment key={`app-instance-${instance.id}`}>
                     {appName}
                     {!isLast && ', '}
-                  </>
+                  </React.Fragment>
                 )
               })}
           </TableCell>

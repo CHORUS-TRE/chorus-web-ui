@@ -1,20 +1,33 @@
-'use server'
+'use client'
 
-type Params = Promise<{ workspaceId: string }>
+import { useParams } from 'next/navigation'
+import { useEffect } from 'react'
 
-import { use } from 'react'
-
+import { useAppState } from '~/components/store/app-state-context'
 import WorkbenchTable from '~/components/workbench-table'
 
-export default async function Page(props: { params: Params }) {
-  const params = use(props.params)
-  const workspaceId = params.workspaceId
+export default function DesktopsPage() {
+  const params = useParams<{ workspaceId: string }>()
+  const workspaceId = params?.workspaceId
+  const { refreshWorkbenches } = useAppState()
+
+  useEffect(() => {
+    if (workspaceId) {
+      refreshWorkbenches()
+    }
+  }, [workspaceId, refreshWorkbenches])
+
+  if (!workspaceId) {
+    return null
+  }
 
   return (
     <div className="flex flex-col">
-      {workspaceId && (
-        <WorkbenchTable workspaceId={workspaceId} title="Desktops" />
-      )}
+      <WorkbenchTable
+        workspaceId={workspaceId}
+        title="Desktops"
+        description="Manage your desktops in this workspace"
+      />
     </div>
   )
 }
