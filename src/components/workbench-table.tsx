@@ -20,7 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
@@ -94,7 +93,7 @@ export default function WorkbenchTable({
 
     return (
       <>
-        {workbench && (
+        {workbench && open && (
           <WorkbenchUpdateForm
             workbench={workbench}
             state={[open, setOpen]}
@@ -108,17 +107,19 @@ export default function WorkbenchTable({
           />
         )}
 
-        <WorkbenchDeleteForm
-          id={workbench?.id}
-          state={[deleteOpen, setDeleteOpen]}
-          onUpdate={() => {
-            setDeleted(true)
-            setTimeout(() => {
-              setDeleted(false)
-            }, 3000)
-            refreshWorkbenches()
-          }}
-        />
+        {deleteOpen && (
+          <WorkbenchDeleteForm
+            id={workbench?.id}
+            state={[deleteOpen, setDeleteOpen]}
+            onUpdate={() => {
+              setDeleted(true)
+              setTimeout(() => {
+                setDeleted(false)
+              }, 3000)
+              refreshWorkbenches()
+            }}
+          />
+        )}
 
         <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
           {/* <TableCell className="p-1" align="center">
@@ -171,7 +172,7 @@ export default function WorkbenchTable({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-black text-white">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault()

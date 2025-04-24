@@ -7,7 +7,7 @@ import {
   LaptopMinimal
 } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import {
   WorkspaceDeleteForm,
@@ -26,12 +26,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
-import { toast } from '~/hooks/use-toast'
 
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
@@ -48,30 +46,8 @@ export default function WorkspacesGrid({
 }: WorkspacesGridProps) {
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
-  const [deleted, setDeleted] = useState(false)
-  const [updated, setUpdated] = useState(false)
-
-  const { apps, appInstances } = useAppState()
-
-  useEffect(() => {
-    if (deleted) {
-      toast({
-        title: 'Success!',
-        description: 'Workspace deleted',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [deleted])
-
-  useEffect(() => {
-    if (updated) {
-      toast({
-        title: 'Success!',
-        description: 'Workspace updated',
-        className: 'bg-background text-white'
-      })
-    }
-  }, [updated])
+  const { setNotification } = useAppState()
+  const { apps, appInstances, refreshWorkspaces } = useAppState()
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
@@ -91,7 +67,7 @@ export default function WorkspacesGrid({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-black text-white">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                 <DropdownMenuItem
                   onClick={() => setActiveUpdateId(workspace.id)}
                 >
@@ -131,19 +107,17 @@ export default function WorkspacesGrid({
                             e.stopPropagation()
                             window.location.href = `/workspaces/${workspace?.id}/desktops/${id}`
                           }}
-                          className="flex cursor-pointer flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
+                          className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
                         >
-                          <div className="flex-grow text-sm">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                {shortName}
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(createdAt)} ago
-                              </p>
+                          <div className="mb-0.5 flex-grow text-sm">
+                            <div className="mb-0.5 flex items-center gap-2">
+                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                              {shortName}
                             </div>
-                            <div className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted">
+                              {formatDistanceToNow(createdAt)} ago
+                            </p>
+                            <div className="mt-0.5 text-xs text-muted-foreground">
                               <div className="flex items-center gap-2 text-xs">
                                 <DraftingCompass className="h-4 w-4 shrink-0" />
                                 {appInstances
@@ -154,6 +128,7 @@ export default function WorkspacesGrid({
                                   ?.filter(
                                     (instance) => id === instance.workbenchId
                                   )
+                                  .slice(0, 3)
                                   .map(
                                     (instance) =>
                                       apps?.find(
@@ -178,31 +153,41 @@ export default function WorkspacesGrid({
             </Card>
           </Link>
 
-          <WorkspaceUpdateForm
-            workspace={workspace}
-            state={[
-              activeUpdateId === workspace.id,
-              () => setActiveUpdateId(null)
-            ]}
-            onUpdate={() => {
-              setUpdated(true)
-              setTimeout(() => setUpdated(false), 3000)
-              if (onUpdate) onUpdate()
-            }}
-          />
+          {activeUpdateId === workspace.id && (
+            <WorkspaceUpdateForm
+              workspace={workspace}
+              state={[
+                activeUpdateId === workspace.id,
+                () => setActiveUpdateId(null)
+              ]}
+              onUpdate={() => {
+                setNotification({
+                  title: 'Success!',
+                  description: 'Workspace updated'
+                })
+                if (onUpdate) onUpdate()
+              }}
+            />
+          )}
 
-          <WorkspaceDeleteForm
-            id={workspace.id}
-            state={[
-              activeDeleteId === workspace.id,
-              () => setActiveDeleteId(null)
-            ]}
-            onUpdate={() => {
-              setDeleted(true)
-              setTimeout(() => setDeleted(false), 3000)
-              if (onUpdate) onUpdate()
-            }}
-          />
+          {activeDeleteId === workspace.id && (
+            <WorkspaceDeleteForm
+              id={workspace.id}
+              state={[
+                activeDeleteId === workspace.id,
+                () => setActiveDeleteId(null)
+              ]}
+              onUpdate={() => {
+                refreshWorkspaces()
+
+                setNotification({
+                  title: 'Success!',
+                  description: 'Workspace deleted'
+                })
+                if (onUpdate) onUpdate()
+              }}
+            />
+          )}
         </div>
       ))}
     </div>

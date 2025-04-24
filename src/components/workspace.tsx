@@ -30,7 +30,6 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { User, Workspace as WorkspaceType } from '@/domain/model'
-import { toast } from '~/hooks/use-toast'
 
 import { userGet } from './actions/user-view-model'
 import { workspaceGet } from './actions/workspace-view-model'
@@ -42,7 +41,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { ScrollArea } from './ui/scroll-area'
@@ -148,7 +146,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-black text-white">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
               <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                 Edit
               </DropdownMenuItem>
@@ -204,19 +202,20 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </Button>
         </CardFooter> */}
         </Card>
-        <WorkspaceUpdateForm
-          workspace={workspace}
-          state={[openEdit, setOpenEdit]}
-          onUpdate={() => {
-            toast({
-              title: 'Workspace updated',
-              description: 'Workspace updated',
-              variant: 'default',
-              className: 'bg-background text-white'
-            })
-            initializeData()
-          }}
-        />
+        {openEdit && (
+          <WorkspaceUpdateForm
+            workspace={workspace}
+            state={[openEdit, setOpenEdit]}
+            onUpdate={() => {
+              setNotification({
+                title: 'Workspace updated',
+                description: 'Workspace updated',
+                variant: 'default'
+              })
+              initializeData()
+            }}
+          />
+        )}
       </div>
       <Card
         className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white"
@@ -242,26 +241,24 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           <CardDescription>Your running desktops.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[160px] pr-4">
+          <ScrollArea className="h-[160px]">
             <div className="grid gap-1">
               {filteredWorkbenches
                 ?.filter((workbench) => workbench.workspaceId === workspace?.id)
-                .map(({ shortName, createdAt, id }) => (
+                .map(({ shortName, id }) => (
                   <Link
                     key={`workspace-desktops-${id}`}
                     href={`/workspaces/${workspace?.id}/desktops/${id}`}
-                    className="flex flex-col justify-between rounded-lg border-muted/10 bg-background/40 p-1 text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-primary hover:shadow-lg"
+                    className="flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
                   >
                     <div className="flex-grow text-sm">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                          {shortName}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(createdAt)} ago
-                        </p>
+                      <div className="mb-1 flex items-center gap-2">
+                        <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                        {shortName}
                       </div>
+                      {/* <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(createdAt)} ago
+                        </p> */}
                       <div className="text-xs text-muted-foreground">
                         <div className="flex items-center gap-2 text-xs">
                           <DraftingCompass className="h-4 w-4 shrink-0" />
@@ -271,6 +268,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                 workspace?.id === instance.workspaceId
                             )
                             ?.filter((instance) => id === instance.workbenchId)
+                            .slice(0, 3)
                             .map(
                               (instance) =>
                                 apps?.find((app) => app.id === instance.appId)

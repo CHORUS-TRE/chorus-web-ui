@@ -10,7 +10,6 @@ import { toast } from '~/hooks/use-toast'
 
 import RightSidebar from '../right-sidebar'
 import { Button } from '../ui/button'
-import { Toaster } from '../ui/toaster'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -59,7 +58,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           className="hover:bg-accent"
         >
           <div
-            className="fixed left-0 top-0 z-20 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
+            className="fixed left-0 top-0 z-30 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
             id="iframe-overlay"
           >
             <div className="pl-4 pt-32 text-white">
@@ -108,7 +107,6 @@ export function MainLayout({ children }: MainLayoutProps) {
           </div>
         )}
       </div>
-      <Toaster />
     </>
   )
 }

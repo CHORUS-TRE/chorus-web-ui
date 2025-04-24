@@ -11,7 +11,6 @@ import { useAuth } from '~/components/store/auth-context'
 import { Button as UIButton } from '~/components/ui/button'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
-import { toast } from '~/hooks/use-toast'
 
 export default function WorkspacesPage() {
   const {
@@ -19,7 +18,8 @@ export default function WorkspacesPage() {
     toggleWorkspaceView,
     workspaces,
     workbenches,
-    refreshWorkspaces
+    refreshWorkspaces,
+    setNotification
   } = useAppState()
   const { user } = useAuth()
 
@@ -124,10 +124,9 @@ export default function WorkspacesPage() {
           userId={user?.id}
           onUpdate={async () => {
             await refreshWorkspaces()
-            toast({
+            setNotification({
               title: 'Success!',
-              description: 'Workspace created',
-              className: 'bg-background text-white'
+              description: 'Workspace created'
             })
           }}
         />
