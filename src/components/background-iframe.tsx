@@ -1,58 +1,25 @@
 'use client'
 
 import { env } from 'next-runtime-env'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
+import { useUrlValidation } from '@/hooks/use-url-validation'
 
-const MAX_ATTEMPTS = 10
-const RETRY_INTERVAL = 1000
+import { ErrorOverlay } from './error-overlay'
+import { LoadingOverlay } from './loading-overlay'
 
 export default function BackgroundIframe() {
-  const { background, appInstances, setNotification } = useAppState()
-  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const { background, setBackground } = useAppState()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
-  const [isUrlValid, setIsUrlValid] = useState(false)
-  const [attemptCount, setAttemptCount] = useState(0)
-
-  const resetState = useCallback(() => {
-    setUrl(null)
-    setIsUrlValid(false)
-    setNotification(undefined)
-    setAttemptCount(0)
-  }, [setNotification])
-
-  const workbenchAppInstances = appInstances?.filter(
-    (ai) => ai.workbenchId === background?.workbenchId
-  )
-
-  const pingIframeURL = useCallback(
-    async (urlToCheck: string): Promise<boolean> => {
-      if (!urlToCheck || isUrlValid) return false
-
-      try {
-        const result = await fetch(urlToCheck, { method: 'HEAD' })
-        return result.status === 200
-      } catch (e) {
-        const errorMessage =
-          e instanceof Error ? e.message : 'Unknown error occurred'
-        setNotification({
-          title: 'Error loading app',
-          description: errorMessage,
-          variant: 'destructive'
-        })
-        return false
-      }
-    },
-    [isUrlValid, setNotification]
-  )
+  const { isValid, error, isLoading } = useUrlValidation(url)
 
   // URL initialization effect
   useEffect(() => {
     if (!background?.workbenchId) {
-      resetState()
+      setUrl(null)
       return
     }
 
@@ -62,65 +29,20 @@ export default function BackgroundIframe() {
     const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.workbenchId}/stream/`
 
     setUrl(newUrl)
-    setIsUrlValid(false)
-    setNotification(undefined)
-    setAttemptCount(0)
-  }, [background, setNotification, resetState])
+  }, [background])
 
-  // URL validation effect
   useEffect(() => {
-    if (!url) return
-
-    const validateURL = async () => {
-      if (attemptCount >= MAX_ATTEMPTS) {
-        setNotification({
-          title: 'Max attempts reached. Please check the URL and try again.',
-          variant: 'destructive'
-        })
-
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current)
-        }
-        return
-      }
-
-      try {
-        const isValid = await pingIframeURL(url)
-        setIsUrlValid(Boolean(isValid))
-
-        if (isValid) {
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current)
-          }
-        } else {
-          setAttemptCount((prev) => prev + 1)
-        }
-      } catch (err) {
-        setNotification({
-          title: 'Error loading app',
-          description: err instanceof Error ? err.message : String(err),
-          variant: 'destructive'
-        })
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current)
-        }
-      }
+    if (error) {
+      setTimeout(() => {
+        setBackground(undefined)
+      }, 3 * 1000)
     }
-
-    validateURL()
-    intervalRef.current = setInterval(validateURL, RETRY_INTERVAL)
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [url, isUrlValid, attemptCount, pingIframeURL, setNotification])
+  }, [error, setBackground])
 
   // Focus management effect
   useEffect(() => {
     const iframe = iFrameRef.current
-    if (!iframe || !isUrlValid) return
+    if (!iframe || !isValid) return
 
     iframe.focus()
     const focusTimeout = setTimeout(() => {
@@ -128,30 +50,29 @@ export default function BackgroundIframe() {
     }, 1000)
 
     return () => clearTimeout(focusTimeout)
-  }, [isUrlValid, workbenchAppInstances])
+  }, [isValid])
 
   if (!background) return null
 
   return (
     <>
+      <LoadingOverlay
+        isLoading={isLoading}
+        message="Loading workspace..."
+        delay={2000}
+        dismiss={error ? true : false}
+      />
+      {error && <ErrorOverlay error={error} />}
       <iframe
         title="Application Workspace"
-        src={isUrlValid && url ? url : 'about:blank'}
+        src={isValid && url ? url : 'about:blank'}
         allow="autoplay; fullscreen; clipboard-write;"
         style={{ width: '100vw', height: '100vh' }}
-        className="fixed left-0 top-11 z-10 h-full w-full"
+        className="fixed left-0 top-11 z-20 h-full w-full"
         id="workspace-iframe"
         ref={iFrameRef}
         aria-label="Application Workspace"
         tabIndex={0}
-        onLoad={() => {
-          if (isUrlValid) {
-            setNotification({
-              title: 'Workspace Ready',
-              description: 'Your workspace has been loaded successfully'
-            })
-          }
-        }}
       />
     </>
   )
