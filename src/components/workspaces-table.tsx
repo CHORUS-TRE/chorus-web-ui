@@ -95,30 +95,34 @@ export default function WorkspaceTable({
     const [deleteOpen, setDeleteOpen] = useState(false)
     return (
       <>
-        <WorkspaceUpdateForm
-          workspace={workspace}
-          state={[open, setOpen]}
-          onUpdate={() => {
-            setUpdated(true)
-            setTimeout(() => {
-              setUpdated(false)
-            }, 3000)
+        {open && (
+          <WorkspaceUpdateForm
+            workspace={workspace}
+            state={[open, setOpen]}
+            onUpdate={() => {
+              setUpdated(true)
+              setTimeout(() => {
+                setUpdated(false)
+              }, 3000)
 
-            if (onUpdate) onUpdate()
-          }}
-        />
+              if (onUpdate) onUpdate()
+            }}
+          />
+        )}
 
-        <WorkspaceDeleteForm
-          id={workspace?.id}
-          state={[deleteOpen, setDeleteOpen]}
-          onUpdate={() => {
-            setDeleted(true)
-            setTimeout(() => {
-              setDeleted(false)
-            }, 3000)
-            if (onUpdate) onUpdate()
-          }}
-        />
+        {deleteOpen && (
+          <WorkspaceDeleteForm
+            id={workspace?.id}
+            state={[deleteOpen, setDeleteOpen]}
+            onUpdate={() => {
+              setDeleted(true)
+              setTimeout(() => {
+                setDeleted(false)
+              }, 3000)
+              if (onUpdate) onUpdate()
+            }}
+          />
+        )}
         <TableRowComponent className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
           <TableCell className="p-1 font-semibold">
             <Link
