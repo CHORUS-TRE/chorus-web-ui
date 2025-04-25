@@ -1,3 +1,10 @@
+# [1.0.0-alpha.27](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.26...v1.0.0-alpha.27) (2025-04-25)
+
+
+### Features
+
+* improved layout and responsiveness ([e051368](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e0513686f03733739a51db5f894d23aa670d5a7f))
+
 # [1.0.0-alpha.26](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.25...v1.0.0-alpha.26) (2025-04-22)
 
 
