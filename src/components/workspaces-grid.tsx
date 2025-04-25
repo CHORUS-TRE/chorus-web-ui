@@ -110,14 +110,14 @@ export default function WorkspacesGrid({
                           className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
                         >
                           <div className="mb-0.5 flex-grow text-sm">
-                            <div className="mb-0.5 flex items-center gap-2">
+                            <div className="mb-1 flex items-center gap-2">
                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                               {shortName}
                             </div>
                             <p className="text-xs text-muted">
                               {formatDistanceToNow(createdAt)} ago
                             </p>
-                            <div className="mt-0.5 text-xs text-muted-foreground">
+                            <div className="mt-1 text-xs text-muted-foreground">
                               <div className="flex items-center gap-2 text-xs">
                                 <DraftingCompass className="h-4 w-4 shrink-0" />
                                 {appInstances
