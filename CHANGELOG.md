@@ -1,3 +1,10 @@
+# [1.0.0-alpha.28](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.27...v1.0.0-alpha.28) (2025-04-28)
+
+
+### Features
+
+* enhance app creation and editing dialogs with resource presets and validation ([2f40843](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2f40843d81568447bfd41b2adf8056b1fa57c22b))
+
 # [1.0.0-alpha.27](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.26...v1.0.0-alpha.27) (2025-04-25)
 
 
