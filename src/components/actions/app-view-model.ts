@@ -6,13 +6,14 @@ import { cookies } from 'next/headers'
 import { AppDataSourceImpl } from '~/data/data-source/chorus-api/app-api-data-source-impl'
 import { AppRepositoryImpl } from '~/data/repository/app-repository-impl'
 import { AppCreate, AppResponse, AppsResponse } from '~/domain/model'
-import { AppCreateSchema, AppType } from '~/domain/model/app'
+import { AppType } from '~/domain/model/app'
 import { AppCreate as AppCreateUseCase } from '~/domain/use-cases/app/app-create'
 import { AppDelete } from '~/domain/use-cases/app/app-delete'
 import { AppGet } from '~/domain/use-cases/app/app-get'
 import { AppList } from '~/domain/use-cases/app/app-list'
 import { AppUpdate } from '~/domain/use-cases/app/app-update'
 
+import { AppCreateSchema } from './app-schema'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
@@ -51,12 +52,12 @@ export async function appCreate(
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
       type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
-      shmSize: formData.get('shmSize') as string,
+      shmSize: (formData.get('shmSize') as string) || '',
       kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
-      maxCPU: formData.get('maxCPU') as string,
-      minCPU: formData.get('minCPU') as string,
-      maxMemory: formData.get('maxMemory') as string,
-      minMemory: formData.get('minMemory') as string
+      maxCPU: (formData.get('maxCPU') as string) || '',
+      minCPU: (formData.get('minCPU') as string) || '',
+      maxMemory: (formData.get('maxMemory') as string) || '',
+      minMemory: (formData.get('minMemory') as string) || ''
     }
 
     const validation = AppCreateSchema.safeParse(app)
@@ -64,8 +65,7 @@ export async function appCreate(
       return { issues: validation.error.issues }
     }
 
-    const nextApp = AppCreateSchema.parse(app)
-    const createdApp = await useCase.execute(nextApp)
+    const createdApp = await useCase.execute(app)
 
     if (createdApp.error) {
       return { error: createdApp.error }
@@ -93,7 +93,7 @@ export async function appUpdate(
     const app: AppCreate & { id: string } = {
       id: formData.get('id') as string,
       name: formData.get('name') as string,
-      description: formData.get('description') as string,
+      description: (formData.get('description') as string) || '',
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       dockerImageRegistry:
@@ -101,12 +101,17 @@ export async function appUpdate(
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
       type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
-      shmSize: formData.get('shmSize') as string,
+      shmSize: (formData.get('shmSize') as string) || '',
       kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
-      maxCPU: formData.get('maxCPU') as string,
-      minCPU: formData.get('minCPU') as string,
-      maxMemory: formData.get('maxMemory') as string,
-      minMemory: formData.get('minMemory') as string
+      maxCPU: (formData.get('maxCPU') as string) || '',
+      minCPU: (formData.get('minCPU') as string) || '',
+      maxMemory: (formData.get('maxMemory') as string) || '',
+      minMemory: (formData.get('minMemory') as string) || ''
+    }
+
+    const validation = AppCreateSchema.safeParse(app)
+    if (!validation.success) {
+      return { issues: validation.error.issues }
     }
 
     const updatedApp = await useCase.execute(app)
