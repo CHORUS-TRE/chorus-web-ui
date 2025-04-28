@@ -55,9 +55,8 @@ export const useUrlValidation = (url: string | null) => {
         setError(null)
         setIsLoading(false)
       } catch (err) {
-        console.log('err', err)
-        // const errorMessage = err instanceof Error ? err.message : String(err)
-        // setError(new Error(`Attempt ${attemptCountRef.current + 1}/${MAX_ATTEMPTS}: ${errorMessage}`))
+        console.error('err', err)
+
         attemptCountRef.current += 1
         timeoutRef.current = setTimeout(checkUrl, RETRY_INTERVAL)
       }
