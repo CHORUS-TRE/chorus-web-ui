@@ -1,3 +1,10 @@
+# [1.0.0-alpha.29](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.28...v1.0.0-alpha.29) (2025-04-30)
+
+
+### Features
+
+* **header:** app name ([64da2f6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/64da2f63a623f0a28c3a8308e93f9c73c3491153))
+
 # [1.0.0-alpha.28](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.27...v1.0.0-alpha.28) (2025-04-28)
 
 
