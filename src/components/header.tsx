@@ -290,7 +290,7 @@ export function Header() {
                                 </NavLink>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                                <ul className="grid w-[640px] grid-cols-2 gap-1 bg-black bg-opacity-85 p-2">
+                                <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                                   {workspaces?.map((workspace) => (
                                     <NavigationMenuItem
                                       key={`my-workspace-${workspace.id}`}
@@ -378,7 +378,7 @@ export function Header() {
                                     workbench.workspaceId === workspaceId
                                 ).length > 0 && (
                                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                                    <div className="flex w-[640px] gap-1 bg-black bg-opacity-85 p-2">
+                                    <div className="flex w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                                       <div className="flex flex-1 flex-col gap-1">
                                         {workbenches
                                           ?.filter(
@@ -525,7 +525,7 @@ export function Header() {
                                   </span>
                                 </NavigationMenuTrigger>
                                 <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                                  <ul className="grid w-[640px] grid-cols-2 gap-1 bg-black bg-opacity-85 p-2">
+                                  <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                                     {/* Desktop Info Section */}
                                     <NavigationMenuItem>
                                       <ListItem
@@ -640,18 +640,21 @@ export function Header() {
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                     exact={isUserWorkspace}
                   >
-                    <div className="mt-1 flex place-items-center gap-2">
+                    <div className="mt-1 flex place-items-center gap-1">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mt-[2px] flex items-center gap-2">
+                  <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
                     <LaptopMinimal className="h-4 w-4" />
                     <span>Open Desktops</span>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                    {sortedWorkspacesWithWorkbenches?.length === 0 && (
+                      <div className="p-2 text-sm">No desktop found</div>
+                    )}
                     <div className="flex w-[640px] gap-1 bg-black bg-opacity-85 p-2">
                       <div className="flex flex-1 flex-col gap-1">
                         {sortedWorkspacesWithWorkbenches
@@ -844,18 +847,16 @@ export function Header() {
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex place-items-center gap-2">
+                    <div className="mt-1 flex place-items-center gap-1">
                       <Store className="h-4 w-4" />
                       App Store
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>
-                    <div className="mt-1 flex place-items-center gap-2">
+                  <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
                       <DraftingCompass className="h-4 w-4" />
                       <span>My Apps</span>
-                    </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     <ul className="grid gap-1 bg-black bg-opacity-85 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
@@ -926,7 +927,11 @@ export function Header() {
                               {app.name &&
                                 getAppIcon(app.name, { id: 'header-my-apps' })}
                             </div>
+
                             <div className="flex flex-col">
+                              <span className="text-sm font-semibold">
+                                {app.name}
+                              </span>
                               <span className="text-sm text-muted">
                                 {app.dockerImageName}:{app.dockerImageTag}
                               </span>
