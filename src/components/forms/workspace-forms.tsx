@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useEffect, useRef, useState, startTransition } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import {
@@ -40,6 +40,9 @@ import { Textarea } from '~/components/ui/textarea'
 
 import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const initialState: IFormState = {
   data: undefined,
@@ -55,6 +58,20 @@ function SubmitButton() {
     </Button>
   )
 }
+
+const workspaceFormSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Name is required'),
+  shortName: z.string().min(1, 'Short name is required'),
+  description: z.string().optional(),
+  status: z.string(),
+  tenantId: z.string(),
+  userId: z.string(),
+  memberIds: z.string(),
+  tags: z.string()
+})
+
+type WorkspaceFormData = z.infer<typeof workspaceFormSchema>
 
 export function WorkspaceCreateForm({
   state: [open, setOpen],
@@ -296,6 +313,27 @@ export function WorkspaceUpdateForm({
   onUpdate?: () => void
 }) {
   const [formState, formAction] = useActionState(workspaceUpdate, initialState)
+  const form = useForm<WorkspaceFormData>({
+    resolver: zodResolver(workspaceFormSchema),
+    defaultValues: {
+      id: workspace?.id || '',
+      name: workspace?.name || '',
+      shortName: workspace?.shortName || '',
+      description: workspace?.description || '',
+      status: workspace?.status || WorkspaceState.ACTIVE,
+      tenantId: '1',
+      userId: workspace?.ownerId || '',
+      memberIds: workspace?.memberIds?.join(',') || '',
+      tags: workspace?.tags?.join(',') || ''
+    }
+  })
+
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+    }
+  }, [open, form])
 
   useEffect(() => {
     if (formState?.error) return
@@ -305,6 +343,16 @@ export function WorkspaceUpdateForm({
     }
   }, [formState, onUpdate, setOpen])
 
+  async function onSubmit(data: WorkspaceFormData) {
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) formData.append(key, value)
+    })
+    startTransition(() => {
+      formAction(formData)
+    })
+  }
+
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -313,73 +361,58 @@ export function WorkspaceUpdateForm({
         <DialogDescription>Update workspace information.</DialogDescription>
         <DialogHeader className="mt-4">
           <DialogDescription asChild>
-            <form action={formAction}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardContent className="grid gap-4">
-                  <input type="hidden" name="id" value={workspace?.id} />
-                  <input type="hidden" name="tenantId" value="1" />
-                  <input
-                    type="hidden"
-                    name="userId"
-                    value={workspace?.ownerId}
-                  />
-                  <input
-                    type="hidden"
-                    name="memberIds"
-                    value={workspace?.memberIds.join(',')}
-                  />
-                  <input
-                    type="hidden"
-                    name="tags"
-                    value={workspace?.tags.join(',')}
-                  />
+                  <input type="hidden" {...form.register('id')} />
+                  <input type="hidden" {...form.register('tenantId')} />
+                  <input type="hidden" {...form.register('userId')} />
+                  <input type="hidden" {...form.register('memberIds')} />
+                  <input type="hidden" {...form.register('tags')} />
 
                   <div className="grid gap-2">
                     <Label htmlFor="name">Name</Label>
                     <Input
                       id="name"
-                      name="name"
-                      defaultValue={workspace?.name}
+                      {...form.register('name')}
                       className="bg-background text-neutral-400"
                     />
-                    <div className="text-xs text-red-500">
-                      {
-                        formState?.issues?.find((e) => e.path.includes('name'))
-                          ?.message
-                      }
-                    </div>
+                    {form.formState.errors.name && (
+                      <div className="text-xs text-red-500">
+                        {form.formState.errors.name.message}
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid gap-2">
                     <Label htmlFor="shortName">Short Name</Label>
                     <Input
                       id="shortName"
-                      name="shortName"
-                      defaultValue={workspace?.shortName}
+                      {...form.register('shortName')}
                       className="bg-background text-neutral-400"
                     />
-                    <div className="text-xs text-red-500">
-                      {
-                        formState?.issues?.find((e) =>
-                          e.path.includes('shortName')
-                        )?.message
-                      }
-                    </div>
+                    {form.formState.errors.shortName && (
+                      <div className="text-xs text-red-500">
+                        {form.formState.errors.shortName.message}
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid gap-2">
                     <Label htmlFor="description">Description</Label>
                     <Textarea
                       id="description"
-                      name="description"
-                      defaultValue={workspace?.description}
+                      {...form.register('description')}
                       className="min-h-[100px] bg-background text-neutral-400"
                     />
                   </div>
 
                   <div className="grid gap-2">
                     <Label htmlFor="status">Status</Label>
-                    <Select name="status" defaultValue={workspace?.status}>
+                    <Select
+                      onValueChange={(value) => form.setValue('status', value)}
+                      defaultValue={form.getValues('status')}
+                    >
                       <SelectTrigger className="bg-background text-neutral-400">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
