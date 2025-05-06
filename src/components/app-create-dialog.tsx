@@ -65,32 +65,32 @@ export const PRESETS: Presets = {
     limits: { cpu: '', memory: '', shm: '' }
   },
   nano: {
-    requests: { cpu: '100m', memory: '128Mi', shm: '50Mi' },
+    requests: { cpu: '100m', memory: '128Mi', shm: '' },
     limits: { cpu: '150m', memory: '192Mi', shm: '2Gi' }
   },
   micro: {
-    requests: { cpu: '250m', memory: '256Mi', shm: '50Mi' },
+    requests: { cpu: '250m', memory: '256Mi', shm: '' },
     limits: { cpu: '375m', memory: '384Mi', shm: '2Gi' }
   },
   small: {
-    requests: { cpu: '500m', memory: '512Mi', shm: '50Mi' },
-    limits: { cpu: '750m', memory: '768Mi', shm: '2Gi' }
+    requests: { cpu: '500m', memory: '512Mi', shm: '' },
+    limits: { cpu: '750m', memory: '768Mi', shm: '' }
   },
   medium: {
-    requests: { cpu: '500m', memory: '1024Mi', shm: '50Mi' },
-    limits: { cpu: '750m', memory: '1536Mi', shm: '2Gi' }
+    requests: { cpu: '500m', memory: '1024Mi', shm: '' },
+    limits: { cpu: '750m', memory: '1536Mi', shm: '' }
   },
   large: {
-    requests: { cpu: '1.0', memory: '2048Mi', shm: '50Mi' },
-    limits: { cpu: '1.5', memory: '3072Mi', shm: '2Gi' }
+    requests: { cpu: '1.0', memory: '2048Mi', shm: '' },
+    limits: { cpu: '1.5', memory: '3072Mi', shm: '' }
   },
   xlarge: {
-    requests: { cpu: '1.0', memory: '3072Mi', shm: '50Mi' },
-    limits: { cpu: '3.0', memory: '6144Mi', shm: '2Gi' }
+    requests: { cpu: '1.0', memory: '3072Mi', shm: '' },
+    limits: { cpu: '3.0', memory: '6144Mi', shm: '' }
   },
   '2xlarge': {
-    requests: { cpu: '1.0', memory: '3072Mi', shm: '50Mi' },
-    limits: { cpu: '6.0', memory: '12288Mi', shm: '2Gi' }
+    requests: { cpu: '1.0', memory: '3072Mi', shm: '' },
+    limits: { cpu: '6.0', memory: '12288Mi', shm: '' }
   }
 }
 
