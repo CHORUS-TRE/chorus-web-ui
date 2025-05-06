@@ -1,3 +1,18 @@
+# [1.0.0-alpha.30](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.29...v1.0.0-alpha.30) (2025-05-06)
+
+
+### Bug Fixes
+
+* **app-create-dialog:** remove shm requests and limits for resource presets ([fd2174a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fd2174a0376e93608eb403497a865876b74961ff))
+* **app-edit-dialog:** reset form on dialog close instead of on app change ([10b2b02](https://github.com/CHORUS-TRE/chorus-web-ui/commit/10b2b021f1ab6b6ea53303ead03919e4f55a8297))
+
+
+### Features
+
+* **app-dialogs:** add icon URL support in app creation and editing dialogs ([1235e2d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1235e2d77bcc3cd14725bb9ebd791516e920f4a5))
+* **workspace-forms:** integrate Zod validation and react-hook-form for workspace forms ([7203404](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7203404965a4f7ebceeac8985ba24865dc26627d))
+* **workspaces-grid:** add Package icon to workspace card header for improved UI ([c01aada](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c01aada9ae36a1617e30ae2b4edde52a579ef9d9))
+
 # [1.0.0-alpha.29](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.28...v1.0.0-alpha.29) (2025-04-30)
 
 
