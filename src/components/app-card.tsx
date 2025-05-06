@@ -1,6 +1,7 @@
 'use client'
 
 import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
+import Image from 'next/image'
 import { useState } from 'react'
 
 import { AppEditDialog } from '~/components/app-edit-dialog'
@@ -21,7 +22,6 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { App } from '~/domain/model'
-import { getAppIcon } from '~/utils/app-icon'
 
 import { appDelete } from './actions/app-view-model'
 import { useAppState } from './store/app-state-context'
@@ -86,7 +86,16 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
       <Card className="flex flex-col overflow-hidden border border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2">
           <div className="flex items-center space-x-4">
-            {app.name && getAppIcon(app.name, { id: 'app-card' })}
+            {app.iconURL && (
+              <Image
+                src={app.iconURL || ''}
+                alt={app.name || 'App logo'}
+                width={48}
+                height={48}
+                className="h-12 w-12"
+                priority
+              />
+            )}
             <CardTitle className="border-b-0 text-xl font-semibold text-white">
               {app.name || 'Unnamed App'}
             </CardTitle>

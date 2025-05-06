@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const AppCreateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
+  iconURL: z.string().optional(),
   dockerImageName: z.string().min(1, 'Docker image name is required'),
   dockerImageTag: z.string().min(1, 'Docker image tag is required'),
   dockerImageRegistry: z.string().optional(),

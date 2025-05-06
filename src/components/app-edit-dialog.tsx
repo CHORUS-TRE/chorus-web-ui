@@ -67,7 +67,8 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       minMemory: app.minMemory || '',
       tenantId: app.tenantId || '',
       ownerId: app.ownerId || '',
-      preset: 'auto'
+      preset: 'auto',
+      iconURL: app.iconURL || ''
     },
     mode: 'onChange'
   })
@@ -75,27 +76,12 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   const { formState } = form
   const isSubmitting = formState.isSubmitting
 
-  // Reset form when app changes
+  // Reset form when dialog closes
   useEffect(() => {
-    if (open) {
-      form.reset({
-        name: app.name,
-        description: app.description,
-        dockerImageName: app.dockerImageName,
-        dockerImageTag: app.dockerImageTag,
-        dockerImageRegistry: app.dockerImageRegistry,
-        shmSize: app.shmSize,
-        kioskConfigURL: app.kioskConfigURL,
-        maxCPU: app.maxCPU,
-        minCPU: app.minCPU,
-        maxMemory: app.maxMemory,
-        minMemory: app.minMemory,
-        tenantId: app.tenantId,
-        ownerId: app.ownerId,
-        preset: 'auto'
-      })
+    if (!open) {
+      form.reset()
     }
-  }, [app, form, open])
+  }, [open, form])
 
   async function onSubmit(data: FormData) {
     try {
@@ -183,6 +169,24 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         <Input
                           {...field}
                           placeholder="Enter description"
+                          className="bg-background text-white placeholder:text-muted-foreground"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="iconURL"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Icon URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter icon URL"
                           className="bg-background text-white placeholder:text-muted-foreground"
                         />
                       </FormControl>

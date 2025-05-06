@@ -45,6 +45,7 @@ export async function appCreate(
     const app: AppCreate = {
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || '',
+      iconURL: (formData.get('iconURL') as string) || '',
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       dockerImageRegistry:
@@ -94,6 +95,7 @@ export async function appUpdate(
       id: formData.get('id') as string,
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || '',
+      iconURL: (formData.get('iconURL') as string) || '',
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       dockerImageRegistry:

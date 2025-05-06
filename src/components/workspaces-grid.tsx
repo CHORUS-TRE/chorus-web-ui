@@ -4,7 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import {
   DraftingCompass,
   EllipsisVerticalIcon,
-  LaptopMinimal
+  LaptopMinimal,
+  Package
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -85,11 +86,14 @@ export default function WorkspacesGrid({
           <Link href={`/workspaces/${workspace.id}`}>
             <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
               <CardHeader>
-                <CardTitle>
+                <div className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
+                  <Package className="h-9 w-9 text-white shrink-0" />
+                  <CardTitle>
                   {workspace?.id === user?.workspaceId
                     ? 'Home'
                     : workspace?.name}
                 </CardTitle>
+                </div>
                 <CardDescription>{workspace.description}</CardDescription>
               </CardHeader>
               <CardContent>
