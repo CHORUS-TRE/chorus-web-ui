@@ -75,27 +75,12 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   const { formState } = form
   const isSubmitting = formState.isSubmitting
 
-  // Reset form when app changes
+  // Reset form when dialog closes
   useEffect(() => {
-    if (open) {
-      form.reset({
-        name: app.name,
-        description: app.description,
-        dockerImageName: app.dockerImageName,
-        dockerImageTag: app.dockerImageTag,
-        dockerImageRegistry: app.dockerImageRegistry,
-        shmSize: app.shmSize,
-        kioskConfigURL: app.kioskConfigURL,
-        maxCPU: app.maxCPU,
-        minCPU: app.minCPU,
-        maxMemory: app.maxMemory,
-        minMemory: app.minMemory,
-        tenantId: app.tenantId,
-        ownerId: app.ownerId,
-        preset: 'auto'
-      })
+    if (!open) {
+      form.reset()
     }
-  }, [app, form, open])
+  }, [open, form])
 
   async function onSubmit(data: FormData) {
     try {
