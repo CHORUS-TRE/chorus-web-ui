@@ -59,7 +59,6 @@ import {
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
 import { AuthenticationMode, Workbench } from '~/domain/model'
-import { getAppIcon } from '~/utils/app-icon'
 
 import { appInstanceCreate } from './actions/app-instance-view-model'
 import {
@@ -855,8 +854,8 @@ export function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
-                      <DraftingCompass className="h-4 w-4" />
-                      <span>My Apps</span>
+                    <DraftingCompass className="h-4 w-4" />
+                    <span>My Apps</span>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     <ul className="grid gap-1 bg-black bg-opacity-85 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
@@ -924,8 +923,16 @@ export function Header() {
                         >
                           <div className="flex items-center gap-2">
                             <div className="x-4 flex items-center">
-                              {app.name &&
-                                getAppIcon(app.name, { id: 'header-my-apps' })}
+                              {app.iconURL && (
+                                <Image
+                                  src={app.iconURL || ''}
+                                  alt={app.name || 'App logo'}
+                                  width={48}
+                                  height={48}
+                                  className="h-12 w-12"
+                                  priority
+                                />
+                              )}
                             </div>
 
                             <div className="flex flex-col">

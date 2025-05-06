@@ -36,7 +36,6 @@ export const AppCreateSchema = z.object({
 export const AppSchema = AppCreateSchema.extend({
   id: z.string(),
   status: z.nativeEnum(AppState),
-
   createdAt: z.date(),
   updatedAt: z.date()
 })

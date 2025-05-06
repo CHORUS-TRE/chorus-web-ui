@@ -146,7 +146,8 @@ export const formSchema = z.object({
     ),
   tenantId: z.string().min(1, 'Tenant ID is required'),
   ownerId: z.string().min(1, 'Owner ID is required'),
-  preset: z.string().optional()
+  preset: z.string().optional(),
+  iconURL: z.string().url('Must be a valid URL').optional()
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -175,7 +176,8 @@ export function AppCreateDialog({
       minMemory: '',
       tenantId: '1',
       ownerId: '',
-      preset: 'auto'
+      preset: 'auto',
+      iconURL: ''
     },
     mode: 'onChange'
   })
@@ -278,6 +280,24 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="Enter description"
+                          className="bg-background text-white placeholder:text-muted-foreground"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="iconURL"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Icon URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter icon URL"
                           className="bg-background text-white placeholder:text-muted-foreground"
                         />
                       </FormControl>
