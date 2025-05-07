@@ -69,6 +69,18 @@ export interface ChorusWorkbench {
   status?: string
   /**
    *
+   * @type {number}
+   * @memberof ChorusWorkbench
+   */
+  initialResolutionWidth?: number
+  /**
+   *
+   * @type {number}
+   * @memberof ChorusWorkbench
+   */
+  initialResolutionHeight?: number
+  /**
+   *
    * @type {Array<string>}
    * @memberof ChorusWorkbench
    */
@@ -122,6 +134,12 @@ export function ChorusWorkbenchFromJSONTyped(
     shortName: !exists(json, 'shortName') ? undefined : json['shortName'],
     description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
+    initialResolutionWidth: !exists(json, 'initialResolutionWidth')
+      ? undefined
+      : json['initialResolutionWidth'],
+    initialResolutionHeight: !exists(json, 'initialResolutionHeight')
+      ? undefined
+      : json['initialResolutionHeight'],
     appInsanceIds: !exists(json, 'appInsanceIds')
       ? undefined
       : json['appInsanceIds'],
@@ -153,6 +171,8 @@ export function ChorusWorkbenchToJSON(value?: ChorusWorkbench | null): any {
     shortName: value.shortName,
     description: value.description,
     status: value.status,
+    initialResolutionWidth: value.initialResolutionWidth,
+    initialResolutionHeight: value.initialResolutionHeight,
     appInsanceIds: value.appInsanceIds,
     appInstances: value.appInstances,
     createdAt:

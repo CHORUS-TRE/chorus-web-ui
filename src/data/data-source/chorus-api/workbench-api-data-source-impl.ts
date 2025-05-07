@@ -29,7 +29,9 @@ export const WorkbenchApiCreateSchema = z.object({
   userId: z.string(),
   appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
-  workspaceId: z.string().optional()
+  workspaceId: z.string().optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export const WorkbenchApiSchema = WorkbenchApiCreateSchema.extend({
@@ -44,6 +46,8 @@ const apiToDomain = (w: ChorusWorkbenchApi): Workbench => {
     name: w.name || '',
     shortName: w.shortName || '',
     description: w.description || '',
+    initialResolutionWidth: w.initialResolutionWidth || 0,
+    initialResolutionHeight: w.initialResolutionHeight || 0,
     tenantId: w.tenantId || '',
     ownerId: w.userId || '',
     workspaceId: w.workspaceId || '',
@@ -68,7 +72,9 @@ const domainToApi = (
     status: 'active',
     name: w.name,
     shortName: w.name,
-    description: w.description
+    description: w.description,
+    initialResolutionWidth: w.initialResolutionWidth,
+    initialResolutionHeight: w.initialResolutionHeight
   }
 }
 
