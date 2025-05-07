@@ -1,3 +1,10 @@
+# [1.0.0-alpha.31](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.30...v1.0.0-alpha.31) (2025-05-07)
+
+
+### Features
+
+* **workbench:** add initial resolution dimensions ([0d05470](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0d054704bd3bdcf2df30cb4123c26cfab11bb2ff))
+
 # [1.0.0-alpha.30](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.29...v1.0.0-alpha.30) (2025-05-06)
 
 
