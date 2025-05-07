@@ -76,7 +76,9 @@ export async function workbenchCreate(
       description: formData.get('description') as string,
       memberIds: formData.getAll('memberIds') as string[],
       tags: formData.getAll('tags') as string[],
-      workspaceId: formData.get('workspaceId') as string
+      workspaceId: formData.get('workspaceId') as string,
+      initialResolutionWidth: Number(formData.get('initialResolutionWidth')),
+      initialResolutionHeight: Number(formData.get('initialResolutionHeight'))
     }
 
     const validation = WorkbenchCreateSchema.safeParse(workbench)

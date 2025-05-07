@@ -16,7 +16,9 @@ export const WorkbenchCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   memberIds: z.array(z.string()).optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export const WorkbenchUpdateSchema = z.object({
@@ -27,7 +29,9 @@ export const WorkbenchUpdateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   memberIds: z.array(z.string()).optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export const WorkbenchSchema = WorkbenchCreateSchema.extend({

@@ -72,8 +72,25 @@ export function WorkbenchCreateForm({
   )
   const [open, setOpen] = useState(false)
   const [scientistName, setScientistName] = useState(generateScientistName())
+  const [viewportDimensions, setViewportDimensions] = useState({
+    width: window.visualViewport?.width,
+    height: window.visualViewport?.height
+  })
   const { setNotification } = useAppState()
   const { apps } = useAppState()
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setViewportDimensions({
+        width: window.visualViewport?.width,
+        height: window.visualViewport?.height
+      })
+    }
+
+    window.visualViewport?.addEventListener('resize', updateDimensions)
+    return () =>
+      window.visualViewport?.removeEventListener('resize', updateDimensions)
+  }, [])
 
   useEffect(() => {
     if (state?.error) {
@@ -251,6 +268,18 @@ export function WorkbenchCreateForm({
                           ?.message
                       }
                     </div>
+                  </div>
+                  <div className="grid hidden gap-2">
+                    <Input
+                      type="hidden"
+                      name="initialResolutionWidth"
+                      value={viewportDimensions.width}
+                    />
+                    <Input
+                      type="hidden"
+                      name="initialResolutionHeight"
+                      value={viewportDimensions.height}
+                    />
                   </div>
                   <p aria-live="polite" className="sr-only" role="status">
                     {JSON.stringify(state?.data)}

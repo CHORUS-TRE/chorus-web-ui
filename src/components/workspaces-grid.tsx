@@ -87,12 +87,12 @@ export default function WorkspacesGrid({
             <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
               <CardHeader>
                 <div className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-                  <Package className="h-9 w-9 text-white shrink-0" />
+                  <Package className="h-9 w-9 shrink-0 text-white" />
                   <CardTitle>
-                  {workspace?.id === user?.workspaceId
-                    ? 'Home'
-                    : workspace?.name}
-                </CardTitle>
+                    {workspace?.id === user?.workspaceId
+                      ? 'Home'
+                      : workspace?.name}
+                  </CardTitle>
                 </div>
                 <CardDescription>{workspace.description}</CardDescription>
               </CardHeader>
