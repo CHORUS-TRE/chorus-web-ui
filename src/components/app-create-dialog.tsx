@@ -1,7 +1,8 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -40,11 +41,13 @@ export type ResourcePreset = {
     cpu: string
     memory: string
     shm: string
+    ephemeralStorage: string
   }
   limits: {
     cpu: string
     memory: string
     shm: string
+    ephemeralStorage: string
   }
 }
 
@@ -61,36 +64,106 @@ export type Presets = {
 
 export const PRESETS: Presets = {
   auto: {
-    requests: { cpu: '', memory: '', shm: '' },
-    limits: { cpu: '', memory: '', shm: '' }
+    requests: { cpu: '', memory: '', shm: '', ephemeralStorage: '' },
+    limits: { cpu: '', memory: '', shm: '', ephemeralStorage: '' }
   },
   nano: {
-    requests: { cpu: '100m', memory: '128Mi', shm: '' },
-    limits: { cpu: '150m', memory: '192Mi', shm: '2Gi' }
+    requests: {
+      cpu: '100m',
+      memory: '128Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '150m',
+      memory: '192Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   },
   micro: {
-    requests: { cpu: '250m', memory: '256Mi', shm: '' },
-    limits: { cpu: '375m', memory: '384Mi', shm: '2Gi' }
+    requests: {
+      cpu: '250m',
+      memory: '256Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '375m',
+      memory: '384Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   },
   small: {
-    requests: { cpu: '500m', memory: '512Mi', shm: '' },
-    limits: { cpu: '750m', memory: '768Mi', shm: '' }
+    requests: {
+      cpu: '500m',
+      memory: '512Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '750m',
+      memory: '768Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   },
   medium: {
-    requests: { cpu: '500m', memory: '1024Mi', shm: '' },
-    limits: { cpu: '750m', memory: '1536Mi', shm: '' }
+    requests: {
+      cpu: '500m',
+      memory: '1024Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '750m',
+      memory: '1536Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   },
   large: {
-    requests: { cpu: '1.0', memory: '2048Mi', shm: '' },
-    limits: { cpu: '1.5', memory: '3072Mi', shm: '' }
+    requests: {
+      cpu: '1.0',
+      memory: '2048Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '1.5',
+      memory: '3072Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   },
   xlarge: {
-    requests: { cpu: '1.0', memory: '3072Mi', shm: '' },
-    limits: { cpu: '3.0', memory: '6144Mi', shm: '' }
+    requests: {
+      cpu: '1.0',
+      memory: '3072Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '3.0',
+      memory: '6144Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   },
   '2xlarge': {
-    requests: { cpu: '1.0', memory: '3072Mi', shm: '' },
-    limits: { cpu: '6.0', memory: '12288Mi', shm: '' }
+    requests: {
+      cpu: '1.0',
+      memory: '3072Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '6.0',
+      memory: '12288Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
   }
 }
 
@@ -115,7 +188,27 @@ export const formSchema = z.object({
       (val) => !val || /^\d+(\.\d+)?(Mi|Gi|M|G)$/.test(val),
       'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
     ),
-  kioskConfigURL: z.string().optional(),
+  minEphemeralStorage: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
+      'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
+    ),
+  maxEphemeralStorage: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
+      'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
+    ),
+  kioskConfigURL: z
+    .string()
+    .refine(
+      (val) => !val || val === '' || /^https?:\/\/.+/.test(val),
+      'Must be a valid URL'
+    )
+    .optional(),
   maxCPU: z
     .string()
     .optional()
@@ -147,7 +240,13 @@ export const formSchema = z.object({
   tenantId: z.string().min(1, 'Tenant ID is required'),
   ownerId: z.string().min(1, 'Owner ID is required'),
   preset: z.string().optional(),
-  iconURL: z.string().url('Must be a valid URL').optional()
+  iconURL: z
+    .string()
+    .refine(
+      (val) => !val || val === '' || /^https?:\/\/.+/.test(val),
+      'Must be a valid URL'
+    )
+    .optional()
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -159,6 +258,7 @@ export function AppCreateDialog({
   onSuccess
 }: AppCreateDialogProps) {
   const { user } = useAuth()
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -169,6 +269,8 @@ export function AppCreateDialog({
       dockerImageTag: '',
       dockerImageRegistry: '',
       shmSize: '',
+      minEphemeralStorage: '',
+      maxEphemeralStorage: '',
       kioskConfigURL: '',
       maxCPU: '',
       minCPU: '',
@@ -238,9 +340,21 @@ export function AppCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-background sm:max-w-[640px]">
+      <DialogContent
+        className={`bg-background ${showAdvanced ? 'max-w-[800px]' : 'max-w-[400px]'}`}
+      >
         <DialogHeader>
-          <DialogTitle className="text-white">Create New App</DialogTitle>
+          <div className="flex flex-row items-center justify-between">
+            <DialogTitle className="text-white">Create New App</DialogTitle>
+            <Link
+              href="#"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="text-sm text-muted underline hover:text-accent"
+              prefetch={false}
+            >
+              {showAdvanced ? 'Hide Advanced Settings' : 'Advanced Settings'}
+            </Link>
+          </div>
           <DialogDescription className="text-muted-foreground">
             Add a new application to the store
           </DialogDescription>
@@ -250,7 +364,9 @@ export function AppCreateDialog({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('tenantId')} />
             <input type="hidden" {...form.register('ownerId')} />
-            <div className="grid grid-cols-2 gap-8">
+            <div
+              className={`grid gap-8 ${showAdvanced ? 'grid-cols-2' : 'grid-cols-1'}`}
+            >
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -367,113 +483,20 @@ export function AppCreateDialog({
                 </div>
               </div>
 
-              <div className="space-y-4 border-l border-gray-400 pl-8">
-                <h3 className="text-sm font-semibold text-muted">
-                  Advanced Settings
-                </h3>
-                <FormField
-                  control={form.control}
-                  name="kioskConfigURL"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">
-                        Kiosk Config URL
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Enter kiosk config URL"
-                          className="bg-background text-white placeholder:text-muted-foreground"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-destructive" />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="rounded-md border border-gray-400 p-4">
+              {showAdvanced && (
+                <div className="space-y-4 border-l border-gray-400 pl-8">
                   <FormField
                     control={form.control}
-                    name="preset"
+                    name="kioskConfigURL"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-white">
-                          Resource Preset
-                        </FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value)
-                            if (value) {
-                              const preset = PRESETS[value as keyof Presets]
-                              if (value === 'auto') {
-                                // Clear all resource fields
-                                form.setValue('minCPU', '')
-                                form.setValue('maxCPU', '')
-                                form.setValue('minMemory', '')
-                                form.setValue('maxMemory', '')
-                                form.setValue('shmSize', '')
-                              } else {
-                                // Set CPU values - min from requests, max from limits
-                                form.setValue('minCPU', preset.requests.cpu)
-                                form.setValue('maxCPU', preset.limits.cpu)
-                                // Set Memory values - min from requests, max from limits
-                                form.setValue(
-                                  'minMemory',
-                                  preset.requests.memory
-                                )
-                                form.setValue('maxMemory', preset.limits.memory)
-                                // Set Shared Memory (shmSize) from shm
-                                form.setValue('shmSize', preset.requests.shm)
-                              }
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="bg-background text-white placeholder:text-muted-foreground">
-                            <SelectValue placeholder="Select a preset" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.keys(PRESETS).map((preset) => {
-                              const presetData =
-                                PRESETS[preset as keyof Presets]
-                              const displayName =
-                                preset.charAt(0).toUpperCase() + preset.slice(1)
-
-                              if (preset === 'auto') {
-                                return (
-                                  <SelectItem key={preset} value={preset}>
-                                    {`${displayName} (custom values)`}
-                                  </SelectItem>
-                                )
-                              }
-
-                              const cpuRange = `${presetData.requests.cpu}-${presetData.limits.cpu}`
-                              const memoryRange = `${presetData.requests.memory}-${presetData.limits.memory}`
-                              const shm = presetData.requests.shm
-
-                              return (
-                                <SelectItem key={preset} value={preset}>
-                                  {`${displayName} (cpu: ${cpuRange}, mem: ${memoryRange}, shm: ${shm})`}
-                                </SelectItem>
-                              )
-                            })}
-                          </SelectContent>
-                        </Select>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="shmSize"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-white">
-                          Shared Memory Size
+                          Kiosk Config URL
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g., 64m"
+                            placeholder="Enter kiosk config URL"
                             className="bg-background text-white placeholder:text-muted-foreground"
                           />
                         </FormControl>
@@ -482,57 +505,99 @@ export function AppCreateDialog({
                     )}
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4 rounded-md border border-gray-400 p-4">
                     <FormField
                       control={form.control}
-                      name="minCPU"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white">Min CPU</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="e.g., 1"
-                              className="bg-background text-white placeholder:text-muted-foreground"
-                            />
-                          </FormControl>
-                          <FormMessage className="text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="maxCPU"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white">Max CPU</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="e.g., 2"
-                              className="bg-background text-white placeholder:text-muted-foreground"
-                            />
-                          </FormControl>
-                          <FormMessage className="text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="minMemory"
+                      name="preset"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-white">
-                            Min Memory
+                            Resource Preset
+                          </FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value)
+                              if (value) {
+                                const preset = PRESETS[value as keyof Presets]
+                                if (value === 'auto') {
+                                  // Clear all resource fields
+                                  form.setValue('minCPU', '')
+                                  form.setValue('maxCPU', '')
+                                  form.setValue('minMemory', '')
+                                  form.setValue('maxMemory', '')
+                                  form.setValue('shmSize', '')
+                                  form.setValue('minEphemeralStorage', '')
+                                  form.setValue('maxEphemeralStorage', '')
+                                } else {
+                                  form.setValue('minCPU', preset.requests.cpu)
+                                  form.setValue('maxCPU', preset.limits.cpu)
+                                  form.setValue(
+                                    'minMemory',
+                                    preset.requests.memory
+                                  )
+                                  form.setValue(
+                                    'maxMemory',
+                                    preset.limits.memory
+                                  )
+                                  form.setValue('shmSize', preset.requests.shm)
+                                  form.setValue(
+                                    'minEphemeralStorage',
+                                    preset.requests.ephemeralStorage
+                                  )
+                                  form.setValue(
+                                    'maxEphemeralStorage',
+                                    preset.limits.ephemeralStorage
+                                  )
+                                }
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="bg-background text-white placeholder:text-muted-foreground">
+                              <SelectValue placeholder="Select a preset" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.keys(PRESETS).map((preset) => {
+                                const presetData =
+                                  PRESETS[preset as keyof Presets]
+                                const displayName =
+                                  preset.charAt(0).toUpperCase() +
+                                  preset.slice(1)
+
+                                if (preset === 'auto') {
+                                  return (
+                                    <SelectItem key={preset} value={preset}>
+                                      {`${displayName} (custom values)`}
+                                    </SelectItem>
+                                  )
+                                }
+
+                                const cpuRange = `${presetData.requests.cpu}-${presetData.limits.cpu}`
+                                const memoryRange = `${presetData.requests.memory}-${presetData.limits.memory}`
+
+                                return (
+                                  <SelectItem key={preset} value={preset}>
+                                    {`${displayName} (cpu: ${cpuRange}, mem: ${memoryRange})`}
+                                  </SelectItem>
+                                )
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="shmSize"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-white">
+                            Shared Memory Size
                           </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
-                              placeholder="e.g., 1Gi"
+                              placeholder="e.g., 64m"
                               className="bg-background text-white placeholder:text-muted-foreground"
                             />
                           </FormControl>
@@ -541,28 +606,134 @@ export function AppCreateDialog({
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="maxMemory"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white">
-                            Max Memory
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="e.g., 2Gi"
-                              className="bg-background text-white placeholder:text-muted-foreground"
-                            />
-                          </FormControl>
-                          <FormMessage className="text-destructive" />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="minEphemeralStorage"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">
+                              Min Ephemeral Storage
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., 1Gi"
+                                className="bg-background text-white placeholder:text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="maxEphemeralStorage"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">
+                              Max Ephemeral Storage
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., 2Gi"
+                                className="bg-background text-white placeholder:text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="minCPU"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">
+                              Min CPU
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., 1"
+                                className="bg-background text-white placeholder:text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="maxCPU"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">
+                              Max CPU
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., 2"
+                                className="bg-background text-white placeholder:text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="minMemory"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">
+                              Min Memory
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., 1Gi"
+                                className="bg-background text-white placeholder:text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="maxMemory"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">
+                              Max Memory
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., 2Gi"
+                                className="bg-background text-white placeholder:text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {formState.errors.root && (

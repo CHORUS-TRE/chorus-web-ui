@@ -23,6 +23,8 @@ export const AppCreateSchema = z.object({
   dockerImageTag: z.string(),
   dockerImageRegistry: z.string().optional(),
   shmSize: z.string().optional(),
+  minEphemeralStorage: z.string().optional(),
+  maxEphemeralStorage: z.string().optional(),
   kioskConfigURL: z.string().optional(),
   maxCPU: z.string().optional(),
   minCPU: z.string().optional(),

@@ -54,6 +54,10 @@ export async function appCreate(
       dockerImageTag: formData.get('dockerImageTag') as string,
       type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
       shmSize: (formData.get('shmSize') as string) || '',
+      minEphemeralStorage:
+        (formData.get('minEphemeralStorage') as string) || '',
+      maxEphemeralStorage:
+        (formData.get('maxEphemeralStorage') as string) || '',
       kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
       maxCPU: (formData.get('maxCPU') as string) || '',
       minCPU: (formData.get('minCPU') as string) || '',
@@ -104,6 +108,10 @@ export async function appUpdate(
       dockerImageTag: formData.get('dockerImageTag') as string,
       type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
       shmSize: (formData.get('shmSize') as string) || '',
+      minEphemeralStorage:
+        (formData.get('minEphemeralStorage') as string) || '',
+      maxEphemeralStorage:
+        (formData.get('maxEphemeralStorage') as string) || '',
       kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
       maxCPU: (formData.get('maxCPU') as string) || '',
       minCPU: (formData.get('minCPU') as string) || '',

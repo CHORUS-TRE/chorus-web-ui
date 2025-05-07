@@ -114,6 +114,18 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
+  maxEphemeralStorage?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  minEphemeralStorage?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
   iconURL?: string
   /**
    *
@@ -179,6 +191,12 @@ export function ChorusAppFromJSONTyped(
     minCPU: !exists(json, 'minCPU') ? undefined : json['minCPU'],
     maxMemory: !exists(json, 'maxMemory') ? undefined : json['maxMemory'],
     minMemory: !exists(json, 'minMemory') ? undefined : json['minMemory'],
+    maxEphemeralStorage: !exists(json, 'maxEphemeralStorage')
+      ? undefined
+      : json['maxEphemeralStorage'],
+    minEphemeralStorage: !exists(json, 'minEphemeralStorage')
+      ? undefined
+      : json['minEphemeralStorage'],
     iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
@@ -213,6 +231,8 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     minCPU: value.minCPU,
     maxMemory: value.maxMemory,
     minMemory: value.minMemory,
+    maxEphemeralStorage: value.maxEphemeralStorage,
+    minEphemeralStorage: value.minEphemeralStorage,
     iconURL: value.iconURL,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
