@@ -253,40 +253,13 @@ export function Header() {
                   )}
                   {items.map((item, index) => (
                     <Fragment key={item.href}>
-                      {/* Workspaces Menu */}
-                      {index === 0 && (
-                        <NavigationMenu className="hidden md:block">
-                          <NavigationMenuList>
-                            <NavigationMenuItem>
-                              <NavLink
-                                href={`/workspaces/`}
-                                exact
-                                className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces' ? 'border-accent' : ''}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Package className="h-4 w-4" />
-                                  <span>My workspaces</span>
-                                </div>
-                              </NavLink>
-                            </NavigationMenuItem>
-                          </NavigationMenuList>
-                        </NavigationMenu>
-                      )}
-
                       {/* Workspace Menu  Dropdown */}
                       {index === 0 && (
                         <NavigationMenu>
                           <NavigationMenuList>
                             <NavigationMenuItem>
-                              <NavigationMenuTrigger
-                                className={`mb-1 border-b-2 text-sm font-light hover:border-b-2 hover:border-accent`}
-                              >
-                                <NavLink
-                                  href={`#`}
-                                  className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent px-[0.5px] py-1 text-sm font-light text-muted transition-colors hover:border-b-2 data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white`}
-                                >
-                                  {''}
-                                </NavLink>
+                              <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 border-transparent text-sm font-light text-white hover:border-b-2 hover:border-accent">
+                                <span>Workspaces</span>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
@@ -336,40 +309,13 @@ export function Header() {
                         </NavigationMenu>
                       )}
 
-                      {/* Workspace's desktops Menu */}
-                      {index === 1 && (
-                        <NavigationMenu className="hidden xl:block">
-                          <NavigationMenuList>
-                            <NavigationMenuItem>
-                              <NavLink
-                                href={`/workspaces/${workspaceId}`}
-                                exact
-                                className={`mt-1 inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent pl-1 text-sm font-light text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white ${paths === '/workspaces/${workspaceId}' ? 'border-accent' : ''}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <PackageOpen className="h-4 w-4" />
-                                  <span>{item.name}</span>
-                                </div>
-                              </NavLink>
-                            </NavigationMenuItem>
-                          </NavigationMenuList>
-                        </NavigationMenu>
-                      )}
-
                       {/* Workspace's desktops Menu  Dropdown*/}
                       {index === 1 && (
                         <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
-                              <NavigationMenuTrigger
-                                className={`mb-1 border-b-2 text-sm font-light hover:border-b-2 hover:border-accent`}
-                              >
-                                <NavLink
-                                  href={`#`}
-                                  className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent px-[0.5px] py-1 text-sm font-light text-muted transition-colors hover:border-b-2 data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white`}
-                                >
-                                  {''}
-                                </NavLink>
+                              <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 text-sm font-light text-white hover:border-b-2 hover:border-accent">
+                                <span>{item.name}</span>
                               </NavigationMenuTrigger>
                               {workbenches &&
                                 workbenches.filter(
@@ -518,7 +464,7 @@ export function Header() {
                             {isInAppContext && currentWorkbench && (
                               <NavigationMenuItem>
                                 <NavigationMenuTrigger className="ml-1 border-b-2 border-accent text-sm font-light text-white hover:border-b-2 hover:border-accent">
-                                  <span className="flex items-center gap-2">
+                                  <span className="mt-1 flex items-center gap-2">
                                     <LaptopMinimal className="h-4 w-4" />
                                     <span>{currentWorkbench.name}</span>
                                   </span>
@@ -654,7 +600,7 @@ export function Header() {
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
                       <div className="p-2 text-sm">No desktop found</div>
                     )}
-                    <div className="flex w-[640px] gap-1 bg-black bg-opacity-85 p-2 overflow-y-auto max-h-[90vh]">
+                    <div className="flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto bg-black bg-opacity-85 p-2">
                       <div className="flex flex-1 flex-col gap-1">
                         {sortedWorkspacesWithWorkbenches
                           ?.slice(
@@ -862,7 +808,7 @@ export function Header() {
                       {apps?.map((app) => (
                         <ListItem
                           key={app.name}
-                          className="bg-background/4 cursor-pointer rounded-2xl border border-muted/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:text-primary hover:shadow-lg"
+                          className="bg-background/4 cursor-pointer rounded-2xl border border-muted/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:text-accent hover:shadow-lg"
                           onClick={async () => {
                             if (!currentWorkbench) {
                               setNotification({
@@ -940,7 +886,7 @@ export function Header() {
                                 {app.name}
                               </span>
                               <span className="text-sm text-muted">
-                                {app.dockerImageName}:{app.dockerImageTag}
+                                {app.description}
                               </span>
                             </div>
                           </div>
