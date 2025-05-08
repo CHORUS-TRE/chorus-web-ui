@@ -654,7 +654,7 @@ export function Header() {
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
                       <div className="p-2 text-sm">No desktop found</div>
                     )}
-                    <div className="flex w-[640px] gap-1 bg-black bg-opacity-85 p-2">
+                    <div className="flex w-[640px] gap-1 bg-black bg-opacity-85 p-2 overflow-y-auto max-h-[90vh]">
                       <div className="flex flex-1 flex-col gap-1">
                         {sortedWorkspacesWithWorkbenches
                           ?.slice(
