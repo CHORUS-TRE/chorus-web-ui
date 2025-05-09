@@ -38,6 +38,10 @@ The CHORUS Web UI is built with Next.js, a React framework that supports both cl
 
 ## Getting Started
 
+### Tutorial
+
+See [docs/development-tutorial/index.md](docs/development-tutorial/index.md)
+
 ### Prerequisites
 
 To set up your development environment for CHORUS Web UI, you will need:
