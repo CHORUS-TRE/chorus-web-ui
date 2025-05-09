@@ -35,6 +35,7 @@ import { App } from '~/domain/model'
 import { appUpdate } from './actions/app-view-model'
 import { IFormState } from './actions/utils'
 import { formSchema, PRESETS, type Presets } from './app-create-dialog'
+import { ImageUploadField } from './image-upload-field'
 
 interface AppEditDialogProps {
   app: App
@@ -199,17 +200,11 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                   control={form.control}
                   name="iconURL"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Icon URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Enter icon URL"
-                          className="bg-background text-white placeholder:text-muted-foreground"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-destructive" />
-                    </FormItem>
+                    <ImageUploadField
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      error={formState.errors.iconURL?.message}
+                    />
                   )}
                 />
 

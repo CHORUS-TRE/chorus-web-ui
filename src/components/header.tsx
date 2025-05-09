@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -886,6 +886,13 @@ export function Header() {
                                   className="h-12 w-12"
                                   priority
                                 />
+                              )}
+                              {!app.iconURL && (
+                                <Avatar className="h-12 w-12">
+                                  <AvatarFallback>
+                                    {app.name?.slice(0, 2) || ''}
+                                  </AvatarFallback>
+                                </Avatar>
                               )}
                             </div>
 

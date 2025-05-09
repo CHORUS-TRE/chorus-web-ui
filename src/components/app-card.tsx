@@ -25,6 +25,7 @@ import { App } from '~/domain/model'
 
 import { appDelete } from './actions/app-view-model'
 import { useAppState } from './store/app-state-context'
+import { Avatar, AvatarFallback } from './ui/avatar'
 
 interface AppCardProps {
   app: App
@@ -95,6 +96,11 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
                 className="h-12 w-12"
                 priority
               />
+            )}
+            {!app.iconURL && (
+              <Avatar className="h-12 w-12">
+                <AvatarFallback>{app.name?.slice(0, 2) || ''}</AvatarFallback>
+              </Avatar>
             )}
             <CardTitle className="border-b-0 text-xl font-semibold text-white">
               {app.name || 'Unnamed App'}

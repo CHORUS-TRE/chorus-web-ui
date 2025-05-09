@@ -34,6 +34,7 @@ import { AppType } from '~/domain/model'
 
 import { appCreate } from './actions/app-view-model'
 import { IFormState } from './actions/utils'
+import { ImageUploadField } from './image-upload-field'
 import { useAuth } from './store/auth-context'
 
 export type ResourcePreset = {
@@ -243,8 +244,12 @@ export const formSchema = z.object({
   iconURL: z
     .string()
     .refine(
-      (val) => !val || val === '' || /^https?:\/\/.+/.test(val),
-      'Must be a valid URL'
+      (val) =>
+        !val ||
+        val === '' ||
+        /^https?:\/\/.+/.test(val) ||
+        /^data:image\/[a-zA-Z]+;base64,/.test(val),
+      'Must be a valid URL or base64 image'
     )
     .optional()
 })
@@ -408,17 +413,12 @@ export function AppCreateDialog({
                   control={form.control}
                   name="iconURL"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Icon URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Enter icon URL"
-                          className="bg-background text-white placeholder:text-muted-foreground"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-destructive" />
-                    </FormItem>
+                    <ImageUploadField
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      error={formState.errors.iconURL?.message}
+                      className="file:bg-white"
+                    />
                   )}
                 />
 
