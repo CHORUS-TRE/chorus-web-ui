@@ -60,6 +60,11 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div
             className="fixed left-0 top-0 z-30 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
             id="iframe-overlay"
+            onClick={() => {
+              setTimeout(() => {
+                document.getElementById('iframe')?.focus()
+              }, 1000)
+            }}
           >
             <div className="pl-4 pt-32 text-white">
               <div className="flex items-center pt-2">

@@ -232,7 +232,15 @@ export function Header() {
 
   return (
     <>
-      <nav className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap">
+      <nav
+        className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap"
+        id="header"
+        onMouseLeave={() => {
+          setTimeout(() => {
+            document.getElementById('iframe')?.focus()
+          }, 1000)
+        }}
+      >
         <div className="flex min-w-0 flex-shrink flex-nowrap items-center justify-start">
           <Link href="/" passHref className="">
             <Image
