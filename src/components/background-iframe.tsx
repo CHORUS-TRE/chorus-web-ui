@@ -39,17 +39,18 @@ export default function BackgroundIframe() {
     }
   }, [error, setBackground])
 
-  // Focus management effect
   useEffect(() => {
-    const iframe = iFrameRef.current
-    if (!iframe || !isValid) return
+    if (!isValid) return
+    if (iFrameRef.current) {
+      setTimeout(() => {
+        iFrameRef.current?.focus()
+      }, 1000)
+    }
 
-    iframe.focus()
-    const focusTimeout = setTimeout(() => {
-      iframe.focus()
-    }, 1000)
-
-    return () => clearTimeout(focusTimeout)
+    // VM102753:1 Uncaught SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin "http://localhost:3000" from accessing a cross-origin frame.
+    // iFrameRef.current?.contentWindow?.document?.addEventListener("click", (e) => {
+    // })
+    // FIX: onMouseleave in header.tsx and main-layout.tsx
   }, [isValid])
 
   if (!background) return null
