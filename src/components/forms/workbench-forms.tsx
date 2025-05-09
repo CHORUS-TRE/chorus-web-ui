@@ -73,8 +73,8 @@ export function WorkbenchCreateForm({
   const [open, setOpen] = useState(false)
   const [scientistName, setScientistName] = useState(generateScientistName())
   const [viewportDimensions, setViewportDimensions] = useState({
-    width: window.visualViewport?.width,
-    height: window.visualViewport?.height
+    width: window?.visualViewport?.width,
+    height: window?.visualViewport?.height
   })
   const { setNotification } = useAppState()
   const { apps } = useAppState()
@@ -82,14 +82,14 @@ export function WorkbenchCreateForm({
   useEffect(() => {
     const updateDimensions = () => {
       setViewportDimensions({
-        width: window.visualViewport?.width,
-        height: window.visualViewport?.height
+        width: window?.visualViewport?.width,
+        height: window?.visualViewport?.height
       })
     }
 
-    window.visualViewport?.addEventListener('resize', updateDimensions)
+    window?.visualViewport?.addEventListener('resize', updateDimensions)
     return () =>
-      window.visualViewport?.removeEventListener('resize', updateDimensions)
+      window?.visualViewport?.removeEventListener('resize', updateDimensions)
   }, [])
 
   useEffect(() => {
