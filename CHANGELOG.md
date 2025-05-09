@@ -1,3 +1,22 @@
+# [1.0.0-alpha.32](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.31...v1.0.0-alpha.32) (2025-05-09)
+
+
+### Bug Fixes
+
+* **app-dialogs:** update advanced settings link hover styles and format maxMemory assignment ([83056fc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/83056fc0cc5fdd963c4278eea6bc14c25a14d4dd))
+* **focus-management:** improve iframe focus handling in header and layout components ([f525f0e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f525f0e5949d8172442f5762af8c87d95abb0b3b))
+* **workspace:** adjust CardTitle styling for improved layout ([714065f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/714065f63c1abf8b1f27beb5d39970c1ea07e412))
+* **workspace:** ensure safe access to visualViewport ([9831727](https://github.com/CHORUS-TRE/chorus-web-ui/commit/983172777dcb531e50854955eef3ac98a3c4de4b))
+
+
+### Features
+
+* **app-dialogs:** add ephemeral storage fields to app creation and editing dialogs ([ac0b620](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ac0b620eeedef5a715d909b4d1e8b471c15d6b36))
+* **app-dialogs:** update advanced settings link ([6f61d8a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6f61d8a15097355211589367a5f5e1a546418ae2))
+* **header:** enhance workspace display with scrollable container ([3031c88](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3031c8842d9629797a98dab19b934f0dd06f89e4))
+* **header:** refactor  menu ([67af82b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/67af82b829296ed9d03ee4ab124c8f30f6375f24))
+* **tutorial:** add development tutorial chapters and index to README ([c2e2367](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c2e23679b9229ae32a9d7de5cb6946a8fd91a3b0))
+
 # [1.0.0-alpha.31](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.30...v1.0.0-alpha.31) (2025-05-07)
 
 
