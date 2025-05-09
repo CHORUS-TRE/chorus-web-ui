@@ -139,7 +139,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
             <Link
               href="#"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted transition-colors hover:text-accent hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              className="inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
               prefetch={false}
             >
               {showAdvanced ? 'Hide Advanced Settings' : 'Advanced Settings'}
@@ -326,7 +326,10 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                                     'minMemory',
                                     preset.requests.memory
                                   )
-                                  form.setValue('maxMemory', preset.limits.memory)
+                                  form.setValue(
+                                    'maxMemory',
+                                    preset.limits.memory
+                                  )
                                   form.setValue('shmSize', preset.requests.shm)
                                   form.setValue(
                                     'minEphemeralStorage',
