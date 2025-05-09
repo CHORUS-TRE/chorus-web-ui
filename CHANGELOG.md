@@ -1,3 +1,10 @@
+# [1.0.0-alpha.33](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.32...v1.0.0-alpha.33) (2025-05-09)
+
+
+### Features
+
+* **app-dialogs:** image upload ([b56916e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b56916ee6c512fc1f8b64e17165019e3639accbd))
+
 # [1.0.0-alpha.32](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.31...v1.0.0-alpha.32) (2025-05-09)
 
 
