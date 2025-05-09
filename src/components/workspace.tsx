@@ -161,8 +161,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </div>
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
-            <CardTitle className="flex items-start gap-3 text-white">
-              <Home className="h-6 w-6 text-white" />
+            <CardTitle className="flex items-start gap-3 pr-2 text-white">
+              <Home className="h-6 w-6 flex-shrink-0 text-white" />
               {workspace?.name}
             </CardTitle>
             <CardDescription>{workspace?.description}</CardDescription>
