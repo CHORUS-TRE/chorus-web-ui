@@ -76,7 +76,6 @@ export async function appCreate(
       return { error: createdApp.error }
     }
 
-    revalidatePath('/app-store')
     return {
       data: 'Successfully created app',
       error: undefined
@@ -129,7 +128,6 @@ export async function appUpdate(
       return { error: updatedApp.error }
     }
 
-    revalidatePath('/app-store')
     return {
       data: 'Successfully updated app',
       error: undefined
