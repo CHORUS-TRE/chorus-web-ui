@@ -39,19 +39,18 @@ export default function BackgroundIframe() {
     }
   }, [error, setBackground])
 
-  useEffect(() => {
-    if (!isValid) return
-    if (iFrameRef.current) {
-      setTimeout(() => {
+  const handleLoad = () => {
+    const handleMouseOver = (e: MouseEvent) => {
+      {
         iFrameRef.current?.focus()
-      }, 1000)
+        e.preventDefault()
+        e.stopPropagation()
+      }
     }
 
-    // VM102753:1 Uncaught SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin "http://localhost:3000" from accessing a cross-origin frame.
-    // iFrameRef.current?.contentWindow?.document?.addEventListener("click", (e) => {
-    // })
-    // FIX: onMouseleave in header.tsx and main-layout.tsx
-  }, [isValid])
+    setTimeout(() => handleMouseOver, 1000)
+    iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
+  }
 
   if (!background) return null
 
@@ -73,6 +72,7 @@ export default function BackgroundIframe() {
         id="workspace-iframe"
         ref={iFrameRef}
         aria-label="Application Workspace"
+        onLoad={handleLoad}
         tabIndex={0}
       />
     </>
