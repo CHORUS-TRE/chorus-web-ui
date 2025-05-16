@@ -113,7 +113,6 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   }, [app, form])
 
   async function onSubmit(data: FormData) {
-
     try {
       const formData = new FormData()
       formData.append('id', app.id)
