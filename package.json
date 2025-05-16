@@ -6,7 +6,7 @@
   "scripts": {
     "prebuild": "pnpm exec tailwindcss -i src/styles/globals.css -o src/app/build.css",
     "build": "next build",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "dev:turbo": "next dev --turbo",
     "lint": "next lint --fix",
     "start": "next start",
