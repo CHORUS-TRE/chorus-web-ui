@@ -85,7 +85,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   return (
     <>
       <Card className="flex flex-col overflow-hidden border border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
-        <CardHeader className="flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2">
+        <CardHeader className="relative flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2">
           <div className="flex items-center space-x-4">
             {app.iconURL && (
               <Image
@@ -93,49 +93,51 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
                 alt={app.name || 'App logo'}
                 width={48}
                 height={48}
-                className="h-12 w-12"
+                className="h-12 w-12 shrink-0"
                 priority
               />
             )}
             {!app.iconURL && (
-              <Avatar className="h-12 w-12">
+              <Avatar className="h-12 w-12 shrink-0">
                 <AvatarFallback>{app.name?.slice(0, 2) || ''}</AvatarFallback>
               </Avatar>
             )}
-            <CardTitle className="border-b-0 text-xl font-semibold text-white">
+            <CardTitle className="shrink border-b-0 text-xl font-semibold text-white">
               {app.name || 'Unnamed App'}
             </CardTitle>
           </div>
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-8 w-8 p-0 text-white ring-0 hover:bg-background/20"
-                disabled={isDeleting}
-              >
-                <span className="sr-only">Open menu</span>
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-black text-white">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => setShowEditDialog(true)}
-                disabled={isDeleting}
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleDeleteClick}
-                className="text-destructive focus:text-destructive"
-                disabled={isDeleting}
-              >
-                <Trash className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="absolute right-2 top-4">
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="justifiy-center m-0 h-8 w-8 p-0 text-accent ring-0 hover:bg-accent hover:text-black"
+                  disabled={isDeleting}
+                >
+                  <span className="sr-only">Open menu</span>
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black text-white">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => setShowEditDialog(true)}
+                  disabled={isDeleting}
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleDeleteClick}
+                  className="text-destructive focus:text-destructive"
+                  disabled={isDeleting}
+                >
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="mt-4 flex flex-col">
@@ -172,6 +174,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         open={showDeleteDialog}
         onOpenChange={handleDialogClose}
         onConfirm={handleDelete}
+        isDeleting={isDeleting}
         title="Delete App"
         description={`Are you sure you want to delete ${app.name || 'this app'}? This action cannot be undone.`}
       />
