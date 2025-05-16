@@ -57,10 +57,9 @@ export default function WorkbenchTable({
   const { setNotification } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
 
-  const filteredWorkbenches =
-    workspaceId === user?.workspaceId
-      ? workbenches
-      : workbenches?.filter((w) => w.workspaceId === workspaceId)
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === workspaceId
+  )
 
   useEffect(() => {
     if (deleted) {
