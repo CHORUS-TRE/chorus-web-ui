@@ -47,6 +47,7 @@ export default function WorkspacesGrid({
 }: WorkspacesGridProps) {
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
+
   const { setNotification } = useAppState()
   const { apps, appInstances, refreshWorkspaces } = useAppState()
 
@@ -186,7 +187,7 @@ export default function WorkspacesGrid({
 
                 setNotification({
                   title: 'Success!',
-                  description: 'Workspace deleted'
+                  description: `Workspace ${workspace.name} deleted`
                 })
                 if (onUpdate) onUpdate()
               }}
