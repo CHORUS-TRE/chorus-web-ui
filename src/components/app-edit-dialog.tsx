@@ -88,6 +88,30 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
     }
   }, [open, form])
 
+  useEffect(() => {
+    if (!form.formState.isDirty && !form.formState.isSubmitting) {
+      form.reset({
+        name: app.name || '',
+        description: app.description || '',
+        dockerImageName: app.dockerImageName || '',
+        dockerImageTag: app.dockerImageTag || '',
+        dockerImageRegistry: app.dockerImageRegistry || '',
+        shmSize: app.shmSize || '',
+        minEphemeralStorage: app.minEphemeralStorage || '',
+        maxEphemeralStorage: app.maxEphemeralStorage || '',
+        kioskConfigURL: app.kioskConfigURL || '',
+        maxCPU: app.maxCPU || '',
+        minCPU: app.minCPU || '',
+        maxMemory: app.maxMemory || '',
+        minMemory: app.minMemory || '',
+        tenantId: app.tenantId || '',
+        ownerId: app.ownerId || '',
+        preset: 'auto',
+        iconURL: app.iconURL || ''
+      })
+    }
+  }, [app, form])
+
   async function onSubmit(data: FormData) {
     try {
       const formData = new FormData()
@@ -97,6 +121,8 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       })
 
       const result = await appUpdate({} as IFormState, formData)
+      //wait for 300ms
+      await new Promise((resolve) => setTimeout(resolve, 300))
 
       if (result.issues) {
         result.issues.forEach((issue) => {
@@ -109,8 +135,8 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       }
 
       if (result.data) {
-        onOpenChange(false)
         onSuccess()
+        onOpenChange(false)
         form.reset()
       } else if (result.error) {
         form.setError('root', {

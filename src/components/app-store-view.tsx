@@ -15,7 +15,6 @@ export function AppStoreView() {
   const [selectedType, setSelectedType] = useState<AppType>('app' as AppType)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const { apps, refreshApps } = useAppState()
-
   const filteredApps = apps?.filter((app) => app.type === selectedType)
 
   return (

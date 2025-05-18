@@ -52,7 +52,7 @@ export default function WorkspaceTable({
 }) {
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
-  const { setNotification } = useAppState()
+  const { setNotification, refreshWorkspaces } = useAppState()
 
   useEffect(() => {
     if (deleted) {
@@ -115,6 +115,7 @@ export default function WorkspaceTable({
             id={workspace?.id}
             state={[deleteOpen, setDeleteOpen]}
             onUpdate={() => {
+              refreshWorkspaces()
               setDeleted(true)
               setTimeout(() => {
                 setDeleted(false)

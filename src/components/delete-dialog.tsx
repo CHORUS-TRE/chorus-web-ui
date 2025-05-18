@@ -1,5 +1,6 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
 import React from 'react'
 
 import { Button } from '~/components/button'
@@ -19,6 +20,7 @@ export interface DeleteDialogProps {
   title: string
   description: string
   onConfirm: () => void
+  isDeleting?: boolean
 }
 
 export const DeleteDialog: React.FC<DeleteDialogProps> = ({
@@ -26,7 +28,8 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   onOpenChange,
   title,
   description,
-  onConfirm
+  onConfirm,
+  isDeleting = false
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,12 +44,13 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
           <Button
             type="button"
             onClick={() => onOpenChange(false)}
-            variant="outline"
-            className="bg-background text-white"
+            disabled={isDeleting}
+            className="focus-visible:bg-background focus-visible:text-accent"
           >
             Cancel
           </Button>
-          <Button type="button" onClick={onConfirm} variant="destructive">
+          <Button type="button" onClick={onConfirm} disabled={isDeleting}>
+            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Delete
           </Button>
         </DialogFooter>

@@ -40,7 +40,7 @@ function SubmitButton() {
   return (
     <Button className="ml-auto" type="submit" disabled={pending}>
       {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      Start
+      {pending ? 'Starting...' : 'Start'}
     </Button>
   )
 }

@@ -51,25 +51,14 @@ export default function WorkbenchTable({
   description?: string
   onUpdate?: (id: string) => void
 }) {
-  const { workbenches, refreshWorkbenches, setBackground, appInstances, apps } =
+  const { workbenches, refreshWorkbenches, setBackground, appInstances, apps, workspaces } =
     useAppState()
-  const { user } = useAuth()
   const { setNotification } = useAppState()
   const [deleted, setDeleted] = useState<boolean>(false)
 
-  const filteredWorkbenches =
-    workspaceId === user?.workspaceId
-      ? workbenches
-      : workbenches?.filter((w) => w.workspaceId === workspaceId)
-
-  useEffect(() => {
-    if (deleted) {
-      setNotification({
-        title: 'Success!',
-        description: 'Desktop deleted'
-      })
-    }
-  }, [deleted, setNotification])
+  const filteredWorkbenches = workbenches?.filter(
+    (w) => w.workspaceId === workspaceId
+  )
 
   const TableHeads = () => (
     <>
@@ -117,6 +106,13 @@ export default function WorkbenchTable({
                 setDeleted(false)
               }, 3000)
               refreshWorkbenches()
+              setNotification({
+                title: 'Success!',
+                description: `Desktop ${workbench?.name} in ${workspaces?.find(
+                  (w) => w.id === workspaceId
+                )?.name} was deleted`,
+                variant: 'default'
+              })
             }}
           />
         )}
@@ -239,15 +235,15 @@ export default function WorkbenchTable({
       <div className="flex items-center justify-end">
         <WorkbenchCreateForm
           workspaceId={workspaceId}
-          onUpdate={(workbenchId) => {
-            refreshWorkbenches()
-            setNotification({
-              title: 'Success!',
-              description: 'Desktop created successfully'
-            })
-            setBackground({ workbenchId, workspaceId })
-            if (onUpdate) onUpdate(workbenchId)
-          }}
+          // onSuccess={(workbenchId) => {
+          //   refreshWorkbenches()
+          //   setNotification({
+          //     title: 'Success!',
+          //     description: 'Desktop created successfully'
+          //   })
+          //   setBackground({ workbenchId, workspaceId })
+          //   if (onUpdate) onUpdate(workbenchId)
+          // }}
         />
       </div>
       <CardContainer

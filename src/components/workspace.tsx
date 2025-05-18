@@ -34,7 +34,7 @@ import { User, Workspace as WorkspaceType } from '@/domain/model'
 import { userGet } from './actions/user-view-model'
 import { workspaceGet } from './actions/workspace-view-model'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
-import { WorkspaceUpdateForm } from './forms/workspace-forms'
+import { WorkspaceDeleteForm, WorkspaceUpdateForm } from './forms/workspace-forms'
 import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
 import {
@@ -81,6 +81,7 @@ function SimpleBarChart({
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [workspaceUser, setWorkspaceUser] = useState<User>()
+  const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
   const {
     workbenches,
@@ -150,15 +151,30 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                 Edit
               </DropdownMenuItem>
-              {/* <DropdownMenuItem
-                  onClick={() => setActiveDeleteId(workspace.id)}
+              <DropdownMenuItem
+                  onClick={() => workspace?.id && setActiveDeleteId(workspace?.id)}
                   className="text-red-500 focus:text-red-500"
                 >
                   Delete
-                </DropdownMenuItem> */}
+                </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+            <WorkspaceDeleteForm
+              id={workspace?.id}
+              state={[
+                activeDeleteId === workspace?.id,
+                () => setActiveDeleteId(null)
+              ]}
+              onUpdate={() => {
+                refreshWorkspaces()
+
+                setNotification({
+                  title: 'Success!',
+                  description: `Workspace ${workspace?.name} deleted`
+                })
+              }}
+            />
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
             <CardTitle className="flex items-start gap-3 pr-2 text-white">
@@ -287,13 +303,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <CardFooter>
           <WorkbenchCreateForm
             workspaceId={workspace?.id}
-            onUpdate={(workbenchId) => {
-              refreshWorkspaces()
-              refreshWorkbenches()
-              router.push(
-                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
-              )
-            }}
+            // onSuccess={(workbenchId) => {
+            //   refreshWorkspaces()
+            //   refreshWorkbenches()
+
+            // }}
           />
         </CardFooter>
       </Card>

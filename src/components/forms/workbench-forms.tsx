@@ -1,8 +1,9 @@
 'use client'
 
 import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect, useState, useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
+import { useRouter } from 'next/navigation'
 
 import {
   workbenchCreate,
@@ -36,35 +37,27 @@ import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
 
+const DEFAULT_VIEWPORT = {
+  width: 1080,
+  height: 608 // 1080 * (9/16) for 16:9 aspect ratio
+}
+
 const initialState: IFormState = {
   data: undefined,
   error: undefined,
   issues: undefined
 }
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <Button
-      className="ml-auto flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
-      type="submit"
-      disabled={pending}
-    >
-      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      Start
-    </Button>
-  )
-}
-
 export function WorkbenchCreateForm({
   workspaceId,
   userId,
-  onUpdate
+  onSuccess
 }: {
   workspaceId?: string
   userId?: string
-  onUpdate?: (id: string) => void
+  onSuccess?: (workbenchId: string) => void
 }) {
+  const { pending } = useFormStatus()
   const [state, formAction] = useActionState(
     workbenchCreate,
     initialState,
@@ -72,18 +65,21 @@ export function WorkbenchCreateForm({
   )
   const [open, setOpen] = useState(false)
   const [scientistName, setScientistName] = useState(generateScientistName())
-  const [viewportDimensions, setViewportDimensions] = useState({
-    width: window?.visualViewport?.width,
-    height: window?.visualViewport?.height
-  })
+  const [viewportDimensions, setViewportDimensions] = useState(DEFAULT_VIEWPORT)
   const { setNotification } = useAppState()
   const { apps } = useAppState()
-
+  const router = useRouter()
   useEffect(() => {
+    // Set initial dimensions
+    setViewportDimensions({
+      width: window?.visualViewport?.width || DEFAULT_VIEWPORT.width,
+      height: window?.visualViewport?.height || DEFAULT_VIEWPORT.height
+    })
+
     const updateDimensions = () => {
       setViewportDimensions({
-        width: window?.visualViewport?.width,
-        height: window?.visualViewport?.height
+        width: window?.visualViewport?.width || DEFAULT_VIEWPORT.width,
+        height: window?.visualViewport?.height || DEFAULT_VIEWPORT.height
       })
     }
 
@@ -103,10 +99,30 @@ export function WorkbenchCreateForm({
     }
 
     if (state?.data) {
+      setNotification({
+        title: 'Success',
+        description: 'Desktop created successfully',
+        variant: 'default'
+      })
+
       setOpen(false)
-      if (onUpdate) onUpdate(state?.data as string)
+
+      router.push(
+        `/workspaces/${workspaceId}/desktops/${state?.data as string}`
+      )
+
+
+      if (onSuccess) onSuccess(state?.data as string)
     }
-  }, [state, onUpdate, setOpen, setNotification])
+  }, [state?.data, state?.error, onSuccess, setOpen, setNotification])
+
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      await formAction(formData)
+    } catch (error) {
+      console.error('Form submission error:', error)
+    }
+  }
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -115,16 +131,17 @@ export function WorkbenchCreateForm({
           className="flex items-center justify-start gap-1 rounded-full bg-background text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-background focus:ring-2 focus:ring-accent"
           type="button"
           variant="default"
+          disabled={pending}
         >
           <CirclePlus className="h-4 w-4" />
-          Start new desktop
+          {pending ? 'Creating...' : 'Start new desktop'}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle className="hidden">Start App</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
-            <form action={formAction}>
+            <form action={handleSubmit}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
                   <CardTitle>Start Desktop</CardTitle>
@@ -143,6 +160,8 @@ export function WorkbenchCreateForm({
                         placeholder="Enter workbench name"
                         value={scientistName}
                         onChange={(e) => setScientistName(e.target.value)}
+                        disabled={pending}
+                        aria-disabled={pending}
                       />
                       <Button
                         type="button"
@@ -151,17 +170,20 @@ export function WorkbenchCreateForm({
                           setScientistName(generateScientistName())
                         }
                         aria-label="Generate random scientist name"
+                        disabled={pending}
                       >
                         <RefreshCw className="h-4 w-4" />
                       </Button>
                     </div>
                     <div className="grid gap-3">
-                      <Label htmlFor="name">App</Label>
+                      <Label htmlFor="id">App</Label>
                       <select
                         name="id"
                         id="id"
                         required
                         className="bg-background text-white"
+                        disabled={pending}
+                        aria-disabled={pending}
                       >
                         <option value="">Choose an app</option>
                         {apps?.map((app) => (
@@ -185,6 +207,8 @@ export function WorkbenchCreateForm({
                       name="workspaceId"
                       placeholder="Enter workspace name"
                       defaultValue={workspaceId || ''}
+                      disabled={pending}
+                      aria-disabled={pending}
                     />
                     <div className="text-xs text-red-500">
                       {
@@ -201,6 +225,8 @@ export function WorkbenchCreateForm({
                       name="description"
                       placeholder="Enter description"
                       className="min-h-[100px]"
+                      disabled={pending}
+                      aria-disabled={pending}
                     />
                     <div className="text-xs text-red-500">
                       {
@@ -217,6 +243,8 @@ export function WorkbenchCreateForm({
                       name="ownerId"
                       placeholder="Enter owner ID"
                       defaultValue={userId || '2'}
+                      disabled={pending}
+                      aria-disabled={pending}
                     />
                     <div className="text-xs text-red-500">
                       {
@@ -232,6 +260,8 @@ export function WorkbenchCreateForm({
                       name="memberIds"
                       placeholder="Enter member IDs separated by commas"
                       className="min-h-[100px]"
+                      disabled={pending}
+                      aria-disabled={pending}
                     />
                     <div className="text-xs text-red-500">
                       {
@@ -246,6 +276,8 @@ export function WorkbenchCreateForm({
                       id="tags"
                       name="tags"
                       placeholder="Enter tags separated by commas"
+                      disabled={pending}
+                      aria-disabled={pending}
                     />
                     <div className="text-xs text-red-500">
                       {
@@ -261,6 +293,8 @@ export function WorkbenchCreateForm({
                       name="tenantId"
                       placeholder="Enter tenant ID"
                       defaultValue={1}
+                      disabled={pending}
+                      aria-disabled={pending}
                     />
                     <div className="text-xs text-red-500">
                       {
@@ -289,7 +323,15 @@ export function WorkbenchCreateForm({
                   )}
                 </CardContent>
                 <CardFooter>
-                  <SubmitButton />
+                  <Button
+                    className="ml-auto flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
+                    type="submit"
+                    disabled={pending}
+                    aria-disabled={pending}
+                  >
+                    {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {`Start ${pending ? '...' : ''}`}
+                  </Button>
                 </CardFooter>
               </Card>
             </form>
@@ -309,15 +351,18 @@ export function WorkbenchDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [, formAction] = useActionState(workbenchDelete, initialState)
+  const [state, formAction] = useActionState(workbenchDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [, startTransition] = useTransition()
 
   const handleDelete = async () => {
     try {
       setIsDeleting(true)
       const formData = new FormData()
       formData.append('id', id || '')
-      await formAction(formData)
+      startTransition(() => {
+        formAction(formData)
+      })
       setIsDeleting(false)
       setOpen(false)
       if (onUpdate) onUpdate()
@@ -344,8 +389,8 @@ export function WorkbenchDeleteForm({
         }
       }}
       onConfirm={handleDelete}
-      title="Quit Desktop"
-      description="The Desktop will be stopped and the apps will be closed. Are you sure you want to delete this desktop and it's apps? This action cannot be undone."
+      title="Delete Desktop"
+      description="The Desktop and its apps will be deleted. Are you sure? This action cannot be undone."
     />
   )
 }
@@ -362,6 +407,7 @@ export function WorkbenchUpdateForm({
   const [state, formAction] = useActionState(workbenchUpdate, initialState)
   const [scientistName, setScientistName] = useState(workbench.name)
   const { setNotification } = useAppState()
+  const [, startTransition] = useTransition()
 
   useEffect(() => {
     if (state?.error) {
@@ -379,87 +425,54 @@ export function WorkbenchUpdateForm({
     }
   }, [setNotification, state, onUpdate, setOpen])
 
+  const handleSubmit = async (formData: FormData) => {
+    startTransition(() => {
+      formAction(formData)
+    })
+  }
+
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
-        <DialogTitle className="hidden">Update Desktop</DialogTitle>
         <DialogHeader>
-          <DialogDescription asChild>
-            <form action={formAction}>
-              <Card className="w-full max-w-md border-none bg-background text-white">
-                <CardHeader>
-                  <CardTitle>Settings</CardTitle>
-                  <CardDescription>Edit desktop settings.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Name of the Desktop</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="name"
-                        name="name"
-                        required
-                        placeholder="Enter workbench name"
-                        value={scientistName}
-                        onChange={(e) => setScientistName(e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() =>
-                          setScientistName(generateScientistName())
-                        }
-                        aria-label="Generate random scientist name"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Input id="id" name="id" defaultValue={workbench.id} />
-                    <Input
-                      id="workspaceId"
-                      name="workspaceId"
-                      defaultValue={workbench.workspaceId}
-                    />
-                    <Input
-                      id="tenantId"
-                      name="tenantId"
-                      defaultValue={workbench.tenantId}
-                    />
-                    <Input
-                      id="ownerId"
-                      name="ownerId"
-                      defaultValue={workbench.ownerId}
-                    />
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      placeholder="Enter description"
-                      className="min-h-[100px]"
-                      defaultValue={workbench.description}
-                    />
-                  </div>
-                  {state?.error && (
-                    <p className="text-red-500">{state.error}</p>
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    className="ml-auto flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
-                    type="submit"
-                  >
-                    Update
-                  </Button>
-                </CardFooter>
-              </Card>
-            </form>
+          <DialogTitle>Update Desktop</DialogTitle>
+          <DialogDescription>
+            Update your desktop settings.
           </DialogDescription>
         </DialogHeader>
+        <form action={handleSubmit}>
+          <Card className="w-full max-w-md border-none bg-background text-white">
+            <CardHeader>
+              <CardTitle>Update Desktop</CardTitle>
+              <CardDescription>
+                Update your desktop settings.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <div className="grid gap-3">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={scientistName}
+                    onChange={(e) => setScientistName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="text-xs text-red-500">
+                  {state?.issues?.find((e) => e.path.includes('name'))?.message}
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="ml-auto">
+                Update
+              </Button>
+            </CardFooter>
+          </Card>
+        </form>
       </DialogContent>
     </DialogContainer>
   )
