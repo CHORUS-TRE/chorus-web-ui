@@ -1,3 +1,17 @@
+# [1.0.0-alpha.34](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.33...v1.0.0-alpha.34) (2025-05-18)
+
+
+### Bug Fixes
+
+* **auth-context:** prevent unnecessary user state updates by checking user ID before setting ([29a7a57](https://github.com/CHORUS-TRE/chorus-web-ui/commit/29a7a574188330d8da29eb5373ce9fa75e63f6ea))
+* **background-iframe:** improve iframe mouseover handling and focus management ([bdd5b05](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bdd5b0597359a34c7abe1aefea8a30657c68985f))
+* infinite loop ([306f1dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/306f1dcd8d04cd41d1f66aa79615b850a42de2cd))
+
+
+### Features
+
+* **app-dialogs:** enhance app edit dialog with form reset and improved submission handling ([992d850](https://github.com/CHORUS-TRE/chorus-web-ui/commit/992d850648740009b4cea24059409e1df63861a3))
+
 # [1.0.0-alpha.33](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.32...v1.0.0-alpha.33) (2025-05-09)
 
 
