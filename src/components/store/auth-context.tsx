@@ -54,7 +54,9 @@ export const AuthProvider = ({
       const { data, error } = await userMe()
       if (error) throw error
 
-      setUser(data)
+      if (user?.id !== data?.id) {
+        setUser(data)
+      }
     } catch (error) {
       console.error(error)
       setBackground(undefined)
