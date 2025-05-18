@@ -303,13 +303,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <CardFooter>
           <WorkbenchCreateForm
             workspaceId={workspace?.id}
-            onUpdate={(workbenchId) => {
-              refreshWorkspaces()
-              refreshWorkbenches()
-              router.push(
-                `/workspaces/${workspace?.id}/desktops/${workbenchId}`
-              )
-            }}
+            // onSuccess={(workbenchId) => {
+            //   refreshWorkspaces()
+            //   refreshWorkbenches()
+
+            // }}
           />
         </CardFooter>
       </Card>

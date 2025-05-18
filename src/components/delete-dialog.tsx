@@ -44,8 +44,8 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
           <Button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="bg-background text-white"
             disabled={isDeleting}
+            className="focus-visible:bg-background focus-visible:text-accent"
           >
             Cancel
           </Button>
