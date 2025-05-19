@@ -100,6 +100,15 @@ nav li {
   list-style: none;
 }
 
+.RaLayout-appFrame {
+  margin-top: 0px !important;
+}
+
+.RaSidebar-docked,
+.RaSidebar-closed {
+  display: none !important;
+}
+
 /* .flex {
   border: 1px solid rgba(0, 0, 0, 0.2);
 } */
