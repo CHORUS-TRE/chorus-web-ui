@@ -1,3 +1,10 @@
+# [1.0.0-alpha.35](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.34...v1.0.0-alpha.35) (2025-05-19)
+
+
+### Features
+
+* **admin:** implement workspace management ([d238fe2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d238fe2b16c480096b08d1fe9f05f53b4fdd18a9))
+
 # [1.0.0-alpha.34](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.33...v1.0.0-alpha.34) (2025-05-18)
 
 
