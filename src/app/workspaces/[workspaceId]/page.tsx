@@ -9,7 +9,7 @@ import { Workspace } from '~/components/workspace'
 
 const WorkspacePage = () => {
   const { refreshWorkbenches } = useAppState()
-  const params = useParams<{ workspaceId: string; desktopId: string }>()
+  const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
 
   const initializeData = useCallback(async () => {

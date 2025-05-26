@@ -50,7 +50,7 @@ export const steps: Tour[] = [
       //   title: "HOME Workspace",
       //   content: <div className="min-w-[480px]">
       //     <p className="mb-4">Your Home Workspace is the starting point for your CHORUS experience. It acts as a personal dashboard where you can manage your work, access datasets, and monitor your resources.</p>
-      //     <p className="mb-4">Designed for efficiency and organization, it provides an overview of your active desktops, running applications, and available datasets.</p>
+      //     <p className="mb-4">Designed for efficiency and organization, it provides an overview of your active sessions, running applications, and available datasets.</p>
       //   </div>,
       //   selector: "#getting-started-step-home",
       //   icon: "🏠",
@@ -60,9 +60,9 @@ export const steps: Tour[] = [
       // {
       //   title: "DESKTOPS",
       //   content: <div className="min-w-[480px]">
-      //     <p className="mb-4">Desktops in CHORUS provide a secure computing environment where you can run applications, analyze data, and collaborate with others.</p>
-      //     <p className="mb-4">You can launch a desktop in your Home Workspace or within a project workspace you are involved in.</p>
-      //     <p className="mb-4">With flexible and scalable resources, desktops can be customized to meet your project’s specific needs. You can also open multiple instances simultaneously, enabling you to manage different research tasks in parallel.</p>
+      //     <p className="mb-4">Session in CHORUS provide a secure computing environment where you can run applications, analyze data, and collaborate with others.</p>
+      //     <p className="mb-4">You can launch a session in your Home Workspace or within a project workspace you are involved in.</p>
+      //     <p className="mb-4">With flexible and scalable resources, sessions can be customized to meet your project’s specific needs. You can also open multiple instances simultaneously, enabling you to manage different research tasks in parallel.</p>
       //   </div>,
       //   selector: "#getting-started-step2",
       //   nextRoute: "/workspaces",
@@ -89,7 +89,7 @@ export const steps: Tour[] = [
       //   title: "Applications",
       //   content: <div className="min-w-[480px]">
       //     <p className="mb-4">CHORUS provides access to a wide range of research applications, including data management tools, statistical analysis software, and AI-based solutions. </p>
-      //     <p className="mb-4">You can launch applications from your desktop or within a workspace.</p>
+      //     <p className="mb-4">You can launch applications from your session or within a workspace.</p>
       //   </div>,
       //   selector: "#getting-started-step4",
       //   prevRoute: "/app-store",

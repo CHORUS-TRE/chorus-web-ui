@@ -35,14 +35,14 @@ type AppStateContextType = {
   toggleWorkspaceView: () => void
   background:
     | {
-        workbenchId: string
+        sessionId: string
         workspaceId: string
       }
     | undefined
   setBackground: Dispatch<
     SetStateAction<
       | {
-          workbenchId: string
+          sessionId: string
           workspaceId: string
         }
       | undefined
@@ -105,7 +105,7 @@ export const AppStateProvider = ({
   })
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [background, setBackground] = useState<{
-    workbenchId: string
+    sessionId: string
     workspaceId: string
   }>()
   const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>(

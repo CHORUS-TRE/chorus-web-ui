@@ -106,11 +106,11 @@ export default function WorkspacesGrid({
                       )
                       .map(({ shortName, createdAt, id }) => (
                         <div
-                          key={`workspace-grid-desktops-${id}`}
+                          key={`workspace-grid-sessions-${id}`}
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            window.location.href = `/workspaces/${workspace?.id}/desktops/${id}`
+                            window.location.href = `/workspaces/${workspace?.id}/sessions/${id}`
                           }}
                           className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
                         >
@@ -131,7 +131,7 @@ export default function WorkspacesGrid({
                                       workspace?.id === instance.workspaceId
                                   )
                                   ?.filter(
-                                    (instance) => id === instance.workbenchId
+                                    (instance) => id === instance.sessionId
                                   )
                                   .slice(0, 3)
                                   .map(

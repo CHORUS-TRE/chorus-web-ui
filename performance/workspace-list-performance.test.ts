@@ -29,7 +29,7 @@ function generateTestWorkspaces(count: number) {
     memberIds: ['owner-1', 'member-1', 'member-2'],
     tags: [`tag-${i % 5}`, `priority-${i % 3}`],
     status: i % 5 === 0 ? 'archived' : 'active',
-    workbenchIds: Array.from({ length: i % 10 }, (_, j) => `workbench-${j}`),
+    sessionIds: Array.from({ length: i % 10 }, (_, j) => `workbench-${j}`),
     serviceIds: Array.from({ length: i % 5 }, (_, j) => `service-${j}`),
     createdAt: new Date(Date.now() - i * 86400000), // i days ago
     updatedAt: new Date(Date.now() - i * 43200000), // i/2 days ago
@@ -127,7 +127,7 @@ describe('Workspace List Performance', () => {
         displayName: `${workspace.name} (${workspace.shortName})`,
         isActive: workspace.status === 'active',
         memberCount: workspace.memberIds.length,
-        workbenchCount: workspace.workbenchIds.length
+        workbenchCount: workspace.sessionIds.length
       }))
 
       return processedData

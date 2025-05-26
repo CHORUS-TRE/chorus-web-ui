@@ -92,7 +92,7 @@ export function Header() {
   } = useAppState()
   const { user, isAuthenticated, setAuthenticated } = useAuth()
 
-  const params = useParams<{ workspaceId: string; desktopId: string }>()
+  const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
   const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -101,7 +101,7 @@ export function Header() {
   const [showAboutDialog, setShowAboutDialog] = useState(false)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
 
-  const isInAppContext = params?.workspaceId && params?.desktopId
+  const isInAppContext = params?.workspaceId && params?.sessionId
   const isUserWorkspace = params?.workspaceId === user?.workspaceId
 
   const pathNames = useMemo(
@@ -171,8 +171,8 @@ export function Header() {
               : workspace.shortName
         }
 
-        if (params?.desktopId) {
-          const workbench = workbenches?.find((w) => w.id === params.desktopId)
+        if (params?.sessionId) {
+          const workbench = workbenches?.find((w) => w.id === params.sessionId)
           if (workbench?.shortName) {
             updatedItems[3] = {
               ...updatedItems[3],
@@ -187,7 +187,7 @@ export function Header() {
   }, [
     initialItems,
     params?.workspaceId,
-    params?.desktopId,
+    params?.sessionId,
     workbenches,
     workspaces,
     user?.workspaceId
@@ -200,12 +200,12 @@ export function Header() {
 
   useEffect(() => {
     if (isInAppContext && workbenches) {
-      const workbench = workbenches.find((w) => w.id === params.desktopId)
+      const workbench = workbenches.find((w) => w.id === params.sessionId)
       if (workbench) {
         setCurrentWorkbench(workbench)
       }
     }
-  }, [isInAppContext, workbenches, params.desktopId])
+  }, [isInAppContext, workbenches, params.sessionId])
 
   useEffect(() => {
     if (isAuthenticated) return
@@ -267,7 +267,13 @@ export function Header() {
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 border-transparent text-sm font-light text-white hover:border-b-2 hover:border-accent">
-                                <span>Workspaces</span>
+                                <span
+                                  onClick={() => {
+                                    router.push('/workspaces')
+                                  }}
+                                >
+                                  Workspaces
+                                </span>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
@@ -303,7 +309,7 @@ export function Header() {
                                                     workbench.workspaceId ===
                                                     workspace.id
                                                 )?.length || 0
-                                              return `${w} open ${w <= 1 ? 'desktop' : 'desktops'}`
+                                              return `${w} open ${w <= 1 ? 'session' : 'sessions'}`
                                             })()}
                                           </span>
                                         </div>
@@ -317,12 +323,17 @@ export function Header() {
                         </NavigationMenu>
                       )}
 
-                      {/* Workspace's desktops Menu  Dropdown*/}
+                      {/* Workspace's sessions Menu  Dropdown*/}
                       {index === 1 && (
                         <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
-                              <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 text-sm font-light text-white hover:border-b-2 hover:border-accent">
+                              <NavigationMenuTrigger
+                                className="ml-1 mt-[2px] border-b-2 text-sm font-light text-white hover:border-b-2 hover:border-accent"
+                                onClick={() => {
+                                  router.push(`/workspaces/${workspaceId}`)
+                                }}
+                              >
                                 <span>{item.name}</span>
                               </NavigationMenuTrigger>
                               {workbenches &&
@@ -346,16 +357,16 @@ export function Header() {
                                           .map((workbench) => (
                                             <NavigationMenuItem
                                               key={workbench.id}
-                                              className="group/desktop relative"
+                                              className="group/session relative"
                                             >
                                               <ListItem
                                                 className="p-1 font-semibold"
-                                                href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                                href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
                                                 wrapWithLi={false}
                                               >
                                                 <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                                   <div
-                                                    className={`mb-[2px] flex items-center gap-2 ${workbench.id === background?.workbenchId ? 'text-accent' : ''}`}
+                                                    className={`mb-[2px] flex items-center gap-2 ${workbench.id === background?.sessionId ? 'text-accent' : ''}`}
                                                   >
                                                     <LaptopMinimal className="h-4 w-4" />
                                                     {workbench.name}
@@ -366,7 +377,7 @@ export function Header() {
                                                         appInstances
                                                           ?.filter(
                                                             (instance) =>
-                                                              instance.workbenchId ===
+                                                              instance.sessionId ===
                                                               workbench.id
                                                           )
                                                           ?.map(
@@ -408,16 +419,16 @@ export function Header() {
                                           .map((workbench) => (
                                             <NavigationMenuItem
                                               key={workbench.id}
-                                              className="group/desktop relative"
+                                              className="group/session relative"
                                             >
                                               <ListItem
                                                 className="p-1 font-semibold"
-                                                href={`/workspaces/${workbench.workspaceId}/desktops/${workbench.id}`}
+                                                href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
                                                 wrapWithLi={false}
                                               >
                                                 <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
                                                   <div
-                                                    className={`mb-[2px] flex items-center gap-2 ${workbench.id === background?.workbenchId ? 'text-accent' : ''}`}
+                                                    className={`mb-[2px] flex items-center gap-2 ${workbench.id === background?.sessionId ? 'text-accent' : ''}`}
                                                   >
                                                     <LaptopMinimal className="h-4 w-4" />
                                                     {workbench.name}
@@ -428,7 +439,7 @@ export function Header() {
                                                         appInstances
                                                           ?.filter(
                                                             (instance) =>
-                                                              instance.workbenchId ===
+                                                              instance.sessionId ===
                                                               workbench.id
                                                           )
                                                           ?.map(
@@ -465,7 +476,7 @@ export function Header() {
                         </NavigationMenu>
                       )}
 
-                      {/* Desktop Menu */}
+                      {/* Session Menu */}
                       {index === 2 && (
                         <NavigationMenu>
                           <NavigationMenuList>
@@ -479,7 +490,7 @@ export function Header() {
                                 </NavigationMenuTrigger>
                                 <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                   <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                                    {/* Desktop Info Section */}
+                                    {/* Session Info Section */}
                                     <NavigationMenuItem>
                                       <ListItem
                                         title={`About ${currentWorkbench?.name}`}
@@ -493,7 +504,7 @@ export function Header() {
                                               appInstances
                                                 ?.filter(
                                                   (instance) =>
-                                                    instance.workbenchId ===
+                                                    instance.sessionId ===
                                                     currentWorkbench.id
                                                 )
                                                 ?.map(
@@ -551,7 +562,7 @@ export function Header() {
 
                                     {/* Quit Section */}
                                     <ListItem
-                                      title="Quit ..."
+                                      title="Delete Session..."
                                       className="cursor-pointer p-1 font-semibold"
                                       onClick={() => setDeleteOpen(true)}
                                       wrapWithLi={false}
@@ -602,11 +613,11 @@ export function Header() {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
                     <LaptopMinimal className="h-4 w-4" />
-                    <span>Open Desktops</span>
+                    <span>Open Sessions</span>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
-                      <div className="p-2 text-sm">No desktop found</div>
+                      <div className="p-2 text-sm">No session found</div>
                     )}
                     <div className="flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto bg-black bg-opacity-85 p-2">
                       <div className="flex flex-1 flex-col gap-1">
@@ -652,13 +663,13 @@ export function Header() {
                                       key={`${workspace?.id}-${id}`}
                                     >
                                       <Link
-                                        href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                                        href={`/workspaces/${workspace?.id}/sessions/${id}`}
                                         className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
                                       >
                                         <div className="text-sm font-semibold">
                                           <div className="flex items-center justify-between">
                                             <div
-                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
                                             >
                                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                               {shortName}
@@ -679,7 +690,7 @@ export function Header() {
                                                 )
                                                 ?.filter(
                                                   (instance) =>
-                                                    id === instance.workbenchId
+                                                    id === instance.sessionId
                                                 )
                                                 .map(
                                                   (instance) =>
@@ -743,13 +754,13 @@ export function Header() {
                                       key={`${workspace?.id}-${id}`}
                                     >
                                       <Link
-                                        href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                                        href={`/workspaces/${workspace?.id}/sessions/${id}`}
                                         className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
                                       >
                                         <div className="text-sm font-semibold">
                                           <div className="flex items-center justify-between">
                                             <div
-                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.workbenchId ? 'text-accent' : ''}`}
+                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
                                             >
                                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                               {shortName}
@@ -770,7 +781,7 @@ export function Header() {
                                                 )
                                                 ?.filter(
                                                   (instance) =>
-                                                    id === instance.workbenchId
+                                                    id === instance.sessionId
                                                 )
                                                 .map(
                                                   (instance) =>
@@ -820,9 +831,9 @@ export function Header() {
                           onClick={async () => {
                             if (!currentWorkbench) {
                               setNotification({
-                                title: 'Select a desktop first',
+                                title: 'Select a session first',
                                 description:
-                                  'You must select a desktop to launch an app',
+                                  'You must select a session to launch an app',
                                 variant: 'default'
                               })
                               return
@@ -830,7 +841,7 @@ export function Header() {
 
                             setNotification({
                               title: 'Launching app...',
-                              description: `Starting ${app.name} in desktop ${currentWorkbench?.name}`,
+                              description: `Starting ${app.name} in session ${currentWorkbench?.name}`,
                               variant: 'default'
                             })
 
@@ -839,7 +850,7 @@ export function Header() {
                             formData.append('tenantId', '1')
                             formData.append('ownerId', user?.id || '')
                             formData.append('workspaceId', params.workspaceId)
-                            formData.append('workbenchId', params.desktopId)
+                            formData.append('sessionId', params.sessionId)
 
                             try {
                               const result = await appInstanceCreate(
@@ -1053,12 +1064,12 @@ export function Header() {
         </div>
 
         <WorkbenchDeleteForm
-          id={params.desktopId}
+          id={params.sessionId}
           state={[deleteOpen, setDeleteOpen]}
           onUpdate={() => {
             setNotification({
               title: 'Success!',
-              description: 'Desktop was deleted, redirecting to workspace...',
+              description: 'Session was deleted, redirecting to workspace...',
               variant: 'default'
             })
             setTimeout(() => {
@@ -1070,7 +1081,7 @@ export function Header() {
 
         <AppInstanceCreateForm
           state={[createOpen, setCreateOpen]}
-          workbenchId={params.desktopId}
+          sessionId={params.sessionId}
           userId={user?.id}
           workspaceId={params.workspaceId}
         />

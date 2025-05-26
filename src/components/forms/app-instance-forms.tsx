@@ -2,7 +2,6 @@
 
 import { Loader2 } from 'lucide-react'
 import { useActionState, useEffect } from 'react'
-import { useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
 import { useAppState } from '@/components/store/app-state-context'
@@ -35,30 +34,23 @@ const initialState: IFormState = {
   issues: undefined
 }
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <Button className="ml-auto" type="submit" disabled={pending}>
-      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {pending ? 'Starting...' : 'Start'}
-    </Button>
-  )
-}
-
 export function AppInstanceCreateForm({
   state: [open, setOpen],
   workspaceId,
-  workbenchId,
+  sessionId,
   userId,
   onUpdate
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   workspaceId?: string
-  workbenchId?: string
+  sessionId?: string
   userId?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useActionState(appInstanceCreate, initialState)
+  const [state, formAction, pending] = useActionState(
+    appInstanceCreate,
+    initialState
+  )
   const { setNotification } = useAppState()
   const { apps } = useAppState()
 
@@ -77,6 +69,15 @@ export function AppInstanceCreateForm({
       if (onUpdate) onUpdate()
     }
   }, [setNotification, state, onUpdate, setOpen])
+
+  function SubmitButton() {
+    return (
+      <Button className="ml-auto" type="submit" disabled={pending}>
+        {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {pending ? 'Starting...' : 'Start'}
+      </Button>
+    )
+  }
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -135,18 +136,17 @@ export function AppInstanceCreateForm({
                     </div>
                   </div>
                   <div className="grid hidden gap-2">
-                    <Label htmlFor="name">Desktop</Label>
+                    <Label htmlFor="name">Session</Label>
                     <Input
-                      id="workbenchId"
-                      name="workbenchId"
+                      id="sessionId"
+                      name="sessionId"
                       placeholder="Enter workbench id"
-                      defaultValue={workbenchId || ''}
+                      defaultValue={sessionId || ''}
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) =>
-                          e.path.includes('workbenchId')
-                        )?.message
+                        state?.issues?.find((e) => e.path.includes('sessionId'))
+                          ?.message
                       }
                     </div>
                   </div>

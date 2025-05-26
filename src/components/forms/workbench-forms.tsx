@@ -1,9 +1,8 @@
 'use client'
 
 import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
-import { useActionState, useEffect, useState, useTransition } from 'react'
-import { useFormStatus } from 'react-dom'
 import { useRouter } from 'next/navigation'
+import { useActionState, useEffect, useState, useTransition } from 'react'
 
 import {
   workbenchCreate,
@@ -55,10 +54,9 @@ export function WorkbenchCreateForm({
 }: {
   workspaceId?: string
   userId?: string
-  onSuccess?: (workbenchId: string) => void
+  onSuccess?: (sessionId: string) => void
 }) {
-  const { pending } = useFormStatus()
-  const [state, formAction] = useActionState(
+  const [state, formAction, pending] = useActionState(
     workbenchCreate,
     initialState,
     `/workspaces/${workspaceId}`
@@ -101,16 +99,15 @@ export function WorkbenchCreateForm({
     if (state?.data) {
       setNotification({
         title: 'Success',
-        description: 'Desktop created successfully',
+        description: 'Session created successfully',
         variant: 'default'
       })
 
       setOpen(false)
 
       router.push(
-        `/workspaces/${workspaceId}/desktops/${state?.data as string}`
+        `/workspaces/${workspaceId}/sessions/${state?.data as string}`
       )
-
 
       if (onSuccess) onSuccess(state?.data as string)
     }
@@ -134,7 +131,7 @@ export function WorkbenchCreateForm({
           disabled={pending}
         >
           <CirclePlus className="h-4 w-4" />
-          {pending ? 'Creating...' : 'Start new desktop'}
+          {pending ? 'Creating...' : 'Start new session'}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -144,14 +141,14 @@ export function WorkbenchCreateForm({
             <form action={handleSubmit}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
-                  <CardTitle>Start Desktop</CardTitle>
+                  <CardTitle>Start Session</CardTitle>
                   <CardDescription>
-                    Start a new desktop with a specific app.
+                    Start a new session with a specific app.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Name of the Desktop</Label>
+                    <Label htmlFor="name">Name of the Session</Label>
                     <div className="flex gap-2">
                       <Input
                         id="name"
@@ -329,7 +326,9 @@ export function WorkbenchCreateForm({
                     disabled={pending}
                     aria-disabled={pending}
                   >
-                    {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {pending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {`Start ${pending ? '...' : ''}`}
                   </Button>
                 </CardFooter>
@@ -389,8 +388,8 @@ export function WorkbenchDeleteForm({
         }
       }}
       onConfirm={handleDelete}
-      title="Delete Desktop"
-      description="The Desktop and its apps will be deleted. Are you sure? This action cannot be undone."
+      title="Delete Session"
+      description="The Session and its apps will be deleted. Are you sure? This action cannot be undone."
     />
   )
 }
@@ -436,18 +435,14 @@ export function WorkbenchUpdateForm({
       <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Desktop</DialogTitle>
-          <DialogDescription>
-            Update your desktop settings.
-          </DialogDescription>
+          <DialogTitle>Update Session</DialogTitle>
+          <DialogDescription>Update your session settings.</DialogDescription>
         </DialogHeader>
         <form action={handleSubmit}>
           <Card className="w-full max-w-md border-none bg-background text-white">
             <CardHeader>
-              <CardTitle>Update Desktop</CardTitle>
-              <CardDescription>
-                Update your desktop settings.
-              </CardDescription>
+              <CardTitle>Update Session</CardTitle>
+              <CardDescription>Update your session settings.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
