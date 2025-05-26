@@ -3,7 +3,7 @@
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import React from 'react'
 
 import { Button } from '~/components/button'
@@ -38,23 +38,20 @@ import {
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
 import { useAppState } from './store/app-state-context'
-import { useAuth } from './store/auth-context'
 
 export default function WorkbenchTable({
   workspaceId,
   title,
-  description,
-  onUpdate
+  description
 }: {
   workspaceId: string
   title?: string
   description?: string
   onUpdate?: (id: string) => void
 }) {
-  const { workbenches, refreshWorkbenches, setBackground, appInstances, apps, workspaces } =
+  const { workbenches, refreshWorkbenches, appInstances, apps, workspaces } =
     useAppState()
   const { setNotification } = useAppState()
-  const [deleted, setDeleted] = useState<boolean>(false)
 
   const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
@@ -101,16 +98,12 @@ export default function WorkbenchTable({
             id={workbench?.id}
             state={[deleteOpen, setDeleteOpen]}
             onUpdate={() => {
-              setDeleted(true)
-              setTimeout(() => {
-                setDeleted(false)
-              }, 3000)
               refreshWorkbenches()
               setNotification({
                 title: 'Success!',
-                description: `Desktop ${workbench?.name} in ${workspaces?.find(
-                  (w) => w.id === workspaceId
-                )?.name} was deleted`,
+                description: `Desktop ${workbench?.name} in ${
+                  workspaces?.find((w) => w.id === workspaceId)?.name
+                } was deleted`,
                 variant: 'default'
               })
             }}
