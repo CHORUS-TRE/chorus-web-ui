@@ -1,3 +1,10 @@
+# [1.0.0-alpha.37](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.36...v1.0.0-alpha.37) (2025-05-26)
+
+
+### Bug Fixes
+
+* **api:** revert sessionId to workbenchId ([d784550](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d784550ec64436f59ba4305dbd8b32198c4da85e))
+
 # [1.0.0-alpha.36](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.35...v1.0.0-alpha.36) (2025-05-26)
 
 
