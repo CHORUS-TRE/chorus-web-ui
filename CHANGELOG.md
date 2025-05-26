@@ -1,3 +1,10 @@
+# [1.0.0-alpha.36](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.35...v1.0.0-alpha.36) (2025-05-26)
+
+
+### Bug Fixes
+
+* trigger alpha.36 release ([a0cea91](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a0cea910fc67f90aad6d66135584ea91cc112dca))
+
 # [1.0.0-alpha.35](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.34...v1.0.0-alpha.35) (2025-05-19)
 
 
