@@ -24,7 +24,7 @@ export const AppInstanceApiCreateSchema = z.object({
   userId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  sessionId: z.string()
+  workbenchId: z.string()
 })
 
 export const AppInstanceApiSchema = AppInstanceApiCreateSchema.extend({
@@ -40,7 +40,7 @@ const apiToDomain = (w: ChorusAppInstanceApi): AppInstance => {
     status: w.status || '',
     tenantId: w.tenantId || '',
     appId: w.appId || '',
-    sessionId: w.sessionId || '',
+    sessionId: w.workbenchId || '',
     workspaceId: w.workspaceId || '',
     id: w.id || '',
     createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),

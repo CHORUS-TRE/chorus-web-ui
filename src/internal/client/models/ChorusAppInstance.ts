@@ -54,7 +54,7 @@ export interface ChorusAppInstance {
    * @type {string}
    * @memberof ChorusAppInstance
    */
-  sessionId?: string
+  workbenchId?: string
   /**
    *
    * @type {string}
@@ -113,7 +113,7 @@ export function ChorusAppInstanceFromJSONTyped(
     userId: !exists(json, 'userId') ? undefined : json['userId'],
     appId: !exists(json, 'appId') ? undefined : json['appId'],
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
-    sessionId: !exists(json, 'sessionId') ? undefined : json['sessionId'],
+    workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
     status: !exists(json, 'status') ? undefined : json['status'],
     initialResolutionWidth: !exists(json, 'initialResolutionWidth')
       ? undefined
@@ -143,7 +143,7 @@ export function ChorusAppInstanceToJSON(value?: ChorusAppInstance | null): any {
     userId: value.userId,
     appId: value.appId,
     workspaceId: value.workspaceId,
-    sessionId: value.sessionId,
+    workbenchId: value.workbenchId,
     status: value.status,
     initialResolutionWidth: value.initialResolutionWidth,
     initialResolutionHeight: value.initialResolutionHeight,
