@@ -267,7 +267,13 @@ export function Header() {
                           <NavigationMenuList>
                             <NavigationMenuItem>
                               <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 border-transparent text-sm font-light text-white hover:border-b-2 hover:border-accent">
-                                <span>Workspaces</span>
+                                <span
+                                  onClick={() => {
+                                    router.push('/workspaces')
+                                  }}
+                                >
+                                  Workspaces
+                                </span>
                               </NavigationMenuTrigger>
                               <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                                 <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
@@ -281,12 +287,14 @@ export function Header() {
                                         href={`/workspaces/${workspace.id}`}
                                         wrapWithLi={false}
                                       >
-                                        <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
+                                        <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground"
+                                        >
                                           <div
+
                                             className={`flex items-center gap-2 ${workspace.id === workspaceId ? 'text-accent' : ''}`}
                                           >
                                             {workspace.id === workspaceId ||
-                                            paths === '/' ? (
+                                              paths === '/' ? (
                                               <PackageOpen className="h-4 w-4" />
                                             ) : (
                                               <Package className="h-4 w-4" />
@@ -322,7 +330,11 @@ export function Header() {
                         <NavigationMenu className="hidden xl:block">
                           <NavigationMenuList>
                             <NavigationMenuItem>
-                              <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 text-sm font-light text-white hover:border-b-2 hover:border-accent">
+                              <NavigationMenuTrigger className="ml-1 mt-[2px] border-b-2 text-sm font-light text-white hover:border-b-2 hover:border-accent" onClick={() => {
+                                router.push(
+                                  `/workspaces/${workspaceId}`
+                                )
+                              }}>
                                 <span>{item.name}</span>
                               </NavigationMenuTrigger>
                               {workbenches &&
@@ -551,7 +563,7 @@ export function Header() {
 
                                     {/* Quit Section */}
                                     <ListItem
-                                      title="Quit ..."
+                                      title="Delete Desktop..."
                                       className="cursor-pointer p-1 font-semibold"
                                       onClick={() => setDeleteOpen(true)}
                                       wrapWithLi={false}
@@ -630,7 +642,7 @@ export function Header() {
                                   className={`mb-2 flex items-center gap-2 font-semibold`}
                                 >
                                   {workspace.id === workspaceId ||
-                                  paths === '/' ? (
+                                    paths === '/' ? (
                                     <PackageOpen className="h-4 w-4" />
                                   ) : (
                                     <Package className="h-4 w-4" />
@@ -721,7 +733,7 @@ export function Header() {
                                   className={`mb-2 flex items-center gap-2 font-semibold`}
                                 >
                                   {workspace.id === workspaceId ||
-                                  paths === '/' ? (
+                                    paths === '/' ? (
                                     <PackageOpen className="h-4 w-4" />
                                   ) : (
                                     <Package className="h-4 w-4" />
@@ -1079,7 +1091,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>
