@@ -102,7 +102,7 @@ export async function workbenchCreate(
     appFormData.set('ownerId', workbench.ownerId)
     appFormData.set('id', appId)
     appFormData.set('workspaceId', workbench.workspaceId)
-    appFormData.set('workbenchId', createdWorkbench?.data?.id || '')
+    appFormData.set('sessionId', createdWorkbench?.data?.id || '')
 
     await appInstanceCreate(prevState, appFormData)
 

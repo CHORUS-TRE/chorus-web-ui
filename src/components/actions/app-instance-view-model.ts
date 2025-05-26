@@ -41,7 +41,7 @@ export async function appInstanceCreate(
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       workspaceId: formData.get('workspaceId') as string,
-      workbenchId: formData.get('workbenchId') as string,
+      sessionId: formData.get('sessionId') as string,
       status: 'active'
     }
 
@@ -96,7 +96,7 @@ export async function appInstanceDelete(
     if (r.error) return { error: r.error }
 
     revalidatePath(
-      `/workspaces/${formData.get('workspaceId')}/${formData.get('workbenchId')}`
+      `/workspaces/${formData.get('workspaceId')}/${formData.get('sessionId')}`
     )
     return { data: 'Successfully deleted app instance' }
   } catch (error) {
@@ -119,7 +119,7 @@ export async function appInstanceUpdate(
       tenantId: formData.get('tenantId') as string,
       ownerId: formData.get('ownerId') as string,
       workspaceId: formData.get('workspaceId') as string,
-      workbenchId: formData.get('workbenchId') as string,
+      sessionId: formData.get('sessionId') as string,
       status: 'active'
     }
 
@@ -127,7 +127,7 @@ export async function appInstanceUpdate(
     if (r.error) return { error: r.error }
 
     revalidatePath(
-      `/workspaces/${formData.get('workspaceId')}/${formData.get('workbenchId')}`
+      `/workspaces/${formData.get('workspaceId')}/${formData.get('sessionId')}`
     )
     return { data: 'Successfully updated app instance' }
   } catch (error) {

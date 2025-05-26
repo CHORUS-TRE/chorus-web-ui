@@ -34,7 +34,10 @@ import { User, Workspace as WorkspaceType } from '@/domain/model'
 import { userGet } from './actions/user-view-model'
 import { workspaceGet } from './actions/workspace-view-model'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
-import { WorkspaceDeleteForm, WorkspaceUpdateForm } from './forms/workspace-forms'
+import {
+  WorkspaceDeleteForm,
+  WorkspaceUpdateForm
+} from './forms/workspace-forms'
 import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
 import {
@@ -152,29 +155,31 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                  onClick={() => workspace?.id && setActiveDeleteId(workspace?.id)}
-                  className="text-red-500 focus:text-red-500"
-                >
-                  Delete
-                </DropdownMenuItem>
+                onClick={() =>
+                  workspace?.id && setActiveDeleteId(workspace?.id)
+                }
+                className="text-red-500 focus:text-red-500"
+              >
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-            <WorkspaceDeleteForm
-              id={workspace?.id}
-              state={[
-                activeDeleteId === workspace?.id,
-                () => setActiveDeleteId(null)
-              ]}
-              onUpdate={() => {
-                refreshWorkspaces()
+        <WorkspaceDeleteForm
+          id={workspace?.id}
+          state={[
+            activeDeleteId === workspace?.id,
+            () => setActiveDeleteId(null)
+          ]}
+          onUpdate={() => {
+            refreshWorkspaces()
 
-                setNotification({
-                  title: 'Success!',
-                  description: `Workspace ${workspace?.name} deleted`
-                })
-              }}
-            />
+            setNotification({
+              title: 'Success!',
+              description: `Workspace ${workspace?.name} deleted`
+            })
+          }}
+        />
         <Card className="flex h-full flex-col justify-between rounded-2xl border-none bg-background/40 text-white">
           <CardHeader>
             <CardTitle className="flex items-start gap-3 pr-2 text-white">
@@ -240,21 +245,21 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <CardHeader>
           <CardTitle
             className="flex cursor-pointer items-center justify-between gap-2"
-            onClick={() => router.push(`/workspaces/${workspace?.id}/desktops`)}
+            onClick={() => router.push(`/workspaces/${workspace?.id}/sessions`)}
           >
             <div className="flex items-center gap-3">
               <LaptopMinimal className="h-6 w-6 text-white" />
-              Desktops
+              Sessions
             </div>
 
             <Link
-              href={`/workspaces/${workspace?.id}/desktops`}
+              href={`/workspaces/${workspace?.id}/sessions`}
               className="text-muted hover:bg-inherit hover:text-accent"
             >
               <Rows3 className="h-4 w-4 shrink-0" />
             </Link>
           </CardTitle>
-          <CardDescription>Your running desktops.</CardDescription>
+          <CardDescription>Your running sessions.</CardDescription>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[160px]">
@@ -263,8 +268,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 ?.filter((workbench) => workbench.workspaceId === workspace?.id)
                 .map(({ shortName, id, createdAt }) => (
                   <Link
-                    key={`workspace-desktops-${id}`}
-                    href={`/workspaces/${workspace?.id}/desktops/${id}`}
+                    key={`workspace-sessions-${id}`}
+                    href={`/workspaces/${workspace?.id}/sessions/${id}`}
                     className="flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
                   >
                     <div className="mb-0.5 flex-grow text-sm">
@@ -283,7 +288,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                               (instance) =>
                                 workspace?.id === instance.workspaceId
                             )
-                            ?.filter((instance) => id === instance.workbenchId)
+                            ?.filter((instance) => id === instance.sessionId)
                             .slice(0, 3)
                             .map(
                               (instance) =>
@@ -303,7 +308,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <CardFooter>
           <WorkbenchCreateForm
             workspaceId={workspace?.id}
-            // onSuccess={(workbenchId) => {
+            // onSuccess={(sessionId) => {
             //   refreshWorkspaces()
             //   refreshWorkbenches()
 
@@ -575,7 +580,7 @@ function LineChart(props: React.HTMLProps<HTMLDivElement>) {
       <ResponsiveLine
         data={[
           {
-            id: 'Desktop',
+            id: 'Session',
             data: [
               { x: 'Jan', y: 43 },
               { x: 'Feb', y: 137 },

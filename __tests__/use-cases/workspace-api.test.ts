@@ -37,7 +37,7 @@ const MOCK_WORKSPACE_RESULT = {
   memberIds: ['2'],
   tags: [],
   status: 'active',
-  workbenchIds: [],
+  sessionIds: [],
   serviceIds: [],
   createdAt: new Date('2024-07-17T12:30:54Z'),
   updatedAt: new Date('2024-07-17T12:30:54Z'),

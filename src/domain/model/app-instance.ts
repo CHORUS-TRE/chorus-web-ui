@@ -6,7 +6,7 @@ export const AppInstanceSchema = z.object({
   ownerId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  workbenchId: z.string(),
+  sessionId: z.string(),
   status: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -20,7 +20,7 @@ export const AppInstanceCreateSchema = z.object({
   ownerId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  workbenchId: z.string(),
+  sessionId: z.string(),
   status: z.string()
 })
 

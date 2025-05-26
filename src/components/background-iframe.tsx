@@ -18,7 +18,7 @@ export default function BackgroundIframe() {
 
   // URL initialization effect
   useEffect(() => {
-    if (!background?.workbenchId) {
+    if (!background?.sessionId) {
       setUrl(null)
       return
     }
@@ -26,7 +26,7 @@ export default function BackgroundIframe() {
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
     const baseAPIURL = env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
-    const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.workbenchId}/stream/`
+    const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
 
     setUrl(newUrl)
   }, [background])
@@ -67,7 +67,7 @@ export default function BackgroundIframe() {
         delay={2000}
         dismiss={error ? true : false}
       />
-      {error && <ErrorOverlay error={error} />}
+      {/* {error && <ErrorOverlay error={error} />} */}
       <iframe
         title="Application Workspace"
         src={isValid && url ? url : 'about:blank'}

@@ -43,7 +43,7 @@ const apiToDomainMapper = (w: ChorusWorkspaceApi): Workspace => {
     memberIds: [w.userId!],
     tags: [],
     status: (w.status as WorkspaceState) || WorkspaceState.ACTIVE,
-    workbenchIds: [],
+    sessionIds: [],
     serviceIds: [],
     createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),
     updatedAt: w.updatedAt ? new Date(w.updatedAt) : new Date(),

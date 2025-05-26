@@ -37,17 +37,20 @@ const initialState: IFormState = {
 export function AppInstanceCreateForm({
   state: [open, setOpen],
   workspaceId,
-  workbenchId,
+  sessionId,
   userId,
   onUpdate
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   workspaceId?: string
-  workbenchId?: string
+  sessionId?: string
   userId?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction, pending] = useActionState(appInstanceCreate, initialState)
+  const [state, formAction, pending] = useActionState(
+    appInstanceCreate,
+    initialState
+  )
   const { setNotification } = useAppState()
   const { apps } = useAppState()
 
@@ -133,18 +136,17 @@ export function AppInstanceCreateForm({
                     </div>
                   </div>
                   <div className="grid hidden gap-2">
-                    <Label htmlFor="name">Desktop</Label>
+                    <Label htmlFor="name">Session</Label>
                     <Input
-                      id="workbenchId"
-                      name="workbenchId"
+                      id="sessionId"
+                      name="sessionId"
                       placeholder="Enter workbench id"
-                      defaultValue={workbenchId || ''}
+                      defaultValue={sessionId || ''}
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) =>
-                          e.path.includes('workbenchId')
-                        )?.message
+                        state?.issues?.find((e) => e.path.includes('sessionId'))
+                          ?.message
                       }
                     </div>
                   </div>

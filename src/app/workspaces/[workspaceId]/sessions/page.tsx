@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { useAppState } from '~/components/store/app-state-context'
 import WorkbenchTable from '~/components/workbench-table'
 
-export default function DesktopsPage() {
+export default function SessionPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
   const { refreshWorkbenches } = useAppState()
@@ -25,8 +25,8 @@ export default function DesktopsPage() {
     <div className="flex flex-col">
       <WorkbenchTable
         workspaceId={workspaceId}
-        title="Desktops"
-        description="Manage your desktops in this workspace"
+        title="Sessions"
+        description="Manage your sessions in this workspace"
       />
     </div>
   )

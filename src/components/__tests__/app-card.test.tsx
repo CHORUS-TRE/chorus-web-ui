@@ -7,17 +7,13 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 
 import { AppCard } from '../../components/app-card'
+import { AppState, AppType } from '../../domain/model/app'
 
 // Mock the app-state-context
 jest.mock('../../components/store/app-state-context', () => ({
   useAppState: jest.fn().mockReturnValue({
     setNotification: jest.fn()
   })
-}))
-
-// Mock the app-icon utility
-jest.mock('../../utils/app-icon', () => ({
-  getAppIcon: jest.fn().mockReturnValue('TestIcon')
 }))
 
 // Mock the app-view-model
@@ -87,8 +83,8 @@ const mockApp = {
   description: 'A test application',
   dockerImageName: 'test-image',
   dockerImageTag: 'latest',
-  type: 'app',
-  status: 'active',
+  type: AppType.APP,
+  status: AppState.ACTIVE,
   url: 'https://example.com/app',
   createdAt: new Date('2023-01-01'),
   updatedAt: new Date('2023-01-02')

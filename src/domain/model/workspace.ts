@@ -16,7 +16,7 @@ export const WorkspaceSchema = z.object({
   memberIds: z.array(z.string()),
   tags: z.array(z.string()),
   status: z.nativeEnum(WorkspaceState),
-  workbenchIds: z.array(z.string()).optional(),
+  sessionIds: z.array(z.string()).optional(),
   serviceIds: z.array(z.string()).optional(),
   createdAt: z.date(),
   updatedAt: z.date(),

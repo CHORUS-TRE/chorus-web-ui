@@ -60,9 +60,9 @@ export default function WorkbenchTable({
   const TableHeads = () => (
     <>
       {/* <TableHead className="text-white">
-        <span className="sr-only">Desktop</span>
+        <span className="sr-only">Session</span>
       </TableHead> */}
-      <TableHead className="text-white">Desktop</TableHead>
+      <TableHead className="text-white">Session</TableHead>
       <TableHead className="text-white">Running Apps</TableHead>
       <TableHead className="hidden text-white md:table-cell">Created</TableHead>
 
@@ -87,7 +87,7 @@ export default function WorkbenchTable({
               refreshWorkbenches()
               setNotification({
                 title: 'Success!',
-                description: 'Desktop updated successfully'
+                description: 'Session updated successfully'
               })
             }}
           />
@@ -101,7 +101,7 @@ export default function WorkbenchTable({
               refreshWorkbenches()
               setNotification({
                 title: 'Success!',
-                description: `Desktop ${workbench?.name} in ${
+                description: `Session ${workbench?.name} in ${
                   workspaces?.find((w) => w.id === workspaceId)?.name
                 } was deleted`,
                 variant: 'default'
@@ -116,7 +116,7 @@ export default function WorkbenchTable({
           </TableCell> */}
           <TableCell className="p-1 font-semibold">
             <Link
-              href={`/workspaces/${workbench?.workspaceId}/desktops/${workbench?.id}`}
+              href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
               className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
             >
               {workbench?.shortName}
@@ -124,7 +124,7 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">
             {appInstances
-              ?.filter((instance) => workbench?.id === instance.workbenchId)
+              ?.filter((instance) => workbench?.id === instance.sessionId)
               .map((instance, index, array) => {
                 const appName =
                   apps?.find((app) => app.id === instance.appId)?.name || ''
@@ -161,15 +161,14 @@ export default function WorkbenchTable({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-black text-white">
-                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault()
                     setOpen(true)
                   }}
                 >
                   Edit
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem
                   onClick={() => setDeleteOpen(true)}
                   className="text-red-500 focus:text-red-500"
@@ -228,14 +227,14 @@ export default function WorkbenchTable({
       <div className="flex items-center justify-end">
         <WorkbenchCreateForm
           workspaceId={workspaceId}
-          // onSuccess={(workbenchId) => {
+          // onSuccess={(sessionId) => {
           //   refreshWorkbenches()
           //   setNotification({
           //     title: 'Success!',
-          //     description: 'Desktop created successfully'
+          //     description: 'Session created successfully'
           //   })
-          //   setBackground({ workbenchId, workspaceId })
-          //   if (onUpdate) onUpdate(workbenchId)
+          //   setBackground({ sessionId, workspaceId })
+          //   if (onUpdate) onUpdate(sessionId)
           // }}
         />
       </div>

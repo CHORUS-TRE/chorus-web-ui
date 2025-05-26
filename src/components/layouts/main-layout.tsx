@@ -25,7 +25,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     notification
   } = useAppState()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
-  const workbench = workbenches?.find((w) => w.id === background?.workbenchId)
+  const workbench = workbenches?.find((w) => w.id === background?.sessionId)
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false)
 
@@ -53,7 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       {background && (
         <Link
-          href={`/workspaces/${background.workspaceId}/desktops/${background?.workbenchId}`}
+          href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
           passHref
           className="hover:bg-accent"
         >
