@@ -1,9 +1,8 @@
 'use client'
 
 import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
-import { useActionState, useEffect, useState, useTransition } from 'react'
-import { useFormStatus } from 'react-dom'
 import { useRouter } from 'next/navigation'
+import { useActionState, useEffect, useState, useTransition } from 'react'
 
 import {
   workbenchCreate,
@@ -57,8 +56,7 @@ export function WorkbenchCreateForm({
   userId?: string
   onSuccess?: (workbenchId: string) => void
 }) {
-  const { pending } = useFormStatus()
-  const [state, formAction] = useActionState(
+  const [state, formAction, pending] = useActionState(
     workbenchCreate,
     initialState,
     `/workspaces/${workspaceId}`
@@ -110,7 +108,6 @@ export function WorkbenchCreateForm({
       router.push(
         `/workspaces/${workspaceId}/desktops/${state?.data as string}`
       )
-
 
       if (onSuccess) onSuccess(state?.data as string)
     }
@@ -329,7 +326,9 @@ export function WorkbenchCreateForm({
                     disabled={pending}
                     aria-disabled={pending}
                   >
-                    {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {pending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {`Start ${pending ? '...' : ''}`}
                   </Button>
                 </CardFooter>
@@ -437,17 +436,13 @@ export function WorkbenchUpdateForm({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Desktop</DialogTitle>
-          <DialogDescription>
-            Update your desktop settings.
-          </DialogDescription>
+          <DialogDescription>Update your desktop settings.</DialogDescription>
         </DialogHeader>
         <form action={handleSubmit}>
           <Card className="w-full max-w-md border-none bg-background text-white">
             <CardHeader>
               <CardTitle>Update Desktop</CardTitle>
-              <CardDescription>
-                Update your desktop settings.
-              </CardDescription>
+              <CardDescription>Update your desktop settings.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">

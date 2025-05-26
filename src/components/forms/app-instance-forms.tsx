@@ -2,7 +2,6 @@
 
 import { Loader2 } from 'lucide-react'
 import { useActionState, useEffect } from 'react'
-import { useFormStatus } from 'react-dom'
 
 import { appInstanceCreate } from '@/components/actions/app-instance-view-model'
 import { useAppState } from '@/components/store/app-state-context'
@@ -35,16 +34,6 @@ const initialState: IFormState = {
   issues: undefined
 }
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <Button className="ml-auto" type="submit" disabled={pending}>
-      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {pending ? 'Starting...' : 'Start'}
-    </Button>
-  )
-}
-
 export function AppInstanceCreateForm({
   state: [open, setOpen],
   workspaceId,
@@ -58,7 +47,7 @@ export function AppInstanceCreateForm({
   userId?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useActionState(appInstanceCreate, initialState)
+  const [state, formAction, pending] = useActionState(appInstanceCreate, initialState)
   const { setNotification } = useAppState()
   const { apps } = useAppState()
 
@@ -77,6 +66,15 @@ export function AppInstanceCreateForm({
       if (onUpdate) onUpdate()
     }
   }, [setNotification, state, onUpdate, setOpen])
+
+  function SubmitButton() {
+    return (
+      <Button className="ml-auto" type="submit" disabled={pending}>
+        {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {pending ? 'Starting...' : 'Start'}
+      </Button>
+    )
+  }
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
