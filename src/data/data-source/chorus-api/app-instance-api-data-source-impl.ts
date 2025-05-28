@@ -52,6 +52,7 @@ const apiToDomain = (w: ChorusAppInstanceApi): AppInstance => {
 const domainToApi = (w: AppInstanceCreateModel): ChorusAppInstanceApi => {
   return {
     ...w,
+    workbenchId: w.sessionId,
     userId: w.ownerId
   }
 }
