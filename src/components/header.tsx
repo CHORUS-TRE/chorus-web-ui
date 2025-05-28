@@ -866,7 +866,6 @@ export function Header() {
                                 })
                                 return
                               }
-
                               setNotification({
                                 title: 'Success!',
                                 description: `${app.name} launched successfully`
@@ -1069,12 +1068,13 @@ export function Header() {
           onUpdate={() => {
             setNotification({
               title: 'Success!',
-              description: 'Session was deleted, redirecting to workspace...',
+              description: 'Session is deleting, redirecting to workspace...',
               variant: 'default'
             })
+            setBackground(undefined)
+            router.replace(`/workspaces/${workspaceId}`)
             setTimeout(() => {
-              setBackground(undefined)
-              router.replace(`/workspaces/${workspaceId}`)
+              refreshWorkbenches()
             }, 2000)
           }}
         />
