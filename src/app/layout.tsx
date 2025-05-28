@@ -86,7 +86,6 @@ export default async function RootLayout({
             </AppStateProvider>
           </AuthProvider>
         </Providers>
-
       </body>
     </html>
   )

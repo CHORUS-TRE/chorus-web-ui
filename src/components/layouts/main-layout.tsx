@@ -22,7 +22,8 @@ export function MainLayout({ children }: MainLayoutProps) {
     workbenches,
     showRightSidebar,
     toggleRightSidebar,
-    notification
+    notification,
+    setNotification
   } = useAppState()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
   const workbench = workbenches?.find((w) => w.id === background?.sessionId)
@@ -32,13 +33,14 @@ export function MainLayout({ children }: MainLayoutProps) {
   useEffect(() => {
     if (notification) {
       toast({
-        title: notification.title,
+        title: notification.title || '',
         description: notification.description || '',
         variant: notification.variant,
         className: 'bg-background text-white'
       })
+      setNotification(undefined)
     }
-  }, [notification])
+  }, [notification, setNotification])
 
   // Set isClient to true after component mounts
   useEffect(() => {
