@@ -1,3 +1,15 @@
+# [1.0.0-alpha.38](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.37...v1.0.0-alpha.38) (2025-05-28)
+
+
+### Bug Fixes
+
+* **api:** map sessionId to workbenchId in domainToApi function ([d83397f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d83397f7d98e08129e36474b301d502285677e06))
+* **background-iframe:** update loading message from "Loading workspace..." to "Loading session..." ([4166d85](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4166d85e88390f0b9ae17809111599cd18883f3b))
+* **dialog:** update DeleteDialog props to use onCancel instead of onOpenChange ([96a2736](https://github.com/CHORUS-TRE/chorus-web-ui/commit/96a2736ddca9341fe7bede2147f46aa523f8d60c))
+* **forms:** fix warnings ([ad7e58e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ad7e58e35fd464b4db73bf78d23b60ac62359ae5))
+* **layout:** enhance notification handling in MainLayout component ([241a757](https://github.com/CHORUS-TRE/chorus-web-ui/commit/241a757654f35cb8e4a95383ba037c109fc5bee2))
+* **layout:** move Toaster in app state provider scope ([fe7e801](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fe7e801788dd56d1e6b1ac8bca7d712af4e91807))
+
 # [1.0.0-alpha.37](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.36...v1.0.0-alpha.37) (2025-05-26)
 
 
