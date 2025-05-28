@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from 'react'
 import { useAppState } from '@/components/store/app-state-context'
 import { useUrlValidation } from '@/hooks/use-url-validation'
 
-import { ErrorOverlay } from './error-overlay'
+// import { ErrorOverlay } from './error-overlay'
 import { LoadingOverlay } from './loading-overlay'
 
 export default function BackgroundIframe() {
-  const { background, setBackground } = useAppState()
+  const { background } = useAppState()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)

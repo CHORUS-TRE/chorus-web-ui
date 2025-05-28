@@ -111,7 +111,15 @@ export function WorkbenchCreateForm({
 
       if (onSuccess) onSuccess(state?.data as string)
     }
-  }, [state?.data, state?.error, onSuccess, setOpen, setNotification])
+  }, [
+    state?.data,
+    state?.error,
+    onSuccess,
+    setOpen,
+    setNotification,
+    router,
+    workspaceId
+  ])
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -350,7 +358,7 @@ export function WorkbenchDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [state, formAction] = useActionState(workbenchDelete, initialState)
+  const [formState, formAction] = useActionState(workbenchDelete, initialState)
   const [isDeleting, setIsDeleting] = useState(false)
   const [, startTransition] = useTransition()
 
@@ -361,10 +369,12 @@ export function WorkbenchDeleteForm({
       formData.append('id', id || '')
       startTransition(() => {
         formAction(formData)
+        if (formState?.data) {
+          setIsDeleting(false)
+          setOpen(false)
+          if (onUpdate) onUpdate()
+        }
       })
-      setIsDeleting(false)
-      setOpen(false)
-      if (onUpdate) onUpdate()
     } catch (error) {
       console.error(error)
       setIsDeleting(false)

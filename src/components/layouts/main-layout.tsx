@@ -36,7 +36,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         title: notification.title || '',
         description: notification.description || '',
         variant: notification.variant,
-        className: 'bg-background text-white'
+        className: 'bg-background text-white',
+        duration: 3000
       })
       setNotification(undefined)
     }

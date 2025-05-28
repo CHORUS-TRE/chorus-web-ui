@@ -65,7 +65,7 @@ export const AuthProvider = ({
         window.location.href = '/'
       })
     }
-  }, [isAuthenticated, setBackground, setAuthenticated])
+  }, [isAuthenticated, setBackground, setAuthenticated, user])
 
   useEffect(() => {
     if (isAuthenticated && !refreshInterval.current) {
