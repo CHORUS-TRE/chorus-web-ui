@@ -1073,6 +1073,9 @@ export function Header() {
             })
             setBackground(undefined)
             router.replace(`/workspaces/${workspaceId}`)
+            setTimeout(() => {
+              refreshWorkbenches()
+            }, 2000)
           }}
         />
 

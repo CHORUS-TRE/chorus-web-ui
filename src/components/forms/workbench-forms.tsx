@@ -358,45 +358,37 @@ export function WorkbenchDeleteForm({
   id?: string
   onUpdate?: () => void
 }) {
-  const [formState, formAction] = useActionState(workbenchDelete, initialState)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [formState, formAction, pending] = useActionState(
+    workbenchDelete,
+    initialState
+  )
   const [, startTransition] = useTransition()
-
   const handleDelete = async () => {
     try {
-      setIsDeleting(true)
       const formData = new FormData()
       formData.append('id', id || '')
       startTransition(() => {
         formAction(formData)
-        if (formState?.data) {
-          setIsDeleting(false)
-          setOpen(false)
-          if (onUpdate) onUpdate()
-        }
       })
     } catch (error) {
       console.error(error)
-      setIsDeleting(false)
-    } finally {
-      setIsDeleting(false)
     }
   }
 
   useEffect(() => {
-    if (!open) {
-      setIsDeleting(false)
+    if (formState?.data) {
+      setOpen(false)
+      if (onUpdate) onUpdate()
     }
-  }, [open])
+  }, [formState?.data])
 
   return (
     <DeleteDialog
       open={open}
-      onOpenChange={(newOpen) => {
-        if (!isDeleting) {
-          setOpen(newOpen)
-        }
+      onCancel={() => {
+        setOpen(false)
       }}
+      isDeleting={pending}
       onConfirm={handleDelete}
       title="Delete Session"
       description="The Session and its apps will be deleted. Are you sure? This action cannot be undone."

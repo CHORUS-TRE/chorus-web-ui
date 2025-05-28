@@ -98,7 +98,9 @@ export default function WorkbenchTable({
             id={workbench?.id}
             state={[deleteOpen, setDeleteOpen]}
             onUpdate={() => {
-              refreshWorkbenches()
+              setTimeout(() => {
+                refreshWorkbenches()
+              }, 2000)
               setNotification({
                 title: 'Success!',
                 description: `Session ${workbench?.name} in ${

@@ -16,7 +16,7 @@ import {
 
 export interface DeleteDialogProps {
   open: boolean
-  onOpenChange: (open: boolean) => void
+  onCancel: () => void
   title: string
   description: string
   onConfirm: () => void
@@ -25,14 +25,14 @@ export interface DeleteDialogProps {
 
 export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   open,
-  onOpenChange,
   title,
   description,
+  onCancel,
   onConfirm,
   isDeleting = false
 }) => {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open}>
       <DialogContent className="bg-background sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-white">{title}</DialogTitle>
@@ -43,7 +43,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
         <DialogFooter>
           <Button
             type="button"
-            onClick={() => onOpenChange(false)}
+            onClick={onCancel}
             disabled={isDeleting}
             className="focus:bg-background focus:text-accent"
           >
