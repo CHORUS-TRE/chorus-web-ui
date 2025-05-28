@@ -82,10 +82,11 @@ export default async function RootLayout({
                 id="background"
                 className="fixed left-0 top-0 h-full w-full"
               />
+              <Toaster />
             </AppStateProvider>
           </AuthProvider>
         </Providers>
-        <Toaster />
+
       </body>
     </html>
   )
