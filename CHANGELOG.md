@@ -1,3 +1,10 @@
+# [1.0.0-alpha.39](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.38...v1.0.0-alpha.39) (2025-05-28)
+
+
+### Bug Fixes
+
+* update DeleteDialog to use onCancel for handling dialog closure ([71916d4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/71916d4b2bac17e1ee77348b2e9168d015b6fac2))
+
 # [1.0.0-alpha.38](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.37...v1.0.0-alpha.38) (2025-05-28)
 
 
