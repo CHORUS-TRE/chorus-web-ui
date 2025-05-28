@@ -172,7 +172,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
       <DeleteDialog
         open={showDeleteDialog}
-        onOpenChange={handleDialogClose}
+        onCancel={() => handleDialogClose(true)}
         onConfirm={handleDelete}
         isDeleting={isDeleting}
         title="Delete App"

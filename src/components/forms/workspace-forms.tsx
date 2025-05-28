@@ -261,10 +261,8 @@ export function WorkspaceDeleteForm({
   return (
     <DeleteDialog
       open={open}
-      onOpenChange={(newOpen) => {
-        if (!isDeleting) {
-          setOpen(newOpen)
-        }
+      onCancel={() => {
+        setOpen(false)
       }}
       onConfirm={() => {
         setIsDeleting(true)
