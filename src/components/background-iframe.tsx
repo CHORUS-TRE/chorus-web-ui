@@ -63,7 +63,7 @@ export default function BackgroundIframe() {
     <>
       <LoadingOverlay
         isLoading={isLoading}
-        message="Loading workspace..."
+        message="Loading session..."
         delay={2000}
         dismiss={error ? true : false}
       />
