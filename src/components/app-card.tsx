@@ -23,8 +23,11 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { App } from '~/domain/model'
 
+import { appInstanceCreate } from './actions/app-instance-view-model'
 import { appDelete } from './actions/app-view-model'
+import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { useAppState } from './store/app-state-context'
+import { useAuth } from './store/auth-context'
 import { Avatar, AvatarFallback } from './ui/avatar'
 
 interface AppCardProps {
@@ -33,10 +36,20 @@ interface AppCardProps {
 }
 
 export function AppCard({ app, onUpdate }: AppCardProps) {
+  const [showStartSessionDialog, setShowStartSessionDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const { setNotification } = useAppState()
+
+  const {
+    setNotification,
+    background,
+    workspaces,
+    refreshWorkspaces,
+    refreshWorkbenches
+  } = useAppState()
+  const { user } = useAuth()
+
   const handleDelete = async () => {
     if (isDeleting) return
 
@@ -79,6 +92,64 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   const handleDialogClose = (open: boolean) => {
     if (!isDeleting) {
       setShowDeleteDialog(open)
+    }
+  }
+
+  const handleStartApp = async () => {
+    const sessionId = background?.sessionId
+    const workspaceId = background?.workspaceId
+    if (!sessionId || !workspaceId) {
+      setNotification({
+        title: 'Select a session first',
+        description: 'You must start a session to launch an app',
+        variant: 'default',
+        action: {
+          label: 'Start a session',
+          onClick: () => {
+            setShowStartSessionDialog(true)
+          }
+        }
+      })
+      return
+    }
+
+    setNotification({
+      title: 'Launching app...',
+      description: `Starting ${app.name}`,
+      variant: 'default'
+    })
+
+    const formData = new FormData()
+    formData.append('id', app.id)
+    formData.append('tenantId', '1')
+    formData.append('ownerId', user?.id || '')
+    formData.append('workspaceId', workspaceId)
+    formData.append('sessionId', sessionId)
+
+    try {
+      const result = await appInstanceCreate({}, formData)
+
+      if (result.error) {
+        setNotification({
+          title: 'Error launching app',
+          description: result.error,
+          variant: 'destructive'
+        })
+        return
+      }
+      setNotification({
+        title: 'Success!',
+        description: `${app.name} launched successfully`
+      })
+
+      // refreshWorkbenches()
+      // refreshWorkspaces()
+    } catch (error) {
+      setNotification({
+        title: 'Error launching app',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
     }
   }
 
@@ -150,15 +221,18 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
           </div>
         </CardContent>
         <CardFooter className="mt-auto">
-          <Button
-            onClick={() => {
-              /* TODO: Implement add to my apps */
-            }}
-            className=""
-            disabled={true}
-          >
+          {showStartSessionDialog && (
+            <WorkbenchCreateForm
+              workspaceId={background?.workspaceId}
+              workspaceName={
+                workspaces?.find((w) => w.id === background?.workspaceId)?.name
+              }
+              openOnStart={true}
+            />
+          )}
+          <Button onClick={handleStartApp} className="" disabled={false}>
             <Plus className="mr-2 h-4 w-4" />
-            Add to My Apps
+            Start App
           </Button>
         </CardFooter>
       </Card>

@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -60,7 +60,6 @@ import {
 } from '~/components/ui/navigation-menu'
 import { AuthenticationMode, Workbench } from '~/domain/model'
 
-import { appInstanceCreate } from './actions/app-instance-view-model'
 import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
@@ -86,7 +85,6 @@ export function Header() {
     setNotification,
     background,
     setBackground,
-    refreshWorkspaces,
     refreshWorkbenches,
     toggleRightSidebar
   } = useAppState()
@@ -242,7 +240,7 @@ export function Header() {
         }}
       >
         <div className="flex min-w-0 flex-shrink flex-nowrap items-center justify-start">
-          <Link href="/" passHref className="">
+          <NavLink href="/" className="">
             <Image
               src={logo}
               alt="Chorus"
@@ -251,7 +249,7 @@ export function Header() {
               id="logo"
               priority
             />
-          </Link>
+          </NavLink>
           {isAuthenticated && (
             <div className="min-w-0 flex-1 pr-4">
               <Breadcrumb className="pl-2">
@@ -284,7 +282,12 @@ export function Header() {
                                     >
                                       <ListItem
                                         className="p-1 font-semibold"
-                                        href={`/workspaces/${workspace.id}`}
+                                        href="#"
+                                        onClick={() => {
+                                          router.push(
+                                            `/workspaces/${workspace.id}`
+                                          )
+                                        }}
                                         wrapWithLi={false}
                                       >
                                         <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
@@ -540,7 +543,9 @@ export function Header() {
                                     <ListItem
                                       title="Start New App..."
                                       className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                                      onClick={() => setCreateOpen(true)}
+                                      onClick={() => {
+                                        router.push(`/app-store`)
+                                      }}
                                       wrapWithLi={false}
                                     ></ListItem>
                                     <Separator className="m-1" />
@@ -610,10 +615,21 @@ export function Header() {
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
+                <NavigationMenuItem id="getting-started-step4">
+                  <NavLink
+                    href="/app-store"
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex place-items-center gap-1">
+                      <Store className="h-4 w-4" />
+                      App Store
+                    </div>
+                  </NavLink>
+                </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
                     <LaptopMinimal className="h-4 w-4" />
-                    <span>Open Sessions</span>
+                    <span>Sessions</span>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
@@ -806,120 +822,6 @@ export function Header() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <NavigationMenuItem id="getting-started-step4">
-                  <NavLink
-                    href="/app-store"
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  >
-                    <div className="mt-1 flex place-items-center gap-1">
-                      <Store className="h-4 w-4" />
-                      App Store
-                    </div>
-                  </NavLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
-                    <DraftingCompass className="h-4 w-4" />
-                    <span>My Apps</span>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                    <ul className="grid gap-1 bg-black bg-opacity-85 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
-                      {apps?.map((app) => (
-                        <ListItem
-                          key={app.name}
-                          className="bg-background/4 cursor-pointer rounded-2xl border border-muted/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:text-accent hover:shadow-lg"
-                          onClick={async () => {
-                            if (!currentWorkbench) {
-                              setNotification({
-                                title: 'Select a session first',
-                                description:
-                                  'You must select a session to launch an app',
-                                variant: 'default'
-                              })
-                              return
-                            }
-
-                            setNotification({
-                              title: 'Launching app...',
-                              description: `Starting ${app.name} in session ${currentWorkbench?.name}`,
-                              variant: 'default'
-                            })
-
-                            const formData = new FormData()
-                            formData.append('id', app.id)
-                            formData.append('tenantId', '1')
-                            formData.append('ownerId', user?.id || '')
-                            formData.append('workspaceId', params.workspaceId)
-                            formData.append('sessionId', params.sessionId)
-
-                            try {
-                              const result = await appInstanceCreate(
-                                {},
-                                formData
-                              )
-
-                              if (result.error) {
-                                setNotification({
-                                  title: 'Error launching app',
-                                  description: result.error,
-                                  variant: 'destructive'
-                                })
-                                return
-                              }
-                              setNotification({
-                                title: 'Success!',
-                                description: `${app.name} launched successfully`
-                              })
-
-                              refreshWorkbenches()
-                              refreshWorkspaces()
-                            } catch (error) {
-                              setNotification({
-                                title: 'Error launching app',
-                                description:
-                                  error instanceof Error
-                                    ? error.message
-                                    : String(error),
-                                variant: 'destructive'
-                              })
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className="x-4 flex items-center">
-                              {app.iconURL && (
-                                <Image
-                                  src={app.iconURL || ''}
-                                  alt={app.name || 'App logo'}
-                                  width={48}
-                                  height={48}
-                                  className="h-12 w-12"
-                                  priority
-                                />
-                              )}
-                              {!app.iconURL && (
-                                <Avatar className="h-12 w-12">
-                                  <AvatarFallback>
-                                    {app.name?.slice(0, 2) || ''}
-                                  </AvatarFallback>
-                                </Avatar>
-                              )}
-                            </div>
-
-                            <div className="flex flex-col">
-                              <span className="text-sm font-semibold">
-                                {app.name}
-                              </span>
-                              <span className="text-sm text-muted">
-                                {app.description}
-                              </span>
-                            </div>
-                          </div>
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
 
@@ -1071,10 +973,11 @@ export function Header() {
               description: 'Session is deleting, redirecting to workspace...',
               variant: 'default'
             })
-            setBackground(undefined)
-            router.replace(`/workspaces/${workspaceId}`)
+
             setTimeout(() => {
               refreshWorkbenches()
+              setBackground(undefined)
+              router.replace(`/workspaces/${workspaceId}`)
             }, 2000)
           }}
         />

@@ -10,6 +10,7 @@ import { toast } from '~/hooks/use-toast'
 
 import RightSidebar from '../right-sidebar'
 import { Button } from '../ui/button'
+import { ToastAction } from '../ui/toast'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -37,7 +38,16 @@ export function MainLayout({ children }: MainLayoutProps) {
         description: notification.description || '',
         variant: notification.variant,
         className: 'bg-background text-white',
-        duration: 3000
+        duration: 3000,
+        action: notification.action ? (
+          <ToastAction
+            key={notification.action.label}
+            onClick={notification.action.onClick}
+            altText={notification.action.label}
+          >
+            {notification.action.label}
+          </ToastAction>
+        ) : undefined
       })
       setNotification(undefined)
     }
@@ -54,7 +64,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Header />
       </div>
 
-      {background && (
+      {background?.sessionId && (
         <Link
           href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
           passHref

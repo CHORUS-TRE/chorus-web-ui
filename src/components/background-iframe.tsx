@@ -57,7 +57,7 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }
 
-  if (!background) return null
+  if (!background?.sessionId) return null
 
   return (
     <>

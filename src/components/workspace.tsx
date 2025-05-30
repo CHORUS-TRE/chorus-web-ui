@@ -92,7 +92,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     refreshWorkspaces,
     refreshWorkbenches,
     appInstances,
-    apps
+    apps,
+    background,
+    setBackground
   } = useAppState()
   const { user } = useAuth()
 
@@ -127,8 +129,31 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   }, [workspaceId, setNotification, refreshWorkbenches])
 
   useEffect(() => {
+    if (!workspaceId) return
     initializeData()
   }, [workspaceId, initializeData])
+
+  useEffect(() => {
+    if (!workspaceId || !workbenches || workbenches?.length === 0) return
+
+    if (!background?.sessionId || background?.workspaceId !== workspaceId) {
+      const firstSessionId = workbenches?.find(
+        (workbench) => workbench.workspaceId === workspaceId
+      )?.id
+
+      if (!background?.sessionId && firstSessionId) {
+        setBackground({
+          sessionId: firstSessionId,
+          workspaceId: workspaceId
+        })
+      } else {
+        setBackground({
+          sessionId: undefined,
+          workspaceId: workspaceId
+        })
+      }
+    }
+  }, [workspaceId, workbenches, setBackground])
 
   const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
@@ -308,6 +333,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <CardFooter>
           <WorkbenchCreateForm
             workspaceId={workspace?.id}
+            workspaceName={workspace?.name}
             // onSuccess={(sessionId) => {
             //   refreshWorkspaces()
             //   refreshWorkbenches()
