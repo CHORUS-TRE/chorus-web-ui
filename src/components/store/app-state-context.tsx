@@ -25,6 +25,10 @@ type NotificationType =
       title: string
       description?: string
       variant?: 'default' | 'destructive'
+      action?: {
+        label: string
+        onClick: () => void
+      }
     }
   | undefined
 
@@ -35,14 +39,14 @@ type AppStateContextType = {
   toggleWorkspaceView: () => void
   background:
     | {
-        sessionId: string
+        sessionId?: string
         workspaceId: string
       }
     | undefined
   setBackground: Dispatch<
     SetStateAction<
       | {
-          sessionId: string
+          sessionId?: string
           workspaceId: string
         }
       | undefined
@@ -105,7 +109,7 @@ export const AppStateProvider = ({
   })
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [background, setBackground] = useState<{
-    sessionId: string
+    sessionId?: string
     workspaceId: string
   }>()
   const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>(

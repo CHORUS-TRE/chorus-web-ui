@@ -30,7 +30,6 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Workbench } from '~/domain/model'
-import { generateScientistName } from '~/lib/utils'
 
 import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
@@ -49,23 +48,25 @@ const initialState: IFormState = {
 
 export function WorkbenchCreateForm({
   workspaceId,
+  workspaceName,
   userId,
-  onSuccess
+  onSuccess,
+  openOnStart = false
 }: {
   workspaceId?: string
+  workspaceName?: string
   userId?: string
   onSuccess?: (sessionId: string) => void
+  openOnStart?: boolean
 }) {
   const [state, formAction, pending] = useActionState(
     workbenchCreate,
     initialState,
     `/workspaces/${workspaceId}`
   )
-  const [open, setOpen] = useState(false)
-  const [scientistName, setScientistName] = useState(generateScientistName())
+  const [open, setOpen] = useState(openOnStart)
   const [viewportDimensions, setViewportDimensions] = useState(DEFAULT_VIEWPORT)
   const { setNotification } = useAppState()
-  const { apps } = useAppState()
   const router = useRouter()
   useEffect(() => {
     // Set initial dimensions
@@ -139,7 +140,7 @@ export function WorkbenchCreateForm({
           disabled={pending}
         >
           <CirclePlus className="h-4 w-4" />
-          {pending ? 'Creating...' : 'Start new session'}
+          {pending ? 'Creating...' : 'Start session'}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -150,9 +151,7 @@ export function WorkbenchCreateForm({
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
                   <CardTitle>Start Session</CardTitle>
-                  <CardDescription>
-                    Start a new session with a specific app.
-                  </CardDescription>
+                  <CardDescription>Start a new session.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                   <div className="grid gap-2">
@@ -162,47 +161,11 @@ export function WorkbenchCreateForm({
                         id="name"
                         name="name"
                         required
-                        placeholder="Enter workbench name"
-                        value={scientistName}
-                        onChange={(e) => setScientistName(e.target.value)}
+                        placeholder="Enter session name"
+                        defaultValue={`${workspaceName}-session`}
                         disabled={pending}
                         aria-disabled={pending}
                       />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() =>
-                          setScientistName(generateScientistName())
-                        }
-                        aria-label="Generate random scientist name"
-                        disabled={pending}
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="grid gap-3">
-                      <Label htmlFor="id">App</Label>
-                      <select
-                        name="id"
-                        id="id"
-                        required
-                        className="bg-background text-white"
-                        disabled={pending}
-                        aria-disabled={pending}
-                      >
-                        <option value="">Choose an app</option>
-                        {apps?.map((app) => (
-                          <option key={app.id} value={app.id}>
-                            {app.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('id'))
-                          ?.message
-                      }
                     </div>
                   </div>
                   <div className="grid hidden gap-2">
