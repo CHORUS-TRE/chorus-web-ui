@@ -6,32 +6,32 @@ Welcome back! In [Chapter 4: View-Model / Server Actions](04_view_model___server
 
 ## Why a UI Component Library?
 
-Imagine you have a big box of LEGO bricks.  
-- Every page or feature in your app is a unique model you build.  
+Imagine you have a big box of LEGO bricks.
+- Every page or feature in your app is a unique model you build.
 - But you don’t want to re-invent the wheel: you want standard bricks that always fit and look consistent.
 
-A **UI Component Library** is that box of bricks:  
-- **Button**, **Card**, **Table**, **Dialog**, etc.  
-- Live in `src/components/ui`  
+A **UI Component Library** is that box of bricks:
+- **Button**, **Card**, **Table**, **Dialog**, etc.
+- Live in `src/components/ui`
 - Guarantee the same styling, spacing, and behavior across your whole **alpha** app.
 
-**Central Use Case:**  
+**Central Use Case:**
 Build a tiny “User Profile Card” with an **Edit** button that opens a **Dialog**. We’ll glue together `Card`, `Button`, and `Dialog` primitives.
 
 ---
 
 ## Key Concepts
 
-1. **Primitives**  
-   Basic building blocks (`Button`, `Card`, `Input`, `Dialog`, …) exported from `components/ui`.  
+1. **Primitives**
+   Basic building blocks (`Button`, `Card`, `Input`, `Dialog`, …) exported from `components/ui`.
 
-2. **Variants & Sizes**  
-   Many components support props like `variant="destructive"` or `size="sm"` for easy theming.  
+2. **Variants & Sizes**
+   Many components support props like `variant="destructive"` or `size="sm"` for easy theming.
 
-3. **Composition with asChild**  
+3. **Composition with asChild**
    Some primitives (like `DialogTrigger`) accept an `asChild` prop to render your own component underneath (e.g., `<Button>`).
 
-4. **Consistent Styling**  
+4. **Consistent Styling**
    We use utilities (Tailwind + `class-variance-authority`) so every component shares the same design tokens.
 
 ---
@@ -57,7 +57,7 @@ export function UserProfile() {
         <CardTitle>Jane Doe</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>Email: jane@example.com</p>
+        <p>username: jane@example.com</p>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="secondary">Edit Profile</Button>
@@ -75,8 +75,8 @@ export function UserProfile() {
 
 What happens here?
 
-- We lay out a **Card** with header, title, and content.  
-- Inside the card, a **DialogTrigger** wraps our **Button** (because of `asChild`) so clicking **Edit Profile** opens the dialog.  
+- We lay out a **Card** with header, title, and content.
+- Inside the card, a **DialogTrigger** wraps our **Button** (because of `asChild`) so clicking **Edit Profile** opens the dialog.
 - **DialogContent** shows a modal where we could put a form.
 
 ---
@@ -102,9 +102,9 @@ sequenceDiagram
 
 ### 1. What Happens When You Render `<Button variant="destructive" size="sm">`?
 
-1. React calls your `Button` component with `props.variant='destructive'` and `props.size='sm'`.  
-2. `class-variance-authority` (`cva`) merges base styles + variant styles.  
-3. You get a string of CSS classes like `"inline-flex … bg-destructive h-9 px-3"`.  
+1. React calls your `Button` component with `props.variant='destructive'` and `props.size='sm'`.
+2. `class-variance-authority` (`cva`) merges base styles + variant styles.
+3. You get a string of CSS classes like `"inline-flex … bg-destructive h-9 px-3"`.
 4. The `<button>` element finally renders with those classes.
 
 ### 2. Simplified Code Example
@@ -184,13 +184,13 @@ Every card in your app now has the same round corners, padding, and shadow.
 
 ## Putting It All Together
 
-1. Install and import the components you need from `components/ui`.  
-2. Use props like `variant`, `size`, and `asChild` to adjust look and behavior.  
+1. Install and import the components you need from `components/ui`.
+2. Use props like `variant`, `size`, and `asChild` to adjust look and behavior.
 3. Compose them in your pages and features without rewriting CSS.
 
 This keeps your UI:
-- Consistent (same look everywhere)  
-- Easy to update (change one `cva` definition, and all buttons update)  
+- Consistent (same look everywhere)
+- Easy to update (change one `cva` definition, and all buttons update)
 - Focused on functionality (you don’t worry about styling in every component)
 
 ---
@@ -199,12 +199,12 @@ This keeps your UI:
 
 In this chapter, you learned how to:
 
-- Treat **UI primitives** as your LEGO bricks (`Button`, `Card`, `Dialog`, …).  
-- Use **variants** and **sizes** for flexible theming.  
-- Leverage **asChild** to compose triggers and custom components.  
+- Treat **UI primitives** as your LEGO bricks (`Button`, `Card`, `Dialog`, …).
+- Use **variants** and **sizes** for flexible theming.
+- Leverage **asChild** to compose triggers and custom components.
 - Peek under the hood at simple `cva` utilities and wrapper components.
 
-Next up, we'll show you how to build full pages by combining these bricks with data and logic:  
+Next up, we'll show you how to build full pages by combining these bricks with data and logic:
 [Chapter 6: Page & Feature Components](06_page___feature_components_.md)
 
 ---

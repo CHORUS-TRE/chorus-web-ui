@@ -36,7 +36,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
       <DialogContent className="bg-background sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-white">{title}</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-muted">
             {description}
           </DialogDescription>
         </DialogHeader>

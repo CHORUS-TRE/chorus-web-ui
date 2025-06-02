@@ -216,7 +216,7 @@ export default function WorkbenchTable({
         </Table>
       </CardContent>
       <CardFooter>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted">
           Showing <strong>1-{workbenches?.length}</strong> of{' '}
           <strong>{workbenches?.length}</strong> apps
         </div>

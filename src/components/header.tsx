@@ -1,8 +1,8 @@
 'use client'
 import { formatDistance, formatDistanceToNow } from 'date-fns'
 import {
+  AppWindow,
   CircleHelp,
-  DraftingCompass,
   House,
   LaptopMinimal,
   Menu,
@@ -80,6 +80,7 @@ export function Header() {
   const {
     workbenches,
     workspaces,
+    users,
     apps,
     appInstances,
     setNotification,
@@ -304,7 +305,7 @@ export function Header() {
                                               ? 'Home'
                                               : workspace?.shortName}
                                           </div>
-                                          <span className="text-sm font-semibold leading-snug text-muted-foreground">
+                                          <span className="text-sm font-semibold leading-snug text-muted">
                                             {(() => {
                                               const w =
                                                 workbenches?.filter(
@@ -364,17 +365,22 @@ export function Header() {
                                             >
                                               <ListItem
                                                 className="p-1 font-semibold"
-                                                href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
+                                                onClick={() => {
+                                                  router.push(
+                                                    `/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`
+                                                  )
+                                                }}
+                                                href="#"
                                                 wrapWithLi={false}
                                               >
                                                 <div className="flex flex-col items-start justify-start font-semibold text-white hover:text-accent-foreground">
-                                                  <div
+                                                  {/* <div
                                                     className={`mb-[2px] flex items-center gap-2 ${workbench.id === background?.sessionId ? 'text-accent' : ''}`}
                                                   >
                                                     <LaptopMinimal className="h-4 w-4" />
                                                     {workbench.name}
-                                                  </div>
-                                                  <span className="text-sm font-semibold leading-snug text-muted-foreground">
+                                                  </div> */}
+                                                  <span className="text-sm font-semibold leading-snug">
                                                     {(() => {
                                                       const filteredApps =
                                                         appInstances
@@ -396,7 +402,7 @@ export function Header() {
 
                                                       return (
                                                         <div className="flex items-center gap-2 text-xs">
-                                                          <DraftingCompass className="h-4 w-4 shrink-0" />
+                                                          <AppWindow className="h-4 w-4 shrink-0" />
                                                           {filteredApps.join(
                                                             ', '
                                                           )}
@@ -436,7 +442,7 @@ export function Header() {
                                                     <LaptopMinimal className="h-4 w-4" />
                                                     {workbench.name}
                                                   </div>
-                                                  <span className="text-sm font-semibold leading-snug text-muted-foreground">
+                                                  <span className="text-sm font-semibold leading-snug text-muted">
                                                     {(() => {
                                                       const filteredApps =
                                                         appInstances
@@ -458,7 +464,7 @@ export function Header() {
 
                                                       return (
                                                         <div className="flex items-center gap-2 text-xs">
-                                                          <DraftingCompass className="h-4 w-4 shrink-0" />
+                                                          <AppWindow className="h-4 w-4 shrink-0" />
                                                           {filteredApps.join(
                                                             ', '
                                                           )}
@@ -488,7 +494,7 @@ export function Header() {
                                 <NavigationMenuTrigger className="ml-1 border-b-2 border-accent text-sm font-light text-white hover:border-b-2 hover:border-accent">
                                   <span className="mt-1 flex items-center gap-2">
                                     <LaptopMinimal className="h-4 w-4" />
-                                    <span>{currentWorkbench.name}</span>
+                                    <span>Current session</span>
                                   </span>
                                 </NavigationMenuTrigger>
                                 <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
@@ -496,12 +502,12 @@ export function Header() {
                                     {/* Session Info Section */}
                                     <NavigationMenuItem>
                                       <ListItem
-                                        title={`About ${currentWorkbench?.name}`}
+                                        title={`About this session`}
                                         className="p-1 font-semibold"
                                         onClick={() => setShowAboutDialog(true)}
                                         wrapWithLi={false}
                                       >
-                                        <div className="pl-1 text-sm font-semibold text-muted-foreground">
+                                        <div className="pl-1 text-xs font-semibold">
                                           {(() => {
                                             const filteredApps =
                                               appInstances
@@ -522,7 +528,7 @@ export function Header() {
 
                                             return (
                                               <div className="flex items-center gap-2 text-xs">
-                                                <DraftingCompass className="h-4 w-4 shrink-0" />
+                                                <AppWindow className="h-4 w-4 shrink-0" />
                                                 {filteredApps.join(', ')}
                                               </div>
                                             )
@@ -591,7 +597,7 @@ export function Header() {
           <>
             <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
               <NavigationMenuList className="flex items-center justify-center gap-3">
-                <NavigationMenuItem id="getting-started-step-home">
+                {/* <NavigationMenuItem id="getting-started-step-home">
                   <NavLink
                     href="/"
                     exact={!isUserWorkspace}
@@ -602,7 +608,7 @@ export function Header() {
                       Home
                     </div>
                   </NavLink>
-                </NavigationMenuItem>
+                </NavigationMenuItem> */}
                 <NavigationMenuItem id="getting-started-step3">
                   <NavLink
                     href="/workspaces"
@@ -626,7 +632,7 @@ export function Header() {
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
+                {/* <NavigationMenuItem>
                   <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
                     <LaptopMinimal className="h-4 w-4" />
                     <span>Sessions</span>
@@ -657,7 +663,7 @@ export function Header() {
                                   className={`mb-2 flex items-center gap-2 font-semibold`}
                                 >
                                   {workspace.id === workspaceId ||
-                                  paths === '/' ? (
+                                    paths === '/' ? (
                                     <PackageOpen className="h-4 w-4" />
                                   ) : (
                                     <Package className="h-4 w-4" />
@@ -673,7 +679,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ shortName, createdAt, id }) => (
+                                  .map(({ ownerId, createdAt, id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -685,19 +691,19 @@ export function Header() {
                                         <div className="text-sm font-semibold">
                                           <div className="flex items-center justify-between">
                                             <div
-                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
+                                              className={`mb-1 flex items-center gap-2 text-muted ${id === background?.sessionId ? 'text-accent' : ''}`}
                                             >
-                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                              {shortName}
+                                              Created {formatDistanceToNow(createdAt)} ago by{' '}
+                                              {
+                                                users?.find((user) => user.id === ownerId)
+                                                  ?.firstName
+                                              }{' '}
+                                              {users?.find((user) => user.id === ownerId)?.lastName}
                                             </div>
-                                            <p className="text-xs text-muted">
-                                              {formatDistanceToNow(createdAt)}{' '}
-                                              ago
-                                            </p>
                                           </div>
-                                          <div className="text-xs text-muted">
+                                          <div className="text-xs">
                                             <div className="flex items-center gap-2 text-xs">
-                                              <DraftingCompass className="h-4 w-4 shrink-0" />
+                                              <AppWindow className="h-4 w-4 shrink-0" />
                                               {appInstances
                                                 ?.filter(
                                                   (instance) =>
@@ -748,7 +754,7 @@ export function Header() {
                                   className={`mb-2 flex items-center gap-2 font-semibold`}
                                 >
                                   {workspace.id === workspaceId ||
-                                  paths === '/' ? (
+                                    paths === '/' ? (
                                     <PackageOpen className="h-4 w-4" />
                                   ) : (
                                     <Package className="h-4 w-4" />
@@ -764,7 +770,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ shortName, createdAt, id }) => (
+                                  .map(({ ownerId, createdAt, id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -774,21 +780,21 @@ export function Header() {
                                         className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
                                       >
                                         <div className="text-sm font-semibold">
-                                          <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between">
                                             <div
-                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
+                                              className={`mb-1 flex items-center gap-2 text-muted ${id === background?.sessionId ? 'text-accent' : ''}`}
                                             >
-                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                              {shortName}
+                                              Created {formatDistanceToNow(createdAt)} ago by{' '}
+                                              {
+                                                users?.find((user) => user.id === ownerId)
+                                                  ?.firstName
+                                              }{' '}
+                                              {users?.find((user) => user.id === ownerId)?.lastName}
                                             </div>
-                                            <p className="text-xs text-muted">
-                                              {formatDistanceToNow(createdAt)}{' '}
-                                              ago
-                                            </p>
                                           </div>
-                                          <div className="text-xs text-muted">
+                                          <div className="text-xs">
                                             <div className="flex items-center gap-2 text-xs">
-                                              <DraftingCompass className="h-4 w-4 shrink-0" />
+                                              <AppWindow className="h-4 w-4 shrink-0" />
                                               {appInstances
                                                 ?.filter(
                                                   (instance) =>
@@ -821,7 +827,7 @@ export function Header() {
                       </div>
                     </div>
                   </NavigationMenuContent>
-                </NavigationMenuItem>
+                </NavigationMenuItem> */}
               </NavigationMenuList>
             </NavigationMenu>
 
@@ -877,7 +883,7 @@ export function Header() {
         <div className="flex items-center justify-end">
           {isAuthenticated && (
             <div className="relative mr-2 hidden flex-1 xl:block">
-              <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted" />
               <Input
                 disabled
                 type="search"
@@ -1009,7 +1015,7 @@ export function Header() {
                 </Avatar>
                 <div className="space-y-1">
                   <p className="font-medium">{currentWorkbench?.shortName}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted">
                     Created{' '}
                     {formatDistance(
                       currentWorkbench?.createdAt ?? 0,

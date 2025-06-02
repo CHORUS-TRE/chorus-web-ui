@@ -1,7 +1,14 @@
 'use client'
 
-import { CircleHelp, LaptopMinimal, PackageOpen } from 'lucide-react'
+import {
+  AppWindow,
+  CircleHelp,
+  CircleX,
+  LaptopMinimal,
+  PackageOpen
+} from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
@@ -21,11 +28,14 @@ export function MainLayout({ children }: MainLayoutProps) {
     background,
     workspaces,
     workbenches,
+    apps,
+    appInstances,
     showRightSidebar,
     toggleRightSidebar,
     notification,
     setNotification
   } = useAppState()
+  const router = useRouter()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
   const workbench = workbenches?.find((w) => w.id === background?.sessionId)
   // Add state to track client-side rendering
@@ -73,23 +83,32 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div
             className="fixed left-0 top-0 z-30 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
             id="iframe-overlay"
-            onClick={() => {
-              setTimeout(() => {
-                document.getElementById('iframe')?.focus()
-              }, 1000)
-            }}
           >
-            <div className="pl-4 pt-32 text-white">
-              <div className="flex items-center pt-2">
-                <PackageOpen className="mr-2 h-4 w-4 opacity-70" />
-                <span className="text-sm opacity-50">
+            <div className="ml-4 mt-16 w-48 rounded-lg bg-primary/60 p-4 text-white hover:text-accent">
+              <div className="flex items-center">
+                <span className="text-lg font-semibold">Open Session</span>
+              </div>
+              <div className="mb-1 flex items-center pt-2">
+                <PackageOpen className="mr-2 h-4 w-4" />
+                <span className="text-sm font-semibold">
                   {workspace?.shortName}
                 </span>
               </div>
-              <div className="flex items-center">
-                <LaptopMinimal className="mr-2 h-4 w-4 opacity-70" />
-                <span className="font-semibold opacity-50">
-                  {workbench?.name}
+              <div className="flex items-start">
+                <AppWindow className="mr-2 h-4 w-4" />
+                <span className="flex-col text-sm">
+                  {appInstances
+                    ?.filter(
+                      (appInstance) => workbench?.id === appInstance.sessionId
+                    )
+                    .map((appInstance) =>
+                      apps?.find((app) => app.id === appInstance.appId)
+                    )
+                    .map((app) => (
+                      <div key={app?.id} className="text-sm opacity-50">
+                        {app?.name}
+                      </div>
+                    ))}
                 </span>
               </div>
             </div>
@@ -106,6 +125,19 @@ export function MainLayout({ children }: MainLayoutProps) {
         >
           <div className="w-full p-8 pr-0">{children}</div>
           <div className="flex justify-end p-2">
+            <Button
+              size="icon"
+              className={`overflow-hidden text-muted hover:bg-inherit hover:text-accent ${isClient && showRightSidebar ? 'hidden' : 'visible'}`}
+              variant="ghost"
+              title="Switch to open session"
+              onClick={() => {
+                router.push(
+                  `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
+                )
+              }}
+            >
+              <AppWindow />
+            </Button>
             <Button
               size="icon"
               className={`overflow-hidden text-muted hover:bg-inherit hover:text-accent ${isClient && showRightSidebar ? 'hidden' : 'visible'}`}

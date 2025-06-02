@@ -201,7 +201,7 @@ export default function WorkspaceTable({
           </Table>
         </CardContent>
         <CardFooter>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted">
             Showing <strong>1-{workspaces?.length}</strong> of{' '}
             <strong>{workspaces?.length}</strong>
           </div>

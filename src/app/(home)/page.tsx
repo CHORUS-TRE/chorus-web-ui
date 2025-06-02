@@ -19,9 +19,7 @@ const HomePage = () => {
 
       <div className="flex flex-col items-center justify-start">
         {!user?.workspaceId && (
-          <span className="animate-pulse text-muted-foreground">
-            Loading workspace...
-          </span>
+          <span className="animate-pulse text-muted">Loading workspace...</span>
         )}
         {user?.workspaceId && <Workspace workspaceId={user.workspaceId} />}
       </div>

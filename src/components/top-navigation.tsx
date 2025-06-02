@@ -29,7 +29,7 @@ const items: Item[] = [
   {
     name: 'Demos',
     description: '',
-    class: 'text-muted-foreground',
+    class: 'text-muted',
     links: [
       {
         name: 'LLM (LLama 3.1 @127.0.0.1)',
@@ -105,7 +105,7 @@ const RichNavigationList = ({ item }: { item: Item }) => (
                 <div className="mb-2 mt-4 text-lg font-medium">
                   {item.poster.name}
                 </div>
-                <p className="text-sm leading-tight text-muted-foreground">
+                <p className="text-sm leading-tight text-muted">
                   {item.poster.description}
                 </p>
               </Link>
@@ -137,7 +137,7 @@ const ListItem = React.forwardRef<
         {...props}
       >
         <div className="text-sm font-medium leading-none">{title}</div>
-        <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+        <div className="line-clamp-2 text-sm leading-snug text-muted">
           {children}
         </div>
       </a>
