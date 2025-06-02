@@ -5,9 +5,10 @@ import { cookies } from 'next/headers'
 import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { UserRepositoryImpl } from '~/data/repository'
 import { UserResponse } from '~/domain/model'
-import { UserCreateSchema } from '~/domain/model/user'
+import { UserCreateSchema, UsersResponse } from '~/domain/model/user'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
 import { UserGet } from '~/domain/use-cases/user/user-get'
+import { UserList } from '~/domain/use-cases/user/user-list'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 
 import { IFormState } from './utils'
@@ -41,7 +42,7 @@ export async function userCreate(
     const useCase = new UserCreate(userRepository)
 
     const user = {
-      email: formData.get('email') as string,
+      username: formData.get('username') as string,
       password: formData.get('password') as string,
       firstName: formData.get('firstName') as string,
       lastName: formData.get('lastName') as string
@@ -59,7 +60,7 @@ export async function userCreate(
       return { error: result.error }
     }
 
-    return { data: nextUser.email }
+    return { data: nextUser.username }
   } catch (error) {
     console.error('Error creating user', error)
     return { error: error instanceof Error ? error.message : String(error) }
@@ -72,6 +73,18 @@ export async function userGet(id: string): Promise<UserResponse> {
     const useCase = new UserGet(userRepository)
 
     return await useCase.execute(id)
+  } catch (error) {
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function userList(): Promise<UsersResponse> {
+  try {
+    const userRepository = await getRepository()
+    const useCase = new UserList(userRepository)
+
+    return await useCase.execute()
   } catch (error) {
     console.error('Error getting user', error)
     return { error: error instanceof Error ? error.message : String(error) }

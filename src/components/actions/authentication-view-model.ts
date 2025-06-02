@@ -29,7 +29,7 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
   const username = formData.get('username') as string
   const password = formData.get('password') as string
 
-  const login = await useCase.execute({ email: username, password })
+  const login = await useCase.execute({ username: username, password })
 
   if (login.error)
     return {

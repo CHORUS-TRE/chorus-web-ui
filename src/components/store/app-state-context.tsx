@@ -12,10 +12,11 @@ import {
   useState
 } from 'react'
 
-import { App, AppInstance, Workbench, Workspace } from '@/domain/model'
+import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
 
 import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
+import { userList } from '../actions/user-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceList } from '../actions/workspace-view-model'
 import { useAuth } from './auth-context'
@@ -54,6 +55,7 @@ type AppStateContextType = {
   >
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
+  users: User[] | undefined
   notification: NotificationType
   setNotification: Dispatch<SetStateAction<NotificationType>>
   refreshWorkspaces: () => Promise<void>
@@ -78,6 +80,7 @@ const AppStateContext = createContext<AppStateContextType>({
   setBackground: () => {},
   workspaces: undefined,
   workbenches: undefined,
+  users: undefined,
   notification: undefined,
   setNotification: () => {},
   refreshWorkspaces: async () => {},
@@ -118,6 +121,7 @@ export const AppStateProvider = ({
   const [workbenches, setWorkbenches] = useState<Workbench[] | undefined>(
     undefined
   )
+  const [users, setUsers] = useState<User[] | undefined>(undefined)
   const [notification, setNotification] = useState<NotificationType>(undefined)
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
@@ -173,6 +177,28 @@ export const AppStateProvider = ({
         )
       if (response?.error)
         setNotification({ title: response.error, variant: 'destructive' })
+    } catch (error) {
+      setNotification({
+        title: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
+    }
+  }, [user])
+
+  const refreshUsers = useCallback(async () => {
+    if (!user) {
+      return
+    }
+    try {
+      const response = await userList()
+
+      if (response?.error) {
+        setNotification({ title: response.error, variant: 'destructive' })
+      }
+
+      if (response?.data) {
+        setUsers(response.data)
+      }
     } catch (error) {
       setNotification({
         title: error instanceof Error ? error.message : String(error),
@@ -238,6 +264,7 @@ export const AppStateProvider = ({
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
+    setUsers(undefined)
     setBackground(undefined)
     setNotification(undefined)
     setApps(undefined)
@@ -273,6 +300,7 @@ export const AppStateProvider = ({
     try {
       await refreshWorkspaces()
       await refreshWorkbenches()
+      await refreshUsers()
       await refreshApps()
       await refreshAppInstances()
     } catch (error) {
@@ -287,6 +315,7 @@ export const AppStateProvider = ({
     user,
     refreshWorkspaces,
     refreshWorkbenches,
+    refreshUsers,
     refreshApps,
     refreshAppInstances
   ])
@@ -306,6 +335,7 @@ export const AppStateProvider = ({
         setBackground,
         workspaces,
         workbenches,
+        users,
         notification,
         setNotification,
         refreshWorkspaces,

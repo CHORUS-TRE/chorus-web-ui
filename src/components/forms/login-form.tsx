@@ -179,7 +179,7 @@ export default function LoginForm() {
             <>
               <div className="grid gap-4 text-center">
                 <p className="text-muted">
-                  Enter your email below to login to your account
+                  Enter your username below to login to your account
                 </p>
               </div>
               <form
@@ -194,7 +194,7 @@ export default function LoginForm() {
               >
                 <div className="grid gap-4 py-8">
                   <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="username">username</Label>
                     <Input
                       id="username"
                       type="input"
@@ -202,7 +202,7 @@ export default function LoginForm() {
                       required
                       disabled={isAuthenticated}
                       className="border border-muted/40 bg-background text-white"
-                      defaultValue={searchParams.get('email') || ''}
+                      defaultValue={searchParams.get('username') || ''}
                     />
                   </div>
                   <div className="mb-2 grid gap-2">

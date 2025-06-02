@@ -41,7 +41,7 @@ export default function UserRegisterForm() {
 
   useEffect(() => {
     if (state?.data && !state.error) {
-      redirect(`/login?email=${state.data}`)
+      redirect(`/login?username=${state.data}`)
     }
   }, [state])
 
@@ -50,7 +50,7 @@ export default function UserRegisterForm() {
       <div className="grid gap-4 text-center">
         <h2>Create an account</h2>
         <h5 className="text-muted">
-          Enter your email below to create your account
+          Enter your username below to create your account
         </h5>
       </div>
       <Separator className="mb-1" />
@@ -89,16 +89,16 @@ export default function UserRegisterForm() {
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">username</Label>
             <Input
-              id="email"
-              type="email"
-              name="email"
+              id="username"
+              type="username"
+              name="username"
               required
               className="border border-muted/40 bg-background text-white"
             />
             <div className="text-xs text-red-500">
-              {state?.issues?.find((e) => e.path.includes('email'))?.message}
+              {state?.issues?.find((e) => e.path.includes('username'))?.message}
             </div>
           </div>
           <div className="grid gap-2">
