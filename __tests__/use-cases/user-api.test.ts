@@ -27,11 +27,11 @@ const MOCK_USER_API_RESPONSE = {
 const { username, ...rest } = MOCK_USER_API_RESPONSE
 const MOCK_USER_RESULT = {
   ...rest,
-  email: username
+  username: username
 } as User
 
 const MOCK_USER_CREATE_MODEL = {
-  email: 'new.user@example.com',
+  username: 'new.user@example.com',
   password: 'securePassword123',
   firstName: 'New',
   lastName: 'User'
@@ -245,7 +245,7 @@ describe('UserApiDataSourceImpl', () => {
 
       // Verify request body contains correct data
       const body = JSON.parse(options.body)
-      expect(body).toHaveProperty('username', MOCK_USER_CREATE_MODEL.email)
+      expect(body).toHaveProperty('username', MOCK_USER_CREATE_MODEL.username)
       expect(body).toHaveProperty('password', MOCK_USER_CREATE_MODEL.password)
       expect(body).toHaveProperty('firstName', MOCK_USER_CREATE_MODEL.firstName)
       expect(body).toHaveProperty('lastName', MOCK_USER_CREATE_MODEL.lastName)

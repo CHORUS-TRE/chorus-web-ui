@@ -27,7 +27,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
 
   async login(data: AuthenticationRequest): Promise<string> {
     try {
-      const nextData = { username: data.email, password: data.password }
+      const nextData = { username: data.username, password: data.password }
       const authenticate = await this.service.authenticationServiceAuthenticate(
         {
           body: nextData

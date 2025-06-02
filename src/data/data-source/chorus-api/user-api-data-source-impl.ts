@@ -12,39 +12,6 @@ import {
 import { ChorusUser as ChorusUserApi, Configuration } from '@/internal/client'
 import { UserServiceApi } from '@/internal/client/apis'
 
-const ChorusUserApiSchema = z.object({
-  id: z.string().optional(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  username: z.string().optional(),
-  status: z.string().optional(),
-  roles: z.array(z.string()).optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  passwordChanged: z.boolean().optional(),
-  totpEnabled: z.boolean().optional()
-})
-
-const apiToDomain = (user: ChorusUserApi & { workspaceId?: string }): User => {
-  return {
-    id: user.id || '',
-    firstName: user.firstName || '',
-    lastName: user.lastName || '',
-    email: user.username || '',
-    status: (user.status as UserStatusEnum) || '',
-    roles: user.roles?.map((u) => u as UserRoleEnum) || [],
-    createdAt: new Date(user.createdAt || ''),
-    updatedAt: new Date(user.updatedAt || ''),
-    passwordChanged: user.passwordChanged || false,
-    totpEnabled: user.totpEnabled || false,
-    workspaceId:
-      user.workspaceId ||
-      env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-      localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-      undefined
-  }
-}
-
 class UserApiDataSourceImpl implements UserDataSource {
   private configuration: Configuration
   private service: UserServiceApi
@@ -60,7 +27,7 @@ class UserApiDataSourceImpl implements UserDataSource {
   async create(user: UserCreateModel): Promise<string> {
     const response = await this.service.userServiceCreateUser({
       body: {
-        username: user.email,
+        username: user.username,
         password: user.password,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -79,14 +46,10 @@ class UserApiDataSourceImpl implements UserDataSource {
 
     if (!response?.result?.me) throw new Error('Error fetching user')
 
-    // Validated the response api
-    const validatedInput = ChorusUserApiSchema.parse(response?.result?.me)
+    // Validate the response api
+    const user = UserSchema.parse(response?.result?.me)
 
-    // map the response to the domain
-    const user = apiToDomain(validatedInput)
-
-    // return the validated domain object
-    return UserSchema.parse(user)
+    return user
   }
 
   async get(id: string): Promise<User> {
@@ -94,13 +57,18 @@ class UserApiDataSourceImpl implements UserDataSource {
     if (!response?.result?.user) throw new Error('Error fetching user')
 
     // Validated the response api
-    const validatedInput = ChorusUserApiSchema.parse(response?.result?.user)
+    const user = UserSchema.parse(response?.result?.user)
 
-    // map the response to the domain
-    const user = apiToDomain(validatedInput)
-
-    // return the validated domain object
     return UserSchema.parse(user)
+  }
+
+  async list(): Promise<User[]> {
+    const response = await this.service.userServiceGetUsers()
+
+    if (!response?.result) throw new Error('Error fetching users')
+
+    const users = response?.result?.map((user) => UserSchema.parse(user))
+    return users
   }
 }
 

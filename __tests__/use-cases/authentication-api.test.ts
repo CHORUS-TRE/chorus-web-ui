@@ -23,7 +23,7 @@ const MOCK_LOGIN_API_RESPONSE = {
 const MOCK_AUTHN_RESULT = MOCK_LOGIN_API_RESPONSE.token
 
 const MOCK_LOGIN_REQUEST: AuthenticationRequest = {
-  email: 'albert.levert@chuv.ch',
+  username: 'albert.levert@chuv.ch',
   password: 'password123'
 }
 
@@ -135,7 +135,7 @@ describe.skip('AuthenticationApiDataSourceImpl', () => {
 
       // Verify request body contains correct credentials
       const body = JSON.parse(options.body)
-      expect(body).toHaveProperty('username', MOCK_LOGIN_REQUEST.email)
+      expect(body).toHaveProperty('username', MOCK_LOGIN_REQUEST.username)
       expect(body).toHaveProperty('password', MOCK_LOGIN_REQUEST.password)
     })
 

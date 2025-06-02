@@ -1,7 +1,8 @@
 import {
   UserCreatedResponse,
   UserCreateModel,
-  UserResponse
+  UserResponse,
+  UsersResponse
 } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 
@@ -52,6 +53,20 @@ export class UserRepositoryImpl implements UserRepository {
       return { data }
     } catch (error) {
       console.error('Error getting user', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async list(): Promise<UsersResponse> {
+    try {
+      const data = await this.dataSource.list()
+      if (!data) {
+        return { error: 'Users not found' }
+      }
+
+      return { data }
+    } catch (error) {
+      console.error('Error getting users', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
