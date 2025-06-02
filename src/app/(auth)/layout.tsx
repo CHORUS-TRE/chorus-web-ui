@@ -85,7 +85,7 @@ export default function Layout({
                 <span>Github</span>
               </a>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted">
               Web-UI Version: {packageInfo.version}
             </p>
           </div>

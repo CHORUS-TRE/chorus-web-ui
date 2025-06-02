@@ -2,12 +2,13 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import {
-  DraftingCompass,
+  AppWindow,
   EllipsisVerticalIcon,
   LaptopMinimal,
   Package
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import {
@@ -49,8 +50,8 @@ export default function WorkspacesGrid({
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
   const { setNotification } = useAppState()
-  const { apps, appInstances, refreshWorkspaces } = useAppState()
-
+  const { apps, appInstances, refreshWorkspaces, users } = useAppState()
+  const router = useRouter()
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
       {workspaces?.map((workspace) => (
@@ -85,46 +86,65 @@ export default function WorkspacesGrid({
             </DropdownMenu>
           </div>
           <Link href={`/workspaces/${workspace.id}`}>
-            <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
+            <Card className="h-full rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
               <CardHeader>
-                <div className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-                  <Package className="h-9 w-9 shrink-0 text-white" />
-                  <CardTitle>
-                    {workspace?.id === user?.workspaceId
-                      ? 'Home'
-                      : workspace?.name}
-                  </CardTitle>
-                </div>
-                <CardDescription>{workspace.description}</CardDescription>
+                <CardTitle className="flex items-start gap-3 pr-2 text-white">
+                  <Package className="h-6 w-6 flex-shrink-0 text-white" />
+                  {workspace?.id === user?.workspaceId
+                    ? 'Home'
+                    : workspace?.name}
+                </CardTitle>
+                <CardDescription>
+                  {workspace?.description}
+                  <p className="mb-3 text-xs text-muted">
+                    Created {formatDistanceToNow(workspace.updatedAt)} ago by{' '}
+                    {
+                      users?.find((user) => user.id === workspace?.ownerId)
+                        ?.firstName
+                    }{' '}
+                    {
+                      users?.find((user) => user.id === workspace?.ownerId)
+                        ?.lastName
+                    }
+                  </p>
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="mb-4 h-[160px] pr-2">
+                <ScrollArea className="mb-4 max-h-[160px] pr-2">
                   <div className="grid gap-1">
+                    {workbenches?.filter(
+                      (workbench) => workbench.workspaceId === workspace?.id
+                    ).length === 0 && (
+                      <div className="mb-1 flex items-center gap-2 text-xs">
+                        <AppWindow className="h-4 w-4 shrink-0" />
+                        No sessions created yet
+                      </div>
+                    )}
                     {workbenches
                       ?.filter(
                         (workbench) => workbench.workspaceId === workspace?.id
                       )
-                      .map(({ shortName, createdAt, id }) => (
+                      .map(({ ownerId, createdAt, id }) => (
                         <div
                           key={`workspace-grid-sessions-${id}`}
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            window.location.href = `/workspaces/${workspace?.id}/sessions/${id}`
+                            router.push(
+                              `/workspaces/${workspace?.id}/sessions/${id}`
+                            )
                           }}
-                          className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
+                          className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white"
                         >
                           <div className="mb-0.5 flex-grow text-sm">
-                            <div className="mb-1 flex items-center gap-2">
+                            {/* <div className="mb-1 flex items-center gap-2">
                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                               {shortName}
-                            </div>
-                            <p className="text-xs text-muted">
-                              {formatDistanceToNow(createdAt)} ago
-                            </p>
-                            <div className="mt-1 text-xs text-muted-foreground">
-                              <div className="flex items-center gap-2 text-xs">
-                                <DraftingCompass className="h-4 w-4 shrink-0" />
+                            </div> */}
+
+                            <div className="mt-1 text-xs">
+                              <div className="mb-1 flex items-center gap-2 text-xs hover:text-accent hover:underline">
+                                <AppWindow className="h-4 w-4 shrink-0" />
                                 {appInstances
                                   ?.filter(
                                     (instance) =>
@@ -142,18 +162,23 @@ export default function WorkspacesGrid({
                                   )
                                   .join(', ')}
                               </div>
+                              <p className="text-xs text-muted">
+                                Created {formatDistanceToNow(createdAt)} ago by{' '}
+                                {
+                                  users?.find((user) => user.id === ownerId)
+                                    ?.firstName
+                                }{' '}
+                                {
+                                  users?.find((user) => user.id === ownerId)
+                                    ?.lastName
+                                }
+                              </p>
                             </div>
                           </div>
                         </div>
                       ))}
                   </div>
                 </ScrollArea>
-                <p className="text-xs text-muted-foreground">
-                  Owner: {user?.firstName} {user?.lastName}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Updated {formatDistanceToNow(workspace.updatedAt)} ago
-                </p>
               </CardContent>
             </Card>
           </Link>

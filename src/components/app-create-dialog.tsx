@@ -360,7 +360,7 @@ export function AppCreateDialog({
               {showAdvanced ? 'Hide Advanced Settings' : 'Advanced Settings'}
             </Link>
           </div>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-muted">
             Add a new application to the store
           </DialogDescription>
         </DialogHeader>
@@ -383,7 +383,7 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="Enter app name"
-                          className="bg-background text-white placeholder:text-muted-foreground"
+                          className="bg-background text-white placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -401,7 +401,7 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="Enter description"
-                          className="bg-background text-white placeholder:text-muted-foreground"
+                          className="bg-background text-white placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -434,7 +434,7 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="e.g., docker.io"
-                          className="bg-background text-white placeholder:text-muted-foreground"
+                          className="bg-background text-white placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -455,7 +455,7 @@ export function AppCreateDialog({
                           <Input
                             {...field}
                             placeholder="e.g., nginx"
-                            className="bg-background text-white placeholder:text-muted-foreground"
+                            className="bg-background text-white placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -473,7 +473,7 @@ export function AppCreateDialog({
                           <Input
                             {...field}
                             placeholder="e.g., latest"
-                            className="bg-background text-white placeholder:text-muted-foreground"
+                            className="bg-background text-white placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -497,7 +497,7 @@ export function AppCreateDialog({
                           <Input
                             {...field}
                             placeholder="Enter kiosk config URL"
-                            className="bg-background text-white placeholder:text-muted-foreground"
+                            className="bg-background text-white placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -552,7 +552,7 @@ export function AppCreateDialog({
                               }
                             }}
                           >
-                            <SelectTrigger className="bg-background text-white placeholder:text-muted-foreground">
+                            <SelectTrigger className="bg-background text-white placeholder:text-muted">
                               <SelectValue placeholder="Select a preset" />
                             </SelectTrigger>
                             <SelectContent>
@@ -598,7 +598,7 @@ export function AppCreateDialog({
                             <Input
                               {...field}
                               placeholder="e.g., 64m"
-                              className="bg-background text-white placeholder:text-muted-foreground"
+                              className="bg-background text-white placeholder:text-muted"
                             />
                           </FormControl>
                           <FormMessage className="text-destructive" />
@@ -619,7 +619,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background text-white placeholder:text-muted-foreground"
+                                className="bg-background text-white placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -639,7 +639,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background text-white placeholder:text-muted-foreground"
+                                className="bg-background text-white placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -661,7 +661,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1"
-                                className="bg-background text-white placeholder:text-muted-foreground"
+                                className="bg-background text-white placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -681,7 +681,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2"
-                                className="bg-background text-white placeholder:text-muted-foreground"
+                                className="bg-background text-white placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -703,7 +703,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background text-white placeholder:text-muted-foreground"
+                                className="bg-background text-white placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -723,7 +723,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background text-white placeholder:text-muted-foreground"
+                                className="bg-background text-white placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />

@@ -81,7 +81,7 @@ export default function WorkspacesPage() {
           </div>
           <TabsContent value="mine" className="border-none">
             {!workspaces && (
-              <span className="animate-pulse text-muted-foreground">
+              <span className="animate-pulse text-muted">
                 Loading workspaces...
               </span>
             )}

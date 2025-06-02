@@ -215,7 +215,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
             <p className="text-white">
               {app.description || 'No description available'}
             </p>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted">
               {app.dockerImageName}:{app.dockerImageTag}
             </div>
           </div>

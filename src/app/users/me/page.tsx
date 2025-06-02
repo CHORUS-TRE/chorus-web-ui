@@ -14,7 +14,7 @@ export default function Me() {
             <CardTitle className="text-2xl">Profile</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted">
               {user.firstName} {user.lastName}
             </p>
             <pre>{JSON.stringify(user, null, 2)}</pre>

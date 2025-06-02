@@ -87,9 +87,7 @@ export function AppStoreView() {
 
           {filteredApps?.length === 0 && (
             <div className="flex flex-col items-center justify-center p-8 text-center">
-              <p className="text-lg text-muted-foreground">
-                No {selectedType} available.
-              </p>
+              <p className="text-lg text-muted">No {selectedType} available.</p>
               <Button
                 onClick={() => setShowCreateDialog(true)}
                 variant="outline"

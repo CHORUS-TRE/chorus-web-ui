@@ -33,7 +33,7 @@ export default function Layout({
                 workspace.shortName
               )
             ) : (
-              <span className="animate-pulse text-muted-foreground">
+              <span className="animate-pulse text-muted">
                 Loading workspace...
               </span>
             )}
