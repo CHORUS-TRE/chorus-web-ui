@@ -11,7 +11,7 @@ import {
   WorkspaceState
 } from '~/domain/model'
 import { WorkspaceCreateSchema } from '~/domain/model/workspace'
-import { WorkspaceUpdateModelSchema } from '~/domain/model/workspace'
+import { WorkspaceUpdateSchema } from '~/domain/model/workspace'
 import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
 import { WorkspaceDelete } from '~/domain/use-cases/workspace/workspace-delete'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
@@ -73,8 +73,6 @@ export async function workspaceCreate(
       userId: formData.get('userId') as string,
       description: formData.get('description') as string,
       shortName: formData.get('shortName') as string,
-      memberIds: formData.getAll('memberIds') as string[],
-      tags: formData.getAll('tags') as string[]
     }
 
     const validation = WorkspaceCreateSchema.safeParse(workspace)
@@ -124,7 +122,7 @@ export async function workspaceUpdate(
       tags: formData.getAll('tags') as string[]
     }
 
-    const validation = WorkspaceUpdateModelSchema.safeParse(workspace)
+    const validation = WorkspaceUpdateSchema.safeParse(workspace)
     if (!validation.success) return { issues: validation.error.issues }
 
     const w = await useCase.execute(validation.data)

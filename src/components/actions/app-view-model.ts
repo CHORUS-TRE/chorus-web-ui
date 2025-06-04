@@ -5,8 +5,8 @@ import { cookies } from 'next/headers'
 
 import { AppDataSourceImpl } from '~/data/data-source/chorus-api/app-api-data-source-impl'
 import { AppRepositoryImpl } from '~/data/repository/app-repository-impl'
-import { AppCreate, AppResponse, AppsResponse } from '~/domain/model'
-import { AppType } from '~/domain/model/app'
+import { AppCreateType, AppResponse, AppsResponse } from '~/domain/model'
+import { App, AppState, AppUpdateType } from '~/domain/model/app'
 import { AppCreate as AppCreateUseCase } from '~/domain/use-cases/app/app-create'
 import { AppDelete } from '~/domain/use-cases/app/app-delete'
 import { AppGet } from '~/domain/use-cases/app/app-get'
@@ -42,17 +42,17 @@ export async function appCreate(
     const repository = await getRepository()
     const useCase = new AppCreateUseCase(repository)
 
-    const app: AppCreate = {
+    const app: AppCreateType = {
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || '',
       iconURL: (formData.get('iconURL') as string) || '',
       tenantId: formData.get('tenantId') as string,
       userId: formData.get('userId') as string,
+      status: AppState.ACTIVE,
       dockerImageRegistry:
         (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
-      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
       shmSize: (formData.get('shmSize') as string) || '',
       minEphemeralStorage:
         (formData.get('minEphemeralStorage') as string) || '',
@@ -94,18 +94,18 @@ export async function appUpdate(
     const repository = await getRepository()
     const useCase = new AppUpdate(repository)
 
-    const app: AppCreate & { id: string } = {
+    const app: AppUpdateType = {
       id: formData.get('id') as string,
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || '',
       iconURL: (formData.get('iconURL') as string) || '',
       tenantId: formData.get('tenantId') as string,
       userId: formData.get('userId') as string,
+      status: AppState.ACTIVE,
       dockerImageRegistry:
         (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
       dockerImageTag: formData.get('dockerImageTag') as string,
-      type: formData.get('type') === 'service' ? AppType.SERVICE : AppType.APP,
       shmSize: (formData.get('shmSize') as string) || '',
       minEphemeralStorage:
         (formData.get('minEphemeralStorage') as string) || '',

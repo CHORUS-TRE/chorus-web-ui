@@ -210,7 +210,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                 <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
                                   <AppWindow className="h-4 w-4 shrink-0" />
                                   {appInstances?.filter(
-                                    (instance) => id === instance.sessionId
+                                    (instance) => id === instance.workbenchId
                                   ).length === 0 && (
                                     <span className="text-muted">
                                       No apps started yet
@@ -218,7 +218,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                   )}
                                   {appInstances
                                     ?.filter(
-                                      (instance) => id === instance.sessionId
+                                      (instance) => id === instance.workbenchId
                                     )
                                     .map(
                                       (instance) =>
@@ -337,7 +337,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                 <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
                                   <AppWindow className="h-4 w-4 shrink-0" />
                                   {appInstances?.filter(
-                                    (instance) => id === instance.sessionId
+                                    (instance) => id === instance.workbenchId
                                   ).length === 0 && (
                                     <span className="text-muted">
                                       No apps started yet
@@ -345,7 +345,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                   )}
                                   {appInstances
                                     ?.filter(
-                                      (instance) => id === instance.sessionId
+                                      (instance) => id === instance.workbenchId
                                     )
                                     .map(
                                       (instance) =>

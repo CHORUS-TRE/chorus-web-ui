@@ -66,10 +66,12 @@ export async function userCreate(
       }
     }
 
-    return { data: {
-      ...user,
-      id: result.data as string
-    } }
+    return {
+      data: {
+        ...user,
+        id: result.data as string
+      }
+    }
   } catch (error) {
     console.error('Error creating user', error)
     return { error: error instanceof Error ? error.message : String(error) }

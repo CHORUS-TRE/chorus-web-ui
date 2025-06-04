@@ -52,8 +52,6 @@ export async function workbenchDelete(
       return { error: r.error }
     }
 
-    revalidatePath('/')
-
     return { data: 'Successfully deleted workbench' }
   } catch (error) {
     console.error('Error deleting workbench', error)
@@ -81,6 +79,8 @@ export async function workbenchCreate(
     }
 
     const validation = WorkbenchCreateSchema.safeParse(workbench)
+
+    console.log(validation.data)
 
     if (!validation.success) {
       return { issues: validation.error.issues }
