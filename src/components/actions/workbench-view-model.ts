@@ -5,10 +5,11 @@ import { cookies } from 'next/headers'
 import { env } from 'next-runtime-env'
 
 import {
-  WorkbenchCreateModel,
   WorkbenchCreateSchema,
-  WorkbenchUpdateModel,
-  WorkbenchUpdateSchema
+  WorkbenchCreateType,
+  WorkbenchStatus,
+  WorkbenchUpdateSchema,
+  WorkbenchUpdateType
 } from '@/domain/model/workbench'
 import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
@@ -19,7 +20,6 @@ import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { WorkbenchUpdateImpl as WorkbenchUpdateUseCase } from '~/domain/use-cases/workbench/workbench-update'
 
-import { appInstanceCreate } from './app-instance-view-model'
 import { IFormState } from './utils'
 
 function delay(ms: number) {
@@ -69,16 +69,15 @@ export async function workbenchCreate(
     const repository = await getRepository()
     const useCase = new WorkbenchCreate(repository)
 
-    const workbench: WorkbenchCreateModel = {
+    const workbench: WorkbenchCreateType = {
       name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       description: formData.get('description') as string,
-      memberIds: formData.getAll('memberIds') as string[],
-      tags: formData.getAll('tags') as string[],
       workspaceId: formData.get('workspaceId') as string,
       initialResolutionWidth: Number(formData.get('initialResolutionWidth')),
-      initialResolutionHeight: Number(formData.get('initialResolutionHeight'))
+      initialResolutionHeight: Number(formData.get('initialResolutionHeight')),
+      status: 'active'
     }
 
     const validation = WorkbenchCreateSchema.safeParse(workbench)
@@ -87,6 +86,8 @@ export async function workbenchCreate(
       return { issues: validation.error.issues }
     }
 
+    console.log('validation', validation)
+
     const createdWorkbench = await useCase.execute(validation.data)
 
     await delay((Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) || 8) * 1000)
@@ -94,17 +95,6 @@ export async function workbenchCreate(
     if (createdWorkbench.error) {
       return { error: createdWorkbench.error }
     }
-
-    const appId = formData.get('id') as string
-
-    const appFormData = new FormData()
-    appFormData.set('tenantId', workbench.tenantId)
-    appFormData.set('ownerId', workbench.ownerId)
-    appFormData.set('id', appId)
-    appFormData.set('workspaceId', workbench.workspaceId)
-    appFormData.set('sessionId', createdWorkbench?.data?.id || '')
-
-    await appInstanceCreate(prevState, appFormData)
 
     return {
       ...prevState,
@@ -149,15 +139,14 @@ export async function workbenchUpdate(
     const repository = await getRepository()
     const useCase = new WorkbenchUpdateUseCase(repository)
 
-    const workbench: WorkbenchUpdateModel = {
+    const workbench: WorkbenchUpdateType = {
       id: formData.get('id') as string,
       name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       description: formData.get('description') as string,
-      memberIds: formData.getAll('memberIds') as string[],
-      tags: formData.getAll('tags') as string[],
-      workspaceId: formData.get('workspaceId') as string
+      workspaceId: formData.get('workspaceId') as string,
+      status: WorkbenchStatus.ACTIVE
     }
 
     const validation = WorkbenchUpdateSchema.safeParse(workbench)

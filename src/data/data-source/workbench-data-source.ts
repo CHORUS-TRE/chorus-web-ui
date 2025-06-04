@@ -1,15 +1,15 @@
 import {
   Workbench,
-  WorkbenchCreateModel,
-  WorkbenchUpdateModel
+  WorkbenchCreateType,
+  WorkbenchUpdateType
 } from '@/domain/model'
 
 interface WorkbenchDataSource {
-  create: (workbench: WorkbenchCreateModel) => Promise<string>
+  create: (workbench: WorkbenchCreateType) => Promise<string>
   get: (id: string) => Promise<Workbench>
   delete: (id: string) => Promise<boolean>
   list: () => Promise<Workbench[]>
-  update: (workbench: WorkbenchUpdateModel) => Promise<Workbench>
+  update: (workbench: WorkbenchUpdateType) => Promise<Workbench>
 }
 
 export type { WorkbenchDataSource }
