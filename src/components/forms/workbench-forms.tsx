@@ -70,14 +70,14 @@ export function WorkbenchCreateForm({
   useEffect(() => {
     // Set initial dimensions
     setViewportDimensions({
-      width: window?.visualViewport?.width || DEFAULT_VIEWPORT.width,
-      height: window?.visualViewport?.height || DEFAULT_VIEWPORT.height
+      width: Math.floor(window?.visualViewport?.width || DEFAULT_VIEWPORT.width),
+      height: Math.floor(window?.visualViewport?.height || DEFAULT_VIEWPORT.height)
     })
 
     const updateDimensions = () => {
       setViewportDimensions({
-        width: window?.visualViewport?.width || DEFAULT_VIEWPORT.width,
-        height: window?.visualViewport?.height || DEFAULT_VIEWPORT.height
+        width: Math.floor(window?.visualViewport?.width || DEFAULT_VIEWPORT.width),
+        height: Math.floor(window?.visualViewport?.height || DEFAULT_VIEWPORT.height)
       })
     }
 
