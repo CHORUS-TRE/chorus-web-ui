@@ -1,3 +1,10 @@
+# [1.0.0-alpha.40](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.39...v1.0.0-alpha.40) (2025-06-04)
+
+
+### Bug Fixes
+
+* ensure viewport dimensions are rounded to avoid fractional values ([fc57962](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fc579629cff0fd64b39389d59a0433c0f0903933))
+
 # [1.0.0-alpha.39](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.38...v1.0.0-alpha.39) (2025-05-28)
 
 
