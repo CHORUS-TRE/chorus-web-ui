@@ -1,16 +1,12 @@
 import { env } from 'next-runtime-env'
-import { z } from 'zod'
 
 import { UserDataSource } from '@/data/data-source'
 import { User } from '@/domain/model'
 import {
-  UserCreateModel,
-  UserRoleEnum,
+  UserCreateType,
   UserSchema,
-  UserStatusEnum
 } from '@/domain/model/user'
-import { ChorusUser as ChorusUserApi, Configuration } from '@/internal/client'
-import { UserServiceApi } from '@/internal/client/apis'
+import { Configuration, UserServiceApi } from '@/internal/client'
 
 class UserApiDataSourceImpl implements UserDataSource {
   private configuration: Configuration
@@ -24,7 +20,7 @@ class UserApiDataSourceImpl implements UserDataSource {
     this.service = new UserServiceApi(this.configuration)
   }
 
-  async create(user: UserCreateModel): Promise<string> {
+  async create(user: UserCreateType): Promise<string> {
     const response = await this.service.userServiceCreateUser({
       body: {
         username: user.username,

@@ -3,12 +3,9 @@ import { z } from 'zod'
 export enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  ARCHIVED = 'archived'
+  DELETED = 'deleted'
 }
 export enum UserRoleEnum {
-  VISITOR = 'visitor',
-  USER = 'user',
-  PI = 'pi',
   ADMIN = 'admin',
   AUTHENTICATED = 'authenticated'
 }
@@ -34,8 +31,6 @@ export const UserSchema = z.object({
   workspaceId: z.string().optional()
 })
 
-export type User = z.infer<typeof UserSchema>
-
 export const UserCreateSchema = z.object({
   username: z.string(),
   password: z.string(),
@@ -43,19 +38,15 @@ export const UserCreateSchema = z.object({
   lastName: z.string().min(2)
 })
 
-export type UserCreateModel = z.infer<typeof UserCreateSchema>
+export type User = z.infer<typeof UserSchema>
+export type UserCreateType = z.infer<typeof UserCreateSchema>
 
 export interface UserResponse {
-  data?: User
+  data?: User | string
   error?: string
 }
 
 export interface UsersResponse {
   data?: User[]
-  error?: string
-}
-
-export interface UserCreatedResponse {
-  data?: string
   error?: string
 }
