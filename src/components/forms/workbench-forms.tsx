@@ -1,6 +1,6 @@
 'use client'
 
-import { CirclePlus, Loader2, RefreshCw } from 'lucide-react'
+import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
@@ -205,10 +205,10 @@ export function WorkbenchCreateForm({
                     </div>
                   </div>
                   <div className="grid hidden gap-2">
-                    <Label htmlFor="ownerId">Owner ID</Label>
+                    <Label htmlFor="userId">Owner ID</Label>
                     <Input
-                      id="ownerId"
-                      name="ownerId"
+                      id="userId"
+                      name="userId"
                       placeholder="Enter owner ID"
                       defaultValue={userId || '2'}
                       disabled={pending}
@@ -216,40 +216,7 @@ export function WorkbenchCreateForm({
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('ownerId'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="memberIds">Member IDs</Label>
-                    <Textarea
-                      id="memberIds"
-                      name="memberIds"
-                      placeholder="Enter member IDs separated by commas"
-                      className="min-h-[100px]"
-                      disabled={pending}
-                      aria-disabled={pending}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('memberIds'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="tags">Tags</Label>
-                    <Input
-                      id="tags"
-                      name="tags"
-                      placeholder="Enter tags separated by commas"
-                      disabled={pending}
-                      aria-disabled={pending}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('tags'))
+                        state?.issues?.find((e) => e.path.includes('userId'))
                           ?.message
                       }
                     </div>

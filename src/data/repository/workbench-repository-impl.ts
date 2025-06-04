@@ -1,10 +1,9 @@
 import { WorkbenchDataSource } from '@/data/data-source'
 import {
-  WorkbenchCreateModel,
-  WorkbenchDeleteResponse,
+  WorkbenchCreateType,
   WorkbenchesResponse,
   WorkbenchResponse,
-  WorkbenchUpdateModel
+  WorkbenchUpdateType
 } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
@@ -15,7 +14,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     this.dataSource = dataSource
   }
 
-  async create(workbench: WorkbenchCreateModel): Promise<WorkbenchResponse> {
+  async create(workbench: WorkbenchCreateType): Promise<WorkbenchResponse> {
     try {
       const response = await this.dataSource.create(workbench)
       if (!response) return { error: 'Error creating workbench' }
@@ -41,7 +40,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     }
   }
 
-  async delete(id: string): Promise<WorkbenchDeleteResponse> {
+  async delete(id: string): Promise<WorkbenchResponse> {
     try {
       const data = await this.dataSource.delete(id)
       if (!data) return { error: 'Error deleting workbench' }
@@ -66,7 +65,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     }
   }
 
-  async update(workbench: WorkbenchUpdateModel): Promise<WorkbenchResponse> {
+  async update(workbench: WorkbenchUpdateType): Promise<WorkbenchResponse> {
     try {
       const data = await this.dataSource.update(workbench)
       return { data }

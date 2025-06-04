@@ -1,82 +1,17 @@
 import { env } from 'next-runtime-env'
-import { z } from 'zod'
 
 import { WorkbenchDataSource } from '@/data/data-source/'
 import {
   Workbench,
-  WorkbenchCreateModel,
-  WorkbenchUpdateModel
+  WorkbenchCreateType,
+  WorkbenchUpdateType
 } from '@/domain/model'
 import {
   WorkbenchCreateSchema,
   WorkbenchSchema,
-  WorkbenchState,
   WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
-import {
-  ChorusWorkbench as ChorusWorkbenchApi,
-  WorkbenchServiceApi
-} from '~/internal/client'
-import { Configuration } from '~/internal/client'
-
-// see src/internal/client/models/ChorusWorkbench.ts
-export const WorkbenchApiCreateSchema = z.object({
-  name: z.string().optional(),
-  shortName: z.string().optional(),
-  description: z.string().optional(),
-  status: z.string(),
-  tenantId: z.string(),
-  userId: z.string(),
-  appInstanceIds: z.array(z.string()).optional(),
-  appInstances: z.array(z.string()).optional(),
-  workspaceId: z.string().optional(),
-  initialResolutionWidth: z.number().optional(),
-  initialResolutionHeight: z.number().optional()
-})
-
-export const WorkbenchApiSchema = WorkbenchApiCreateSchema.extend({
-  id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
-})
-
-const apiToDomain = (w: ChorusWorkbenchApi): Workbench => {
-  return {
-    id: w.id || '',
-    name: w.name || '',
-    shortName: w.shortName || '',
-    description: w.description || '',
-    initialResolutionWidth: w.initialResolutionWidth || 0,
-    initialResolutionHeight: w.initialResolutionHeight || 0,
-    tenantId: w.tenantId || '',
-    ownerId: w.userId || '',
-    workspaceId: w.workspaceId || '',
-    status:
-      WorkbenchState[w.status?.toUpperCase() as keyof typeof WorkbenchState],
-    memberIds: w.userId ? [w.userId] : [],
-    tags: ['not', 'yet', 'implemented'],
-    createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),
-    updatedAt: w.updatedAt ? new Date(w.updatedAt) : new Date(),
-    archivedAt: undefined
-  }
-}
-
-const domainToApi = (
-  w: WorkbenchCreateModel | WorkbenchUpdateModel
-): ChorusWorkbenchApi => {
-  return {
-    id: 'id' in w ? w.id : undefined,
-    tenantId: w.tenantId,
-    userId: w.ownerId,
-    workspaceId: w.workspaceId,
-    status: 'active',
-    name: w.name,
-    shortName: w.name,
-    description: w.description,
-    initialResolutionWidth: w.initialResolutionWidth,
-    initialResolutionHeight: w.initialResolutionHeight
-  }
-}
+import { Configuration, WorkbenchServiceApi } from '~/internal/client'
 
 class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   private configuration: Configuration
@@ -90,17 +25,14 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
     this.service = new WorkbenchServiceApi(this.configuration)
   }
 
-  async create(workbench: WorkbenchCreateModel): Promise<string> {
-    const validatedInput = WorkbenchCreateSchema.parse(workbench)
-    const w = domainToApi(validatedInput)
-    const validatedRequest: ChorusWorkbenchApi =
-      WorkbenchApiCreateSchema.parse(w)
+  async create(workbench: WorkbenchCreateType): Promise<string> {
+    const body = WorkbenchCreateSchema.parse(workbench)
 
     const response = await this.service.workbenchServiceCreateWorkbench({
-      body: validatedRequest
+      body
     })
 
-    if (!response.result?.id) {
+    if (!response?.result?.id) {
       throw new Error('Error creating workbench')
     }
 
@@ -113,16 +45,11 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
         id
       })
 
-      if (!response.result?.workbench) {
+      if (!response?.result?.workbench) {
         throw new Error('Error fetching workbench')
       }
 
-      const validatedInput = WorkbenchApiSchema.parse(
-        response.result?.workbench
-      )
-
-      const workbench = apiToDomain(validatedInput)
-      return WorkbenchSchema.parse(workbench)
+      return WorkbenchSchema.parse(response.result.workbench)
     } catch (error) {
       console.error(error)
       throw error
@@ -150,46 +77,31 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
     try {
       const response = await this.service.workbenchServiceListWorkbenchs()
 
-      if (!response.result) return []
-      // throw new Error('Error fetching workbenchs')
+      if (!response?.result) return []
 
-      const parsed = response.result.map((r) => WorkbenchApiSchema.parse(r))
-      const workbenchs = parsed.map(apiToDomain)
-
-      return workbenchs.map((w) => WorkbenchSchema.parse(w))
+      return response.result.map((workbench) =>
+        WorkbenchSchema.parse(workbench)
+      )
     } catch (error) {
       console.error(error)
       throw error
     }
   }
 
-  async update(workbench: WorkbenchUpdateModel): Promise<Workbench> {
+  async update(workbench: WorkbenchUpdateType): Promise<Workbench> {
     try {
-      const validatedInput = WorkbenchUpdateSchema.parse(workbench)
-      const w = domainToApi(validatedInput)
-      const validatedRequest = WorkbenchApiSchema.parse(w)
+      const body = WorkbenchUpdateSchema.parse(workbench)
 
       const response = await this.service.workbenchServiceUpdateWorkbench({
-        body: {
-          workbench: validatedRequest
-        }
+        body: { workbench: body }
       })
 
       if (!response.result) {
-        const error = new Error('Error updating workbench')
-        // Don't log the error here since we want the exact error message to propagate
-        throw error
+        throw new Error('Error updating workbench')
       }
 
       return this.get(workbench.id)
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === 'Error updating workbench'
-      ) {
-        throw error // Re-throw our specific error without modification
-      }
-      // For other errors (validation, network, etc.), log and re-throw
       console.error(error)
       throw error
     }

@@ -39,7 +39,7 @@ const apiToDomainMapper = (w: ChorusWorkspaceApi): Workspace => {
     shortName: w.shortName || '',
     description: w.description || '',
     image: '',
-    ownerId: w.userId || '',
+    userId: w.userId || '',
     memberIds: [w.userId!],
     tags: [],
     status: (w.status as WorkspaceState) || WorkspaceState.ACTIVE,
@@ -54,7 +54,7 @@ const apiToDomainMapper = (w: ChorusWorkspaceApi): Workspace => {
 const domainToApiMapper = (w: WorkspaceCreateModel): ChorusWorkspaceApi => {
   return {
     tenantId: w.tenantId,
-    userId: w.ownerId,
+    userId: w.userId,
     name: w.name,
     shortName: w.shortName,
     description: w.description,
