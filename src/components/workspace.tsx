@@ -11,11 +11,12 @@ import {
   EllipsisVerticalIcon,
   Footprints,
   Home,
+  LaptopMinimal,
   Users
 } from 'lucide-react'
 import Link from 'next/link'
 import { env } from 'next-runtime-env'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
@@ -28,10 +29,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { User, Workspace as WorkspaceType } from '@/domain/model'
 
-import { userGet } from './actions/user-view-model'
-import { workspaceGet } from './actions/workspace-view-model'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import {
   WorkspaceDeleteForm,
@@ -81,15 +79,13 @@ function SimpleBarChart({
 }
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
-  const [workspace, setWorkspace] = useState<WorkspaceType>()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
-
+  const [openEdit, setOpenEdit] = useState(false)
   const {
     workbenches,
     users,
     setNotification,
     refreshWorkspaces,
-    refreshWorkbenches,
     appInstances,
     apps,
     background,
@@ -98,41 +94,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   } = useAppState()
   const { user } = useAuth()
 
-  const [openEdit, setOpenEdit] = useState(false)
-
+  const workspace = workspaces?.find((w) => w.id === workspaceId)
   const isUserWorkspace = workspaceId === user?.workspaceId
-
-  const initializeData = useCallback(async () => {
-    try {
-      const [workspaceResponse] = await Promise.all([
-        workspaceGet(workspaceId),
-        refreshWorkbenches()
-      ])
-
-      if (workspaceResponse.error)
-        setNotification({
-          title: 'Error loading workspace',
-          description: workspaceResponse.error,
-          variant: 'destructive'
-        })
-      if (workspaceResponse.data) {
-        setWorkspace(workspaceResponse.data)
-        const userResponse = await userGet(workspaceResponse.data.userId)
-        if (userResponse.data) setWorkspaceUser(userResponse.data as User)
-      }
-    } catch (error) {
-      setNotification({
-        title: 'Error loading workspace',
-        description: error instanceof Error ? error.message : String(error),
-        variant: 'destructive'
-      })
-    }
-  }, [workspaceId, setNotification, refreshWorkbenches])
-
-  useEffect(() => {
-    if (!workspaceId) return
-    initializeData()
-  }, [workspaceId, initializeData])
 
   useEffect(() => {
     if (!workspaceId || !workbenches || workbenches?.length === 0) return
@@ -223,6 +186,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardHeader>
 
           <CardContent>
+            <div className="mb-1 flex items-center gap-2 text-sm font-bold">
+              <LaptopMinimal className="h-4 w-4 shrink-0" />
+              Sessions
+            </div>
+
             <ScrollArea className="h-[160px]">
               <div className="grid gap-1">
                 {workspaces
@@ -235,26 +203,23 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                           <Link
                             key={`workspace-sessions-${id}`}
                             href={`/workspaces/${id}`}
-                            className="flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300"
+                            className="mb-2 flex cursor-pointer flex-col justify-between bg-background/40 text-white"
                           >
                             <div className="flex-grow text-sm">
-                              {/* <div className="flex flex-row justify-between">
-
-                          <Badge
-                          variant={status === 'active' ? 'default' : 'outline'}
-                        >
-                          {status}
-                        </Badge>
-                        </div> */}
-
-                              <div className="mb-1 mt-0.5 text-xs">
+                              <div className="mb-0.5 mt-0.5 text-xs">
                                 <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
                                   <AppWindow className="h-4 w-4 shrink-0" />
+                                  {appInstances?.filter(
+                                    (instance) => id === instance.sessionId
+                                  ).length === 0 && (
+                                    <span className="text-muted">
+                                      No apps started yet
+                                    </span>
+                                  )}
                                   {appInstances
                                     ?.filter(
                                       (instance) => id === instance.sessionId
                                     )
-                                    .slice(0, 3)
                                     .map(
                                       (instance) =>
                                         apps?.find(
@@ -308,7 +273,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 description: 'Workspace updated',
                 variant: 'default'
               })
-              initializeData()
+              refreshWorkspaces()
             }}
           />
         )}
@@ -365,26 +330,23 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                           <Link
                             key={`workspace-sessions-${id}`}
                             href={`/workspaces/${id}`}
-                            className="ml-2 flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300"
+                            className="ml-2 flex cursor-pointer flex-col justify-between bg-background/40 text-white transition-colors duration-300"
                           >
-                            <div className="flex-grow text-sm">
-                              {/* <div className="flex flex-row justify-between">
-
-                          <Badge
-                          variant={status === 'active' ? 'default' : 'outline'}
-                        >
-                          {status}
-                        </Badge>
-                        </div> */}
-
-                              <div className="mb-1 mt-0.5 text-xs">
+                            <div className="mb-2 flex-grow text-sm">
+                              <div className="mb- mt-0.5 text-xs">
                                 <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
                                   <AppWindow className="h-4 w-4 shrink-0" />
+                                  {appInstances?.filter(
+                                    (instance) => id === instance.sessionId
+                                  ).length === 0 && (
+                                    <span className="text-muted">
+                                      No apps started yet
+                                    </span>
+                                  )}
                                   {appInstances
                                     ?.filter(
                                       (instance) => id === instance.sessionId
                                     )
-                                    .slice(0, 3)
                                     .map(
                                       (instance) =>
                                         apps?.find(

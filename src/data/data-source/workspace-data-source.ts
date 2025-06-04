@@ -1,15 +1,15 @@
 import {
   Workspace,
-  WorkspaceCreateModel,
-  WorkspaceUpdateModel
+  WorkspaceCreateType,
+  WorkspaceUpdatetype
 } from '@/domain/model'
 
 interface WorkspaceDataSource {
-  create: (workspace: WorkspaceCreateModel) => Promise<string>
+  create: (workspace: WorkspaceCreateType) => Promise<string>
   get: (id: string) => Promise<Workspace>
   delete: (id: string) => Promise<boolean>
   list: () => Promise<Workspace[]>
-  update: (workspace: WorkspaceUpdateModel) => Promise<Workspace>
+  update: (workspace: WorkspaceUpdatetype) => Promise<Workspace>
 }
 
 export type { WorkspaceDataSource }

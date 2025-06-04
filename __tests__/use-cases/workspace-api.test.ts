@@ -7,8 +7,8 @@ import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
   Workspace,
-  WorkspaceCreateModel,
-  WorkspaceUpdateModel
+  WorkspaceCreateType,
+  WorkspaceUpdatetype
 } from '~/domain/model/'
 import { WorkspaceCreate } from '~/domain/use-cases'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
@@ -48,7 +48,7 @@ const MOCK_API_CREATE = {
   name: 'Study 101, a workspace for learning',
   shortName: '101',
   description: 'Study 101 is a test workspace to improve learning'
-} as WorkspaceCreateModel
+} as WorkspaceCreateType
 
 const MOCK_API_UPDATE = {
   id: '1',
@@ -58,7 +58,7 @@ const MOCK_API_UPDATE = {
   shortName: '101-updated',
   description: 'Updated description for Study 101',
   status: 'active'
-} as WorkspaceUpdateModel
+} as WorkspaceUpdatetype
 
 const MOCK_UPDATED_WORKSPACE = {
   ...MOCK_WORKSPACE_RESULT,

@@ -94,7 +94,7 @@ export function WorkspaceCreateForm({
       shortName: '',
       description: '',
       tenantId: '1',
-      userId: userId || '',
+      userId: userId || ''
     }
   })
 
