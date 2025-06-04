@@ -7,9 +7,9 @@ import { AppInstanceDataSourceImpl } from '~/data/data-source/chorus-api/app-ins
 import { AppInstanceRepositoryImpl } from '~/data/repository'
 import {
   AppInstance,
-  AppInstanceCreateModel,
+  AppInstanceCreateType,
   AppInstanceResponse,
-  AppInstanceUpdateModel
+  AppInstanceUpdateType
 } from '~/domain/model'
 import { AppInstanceCreateSchema } from '~/domain/model/app-instance'
 import { AppInstanceCreate } from '~/domain/use-cases/app-instance/app-instance-create'
@@ -36,12 +36,12 @@ export async function appInstanceCreate(
     const repository = await getRepository()
     const useCase = new AppInstanceCreate(repository)
 
-    const appInstance: AppInstanceCreateModel = {
+    const appInstance: AppInstanceCreateType = {
       appId: formData.get('id') as string,
       tenantId: formData.get('tenantId') as string,
       userId: formData.get('userId') as string,
       workspaceId: formData.get('workspaceId') as string,
-      sessionId: formData.get('sessionId') as string,
+      workbenchId: formData.get('sessionId') as string,
       status: 'active'
     }
 
@@ -113,13 +113,13 @@ export async function appInstanceUpdate(
     const repository = await getRepository()
     const useCase = new AppInstanceUpdate(repository)
 
-    const appInstance: AppInstanceUpdateModel = {
+    const appInstance: AppInstanceUpdateType = {
       id: formData.get('id') as string,
       appId: formData.get('appId') as string,
       tenantId: formData.get('tenantId') as string,
       userId: formData.get('userId') as string,
       workspaceId: formData.get('workspaceId') as string,
-      sessionId: formData.get('sessionId') as string,
+      workbenchId: formData.get('sessionId') as string,
       status: 'active'
     }
 

@@ -1,61 +1,18 @@
 import { env } from 'next-runtime-env'
-import { z } from 'zod'
 
 import { AppInstanceDataSource } from '@/data/data-source/'
 import {
   AppInstance,
-  AppInstanceCreateModel,
-  AppInstanceUpdateModel
+  AppInstanceCreateType,
+  AppInstanceUpdateType
 } from '@/domain/model'
 import {
   AppInstanceCreateSchema,
-  AppInstanceSchema
+  AppInstanceSchema,
+  AppInstanceUpdateSchema
 } from '@/domain/model/app-instance'
-import {
-  AppInstanceServiceApi,
-  ChorusAppInstance as ChorusAppInstanceApi
-} from '~/internal/client'
+import { AppInstanceServiceApi } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-
-// see src/internal/client/models/ChorusAppInstance.ts
-export const AppInstanceApiCreateSchema = z.object({
-  status: z.string(),
-  tenantId: z.string(),
-  userId: z.string(),
-  appId: z.string(),
-  workspaceId: z.string(),
-  workbenchId: z.string()
-})
-
-export const AppInstanceApiSchema = AppInstanceApiCreateSchema.extend({
-  id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
-})
-
-const apiToDomain = (w: ChorusAppInstanceApi): AppInstance => {
-  return {
-    ...w,
-    userId: w.userId || '',
-    status: w.status || '',
-    tenantId: w.tenantId || '',
-    appId: w.appId || '',
-    sessionId: w.workbenchId || '',
-    workspaceId: w.workspaceId || '',
-    id: w.id || '',
-    createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),
-    updatedAt: w.updatedAt ? new Date(w.updatedAt) : new Date(),
-    archivedAt: undefined
-  }
-}
-
-const domainToApi = (w: AppInstanceCreateModel): ChorusAppInstanceApi => {
-  return {
-    ...w,
-    workbenchId: w.sessionId,
-    userId: w.userId
-  }
-}
 
 class AppInstanceDataSourceImpl implements AppInstanceDataSource {
   private configuration: Configuration
@@ -69,16 +26,13 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
     this.service = new AppInstanceServiceApi(this.configuration)
   }
 
-  async create(appInstance: AppInstanceCreateModel): Promise<string> {
+  async create(appInstance: AppInstanceCreateType): Promise<string> {
     try {
-      const validatedInput: AppInstanceCreateModel =
+      const validatedInput: AppInstanceCreateType =
         AppInstanceCreateSchema.parse(appInstance)
-      const w = domainToApi(validatedInput)
-      const validatedRequest: ChorusAppInstanceApi =
-        AppInstanceApiCreateSchema.parse(w)
 
       const response = await this.service.appInstanceServiceCreateAppInstance({
-        body: validatedRequest
+        body: validatedInput
       })
 
       if (!response.result?.id) {
@@ -102,11 +56,8 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
         throw new Error('Error fetching app instance')
       }
 
-      const validatedInput = AppInstanceApiSchema.parse(
-        response.result?.appInstance
-      )
+      const appInstance = response.result?.appInstance
 
-      const appInstance = apiToDomain(validatedInput)
       return AppInstanceSchema.parse(appInstance)
     } catch (error) {
       console.error(error)
@@ -137,20 +88,16 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
 
       if (!response.result) return []
 
-      const parsed = response.result.map((r) => AppInstanceApiSchema.parse(r))
-      const appInstances = parsed.map(apiToDomain)
-
-      return appInstances.map((w) => AppInstanceSchema.parse(w))
+      return response.result.map((r) => AppInstanceSchema.parse(r))
     } catch (error) {
       console.error(error)
       throw error
     }
   }
 
-  async update(appInstance: AppInstanceUpdateModel): Promise<AppInstance> {
+  async update(appInstance: AppInstanceUpdateType): Promise<AppInstance> {
     try {
-      const w = domainToApi(appInstance)
-      const validatedRequest = AppInstanceApiSchema.parse(w)
+      const validatedRequest = AppInstanceUpdateSchema.parse(appInstance)
 
       const response = await this.service.appInstanceServiceUpdateAppInstance({
         body: {

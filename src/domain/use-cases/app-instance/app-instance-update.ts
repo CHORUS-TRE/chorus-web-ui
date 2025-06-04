@@ -1,8 +1,8 @@
-import { AppInstanceResponse, AppInstanceUpdateModel } from '@/domain/model'
+import { AppInstanceResponse, AppInstanceUpdateType } from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 
 export interface AppInstanceUpdateUseCase {
-  execute(data: AppInstanceUpdateModel): Promise<AppInstanceResponse>
+  execute(data: AppInstanceUpdateType): Promise<AppInstanceResponse>
 }
 
 export class AppInstanceUpdate implements AppInstanceUpdateUseCase {
@@ -13,7 +13,7 @@ export class AppInstanceUpdate implements AppInstanceUpdateUseCase {
   }
 
   async execute(
-    appInstance: AppInstanceUpdateModel
+    appInstance: AppInstanceUpdateType
   ): Promise<AppInstanceResponse> {
     return await this.repository.update(appInstance)
   }
