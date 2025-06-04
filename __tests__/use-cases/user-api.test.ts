@@ -5,8 +5,8 @@ import '@testing-library/jest-dom'
 
 import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
 import { UserRepositoryImpl } from '~/data/repository'
-import { User, UserCreateModel } from '~/domain/model/'
-import { UserCreate } from '~/domain/use-cases/user/user-create'
+import { User, UserCreateType } from '~/domain/model/'
+import { UserCreateType } from '~/domain/use-cases/user/user-create'
 import { UserGet } from '~/domain/use-cases/user/user-get'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 import { ChorusUser as UserApi } from '~/internal/client'
@@ -35,7 +35,7 @@ const MOCK_USER_CREATE_MODEL = {
   password: 'securePassword123',
   firstName: 'New',
   lastName: 'User'
-} as UserCreateModel
+} as UserCreateType
 
 describe('UserUseCases', () => {
   it('should get the current user', async () => {
@@ -107,7 +107,7 @@ describe('UserUseCases', () => {
     const session = 'empty'
     const dataSource = new UserApiDataSourceImpl(session)
     const repository = new UserRepositoryImpl(dataSource)
-    const useCase = new UserCreate(repository)
+    const useCase = new UserCreateType(repository)
 
     const response = await useCase.execute(MOCK_USER_CREATE_MODEL)
     expect(response.error).toBeUndefined()

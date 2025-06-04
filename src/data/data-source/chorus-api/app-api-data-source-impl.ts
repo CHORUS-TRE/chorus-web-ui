@@ -54,7 +54,7 @@ const apiToDomain = (app: ChorusApp): App => {
     minMemory: app.minMemory || '',
     iconURL: app.iconURL || '',
     tenantId: app.tenantId || '',
-    ownerId: app.userId || '',
+    userId: app.userId || '',
     status: AppState[app.status?.toUpperCase() as keyof typeof AppState],
     type: AppType.APP,
     prettyName: app.prettyName || '',
@@ -85,7 +85,7 @@ export class AppDataSourceImpl implements AppDataSource {
     const response = await this.client.appServiceCreateApp({
       body: {
         tenantId: app.tenantId,
-        userId: app.ownerId,
+        userId: app.userId,
         name: app.name,
         description: app.description,
         dockerImageName: app.dockerImageName,
@@ -118,7 +118,7 @@ export class AppDataSourceImpl implements AppDataSource {
         app: {
           id: app.id,
           tenantId: app.tenantId,
-          userId: app.ownerId,
+          userId: app.userId,
           name: app.name,
           description: app.description,
           dockerImageName: app.dockerImageName,

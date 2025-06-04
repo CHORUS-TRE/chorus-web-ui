@@ -1,7 +1,7 @@
-import { User, UserCreateModel } from '@/domain/model'
+import { User, UserCreateType } from '@/domain/model'
 
 interface UserDataSource {
-  create: (user: UserCreateModel) => Promise<string>
+  create: (user: UserCreateType) => Promise<string>
   me: () => Promise<User>
   get: (id: string) => Promise<User>
   list: () => Promise<User[]>
