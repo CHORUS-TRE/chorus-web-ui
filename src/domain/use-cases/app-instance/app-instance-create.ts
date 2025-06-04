@@ -1,8 +1,8 @@
-import { AppInstanceCreateModel, AppInstanceResponse } from '@/domain/model'
+import { AppInstanceCreateType, AppInstanceResponse } from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 
 export interface AppInstanceCreateUseCase {
-  execute(data: AppInstanceCreateModel): Promise<AppInstanceResponse>
+  execute(data: AppInstanceCreateType): Promise<AppInstanceResponse>
 }
 
 export class AppInstanceCreate implements AppInstanceCreateUseCase {
@@ -13,7 +13,7 @@ export class AppInstanceCreate implements AppInstanceCreateUseCase {
   }
 
   async execute(
-    appInstance: AppInstanceCreateModel
+    appInstance: AppInstanceCreateType
   ): Promise<AppInstanceResponse> {
     const createdAppInstance = await this.repository.create(appInstance)
     return createdAppInstance

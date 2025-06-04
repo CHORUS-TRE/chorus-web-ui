@@ -1,10 +1,9 @@
 import { AppInstanceDataSource } from '@/data/data-source'
 import {
-  AppInstanceCreateModel,
-  AppInstanceDeleteResponse,
+  AppInstanceCreateType,
   AppInstanceResponse,
   AppInstancesResponse,
-  AppInstanceUpdateModel
+  AppInstanceUpdateType,
 } from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 
@@ -16,7 +15,7 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
   }
 
   async create(
-    appInstance: AppInstanceCreateModel
+    appInstance: AppInstanceCreateType
   ): Promise<AppInstanceResponse> {
     try {
       const response = await this.dataSource.create(appInstance)
@@ -43,7 +42,7 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
     }
   }
 
-  async delete(id: string): Promise<AppInstanceDeleteResponse> {
+  async delete(id: string): Promise<AppInstanceResponse> {
     try {
       const data = await this.dataSource.delete(id)
       if (!data) return { error: 'Error deleting app instance' }
@@ -71,7 +70,7 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
   }
 
   async update(
-    appInstance: AppInstanceUpdateModel
+    appInstance: AppInstanceUpdateType
   ): Promise<AppInstanceResponse> {
     try {
       const data = await this.dataSource.update(appInstance)
