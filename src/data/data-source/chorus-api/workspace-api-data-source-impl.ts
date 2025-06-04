@@ -1,80 +1,18 @@
 import { env } from 'next-runtime-env'
-import { z } from 'zod'
 
 import { WorkspaceDataSource } from '@/data/data-source/'
 import {
   Workspace,
-  WorkspaceCreateModel,
-  WorkspaceUpdateModel
+  WorkspaceCreateType,
+  WorkspaceUpdatetype
 } from '@/domain/model'
 import {
-  WorkspaceCreateModelSchema,
+  WorkspaceCreateSchema,
   WorkspaceSchema,
-  WorkspaceState
+  WorkspaceUpdateSchema
 } from '@/domain/model/workspace'
-import {
-  ChorusWorkspace as ChorusWorkspaceApi,
-  WorkspaceServiceApi
-} from '~/internal/client'
+import { WorkspaceServiceApi } from '~/internal/client'
 import { Configuration } from '~/internal/client'
-
-export const WorkspaceApiSchema = z.object({
-  id: z.string().optional(),
-  tenantId: z.string().optional(),
-  userId: z.string().optional(),
-  name: z.string().optional(),
-  shortName: z.string().optional(),
-  description: z.string().optional(),
-  status: z.string().optional(),
-  appInsanceIds: z.array(z.string()).optional(),
-  appInstances: z.array(z.string()).optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
-})
-
-const apiToDomainMapper = (w: ChorusWorkspaceApi): Workspace => {
-  return {
-    id: w.id || '',
-    name: w.name || '',
-    shortName: w.shortName || '',
-    description: w.description || '',
-    image: '',
-    userId: w.userId || '',
-    memberIds: [w.userId!],
-    tags: [],
-    status: (w.status as WorkspaceState) || WorkspaceState.ACTIVE,
-    sessionIds: [],
-    serviceIds: [],
-    createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),
-    updatedAt: w.updatedAt ? new Date(w.updatedAt) : new Date(),
-    archivedAt: undefined
-  }
-}
-
-const domainToApiMapper = (w: WorkspaceCreateModel): ChorusWorkspaceApi => {
-  return {
-    tenantId: w.tenantId,
-    userId: w.userId,
-    name: w.name,
-    shortName: w.shortName,
-    description: w.description,
-    status: WorkspaceState.ACTIVE
-  }
-}
-
-const domainToApiUpdateMapper = (
-  w: WorkspaceUpdateModel
-): ChorusWorkspaceApi => {
-  return {
-    id: w.id,
-    tenantId: w.tenantId,
-    userId: w.userId,
-    name: w.name,
-    shortName: w.shortName,
-    description: w.description,
-    status: w.status || WorkspaceState.ACTIVE
-  }
-}
 
 class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   private configuration: Configuration
@@ -88,13 +26,10 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
     this.service = new WorkspaceServiceApi(this.configuration)
   }
 
-  async create(workspace: WorkspaceCreateModel): Promise<string> {
-    const validatedInput = WorkspaceCreateModelSchema.parse(workspace)
-    const w = domainToApiMapper(validatedInput)
-    const validatedRequest = WorkspaceApiSchema.parse(w)
-
+  async create(workspace: WorkspaceCreateType): Promise<string> {
+    const validatedInput = WorkspaceCreateSchema.parse(workspace)
     const response = await this.service.workspaceServiceCreateWorkspace({
-      body: validatedRequest
+      body: validatedInput
     })
 
     if (!response.result?.id) {
@@ -111,9 +46,9 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
       throw new Error('Error fetching workspace')
     }
 
-    const validatedInput = WorkspaceApiSchema.parse(response.result.workspace)
-    const workspace = apiToDomainMapper(validatedInput)
-    return WorkspaceSchema.parse(workspace)
+    const validatedInput = WorkspaceSchema.parse(response.result.workspace)
+
+    return validatedInput
   }
 
   async delete(id: string): Promise<boolean> {
@@ -131,15 +66,11 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
 
     if (!response.result) throw new Error('Error fetching workspaces')
 
-    const parsed = response.result.map((r) => WorkspaceApiSchema.parse(r))
-    const workspaces = parsed.map(apiToDomainMapper)
-
-    return workspaces.map((w) => WorkspaceSchema.parse(w))
+    return response.result.map((w) => WorkspaceSchema.parse(w))
   }
 
-  async update(workspace: WorkspaceUpdateModel): Promise<Workspace> {
-    const w = domainToApiUpdateMapper(workspace)
-    const validatedRequest = WorkspaceApiSchema.parse(w)
+  async update(workspace: WorkspaceUpdatetype): Promise<Workspace> {
+    const validatedRequest = WorkspaceUpdateSchema.parse(workspace)
 
     const response = await this.service.workspaceServiceUpdateWorkspace({
       body: {

@@ -1,8 +1,8 @@
-import { WorkspaceResponse, WorkspaceUpdateModel } from '@/domain/model'
+import { WorkspaceResponse, WorkspaceUpdatetype } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 
 export interface WorkspaceUpdateUseCase {
-  execute(data: WorkspaceUpdateModel): Promise<WorkspaceResponse>
+  execute(data: WorkspaceUpdatetype): Promise<WorkspaceResponse>
 }
 
 export class WorkspaceUpdate implements WorkspaceUpdateUseCase {
@@ -12,7 +12,7 @@ export class WorkspaceUpdate implements WorkspaceUpdateUseCase {
     this.repository = repository
   }
 
-  async execute(workspace: WorkspaceUpdateModel): Promise<WorkspaceResponse> {
+  async execute(workspace: WorkspaceUpdatetype): Promise<WorkspaceResponse> {
     return await this.repository.update(workspace)
   }
 }

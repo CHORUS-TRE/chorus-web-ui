@@ -1,8 +1,8 @@
-import { WorkspaceDeleteResponse } from '@/domain/model'
+import { WorkspaceResponse } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 
 export interface WorkspaceDeleteUseCase {
-  execute(id: string): Promise<WorkspaceDeleteResponse>
+  execute(id: string): Promise<WorkspaceResponse>
 }
 
 export class WorkspaceDelete implements WorkspaceDeleteUseCase {
@@ -12,7 +12,7 @@ export class WorkspaceDelete implements WorkspaceDeleteUseCase {
     this.repository = repository
   }
 
-  async execute(id: string): Promise<WorkspaceDeleteResponse> {
+  async execute(id: string): Promise<WorkspaceResponse> {
     return await this.repository.delete(id)
   }
 }

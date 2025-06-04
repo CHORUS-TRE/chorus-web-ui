@@ -5,12 +5,12 @@ import { cookies } from 'next/headers'
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-api-data-source-impl'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
-  WorkspaceCreateModel,
+  WorkspaceCreateType,
   WorkspaceResponse,
   WorkspacesResponse,
   WorkspaceState
 } from '~/domain/model'
-import { WorkspaceCreateModelSchema } from '~/domain/model/workspace'
+import { WorkspaceCreateSchema } from '~/domain/model/workspace'
 import { WorkspaceUpdateModelSchema } from '~/domain/model/workspace'
 import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
 import { WorkspaceDelete } from '~/domain/use-cases/workspace/workspace-delete'
@@ -67,7 +67,7 @@ export async function workspaceCreate(
     const repository = await getRepository()
     const useCase = new WorkspaceCreate(repository)
 
-    const workspace: WorkspaceCreateModel = {
+    const workspace: WorkspaceCreateType = {
       name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
       userId: formData.get('userId') as string,
@@ -77,7 +77,7 @@ export async function workspaceCreate(
       tags: formData.getAll('tags') as string[]
     }
 
-    const validation = WorkspaceCreateModelSchema.safeParse(workspace)
+    const validation = WorkspaceCreateSchema.safeParse(workspace)
     if (!validation.success) return { issues: validation.error.issues }
 
     const w = await useCase.execute(validation.data)

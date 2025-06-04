@@ -1,7 +1,12 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { AppWindow, EllipsisVerticalIcon, Package } from 'lucide-react'
+import {
+  AppWindow,
+  EllipsisVerticalIcon,
+  LaptopMinimal,
+  Package
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -105,16 +110,22 @@ export default function WorkspacesGrid({
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                <div className="mb-1 flex items-center gap-2 text-sm font-bold">
+                  <LaptopMinimal className="h-4 w-4 shrink-0" />
+                  Sessions
+                </div>
+
                 <ScrollArea className="mb-4 max-h-[160px] pr-2">
                   <div className="grid gap-1">
                     {workbenches?.filter(
                       (workbench) => workbench.workspaceId === workspace?.id
                     ).length === 0 && (
                       <div className="mb-1 flex items-center gap-2 text-xs">
-                        <AppWindow className="h-4 w-4 shrink-0" />
+                        <LaptopMinimal className="h-4 w-4 shrink-0" />
                         No sessions created yet
                       </div>
                     )}
+
                     {workbenches
                       ?.filter(
                         (workbench) => workbench.workspaceId === workspace?.id
@@ -129,9 +140,9 @@ export default function WorkspacesGrid({
                               `/workspaces/${workspace?.id}/sessions/${id}`
                             )
                           }}
-                          className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white"
+                          className="cursor-pointer justify-between bg-background/40 text-white"
                         >
-                          <div className="mb-0.5 flex-grow text-sm">
+                          <div className="mb-2 flex-grow text-xs">
                             {/* <div className="mb-1 flex items-center gap-2">
                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                               {shortName}
@@ -147,8 +158,19 @@ export default function WorkspacesGrid({
                                   )
                                   ?.filter(
                                     (instance) => id === instance.sessionId
+                                  ).length === 0 && (
+                                  <span className="text-muted">
+                                    No apps started yet
+                                  </span>
+                                )}
+                                {appInstances
+                                  ?.filter(
+                                    (instance) =>
+                                      workspace?.id === instance.workspaceId
                                   )
-                                  .slice(0, 3)
+                                  ?.filter(
+                                    (instance) => id === instance.sessionId
+                                  )
                                   .map(
                                     (instance) =>
                                       apps?.find(
@@ -158,7 +180,9 @@ export default function WorkspacesGrid({
                                   .join(', ')}
                               </div>
                               <p className="text-xs text-muted">
-                                Created {formatDistanceToNow(createdAt)} ago by{' '}
+                                Created{' '}
+                                {formatDistanceToNow(createdAt || new Date())}{' '}
+                                ago by{' '}
                                 {
                                   users?.find((user) => user.id === userId)
                                     ?.firstName
