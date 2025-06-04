@@ -69,9 +69,7 @@ const workspaceFormSchema = z.object({
   shortName: z.string().min(1, 'Short name is required'),
   description: z.string().optional(),
   tenantId: z.string(),
-  userId: z.string(),
-  memberIds: z.string(),
-  tags: z.string()
+  userId: z.string()
 })
 
 type WorkspaceFormData = z.infer<typeof workspaceFormSchema>
@@ -97,8 +95,6 @@ export function WorkspaceCreateForm({
       description: '',
       tenantId: '1',
       userId: userId || '',
-      memberIds: '',
-      tags: ''
     }
   })
 
@@ -126,7 +122,7 @@ export function WorkspaceCreateForm({
     formData.append('shortName', data.shortName)
     formData.append('description', data.description || '')
     formData.append('tenantId', data.tenantId)
-    formData.append('ownerId', data.userId)
+    formData.append('userId', data.userId)
     formData.append('memberIds', data.memberIds)
     formData.append('tags', data.tags)
 
@@ -314,7 +310,7 @@ export function WorkspaceUpdateForm({
       description: workspace?.description || '',
       status: workspace?.status || WorkspaceState.ACTIVE,
       tenantId: '1',
-      userId: workspace?.ownerId || '',
+      userId: workspace?.userId || '',
       memberIds: workspace?.memberIds?.join(',') || '',
       tags: workspace?.tags?.join(',') || ''
     }
@@ -367,8 +363,6 @@ export function WorkspaceUpdateForm({
                     <input type="hidden" {...form.register('id')} />
                     <input type="hidden" {...form.register('tenantId')} />
                     <input type="hidden" {...form.register('userId')} />
-                    <input type="hidden" {...form.register('memberIds')} />
-                    <input type="hidden" {...form.register('tags')} />
 
                     <FormField
                       control={form.control}

@@ -39,7 +39,7 @@ export async function appInstanceCreate(
     const appInstance: AppInstanceCreateModel = {
       appId: formData.get('id') as string,
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       workspaceId: formData.get('workspaceId') as string,
       sessionId: formData.get('sessionId') as string,
       status: 'active'
@@ -117,7 +117,7 @@ export async function appInstanceUpdate(
       id: formData.get('id') as string,
       appId: formData.get('appId') as string,
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       workspaceId: formData.get('workspaceId') as string,
       sessionId: formData.get('sessionId') as string,
       status: 'active'

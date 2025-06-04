@@ -1,12 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import {
-  AppWindow,
-  EllipsisVerticalIcon,
-  LaptopMinimal,
-  Package
-} from 'lucide-react'
+import { AppWindow, EllipsisVerticalIcon, Package } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -99,11 +94,11 @@ export default function WorkspacesGrid({
                   <p className="mb-3 text-xs text-muted">
                     Created {formatDistanceToNow(workspace.updatedAt)} ago by{' '}
                     {
-                      users?.find((user) => user.id === workspace?.ownerId)
+                      users?.find((user) => user.id === workspace?.userId)
                         ?.firstName
                     }{' '}
                     {
-                      users?.find((user) => user.id === workspace?.ownerId)
+                      users?.find((user) => user.id === workspace?.userId)
                         ?.lastName
                     }
                   </p>
@@ -124,7 +119,7 @@ export default function WorkspacesGrid({
                       ?.filter(
                         (workbench) => workbench.workspaceId === workspace?.id
                       )
-                      .map(({ ownerId, createdAt, id }) => (
+                      .map(({ userId, createdAt, id }) => (
                         <div
                           key={`workspace-grid-sessions-${id}`}
                           onClick={(e) => {
@@ -165,11 +160,11 @@ export default function WorkspacesGrid({
                               <p className="text-xs text-muted">
                                 Created {formatDistanceToNow(createdAt)} ago by{' '}
                                 {
-                                  users?.find((user) => user.id === ownerId)
+                                  users?.find((user) => user.id === userId)
                                     ?.firstName
                                 }{' '}
                                 {
-                                  users?.find((user) => user.id === ownerId)
+                                  users?.find((user) => user.id === userId)
                                     ?.lastName
                                 }
                               </p>

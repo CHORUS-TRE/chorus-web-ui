@@ -36,7 +36,7 @@ export const AppInstanceApiSchema = AppInstanceApiCreateSchema.extend({
 const apiToDomain = (w: ChorusAppInstanceApi): AppInstance => {
   return {
     ...w,
-    ownerId: w.userId || '',
+    userId: w.userId || '',
     status: w.status || '',
     tenantId: w.tenantId || '',
     appId: w.appId || '',
@@ -53,7 +53,7 @@ const domainToApi = (w: AppInstanceCreateModel): ChorusAppInstanceApi => {
   return {
     ...w,
     workbenchId: w.sessionId,
-    userId: w.ownerId
+    userId: w.userId
   }
 }
 

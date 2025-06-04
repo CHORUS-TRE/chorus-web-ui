@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const AppInstanceSchema = z.object({
   id: z.string(),
   tenantId: z.string(),
-  ownerId: z.string(),
+  userId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
   sessionId: z.string(),
@@ -17,7 +17,7 @@ export type AppInstance = z.infer<typeof AppInstanceSchema>
 
 export const AppInstanceCreateSchema = z.object({
   tenantId: z.string(),
-  ownerId: z.string(),
+  userId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
   sessionId: z.string(),

@@ -2,10 +2,7 @@ import { env } from 'next-runtime-env'
 
 import { UserDataSource } from '@/data/data-source'
 import { User } from '@/domain/model'
-import {
-  UserCreateType,
-  UserSchema,
-} from '@/domain/model/user'
+import { UserCreateType, UserSchema } from '@/domain/model/user'
 import { Configuration, UserServiceApi } from '@/internal/client'
 
 class UserApiDataSourceImpl implements UserDataSource {

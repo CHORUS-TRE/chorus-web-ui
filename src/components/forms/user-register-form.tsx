@@ -8,9 +8,20 @@ import { userCreate } from '@/components/actions/user-view-model'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
-import { IFormState } from '../actions/utils'
 import { Button } from '../button'
 import { Separator } from '../ui/separator'
+import { z } from 'zod'
+
+export interface IFormState {
+  data?: {
+    firstName: string
+    lastName: string
+    username: string
+    id?: string
+  }
+  error?: string
+  issues?: z.ZodIssue[]
+}
 
 const initialState: IFormState = {
   data: undefined,
@@ -37,11 +48,11 @@ function SubmitButton() {
 }
 
 export default function UserRegisterForm() {
-  const [state, formAction] = useActionState(userCreate, initialState)
+  const [state, formAction, isPending] = useActionState(userCreate, initialState)
 
   useEffect(() => {
-    if (state?.data && !state.error) {
-      redirect(`/login?username=${state.data}`)
+    if (state?.data?.id && !state.error) {
+      redirect(`/login?username=${state.data.username}`)
     }
   }, [state])
 
@@ -60,10 +71,14 @@ export default function UserRegisterForm() {
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input
+                disabled={isPending}
                 id="firstName"
                 name="firstName"
+                defaultValue={state?.data?.firstName}
                 required
                 className="border border-muted/40 bg-background text-white"
+
+                autoComplete="given-name"
               />
               <div className="text-xs text-red-500">
                 {
@@ -75,10 +90,13 @@ export default function UserRegisterForm() {
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
               <Input
+                disabled={isPending}
                 id="lastName"
                 name="lastName"
                 required
+                defaultValue={state?.data?.lastName}
                 className="border border-muted/40 bg-background text-white"
+                autoComplete="family-name"
               />
               <div className="text-xs text-red-500">
                 {
@@ -91,11 +109,14 @@ export default function UserRegisterForm() {
           <div className="grid gap-2">
             <Label htmlFor="username">username</Label>
             <Input
+              disabled={isPending}
               id="username"
               type="username"
               name="username"
+              defaultValue={state?.data?.username}
               required
               className="border border-muted/40 bg-background text-white"
+              autoComplete="username"
             />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('username'))?.message}
@@ -106,6 +127,7 @@ export default function UserRegisterForm() {
               <Label htmlFor="password">Password</Label>
             </div>
             <Input
+              disabled={isPending}
               id="password"
               type="password"
               name="password"

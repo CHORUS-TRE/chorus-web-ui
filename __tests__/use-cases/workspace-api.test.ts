@@ -33,9 +33,7 @@ const MOCK_WORKSPACE_RESULT = {
   shortName: '101',
   description: 'Study 101 is a test workspace to improve learning',
   image: '',
-  ownerId: '2',
-  memberIds: ['2'],
-  tags: [],
+  userId: '2',
   status: 'active',
   sessionIds: [],
   serviceIds: [],
@@ -46,7 +44,7 @@ const MOCK_WORKSPACE_RESULT = {
 
 const MOCK_API_CREATE = {
   tenantId: '1',
-  ownerId: '2',
+  userId: '2',
   name: 'Study 101, a workspace for learning',
   shortName: '101',
   description: 'Study 101 is a test workspace to improve learning'

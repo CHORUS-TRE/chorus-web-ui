@@ -167,16 +167,16 @@ export function AppInstanceCreateForm({
                     </div>
                   </div>
                   <div className="grid hidden gap-2">
-                    <Label htmlFor="ownerId">Owner ID</Label>
+                    <Label htmlFor="userId">User ID</Label>
                     <Input
-                      id="ownerId"
-                      name="ownerId"
+                      id="userId"
+                      name="userId"
                       placeholder="Enter owner ID"
                       defaultValue={userId || '2'}
                     />
                     <div className="text-xs text-red-500">
                       {
-                        state?.issues?.find((e) => e.path.includes('ownerId'))
+                        state?.issues?.find((e) => e.path.includes('userId'))
                           ?.message
                       }
                     </div>

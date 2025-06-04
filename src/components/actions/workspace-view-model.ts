@@ -70,7 +70,7 @@ export async function workspaceCreate(
     const workspace: WorkspaceCreateModel = {
       name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       description: formData.get('description') as string,
       shortName: formData.get('shortName') as string,
       memberIds: formData.getAll('memberIds') as string[],

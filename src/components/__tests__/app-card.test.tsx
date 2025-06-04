@@ -77,7 +77,7 @@ jest.mock(
 const mockApp = {
   id: '1',
   tenantId: 'tenant-1',
-  ownerId: 'owner-1',
+  userId: 'owner-1',
   name: 'Test App',
   prettyName: 'Test Application',
   description: 'A test application',

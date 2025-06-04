@@ -15,7 +15,7 @@ export enum AppType {
 
 export const AppCreateSchema = z.object({
   tenantId: z.string(),
-  ownerId: z.string(),
+  userId: z.string(),
   name: z.string().optional(),
   prettyName: z.string().optional(),
   description: z.string().optional(),

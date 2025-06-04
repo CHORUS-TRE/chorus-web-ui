@@ -11,7 +11,7 @@ import { UserGet } from '~/domain/use-cases/user/user-get'
 import { UserList } from '~/domain/use-cases/user/user-list'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 
-import { IFormState } from './utils'
+import { IFormState } from '../forms/user-register-form'
 
 const getRepository = async () => {
   const cookieStore = await cookies()
@@ -50,17 +50,26 @@ export async function userCreate(
 
     const validation = UserCreateSchema.safeParse(user)
     if (!validation.success) {
-      return { issues: validation.error.issues }
+      return {
+        data: user,
+        issues: validation.error.issues
+      }
     }
 
     const nextUser = UserCreateSchema.parse(user)
     const result = await useCase.execute(nextUser)
 
     if (result.error) {
-      return { error: result.error }
+      return {
+        data: user,
+        error: result.error
+      }
     }
 
-    return { data: nextUser.username }
+    return { data: {
+      ...user,
+      id: result.data as string
+    } }
   } catch (error) {
     console.error('Error creating user', error)
     return { error: error instanceof Error ? error.message : String(error) }
