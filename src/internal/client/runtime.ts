@@ -157,29 +157,8 @@ export class BaseAPI {
       return response
     }
 
-    // Build curl command
-    let curlCommand = `curl -X ${init.method} '${url}'`
-
-    if (init.headers) {
-      Object.entries(init.headers).forEach(([key, value]) => {
-        curlCommand += ` -H '${key}: ${value}'`
-      })
-    }
-
-    if (init.body) {
-      const bodyStr =
-        typeof init.body === 'string' ? init.body : JSON.stringify(init.body)
-      curlCommand += ` -d '${bodyStr}'`
-    }
-
-    // log request
-    console.log('\n')
-    console.log(curlCommand)
-    console.log('\n')
-
     const errorBody = await response.json().catch(() => null)
-    const errorMessage =
-      errorBody?.message || errorBody?.error || response.statusText
+    const errorMessage = errorBody?.message || errorBody?.error || response.statusText
     console.error('API Error:', {
       status: response.status,
       statusText: response.statusText,
@@ -187,8 +166,7 @@ export class BaseAPI {
       details: errorBody
     })
 
-    throw new ResponseError(response, 'Response returned an error code')
-  }
+    throw new ResponseError(response, errorMessage)  }
 
   private async createFetchParams(
     context: RequestOpts,
