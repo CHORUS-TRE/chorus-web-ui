@@ -156,8 +156,17 @@ export class BaseAPI {
     if (response && response.status >= 200 && response.status < 300) {
       return response
     }
-    throw new ResponseError(response, 'Response returned an error code')
-  }
+
+    const errorBody = await response.json().catch(() => null)
+    const errorMessage = errorBody?.message || errorBody?.error || response.statusText
+    console.error('API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorMessage,
+      details: errorBody
+    })
+
+    throw new ResponseError(response, errorMessage)  }
 
   private async createFetchParams(
     context: RequestOpts,
