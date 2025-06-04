@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  AppWindow,
-  CircleHelp,
-  CircleX,
-  LaptopMinimal,
-  PackageOpen
-} from 'lucide-react'
+import { AppWindow, CircleHelp, PackageOpen } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'

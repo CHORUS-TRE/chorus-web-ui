@@ -12,7 +12,7 @@ const mockAppGetResponse = {
   data: {
     id: '1',
     tenantId: 'tenant-1',
-    ownerId: 'owner-1',
+    userId: 'owner-1',
     name: 'Test App',
     prettyName: 'Test Application',
     description: 'A test application',
@@ -29,7 +29,7 @@ const mockAppGetResponse = {
 // Using type assertion to bypass the type checks since types are exported as types
 const mockAppCreateRequest = {
   tenantId: 'tenant-1',
-  ownerId: 'owner-1',
+  userId: 'owner-1',
   name: 'New App',
   prettyName: 'Newly Created App',
   description: 'A newly created application',

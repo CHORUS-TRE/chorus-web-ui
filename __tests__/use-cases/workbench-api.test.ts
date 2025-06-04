@@ -8,8 +8,8 @@ import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import {
   Workbench,
-  WorkbenchCreateModel,
-  WorkbenchUpdateModel
+  WorkbenchCreateType,
+  WorkbenchUpdateType
 } from '~/domain/model'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
@@ -31,25 +31,21 @@ const MOCK_API_RESPONSE = {
 
 const MOCK_API_CREATE = {
   tenantId: '1',
-  ownerId: '2',
+  userId: '2',
   appId: '3',
   workspaceId: '4',
   name: 'not yet implemented',
-  description: 'not yet implemented',
-  memberIds: ['2'],
-  tags: ['not', 'yet', 'implemented']
-} as WorkbenchCreateModel
+  description: 'not yet implemented'
+} as WorkbenchCreateType
 
 const MOCK_API_UPDATE = {
   id: '1',
   tenantId: '1',
-  ownerId: '2',
+  userId: '2',
   workspaceId: '4',
   name: 'updated name',
-  description: 'updated description',
-  memberIds: ['2'],
-  tags: ['not', 'yet', 'implemented']
-} as WorkbenchUpdateModel
+  description: 'updated description'
+} as WorkbenchUpdateType
 
 // Create a version of the API response without userId for test expectations
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,11 +53,9 @@ const { userId, ...apiResponseWithoutUserId } = MOCK_API_RESPONSE
 
 const MOCK_WORKBENCH_RESULT = {
   ...apiResponseWithoutUserId,
-  ownerId: '2',
+  userId: '2',
   name: 'toto',
   description: 'descriptiojn',
-  memberIds: ['2'],
-  tags: ['not', 'yet', 'implemented'],
   archivedAt: undefined
 } as Workbench
 

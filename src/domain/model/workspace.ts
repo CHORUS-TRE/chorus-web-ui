@@ -12,7 +12,7 @@ export const WorkspaceSchema = z.object({
   shortName: z.string(),
   description: z.string().optional(),
   image: z.string().optional(),
-  ownerId: z.string(),
+  userId: z.string(),
   memberIds: z.array(z.string()),
   tags: z.array(z.string()),
   status: z.nativeEnum(WorkspaceState),
@@ -25,7 +25,7 @@ export const WorkspaceSchema = z.object({
 
 export const WorkspaceCreateModelSchema = z.object({
   tenantId: z.string(),
-  ownerId: z.string(),
+  userId: z.string(),
   name: z.string().min(3),
   shortName: z.string().min(3).optional(),
   description: z.string().optional(),

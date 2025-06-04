@@ -47,7 +47,7 @@ export async function appCreate(
       description: (formData.get('description') as string) || '',
       iconURL: (formData.get('iconURL') as string) || '',
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       dockerImageRegistry:
         (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,
@@ -100,7 +100,7 @@ export async function appUpdate(
       description: (formData.get('description') as string) || '',
       iconURL: (formData.get('iconURL') as string) || '',
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
       dockerImageRegistry:
         (formData.get('dockerImageRegistry') as string) || '',
       dockerImageName: formData.get('dockerImageName') as string,

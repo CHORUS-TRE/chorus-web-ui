@@ -71,7 +71,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       maxMemory: app.maxMemory || '',
       minMemory: app.minMemory || '',
       tenantId: app.tenantId || '',
-      ownerId: app.ownerId || '',
+      userId: app.userId || '',
       preset: 'auto',
       iconURL: app.iconURL || ''
     },
@@ -105,7 +105,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
         maxMemory: app.maxMemory || '',
         minMemory: app.minMemory || '',
         tenantId: app.tenantId || '',
-        ownerId: app.ownerId || '',
+        userId: app.userId || '',
         preset: 'auto',
         iconURL: app.iconURL || ''
       })
@@ -181,7 +181,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('tenantId')} />
-            <input type="hidden" {...form.register('ownerId')} />
+            <input type="hidden" {...form.register('userId')} />
             <div
               className={`grid gap-8 ${showAdvanced ? 'grid-cols-2' : 'grid-cols-1'}`}
             >

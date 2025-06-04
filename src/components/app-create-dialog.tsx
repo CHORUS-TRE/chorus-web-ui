@@ -239,7 +239,7 @@ export const formSchema = z.object({
       'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
     ),
   tenantId: z.string().min(1, 'Tenant ID is required'),
-  ownerId: z.string().min(1, 'Owner ID is required'),
+  userId: z.string().min(1, 'Owner ID is required'),
   preset: z.string().optional(),
   iconURL: z
     .string()
@@ -282,7 +282,7 @@ export function AppCreateDialog({
       maxMemory: '',
       minMemory: '',
       tenantId: '1',
-      ownerId: '',
+      userId: '',
       preset: 'auto',
       iconURL: ''
     },
@@ -339,7 +339,7 @@ export function AppCreateDialog({
 
   useEffect(() => {
     if (user) {
-      form.setValue('ownerId', user.id)
+      form.setValue('userId', user.id)
     }
   }, [user, form])
 
@@ -368,7 +368,7 @@ export function AppCreateDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('tenantId')} />
-            <input type="hidden" {...form.register('ownerId')} />
+            <input type="hidden" {...form.register('userId')} />
             <div
               className={`grid gap-8 ${showAdvanced ? 'grid-cols-2' : 'grid-cols-1'}`}
             >

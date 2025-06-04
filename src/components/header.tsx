@@ -1,5 +1,5 @@
 'use client'
-import { formatDistance, formatDistanceToNow } from 'date-fns'
+import { formatDistance } from 'date-fns'
 import {
   AppWindow,
   CircleHelp,
@@ -80,7 +80,6 @@ export function Header() {
   const {
     workbenches,
     workspaces,
-    users,
     apps,
     appInstances,
     setNotification,
@@ -106,20 +105,6 @@ export function Header() {
   const pathNames = useMemo(
     () => paths?.split('/').filter(Boolean) || [],
     [paths]
-  )
-
-  const workspacesWithWorkbenches = useMemo(
-    () =>
-      workspaces?.filter((workspace) =>
-        workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
-      ),
-    [workspaces, workbenches]
-  )
-
-  const sortedWorkspacesWithWorkbenches = useMemo(
-    () =>
-      workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
-    [workspacesWithWorkbenches, workspaceId]
   )
 
   const internalLogin = authModes.some(
@@ -679,7 +664,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ ownerId, createdAt, id }) => (
+                                  .map(({ userId, createdAt, id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -695,10 +680,10 @@ export function Header() {
                                             >
                                               Created {formatDistanceToNow(createdAt)} ago by{' '}
                                               {
-                                                users?.find((user) => user.id === ownerId)
+                                                users?.find((user) => user.id === userId)
                                                   ?.firstName
                                               }{' '}
-                                              {users?.find((user) => user.id === ownerId)?.lastName}
+                                              {users?.find((user) => user.id === userId)?.lastName}
                                             </div>
                                           </div>
                                           <div className="text-xs">
@@ -770,7 +755,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ ownerId, createdAt, id }) => (
+                                  .map(({ userId, createdAt, id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -786,10 +771,10 @@ export function Header() {
                                             >
                                               Created {formatDistanceToNow(createdAt)} ago by{' '}
                                               {
-                                                users?.find((user) => user.id === ownerId)
+                                                users?.find((user) => user.id === userId)
                                                   ?.firstName
                                               }{' '}
-                                              {users?.find((user) => user.id === ownerId)?.lastName}
+                                              {users?.find((user) => user.id === userId)?.lastName}
                                             </div>
                                           </div>
                                           <div className="text-xs">

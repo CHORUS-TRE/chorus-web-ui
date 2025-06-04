@@ -77,7 +77,7 @@ export async function workbenchCreate(
       workspaceId: formData.get('workspaceId') as string,
       initialResolutionWidth: Number(formData.get('initialResolutionWidth')),
       initialResolutionHeight: Number(formData.get('initialResolutionHeight')),
-      status: 'active'
+      status: WorkbenchStatus.ACTIVE
     }
 
     const validation = WorkbenchCreateSchema.safeParse(workbench)
@@ -85,8 +85,6 @@ export async function workbenchCreate(
     if (!validation.success) {
       return { issues: validation.error.issues }
     }
-
-    console.log('validation', validation)
 
     const createdWorkbench = await useCase.execute(validation.data)
 

@@ -41,13 +41,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const {
-    setNotification,
-    background,
-    workspaces,
-    refreshWorkspaces,
-    refreshWorkbenches
-  } = useAppState()
+  const { setNotification, background, workspaces } = useAppState()
   const { user } = useAuth()
 
   const handleDelete = async () => {
@@ -122,7 +116,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
     const formData = new FormData()
     formData.append('id', app.id)
     formData.append('tenantId', '1')
-    formData.append('ownerId', user?.id || '')
+    formData.append('userId', user?.id || '')
     formData.append('workspaceId', workspaceId)
     formData.append('sessionId', sessionId)
 

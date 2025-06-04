@@ -44,6 +44,6 @@ export const AppCreateSchema = z.object({
       'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
     ),
   tenantId: z.string().min(1, 'Tenant ID is required'),
-  ownerId: z.string().min(1, 'Owner ID is required'),
+  userId: z.string().min(1, 'User ID is required'),
   preset: z.string().optional()
 })

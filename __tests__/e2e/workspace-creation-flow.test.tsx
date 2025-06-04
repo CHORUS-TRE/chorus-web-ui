@@ -26,8 +26,7 @@ jest.mock('../../src/data/repository', () => ({
         name: 'New Workspace',
         shortName: 'new-ws',
         description: 'E2E Test Workspace',
-        ownerId: 'current-user',
-        memberIds: ['current-user'],
+        userId: 'current-user',
         status: 'active',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -40,8 +39,7 @@ jest.mock('../../src/data/repository', () => ({
           name: 'New Workspace',
           shortName: 'new-ws',
           description: 'E2E Test Workspace',
-          ownerId: 'current-user',
-          memberIds: ['current-user'],
+          userId: 'current-user',
           status: 'active',
           createdAt: new Date(),
           updatedAt: new Date()
@@ -58,7 +56,7 @@ jest.mock(
     getCurrentUser: jest.fn().mockResolvedValue({
       data: {
         id: 'current-user',
-        email: 'user@example.com',
+        username: 'user@example.com',
         firstName: 'Test',
         lastName: 'User'
       }

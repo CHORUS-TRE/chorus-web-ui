@@ -11,18 +11,15 @@ import {
   EllipsisVerticalIcon,
   Footprints,
   Home,
-  LaptopMinimal,
-  Rows3,
   Users
 } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { env } from 'next-runtime-env'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -85,7 +82,6 @@ function SimpleBarChart({
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [workspace, setWorkspace] = useState<WorkspaceType>()
-  const [workspaceUser, setWorkspaceUser] = useState<User>()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
   const {
@@ -103,7 +99,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const { user } = useAuth()
 
   const [openEdit, setOpenEdit] = useState(false)
-  const router = useRouter()
 
   const isUserWorkspace = workspaceId === user?.workspaceId
 
@@ -122,8 +117,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         })
       if (workspaceResponse.data) {
         setWorkspace(workspaceResponse.data)
-        const userResponse = await userGet(workspaceResponse.data.ownerId)
-        if (userResponse.data) setWorkspaceUser(userResponse.data)
+        const userResponse = await userGet(workspaceResponse.data.userId)
+        if (userResponse.data) setWorkspaceUser(userResponse.data as User)
       }
     } catch (error) {
       setNotification({
@@ -160,10 +155,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       }
     }
   }, [workspaceId, workbenches, setBackground])
-
-  const filteredWorkbenches = workbenches?.filter(
-    (w) => w.workspaceId === workspaceId
-  )
 
   return (
     <div className="my-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -220,53 +211,92 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardDescription>
               {workspace?.description}
               <p className="mb-3 text-xs text-muted">
-                Created{' '}
+                Updated{' '}
                 {formatDistanceToNow(workspace?.updatedAt || new Date())} ago by{' '}
                 {
-                  users?.find((user) => user.id === workspace?.ownerId)
+                  users?.find((user) => user.id === workspace?.userId)
                     ?.firstName
                 }{' '}
-                {
-                  users?.find((user) => user.id === workspace?.ownerId)
-                    ?.lastName
-                }
+                {users?.find((user) => user.id === workspace?.userId)?.lastName}
               </p>
             </CardDescription>
           </CardHeader>
 
-          {/* <CardContent>
-            <p className="text-xs">
-              <strong>Owner: </strong>
-              {workspaceUser?.firstName} {workspaceUser?.lastName}
-            </p>
-            {workspace && user?.workspaceId !== workspace?.id && (
-              <p className="mb-2 text-xs">
-                <strong>Members: </strong>
-                {workspace?.memberIds.length}
-              </p>
-            )}
-            <div>
-              <p className="text-xs">
-                <strong>Status: </strong>
-                {workspace?.status}
-              </p>
-              <p className="text-xs">
-                <strong>Creation date: </strong>
-                {formatDistanceToNow(workspace?.createdAt || new Date())} ago
-              </p>
-              <p className="text-xs">
-                <strong>Updated: </strong>
-                {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
-              </p>
-            </div>
-          </CardContent> */}
+          <CardContent>
+            <ScrollArea className="h-[160px]">
+              <div className="grid gap-1">
+                {workspaces
+                  ?.filter((workspace) => workspace.id === workspaceId)
+                  ?.map(({ id }) => (
+                    <div className="mb-2" key={`workspace-grid-${id}`}>
+                      {workbenches
+                        ?.filter((workbench) => workbench.workspaceId === id)
+                        .map(({ id, createdAt, userId }) => (
+                          <Link
+                            key={`workspace-sessions-${id}`}
+                            href={`/workspaces/${id}`}
+                            className="flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300"
+                          >
+                            <div className="flex-grow text-sm">
+                              {/* <div className="flex flex-row justify-between">
+
+                          <Badge
+                          variant={status === 'active' ? 'default' : 'outline'}
+                        >
+                          {status}
+                        </Badge>
+                        </div> */}
+
+                              <div className="mb-1 mt-0.5 text-xs">
+                                <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
+                                  <AppWindow className="h-4 w-4 shrink-0" />
+                                  {appInstances
+                                    ?.filter(
+                                      (instance) => id === instance.sessionId
+                                    )
+                                    .slice(0, 3)
+                                    .map(
+                                      (instance) =>
+                                        apps?.find(
+                                          (app) => app.id === instance.appId
+                                        )?.name || ''
+                                    )
+                                    .join(', ')}
+                                </div>
+                              </div>
+                              <p className="text-xs text-muted">
+                                Created by{' '}
+                                {
+                                  users?.find((user) => user.id === userId)
+                                    ?.firstName
+                                }{' '}
+                                {
+                                  users?.find((user) => user.id === userId)
+                                    ?.lastName
+                                }{' '}
+                                {formatDistanceToNow(createdAt || new Date())}{' '}
+                                ago
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                    </div>
+                  ))}
+              </div>
+            </ScrollArea>
+          </CardContent>
           <div className="flex-grow" />
-          {/* <CardFooter>
-          <Button disabled>
-            <ArrowRight className="h-4 w-4" />
-            Settings
-          </Button>
-        </CardFooter> */}
+          <CardFooter>
+            <WorkbenchCreateForm
+              workspaceId={workspace?.id}
+              workspaceName={workspace?.name}
+              // onSuccess={(sessionId) => {
+              //   refreshWorkspaces()
+              //   refreshWorkbenches()
+
+              // }}
+            />
+          </CardFooter>
         </Card>
         {openEdit && (
           <WorkspaceUpdateForm
@@ -308,32 +338,37 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[160px]">
+            <ScrollArea className="h-[240px]">
               <div className="grid gap-1">
-                {workspaces?.map(({ name, id, createdAt, ownerId }) => (
-                  <div className="mb-2" key={`workspace-grid-${id}`}>
-                    <div className="mb-1">
-                      <div className="mb-0 flex items-center gap-2 hover:text-accent hover:underline">
-                        <Box className="h-4 w-4 flex-shrink-0" />
-                        <Link href={`/workspaces/${id}`}>{name}</Link>
+                {workspaces
+                  ?.filter(
+                    (workspace) =>
+                      workspace.id !== env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID')
+                  )
+                  ?.map(({ name, id, createdAt, userId }) => (
+                    <div className="mb-2" key={`workspace-grid-${id}`}>
+                      <div className="mb-1">
+                        <div className="mb-0 flex items-center gap-2 hover:text-accent hover:underline">
+                          <Box className="h-4 w-4 flex-shrink-0" />
+                          <Link href={`/workspaces/${id}`}>{name}</Link>
+                        </div>
+                        <p className="text-xs text-muted">
+                          created by{' '}
+                          {users?.find((user) => user.id === userId)?.firstName}{' '}
+                          {users?.find((user) => user.id === userId)?.lastName}{' '}
+                          {formatDistanceToNow(createdAt)} ago
+                        </p>
                       </div>
-                      <p className="text-xs text-muted">
-                        created by{' '}
-                        {users?.find((user) => user.id === ownerId)?.firstName}{' '}
-                        {users?.find((user) => user.id === ownerId)?.lastName}{' '}
-                        {formatDistanceToNow(createdAt)} ago
-                      </p>
-                    </div>
-                    {workbenches
-                      ?.filter((workbench) => workbench.workspaceId === id)
-                      .map(({ id, createdAt, ownerId }) => (
-                        <Link
-                          key={`workspace-sessions-${id}`}
-                          href={`/workspaces/${id}`}
-                          className="flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300"
-                        >
-                          <div className="flex-grow text-sm">
-                            {/* <div className="flex flex-row justify-between">
+                      {workbenches
+                        ?.filter((workbench) => workbench.workspaceId === id)
+                        .map(({ id, createdAt, userId }) => (
+                          <Link
+                            key={`workspace-sessions-${id}`}
+                            href={`/workspaces/${id}`}
+                            className="ml-2 flex cursor-pointer flex-col justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300"
+                          >
+                            <div className="flex-grow text-sm">
+                              {/* <div className="flex flex-row justify-between">
 
                           <Badge
                           variant={status === 'active' ? 'default' : 'outline'}
@@ -342,59 +377,50 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                         </Badge>
                         </div> */}
 
-                            <div className="mb-1 mt-0.5 text-xs">
-                              <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
-                                <AppWindow className="h-4 w-4 shrink-0" />
-                                {appInstances
-                                  ?.filter(
-                                    (instance) => id === instance.sessionId
-                                  )
-                                  .slice(0, 3)
-                                  .map(
-                                    (instance) =>
-                                      apps?.find(
-                                        (app) => app.id === instance.appId
-                                      )?.name || ''
-                                  )
-                                  .join(', ')}
+                              <div className="mb-1 mt-0.5 text-xs">
+                                <div className="flex items-center gap-2 text-xs hover:text-accent hover:underline">
+                                  <AppWindow className="h-4 w-4 shrink-0" />
+                                  {appInstances
+                                    ?.filter(
+                                      (instance) => id === instance.sessionId
+                                    )
+                                    .slice(0, 3)
+                                    .map(
+                                      (instance) =>
+                                        apps?.find(
+                                          (app) => app.id === instance.appId
+                                        )?.name || ''
+                                    )
+                                    .join(', ')}
+                                </div>
                               </div>
+                              <p className="text-xs text-muted">
+                                Created by{' '}
+                                {
+                                  users?.find((user) => user.id === userId)
+                                    ?.firstName
+                                }{' '}
+                                {
+                                  users?.find((user) => user.id === userId)
+                                    ?.lastName
+                                }{' '}
+                                {formatDistanceToNow(createdAt || new Date())}{' '}
+                                ago
+                              </p>
                             </div>
-                            <p className="text-xs text-muted">
-                              Created by{' '}
-                              {
-                                users?.find((user) => user.id === ownerId)
-                                  ?.firstName
-                              }{' '}
-                              {
-                                users?.find((user) => user.id === ownerId)
-                                  ?.lastName
-                              }{' '}
-                              {formatDistanceToNow(createdAt)} ago
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
-                  </div>
-                ))}
+                          </Link>
+                        ))}
+                    </div>
+                  ))}
               </div>
             </ScrollArea>
           </CardContent>
           <div className="flex-grow" />
-          <CardFooter>
-            <WorkbenchCreateForm
-              workspaceId={workspace?.id}
-              workspaceName={workspace?.name}
-              // onSuccess={(sessionId) => {
-              //   refreshWorkspaces()
-              //   refreshWorkbenches()
-
-              // }}
-            />
-          </CardFooter>
+          <CardFooter></CardFooter>
         </Card>
       )}
 
-      {!isUserWorkspace && (
+      {/* {!isUserWorkspace && (
         <Card
           className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white"
           id="getting-started-step2"
@@ -429,7 +455,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   ?.filter(
                     (workbench) => workbench.workspaceId === workspace?.id
                   )
-                  .filter((workbench) => workbench.ownerId === user?.id)
+                  .filter((workbench) => workbench.userId === user?.id)
                   .map(({ id, createdAt }) => (
                     <Link
                       key={`workspace-sessions-${id}`}
@@ -466,8 +492,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   ?.filter(
                     (workbench) => workbench.workspaceId === workspace?.id
                   )
-                  .filter((workbench) => workbench.ownerId !== user?.id)
-                  .map(({ id, createdAt, ownerId }) => (
+                  .filter((workbench) => workbench.userId !== user?.id)
+                  .map(({ id, createdAt, userId }) => (
                     <Link
                       key={`workspace-sessions-${id}`}
                       href={`/workspaces/${workspace?.id}/sessions/${id}`}
@@ -478,7 +504,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                           <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                           {shortName}
                         </div> */}
-
+      {/*
                         <div className="mt-0.5 text-xs">
                           <div className="mb-1 flex items-center gap-2 text-xs hover:text-accent hover:underline">
                             <AppWindow className="h-4 w-4 shrink-0" />
@@ -500,10 +526,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                         <p className="text-xs text-muted">
                           Created {formatDistanceToNow(createdAt)} ago by{' '}
                           {
-                            users?.find((user) => user.id === ownerId)
+                            users?.find((user) => user.id === userId)
                               ?.firstName
                           }{' '}
-                          {users?.find((user) => user.id === ownerId)?.lastName}
+                          {users?.find((user) => user.id === userId)?.lastName}
                         </p>
                       </div>
                     </Link>
@@ -524,7 +550,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             />
           </CardFooter>
         </Card>
-      )}
+      )} */}
 
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/10 bg-background/40 text-white">
         <CardHeader>
