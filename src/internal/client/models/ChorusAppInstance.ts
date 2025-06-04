@@ -63,6 +63,18 @@ export interface ChorusAppInstance {
   status?: string
   /**
    *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  k8sStatus?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  k8sState?: string
+  /**
+   *
    * @type {number}
    * @memberof ChorusAppInstance
    */
@@ -115,6 +127,8 @@ export function ChorusAppInstanceFromJSONTyped(
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
     workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
     status: !exists(json, 'status') ? undefined : json['status'],
+    k8sStatus: !exists(json, 'k8sStatus') ? undefined : json['k8sStatus'],
+    k8sState: !exists(json, 'k8sState') ? undefined : json['k8sState'],
     initialResolutionWidth: !exists(json, 'initialResolutionWidth')
       ? undefined
       : json['initialResolutionWidth'],
@@ -145,6 +159,8 @@ export function ChorusAppInstanceToJSON(value?: ChorusAppInstance | null): any {
     workspaceId: value.workspaceId,
     workbenchId: value.workbenchId,
     status: value.status,
+    k8sStatus: value.k8sStatus,
+    k8sState: value.k8sState,
     initialResolutionWidth: value.initialResolutionWidth,
     initialResolutionHeight: value.initialResolutionHeight,
     createdAt:
