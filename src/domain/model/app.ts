@@ -1,24 +1,41 @@
 import { z } from 'zod'
 
 export enum AppState {
-  CREATED = 'created',
-  LOADING = 'loading',
   ACTIVE = 'active',
-  STOPPING = 'stopping',
-  EXITED = 'exited'
+  INACTIVE = 'inactive',
+  DELETED = 'deleted'
 }
 
-export enum AppType {
-  APP = 'app',
-  SERVICE = 'service'
-}
+export const AppSchema = z.object({
+  id: z.string(),
+  tenantId: z.string(),
+  userId: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  status: z.nativeEnum(AppState),
+  dockerImageRegistry: z.string().optional(),
+  dockerImageName: z.string().optional(),
+  dockerImageTag: z.string().optional(),
+  shmSize: z.string().optional(),
+  kioskConfigURL: z.string().optional(),
+  maxCPU: z.string().optional(),
+  minCPU: z.string().optional(),
+  maxMemory: z.string().optional(),
+  minMemory: z.string().optional(),
+  minEphemeralStorage: z.string().optional(),
+  maxEphemeralStorage: z.string().optional(),
+  iconURL: z.string().optional(),
+  prettyName: z.string().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date()
+})
 
 export const AppCreateSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
   name: z.string().optional(),
-  prettyName: z.string().optional(),
   description: z.string().optional(),
+  status: z.nativeEnum(AppState),
   dockerImageName: z.string(),
   dockerImageTag: z.string(),
   dockerImageRegistry: z.string().optional(),
@@ -31,19 +48,18 @@ export const AppCreateSchema = z.object({
   maxMemory: z.string().optional(),
   minMemory: z.string().optional(),
   iconURL: z.string().optional(),
-  type: z.nativeEnum(AppType),
   url: z.string().optional()
 })
 
-export const AppSchema = AppCreateSchema.extend({
-  id: z.string(),
-  status: z.nativeEnum(AppState),
-  createdAt: z.date(),
-  updatedAt: z.date()
+export const AppUpdateSchema = AppCreateSchema.extend({
+  id: z.string()
 })
 
-export type AppCreate = z.infer<typeof AppCreateSchema>
 export type App = z.infer<typeof AppSchema>
+
+export type AppCreateType = z.infer<typeof AppCreateSchema>
+
+export type AppUpdateType = z.infer<typeof AppUpdateSchema>
 
 export interface AppResponse {
   data?: App

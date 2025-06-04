@@ -53,7 +53,7 @@ export function WorkbenchCreateForm({
   onSuccess,
   openOnStart = false
 }: {
-  workspaceId?: string
+  workspaceId: string
   workspaceName?: string
   userId?: string
   onSuccess?: (sessionId: string) => void

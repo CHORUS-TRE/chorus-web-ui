@@ -157,7 +157,7 @@ export default function WorkspacesGrid({
                                       workspace?.id === instance.workspaceId
                                   )
                                   ?.filter(
-                                    (instance) => id === instance.sessionId
+                                    (instance) => id === instance.workbenchId
                                   ).length === 0 && (
                                   <span className="text-muted">
                                     No apps started yet
@@ -169,7 +169,7 @@ export default function WorkspacesGrid({
                                       workspace?.id === instance.workspaceId
                                   )
                                   ?.filter(
-                                    (instance) => id === instance.sessionId
+                                    (instance) => id === instance.workbenchId
                                   )
                                   .map(
                                     (instance) =>

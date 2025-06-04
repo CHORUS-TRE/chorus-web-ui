@@ -3,7 +3,7 @@ import {
   AppInstanceCreateType,
   AppInstanceResponse,
   AppInstancesResponse,
-  AppInstanceUpdateType,
+  AppInstanceUpdateType
 } from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 

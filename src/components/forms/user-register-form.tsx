@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
+import { z } from 'zod'
 
 import { userCreate } from '@/components/actions/user-view-model'
 import { Input } from '~/components/ui/input'
@@ -10,7 +11,6 @@ import { Label } from '~/components/ui/label'
 
 import { Button } from '../button'
 import { Separator } from '../ui/separator'
-import { z } from 'zod'
 
 export interface IFormState {
   data?: {
@@ -48,7 +48,10 @@ function SubmitButton() {
 }
 
 export default function UserRegisterForm() {
-  const [state, formAction, isPending] = useActionState(userCreate, initialState)
+  const [state, formAction, isPending] = useActionState(
+    userCreate,
+    initialState
+  )
 
   useEffect(() => {
     if (state?.data?.id && !state.error) {
@@ -77,7 +80,6 @@ export default function UserRegisterForm() {
                 defaultValue={state?.data?.firstName}
                 required
                 className="border border-muted/40 bg-background text-white"
-
                 autoComplete="given-name"
               />
               <div className="text-xs text-red-500">

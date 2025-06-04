@@ -33,10 +33,10 @@ export const WorkbenchSchema = z.object({
 })
 
 export const WorkbenchCreateSchema = z.object({
-  tenantId: z.string(),
-  userId: z.string(),
-  workspaceId: z.string(),
-  name: z.string(),
+  tenantId: z.string().min(1, 'Tenant ID is required'),
+  userId: z.string().min(1, 'User ID is required'),
+  workspaceId: z.string().min(1, 'Workspace ID is required'),
+  name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
   status: z.nativeEnum(WorkbenchStatus),
   initialResolutionWidth: z.number().optional(),
