@@ -1,7 +1,7 @@
 import {
   AppInstance,
   AppInstanceCreateType,
-  AppInstanceUpdateModel
+  AppInstanceUpdateType
 } from '@/domain/model'
 
 interface AppInstanceDataSource {
@@ -9,7 +9,7 @@ interface AppInstanceDataSource {
   get: (id: string) => Promise<AppInstance>
   delete: (id: string) => Promise<boolean>
   list: () => Promise<AppInstance[]>
-  update: (appInstance: AppInstanceUpdateModel) => Promise<AppInstance>
+  update: (appInstance: AppInstanceUpdateType) => Promise<AppInstance>
 }
 
 export type { AppInstanceDataSource }

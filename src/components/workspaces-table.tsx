@@ -181,7 +181,7 @@ export default function WorkspaceTable({
     <>
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
         {title && (
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </CardHeader>

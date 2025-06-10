@@ -10,7 +10,7 @@ export default function Me() {
     <div className="grid gap-6">
       {user && (
         <Card className="w-full bg-black text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pb-4">
             <CardTitle className="text-2xl">Profile</CardTitle>
           </CardHeader>
           <CardContent>

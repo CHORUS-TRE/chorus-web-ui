@@ -7,6 +7,7 @@ import { AppCard } from '~/components/app-card'
 import { AppCreateDialog } from '~/components/app-create-dialog'
 import { Button } from '~/components/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+
 import { useAppState } from './store/app-state-context'
 
 export function AppStoreView() {
@@ -18,10 +19,7 @@ export function AppStoreView() {
       <section className="w-full">
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
-            <Tabs
-              defaultValue="my-apps"
-              className="w-full"
-            >
+            <Tabs defaultValue="my-apps" className="w-full">
               <div className="mb-8 flex items-center justify-between">
                 <TabsList className="bg-background">
                   <TabsTrigger

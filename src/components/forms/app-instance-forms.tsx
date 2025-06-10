@@ -88,7 +88,7 @@ export function AppInstanceCreateForm({
           <DialogDescription asChild>
             <form action={formAction}>
               <Card className="w-full max-w-md border-none bg-background text-white">
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <CardTitle>Start App</CardTitle>
                   <CardDescription>
                     Fill out the form to start a new app.

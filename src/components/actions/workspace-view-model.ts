@@ -72,7 +72,7 @@ export async function workspaceCreate(
       tenantId: formData.get('tenantId') as string,
       userId: formData.get('userId') as string,
       description: formData.get('description') as string,
-      shortName: formData.get('shortName') as string,
+      shortName: formData.get('shortName') as string
     }
 
     const validation = WorkspaceCreateSchema.safeParse(workspace)

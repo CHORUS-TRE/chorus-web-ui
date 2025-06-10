@@ -150,7 +150,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   return (
     <>
       <Card className="flex flex-col overflow-hidden border border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
-        <CardHeader className="relative flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2">
+        <CardHeader className="relative flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2 pb-4">
           <div className="flex items-center space-x-4">
             {app.iconURL && (
               <Image

@@ -11,7 +11,6 @@ import { env } from 'next-runtime-env'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React from 'react'
 
-import cover from '/public/cover.jpeg'
 import { AppStateProvider } from '@/components/store/app-state-context'
 import BackgroundIframe from '~/components/background-iframe'
 import GettingStartedCard from '~/components/getting-started-card'
@@ -72,16 +71,10 @@ export default async function RootLayout({
                 </NextStep>
               </NextStepProvider>
               <BackgroundIframe />
-              <Image
-                alt="Background"
-                src={cover}
-                placeholder="blur"
-                quality={75}
-                priority={false}
-                sizes="100vw"
+              <div
+                className="fixed left-0 top-0 h-full w-full bg-slate-900"
                 id="background"
-                className="fixed left-0 top-0 h-full w-full"
-              />
+              ></div>
               <Toaster />
             </AppStateProvider>
           </AuthProvider>

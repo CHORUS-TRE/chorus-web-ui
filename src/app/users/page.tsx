@@ -74,7 +74,7 @@ export default function UsersPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {users.map((user) => (
           <Card key={user.id} className="bg-black text-white">
-            <CardHeader className="flex flex-row items-center gap-4">
+            <CardHeader className="flex flex-row items-center gap-4 pb-4">
               <Avatar>
                 <AvatarImage src={user.avatarUrl} />
                 <AvatarFallback>

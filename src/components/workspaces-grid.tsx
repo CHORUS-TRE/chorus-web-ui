@@ -86,12 +86,12 @@ export default function WorkspacesGrid({
             </DropdownMenu>
           </div>
           <Link href={`/workspaces/${workspace.id}`}>
-            <Card className="h-full rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
-              <CardHeader>
+            <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80">
+              <CardHeader className="pb-4">
                 <CardTitle className="flex items-start gap-3 pr-2 text-white">
                   <Package className="h-6 w-6 flex-shrink-0 text-white" />
                   {workspace?.id === user?.workspaceId
-                    ? 'Home'
+                    ? 'Private Workspace'
                     : workspace?.name}
                 </CardTitle>
                 <CardDescription>
@@ -110,10 +110,10 @@ export default function WorkspacesGrid({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="mb-1 flex items-center gap-2 text-sm font-bold">
+                {/* <div className="mb-1 flex items-center gap-2 text-sm font-bold">
                   <LaptopMinimal className="h-4 w-4 shrink-0" />
                   Sessions
-                </div>
+                </div> */}
 
                 <ScrollArea className="mb-4 max-h-[160px] pr-2">
                   <div className="grid gap-1">
@@ -148,21 +148,9 @@ export default function WorkspacesGrid({
                               {shortName}
                             </div> */}
 
-                            <div className="mt-1 text-xs">
-                              <div className="mb-1 flex items-center gap-2 text-xs hover:text-accent hover:underline">
+                            <div className="mb-0.5 mt-0.5 text-xs">
+                              <div className="flex items-center gap-2 truncate text-xs font-semibold hover:text-accent hover:underline">
                                 <AppWindow className="h-4 w-4 shrink-0" />
-                                {appInstances
-                                  ?.filter(
-                                    (instance) =>
-                                      workspace?.id === instance.workspaceId
-                                  )
-                                  ?.filter(
-                                    (instance) => id === instance.workbenchId
-                                  ).length === 0 && (
-                                  <span className="text-muted">
-                                    No apps started yet
-                                  </span>
-                                )}
                                 {appInstances
                                   ?.filter(
                                     (instance) =>
@@ -177,12 +165,10 @@ export default function WorkspacesGrid({
                                         (app) => app.id === instance.appId
                                       )?.name || ''
                                   )
-                                  .join(', ')}
+                                  .join(', ') || 'No apps started yet'}
                               </div>
                               <p className="text-xs text-muted">
-                                Created{' '}
-                                {formatDistanceToNow(createdAt || new Date())}{' '}
-                                ago by{' '}
+                                Created by{' '}
                                 {
                                   users?.find((user) => user.id === userId)
                                     ?.firstName
@@ -190,7 +176,9 @@ export default function WorkspacesGrid({
                                 {
                                   users?.find((user) => user.id === userId)
                                     ?.lastName
-                                }
+                                }{' '}
+                                {formatDistanceToNow(createdAt || new Date())}{' '}
+                                ago
                               </p>
                             </div>
                           </div>

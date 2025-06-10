@@ -100,9 +100,7 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
       const validatedRequest = AppInstanceUpdateSchema.parse(appInstance)
 
       const response = await this.service.appInstanceServiceUpdateAppInstance({
-        body: {
-          appInstance: validatedRequest
-        }
+        body: { appInstance: validatedRequest }
       })
 
       if (!response.result) {

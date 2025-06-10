@@ -158,7 +158,8 @@ export class BaseAPI {
     }
 
     const errorBody = await response.json().catch(() => null)
-    const errorMessage = errorBody?.message || errorBody?.error || response.statusText
+    const errorMessage =
+      errorBody?.message || errorBody?.error || response.statusText
     console.error('API Error:', {
       status: response.status,
       statusText: response.statusText,
@@ -166,7 +167,8 @@ export class BaseAPI {
       details: errorBody
     })
 
-    throw new ResponseError(response, errorMessage)  }
+    throw new ResponseError(response, errorMessage)
+  }
 
   private async createFetchParams(
     context: RequestOpts,
