@@ -1,6 +1,12 @@
 'use client'
 
-import { AppWindow, CircleHelp, PackageOpen } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import {
+  AppWindow,
+  CircleX,
+  LaptopMinimal,
+  PackageOpen
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -10,6 +16,7 @@ import { Header } from '~/components/header'
 import { toast } from '~/hooks/use-toast'
 
 import RightSidebar from '../right-sidebar'
+import { useAuth } from '../store/auth-context'
 import { Button } from '../ui/button'
 import { ToastAction } from '../ui/toast'
 
@@ -25,10 +32,11 @@ export function MainLayout({ children }: MainLayoutProps) {
     apps,
     appInstances,
     showRightSidebar,
-    toggleRightSidebar,
     notification,
-    setNotification
+    setNotification,
+    setBackground
   } = useAppState()
+  const { user } = useAuth()
   const router = useRouter()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
   const workbench = workbenches?.find((w) => w.id === background?.sessionId)
@@ -72,38 +80,68 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Link
           href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
           passHref
-          className="hover:bg-accent"
         >
           <div
-            className="fixed left-0 top-0 z-30 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60"
-            id="iframe-overlay"
+            className="fixed left-0 top-11 z-30 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60 text-muted hover:text-accent"
+            id="iframe-overlay "
           >
-            <div className="ml-4 mt-16 w-48 rounded-lg bg-primary/60 p-4 text-white hover:text-accent">
+            <div className="session-overlay w-fullrounded-lg flex h-8 cursor-pointer items-center justify-between bg-slate-900 bg-opacity-60 p-4">
               <div className="flex items-center">
-                <span className="text-lg font-semibold">Open Session</span>
-              </div>
-              <div className="mb-1 flex items-center pt-2">
                 <PackageOpen className="mr-2 h-4 w-4" />
                 <span className="text-sm font-semibold">
-                  {workspace?.shortName}
+                  <Link
+                    href={`/workspaces/${workspace?.id}`}
+                    className="hover:text-accent hover:underline"
+                  >
+                    {workspace?.id === user?.workspaceId
+                      ? 'Private Workspace'
+                      : workspace?.name}
+                  </Link>
                 </span>
               </div>
-              <div className="flex items-start">
-                <AppWindow className="mr-2 h-4 w-4" />
-                <span className="flex-col text-sm">
+              <div className="flex items-center">
+                <LaptopMinimal className="mr-2 h-4 w-4" />
+                <span className="text-xs font-semibold">Open Session: </span>
+                <AppWindow className="ml-4 mr-2 h-4 w-4 shrink-0" />
+                <span className="truncate text-xs font-semibold">
                   {appInstances
                     ?.filter(
-                      (appInstance) => workbench?.id === appInstance.sessionId
+                      (appInstance) => workbench?.id === appInstance.workbenchId
                     )
                     .map((appInstance) =>
                       apps?.find((app) => app.id === appInstance.appId)
                     )
-                    .map((app) => (
-                      <div key={app?.id} className="text-sm opacity-50">
-                        {app?.name}
-                      </div>
-                    ))}
+                    ?.map((app) => app?.name)
+                    .join(', ') || 'No apps started yet'}
                 </span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-xs font-semibold">
+                  Created:{' '}
+                  {formatDistanceToNow(workbench?.createdAt || new Date())} ago
+                </span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-xs font-semibold">
+                  Updated:{' '}
+                  {formatDistanceToNow(workbench?.updatedAt || new Date())} ago
+                </span>
+              </div>
+
+              <div className="flex items-center">
+                <Button
+                  size="icon"
+                  className={`overflow-hidden hover:bg-inherit`}
+                  variant="ghost"
+                  title="hide session"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setBackground(undefined)
+                  }}
+                >
+                  <CircleX />
+                </Button>
               </div>
             </div>
           </div>
@@ -115,32 +153,27 @@ export function MainLayout({ children }: MainLayoutProps) {
       >
         <div
           id="content"
-          className="flex w-full items-start justify-between rounded-2xl border border-secondary bg-black bg-opacity-85"
+          className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
         >
-          <div className="w-full p-8 pr-0">{children}</div>
-          <div className="flex justify-end p-2">
-            <Button
-              size="icon"
-              className={`overflow-hidden text-muted hover:bg-inherit hover:text-accent ${isClient && showRightSidebar ? 'hidden' : 'visible'}`}
-              variant="ghost"
-              title="Switch to open session"
-              onClick={() => {
-                router.push(
-                  `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-                )
-              }}
-            >
-              <AppWindow />
-            </Button>
-            <Button
-              size="icon"
-              className={`overflow-hidden text-muted hover:bg-inherit hover:text-accent ${isClient && showRightSidebar ? 'hidden' : 'visible'}`}
-              variant="ghost"
-              onClick={toggleRightSidebar}
-            >
-              <CircleHelp />
-            </Button>
-          </div>
+          <>
+            <div className="w-full p-8">{children}</div>
+            <div className="absolute right-0 top-0 z-50 p-2">
+              <Button
+                disabled={!background?.sessionId}
+                size="icon"
+                className={`overflow-hidden text-accent hover:bg-inherit`}
+                variant="ghost"
+                title="Show session"
+                onClick={() => {
+                  router.push(
+                    `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
+                  )
+                }}
+              >
+                <CircleX />
+              </Button>
+            </div>
+          </>
         </div>
         {isClient && (
           <div

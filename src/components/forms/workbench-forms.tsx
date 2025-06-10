@@ -149,7 +149,7 @@ export function WorkbenchCreateForm({
           <DialogDescription asChild>
             <form action={handleSubmit}>
               <Card className="w-full max-w-md border-none bg-background text-white">
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <CardTitle>Start Session</CardTitle>
                   <CardDescription>Start a new session.</CardDescription>
                 </CardHeader>
@@ -372,7 +372,7 @@ export function WorkbenchUpdateForm({
         </DialogHeader>
         <form action={handleSubmit}>
           <Card className="w-full max-w-md border-none bg-background text-white">
-            <CardHeader>
+            <CardHeader className="pb-4">
               <CardTitle>Update Session</CardTitle>
               <CardDescription>Update your session settings.</CardDescription>
             </CardHeader>

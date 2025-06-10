@@ -28,7 +28,7 @@ export default function Layout({
           >
             {workspace ? (
               params?.workspaceId === user?.workspaceId ? (
-                'Home'
+                'Private Workspace'
               ) : (
                 workspace.shortName
               )

@@ -25,6 +25,9 @@ export default function WorkspacesPage() {
   const { user } = useAuth()
 
   const [createOpen, setCreateOpen] = useState(false)
+  const myWorkspaces = workspaces?.filter(
+    (workspace) => workspace.id !== user?.workspaceId
+  )
 
   return (
     <>
@@ -80,20 +83,20 @@ export default function WorkspacesPage() {
             </div>
           </div>
           <TabsContent value="mine" className="border-none">
-            {!workspaces && (
+            {!myWorkspaces && (
               <span className="animate-pulse text-muted">
                 Loading workspaces...
               </span>
             )}
             {showWorkspacesTable ? (
               <WorkspaceTable
-                workspaces={workspaces}
+                workspaces={myWorkspaces}
                 user={user}
                 onUpdate={refreshWorkspaces}
               />
             ) : (
               <WorkspacesGrid
-                workspaces={workspaces}
+                workspaces={myWorkspaces}
                 workbenches={workbenches}
                 user={user}
                 onUpdate={refreshWorkspaces}
@@ -103,13 +106,13 @@ export default function WorkspacesPage() {
           <TabsContent value="all">
             {showWorkspacesTable ? (
               <WorkspaceTable
-                workspaces={workspaces}
+                workspaces={myWorkspaces}
                 user={user}
                 onUpdate={refreshWorkspaces}
               />
             ) : (
               <WorkspacesGrid
-                workspaces={workspaces}
+                workspaces={myWorkspaces}
                 workbenches={workbenches}
                 user={user}
                 onUpdate={refreshWorkspaces}
