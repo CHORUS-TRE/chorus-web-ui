@@ -23,15 +23,15 @@ export interface ConfigurationParameters {
   password?: string // parameter for basic security
   apiKey?: string | ((name: string) => string) // parameter for apiKey security
   accessToken?:
-    | string
-    | Promise<string>
-    | ((name?: string, scopes?: string[]) => string | Promise<string>) // parameter for oauth2 security
+  | string
+  | Promise<string>
+  | ((name?: string, scopes?: string[]) => string | Promise<string>) // parameter for oauth2 security
   headers?: HTTPHeaders //header params we want to use on every request
   credentials?: RequestCredentials //value for the credentials param we want to use on each request
 }
 
 export class Configuration {
-  constructor(private configuration: ConfigurationParameters = {}) {}
+  constructor(private configuration: ConfigurationParameters = {}) { }
 
   set config(configuration: Configuration) {
     this.configuration = configuration
@@ -156,6 +156,37 @@ export class BaseAPI {
     if (response && response.status >= 200 && response.status < 300) {
       return response
     }
+
+    // Build curl command
+    let curlCommand = `curl -X ${init.method} '${url}'`
+
+    if (init.headers) {
+      Object.entries(init.headers).forEach(([key, value]) => {
+        curlCommand += ` -H '${key}: ${value}'`
+      })
+    }
+
+    if (init.body) {
+      const bodyStr =
+        typeof init.body === 'string' ? init.body : JSON.stringify(init.body)
+      curlCommand += ` -d '${bodyStr}'`
+    }
+
+    // log request
+    console.log('\n')
+    console.log(curlCommand)
+    console.log('\n')
+
+    const errorBody = await response.json().catch(() => null)
+    const errorMessage =
+      errorBody?.message || errorBody?.error || response.statusText
+    console.error('API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorMessage,
+      details: errorBody
+    })
+
     throw new ResponseError(response, 'Response returned an error code')
   }
 
@@ -256,6 +287,10 @@ export class BaseAPI {
       }
       if (response === undefined) {
         if (e instanceof Error) {
+          console.error('API Error:', {
+            error: e?.message,
+          })
+
           throw new FetchError(
             e,
             'The request failed and the interceptors did not return an alternative response'
@@ -350,13 +385,13 @@ export type HTTPMethod =
 export type HTTPHeaders = { [key: string]: string }
 export type HTTPQuery = {
   [key: string]:
-    | string
-    | number
-    | null
-    | boolean
-    | Array<string | number | null | boolean>
-    | Set<string | number | null | boolean>
-    | HTTPQuery
+  | string
+  | number
+  | null
+  | boolean
+  | Array<string | number | null | boolean>
+  | Set<string | number | null | boolean>
+  | HTTPQuery
 }
 export type HTTPBody = Json | FormData | URLSearchParams
 export type HTTPRequestInit = {
@@ -494,7 +529,7 @@ export class JSONApiResponse<T> {
   constructor(
     public raw: Response,
     private transformer: ResponseTransformer<T> = (jsonValue: any) => jsonValue
-  ) {}
+  ) { }
 
   async value(): Promise<T> {
     return this.transformer(await this.raw.json())
@@ -502,7 +537,7 @@ export class JSONApiResponse<T> {
 }
 
 export class VoidApiResponse {
-  constructor(public raw: Response) {}
+  constructor(public raw: Response) { }
 
   async value(): Promise<void> {
     return undefined
@@ -510,7 +545,7 @@ export class VoidApiResponse {
 }
 
 export class BlobApiResponse {
-  constructor(public raw: Response) {}
+  constructor(public raw: Response) { }
 
   async value(): Promise<Blob> {
     return await this.raw.blob()
@@ -518,7 +553,7 @@ export class BlobApiResponse {
 }
 
 export class TextApiResponse {
-  constructor(public raw: Response) {}
+  constructor(public raw: Response) { }
 
   async value(): Promise<string> {
     return await this.raw.text()
