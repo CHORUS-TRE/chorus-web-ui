@@ -1,3 +1,10 @@
+# [1.0.0-alpha.41](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.40...v1.0.0-alpha.41) (2025-06-10)
+
+
+### Features
+
+* **api:** improve error handling and logging in BaseAPI class ([a3ba2fd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a3ba2fdc4898b59fa9e376eb488f0f625797782f))
+
 # [1.0.0-alpha.40](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0-alpha.39...v1.0.0-alpha.40) (2025-06-04)
 
 
