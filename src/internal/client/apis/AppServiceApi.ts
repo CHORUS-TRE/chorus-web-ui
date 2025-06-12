@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import * as runtime from '../runtime'
 import type {
   ChorusApp,
   ChorusCreateAppReply,
@@ -19,18 +20,27 @@ import type {
   ChorusGetAppReply,
   ChorusListAppsReply,
   ChorusUpdateAppReply,
-  ChorusUpdateAppRequest
+  ChorusUpdateAppRequest,
+  RpcStatus
 } from '../models/index'
 import {
+  ChorusAppFromJSON,
   ChorusAppToJSON,
   ChorusCreateAppReplyFromJSON,
+  ChorusCreateAppReplyToJSON,
   ChorusDeleteAppReplyFromJSON,
+  ChorusDeleteAppReplyToJSON,
   ChorusGetAppReplyFromJSON,
+  ChorusGetAppReplyToJSON,
   ChorusListAppsReplyFromJSON,
+  ChorusListAppsReplyToJSON,
   ChorusUpdateAppReplyFromJSON,
-  ChorusUpdateAppRequestToJSON
+  ChorusUpdateAppReplyToJSON,
+  ChorusUpdateAppRequestFromJSON,
+  ChorusUpdateAppRequestToJSON,
+  RpcStatusFromJSON,
+  RpcStatusToJSON
 } from '../models/index'
-import * as runtime from '../runtime'
 
 export interface AppServiceCreateAppRequest {
   body: ChorusApp

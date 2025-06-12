@@ -511,6 +511,257 @@ paths:
       tags:
         - AuthenticationService
       security: []
+  /api/rest/v1/authentication/logout:
+    post:
+      summary: Logout
+      description: This endpoint logs out a user
+      operationId: AuthenticationService_Logout
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusLogoutReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/chorusLogoutRequest'
+      tags:
+        - AuthenticationService
+  /api/rest/v1/authentication/modes:
+    get:
+      summary: Get list of possible way to authenticate
+      description: This endpoint list all the way the backend accept authentication
+      operationId: AuthenticationService_GetAuthenticationModes
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusGetAuthenticationModesReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - AuthenticationService
+      security: []
+  /api/rest/v1/authentication/oauth2/{id}/login:
+    get:
+      summary: Authenticate using Auth 2.0
+      description: This endpoint redirects a user to a configured oauth2 provider
+      operationId: AuthenticationService_AuthenticateOauth
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusAuthenticateOauthReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - AuthenticationService
+      security: []
+  /api/rest/v1/authentication/oauth2/{id}/redirect:
+    get:
+      summary: Authenticate redirect using Auth 2.0
+      description: This endpoint is called by the provider after auth for the backend to retrieve the user profile
+      operationId: AuthenticationService_AuthenticateOauthRedirect
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusAuthenticateOauthRedirectReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: state
+          in: query
+          required: false
+          type: string
+        - name: sessionState
+          in: query
+          required: false
+          type: string
+        - name: code
+          in: query
+          required: false
+          type: string
+      tags:
+        - AuthenticationService
+      security: []
+    post:
+      summary: Authenticate redirect using Auth 2.0
+      description: This endpoint is called by the provider after auth for the backend to retrieve the user profile
+      operationId: AuthenticationService_AuthenticateOauthRedirect2
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusAuthenticateOauthRedirectReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthenticationServiceAuthenticateOauthRedirectBody'
+      tags:
+        - AuthenticationService
+      security: []
+  /api/rest/v1/authentication/refresh-token:
+    post:
+      summary: Refresh token
+      description: This endpoint refreshes a user token
+      operationId: AuthenticationService_RefreshToken
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusAuthenticationReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/chorusRefreshTokenRequest'
+      tags:
+        - AuthenticationService
   /api/rest/v1/health:
     get:
       summary: Get health check
@@ -1586,6 +1837,15 @@ paths:
       tags:
         - WorkspaceService
 definitions:
+  AuthenticationServiceAuthenticateOauthRedirectBody:
+    type: object
+    properties:
+      state:
+        type: string
+      sessionState:
+        type: string
+      code:
+        type: string
   UserServiceResetPasswordBody:
     type: object
   chorusApp:
@@ -1606,9 +1866,29 @@ definitions:
         type: string
       status:
         type: string
+      dockerImageRegistry:
+        type: string
       dockerImageName:
         type: string
       dockerImageTag:
+        type: string
+      shmSize:
+        type: string
+      kioskConfigURL:
+        type: string
+      maxCPU:
+        type: string
+      minCPU:
+        type: string
+      maxMemory:
+        type: string
+      minMemory:
+        type: string
+      maxEphemeralStorage:
+        type: string
+      minEphemeralStorage:
+        type: string
+      iconURL:
         type: string
       createdAt:
         type: string
@@ -1641,12 +1921,51 @@ definitions:
         format: uint64
       status:
         type: string
+      initialResolutionWidth:
+        type: integer
+        format: int64
+      initialResolutionHeight:
+        type: integer
+        format: int64
       createdAt:
         type: string
         format: date-time
       updatedAt:
         type: string
         format: date-time
+  chorusAuthenticateOauthRedirectReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusAuthenticateOauthRedirectResult'
+  chorusAuthenticateOauthRedirectResult:
+    type: object
+    properties:
+      token:
+        type: string
+  chorusAuthenticateOauthReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusAuthenticateOauthResult'
+  chorusAuthenticateOauthResult:
+    type: object
+    properties:
+      redirectURI:
+        type: string
+  chorusAuthenticationMode:
+    type: object
+    properties:
+      type:
+        type: string
+      internal:
+        $ref: '#/definitions/chorusInternal'
+      openid:
+        $ref: '#/definitions/chorusOpenID'
+      ButtonText:
+        type: string
+      IconURL:
+        type: string
   chorusAuthenticationReply:
     type: object
     properties:
@@ -1796,6 +2115,14 @@ definitions:
     properties:
       app:
         $ref: '#/definitions/chorusApp'
+  chorusGetAuthenticationModesReply:
+    type: object
+    properties:
+      result:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/chorusAuthenticationMode'
   chorusGetHealthCheckReply:
     type: object
   chorusGetNotificationsReply:
@@ -1864,6 +2191,11 @@ definitions:
       tenantId:
         type: string
         format: uint64
+  chorusInternal:
+    type: object
+    properties:
+      publicRegistrationEnabled:
+        type: boolean
   chorusListAppInstancesReply:
     type: object
     properties:
@@ -1896,6 +2228,13 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/chorusWorkspace'
+  chorusLogoutReply:
+    type: object
+    properties:
+      redirectURL:
+        type: string
+  chorusLogoutRequest:
+    type: object
   chorusMarkNotificationsAsReadRequest:
     type: object
     properties:
@@ -1921,6 +2260,11 @@ definitions:
       readAt:
         type: string
         format: date-time
+  chorusOpenID:
+    type: object
+    properties:
+      id:
+        type: string
   chorusPaginationQuery:
     type: object
     properties:
@@ -1943,6 +2287,8 @@ definitions:
         x-example:
           - user_id=9999
           - status=STATUS_CREATED,STATUS_CLOSED
+  chorusRefreshTokenRequest:
+    type: object
   chorusResetPasswordReply:
     type: object
     properties:
@@ -2063,6 +2409,8 @@ definitions:
         type: string
       username:
         type: string
+      source:
+        type: string
       password:
         type: string
       status:
@@ -2104,6 +2452,12 @@ definitions:
         type: string
       status:
         type: string
+      initialResolutionWidth:
+        type: integer
+        format: int64
+      initialResolutionHeight:
+        type: integer
+        format: int64
       appInsanceIds:
         type: array
         items:

@@ -1,14 +1,13 @@
-'use server'
+'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
+import React from 'react'
 
-import { workbenchList } from '@/components/actions/workbench-view-model'
-
+import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
 import {
   Card,
   CardContent,
@@ -19,11 +18,8 @@ import {
 } from '~/components/ui/card'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
@@ -34,178 +30,221 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Workbench } from '~/domain/model'
 
-import { WorksbenchDeleteForm } from './forms/workbench-forms'
-import { Icons } from './ui/icons'
+import {
+  WorkbenchCreateForm,
+  WorkbenchDeleteForm,
+  WorkbenchUpdateForm
+} from './forms/workbench-forms'
+import { useAppState } from './store/app-state-context'
 
-import placeholder from '/public/placeholder.svg'
-
-export default async function WorkbenchTable({
-  workspaceId
+export default function WorkbenchTable({
+  workspaceId,
+  title,
+  description
 }: {
   workspaceId: string
+  title?: string
+  description?: string
+  onUpdate?: (id: string) => void
 }) {
-  const workbenches = await workbenchList()
-  const nextWorkbenches = workbenches?.data?.filter(
+  const { workbenches, refreshWorkbenches, appInstances, apps, workspaces } =
+    useAppState()
+  const { setNotification } = useAppState()
+
+  const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
   )
 
-  console.log({ workspaceId })
-
   const TableHeads = () => (
     <>
-      <TableHead className="hidden w-[100px] sm:table-cell">
-        <span className="sr-only">Image</span>
-      </TableHead>
-      <TableHead>Name</TableHead>
-      <TableHead>Status</TableHead>
-      {/* <TableHead className="hidden md:table-cell">Workspace</TableHead> */}
-      <TableHead className="hidden md:table-cell">Created at</TableHead>
-      <TableHead>
-        <span className="sr-only">Actions</span>
+      {/* <TableHead className="text-white">
+        <span className="sr-only">Session</span>
+      </TableHead> */}
+      <TableHead className="text-white">Session</TableHead>
+      <TableHead className="text-white">Running Apps</TableHead>
+      <TableHead className="hidden text-white md:table-cell">Created</TableHead>
+
+      <TableHead className="text-white">Status</TableHead>
+      <TableHead className="text-white" colSpan={2}>
+        <span className="text-white">Actions</span>
       </TableHead>
     </>
   )
 
   const TableRow = ({ workbench }: { workbench?: Workbench }) => {
-    const link = `/workspaces/${workbench?.workspaceId}/${workbench?.id}`
+    const [open, setOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
 
     return (
-      <TableRowComponent>
-        <TableCell className="hidden p-1 sm:table-cell">
-          <Link href={link}>
-            <Image
-              src={placeholder}
-              alt={workbench?.name || 'App image'}
-              width="48"
-              height="48"
-              className="aspect-square rounded-md object-cover"
-            />
-          </Link>
-        </TableCell>
-        <TableCell className="p-1 font-medium">
-          <Link
-            href={link}
-            className="text-muted hover:border-b-2 hover:border-accent [&.active]:border-b-2 [&.active]:border-accent"
+      <>
+        {workbench && open && (
+          <WorkbenchUpdateForm
+            workbench={workbench}
+            state={[open, setOpen]}
+            onUpdate={() => {
+              refreshWorkbenches()
+              setNotification({
+                title: 'Success!',
+                description: 'Session updated successfully'
+              })
+            }}
+          />
+        )}
+
+        {deleteOpen && (
+          <WorkbenchDeleteForm
+            id={workbench?.id}
+            state={[deleteOpen, setDeleteOpen]}
+            onUpdate={() => {
+              setTimeout(() => {
+                refreshWorkbenches()
+              }, 2000)
+              setNotification({
+                title: 'Success!',
+                description: `Session ${workbench?.name} in ${
+                  workspaces?.find((w) => w.id === workspaceId)?.name
+                } was deleted`,
+                variant: 'default'
+              })
+            }}
+          />
+        )}
+
+        <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+          {/* <TableCell className="p-1" align="center">
+            <MonitorPlay className="h-4 w-4" />
+          </TableCell> */}
+          <TableCell className="p-1 font-semibold">
+            <Link
+              href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
+              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+            >
+              {workbench?.shortName}
+            </Link>
+          </TableCell>
+          <TableCell className="hidden p-1 md:table-cell">
+            {appInstances
+              ?.filter((instance) => workbench?.id === instance.sessionId)
+              .map((instance, index, array) => {
+                const appName =
+                  apps?.find((app) => app.id === instance.appId)?.name || ''
+                const isLast = index === array.length - 1
+
+                return (
+                  <React.Fragment key={`app-instance-${instance.id}`}>
+                    {appName}
+                    {!isLast && ', '}
+                  </React.Fragment>
+                )
+              })}
+          </TableCell>
+          <TableCell
+            className="hidden p-1 md:table-cell"
+            title={workbench?.createdAt.toLocaleDateString()}
           >
-            {workbench?.shortName}
-          </Link>
-        </TableCell>
-        <TableCell className="p-1">
-          <Badge variant="outline">{workbench?.status}</Badge>
-        </TableCell>
-        {/* <TableCell className="p-1 font-medium">
-            {
-              workspaces?.find((w) => w?.id === workbench?.workspaceId)
-                ?.shortName
-            }
-        </TableCell> */}
-        <TableCell
-          className="hidden p-1 md:table-cell"
-          title={workbench?.createdAt.toLocaleDateString()}
-        >
-          {workbench && formatDistanceToNow(workbench?.createdAt)} ago
-        </TableCell>
-        <TableCell className="p-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button aria-haspopup="true" size="icon" variant="ghost">
-                <EllipsisVerticalIcon className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>
-                <WorksbenchDeleteForm id={workbench?.id} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TableCell>
-      </TableRowComponent>
+            {workbench && formatDistanceToNow(workbench?.createdAt)} ago
+          </TableCell>
+          <TableCell className="p-1">
+            <Badge variant="outline">{workbench?.status}</Badge>
+          </TableCell>
+          <TableCell className="p-1"></TableCell>
+          <TableCell className="p-1">
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-haspopup="true"
+                  variant="ghost"
+                  className="text-muted ring-0"
+                >
+                  <EllipsisVerticalIcon className="h-4 w-4" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black text-white">
+                {/* <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(true)
+                  }}
+                >
+                  Edit
+                </DropdownMenuItem> */}
+                <DropdownMenuItem
+                  onClick={() => setDeleteOpen(true)}
+                  className="text-red-500 focus:text-red-500"
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableCell>
+        </TableRowComponent>
+      </>
     )
   }
 
-  const CardContainer = ({ workbenches }: { workbenches?: Workbench[] }) => (
-    <Card className="border-0 border-r-0 bg-white">
-      <CardHeader>
-        <CardTitle>Apps</CardTitle>
-        <CardDescription>Your running apps</CardDescription>
-      </CardHeader>
+  const CardContainer = ({
+    workbenches,
+    title,
+    description
+  }: {
+    workbenches?: Workbench[]
+    title?: string
+    description?: string
+  }) => (
+    <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
+      {title && (
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+      )}
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRowComponent>
+            <TableRowComponent className="hover:bg-background/80">
               <TableHeads />
             </TableRowComponent>
           </TableHeader>
           <TableBody>
-            {workbenches?.map((w) => <TableRow key={w.id} workbench={w} />)}
+            {workbenches?.map((w) => (
+              <TableRow key={`workbench-table-${w.id}`} workbench={w} />
+            ))}
           </TableBody>
         </Table>
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1-10</strong> of <strong>32</strong> apps
+          Showing <strong>1-{workbenches?.length}</strong> of{' '}
+          <strong>{workbenches?.length}</strong> apps
         </div>
       </CardFooter>
     </Card>
   )
 
   return (
-    <div className="mb-8 grid flex-1 items-start gap-4 md:gap-8">
-      <Tabs defaultValue="all">
-        <div className="flex items-center">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="archived" className="hidden sm:flex">
-              Archived
-            </TabsTrigger>
-          </TabsList>
-          <div className="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <Icons.ListFilterIcon className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem checked>
-                  Active
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* <Dialog triggerText="New app">
-              <WorkbenchCreateForm />
-            </Dialog> */}
-          </div>
-        </div>
-        <TabsContent value="all">
-          <CardContainer workbenches={nextWorkbenches} />
-        </TabsContent>
-        <TabsContent value="active">
-          <CardContainer
-            workbenches={nextWorkbenches?.filter((a) => a.status === 'active')}
-          />
-        </TabsContent>
-        <TabsContent value="archived">
-          <CardContainer
-            workbenches={nextWorkbenches?.filter((a) => a.status !== 'active')}
-          />
-        </TabsContent>
-      </Tabs>
+    <div className="mb-4 grid flex-1 items-start gap-4">
+      <div className="flex items-center justify-end">
+        <WorkbenchCreateForm
+          workspaceId={workspaceId}
+          // onSuccess={(sessionId) => {
+          //   refreshWorkbenches()
+          //   setNotification({
+          //     title: 'Success!',
+          //     description: 'Session created successfully'
+          //   })
+          //   setBackground({ sessionId, workspaceId })
+          //   if (onUpdate) onUpdate(sessionId)
+          // }}
+        />
+      </div>
+      <CardContainer
+        workbenches={filteredWorkbenches}
+        title={title}
+        description={description}
+      />
     </div>
   )
 }

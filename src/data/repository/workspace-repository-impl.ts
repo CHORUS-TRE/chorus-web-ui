@@ -3,7 +3,8 @@ import {
   WorkspaceCreateModel,
   WorkspaceDeleteResponse,
   WorkspaceResponse,
-  WorkspacesResponse
+  WorkspacesResponse,
+  WorkspaceUpdateModel
 } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 
@@ -22,7 +23,8 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       const w = await this.dataSource.get(response)
       return { data: w }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error creating workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -33,31 +35,45 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
   async delete(id: string): Promise<WorkspaceDeleteResponse> {
     try {
       const data = await this.dataSource.delete(id)
-      if (!data) return { error: 'Error deleting workbench' }
+      if (!data) return { error: 'Error deleting workspace' }
 
       return { data: true }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error deleting workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
   async list(): Promise<WorkspacesResponse> {
     try {
       const data = await this.dataSource.list()
-
       if (!data) return { data: [] }
 
       return { data }
     } catch (error) {
-      return { data: [], error: error.message }
+      console.error('Error listing workspaces', error)
+      return {
+        data: [],
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async update(workspace: WorkspaceUpdateModel): Promise<WorkspaceResponse> {
+    try {
+      const data = await this.dataSource.update(workspace)
+      return { data }
+    } catch (error) {
+      console.error('Error updating workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

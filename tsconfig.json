@@ -1,36 +1,21 @@
 {
   "compilerOptions": {
-    /* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    /* Strictness */
+    "skipLibCheck": true,
     "strict": true,
-    "useUnknownInCatchVariables": false,
-    "noUncheckedIndexedAccess": true,
-    "checkJs": true,
-    /* Bundled projects */
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ES2022"
-    ],
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "incremental": true,
-    /* Path Aliases */
     "baseUrl": ".",
+    "types": ["@testing-library/jest-dom"],
     "paths": {
       "~/*": [
         "./src/*"
@@ -39,31 +24,18 @@
         "./src/*"
       ]
     },
-    "allowSyntheticDefaultImports": true,
-    "declaration": true
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    ".eslintrc.json",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.cjs",
-    "**/*.js",
-    ".next/types/**/*.ts",
-    "vitest.config.ts"
+    "types.d.ts",
+    ".next/types/**/*.ts"
   ],
-  "module": "esnext",
-  "moduleResolution": "bundler",
-  "baseUrl": "./",
-  "paths": {
-    "@/*": [
-      "src/*"
-    ],
-    "~/*": [
-      "src/*"
-    ]
-  },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

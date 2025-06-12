@@ -2,33 +2,33 @@
 
 import { cookies } from 'next/headers'
 
-import { env } from '@/env'
-
 import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
-import { UserLocalStorageDataSourceImpl } from '~/data/data-source/local-storage/user-local-storage-data-source-impl'
 import { UserRepositoryImpl } from '~/data/repository'
 import { UserResponse } from '~/domain/model'
 import { UserCreateSchema } from '~/domain/model/user'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
+import { UserGet } from '~/domain/use-cases/user/user-get'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 
 import { IFormState } from './utils'
 
+const getRepository = async () => {
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
+  const dataSource = new UserApiDataSourceImpl(session)
+
+  return new UserRepositoryImpl(dataSource)
+}
+
 export async function userMe(): Promise<UserResponse> {
   try {
-    const session = cookies().get('session')?.value || ''
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await UserLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new UserApiDataSourceImpl(session)
-    const userRepository = new UserRepositoryImpl(dataSource)
+    const userRepository = await getRepository()
     const useCase = new UserMe(userRepository)
 
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -37,13 +37,7 @@ export async function userCreate(
   formData: FormData
 ): Promise<IFormState> {
   try {
-    const dataSource =
-      env.DATA_SOURCE === 'local'
-        ? await UserLocalStorageDataSourceImpl.getInstance(
-            env.DATA_SOURCE_LOCAL_DIR
-          )
-        : new UserApiDataSourceImpl('')
-    const userRepository = new UserRepositoryImpl(dataSource)
+    const userRepository = await getRepository()
     const useCase = new UserCreate(userRepository)
 
     const user = {
@@ -59,10 +53,27 @@ export async function userCreate(
     }
 
     const nextUser = UserCreateSchema.parse(user)
-    const u = await useCase.execute(nextUser)
+    const result = await useCase.execute(nextUser)
+
+    if (result.error) {
+      return { error: result.error }
+    }
 
     return { data: nextUser.email }
   } catch (error) {
-    return { error: error.message }
+    console.error('Error creating user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function userGet(id: string): Promise<UserResponse> {
+  try {
+    const userRepository = await getRepository()
+    const useCase = new UserGet(userRepository)
+
+    return await useCase.execute(id)
+  } catch (error) {
+    console.error('Error getting user', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

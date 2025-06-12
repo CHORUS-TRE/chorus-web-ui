@@ -48,6 +48,12 @@ export interface ChorusUser {
    * @type {string}
    * @memberof ChorusUser
    */
+  source?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusUser
+   */
   password?: string
   /**
    *
@@ -112,6 +118,7 @@ export function ChorusUserFromJSONTyped(
     firstName: !exists(json, 'firstName') ? undefined : json['firstName'],
     lastName: !exists(json, 'lastName') ? undefined : json['lastName'],
     username: !exists(json, 'username') ? undefined : json['username'],
+    source: !exists(json, 'source') ? undefined : json['source'],
     password: !exists(json, 'password') ? undefined : json['password'],
     status: !exists(json, 'status') ? undefined : json['status'],
     roles: !exists(json, 'roles') ? undefined : json['roles'],
@@ -140,6 +147,7 @@ export function ChorusUserToJSON(value?: ChorusUser | null): any {
     firstName: value.firstName,
     lastName: value.lastName,
     username: value.username,
+    source: value.source,
     password: value.password,
     status: value.status,
     roles: value.roles,

@@ -13,10 +13,25 @@ export const WorkbenchCreateSchema = z.object({
   tenantId: z.string(),
   ownerId: z.string(),
   workspaceId: z.string(),
-  name: z.string().optional(),
+  name: z.string(),
   description: z.string().optional(),
   memberIds: z.array(z.string()).optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
+})
+
+export const WorkbenchUpdateSchema = z.object({
+  id: z.string(),
+  tenantId: z.string(),
+  ownerId: z.string(),
+  workspaceId: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  memberIds: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export const WorkbenchSchema = WorkbenchCreateSchema.extend({
@@ -39,9 +54,9 @@ export const WorkbenchSchema = WorkbenchCreateSchema.extend({
   // edges: z.array(EdgeSchema).optional(),
 })
 
-export type WorkbenchCreate = z.infer<typeof WorkbenchCreateSchema>
 export type Workbench = z.infer<typeof WorkbenchSchema>
-
+export type WorkbenchCreateModel = z.infer<typeof WorkbenchCreateSchema>
+export type WorkbenchUpdateModel = z.infer<typeof WorkbenchUpdateSchema>
 export interface WorkbenchResponse {
   data?: Workbench
   error?: string

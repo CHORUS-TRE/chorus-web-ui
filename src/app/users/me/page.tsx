@@ -1,35 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
-import { userMe } from '~/components/actions/user-view-model'
+import { useAuth } from '~/components/store/auth-context'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { UserResponse } from '~/domain/model'
 
 export default function Me() {
-  const [user, setUser] = useState<UserResponse['data']>()
-  const [error, setError] = useState<UserResponse['error']>()
-
-  useEffect(() => {
-    try {
-      userMe()
-        .then((response) => {
-          if (response?.error) setError(response.error)
-          if (response?.data) setUser(response?.data)
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
-    } catch (error) {
-      setError(error.message)
-    }
-  }, [])
+  const { user } = useAuth()
 
   return (
     <div className="grid gap-6">
-      {error && <p className="mt-4 text-red-500">{error}</p>}
       {user && (
-        <Card>
+        <Card className="w-full bg-black text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl">Profile</CardTitle>
           </CardHeader>

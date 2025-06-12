@@ -1,9 +1,10 @@
 import { WorkbenchDataSource } from '@/data/data-source'
 import {
-  WorkbenchCreate as WorkbenchCreateModel,
+  WorkbenchCreateModel,
   WorkbenchDeleteResponse,
   WorkbenchesResponse,
-  WorkbenchResponse
+  WorkbenchResponse,
+  WorkbenchUpdateModel
 } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
@@ -23,7 +24,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data: w }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error creating workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -34,7 +36,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -45,7 +48,8 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data: true }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error deleting workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -57,8 +61,18 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data }
     } catch (error) {
-      console.error(error)
-      return { error: error.message }
+      console.error('Error listing workbenches', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async update(workbench: WorkbenchUpdateModel): Promise<WorkbenchResponse> {
+    try {
+      const data = await this.dataSource.update(workbench)
+      return { data }
+    } catch (error) {
+      console.error('Error updating workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

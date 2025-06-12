@@ -1,4 +1,4 @@
-import { WorkspaceResponse } from '@/domain/model/workspace'
+import { WorkspaceResponse } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 
 export interface WorkspaceGetUseCase {

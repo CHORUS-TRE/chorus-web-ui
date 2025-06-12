@@ -10,8 +10,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 213 15% 14%;
+    --foreground: 214 32% 91%%;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -25,12 +25,12 @@
     --secondary: 240 75% 84.3%;
     --secondary-foreground: 229 100% 54%; /* Using primary color for contrast */
 
-    --muted: 215, 20%, 65%;
+    --muted: 217 20% 65%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 73.8 100% 54.3%;
+    --accent: 73.8 100% 54.3%; /* #b6ff12 */
     --accent-foreground: 229 100% 54%;
-    --accent-background: 240 75% 84.3%;
+    --accent-background: 80 100% 45%; /* #99e600 */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 100% 100%;
@@ -54,11 +54,11 @@
 
 @layer utilities {
   h1 {
-    @apply text-6xl font-medium tracking-tight;
+    @apply text-5xl font-medium tracking-tight;
   }
 
   h2 {
-    @apply text-3xl font-bold tracking-tight;
+    @apply border-b border-dotted border-muted pb-2 text-4xl font-medium leading-10;
   }
 
   h3 {
@@ -69,8 +69,16 @@
     @apply text-xl font-medium tracking-tight;
   }
 
+  h5 {
+    @apply text-xl font-medium tracking-tight text-muted;
+  }
+
   p {
     @apply text-base font-normal;
+  }
+
+  .nav-link {
+    @apply bg-transparent text-sm font-semibold text-muted;
   }
 
   .blur-soft {
@@ -86,6 +94,19 @@
   .b3 {
     @apply border border-l-rose-400;
   }
+}
+
+nav li {
+  list-style: none;
+}
+
+.RaLayout-appFrame {
+  margin-top: 0px !important;
+}
+
+.RaSidebar-docked,
+.RaSidebar-closed {
+  display: none !important;
 }
 
 /* .flex {

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { UrlObject } from 'url'
 
 export default function NavLink({
   href,
@@ -20,7 +21,11 @@ export default function NavLink({
   const newClassName = isActive ? `${className} active` : className
 
   return (
-    <Link href={href} className={newClassName} {...props}>
+    <Link
+      href={href as unknown as UrlObject}
+      className={newClassName}
+      {...props}
+    >
       {children}
     </Link>
   )
