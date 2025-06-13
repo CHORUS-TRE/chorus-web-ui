@@ -269,3 +269,11 @@ The project provides utility functions for testing in `src/utils/test-utils.tsx`
 ### Testing Documentation
 
 For more detailed information about our testing strategy, including best practices and examples, see the [Testing Strategy Documentation](./docs/testing-strategy.md).
+
+## License and Usage Restrictions
+
+Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from [CHUV](mailto:pactt.legal@chuv.ch).
+
+## Acknowledgments
+
+This project has received funding from the Swiss State Secretariat for Education, Research and Innovation (SERI) under contract number 23.00638, as part of the Horizon Europe project “EBRAINS 2.0”.
