@@ -277,4 +277,3 @@ Any use of the software for purposes other than academic research, including for
 ## Acknowledgments
 
 This project has received funding from the Swiss State Secretariat for Education, Research and Innovation (SERI) under contract number 23.00638, as part of the Horizon Europe project “EBRAINS 2.0”.
-
