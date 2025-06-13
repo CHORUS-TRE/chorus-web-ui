@@ -6,7 +6,7 @@ export const AppInstanceSchema = z.object({
   ownerId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  workbenchId: z.string(),
+  sessionId: z.string(),
   status: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -20,7 +20,7 @@ export const AppInstanceCreateSchema = z.object({
   ownerId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  workbenchId: z.string(),
+  sessionId: z.string(),
   status: z.string()
 })
 
@@ -29,4 +29,18 @@ export type AppInstanceCreateModel = z.infer<typeof AppInstanceCreateSchema>
 export interface AppInstanceResponse {
   data?: AppInstance
   error?: string
+}
+
+export interface AppInstanceDeleteResponse {
+  data?: boolean
+  error?: string
+}
+
+export interface AppInstancesResponse {
+  data?: AppInstance[]
+  error?: string
+}
+
+export interface AppInstanceUpdateModel extends AppInstanceCreateModel {
+  id: string
 }

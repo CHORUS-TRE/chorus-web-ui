@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/AppInstanceServiceApi.ts
 apis/AppServiceApi.ts
 apis/AuthenticationServiceApi.ts
@@ -10,8 +9,14 @@ apis/WorkbenchServiceApi.ts
 apis/WorkspaceServiceApi.ts
 apis/index.ts
 index.ts
+models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
+models/ChorusAuthenticateOauthRedirectReply.ts
+models/ChorusAuthenticateOauthRedirectResult.ts
+models/ChorusAuthenticateOauthReply.ts
+models/ChorusAuthenticateOauthResult.ts
+models/ChorusAuthenticationMode.ts
 models/ChorusAuthenticationReply.ts
 models/ChorusAuthenticationResult.ts
 models/ChorusCountUnreadNotificationsReply.ts
@@ -37,6 +42,7 @@ models/ChorusGetAppInstanceReply.ts
 models/ChorusGetAppInstanceResult.ts
 models/ChorusGetAppReply.ts
 models/ChorusGetAppResult.ts
+models/ChorusGetAuthenticationModesReply.ts
 models/ChorusGetNotificationsReply.ts
 models/ChorusGetUserMeReply.ts
 models/ChorusGetUserMeResult.ts
@@ -48,12 +54,15 @@ models/ChorusGetWorkbenchResult.ts
 models/ChorusGetWorkspaceReply.ts
 models/ChorusGetWorkspaceResult.ts
 models/ChorusInitializeTenantRequest.ts
+models/ChorusInternal.ts
 models/ChorusListAppInstancesReply.ts
 models/ChorusListAppsReply.ts
 models/ChorusListWorkbenchsReply.ts
 models/ChorusListWorkspacesReply.ts
+models/ChorusLogoutReply.ts
 models/ChorusMarkNotificationsAsReadRequest.ts
 models/ChorusNotification.ts
+models/ChorusOpenID.ts
 models/ChorusPaginationQuery.ts
 models/ChorusResetPasswordReply.ts
 models/ChorusResetTotpReply.ts

@@ -1,5 +1,11 @@
 import { AppInstanceDataSource } from '@/data/data-source'
-import { AppInstanceCreateModel, AppInstanceResponse } from '@/domain/model'
+import {
+  AppInstanceCreateModel,
+  AppInstanceDeleteResponse,
+  AppInstanceResponse,
+  AppInstancesResponse,
+  AppInstanceUpdateModel
+} from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 
 export class AppInstanceRepositoryImpl implements AppInstanceRepository {
@@ -20,7 +26,8 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       return { data: w }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error creating appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
@@ -31,7 +38,47 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       return { data }
     } catch (error) {
-      return { error: error.message }
+      console.error('Error getting appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async delete(id: string): Promise<AppInstanceDeleteResponse> {
+    try {
+      const data = await this.dataSource.delete(id)
+      if (!data) return { error: 'Error deleting app instance' }
+
+      return { data: true }
+    } catch (error) {
+      console.error('Error deleting appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async list(): Promise<AppInstancesResponse> {
+    try {
+      const data = await this.dataSource.list()
+      if (!data) return { data: [] }
+
+      return { data }
+    } catch (error) {
+      console.error('Error listing appInstances', error)
+      return {
+        data: [],
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async update(
+    appInstance: AppInstanceUpdateModel
+  ): Promise<AppInstanceResponse> {
+    try {
+      const data = await this.dataSource.update(appInstance)
+      return { data }
+    } catch (error) {
+      console.error('Error updating appInstance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 }

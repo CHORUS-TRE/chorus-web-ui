@@ -1,3 +1,4 @@
+import { env } from 'next-runtime-env'
 import { z } from 'zod'
 
 import { UserDataSource } from '@/data/data-source'
@@ -10,8 +11,6 @@ import {
 } from '@/domain/model/user'
 import { ChorusUser as ChorusUserApi, Configuration } from '@/internal/client'
 import { UserServiceApi } from '@/internal/client/apis'
-
-import { env } from '~/env'
 
 const ChorusUserApiSchema = z.object({
   id: z.string().optional(),
@@ -26,7 +25,7 @@ const ChorusUserApiSchema = z.object({
   totpEnabled: z.boolean().optional()
 })
 
-const apiToDomain = (user: ChorusUserApi): User => {
+const apiToDomain = (user: ChorusUserApi & { workspaceId?: string }): User => {
   return {
     id: user.id || '',
     firstName: user.firstName || '',
@@ -37,7 +36,12 @@ const apiToDomain = (user: ChorusUserApi): User => {
     createdAt: new Date(user.createdAt || ''),
     updatedAt: new Date(user.updatedAt || ''),
     passwordChanged: user.passwordChanged || false,
-    totpEnabled: user.totpEnabled || false
+    totpEnabled: user.totpEnabled || false,
+    workspaceId:
+      user.workspaceId ||
+      env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+      localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+      undefined
   }
 }
 
@@ -48,7 +52,7 @@ class UserApiDataSourceImpl implements UserDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: env('DATA_SOURCE_API_URL')
     })
     this.service = new UserServiceApi(this.configuration)
   }

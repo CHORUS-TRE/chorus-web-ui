@@ -1,8 +1,7 @@
-import * as React from 'react'
+import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { cva } from 'class-variance-authority'
 import { ChevronDown } from 'lucide-react'
-
-import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
+import * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
@@ -42,7 +41,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50'
+  'border-b-2 border-transparent text-muted hover:border-b-2 hover:border-accent bg-transparent text-sm font-semibold text-muted inline-flex w-max items-center transition-colors justify-center data-[active]:border-accent data-[active]:border-b-2 data-[state=open]:border-accent'
 )
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -116,7 +115,40 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
+// Add the ListItem component
+const ListItem = React.forwardRef<
+  React.ElementRef<'a'>,
+  React.ComponentPropsWithoutRef<'a'> & {
+    title?: string
+    wrapWithLi?: boolean
+  }
+>(({ className, title, children, wrapWithLi = true, ...props }, ref) => {
+  const content = (
+    <NavigationMenuLink asChild>
+      <a
+        ref={ref}
+        className={cn(
+          'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+          className
+        )}
+        {...props}
+      >
+        {title && <p className="text-sm font-medium leading-none">{title}</p>}
+        {children}
+      </a>
+    </NavigationMenuLink>
+  )
+
+  if (wrapWithLi) {
+    return <li>{content}</li>
+  }
+
+  return content
+})
+ListItem.displayName = 'ListItem'
+
 export {
+  ListItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuIndicator,

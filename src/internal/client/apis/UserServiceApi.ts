@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import * as runtime from '../runtime'
 import type {
   ChorusCreateUserReply,
   ChorusDeleteUserReply,
@@ -27,26 +28,43 @@ import type {
   ChorusUpdatePasswordRequest,
   ChorusUpdateUserReply,
   ChorusUpdateUserRequest,
-  ChorusUser
+  ChorusUser,
+  RpcStatus
 } from '../models/index'
 import {
   ChorusCreateUserReplyFromJSON,
+  ChorusCreateUserReplyToJSON,
   ChorusDeleteUserReplyFromJSON,
+  ChorusDeleteUserReplyToJSON,
   ChorusEnableTotpReplyFromJSON,
+  ChorusEnableTotpReplyToJSON,
+  ChorusEnableTotpRequestFromJSON,
   ChorusEnableTotpRequestToJSON,
   ChorusGetUserMeReplyFromJSON,
+  ChorusGetUserMeReplyToJSON,
   ChorusGetUserReplyFromJSON,
+  ChorusGetUserReplyToJSON,
   ChorusGetUsersReplyFromJSON,
+  ChorusGetUsersReplyToJSON,
   ChorusResetPasswordReplyFromJSON,
+  ChorusResetPasswordReplyToJSON,
   ChorusResetTotpReplyFromJSON,
+  ChorusResetTotpReplyToJSON,
+  ChorusResetTotpRequestFromJSON,
   ChorusResetTotpRequestToJSON,
   ChorusUpdatePasswordReplyFromJSON,
+  ChorusUpdatePasswordReplyToJSON,
+  ChorusUpdatePasswordRequestFromJSON,
   ChorusUpdatePasswordRequestToJSON,
   ChorusUpdateUserReplyFromJSON,
+  ChorusUpdateUserReplyToJSON,
+  ChorusUpdateUserRequestFromJSON,
   ChorusUpdateUserRequestToJSON,
-  ChorusUserToJSON
+  ChorusUserFromJSON,
+  ChorusUserToJSON,
+  RpcStatusFromJSON,
+  RpcStatusToJSON
 } from '../models/index'
-import * as runtime from '../runtime'
 
 export interface UserServiceCreateUserRequest {
   body: ChorusUser

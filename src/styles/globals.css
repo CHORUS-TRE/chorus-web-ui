@@ -58,11 +58,11 @@
   }
 
   h2 {
-    @apply text-4xl font-medium leading-10;
+    @apply border-b border-dotted border-muted pb-2 text-4xl font-medium leading-10;
   }
 
   h3 {
-    @apply border-b border-dotted border-muted pb-2 text-2xl font-medium tracking-tight;
+    @apply text-2xl font-medium tracking-tight;
   }
 
   h4 {
@@ -94,6 +94,19 @@
   .b3 {
     @apply border border-l-rose-400;
   }
+}
+
+nav li {
+  list-style: none;
+}
+
+.RaLayout-appFrame {
+  margin-top: 0px !important;
+}
+
+.RaSidebar-docked,
+.RaSidebar-closed {
+  display: none !important;
 }
 
 /* .flex {

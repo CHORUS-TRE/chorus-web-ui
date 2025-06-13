@@ -1,17 +1,18 @@
+import { env } from 'next-runtime-env'
 import { z } from 'zod'
 
 import { WorkbenchDataSource } from '@/data/data-source/'
 import {
   Workbench,
-  WorkbenchCreate as WorkbenchCreateModel
+  WorkbenchCreateModel,
+  WorkbenchUpdateModel
 } from '@/domain/model'
 import {
   WorkbenchCreateSchema,
   WorkbenchSchema,
-  WorkbenchState
+  WorkbenchState,
+  WorkbenchUpdateSchema
 } from '@/domain/model/workbench'
-
-import { env } from '~/env'
 import {
   ChorusWorkbench as ChorusWorkbenchApi,
   WorkbenchServiceApi
@@ -28,7 +29,9 @@ export const WorkbenchApiCreateSchema = z.object({
   userId: z.string(),
   appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
-  workspaceId: z.string().optional()
+  workspaceId: z.string().optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export const WorkbenchApiSchema = WorkbenchApiCreateSchema.extend({
@@ -43,6 +46,8 @@ const apiToDomain = (w: ChorusWorkbenchApi): Workbench => {
     name: w.name || '',
     shortName: w.shortName || '',
     description: w.description || '',
+    initialResolutionWidth: w.initialResolutionWidth || 0,
+    initialResolutionHeight: w.initialResolutionHeight || 0,
     tenantId: w.tenantId || '',
     ownerId: w.userId || '',
     workspaceId: w.workspaceId || '',
@@ -56,15 +61,20 @@ const apiToDomain = (w: ChorusWorkbenchApi): Workbench => {
   }
 }
 
-const domainToApi = (w: WorkbenchCreateModel): ChorusWorkbenchApi => {
+const domainToApi = (
+  w: WorkbenchCreateModel | WorkbenchUpdateModel
+): ChorusWorkbenchApi => {
   return {
+    id: 'id' in w ? w.id : undefined,
     tenantId: w.tenantId,
     userId: w.ownerId,
     workspaceId: w.workspaceId,
     status: 'active',
     name: w.name,
     shortName: w.name,
-    description: w.description
+    description: w.description,
+    initialResolutionWidth: w.initialResolutionWidth,
+    initialResolutionHeight: w.initialResolutionHeight
   }
 }
 
@@ -75,32 +85,26 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: env('DATA_SOURCE_API_URL')
     })
     this.service = new WorkbenchServiceApi(this.configuration)
   }
 
   async create(workbench: WorkbenchCreateModel): Promise<string> {
-    try {
-      const validatedInput: WorkbenchCreateModel =
-        WorkbenchCreateSchema.parse(workbench)
-      const w = domainToApi(validatedInput)
-      const validatedRequest: ChorusWorkbenchApi =
-        WorkbenchApiCreateSchema.parse(w)
+    const validatedInput = WorkbenchCreateSchema.parse(workbench)
+    const w = domainToApi(validatedInput)
+    const validatedRequest: ChorusWorkbenchApi =
+      WorkbenchApiCreateSchema.parse(w)
 
-      const response = await this.service.workbenchServiceCreateWorkbench({
-        body: validatedRequest
-      })
+    const response = await this.service.workbenchServiceCreateWorkbench({
+      body: validatedRequest
+    })
 
-      if (!response.result?.id) {
-        throw new Error('Error creating workbench')
-      }
-
-      return response.result?.id
-    } catch (error) {
-      console.error(error)
-      throw error
+    if (!response.result?.id) {
+      throw new Error('Error creating workbench')
     }
+
+    return response.result.id
   }
 
   async get(id: string): Promise<Workbench> {
@@ -154,6 +158,38 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
 
       return workbenchs.map((w) => WorkbenchSchema.parse(w))
     } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  async update(workbench: WorkbenchUpdateModel): Promise<Workbench> {
+    try {
+      const validatedInput = WorkbenchUpdateSchema.parse(workbench)
+      const w = domainToApi(validatedInput)
+      const validatedRequest = WorkbenchApiSchema.parse(w)
+
+      const response = await this.service.workbenchServiceUpdateWorkbench({
+        body: {
+          workbench: validatedRequest
+        }
+      })
+
+      if (!response.result) {
+        const error = new Error('Error updating workbench')
+        // Don't log the error here since we want the exact error message to propagate
+        throw error
+      }
+
+      return this.get(workbench.id)
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Error updating workbench'
+      ) {
+        throw error // Re-throw our specific error without modification
+      }
+      // For other errors (validation, network, etc.), log and re-throw
       console.error(error)
       throw error
     }

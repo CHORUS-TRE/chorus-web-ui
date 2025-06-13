@@ -1,7 +1,7 @@
-import type { ZodIssue } from 'zod'
+import { z } from 'zod'
 
 export interface IFormState {
-  data?: string | object
+  data?: string
   error?: string
-  issues?: ZodIssue[]
+  issues?: z.ZodIssue[]
 }

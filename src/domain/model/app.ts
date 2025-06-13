@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 export enum AppState {
-  UNINITIALIZED = 'uninitialized',
   CREATED = 'created',
   LOADING = 'loading',
   ACTIVE = 'active',
@@ -9,19 +8,36 @@ export enum AppState {
   EXITED = 'exited'
 }
 
+export enum AppType {
+  APP = 'app',
+  SERVICE = 'service'
+}
+
 export const AppCreateSchema = z.object({
   tenantId: z.string(),
   ownerId: z.string(),
   name: z.string().optional(),
+  prettyName: z.string().optional(),
   description: z.string().optional(),
   dockerImageName: z.string(),
-  dockerImageTag: z.string()
+  dockerImageTag: z.string(),
+  dockerImageRegistry: z.string().optional(),
+  shmSize: z.string().optional(),
+  minEphemeralStorage: z.string().optional(),
+  maxEphemeralStorage: z.string().optional(),
+  kioskConfigURL: z.string().optional(),
+  maxCPU: z.string().optional(),
+  minCPU: z.string().optional(),
+  maxMemory: z.string().optional(),
+  minMemory: z.string().optional(),
+  iconURL: z.string().optional(),
+  type: z.nativeEnum(AppType),
+  url: z.string().optional()
 })
 
 export const AppSchema = AppCreateSchema.extend({
   id: z.string(),
   status: z.nativeEnum(AppState),
-
   createdAt: z.date(),
   updatedAt: z.date()
 })

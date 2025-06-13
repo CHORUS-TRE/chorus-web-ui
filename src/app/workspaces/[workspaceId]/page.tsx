@@ -1,99 +1,37 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useCallback, useEffect } from 'react'
 
-import { userGet } from '@/components/actions/user-view-model'
-import { workbenchList } from '@/components/actions/workbench-view-model'
 import { workspaceGet } from '@/components/actions/workspace-view-model'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { User, Workspace as WorkspaceType } from '@/domain/model'
-
+import { useAppState } from '@/components/store/app-state-context'
 import { Workspace } from '~/components/workspace'
-import { Workbench } from '~/domain/model/workbench'
 
 const WorkspacePage = () => {
-  const [workspace, setWorkspace] = useState<WorkspaceType>()
-  const [user, setUser] = useState<User>()
-  const [workbenches, setWorkbenches] = useState<Workbench[]>()
-  const [error, setError] = useState<string>()
-
-  const router = useRouter()
-  const params = useParams<{ workspaceId: string; appId: string }>()
+  const { refreshWorkbenches } = useAppState()
+  const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
 
-  const getWorkbenchList = useCallback(() => {
-    workbenchList()
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data)
-          setWorkbenches(
-            response.data?.filter((w) => w.workspaceId === workspaceId)
-          )
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-  }, [])
+  const initializeData = useCallback(async () => {
+    try {
+      await Promise.all([workspaceGet(workspaceId), refreshWorkbenches()])
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error initializing data:', error.message)
+      } else {
+        console.error('Error initializing data:', String(error))
+      }
+    }
+  }, [workspaceId, refreshWorkbenches])
 
   useEffect(() => {
-    if (!workspaceId) return
-
-    workspaceGet(workspaceId)
-      .then((response) => {
-        if (response?.error) setError(response.error)
-        if (response?.data) {
-          setWorkspace(response.data)
-          userGet(response?.data?.ownerId).then((user) => {
-            setUser(user.data)
-          })
-        }
-      })
-      .catch((error) => {
-        setError(error.message)
-      })
-
-    getWorkbenchList()
-  }, [])
-
-  // TODO: react use in not yet ready in NextJS
-  // const fetchWorkspace = async () => {
-  //   if (!params?.workspaceId) return
-
-  //   return await workspaceGet(params.workspaceId)
-  // }
-
-  // function WSH() {
-  //   const response = use(fetchWorkspace())
-  //   return <WorkspaceHeader workspace={response?.data} />
-  // }
-
-  // function WS() {
-  //   const response = use(fetchWorkspace())
-  //   return <Workspace workspace={response?.data} workbenches={workbenches}/>
-  // }
+    initializeData()
+  }, [initializeData])
 
   return (
     <>
       <div>
-        {error && <p className="mt-4 text-red-500">{error}</p>}
-        <Suspense
-          fallback={
-            <div className="w-full text-xs text-white">
-              Loading workspace...
-            </div>
-          }
-        >
-          <Workspace
-            workspace={workspace}
-            workbenches={workbenches}
-            workspaceOwner={user}
-            cb={(id) => {
-              getWorkbenchList()
-              router.push(`/workspaces/${workspaceId}/${id}`)
-            }}
-          />
-        </Suspense>
+        <Workspace workspaceId={workspaceId} />
       </div>
 
       <footer>{/* Footer content */}</footer>

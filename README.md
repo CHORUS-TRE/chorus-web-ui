@@ -38,6 +38,10 @@ The CHORUS Web UI is built with Next.js, a React framework that supports both cl
 
 ## Getting Started
 
+### Tutorial
+
+See [docs/development-tutorial/index.md](docs/development-tutorial/index.md)
+
 ### Prerequisites
 
 To set up your development environment for CHORUS Web UI, you will need:
@@ -129,55 +133,142 @@ cd chorus-web-ui
 **Environment variables**
 
 Server side variables:
-- `DATA_SOURCE` is either api, or local if you want to use a local storage.
-- `DATA_SOURCE_LOCAL_DIR` is used if DATA_SOURCE=local. It is the path to store the local data files
 - `DATA_SOURCE_API_URL` is the API backend. Note that the generated files are prefixed with /api/rest/v1/ so generally you want to have something like
 DATA_SOURCE_API_URL=https://api.chorus-tre.com/
 
 Client side variable:
 - `NEXT_PUBLIC_DATA_SOURCE_API_URL` is exposed to the web-ui and should contains the prefix to the API, like https://api.chorus-tre.com/api/rest/v1/ Used for the iframe streams
 
+**Local Production Testing**
 
- **Local Production Testing**
-
-   Build and run the production application locally:
-
-```bash
-   docker build -t chorus/web-ui .
-   ```
-
-
-
-   Local storage mode
+Build and run the production application locally:
 
 ```bash
-	echo "DATA_SOURCE=local" > .env
-	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
-	echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com/" >> .env
-	echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
-
-	docker run --rm  --env-file .env  -v $(pwd)/.local-storage:/app/.local-storage  -p3000:3000 chorus/web-ui
- ```
-
-   API mode
-
-```bash
-	echo "DATA_SOURCE=api" > .env
-	echo "DATA_SOURCE_LOCAL_DIR=./.local-storage" >> .env
-	echo "DATA_SOURCE_API_URL=https://api.chorus-tre.com" >> .env
-	echo "NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/" >> .env
-
-   docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui
+docker build -t chorus/web-ui .
 ```
 
-inline
+```bash
+docker run -e DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch \
+          -e REACT_EDITOR=cursor \
+          -e NODE_ENV=development \
+          -e NEXT_PUBLIC_APP_URL=http://localhost:3000 \
+          -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch/api/rest/v1 \
+          -e NEXT_PUBLIC_MATOMO_URL=https://matomo.dev.chorus-tre.ch \
+          -e NEXT_PUBLIC_MATOMO_CONTAINER_ID=XHnjFrGP \
+          -e NEXT_PUBLIC_ALBERT_WORKSPACE_ID=35 \
+          -p 3000:3000 \
+          chorus/web-ui:latest
+```
 
-`docker run -e DATA_SOURCE=api -e DATA_SOURCE_API_URL=https://api.chorus-tre.com -e DATA_SOURCE_LOCAL_DIR=./.local-storage -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/api/rest/v1/`
+or
 
+`docker run --rm  --env-file .env  -p3000:3000 chorus/web-ui:latest`
 
-   Access your application at `localhost:3000`.
+Access your application at `localhost:3000`.
 
 For further assistance or inquiries, feel free to open an issue in the repository.
+
+## License and Usage Restrictions
+
+Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from [CHUV](mailto:pactt.legal@chuv.ch).
+
+## Testing Strategy
+
+### Test Directory Structure
+
+The project follows a comprehensive testing approach with the following test organization:
+
+```
+/
+├── src/
+│   ├── components/
+│   │   ├── __tests__/           # Component unit tests
+│   │   │   └── [ComponentName].test.tsx
+│   │   └── __snapshots__/        # Component snapshot tests
+│   │       └── [ComponentName].snap.tsx
+│   ├── domain/
+│   │   ├── use-cases/
+│   │   │   └── __tests__/        # Domain use case unit tests
+│   │   │       └── [UseCaseName].test.ts
+│   │   └── model/
+│   │       └── __tests__/        # Domain model unit tests
+│   │           └── [ModelName].test.ts
+│   └── data/
+│       ├── repository/
+│       │   └── __tests__/        # Repository implementation tests
+│       │       └── [RepositoryName].test.ts
+│       └── data-source/
+│           └── __tests__/        # Data source tests
+│               └── [DataSourceName].test.ts
+├── __tests__/
+│   ├── integration/              # Integration tests
+│   ├── e2e/                      # End-to-end tests
+│   ├── visual/                   # Visual regression tests
+│   └── accessibility/            # Accessibility tests
+└── performance/                  # Performance tests
+```
+
+### Testing Layers
+
+1. **Unit Tests**: Test individual components, functions, and classes in isolation.
+2. **Integration Tests**: Test interactions between different parts of the application.
+3. **Component Tests**: Test UI components in isolation.
+4. **End-to-End Tests**: Test complete user flows.
+5. **Visual Regression Tests**: Ensure UI appearance remains consistent.
+6. **Accessibility Tests**: Validate WCAG compliance.
+7. **Performance Tests**: Measure and ensure application performance.
+
+### Running Tests
+
+The project includes several npm scripts for running different types of tests:
+
+```bash
+# Run tests in watch mode (development)
+pnpm test
+
+# Run all tests once (CI/CD)
+pnpm test:run
+
+# Run only unit tests
+pnpm test:unit
+
+# Run only integration tests
+pnpm test:integration
+
+# Run only end-to-end tests
+pnpm test:e2e
+
+# Run only visual regression tests
+pnpm test:visual
+
+# Run only accessibility tests
+pnpm test:a11y
+
+# Generate test coverage report
+pnpm test:coverage
+
+# Run tests in CI mode
+pnpm test:ci
+```
+
+### Code Coverage Requirements
+
+We maintain the following code coverage thresholds:
+
+- **Global**: 70% statements, branches, functions, and lines
+- **Domain Layer**: 90% statements, 85% branches, 90% functions and lines
+
+### Test Utilities
+
+The project provides utility functions for testing in `src/utils/test-utils.tsx`, including:
+
+- A custom render function that includes common providers
+- Mock implementations for hooks and contexts
+- Helper functions for creating mock repositories and API responses
+
+### Testing Documentation
+
+For more detailed information about our testing strategy, including best practices and examples, see the [Testing Strategy Documentation](./docs/testing-strategy.md).
 
 ## License and Usage Restrictions
 
@@ -186,3 +277,4 @@ Any use of the software for purposes other than academic research, including for
 ## Acknowledgments
 
 This project has received funding from the Swiss State Secretariat for Education, Research and Innovation (SERI) under contract number 23.00638, as part of the Horizon Europe project “EBRAINS 2.0”.
+

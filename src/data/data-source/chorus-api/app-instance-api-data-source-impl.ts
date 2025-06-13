@@ -1,13 +1,16 @@
+import { env } from 'next-runtime-env'
 import { z } from 'zod'
 
 import { AppInstanceDataSource } from '@/data/data-source/'
-import { AppInstance, AppInstanceCreateModel } from '@/domain/model'
+import {
+  AppInstance,
+  AppInstanceCreateModel,
+  AppInstanceUpdateModel
+} from '@/domain/model'
 import {
   AppInstanceCreateSchema,
   AppInstanceSchema
 } from '@/domain/model/app-instance'
-
-import { env } from '~/env'
 import {
   AppInstanceServiceApi,
   ChorusAppInstance as ChorusAppInstanceApi
@@ -37,7 +40,7 @@ const apiToDomain = (w: ChorusAppInstanceApi): AppInstance => {
     status: w.status || '',
     tenantId: w.tenantId || '',
     appId: w.appId || '',
-    workbenchId: w.workbenchId || '',
+    sessionId: w.workbenchId || '',
     workspaceId: w.workspaceId || '',
     id: w.id || '',
     createdAt: w.createdAt ? new Date(w.createdAt) : new Date(),
@@ -49,6 +52,7 @@ const apiToDomain = (w: ChorusAppInstanceApi): AppInstance => {
 const domainToApi = (w: AppInstanceCreateModel): ChorusAppInstanceApi => {
   return {
     ...w,
+    workbenchId: w.sessionId,
     userId: w.ownerId
   }
 }
@@ -60,7 +64,7 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
   constructor(token: string) {
     this.configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env.DATA_SOURCE_API_URL
+      basePath: env('DATA_SOURCE_API_URL')
     })
     this.service = new AppInstanceServiceApi(this.configuration)
   }
@@ -104,6 +108,61 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
 
       const appInstance = apiToDomain(validatedInput)
       return AppInstanceSchema.parse(appInstance)
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      const response = await this.service.appInstanceServiceDeleteAppInstance({
+        id
+      })
+
+      if (!response.result) {
+        throw new Error('Error deleting app instance')
+      }
+
+      return true
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  async list(): Promise<AppInstance[]> {
+    try {
+      const response = await this.service.appInstanceServiceListAppInstances({})
+
+      if (!response.result) return []
+
+      const parsed = response.result.map((r) => AppInstanceApiSchema.parse(r))
+      const appInstances = parsed.map(apiToDomain)
+
+      return appInstances.map((w) => AppInstanceSchema.parse(w))
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  async update(appInstance: AppInstanceUpdateModel): Promise<AppInstance> {
+    try {
+      const w = domainToApi(appInstance)
+      const validatedRequest = AppInstanceApiSchema.parse(w)
+
+      const response = await this.service.appInstanceServiceUpdateAppInstance({
+        body: {
+          appInstance: validatedRequest
+        }
+      })
+
+      if (!response.result) {
+        throw new Error('Error updating app instance')
+      }
+
+      return this.get(appInstance.id)
     } catch (error) {
       console.error(error)
       throw error

@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
 
@@ -26,13 +27,14 @@ export default function Dialog({
           variant="link"
           className="h-8 gap-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
         >
-          <Icons.CirclePlusIcon className="h-3.5 w-3.5" />
+          <Icons.CirclePlusIcon className="h-4 w-4" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             {triggerText}
           </span>
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">{triggerText}</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>{children}</DialogDescription>
         </DialogHeader>

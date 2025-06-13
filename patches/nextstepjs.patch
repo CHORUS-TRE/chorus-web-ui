@@ -1,0 +1,11 @@
+diff --git a/src/types/index.ts b/src/types/index.ts
+index 6503e49fa13740868fa15a3a688fbf22eeade29d..bc94e30ccbbbc960b41850fc85e2a424369e5605 100644
+--- a/src/types/index.ts
++++ b/src/types/index.ts
+@@ -75,5 +75,5 @@ export interface CardComponentProps {
+   nextStep: () => void;
+   prevStep: () => void;
+   skipTour?: () => void;
+-  arrow: JSX.Element;
++  arrow: React.ReactElement;
+ }

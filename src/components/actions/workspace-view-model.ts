@@ -1,35 +1,29 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 
-import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
-import { env } from '@/env'
-
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-api-data-source-impl'
-import { WorkspaceLocalStorageDataSourceImpl } from '~/data/data-source/local-storage'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
   WorkspaceCreateModel,
   WorkspaceResponse,
-  WorkspacesResponse
+  WorkspacesResponse,
+  WorkspaceState
 } from '~/domain/model'
 import { WorkspaceCreateModelSchema } from '~/domain/model/workspace'
-import { WorkspaceCreate } from '~/domain/use-cases'
+import { WorkspaceUpdateModelSchema } from '~/domain/model/workspace'
+import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
+import { WorkspaceDelete } from '~/domain/use-cases/workspace/workspace-delete'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
+import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = cookies().get('session')?.value || ''
-  const dataSource =
-    env.DATA_SOURCE === 'local'
-      ? await WorkspaceLocalStorageDataSourceImpl.getInstance(
-          env.DATA_SOURCE_LOCAL_DIR
-        )
-      : new WorkspaceDataSourceImpl(session)
-
+  const cookieStore = await cookies()
+  const session = cookieStore.get('session')?.value || ''
+  const dataSource = new WorkspaceDataSourceImpl(session)
   return new WorkspaceRepositoryImpl(dataSource)
 }
 
@@ -39,23 +33,18 @@ export async function workspaceDelete(
 ): Promise<IFormState> {
   try {
     const id = formData.get('id') as string
+    if (!id) throw new Error('Invalid workspace id')
 
-    if (!id) {
-      throw new Error('Invalid workspace id')
-    }
     const repository = await getRepository()
     const useCase = new WorkspaceDelete(repository)
 
     const r = await useCase.execute(id)
-    if (r.error) {
-      return { error: r.error }
-    }
+    if (r.error) return { error: r.error }
 
-    revalidatePath('/')
     return { data: 'Successfully deleted workspace' }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error deleting workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -63,10 +52,10 @@ export async function workspaceList(): Promise<WorkspacesResponse> {
   try {
     const repository = await getRepository()
     const useCase = new WorkspacesList(repository)
-
     return await useCase.execute()
   } catch (error) {
-    return { error: error.message }
+    console.error('Error listing workspaces', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -78,7 +67,6 @@ export async function workspaceCreate(
     const repository = await getRepository()
     const useCase = new WorkspaceCreate(repository)
 
-    // const rawFormData = Object.fromEntries(formData)
     const workspace: WorkspaceCreateModel = {
       name: formData.get('name') as string,
       tenantId: formData.get('tenantId') as string,
@@ -90,15 +78,9 @@ export async function workspaceCreate(
     }
 
     const validation = WorkspaceCreateModelSchema.safeParse(workspace)
+    if (!validation.success) return { issues: validation.error.issues }
 
-    if (!validation.success) {
-      return { issues: validation.error.issues }
-    }
-
-    const nextWorkspace = WorkspaceCreateModelSchema.parse(workspace)
-    const w = await useCase.execute(nextWorkspace)
-
-    revalidatePath('/')
+    const w = await useCase.execute(validation.data)
 
     return {
       ...prevState,
@@ -106,24 +88,54 @@ export async function workspaceCreate(
       error: w.error
     }
   } catch (error) {
-    console.error(error)
-    return { error: error.message }
+    console.error('Error creating workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
-export async function workspaceGet(
-  workspaceId: string
-): Promise<WorkspaceResponse> {
-  if (!workspaceId) {
-    throw new Error('Invalid workspace id')
-  }
-
+export async function workspaceGet(id: string): Promise<WorkspaceResponse> {
   try {
     const repository = await getRepository()
     const useCase = new WorkspaceGet(repository)
-
-    return await useCase.execute(workspaceId)
+    return await useCase.execute(id)
   } catch (error) {
-    return { error: error.message }
+    console.error('Error getting workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceUpdate(
+  prevState: IFormState,
+  formData: FormData
+): Promise<IFormState> {
+  try {
+    const repository = await getRepository()
+    const useCase = new WorkspaceUpdate(repository)
+
+    const workspace = {
+      id: formData.get('id') as string,
+      tenantId: formData.get('tenantId') as string,
+      userId: formData.get('userId') as string,
+      name: formData.get('name') as string,
+      shortName: formData.get('shortName') as string,
+      description: formData.get('description') as string,
+      status: formData.get('status') as WorkspaceState,
+      memberIds: formData.getAll('memberIds') as string[],
+      tags: formData.getAll('tags') as string[]
+    }
+
+    const validation = WorkspaceUpdateModelSchema.safeParse(workspace)
+    if (!validation.success) return { issues: validation.error.issues }
+
+    const w = await useCase.execute(validation.data)
+
+    return {
+      ...prevState,
+      data: 'Successfully updated workspace',
+      error: w.error
+    }
+  } catch (error) {
+    console.error('Error updating workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

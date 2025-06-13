@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import * as runtime from '../runtime'
 import type {
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
@@ -19,18 +20,27 @@ import type {
   ChorusListWorkbenchsReply,
   ChorusUpdateWorkbenchReply,
   ChorusUpdateWorkbenchRequest,
-  ChorusWorkbench
+  ChorusWorkbench,
+  RpcStatus
 } from '../models/index'
 import {
   ChorusCreateWorkbenchReplyFromJSON,
+  ChorusCreateWorkbenchReplyToJSON,
   ChorusDeleteWorkbenchReplyFromJSON,
+  ChorusDeleteWorkbenchReplyToJSON,
   ChorusGetWorkbenchReplyFromJSON,
+  ChorusGetWorkbenchReplyToJSON,
   ChorusListWorkbenchsReplyFromJSON,
+  ChorusListWorkbenchsReplyToJSON,
   ChorusUpdateWorkbenchReplyFromJSON,
+  ChorusUpdateWorkbenchReplyToJSON,
+  ChorusUpdateWorkbenchRequestFromJSON,
   ChorusUpdateWorkbenchRequestToJSON,
-  ChorusWorkbenchToJSON
+  ChorusWorkbenchFromJSON,
+  ChorusWorkbenchToJSON,
+  RpcStatusFromJSON,
+  RpcStatusToJSON
 } from '../models/index'
-import * as runtime from '../runtime'
 
 export interface WorkbenchServiceCreateWorkbenchRequest {
   body: ChorusWorkbench

@@ -1,21 +1,32 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { CirclePlus } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import {
   workspaceCreate,
-  workspaceDelete
+  workspaceDelete,
+  workspaceUpdate
 } from '@/components/actions/workspace-view-model'
 import {
   Dialog as DialogContainer,
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-
+import { Workspace } from '@/domain/model'
+import { WorkspaceState } from '@/domain/model/workspace'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -25,11 +36,27 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
 
 import { IFormState } from '../actions/utils'
+import { DeleteDialog } from '../delete-dialog'
 
 const initialState: IFormState = {
   data: undefined,
@@ -37,48 +64,85 @@ const initialState: IFormState = {
   issues: undefined
 }
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <Button className="ml-auto" type="submit" disabled={pending}>
-      Create
-    </Button>
-  )
-}
+const workspaceFormSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  shortName: z.string().min(1, 'Short name is required'),
+  description: z.string().optional(),
+  tenantId: z.string(),
+  userId: z.string(),
+  memberIds: z.string(),
+  tags: z.string()
+})
+
+type WorkspaceFormData = z.infer<typeof workspaceFormSchema>
 
 export function WorkspaceCreateForm({
+  state: [open, setOpen],
   userId,
-  cb
+  children,
+  onUpdate
 }: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
   userId?: string
-  cb?: () => void
+  children?: React.ReactNode
+  onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workspaceCreate, initialState)
-  const [open, setOpen] = useState(false)
+  const [formState, formAction] = useActionState(workspaceCreate, initialState)
+  const hasHandledSuccess = useRef(false)
+  const form = useForm<WorkspaceFormData>({
+    resolver: zodResolver(workspaceFormSchema),
+    defaultValues: {
+      name: '',
+      shortName: '',
+      description: '',
+      tenantId: '1',
+      userId: userId || '',
+      memberIds: '',
+      tags: ''
+    }
+  })
 
   useEffect(() => {
-    if (state?.error) {
+    if (!open) {
+      hasHandledSuccess.current = false
+      form.reset()
       return
     }
 
-    if (state?.data) {
-      setOpen(false)
-      if (cb) cb()
+    if (formState?.error) {
+      return
     }
-  }, [state])
+
+    if (formState?.data && !hasHandledSuccess.current) {
+      hasHandledSuccess.current = true
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    }
+  }, [formState, onUpdate, setOpen, open, form])
+
+  async function onSubmit(data: WorkspaceFormData) {
+    const formData = new FormData()
+    formData.append('name', data.name)
+    formData.append('shortName', data.shortName)
+    formData.append('description', data.description || '')
+    formData.append('tenantId', data.tenantId)
+    formData.append('ownerId', data.userId)
+    formData.append('memberIds', data.memberIds)
+    formData.append('tags', data.tags)
+
+    startTransition(() => {
+      formAction(formData)
+    })
+  }
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <CirclePlus className="h-3.5 w-3.5" />
-          New workspace
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
+        <DialogTitle className="hidden">Create Workspace</DialogTitle>
         <DialogHeader>
           <DialogDescription asChild>
-            <form action={formAction}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <Card className="w-full max-w-md border-none bg-background text-white">
                 <CardHeader>
                   <CardTitle>Create Workspace</CardTitle>
@@ -91,116 +155,66 @@ export function WorkspaceCreateForm({
                     <Label htmlFor="name">Name</Label>
                     <Input
                       id="name"
-                      name="name"
+                      {...form.register('name')}
                       className="bg-background text-neutral-400"
                       placeholder="Enter workspace name"
                     />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('name'))
-                          ?.message
-                      }
-                    </div>
+                    {form.formState.errors.name && (
+                      <div className="text-xs text-red-500">
+                        {form.formState.errors.name.message}
+                      </div>
+                    )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="shortName">Short Name</Label>
                     <Input
                       id="shortName"
-                      name="shortName"
+                      {...form.register('shortName')}
                       className="bg-background text-neutral-400"
                       placeholder="Enter short name"
                     />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('shortName'))
-                          ?.message
-                      }
-                    </div>
+                    {form.formState.errors.shortName && (
+                      <div className="text-xs text-red-500">
+                        {form.formState.errors.shortName.message}
+                      </div>
+                    )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="description">Description</Label>
                     <Textarea
                       id="description"
-                      name="description"
+                      {...form.register('description')}
                       placeholder="Enter description"
                       className="min-h-[100px] bg-background text-neutral-400"
                     />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) =>
-                          e.path.includes('description')
-                        )?.message
-                      }
-                    </div>
+                    {form.formState.errors.description && (
+                      <div className="text-xs text-red-500">
+                        {form.formState.errors.description.message}
+                      </div>
+                    )}
                   </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="ownerId">Owner ID</Label>
-                    <Input
-                      id="ownerId"
-                      name="ownerId"
-                      placeholder="Enter owner ID"
-                      defaultValue={userId}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('ownerId'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="memberIds">Member IDs</Label>
-                    <Textarea
-                      id="memberIds"
-                      name="memberIds"
-                      placeholder="Enter member IDs separated by commas"
-                      className="min-h-[100px]"
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('memberIds'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="tags">Tags</Label>
-                    <Input
-                      id="tags"
-                      name="tags"
-                      placeholder="Enter tags separated by commas"
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('tags'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="tenantId">Tenant ID</Label>
-                    <Input
-                      id="tenantId"
-                      name="tenantId"
-                      placeholder="Enter tenant ID"
-                      defaultValue={1}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('tenantId'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
+                  <input type="hidden" {...form.register('tenantId')} />
+                  <input type="hidden" {...form.register('userId')} />
+                  <input type="hidden" {...form.register('memberIds')} />
+                  <input type="hidden" {...form.register('tags')} />
                   <p aria-live="polite" className="sr-only" role="status">
-                    {JSON.stringify(state?.data, null, 2)}
+                    {JSON.stringify(formState?.data, null, 2)}
                   </p>
-                  {state?.error && (
-                    <p className="text-red-500">{state.error}</p>
+                  {formState?.error && (
+                    <p className="text-red-500">{formState.error}</p>
                   )}
                 </CardContent>
                 <CardFooter>
-                  <SubmitButton />
+                  <Button
+                    className="ml-auto"
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
+                  >
+                    {form.formState.isSubmitting && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Create
+                  </Button>
                 </CardFooter>
               </Card>
             </form>
@@ -212,35 +226,256 @@ export function WorkspaceCreateForm({
 }
 
 export function WorkspaceDeleteForm({
+  state: [open, setOpen],
   id,
-  cb
+  onUpdate
 }: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
   id?: string
-  cb?: () => void
+  onUpdate?: () => void
 }) {
-  const [state, formAction] = useFormState(workspaceDelete, initialState)
+  const [formState, formAction] = useActionState(workspaceDelete, initialState)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const hasHandledSuccess = useRef(false)
 
-  function DeleteButton() {
-    const { pending } = useFormStatus()
+  useEffect(() => {
+    if (!open) {
+      hasHandledSuccess.current = false
+      setIsDeleting(false)
+      return
+    }
 
-    useEffect(() => {
-      if (cb && pending) cb()
-    }, [pending])
+    if (formState?.error) {
+      setIsDeleting(false)
+      return
+    }
 
-    return (
-      <button type="submit" aria-disabled={pending}>
-        Delete
-      </button>
-    )
+    if (formState?.data && !hasHandledSuccess.current) {
+      hasHandledSuccess.current = true
+      setIsDeleting(false)
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    }
+  }, [formState, onUpdate, setOpen, open])
+
+  return (
+    <DeleteDialog
+      open={open}
+      onCancel={() => {
+        setOpen(false)
+      }}
+      onConfirm={() => {
+        setIsDeleting(true)
+        const formData = new FormData()
+        formData.append('id', id || '')
+        startTransition(() => {
+          formAction(formData)
+        })
+      }}
+      isDeleting={isDeleting}
+      title="Delete Workspace"
+      description="Are you sure you want to delete this workspace? This action cannot be undone."
+    />
+  )
+}
+
+const workspaceUpdateFormSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Name is required'),
+  shortName: z.string().min(1, 'Short name is required'),
+  description: z.string().optional(),
+  status: z.nativeEnum(WorkspaceState),
+  tenantId: z.string(),
+  userId: z.string(),
+  memberIds: z.string(),
+  tags: z.string()
+})
+
+type WorkspaceUpdateFormData = z.infer<typeof workspaceUpdateFormSchema>
+
+export function WorkspaceUpdateForm({
+  state: [open, setOpen],
+  trigger,
+  workspace,
+  onUpdate
+}: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
+  trigger?: React.ReactNode
+  workspace?: Workspace
+  onUpdate?: () => void
+}) {
+  const [formState, formAction] = useActionState(workspaceUpdate, initialState)
+  const form = useForm<WorkspaceUpdateFormData>({
+    resolver: zodResolver(workspaceUpdateFormSchema),
+    defaultValues: {
+      id: workspace?.id || '',
+      name: workspace?.name || '',
+      shortName: workspace?.shortName || '',
+      description: workspace?.description || '',
+      status: workspace?.status || WorkspaceState.ACTIVE,
+      tenantId: '1',
+      userId: workspace?.ownerId || '',
+      memberIds: workspace?.memberIds?.join(',') || '',
+      tags: workspace?.tags?.join(',') || ''
+    }
+  })
+
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+    }
+  }, [open, form])
+
+  useEffect(() => {
+    if (formState?.error) return
+    if (formState?.data) {
+      setOpen(false)
+      if (onUpdate) onUpdate()
+    }
+  }, [formState, onUpdate, setOpen])
+
+  async function onSubmit(data: WorkspaceUpdateFormData) {
+    const formData = new FormData()
+    formData.append('id', data.id)
+    formData.append('name', data.name)
+    formData.append('shortName', data.shortName)
+    formData.append('description', data.description || '')
+    formData.append('status', data.status)
+    formData.append('tenantId', data.tenantId)
+    formData.append('userId', data.userId)
+    formData.append('memberIds', data.memberIds)
+    formData.append('tags', data.tags)
+
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   return (
-    <form action={formAction}>
-      <input type="hidden" name="id" value={id} />
-      <DeleteButton />
-      <p aria-live="polite" className="sr-only" role="status">
-        {JSON.stringify(state?.data, null, 2)}
-      </p>
-    </form>
+    <DialogContainer open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent>
+        <DialogTitle className="text-white">Update Workspace</DialogTitle>
+        <DialogDescription>Update workspace information.</DialogDescription>
+        <DialogHeader className="mt-4">
+          <DialogDescription asChild>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <Form {...form}>
+                <Card className="w-full max-w-md border-none bg-background text-white">
+                  <CardContent className="grid gap-4">
+                    <input type="hidden" {...form.register('id')} />
+                    <input type="hidden" {...form.register('tenantId')} />
+                    <input type="hidden" {...form.register('userId')} />
+                    <input type="hidden" {...form.register('memberIds')} />
+                    <input type="hidden" {...form.register('tags')} />
+
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="bg-background text-neutral-400"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="shortName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Short Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="bg-background text-neutral-400"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              className="min-h-[100px] bg-background text-neutral-400"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="bg-background text-neutral-400">
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {[
+                                WorkspaceState.ACTIVE,
+                                WorkspaceState.INACTIVE,
+                                WorkspaceState.ARCHIVED
+                              ].map((status) => (
+                                <SelectItem key={status} value={status}>
+                                  {status}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {formState?.error && (
+                      <p className="text-red-500">{formState.error}</p>
+                    )}
+                  </CardContent>
+                  <CardFooter>
+                    <Button
+                      className="ml-auto"
+                      type="submit"
+                      disabled={form.formState.isSubmitting}
+                    >
+                      {form.formState.isSubmitting && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+
+                      {form.formState.isSubmitting ? 'Updating...' : 'Update'}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Form>
+            </form>
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </DialogContainer>
   )
 }

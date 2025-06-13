@@ -1,11 +1,10 @@
-import { useEffect } from 'react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useActionState, useEffect } from 'react'
+import { useFormStatus } from 'react-dom'
 
 import { userCreate } from '@/components/actions/user-view-model'
-
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
@@ -22,15 +21,23 @@ const initialState: IFormState = {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending}>
-      <ArrowRight className="h-3.5 w-3.5" />
+    <Button
+      type="submit"
+      disabled={pending}
+      className="flex w-full items-center justify-center gap-1"
+    >
+      {pending ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <ArrowRight className="mr-2 h-4 w-4" />
+      )}
       Create account
     </Button>
   )
 }
 
 export default function UserRegisterForm() {
-  const [state, formAction] = useFormState(userCreate, initialState)
+  const [state, formAction] = useActionState(userCreate, initialState)
 
   useEffect(() => {
     if (state?.data && !state.error) {
@@ -39,14 +46,14 @@ export default function UserRegisterForm() {
   }, [state])
 
   return (
-    <div className="mx-auto grid w-[450px] gap-6 text-white">
+    <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
       <div className="grid gap-4 text-center">
         <h2>Create an account</h2>
         <h5 className="text-muted">
           Enter your email below to create your account
         </h5>
       </div>
-      <Separator className="mb-2" />
+      <Separator className="mb-1" />
       <form action={formAction}>
         <div className="mb-4 grid gap-4">
           <div className="grid grid-cols-2 gap-4">
@@ -56,7 +63,7 @@ export default function UserRegisterForm() {
                 id="firstName"
                 name="firstName"
                 required
-                className="border-none bg-background text-muted"
+                className="border border-muted/40 bg-background text-white"
               />
               <div className="text-xs text-red-500">
                 {
@@ -71,7 +78,7 @@ export default function UserRegisterForm() {
                 id="lastName"
                 name="lastName"
                 required
-                className="border-none bg-background text-muted"
+                className="border border-muted/40 bg-background text-white"
               />
               <div className="text-xs text-red-500">
                 {
@@ -88,7 +95,7 @@ export default function UserRegisterForm() {
               type="email"
               name="email"
               required
-              className="border-none bg-background text-muted"
+              className="border border-muted/40 bg-background text-white"
             />
             <div className="text-xs text-red-500">
               {state?.issues?.find((e) => e.path.includes('email'))?.message}
@@ -103,7 +110,7 @@ export default function UserRegisterForm() {
               type="password"
               name="password"
               required
-              className="border-none bg-background text-muted"
+              className="border border-muted/40 bg-background text-white"
               autoComplete="new-password"
             />
             <div className="text-xs text-red-500">
