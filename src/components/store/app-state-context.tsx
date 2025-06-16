@@ -16,7 +16,7 @@ import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
 
 import { appInstanceList } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
-import { userList } from '../actions/user-view-model'
+import { listUsers } from '../actions/user-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceList } from '../actions/workspace-view-model'
 import { useAuth } from './auth-context'
@@ -198,7 +198,7 @@ export const AppStateProvider = ({
       return
     }
     try {
-      const response = await userList()
+      const response = await listUsers()
 
       if (response?.error) {
         setNotification({ title: response.error, variant: 'destructive' })
