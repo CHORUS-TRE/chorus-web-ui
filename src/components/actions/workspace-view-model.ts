@@ -5,9 +5,9 @@ import { cookies } from 'next/headers'
 import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-api-data-source-impl'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
+  Workspace,
   WorkspaceCreateType,
   WorkspaceResponse,
-  WorkspacesResponse,
   WorkspaceState
 } from '~/domain/model'
 import { WorkspaceCreateSchema } from '~/domain/model/workspace'
@@ -48,15 +48,10 @@ export async function workspaceDelete(
   }
 }
 
-export async function workspaceList(): Promise<WorkspacesResponse> {
-  try {
-    const repository = await getRepository()
-    const useCase = new WorkspacesList(repository)
-    return await useCase.execute()
-  } catch (error) {
-    console.error('Error listing workspaces', error)
-    return { error: error instanceof Error ? error.message : String(error) }
-  }
+export async function workspaceList(): Promise<WorkspaceResponse<Workspace[]>> {
+  const repository = await getRepository()
+  const useCase = new WorkspacesList(repository)
+  return await useCase.execute()
 }
 
 export async function workspaceCreate(
@@ -91,7 +86,9 @@ export async function workspaceCreate(
   }
 }
 
-export async function workspaceGet(id: string): Promise<WorkspaceResponse> {
+export async function workspaceGet(
+  id: string
+): Promise<WorkspaceResponse<Workspace>> {
   try {
     const repository = await getRepository()
     const useCase = new WorkspaceGet(repository)

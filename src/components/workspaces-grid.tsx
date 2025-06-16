@@ -50,7 +50,14 @@ export default function WorkspacesGrid({
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
   const { setNotification } = useAppState()
-  const { apps, appInstances, refreshWorkspaces, users } = useAppState()
+  const {
+    apps,
+    appInstances,
+    refreshWorkspaces,
+    users,
+    setBackground,
+    background
+  } = useAppState()
   const router = useRouter()
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
@@ -91,7 +98,7 @@ export default function WorkspacesGrid({
                 <CardTitle className="flex items-start gap-3 pr-2 text-white">
                   <Package className="h-6 w-6 flex-shrink-0 text-white" />
                   {workspace?.id === user?.workspaceId
-                    ? 'Private Workspace'
+                    ? 'My Workspace'
                     : workspace?.name}
                 </CardTitle>
                 <CardDescription>
@@ -130,17 +137,25 @@ export default function WorkspacesGrid({
                       ?.filter(
                         (workbench) => workbench.workspaceId === workspace?.id
                       )
+                      ?.sort((a, b) => (a.userId === user?.id ? -1 : 1))
                       .map(({ userId, createdAt, id }) => (
                         <div
                           key={`workspace-grid-sessions-${id}`}
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            router.push(
-                              `/workspaces/${workspace?.id}/sessions/${id}`
-                            )
+
+                            if (userId === user?.id) {
+                              setBackground({
+                                sessionId: id,
+                                workspaceId: workspace?.id
+                              })
+                            }
+                            // router.push(
+                            //   `/workspaces/${workspace?.id}/sessions/${id}`
+                            // )
                           }}
-                          className="cursor-pointer justify-between bg-background/40 text-white"
+                          className="justify-between bg-background/40 text-white"
                         >
                           <div className="mb-2 flex-grow text-xs">
                             {/* <div className="mb-1 flex items-center gap-2">
@@ -149,7 +164,9 @@ export default function WorkspacesGrid({
                             </div> */}
 
                             <div className="mb-0.5 mt-0.5 text-xs">
-                              <div className="flex items-center gap-2 truncate text-xs font-semibold hover:text-accent hover:underline">
+                              <div
+                                className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'text-accent hover:text-accent hover:underline' : 'text-muted'}`}
+                              >
                                 <AppWindow className="h-4 w-4 shrink-0" />
                                 {appInstances
                                   ?.filter(

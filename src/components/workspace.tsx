@@ -13,13 +13,16 @@ import {
   Users
 } from 'lucide-react'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { WorkspaceState } from '~/domain/model/workspace'
 
 import { Card } from './card'
+// import Dashboard from './dashboard'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import {
   WorkspaceDeleteForm,
@@ -69,6 +72,7 @@ function SimpleBarChart({
 }
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
+  const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
   const {
@@ -86,34 +90,34 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const owner = users?.find((user) => user.id === workspace?.userId)
-  const isUserWorkspace = workspaceId === user?.workspaceId
 
-  // useEffect(() => {
-  //   if (!workspaceId || !workbenches || workbenches?.length === 0) return
+  useEffect(() => {
+    if (!workspaceId || !workbenches || workbenches?.length === 0) return
 
-  //   if (!background?.sessionId || background?.workspaceId !== workspaceId) {
-  //     const firstSessionId = workbenches?.find(
-  //       (workbench) => workbench.workspaceId === workspaceId
-  //     )?.id
+    if (!background?.sessionId || background?.workspaceId !== workspaceId) {
+      const firstSessionId = workbenches?.find(
+        (workbench) =>
+          workbench.workspaceId === workspaceId && workbench.userId === user?.id
+      )?.id
 
-  //     if (!background?.sessionId && firstSessionId) {
-  //       setBackground({
-  //         sessionId: firstSessionId,
-  //         workspaceId: workspaceId
-  //       })
-  //     } else {
-  //       setBackground({
-  //         sessionId: undefined,
-  //         workspaceId: workspaceId
-  //       })
-  //     }
-  //   }
-  // }, [workspaceId, workbenches, setBackground])
+      if (!background?.sessionId && firstSessionId) {
+        setBackground({
+          sessionId: firstSessionId,
+          workspaceId: workspaceId
+        })
+      } else {
+        setBackground({
+          sessionId: undefined,
+          workspaceId: workspaceId
+        })
+      }
+    }
+  }, [workspaceId, workbenches, setBackground])
 
   return (
     <>
-      <div className="mb-4 flex w-full items-center justify-between gap-2 rounded-lg bg-background/60 p-4 text-white">
-        <div className="workspace-info w-full">
+      <div className="relative mb-4 flex w-full items-center justify-between gap-2 rounded-2xl border border-muted/40 bg-background/60 p-4 text-white">
+        <div className="workspace-info mr-8 w-full">
           <h3 className="mb-2 text-lg">{workspace?.description}</h3>
           <div className="workspace-details flex w-full items-center justify-between gap-2">
             <div className="detail-item">
@@ -140,27 +144,24 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="my-1 grid w-full gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div key={workspace?.id} className="group relative">
-          <div className="absolute right-4 top-4 z-10">
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  aria-haspopup="true"
-                  variant="ghost"
-                  className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
-                >
-                  <EllipsisVerticalIcon className="h-4 w-4" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black text-white">
-                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                <DropdownMenuItem onClick={() => setOpenEdit(true)}>
-                  Edit
-                </DropdownMenuItem>
+        <div className="absolute right-2 top-2 text-white">
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-haspopup="true"
+                variant="ghost"
+                className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
+              >
+                <EllipsisVerticalIcon className="h-4 w-4 text-accent" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-black text-white">
+              {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+              <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+                Edit
+              </DropdownMenuItem>
+              {workspace?.id !== user?.workspaceId && (
                 <DropdownMenuItem
                   onClick={() =>
                     workspace?.id && setActiveDeleteId(workspace?.id)
@@ -169,30 +170,48 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 >
                   Delete
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <WorkspaceDeleteForm
-            id={workspace?.id}
-            state={[
-              activeDeleteId === workspace?.id,
-              () => setActiveDeleteId(null)
-            ]}
-            onUpdate={() => {
-              refreshWorkspaces()
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <WorkspaceDeleteForm
+          id={workspace?.id}
+          state={[
+            activeDeleteId === workspace?.id,
+            () => setActiveDeleteId(null)
+          ]}
+          onUpdate={() => {
+            refreshWorkspaces()
 
-              setNotification({
-                title: 'Success!',
-                description: `Workspace ${workspace?.name} deleted`
-              })
-            }}
-          />
+            setNotification({
+              title: 'Success!',
+              description: `Workspace ${workspace?.name} deleted`
+            })
+          }}
+        />
+      </div>
+
+      <div className="my-1 grid w-full gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div key={workspace?.id} className="group relative">
           <Card
             title={
-              <>
-                <LaptopMinimal className="h-6 w-6 flex-shrink-0 text-white" />
-                Sessions
-              </>
+              <div
+                className="flex items-center gap-2"
+                onClick={() => {
+                  router.push(`/workspaces/${workspaceId}/sessions`)
+                }}
+              >
+                <LaptopMinimal className="h-6 w-6 flex-shrink-0" />
+                <span className="text-white">
+                  {(() => {
+                    const sessionCount =
+                      workbenches?.filter(
+                        (workbench) => workbench.workspaceId === workspaceId
+                      )?.length || 0
+                    return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`
+                  })()}
+                </span>
+              </div>
             }
             description={`Your open sessions in ${workspace?.name}.`}
             content={
@@ -209,15 +228,28 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                           ?.filter(
                             (workbench) => workbench.workspaceId === workspaceId
                           )
+                          ?.sort((a, b) => (a.userId === user?.id ? -1 : 1))
                           .map(({ id, createdAt, userId }) => (
-                            <Link
+                            <div
                               key={`workspace-sessions-${id}`}
-                              href={`/workspaces/${workspaceId}/sessions/${id}`}
-                              className="mb-2 flex cursor-pointer flex-col justify-between text-white"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+
+                                if (userId === user?.id) {
+                                  setBackground({
+                                    sessionId: id,
+                                    workspaceId: workspaceId
+                                  })
+                                }
+                              }}
+                              className={`mb-2 flex cursor-pointer flex-col justify-between`}
                             >
                               <div className="flex-grow text-sm">
                                 <div className="mb-0.5 mt-0.5 text-xs">
-                                  <div className="flex items-center gap-2 truncate text-xs font-semibold hover:text-accent hover:underline">
+                                  <div
+                                    className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'text-accent hover:text-accent hover:underline' : 'text-muted'}`}
+                                  >
                                     <AppWindow className="h-4 w-4 shrink-0" />
                                     {appInstances
                                       ?.filter(
@@ -247,7 +279,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                   ago
                                 </p>
                               </div>
-                            </Link>
+                            </div>
                           ))}
                       </div>
                     ))}
@@ -477,6 +509,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           }
         />
       </div>
+      {/* <Dashboard /> */}
     </>
   )
 }

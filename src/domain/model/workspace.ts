@@ -24,9 +24,10 @@ export const WorkspaceSchema = z.object({
 export const WorkspaceCreateSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
-  name: z.string().min(3),
-  shortName: z.string().min(3).optional(),
-  description: z.string().optional()
+  name: z.string().min(1, 'Name is required'),
+  shortName: z.string().min(3, 'Short name is required'),
+  description: z.string().optional(),
+  status: z.nativeEnum(WorkspaceState).optional()
 })
 
 export const WorkspaceUpdateSchema = WorkspaceCreateSchema.extend({
@@ -36,13 +37,3 @@ export const WorkspaceUpdateSchema = WorkspaceCreateSchema.extend({
 export type Workspace = z.infer<typeof WorkspaceSchema>
 export type WorkspaceCreateType = z.infer<typeof WorkspaceCreateSchema>
 export type WorkspaceUpdatetype = z.infer<typeof WorkspaceUpdateSchema>
-
-export interface WorkspaceResponse {
-  data?: Workspace
-  error?: string
-}
-
-export interface WorkspacesResponse {
-  data?: Workspace[]
-  error?: string
-}
