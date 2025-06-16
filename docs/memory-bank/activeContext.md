@@ -2,22 +2,18 @@
 
 ## 1. Current Focus
 
-The current focus is on analyzing and harmonizing the data architecture of the Chorus Web UI application. The goal is to establish a consistent, robust, and easily understandable pattern for data fetching, mutation, and state management across all features.
+The primary focus is to systematically apply the established architectural and data flow patterns to all remaining entities in the application.
 
 ## 2. Recent Changes
 
-- Initiated a discussion about the existing Clean Architecture implementation.
-- Identified inconsistencies in the data flow, particularly with the `App` entity's `create` and `update` operations, leading to TypeScript errors.
-- Began the process of documenting the intended architectural patterns in the Memory Bank.
+- **`User` Entity Refactored:** The entire data flow for the `User` entity has been refactored, including its domain model, mapper, data source, repository, use cases, and view-model actions. The public `UserRegisterForm` was also updated.
+- **SSR Bug Fixed:** Resolved a critical server-side rendering error by moving initial authentication state fetching from a Client Component (`Providers`) to the root Server Component (`layout.tsx`). This pattern is now documented.
+- **Dedicated `userMe` Action:** Created a specific server action for fetching the current user's data, cleaning up the main view model.
 
 ## 3. Next Steps
 
-- **Finalize Architectural Blueprint:** Answer the clarifying questions posed by the AI assistant to solidify the target architectural pattern for data handling.
-- **Create Refactoring Plan:** Develop a detailed, step-by-step plan to refactor the existing codebase to align with the new architectural blueprint.
-- **Implement a Pilot Refactor:** Apply the plan to the `App` entity's data flow as a proof-of-concept. This will serve as a template for other entities.
-- **Document the Process:** Create reproducible documentation from the refactoring process.
+- **Apply Patterns to `Workspace`:** The next entity to refactor is `Workspace`. This involves updating its entire data flow (domain, repository, data source, view-model, and UI) to match the established pattern.
 
 ## 4. Active Decisions & Considerations
 
-- **Standardizing the `Result<T>` Object:** Deciding where in the data flow the transformation from raw API responses to the application's standard `Result<T>` object should occur. The current hypothesis is that this is the responsibility of the Repository Implementation layer.
-- **Enforcing Architectural Boundaries:** Ensuring that UI components only interact with Server Actions, and that layers only communicate with their adjacent layers as defined in the system architecture.
+- **Continue the Pattern:** The successful refactoring of `App` and `User` validates the current architectural approach. The process will be repeated for all remaining models.
