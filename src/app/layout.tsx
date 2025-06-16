@@ -10,10 +10,9 @@ import { env } from 'next-runtime-env'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React from 'react'
 
-import { AppStateProvider } from '@/components/store/app-state-context'
+import { userMe } from '@/components/actions/server/user-me'
 import BackgroundIframe from '~/components/background-iframe'
 import GettingStartedCard from '~/components/getting-started-card'
-import { AuthProvider } from '~/components/store/auth-context'
 import { Toaster } from '~/components/ui/toaster'
 import { steps } from '~/lib/tours'
 
@@ -36,7 +35,18 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies()
   const session = cookieStore.get('session')
-  const authenticated = session !== undefined
+  const authenticated = !!session
+  let user
+
+  if (authenticated) {
+    const userResult = await userMe()
+    if (userResult.data) {
+      user = userResult.data
+    } else {
+      console.error('Failed to get initial user state:', userResult.error)
+    }
+  }
+
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
 
@@ -55,25 +65,20 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${rubik.variable} antialiased`}>
-        <Providers>
-          <AuthProvider authenticated={authenticated}>
-            <AppStateProvider>
-              <NextStepProvider>
-                <NextStep
-                  steps={steps}
-                  showNextStep={false}
-                  displayArrow={true}
-                  clickThroughOverlay={true}
-                  cardComponent={GettingStartedCard}
-                >
-                  {children}
-                </NextStep>
-              </NextStepProvider>
-              <BackgroundIframe />
-
-              <Toaster />
-            </AppStateProvider>
-          </AuthProvider>
+        <Providers authenticated={authenticated} initialUser={user}>
+          <NextStepProvider>
+            <NextStep
+              steps={steps}
+              showNextStep={false}
+              displayArrow={true}
+              clickThroughOverlay={true}
+              cardComponent={GettingStartedCard}
+            >
+              {children}
+            </NextStep>
+          </NextStepProvider>
+          <BackgroundIframe />
+          <Toaster />
         </Providers>
       </body>
     </html>
