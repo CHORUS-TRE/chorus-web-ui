@@ -30,6 +30,8 @@ export const WorkspaceCreateSchema = z.object({
   status: z.nativeEnum(WorkspaceState).optional()
 })
 
+export const WorkspaceEditFormSchema = WorkspaceCreateSchema // For form validation
+
 export const WorkspaceUpdateSchema = WorkspaceCreateSchema.extend({
   id: z.string()
 })

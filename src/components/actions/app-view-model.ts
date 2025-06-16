@@ -15,11 +15,11 @@ import { AppGet } from '~/domain/use-cases/app/app-get'
 import { AppList } from '~/domain/use-cases/app/app-list'
 import { AppUpdate } from '~/domain/use-cases/app/app-update'
 
-import { getCookie } from './server-cookie'
+import { getSession } from './server-session'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const session = await getCookie()
+  const session = await getSession()
   const dataSource = new AppDataSourceImpl(session)
   return new AppRepositoryImpl(dataSource)
 }
