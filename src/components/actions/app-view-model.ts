@@ -1,89 +1,58 @@
-'use server'
+'use client'
 
-import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
-
-import { AppDataSourceImpl } from '~/data/data-source/chorus-api/app-api-data-source-impl'
+import { AppDataSourceImpl } from '~/data/data-source/chorus-api/app-data-source'
 import { AppRepositoryImpl } from '~/data/repository/app-repository-impl'
-import { AppCreateType, AppResponse, AppsResponse } from '~/domain/model'
-import { App, AppState, AppUpdateType } from '~/domain/model/app'
+import { AppCreateSchema, AppCreateType, Result } from '~/domain/model'
+import { App, AppUpdateType } from '~/domain/model/app'
 import { AppCreate as AppCreateUseCase } from '~/domain/use-cases/app/app-create'
 import { AppDelete } from '~/domain/use-cases/app/app-delete'
 import { AppGet } from '~/domain/use-cases/app/app-get'
 import { AppList } from '~/domain/use-cases/app/app-list'
 import { AppUpdate } from '~/domain/use-cases/app/app-update'
 
-import { AppCreateSchema } from './app-schema'
+import { getCookie } from './server-cookie'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')?.value || ''
+  const session = await getCookie()
   const dataSource = new AppDataSourceImpl(session)
   return new AppRepositoryImpl(dataSource)
 }
 
-export async function appList(): Promise<AppsResponse> {
+export async function appGet(id: string): Promise<Result<App>> {
   try {
     const repository = await getRepository()
-    const useCase = new AppList(repository)
-    return await useCase.execute()
+    const useCase = new AppGet(repository)
+    return await useCase.execute(id)
   } catch (error) {
-    console.error('Error listing apps', error)
+    console.error('Error getting app', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
+}
+
+export async function appList(): Promise<Result<App[]>> {
+  const repository = await getRepository()
+  const useCase = new AppList(repository)
+
+  return await useCase.execute()
 }
 
 export async function appCreate(
   prevState: IFormState,
   formData: FormData
-): Promise<IFormState> {
-  try {
-    const repository = await getRepository()
-    const useCase = new AppCreateUseCase(repository)
+): Promise<Result<App>> {
+  const app = Object.fromEntries(formData.entries()) as AppCreateType
 
-    const app: AppCreateType = {
-      name: formData.get('name') as string,
-      description: (formData.get('description') as string) || '',
-      iconURL: (formData.get('iconURL') as string) || '',
-      tenantId: formData.get('tenantId') as string,
-      userId: formData.get('userId') as string,
-      status: AppState.ACTIVE,
-      dockerImageRegistry:
-        (formData.get('dockerImageRegistry') as string) || '',
-      dockerImageName: formData.get('dockerImageName') as string,
-      dockerImageTag: formData.get('dockerImageTag') as string,
-      shmSize: (formData.get('shmSize') as string) || '',
-      minEphemeralStorage:
-        (formData.get('minEphemeralStorage') as string) || '',
-      maxEphemeralStorage:
-        (formData.get('maxEphemeralStorage') as string) || '',
-      kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
-      maxCPU: (formData.get('maxCPU') as string) || '',
-      minCPU: (formData.get('minCPU') as string) || '',
-      maxMemory: (formData.get('maxMemory') as string) || '',
-      minMemory: (formData.get('minMemory') as string) || ''
-    }
+  const validation = AppCreateSchema.safeParse(app)
 
-    const validation = AppCreateSchema.safeParse(app)
-    if (!validation.success) {
-      return { issues: validation.error.issues }
-    }
-
-    const createdApp = await useCase.execute(app)
-
-    if (createdApp.error) {
-      return { error: createdApp.error }
-    }
-
-    return {
-      data: 'Successfully created app',
-      error: undefined
-    }
-  } catch (error) {
-    console.error('Error creating app', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+  if (!validation.success) {
+    return { issues: validation.error.issues }
   }
+
+  const repository = await getRepository()
+  const useCase = new AppCreateUseCase(repository)
+
+  return await useCase.execute(app)
 }
 
 export async function appUpdate(
@@ -94,29 +63,9 @@ export async function appUpdate(
     const repository = await getRepository()
     const useCase = new AppUpdate(repository)
 
-    const app: AppUpdateType = {
-      id: formData.get('id') as string,
-      name: formData.get('name') as string,
-      description: (formData.get('description') as string) || '',
-      iconURL: (formData.get('iconURL') as string) || '',
-      tenantId: formData.get('tenantId') as string,
-      userId: formData.get('userId') as string,
-      status: AppState.ACTIVE,
-      dockerImageRegistry:
-        (formData.get('dockerImageRegistry') as string) || '',
-      dockerImageName: formData.get('dockerImageName') as string,
-      dockerImageTag: formData.get('dockerImageTag') as string,
-      shmSize: (formData.get('shmSize') as string) || '',
-      minEphemeralStorage:
-        (formData.get('minEphemeralStorage') as string) || '',
-      maxEphemeralStorage:
-        (formData.get('maxEphemeralStorage') as string) || '',
-      kioskConfigURL: (formData.get('kioskConfigURL') as string) || '',
-      maxCPU: (formData.get('maxCPU') as string) || '',
-      minCPU: (formData.get('minCPU') as string) || '',
-      maxMemory: (formData.get('maxMemory') as string) || '',
-      minMemory: (formData.get('minMemory') as string) || ''
-    }
+    const app: AppUpdateType = Object.fromEntries(
+      formData.entries()
+    ) as AppUpdateType
 
     const validation = AppCreateSchema.safeParse(app)
     if (!validation.success) {
@@ -148,24 +97,12 @@ export async function appDelete(id: string): Promise<IFormState> {
       return { error: result.error }
     }
 
-    revalidatePath('/app-store')
     return {
       data: 'Successfully deleted app',
       error: undefined
     }
   } catch (error) {
     console.error('Error deleting app', error)
-    return { error: error instanceof Error ? error.message : String(error) }
-  }
-}
-
-export async function appGet(id: string): Promise<AppResponse> {
-  try {
-    const repository = await getRepository()
-    const useCase = new AppGet(repository)
-    return await useCase.execute(id)
-  } catch (error) {
-    console.error('Error getting app', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

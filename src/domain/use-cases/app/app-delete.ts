@@ -1,8 +1,8 @@
-import { AppResponse } from '@/domain/model'
+import { App, Result } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
 export interface AppDeleteUseCase {
-  execute(id: string): Promise<AppResponse>
+  execute(id: string): Promise<Result<string>>
 }
 
 export class AppDelete implements AppDeleteUseCase {
@@ -12,7 +12,7 @@ export class AppDelete implements AppDeleteUseCase {
     this.repository = repository
   }
 
-  async execute(id: string): Promise<AppResponse> {
+  async execute(id: string): Promise<Result<string>> {
     return await this.repository.delete(id)
   }
 }

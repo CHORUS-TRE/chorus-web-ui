@@ -1,8 +1,8 @@
-import { AppCreate, AppResponse } from '@/domain/model'
+import { App, AppUpdateType, Result } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
 export interface AppUpdateUseCase {
-  execute(data: AppCreate & { id: string }): Promise<AppResponse>
+  execute(data: AppUpdateType): Promise<Result<App>>
 }
 
 export class AppUpdate implements AppUpdateUseCase {
@@ -12,7 +12,7 @@ export class AppUpdate implements AppUpdateUseCase {
     this.repository = repository
   }
 
-  async execute(app: AppCreate & { id: string }): Promise<AppResponse> {
+  async execute(app: AppUpdateType): Promise<Result<App>> {
     return await this.repository.update(app)
   }
 }

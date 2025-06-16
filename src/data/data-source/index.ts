@@ -1,6 +1,7 @@
-export type * from './app-data-source'
 export type * from './app-instance-data-source'
 export type * from './authentication-data-source'
+export type * from './chorus-api/app-data-source'
+export * from './chorus-api/app-data-source'
 export type * from './user-data-source'
 export type * from './workbench-data-source'
 export type * from './workspace-data-source'
