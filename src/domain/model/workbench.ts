@@ -50,12 +50,3 @@ export const WorkbenchUpdateSchema = WorkbenchCreateSchema.extend({
 export type Workbench = z.infer<typeof WorkbenchSchema>
 export type WorkbenchCreateType = z.infer<typeof WorkbenchCreateSchema>
 export type WorkbenchUpdateType = z.infer<typeof WorkbenchUpdateSchema>
-export interface WorkbenchResponse {
-  data?: Workbench
-  error?: string
-}
-
-export interface WorkbenchesResponse {
-  data?: Workbench[]
-  error?: string
-}

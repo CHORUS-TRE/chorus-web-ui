@@ -36,6 +36,8 @@ type NotificationType =
 type AppStateContextType = {
   showRightSidebar: boolean
   toggleRightSidebar: () => void
+  sideBarContent: ReactNode | undefined
+  setSideBarContent: Dispatch<SetStateAction<ReactNode>>
   showWorkspacesTable: boolean
   toggleWorkspaceView: () => void
   background:
@@ -74,6 +76,8 @@ type AppStateContextType = {
 const AppStateContext = createContext<AppStateContextType>({
   showRightSidebar: false,
   toggleRightSidebar: () => {},
+  setSideBarContent: () => {},
+  sideBarContent: undefined,
   showWorkspacesTable: true,
   toggleWorkspaceView: () => {},
   background: undefined,
@@ -110,6 +114,9 @@ export const AppStateProvider = ({
     }
     return true
   })
+  const [sideBarContent, setSideBarContent] = useState<ReactNode | undefined>(
+    undefined
+  )
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [background, setBackground] = useState<{
     sessionId?: string
@@ -172,8 +179,9 @@ export const AppStateProvider = ({
       if (response?.data)
         setWorkbenches(
           response.data.sort(
-            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-          )
+            (a, b) =>
+              (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
+          ) as Workbench[]
         )
       if (response?.error)
         setNotification({ title: response.error, variant: 'destructive' })
@@ -212,23 +220,18 @@ export const AppStateProvider = ({
       return
     }
 
-    try {
-      const response = await appList()
-      if (response?.error)
-        setNotification({ title: response.error, variant: 'destructive' })
-      if (response?.data) {
-        setApps(
-          response.data.sort((a, b) => {
-            if (!a.name || !b.name) return 0
-            return a.name.localeCompare(b.name)
-          })
-        )
-      }
-    } catch (error) {
-      setNotification({
-        title: error instanceof Error ? error.message : String(error),
-        variant: 'destructive'
-      })
+    const result = await appList()
+    console.log('result', result)
+    if (result?.error)
+      setNotification({ title: result.error, variant: 'destructive' })
+
+    if (result?.data) {
+      setApps(
+        result.data.sort((a, b) => {
+          if (!a.name || !b.name) return 0
+          return a.name.localeCompare(b.name)
+        })
+      )
     }
   }, [user])
 
@@ -329,6 +332,8 @@ export const AppStateProvider = ({
       value={{
         showRightSidebar,
         toggleRightSidebar: () => setShowRightSidebar(!showRightSidebar),
+        sideBarContent,
+        setSideBarContent,
         showWorkspacesTable,
         toggleWorkspaceView: () => setShowWorkspacesTable(!showWorkspacesTable),
         background,

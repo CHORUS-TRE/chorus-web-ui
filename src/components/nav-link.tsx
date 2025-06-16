@@ -5,19 +5,22 @@ import { usePathname } from 'next/navigation'
 import { UrlObject } from 'url'
 
 export default function NavLink({
+  enabled = true,
   href,
   exact = false,
   children,
   className,
   ...props
 }: {
+  enabled?: boolean
   href: string
   exact?: boolean
   className?: string
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isActive = exact ? pathname === href : pathname?.startsWith(href)
+  const isActive =
+    !enabled || exact ? pathname === href : pathname?.startsWith(href)
   const newClassName = isActive ? `${className} active` : className
 
   return (

@@ -7,6 +7,7 @@ import {
   LaptopMinimal,
   PackageOpen
 } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -15,6 +16,7 @@ import { useAppState } from '@/components/store/app-state-context'
 import { Header } from '~/components/header'
 import { toast } from '~/hooks/use-toast'
 
+import { Card } from '../card'
 import RightSidebar from '../right-sidebar'
 import { useAuth } from '../store/auth-context'
 import { Button } from '../ui/button'
@@ -34,7 +36,10 @@ export function MainLayout({ children }: MainLayoutProps) {
     showRightSidebar,
     notification,
     setNotification,
-    setBackground
+    setBackground,
+    toggleRightSidebar,
+    users,
+    setSideBarContent
   } = useAppState()
   const { user } = useAuth()
   const router = useRouter()
@@ -76,32 +81,122 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Header />
       </div>
 
+      {!background?.sessionId && (
+        <div
+          className="fixed left-0 top-11 z-30 h-full w-full bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 hover:text-accent"
+          id="iframe-overlay"
+        >
+          <div className="session-overlay flex h-8 w-full cursor-pointer items-center justify-end gap-4 rounded-lg p-2">
+            <Button
+              size="icon"
+              className={`overflow-hidden hover:bg-inherit`}
+              title="List existing sessions"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                setSideBarContent(
+                  <Card
+                    title={
+                      <>
+                        <LaptopMinimal className="h-6 w-6 flex-shrink-0 text-white" />
+                        Sessions
+                      </>
+                    }
+                    description={`Your open sessions`}
+                    content={
+                      <div className="grid gap-1">
+                        {workspaces
+                          ?.filter((workspace) =>
+                            workbenches?.some(
+                              (workbench) =>
+                                workbench.workspaceId === workspace.id &&
+                                workbench.userId === user?.id
+                            )
+                          )
+                          ?.map(({ id: workspaceId }) => (
+                            <div
+                              className="mb-2"
+                              key={`workspace-grid-${workspaceId}`}
+                            >
+                              {workbenches
+                                ?.filter(
+                                  (workbench) =>
+                                    workbench.workspaceId === workspaceId
+                                )
+                                .map(({ id, createdAt, userId }) => (
+                                  <Link
+                                    key={`workspace-sessions-${id}`}
+                                    href={`/workspaces/${workspaceId}/sessions/${id}`}
+                                    className="mb-2 flex cursor-pointer flex-col justify-between text-white"
+                                  >
+                                    <div className="flex-grow text-sm">
+                                      <div className="mb-0.5 mt-0.5 text-xs">
+                                        <div className="flex items-center gap-2 truncate text-xs font-semibold hover:text-accent hover:underline">
+                                          <AppWindow className="h-4 w-4 shrink-0" />
+                                          {appInstances
+                                            ?.filter(
+                                              (instance) =>
+                                                id === instance.workbenchId
+                                            )
+                                            .map(
+                                              (instance) =>
+                                                apps?.find(
+                                                  (app) =>
+                                                    app.id === instance.appId
+                                                )?.name || ''
+                                            )
+                                            .join(', ') ||
+                                            'No apps started yet'}
+                                        </div>
+                                      </div>
+                                      <p className="text-xs text-muted">
+                                        Created by{' '}
+                                        {
+                                          users?.find(
+                                            (user) => user.id === userId
+                                          )?.firstName
+                                        }{' '}
+                                        {
+                                          users?.find(
+                                            (user) => user.id === userId
+                                          )?.lastName
+                                        }{' '}
+                                        {formatDistanceToNow(
+                                          createdAt || new Date()
+                                        )}{' '}
+                                        ago
+                                      </p>
+                                    </div>
+                                  </Link>
+                                ))}
+                            </div>
+                          ))}
+                      </div>
+                    }
+                  />
+                )
+                if (!showRightSidebar) {
+                  toggleRightSidebar()
+                }
+              }}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
       {background?.sessionId && (
         <Link
           href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
           passHref
         >
           <div
-            className="fixed left-0 top-11 z-30 h-full w-full cursor-pointer bg-slate-900 bg-opacity-60 text-muted hover:text-accent"
+            className="fixed left-0 top-11 z-30 h-full w-full cursor-pointer bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 hover:text-accent"
             id="iframe-overlay "
           >
-            <div className="session-overlay w-fullrounded-lg flex h-8 cursor-pointer items-center justify-between bg-slate-900 bg-opacity-60 p-4">
+            <div className="session-overlay flex h-8 w-full cursor-pointer items-center justify-end gap-4 rounded-lg p-2">
               <div className="flex items-center">
-                <PackageOpen className="mr-2 h-4 w-4" />
-                <span className="text-sm font-semibold">
-                  <Link
-                    href={`/workspaces/${workspace?.id}`}
-                    className="hover:text-accent hover:underline"
-                  >
-                    {workspace?.id === user?.workspaceId
-                      ? 'Private Workspace'
-                      : workspace?.name}
-                  </Link>
-                </span>
-              </div>
-              <div className="flex items-center">
-                <LaptopMinimal className="mr-2 h-4 w-4" />
-                <span className="text-xs font-semibold">Open Session: </span>
                 <AppWindow className="ml-4 mr-2 h-4 w-4 shrink-0" />
                 <span className="truncate text-xs font-semibold">
                   {appInstances
@@ -122,13 +217,27 @@ export function MainLayout({ children }: MainLayoutProps) {
                 </span>
               </div>
               <div className="flex items-center">
+                <PackageOpen className="mr-2 h-4 w-4" />
+                <span className="text-sm font-semibold">
+                  <Link
+                    href={`/workspaces/${workspace?.id}`}
+                    className="hover:text-accent hover:underline"
+                  >
+                    {workspace?.id === user?.workspaceId
+                      ? 'My Workspace'
+                      : workspace?.name}
+                  </Link>
+                </span>
+              </div>
+              {/*
+              <div className="flex items-center">
                 <span className="text-xs font-semibold">
                   Updated:{' '}
                   {formatDistanceToNow(workbench?.updatedAt || new Date())} ago
                 </span>
-              </div>
+              </div> */}
 
-              <div className="flex items-center">
+              <div className="">
                 <Button
                   size="icon"
                   className={`overflow-hidden hover:bg-inherit`}

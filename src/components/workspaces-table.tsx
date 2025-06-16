@@ -134,7 +134,9 @@ export default function WorkspaceTable({
             </Link>
           </TableCell>
           <TableCell className="p-1 font-normal">
-            {workspace?.id === user?.workspaceId ? 'Home' : workspace?.name}
+            {workspace?.id === user?.workspaceId
+              ? 'My Workspace'
+              : workspace?.name}
           </TableCell>
           <TableCell className="font-xs p-1">
             {workspace?.description}

@@ -61,7 +61,7 @@ export const steps: Tour[] = [
       //   title: "DESKTOPS",
       //   content: <div className="min-w-[480px]">
       //     <p className="mb-4">Session in CHORUS provide a secure computing environment where you can run applications, analyze data, and collaborate with others.</p>
-      //     <p className="mb-4">You can launch a session in your Home Workspace or within a project workspace you are involved in.</p>
+      //     <p className="mb-4">You can launch a session in your My Workspace Workspace or within a project workspace you are involved in.</p>
       //     <p className="mb-4">With flexible and scalable resources, sessions can be customized to meet your project’s specific needs. You can also open multiple instances simultaneously, enabling you to manage different research tasks in parallel.</p>
       //   </div>,
       //   selector: "#getting-started-step2",

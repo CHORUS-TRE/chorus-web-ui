@@ -26,7 +26,13 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Workspace } from '@/domain/model'
-import { WorkspaceState } from '@/domain/model/workspace'
+import {
+  WorkspaceCreateSchema,
+  WorkspaceCreateType,
+  WorkspaceState,
+  WorkspaceUpdateSchema,
+  WorkspaceUpdatetype
+} from '@/domain/model/workspace'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -64,16 +70,6 @@ const initialState: IFormState = {
   issues: undefined
 }
 
-const workspaceFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  shortName: z.string().min(1, 'Short name is required'),
-  description: z.string().optional(),
-  tenantId: z.string(),
-  userId: z.string()
-})
-
-type WorkspaceFormData = z.infer<typeof workspaceFormSchema>
-
 export function WorkspaceCreateForm({
   state: [open, setOpen],
   userId,
@@ -87,8 +83,8 @@ export function WorkspaceCreateForm({
 }) {
   const [formState, formAction] = useActionState(workspaceCreate, initialState)
   const hasHandledSuccess = useRef(false)
-  const form = useForm<WorkspaceFormData>({
-    resolver: zodResolver(workspaceFormSchema),
+  const form = useForm<WorkspaceCreateType>({
+    resolver: zodResolver(WorkspaceCreateSchema),
     defaultValues: {
       name: '',
       shortName: '',
@@ -116,15 +112,14 @@ export function WorkspaceCreateForm({
     }
   }, [formState, onUpdate, setOpen, open, form])
 
-  async function onSubmit(data: WorkspaceFormData) {
+  async function onSubmit(data: WorkspaceCreateType) {
     const formData = new FormData()
     formData.append('name', data.name)
     formData.append('shortName', data.shortName)
     formData.append('description', data.description || '')
     formData.append('tenantId', data.tenantId)
     formData.append('userId', data.userId)
-    formData.append('memberIds', data.memberIds)
-    formData.append('tags', data.tags)
+    formData.append('status', WorkspaceState.ACTIVE)
 
     startTransition(() => {
       formAction(formData)
@@ -191,8 +186,6 @@ export function WorkspaceCreateForm({
                   </div>
                   <input type="hidden" {...form.register('tenantId')} />
                   <input type="hidden" {...form.register('userId')} />
-                  <input type="hidden" {...form.register('memberIds')} />
-                  <input type="hidden" {...form.register('tags')} />
                   <p aria-live="polite" className="sr-only" role="status">
                     {JSON.stringify(formState?.data, null, 2)}
                   </p>
@@ -275,20 +268,6 @@ export function WorkspaceDeleteForm({
   )
 }
 
-const workspaceUpdateFormSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'Name is required'),
-  shortName: z.string().min(1, 'Short name is required'),
-  description: z.string().optional(),
-  status: z.nativeEnum(WorkspaceState),
-  tenantId: z.string(),
-  userId: z.string(),
-  memberIds: z.string(),
-  tags: z.string()
-})
-
-type WorkspaceUpdateFormData = z.infer<typeof workspaceUpdateFormSchema>
-
 export function WorkspaceUpdateForm({
   state: [open, setOpen],
   trigger,
@@ -301,8 +280,8 @@ export function WorkspaceUpdateForm({
   onUpdate?: () => void
 }) {
   const [formState, formAction] = useActionState(workspaceUpdate, initialState)
-  const form = useForm<WorkspaceUpdateFormData>({
-    resolver: zodResolver(workspaceUpdateFormSchema),
+  const form = useForm<WorkspaceUpdatetype>({
+    resolver: zodResolver(WorkspaceUpdateSchema),
     defaultValues: {
       id: workspace?.id || '',
       name: workspace?.name || '',
@@ -310,9 +289,7 @@ export function WorkspaceUpdateForm({
       description: workspace?.description || '',
       status: workspace?.status || WorkspaceState.ACTIVE,
       tenantId: '1',
-      userId: workspace?.userId || '',
-      memberIds: workspace?.memberIds?.join(',') || '',
-      tags: workspace?.tags?.join(',') || ''
+      userId: workspace?.userId || ''
     }
   })
 
@@ -340,8 +317,6 @@ export function WorkspaceUpdateForm({
     formData.append('status', data.status)
     formData.append('tenantId', data.tenantId)
     formData.append('userId', data.userId)
-    formData.append('memberIds', data.memberIds)
-    formData.append('tags', data.tags)
 
     startTransition(() => {
       formAction(formData)

@@ -14,8 +14,12 @@ import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
 
 export default function RightSidebar() {
   const { startNextStep } = useNextStep()
-  const { toggleRightSidebar, showRightSidebar, hasSeenGettingStartedTour } =
-    useAppState()
+  const {
+    toggleRightSidebar,
+    showRightSidebar,
+    hasSeenGettingStartedTour,
+    sideBarContent
+  } = useAppState()
 
   const handleStartTour = useCallback(() => {
     startNextStep('gettingStartedTour')
@@ -38,29 +42,32 @@ export default function RightSidebar() {
       >
         <CircleX />
       </Button>
-      <div className="flex h-full w-[300px] flex-col justify-between pr-8">
-        <div>
-          <h2 className="mb-8 flex items-center gap-2 text-xl text-white">
-            <Icon iconNode={owl} />
-            Help
-          </h2>
-          <div className="flex flex-col gap-4">
-            <Link
-              href="https://docs.chorus-tre.ch/docs/category/getting-started"
-              className="cursor"
-              target="_blank"
-            >
-              <Card
-                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
-                id="getting-started-step1"
+
+      {sideBarContent}
+      {!sideBarContent && (
+        <div className="flex h-full w-[300px] flex-col justify-between pr-8">
+          <div>
+            <h2 className="mb-8 flex items-center gap-2 text-xl text-white">
+              <Icon iconNode={owl} />
+              Help
+            </h2>
+            <div className="flex flex-col gap-4">
+              <Link
+                href="https://docs.chorus-tre.ch/docs/category/getting-started"
+                className="cursor"
+                target="_blank"
               >
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-base">Getting started</CardTitle>
-                  <CardDescription className="text-sm">
-                    Get started with your research.
-                  </CardDescription>
-                </CardHeader>
-                {/* <CardContent>
+                <Card
+                  className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                  id="getting-started-step1"
+                >
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-base">Getting started</CardTitle>
+                    <CardDescription className="text-sm">
+                      Get started with your research.
+                    </CardDescription>
+                  </CardHeader>
+                  {/* <CardContent>
                   <div className="relative max-w-xs overflow-hidden bg-cover bg-no-repeat">
                     <Image
                       src={placeholder}
@@ -69,23 +76,23 @@ export default function RightSidebar() {
                     />
                   </div>
                 </CardContent> */}
-              </Card>
-            </Link>
-            <Link
-              href="https://docs.chorus-tre.ch"
-              target="_blank"
-              className="cursor"
-            >
-              <Card
-                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                </Card>
+              </Link>
+              <Link
+                href="https://docs.chorus-tre.ch"
+                target="_blank"
+                className="cursor"
               >
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-base">Documentation</CardTitle>
-                  <CardDescription className="text-sm">
-                    Learn more about the platform.
-                  </CardDescription>
-                </CardHeader>
-                {/* <CardContent>
+                <Card
+                  className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                >
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-base">Documentation</CardTitle>
+                    <CardDescription className="text-sm">
+                      Learn more about the platform.
+                    </CardDescription>
+                  </CardHeader>
+                  {/* <CardContent>
                   <div className="relative w-full max-w-xs overflow-hidden bg-cover bg-no-repeat">
                     <Image
                       src={placeholder}
@@ -95,10 +102,10 @@ export default function RightSidebar() {
                     <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-accent bg-fixed opacity-0 transition duration-300 ease-in-out hover:opacity-60"></div>
                   </div>
                 </CardContent> */}
-              </Card>
-            </Link>
+                </Card>
+              </Link>
 
-            {/* <Card className="bg-opacity-85 bg-black text-white">
+              {/* <Card className="bg-opacity-85 bg-black text-white">
               <CardHeader className="pb-4">
                 <CardTitle>Contact Support</CardTitle>
                 <CardDescription>
@@ -136,7 +143,7 @@ export default function RightSidebar() {
               </CardContent>
             </Card> */}
 
-            {/* <Card>
+              {/* <Card>
                 <Link href="#" className="cursor-default">
                   <div className="relative max-w-xs overflow-hidden bg-cover bg-no-repeat">
                     <Image
@@ -181,9 +188,10 @@ export default function RightSidebar() {
                   </CardFooter>
                 </CardHeader>
               </Card> */}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   )
 }
