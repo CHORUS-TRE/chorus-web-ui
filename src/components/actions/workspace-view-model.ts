@@ -18,7 +18,7 @@ import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
-import { getSession } from './server-session'
+import { getSession } from './server/session'
 import { IFormState } from './utils'
 
 const getRepository = async () => {

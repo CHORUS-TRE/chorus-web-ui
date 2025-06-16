@@ -1,12 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import {
-  AppWindow,
-  CircleX,
-  LaptopMinimal,
-  PackageOpen
-} from 'lucide-react'
+import { AppWindow, CircleX, LaptopMinimal, PackageOpen } from 'lucide-react'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'

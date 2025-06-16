@@ -133,8 +133,8 @@ cd chorus-web-ui
 **Environment variables**
 
 Server side variables:
-- `DATA_SOURCE_API_URL` is the API backend. Note that the generated files are prefixed with /api/rest/v1/ so generally you want to have something like
-DATA_SOURCE_API_URL=https://api.chorus-tre.com/
+- `NEXT_PUBLIC_DATA_SOURCE_API_URL` is the API backend. Note that the generated files are prefixed with /api/rest/v1/ so generally you want to have something like
+NEXT_PUBLIC_DATA_SOURCE_API_URL=https://api.chorus-tre.com/
 
 Client side variable:
 - `NEXT_PUBLIC_DATA_SOURCE_API_URL` is exposed to the web-ui and should contains the prefix to the API, like https://api.chorus-tre.com/api/rest/v1/ Used for the iframe streams
@@ -148,7 +148,7 @@ docker build -t chorus/web-ui .
 ```
 
 ```bash
-docker run -e DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch \
+docker run -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch \
           -e REACT_EDITOR=cursor \
           -e NODE_ENV=development \
           -e NEXT_PUBLIC_APP_URL=http://localhost:3000 \

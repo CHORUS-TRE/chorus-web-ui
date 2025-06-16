@@ -16,7 +16,7 @@ import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
 
-import { getSession } from './server-session'
+import { getSession } from './server/session'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
@@ -40,7 +40,7 @@ export async function workbenchDelete(id: string): Promise<Result<boolean>> {
 }
 
 export async function workbenchCreate(
-  prevState: IFormState,
+  prevState: IFormState<Workbench>,
   formData: FormData
 ): Promise<Result<Workbench>> {
   try {
@@ -57,13 +57,19 @@ export async function workbenchCreate(
     const validation = WorkbenchCreateSchema.safeParse(workbench)
 
     if (!validation.success) {
-      return { issues: validation.error.issues }
+      return {
+        ...prevState,
+        issues: validation.error.issues
+      }
     }
 
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error creating workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return {
+      ...prevState,
+      error: error instanceof Error ? error.message : String(error)
+    }
   }
 }
 
@@ -90,7 +96,7 @@ export async function workbenchGet(id: string): Promise<Result<Workbench>> {
 }
 
 export async function workbenchUpdate(
-  prevState: IFormState,
+  prevState: IFormState<Workbench>,
   formData: FormData
 ): Promise<Result<Workbench>> {
   try {

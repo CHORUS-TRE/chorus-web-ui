@@ -15,7 +15,7 @@ import { AppGet } from '~/domain/use-cases/app/app-get'
 import { AppList } from '~/domain/use-cases/app/app-list'
 import { AppUpdate } from '~/domain/use-cases/app/app-update'
 
-import { getSession } from './server-session'
+import { getSession } from './server/session'
 import { IFormState } from './utils'
 
 const getRepository = async () => {
