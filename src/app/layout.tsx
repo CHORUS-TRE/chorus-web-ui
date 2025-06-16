@@ -4,7 +4,6 @@ import '@/styles/globals.css'
 import { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import { cookies } from 'next/headers'
-import Image from 'next/image'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
@@ -71,10 +70,7 @@ export default async function RootLayout({
                 </NextStep>
               </NextStepProvider>
               <BackgroundIframe />
-              <div
-                className="fixed left-0 top-0 h-full w-full bg-slate-900"
-                id="background"
-              ></div>
+
               <Toaster />
             </AppStateProvider>
           </AuthProvider>
