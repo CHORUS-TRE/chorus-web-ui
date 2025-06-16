@@ -1,8 +1,11 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useActionState, useEffect, useState, useTransition } from 'react'
+import { startTransition, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { ZodIssue } from 'zod'
 
 import {
   workbenchCreate,
@@ -18,6 +21,15 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import {
+  Workbench,
+  WorkbenchCreateSchema,
+  WorkbenchCreateType,
+  WorkbenchEditFormSchema,
+  WorkbenchStatus,
+  WorkbenchUpdateSchema,
+  WorkbenchUpdateType
+} from '@/domain/model'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -27,23 +39,23 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Workbench } from '~/domain/model'
 
-import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
 
 const DEFAULT_VIEWPORT = {
   width: 1080,
   height: 608 // 1080 * (9/16) for 16:9 aspect ratio
-}
-
-const initialState: IFormState = {
-  data: undefined,
-  error: undefined,
-  issues: undefined
 }
 
 export function WorkbenchCreateForm({
@@ -56,18 +68,28 @@ export function WorkbenchCreateForm({
   workspaceId: string
   workspaceName?: string
   userId?: string
-  onSuccess?: (sessionId: string) => void
+  onSuccess?: (workbench: Workbench) => void
   openOnStart?: boolean
 }) {
-  const [state, formAction, pending] = useActionState(
-    workbenchCreate,
-    initialState,
-    `/workspaces/${workspaceId}`
-  )
   const [open, setOpen] = useState(openOnStart)
   const [viewportDimensions, setViewportDimensions] = useState(DEFAULT_VIEWPORT)
   const { setNotification } = useAppState()
   const router = useRouter()
+
+  const form = useForm<WorkbenchCreateType>({
+    resolver: zodResolver(WorkbenchCreateSchema),
+    defaultValues: {
+      name: `${workspaceName}-session`,
+      workspaceId: workspaceId,
+      userId: userId || '2',
+      tenantId: '1',
+      status: WorkbenchStatus.ACTIVE,
+      description: '',
+      initialResolutionHeight: viewportDimensions.height,
+      initialResolutionWidth: viewportDimensions.width
+    }
+  })
+
   useEffect(() => {
     // Set initial dimensions
     setViewportDimensions({
@@ -81,53 +103,74 @@ export function WorkbenchCreateForm({
         height: Math.floor(window?.visualViewport?.height || DEFAULT_VIEWPORT.height)
       })
     }
-
     window?.visualViewport?.addEventListener('resize', updateDimensions)
     return () =>
       window?.visualViewport?.removeEventListener('resize', updateDimensions)
   }, [])
 
   useEffect(() => {
-    if (state?.error) {
-      setNotification({
-        title: 'Error',
-        description: state.error,
-        variant: 'destructive'
+    if (open) {
+      form.reset({
+        name: `${workspaceName}-session`,
+        workspaceId: workspaceId,
+        userId: userId || '2',
+        tenantId: '1',
+        status: WorkbenchStatus.ACTIVE,
+        description: '',
+        initialResolutionHeight: viewportDimensions.height,
+        initialResolutionWidth: viewportDimensions.width
       })
-      return
-    }
-
-    if (state?.data) {
-      setNotification({
-        title: 'Success',
-        description: 'Session created successfully',
-        variant: 'default'
-      })
-
-      setOpen(false)
-
-      router.push(
-        `/workspaces/${workspaceId}/sessions/${state?.data as string}`
-      )
-
-      if (onSuccess) onSuccess(state?.data as string)
     }
   }, [
-    state?.data,
-    state?.error,
-    onSuccess,
-    setOpen,
-    setNotification,
-    router,
-    workspaceId
+    open,
+    form,
+    workspaceId,
+    workspaceName,
+    userId,
+    viewportDimensions.height,
+    viewportDimensions.width
   ])
 
-  const handleSubmit = async (formData: FormData) => {
-    try {
-      await formAction(formData)
-    } catch (error) {
-      console.error('Form submission error:', error)
-    }
+  async function onSubmit(data: WorkbenchCreateType) {
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) formData.append(key, String(value))
+    })
+
+    startTransition(async () => {
+      const result = await workbenchCreate({}, formData)
+
+      if (result.issues) {
+        result.issues.forEach((issue: ZodIssue) => {
+          form.setError(issue.path[0] as keyof WorkbenchCreateType, {
+            type: 'server',
+            message: issue.message
+          })
+        })
+        return
+      }
+
+      if (result.error) {
+        setNotification({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+        return
+      }
+
+      if (result.data) {
+        setNotification({
+          title: 'Success',
+          description: 'Session created successfully'
+        })
+        setOpen(false)
+        router.push(
+          `/workspaces/${workspaceId}/sessions/${result.data.id as string}`
+        )
+        if (onSuccess) onSuccess(result.data)
+      }
+    })
   }
 
   return (
@@ -137,143 +180,85 @@ export function WorkbenchCreateForm({
           className="flex items-center justify-start gap-1 rounded-full bg-background text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-background focus:ring-2 focus:ring-accent"
           type="button"
           variant="default"
-          disabled={pending}
+          disabled={form.formState.isSubmitting}
         >
           <CirclePlus className="h-4 w-4" />
-          {pending ? 'Creating...' : 'Start session'}
+          {form.formState.isSubmitting ? 'Creating...' : 'Start session'}
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle className="hidden">Start App</DialogTitle>
         <DialogHeader>
-          <DialogDescription asChild>
-            <form action={handleSubmit}>
-              <Card className="w-full max-w-md border-none bg-background text-white">
-                <CardHeader className="pb-4">
-                  <CardTitle>Start Session</CardTitle>
-                  <CardDescription>Start a new session.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Name of the Session</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="name"
-                        name="name"
-                        required
-                        placeholder="Enter session name"
-                        defaultValue={`${workspaceName}-session`}
-                        disabled={pending}
-                        aria-disabled={pending}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="name">Workspace</Label>
-                    <Input
-                      id="workspaceId"
-                      name="workspaceId"
-                      placeholder="Enter workspace name"
-                      defaultValue={workspaceId || ''}
-                      disabled={pending}
-                      aria-disabled={pending}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) =>
-                          e.path.includes('workspaceId')
-                        )?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      placeholder="Enter description"
-                      className="min-h-[100px]"
-                      disabled={pending}
-                      aria-disabled={pending}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) =>
-                          e.path.includes('description')
-                        )?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Label htmlFor="userId">Owner ID</Label>
-                    <Input
-                      id="userId"
-                      name="userId"
-                      placeholder="Enter owner ID"
-                      defaultValue={userId || '2'}
-                      disabled={pending}
-                      aria-disabled={pending}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('userId'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="hidden gap-2">
-                    <Label htmlFor="tenantId">Tenant ID</Label>
-                    <Input
-                      id="tenantId"
-                      name="tenantId"
-                      placeholder="Enter tenant ID"
-                      defaultValue={1}
-                      disabled={pending}
-                      aria-disabled={pending}
-                    />
-                    <div className="text-xs text-red-500">
-                      {
-                        state?.issues?.find((e) => e.path.includes('tenantId'))
-                          ?.message
-                      }
-                    </div>
-                  </div>
-                  <div className="grid hidden gap-2">
-                    <Input
-                      type="hidden"
-                      name="initialResolutionWidth"
-                      value={viewportDimensions.width}
-                    />
-                    <Input
-                      type="hidden"
-                      name="initialResolutionHeight"
-                      value={viewportDimensions.height}
-                    />
-                  </div>
-                  <p aria-live="polite" className="sr-only" role="status">
-                    {JSON.stringify(state?.data)}
-                  </p>
-                  {state?.error && (
-                    <p className="text-red-500">{state.error}</p>
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    className="ml-auto flex items-center justify-start gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
-                    type="submit"
-                    disabled={pending}
-                    aria-disabled={pending}
-                  >
-                    {pending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {`Start ${pending ? '...' : ''}`}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </form>
-          </DialogDescription>
+          <DialogTitle>Start Session</DialogTitle>
+          <DialogDescription>Start a new session.</DialogDescription>
         </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="w-full max-w-md border-none bg-background text-white">
+              <CardContent className="grid gap-4">
+                <input
+                  type="hidden"
+                  {...form.register('initialResolutionWidth')}
+                />
+                <input
+                  type="hidden"
+                  {...form.register('initialResolutionHeight')}
+                />
+                <input type="hidden" {...form.register('workspaceId')} />
+                <input type="hidden" {...form.register('userId')} />
+                <input type="hidden" {...form.register('tenantId')} />
+                <input type="hidden" {...form.register('status')} />
+
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name of the Session</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          required
+                          placeholder="Enter session name"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Enter description"
+                          className="min-h-[100px]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter>
+                <Button
+                  className="ml-auto"
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Create
+                </Button>
+              </CardFooter>
+            </Card>
+          </form>
+        </Form>
       </DialogContent>
     </DialogContainer>
   )
@@ -282,46 +267,50 @@ export function WorkbenchCreateForm({
 export function WorkbenchDeleteForm({
   state: [open, setOpen],
   id,
-  onUpdate
+  onSuccess
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   id?: string
-  onUpdate?: () => void
+  onSuccess?: () => void
 }) {
-  const [formState, formAction, pending] = useActionState(
-    workbenchDelete,
-    initialState
-  )
-  const [, startTransition] = useTransition()
-  const handleDelete = async () => {
-    try {
-      const formData = new FormData()
-      formData.append('id', id || '')
-      startTransition(() => {
-        formAction(formData)
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  const { setNotification } = useAppState()
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  useEffect(() => {
-    if (formState?.data) {
-      setOpen(false)
-      if (onUpdate) onUpdate()
-    }
-  }, [formState?.data])
+  const onConfirm = async () => {
+    if (!id) return
+    setIsDeleting(true)
+    startTransition(async () => {
+      const result = await workbenchDelete(id)
+      setIsDeleting(false)
+
+      if (result.error) {
+        setNotification({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+        return
+      }
+
+      if (result.data) {
+        setNotification({
+          title: 'Success',
+          description: 'Session deleted successfully.'
+        })
+        if (onSuccess) onSuccess()
+        setOpen(false)
+      }
+    })
+  }
 
   return (
     <DeleteDialog
       open={open}
-      onCancel={() => {
-        setOpen(false)
-      }}
-      isDeleting={pending}
-      onConfirm={handleDelete}
+      onCancel={() => setOpen(false)}
+      onConfirm={onConfirm}
+      isDeleting={isDeleting}
       title="Delete Session"
-      description="The Session and its apps will be deleted. Are you sure? This action cannot be undone."
+      description="Are you sure you want to delete this session? This action cannot be undone."
     />
   )
 }
@@ -329,77 +318,153 @@ export function WorkbenchDeleteForm({
 export function WorkbenchUpdateForm({
   state: [open, setOpen],
   workbench,
-  onUpdate
+  onSuccess
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   workbench: Workbench
-  onUpdate?: () => void
+  onSuccess?: (workbench: Workbench) => void
 }) {
-  const [state, formAction] = useActionState(workbenchUpdate, initialState)
-  const [scientistName, setScientistName] = useState(workbench.name)
   const { setNotification } = useAppState()
-  const [, startTransition] = useTransition()
+  const form = useForm<WorkbenchUpdateType>({
+    resolver: zodResolver(WorkbenchUpdateSchema),
+    defaultValues: {
+      id: workbench.id,
+      name: workbench.name,
+      description: workbench.description,
+      status: workbench.status,
+      tenantId: workbench.tenantId,
+      userId: workbench.userId,
+      workspaceId: workbench.workspaceId,
+      initialResolutionHeight: workbench.initialResolutionHeight,
+      initialResolutionWidth: workbench.initialResolutionWidth
+    }
+  })
 
   useEffect(() => {
-    if (state?.error) {
-      setNotification({
-        title: 'Error',
-        description: state.error,
-        variant: 'destructive'
+    if (open) {
+      form.reset({
+        id: workbench.id,
+        name: workbench.name,
+        description: workbench.description,
+        status: workbench.status,
+        tenantId: workbench.tenantId,
+        userId: workbench.userId,
+        workspaceId: workbench.workspaceId,
+        initialResolutionHeight: workbench.initialResolutionHeight,
+        initialResolutionWidth: workbench.initialResolutionWidth
       })
-      return
     }
+  }, [open, workbench, form])
 
-    if (state?.data) {
-      setOpen(false)
-      if (onUpdate) onUpdate()
-    }
-  }, [setNotification, state, onUpdate, setOpen])
+  async function onSubmit(data: WorkbenchUpdateType) {
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) formData.append(key, String(value))
+    })
 
-  const handleSubmit = async (formData: FormData) => {
-    startTransition(() => {
-      formAction(formData)
+    startTransition(async () => {
+      const result = await workbenchUpdate({}, formData)
+
+      if (result.issues) {
+        result.issues.forEach((issue: ZodIssue) => {
+          form.setError(issue.path[0] as keyof WorkbenchUpdateType, {
+            type: 'server',
+            message: issue.message
+          })
+        })
+        return
+      }
+
+      if (result.error) {
+        setNotification({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+        return
+      }
+
+      if (result.data) {
+        setNotification({
+          title: 'Success',
+          description: 'Session updated successfully'
+        })
+        if (onSuccess) onSuccess(result.data)
+        setOpen(false)
+      }
     })
   }
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Session</DialogTitle>
-          <DialogDescription>Update your session settings.</DialogDescription>
+          <DialogTitle>Edit Session</DialogTitle>
+          <DialogDescription>
+            Make changes to your session here. Click save when you&apos;re done.
+          </DialogDescription>
         </DialogHeader>
-        <form action={handleSubmit}>
-          <Card className="w-full max-w-md border-none bg-background text-white">
-            <CardHeader className="pb-4">
-              <CardTitle>Update Session</CardTitle>
-              <CardDescription>Update your session settings.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="grid gap-2">
-                <div className="grid gap-3">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={scientistName}
-                    onChange={(e) => setScientistName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="text-xs text-red-500">
-                  {state?.issues?.find((e) => e.path.includes('name'))?.message}
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button type="submit" className="ml-auto">
-                Update
-              </Button>
-            </CardFooter>
-          </Card>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="w-full max-w-md border-none bg-background text-white">
+              <CardContent className="grid gap-4">
+                <input type="hidden" {...form.register('id')} />
+                <input type="hidden" {...form.register('tenantId')} />
+                <input type="hidden" {...form.register('userId')} />
+                <input type="hidden" {...form.register('workspaceId')} />
+                <input
+                  type="hidden"
+                  {...form.register('initialResolutionWidth')}
+                />
+                <input
+                  type="hidden"
+                  {...form.register('initialResolutionHeight')}
+                />
+                <input type="hidden" {...form.register('status')} />
+
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} className="min-h-[100px]" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter>
+                <Button
+                  className="ml-auto"
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save Changes
+                </Button>
+              </CardFooter>
+            </Card>
+          </form>
+        </Form>
       </DialogContent>
     </DialogContainer>
   )

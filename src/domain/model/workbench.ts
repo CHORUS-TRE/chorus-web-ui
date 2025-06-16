@@ -43,6 +43,8 @@ export const WorkbenchCreateSchema = z.object({
   initialResolutionHeight: z.number().optional()
 })
 
+export const WorkbenchEditFormSchema = WorkbenchCreateSchema
+
 export const WorkbenchUpdateSchema = WorkbenchCreateSchema.extend({
   id: z.string()
 })
