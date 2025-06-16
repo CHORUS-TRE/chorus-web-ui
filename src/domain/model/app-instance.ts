@@ -54,13 +54,3 @@ export type AppInstance = z.infer<typeof AppInstanceSchema>
 export type AppInstanceCreateType = z.infer<typeof AppInstanceCreateSchema>
 
 export type AppInstanceUpdateType = z.infer<typeof AppInstanceUpdateSchema>
-
-export interface AppInstanceResponse {
-  data?: AppInstance
-  error?: string
-}
-
-export interface AppInstancesResponse {
-  data?: AppInstance[]
-  error?: string
-}
