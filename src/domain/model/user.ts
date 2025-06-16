@@ -38,15 +38,12 @@ export const UserCreateSchema = z.object({
   lastName: z.string().min(2)
 })
 
+export const UserUpdateSchema = UserCreateSchema.extend({
+  id: z.string()
+})
+
+export const UserEditFormSchema = UserCreateSchema
+
 export type User = z.infer<typeof UserSchema>
 export type UserCreateType = z.infer<typeof UserCreateSchema>
-
-export interface UserResponse {
-  data?: User | string
-  error?: string
-}
-
-export interface UsersResponse {
-  data?: User[]
-  error?: string
-}
+export type UserUpdateType = z.infer<typeof UserUpdateSchema>

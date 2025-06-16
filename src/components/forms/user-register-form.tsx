@@ -1,31 +1,18 @@
+'use client'
+
 import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
-import { z } from 'zod'
 
-import { userCreate } from '@/components/actions/user-view-model'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
+import { createUser } from '@/components/actions/user-view-model'
+import { Button, IFormState, Input, Label, Separator } from '~/components/ui'
+import { User } from '~/domain/model'
 
-import { Button } from '../button'
-import { Separator } from '../ui/separator'
-
-export interface IFormState {
-  data?: {
-    firstName: string
-    lastName: string
-    username: string
-    id?: string
-  }
-  error?: string
-  issues?: z.ZodIssue[]
-}
-
-const initialState: IFormState = {
+const initialState: IFormState<User> = {
   data: undefined,
-  error: undefined,
+  message: undefined,
   issues: undefined
 }
 
@@ -49,12 +36,12 @@ function SubmitButton() {
 
 export default function UserRegisterForm() {
   const [state, formAction, isPending] = useActionState(
-    userCreate,
+    createUser,
     initialState
   )
 
   useEffect(() => {
-    if (state?.data?.id && !state.error) {
+    if (state.data?.id && !state.message?.includes('fail')) {
       redirect(`/login?username=${state.data.username}`)
     }
   }, [state])
@@ -77,14 +64,14 @@ export default function UserRegisterForm() {
                 disabled={isPending}
                 id="firstName"
                 name="firstName"
-                defaultValue={state?.data?.firstName}
+                defaultValue={state.data?.firstName}
                 required
                 className="border border-muted/40 bg-background text-white"
                 autoComplete="given-name"
               />
               <div className="text-xs text-red-500">
                 {
-                  state?.issues?.find((e) => e.path.includes('firstName'))
+                  state.issues?.find((e) => e.path.includes('firstName'))
                     ?.message
                 }
               </div>
@@ -96,13 +83,13 @@ export default function UserRegisterForm() {
                 id="lastName"
                 name="lastName"
                 required
-                defaultValue={state?.data?.lastName}
+                defaultValue={state.data?.lastName}
                 className="border border-muted/40 bg-background text-white"
                 autoComplete="family-name"
               />
               <div className="text-xs text-red-500">
                 {
-                  state?.issues?.find((e) => e.path.includes('lastName'))
+                  state.issues?.find((e) => e.path.includes('lastName'))
                     ?.message
                 }
               </div>
@@ -115,13 +102,13 @@ export default function UserRegisterForm() {
               id="username"
               type="username"
               name="username"
-              defaultValue={state?.data?.username}
+              defaultValue={state.data?.username}
               required
               className="border border-muted/40 bg-background text-white"
               autoComplete="username"
             />
             <div className="text-xs text-red-500">
-              {state?.issues?.find((e) => e.path.includes('username'))?.message}
+              {state.issues?.find((e) => e.path.includes('username'))?.message}
             </div>
           </div>
           <div className="grid gap-2">
@@ -138,7 +125,7 @@ export default function UserRegisterForm() {
               autoComplete="new-password"
             />
             <div className="text-xs text-red-500">
-              {state?.issues?.find((e) => e.path.includes('password'))?.message}
+              {state.issues?.find((e) => e.path.includes('password'))?.message}
             </div>
           </div>
         </div>
@@ -146,9 +133,9 @@ export default function UserRegisterForm() {
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">
-        {JSON.stringify(state, null, 2)}
+        {state.message}
       </p>
-      {state?.error && <p className="text-red-500">{state.error}</p>}
+      {state.message && <p className="text-red-500">{state.message}</p>}
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}

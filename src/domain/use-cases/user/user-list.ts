@@ -1,18 +1,10 @@
-import { UsersResponse } from '@/domain/model'
-import { UserRepository } from '@/domain/repository'
+import { Result, User } from '~/domain/model'
+import { UserRepository } from '~/domain/repository'
 
-export interface UserListUseCase {
-  execute(id: string): Promise<UsersResponse>
-}
+export class UserList {
+  constructor(private readonly userRepository: UserRepository) {}
 
-export class UserList implements UserListUseCase {
-  private repository: UserRepository
-
-  constructor(repository: UserRepository) {
-    this.repository = repository
-  }
-
-  async execute(): Promise<UsersResponse> {
-    return await this.repository.list()
+  async execute(): Promise<Result<User[]>> {
+    return this.userRepository.list()
   }
 }
