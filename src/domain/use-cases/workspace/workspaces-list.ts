@@ -1,8 +1,8 @@
-import { WorkspacesResponse } from '@/domain/model'
+import { Result, Workspace } from '@/domain/model'
 import { WorkspaceRepository } from '@/domain/repository'
 
 export interface WorkspacesListUseCase {
-  execute(): Promise<WorkspacesResponse>
+  execute(): Promise<Result<Workspace[]>>
 }
 
 export class WorkspacesList implements WorkspacesListUseCase {
@@ -12,7 +12,7 @@ export class WorkspacesList implements WorkspacesListUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<WorkspacesResponse> {
+  async execute(): Promise<Result<Workspace[]>> {
     return await this.repository.list()
   }
 }
