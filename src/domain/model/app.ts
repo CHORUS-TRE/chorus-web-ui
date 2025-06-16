@@ -89,13 +89,9 @@ export const AppSchema = z.object({
 })
 
 export const AppCreateSchema = AppSchema.omit({ id: true })
+export const AppUpdateSchema = AppSchema
 
 export type AppCreateType = z.infer<typeof AppCreateSchema>
-
-export const AppUpdateSchema = AppCreateSchema.extend({
-  id: z.string()
-})
-
 export type AppUpdateType = z.infer<typeof AppUpdateSchema>
 
 export type App = z.infer<typeof AppSchema>

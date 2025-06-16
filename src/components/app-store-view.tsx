@@ -98,7 +98,6 @@ export function AppStoreView() {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         onSuccess={refreshApps}
-        defaultType="app"
       />
     </div>
   )

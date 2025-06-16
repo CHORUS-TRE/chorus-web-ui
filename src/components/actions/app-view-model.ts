@@ -2,7 +2,12 @@
 
 import { AppDataSourceImpl } from '~/data/data-source/chorus-api/app-data-source'
 import { AppRepositoryImpl } from '~/data/repository/app-repository-impl'
-import { AppCreateSchema, AppCreateType, Result } from '~/domain/model'
+import {
+  AppCreateSchema,
+  AppCreateType,
+  AppUpdateSchema,
+  Result
+} from '~/domain/model'
 import { App, AppUpdateType } from '~/domain/model/app'
 import { AppCreate as AppCreateUseCase } from '~/domain/use-cases/app/app-create'
 import { AppDelete } from '~/domain/use-cases/app/app-delete'
@@ -58,7 +63,7 @@ export async function appCreate(
 export async function appUpdate(
   prevState: IFormState,
   formData: FormData
-): Promise<IFormState> {
+): Promise<Result<App>> {
   try {
     const repository = await getRepository()
     const useCase = new AppUpdate(repository)
@@ -67,40 +72,24 @@ export async function appUpdate(
       formData.entries()
     ) as AppUpdateType
 
-    const validation = AppCreateSchema.safeParse(app)
+    const validation = AppUpdateSchema.safeParse(app)
     if (!validation.success) {
       return { issues: validation.error.issues }
     }
 
-    const updatedApp = await useCase.execute(app)
-    if (updatedApp.error) {
-      return { error: updatedApp.error }
-    }
-
-    return {
-      data: 'Successfully updated app',
-      error: undefined
-    }
+    return await useCase.execute(app)
   } catch (error) {
     console.error('Error updating app', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }
 
-export async function appDelete(id: string): Promise<IFormState> {
+export async function appDelete(id: string): Promise<Result<string>> {
   try {
     const repository = await getRepository()
     const useCase = new AppDelete(repository)
 
-    const result = await useCase.execute(id)
-    if (result.error) {
-      return { error: result.error }
-    }
-
-    return {
-      data: 'Successfully deleted app',
-      error: undefined
-    }
+    return await useCase.execute(id)
   } catch (error) {
     console.error('Error deleting app', error)
     return { error: error instanceof Error ? error.message : String(error) }

@@ -30,11 +30,12 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { AppType } from '~/domain/model'
+import { App, AppCreateSchema, AppState } from '~/domain/model'
 
 import { appCreate } from './actions/app-view-model'
 import { IFormState } from './actions/utils'
 import { ImageUploadField } from './image-upload-field'
+import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 
 export type ResourcePreset = {
@@ -171,90 +172,12 @@ export const PRESETS: Presets = {
 interface AppCreateDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSuccess: () => void
-  defaultType: AppType
+  onSuccess: (app: App) => void
 }
 
 // Create a form schema that matches our needs
-export const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  dockerImageName: z.string().min(1, 'Docker image name is required'),
-  dockerImageTag: z.string().min(1, 'Docker image tag is required'),
-  dockerImageRegistry: z.string().optional(),
-  shmSize: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(Mi|Gi|M|G)$/.test(val),
-      'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
-    ),
-  minEphemeralStorage: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
-      'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
-    ),
-  maxEphemeralStorage: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
-      'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
-    ),
-  kioskConfigURL: z
-    .string()
-    .refine(
-      (val) => !val || val === '' || /^https?:\/\/.+/.test(val),
-      'Must be a valid URL'
-    )
-    .optional(),
-  maxCPU: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(m)?$/.test(val),
-      'Must be a number followed by m (e.g., 500m) or no unit (e.g., 1)'
-    ),
-  minCPU: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(m)?$/.test(val),
-      'Must be a number followed by m (e.g., 500m) or no unit (e.g., 1)'
-    ),
-  maxMemory: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(Mi|Gi|M|G)$/.test(val),
-      'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
-    ),
-  minMemory: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^\d+(\.\d+)?(Mi|Gi|M|G)$/.test(val),
-      'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
-    ),
-  tenantId: z.string().min(1, 'Tenant ID is required'),
-  userId: z.string().min(1, 'Owner ID is required'),
-  preset: z.string().optional(),
-  iconURL: z
-    .string()
-    .refine(
-      (val) =>
-        !val ||
-        val === '' ||
-        /^https?:\/\/.+/.test(val) ||
-        /^data:image\/[a-zA-Z]+;base64,/.test(val),
-      'Must be a valid URL or base64 image'
-    )
-    .optional()
-})
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof AppCreateSchema>
 type FormFieldName = keyof FormData
 
 export function AppCreateDialog({
@@ -263,13 +186,15 @@ export function AppCreateDialog({
   onSuccess
 }: AppCreateDialogProps) {
   const { user } = useAuth()
+  const { setNotification } = useAppState()
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(AppCreateSchema),
     defaultValues: {
       name: '',
       description: '',
+      status: AppState.ACTIVE,
       dockerImageName: '',
       dockerImageTag: '',
       dockerImageRegistry: '',
@@ -292,11 +217,17 @@ export function AppCreateDialog({
   const { formState } = form
   const isSubmitting = formState.isSubmitting
 
+  useEffect(() => {
+    if (formState.errors) {
+      console.log(formState.errors)
+    }
+  }, [formState.errors])
+
   async function onSubmit(data: FormData) {
     try {
       const formData = new FormData()
       Object.entries(data).forEach(([key, value]) => {
-        if (value) formData.append(key, value)
+        if (value) formData.append(key, String(value))
       })
 
       const result = await appCreate({} as IFormState, formData)
@@ -311,21 +242,32 @@ export function AppCreateDialog({
         return
       }
 
-      if (result.data) {
-        onOpenChange(false)
-        onSuccess()
-        form.reset()
-      } else if (result.error) {
-        form.setError('root', {
-          type: 'server',
-          message: result.error
+      if (result.error) {
+        setNotification({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
         })
+        return
+      }
+
+      if (result.data) {
+        setNotification({
+          title: 'Success',
+          description: 'App created successfully'
+        })
+        onSuccess(result.data)
+        onOpenChange(false)
+        form.reset()
       }
     } catch (error) {
-      console.error('App creation error:', error)
-      form.setError('root', {
-        type: 'server',
-        message: 'An unexpected error occurred'
+      setNotification({
+        title: 'Error',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
+        variant: 'destructive'
       })
     }
   }
@@ -369,6 +311,7 @@ export function AppCreateDialog({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('tenantId')} />
             <input type="hidden" {...form.register('userId')} />
+            <input type="hidden" {...form.register('status')} />
             <div
               className={`grid gap-8 ${showAdvanced ? 'grid-cols-2' : 'grid-cols-1'}`}
             >
