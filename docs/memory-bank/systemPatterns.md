@@ -44,7 +44,22 @@ graph TD
 
 ## 2. Key Technical Decisions
 
-- **Server Actions as View-Models:** Using Next.js Server Actions (`src/components/actions`) to handle form submissions and orchestrate calls to the application layer. This keeps client components lean.
-- **Repository Pattern:** Abstracting data access through repository interfaces, with implementations in the `data` layer.
-- **Zod for Validation:** Using Zod for robust schema definition and validation at the domain and API boundaries.
+- **Server Actions as View-Models:** Using Next.js Server Actions (`src/components/actions`) is the exclusive entry point from the presentation layer. They handle form data, call the appropriate use case, and return a standardized `IFormState` object (`{ data?, error?, issues? }`) to the UI.
+- **Repository Pattern:** This is the core of our data handling strategy.
+  - **Interface (`domain/repository`):** Defines the contract for data operations, using domain models (e.g., `App`, `AppCreateType`).
+  - **Implementation (`data/repository`):** Implements the interface. It calls the data source, and its primary responsibility is to catch errors and map the raw data source response into the standard `Result<T>` object (`{ data?, error?, issues? }`).
+- **Data Source Pattern:**
+  - **Interface (`data/data-source`):** Defines the contract for interacting with the backend, using raw API client types (e.g., `ChorusApp`, `ChorusCreateAppReply`).
+  - **Implementation (`data/data-source/chorus-api`):** Implements the interface, making direct calls to the generated API client. It is responsible for mapping domain types (e.g., `AppCreateType`) to API types (`ChorusApp`) before sending the request.
+- **Zod for Validation:** Zod schemas in `domain/model` are the single source of truth for validation. They are used in server actions and repository implementations to ensure data integrity.
 - **Generated API Client:** Using OpenAPI generator to create a strongly-typed API client, ensuring type safety when communicating with the backend.
+
+## 3. Initial Data Loading for Client Providers
+
+A common requirement is to provide initial state (e.g., authentication status) to client-side providers. To avoid server/client boundary errors, the following pattern is used:
+
+1.  **Fetch in Root Server Component:** The initial data is fetched in the root `layout.tsx`, which is a Server Component. This is the only place where server-side functions like `cookies()` or `userMe()` should be called for initial state.
+2.  **Pass as Props:** The fetched data is passed as props to the client-side `Providers` component.
+3.  **Accept in Client Component:** The `Providers` component (`'use client'`) is a standard (non-async) component that accepts the initial state via props and passes it to the React Context providers.
+
+This pattern ensures that no server functions are called during the initial client-side render, preventing fetch waterfalls and errors.
