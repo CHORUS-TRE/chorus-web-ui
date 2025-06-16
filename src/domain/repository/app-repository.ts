@@ -5,7 +5,7 @@ interface AppRepository {
   list: () => Promise<Result<App[]>>
   create: (app: AppCreateType) => Promise<Result<App>>
   update: (app: AppUpdateType) => Promise<Result<App>>
-  delete: (id: string) => Promise<Result<string>>
+  delete: (id: string) => Promise<Result<boolean>>
 }
 
 export type { AppRepository }

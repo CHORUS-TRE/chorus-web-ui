@@ -30,21 +30,22 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { App } from '~/domain/model'
+import { App, AppState, AppUpdateSchema } from '~/domain/model'
 
 import { appUpdate } from './actions/app-view-model'
 import { IFormState } from './actions/utils'
-import { formSchema, PRESETS, type Presets } from './app-create-dialog'
+import { PRESETS, type Presets } from './app-create-dialog'
 import { ImageUploadField } from './image-upload-field'
+import { useAppState } from './store/app-state-context'
 
 interface AppEditDialogProps {
   app: App
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSuccess: () => void
+  onSuccess: (app: App) => void
 }
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof AppUpdateSchema>
 type FormFieldName = keyof FormData
 
 export const AppEditDialog: React.FC<AppEditDialogProps> = ({
@@ -53,12 +54,14 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   onOpenChange,
   onSuccess
 }) => {
+  const { setNotification } = useAppState()
   const [showAdvanced, setShowAdvanced] = useState(false)
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(AppUpdateSchema),
     defaultValues: {
       name: app.name || '',
       description: app.description || '',
+      status: app.status || AppState.ACTIVE,
       dockerImageName: app.dockerImageName || '',
       dockerImageTag: app.dockerImageTag || '',
       dockerImageRegistry: app.dockerImageRegistry || '',
@@ -89,40 +92,21 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   }, [open, form])
 
   useEffect(() => {
-    if (!form.formState.isDirty && !form.formState.isSubmitting) {
-      form.reset({
-        name: app.name || '',
-        description: app.description || '',
-        dockerImageName: app.dockerImageName || '',
-        dockerImageTag: app.dockerImageTag || '',
-        dockerImageRegistry: app.dockerImageRegistry || '',
-        shmSize: app.shmSize || '',
-        minEphemeralStorage: app.minEphemeralStorage || '',
-        maxEphemeralStorage: app.maxEphemeralStorage || '',
-        kioskConfigURL: app.kioskConfigURL || '',
-        maxCPU: app.maxCPU || '',
-        minCPU: app.minCPU || '',
-        maxMemory: app.maxMemory || '',
-        minMemory: app.minMemory || '',
-        tenantId: app.tenantId || '',
-        userId: app.userId || '',
-        preset: 'auto',
-        iconURL: app.iconURL || ''
-      })
+    if (formState.errors) {
+      console.log(formState.errors)
     }
-  }, [app, form])
+  }, [formState.errors])
 
   async function onSubmit(data: FormData) {
     try {
       const formData = new FormData()
-      formData.append('id', app.id)
-      Object.entries(data).forEach(([key, value]) => {
-        if (value) formData.append(key, value)
+      const completeData = { ...data, id: app.id }
+
+      Object.entries(completeData).forEach(([key, value]) => {
+        if (value) formData.append(key, String(value))
       })
 
       const result = await appUpdate({} as IFormState, formData)
-      //wait for 300ms
-      await new Promise((resolve) => setTimeout(resolve, 300))
 
       if (result.issues) {
         result.issues.forEach((issue) => {
@@ -134,23 +118,32 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
         return
       }
 
+      if (result.error) {
+        setNotification({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+        return
+      }
+
       if (result.data) {
-        onSuccess()
+        setNotification({
+          title: 'Success',
+          description: 'App updated successfully'
+        })
+        onSuccess(result.data)
         onOpenChange(false)
         form.reset()
-      } else if (result.error) {
-        form.setError('root', {
-          type: 'server',
-          message: result.error
-        })
       }
     } catch (error) {
-      form.setError('root', {
-        type: 'server',
-        message:
+      setNotification({
+        title: 'Error',
+        description:
           error instanceof Error
             ? error.message
-            : 'An unexpected error occurred'
+            : 'An unexpected error occurred',
+        variant: 'destructive'
       })
     }
   }
@@ -182,6 +175,8 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('tenantId')} />
             <input type="hidden" {...form.register('userId')} />
+            <input type="hidden" {...form.register('status')} />
+            <input type="hidden" {...form.register('id')} />
             <div
               className={`grid gap-8 ${showAdvanced ? 'grid-cols-2' : 'grid-cols-1'}`}
             >

@@ -22,10 +22,12 @@ import {
 } from '~/internal/client'
 import { Configuration } from '~/internal/client'
 
+import { toChorusApp, toChorusAppUpdate } from './app-mapper'
+
 interface AppDataSource {
   list: (request: AppServiceListAppsRequest) => Promise<ChorusListAppsReply>
-  create: (request: ChorusApp) => Promise<ChorusCreateAppReply>
-  update: (request: ChorusApp) => Promise<ChorusUpdateAppReply>
+  create: (app: AppCreateType) => Promise<ChorusCreateAppReply>
+  update: (app: AppUpdateType) => Promise<ChorusUpdateAppReply>
   delete: (id: string) => Promise<ChorusDeleteAppReply>
   get: (id: string) => Promise<ChorusGetAppReply>
 }
@@ -51,20 +53,21 @@ export class AppDataSourceImpl implements AppDataSource {
     return this.client.appServiceListApps(request)
   }
 
-  create(app: ChorusApp): Promise<ChorusCreateAppReply> {
-    const validatedApp = AppCreateSchema.parse(app)
-
+  create(app: AppCreateType): Promise<ChorusCreateAppReply> {
+    console.log('app', app)
+    const chorusApp = toChorusApp(app)
+    console.log('chorusApp', chorusApp)
     return this.client.appServiceCreateApp({
-      body: validatedApp
+      body: chorusApp
     })
   }
 
-  update(app: ChorusApp): Promise<ChorusUpdateAppReply> {
-    const validatedApp = AppUpdateSchema.parse(app)
-    return this.client.appServiceUpdateApp({ body: { app: validatedApp } })
+  update(app: AppUpdateType): Promise<ChorusUpdateAppReply> {
+    const chorusApp = toChorusAppUpdate(app)
+    return this.client.appServiceUpdateApp({ body: { app: chorusApp } })
   }
 
-  delete(id: string): Promise<ChorusGetAppReply> {
+  delete(id: string): Promise<ChorusDeleteAppReply> {
     return this.client.appServiceDeleteApp({ id })
   }
 }

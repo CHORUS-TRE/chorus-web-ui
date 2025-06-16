@@ -221,7 +221,7 @@ export const AppStateProvider = ({
     }
 
     const result = await appList()
-    console.log('result', result)
+
     if (result?.error)
       setNotification({ title: result.error, variant: 'destructive' })
 
