@@ -6,30 +6,30 @@ The application aims to follow a Clean Architecture pattern, separating concerns
 
 ```mermaid
 graph TD
-    A[Presentation (React Components/Pages)] --> B[View-Model (Server Actions)];
-    B --> C[Application (Use Cases)];
-    C --> D[Domain (Entities/Interfaces)];
-    C --> E[Repository Interfaces];
-    F[Infrastructure (Data Layer)] --> E;
+    A["Presentation (React Components/Pages)"] --> B["View-Model / Actions"];
+    B --> C["Application (Use Cases)"];
+    C --> D["Domain (Entities/Interfaces)"];
+    C --> E["Repository Interfaces"];
+    F["Infrastructure (Data Layer)"] --> E;
     F --> D;
-    G[Data Sources] --> F
-    H[API Client] --> G
+    G["Data Sources"] --> F
+    H["API Client"] --> G
 
-    subgraph Presentation Layer
+    subgraph "Presentation Layer"
         A
         B
     end
 
-    subgraph Domain Layer
+    subgraph "Domain Layer"
         D
         E
     end
 
-    subgraph Application Layer
+    subgraph "Application Layer"
         C
     end
 
-    subgraph Infrastructure Layer
+    subgraph "Infrastructure Layer"
         F
         G
         H
@@ -37,14 +37,14 @@ graph TD
 
 ```
 
-- **Presentation Layer (`src/app`, `src/components`):** Contains UI components, pages, and server actions that act as a View-Model.
+- **Presentation Layer (`src/app`, `src/components`):** Contains UI components and pages. The View-Model / Actions layer (`src/components/actions`) is called to handle user interactions.
 - **Application Layer (`src/domain/use-cases`):** Orchestrates the flow of data and triggers business logic.
 - **Domain Layer (`src/domain/model`, `src/domain/repository`):** Contains core business entities, validation schemas (Zod), and repository interfaces.
 - **Infrastructure Layer (`src/data`):** Contains repository implementations and data sources that communicate with external services like the Chorus API.
 
 ## 2. Key Technical Decisions
 
-- **Server Actions as View-Models:** Using Next.js Server Actions (`src/components/actions`) is the exclusive entry point from the presentation layer. They handle form data, call the appropriate use case, and return a standardized `IFormState` object (`{ data?, error?, issues? }`) to the UI.
+- **View-Model and Data Fetching Strategy:** The primary approach is client-side data fetching. "View-Model" files in `src/components/actions` use `fetch` to call API routes. As an exception for progressive enhancement, form submissions are handled by Next.js Server Actions, which call use cases and return state to the UI.
 - **Repository Pattern:** This is the core of our data handling strategy.
   - **Interface (`domain/repository`):** Defines the contract for data operations, using domain models (e.g., `App`, `AppCreateType`).
   - **Implementation (`data/repository`):** Implements the interface. It calls the data source, and its primary responsibility is to catch errors and map the raw data source response into the standard `Result<T>` object (`{ data?, error?, issues? }`).
