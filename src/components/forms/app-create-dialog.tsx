@@ -2,11 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { appCreate } from '~/components/actions/app-view-model'
 import { Button } from '~/components/button'
+import { ImageUploadField } from '~/components/forms/image-upload-field'
+import { useAppState } from '~/components/store/app-state-context'
+import { useAuth } from '~/components/store/auth-context'
 import {
   Dialog,
   DialogContent,
@@ -30,65 +34,187 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { App, AppState, AppUpdateSchema, Result } from '~/domain/model'
+import { App, AppCreateSchema, AppState } from '~/domain/model'
+import { Result } from '~/domain/model'
 
-import { appUpdate } from './actions/app-view-model'
-import { PRESETS, type Presets } from './app-create-dialog'
-import { ImageUploadField } from './image-upload-field'
-import { useAppState } from './store/app-state-context'
+export type ResourcePreset = {
+  requests: {
+    cpu: string
+    memory: string
+    shm: string
+    ephemeralStorage: string
+  }
+  limits: {
+    cpu: string
+    memory: string
+    shm: string
+    ephemeralStorage: string
+  }
+}
 
-interface AppEditDialogProps {
-  app: App
+export type Presets = {
+  auto: ResourcePreset
+  nano: ResourcePreset
+  micro: ResourcePreset
+  small: ResourcePreset
+  medium: ResourcePreset
+  large: ResourcePreset
+  xlarge: ResourcePreset
+  '2xlarge': ResourcePreset
+}
+
+export const PRESETS: Presets = {
+  auto: {
+    requests: { cpu: '', memory: '', shm: '', ephemeralStorage: '' },
+    limits: { cpu: '', memory: '', shm: '', ephemeralStorage: '' }
+  },
+  nano: {
+    requests: {
+      cpu: '100m',
+      memory: '128Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '150m',
+      memory: '192Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  },
+  micro: {
+    requests: {
+      cpu: '250m',
+      memory: '256Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '375m',
+      memory: '384Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  },
+  small: {
+    requests: {
+      cpu: '500m',
+      memory: '512Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '750m',
+      memory: '768Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  },
+  medium: {
+    requests: {
+      cpu: '500m',
+      memory: '1024Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '750m',
+      memory: '1536Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  },
+  large: {
+    requests: {
+      cpu: '1.0',
+      memory: '2048Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '1.5',
+      memory: '3072Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  },
+  xlarge: {
+    requests: {
+      cpu: '1.0',
+      memory: '3072Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '3.0',
+      memory: '6144Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  },
+  '2xlarge': {
+    requests: {
+      cpu: '1.0',
+      memory: '3072Mi',
+      shm: '',
+      ephemeralStorage: '1Gi'
+    },
+    limits: {
+      cpu: '6.0',
+      memory: '12288Mi',
+      shm: '2Gi',
+      ephemeralStorage: '10Gi'
+    }
+  }
+}
+
+interface AppCreateDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: (app: App) => void
 }
 
-type FormData = z.infer<typeof AppUpdateSchema>
+// Create a form schema that matches our needs
+
+type FormData = z.infer<typeof AppCreateSchema>
 type FormFieldName = keyof FormData
 
-export const AppEditDialog: React.FC<AppEditDialogProps> = ({
-  app,
+export function AppCreateDialog({
   open,
   onOpenChange,
   onSuccess
-}) => {
+}: AppCreateDialogProps) {
+  const { user } = useAuth()
   const { setNotification } = useAppState()
   const [showAdvanced, setShowAdvanced] = useState(false)
+
   const form = useForm<FormData>({
-    resolver: zodResolver(AppUpdateSchema),
+    resolver: zodResolver(AppCreateSchema),
     defaultValues: {
-      name: app.name || '',
-      description: app.description || '',
-      status: app.status || AppState.ACTIVE,
-      dockerImageName: app.dockerImageName || '',
-      dockerImageTag: app.dockerImageTag || '',
-      dockerImageRegistry: app.dockerImageRegistry || '',
-      shmSize: app.shmSize || '',
-      minEphemeralStorage: app.minEphemeralStorage || '',
-      maxEphemeralStorage: app.maxEphemeralStorage || '',
-      kioskConfigURL: app.kioskConfigURL || '',
-      maxCPU: app.maxCPU || '',
-      minCPU: app.minCPU || '',
-      maxMemory: app.maxMemory || '',
-      minMemory: app.minMemory || '',
-      tenantId: app.tenantId || '',
-      userId: app.userId || '',
+      name: '',
+      description: '',
+      status: AppState.ACTIVE,
+      dockerImageName: '',
+      dockerImageTag: '',
+      dockerImageRegistry: '',
+      shmSize: '',
+      minEphemeralStorage: '',
+      maxEphemeralStorage: '',
+      kioskConfigURL: '',
+      maxCPU: '',
+      minCPU: '',
+      maxMemory: '',
+      minMemory: '',
+      tenantId: '1',
+      userId: '',
       preset: 'auto',
-      iconURL: app.iconURL || ''
+      iconURL: ''
     },
     mode: 'onChange'
   })
 
   const { formState } = form
   const isSubmitting = formState.isSubmitting
-
-  // Reset form when dialog closes
-  useEffect(() => {
-    if (!open) {
-      form.reset()
-    }
-  }, [open, form])
 
   useEffect(() => {
     if (formState.errors) {
@@ -99,13 +225,11 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   async function onSubmit(data: FormData) {
     try {
       const formData = new FormData()
-      const completeData = { ...data, id: app.id }
-
-      Object.entries(completeData).forEach(([key, value]) => {
+      Object.entries(data).forEach(([key, value]) => {
         if (value) formData.append(key, String(value))
       })
 
-      const result = await appUpdate({} as Result<App>, formData)
+      const result = await appCreate({} as Result<App>, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {
@@ -129,7 +253,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       if (result.data) {
         setNotification({
           title: 'Success',
-          description: 'App updated successfully'
+          description: 'App created successfully'
         })
         onSuccess(result.data)
         onOpenChange(false)
@@ -147,6 +271,19 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
     }
   }
 
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+    }
+  }, [open, form])
+
+  useEffect(() => {
+    if (user) {
+      form.setValue('userId', user.id)
+    }
+  }, [user, form])
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -154,7 +291,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       >
         <DialogHeader>
           <div className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-white">Edit App Details</DialogTitle>
+            <DialogTitle className="text-white">Create New App</DialogTitle>
             <Link
               href="#"
               onClick={() => setShowAdvanced(!showAdvanced)}
@@ -165,8 +302,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
             </Link>
           </div>
           <DialogDescription className="text-muted">
-            Make changes to your app details here. Click save when you&apos;re
-            done.
+            Add a new application to the store
           </DialogDescription>
         </DialogHeader>
 
@@ -175,7 +311,6 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
             <input type="hidden" {...form.register('tenantId')} />
             <input type="hidden" {...form.register('userId')} />
             <input type="hidden" {...form.register('status')} />
-            <input type="hidden" {...form.register('id')} />
             <div
               className={`grid gap-8 ${showAdvanced ? 'grid-cols-2' : 'grid-cols-1'}`}
             >
@@ -224,6 +359,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                       value={field.value || ''}
                       onChange={field.onChange}
                       error={formState.errors.iconURL?.message}
+                      className="file:bg-white"
                     />
                   )}
                 />
@@ -561,7 +697,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save'}
+                {isSubmitting ? 'Creating...' : 'Create'}
               </Button>
             </div>
           </form>

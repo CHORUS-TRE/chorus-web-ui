@@ -44,7 +44,6 @@ export default function UserRegisterForm() {
   )
 
   useEffect(() => {
-    debugger
     if (state.data?.id && !state.error?.includes('fail')) {
       redirect(`/login?username=${state.data.username}`)
     }

@@ -2,6 +2,7 @@
 
 ## 1. What Works
 
+- **User Management UI:** A full-featured UI for administrators to manage users (create, read, update, delete) is now implemented.
 - A complete, end-to-end data flow pattern for the `App`, `User`, `AppInstance`, `Workspace`, and `Workbench` entities is fully implemented and documented. This includes the UI dialogs, Server Actions, Use Cases, Repositories, and Data Sources.
 - The UI components for creating and editing resources (`AppCreateDialog`, `AppEditDialog`, `WorkspaceForms`, etc.) are robust, providing clear validation, error handling, and user notifications.
 - The public-facing `UserRegisterForm` is aligned with the new patterns.
@@ -12,7 +13,7 @@
 ## 2. Next Steps
 
 ### Next Concrete Feature
-- **User Management UI:** Create a UI for managing users (list, edit, delete) for authenticated admins.
+- Awaiting direction on the next feature. A potential candidate is creating data flows in `apis.swagger.yaml`.
 
 ### Ongoing Tasks
 - **Increase Test Coverage:** Continuously add tests for new and existing data flow components to ensure stability.

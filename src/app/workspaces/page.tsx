@@ -160,12 +160,7 @@ export default function WorkspacesPage() {
           </TabsContent>
         </Tabs>
 
-        <Link
-          className="mt-16 inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-          href="/admin"
-        >
-          Admin
-        </Link>
+
       </div>
 
       {createOpen && (

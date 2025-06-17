@@ -15,9 +15,8 @@ import {
 } from '@/domain/use-cases'
 import {
   AuthenticationMode,
-  Result,
-  AuthenticationOAuthRedirectRequest
-} from '~/domain/model'
+  AuthenticationOAuthRedirectRequest,
+  Result} from '~/domain/model'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function authenticationLogin(prevState: any, formData: FormData) {
