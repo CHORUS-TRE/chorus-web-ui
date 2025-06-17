@@ -1,7 +1,6 @@
-import { cookies } from 'next/headers'
 import { env } from 'next-runtime-env'
 
-import { AuthenticationDataSource } from '@/data/data-source/'
+import { getSession } from '@/components/actions/server/session'
 import {
   AuthenticationInternal,
   AuthenticationMode,
@@ -14,13 +13,25 @@ import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
 import { Configuration } from '~/internal/client'
 
+interface AuthenticationDataSource {
+  login: (data: AuthenticationRequest) => Promise<string>
+  getAuthenticationModes: () => Promise<AuthenticationMode[]>
+  getOAuthUrl: (id: string) => Promise<string>
+  handleOAuthRedirect: (
+    data: AuthenticationOAuthRedirectRequest
+  ) => Promise<string>
+  logout: () => Promise<void>
+}
+
+export type { AuthenticationDataSource }
+
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   private configuration: Configuration
   private service: AuthenticationServiceApi
 
   constructor() {
     this.configuration = new Configuration({
-      basePath: env('DATA_SOURCE_API_URL')
+      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
     })
     this.service = new AuthenticationServiceApi(this.configuration)
   }
@@ -126,11 +137,10 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 
   async logout(): Promise<void> {
-    const cookieStore = await cookies()
-    const session = cookieStore.get('session')
+    const session = await getSession()
     const configuration = new Configuration({
       apiKey: `Bearer ${session}`,
-      basePath: env('DATA_SOURCE_API_URL')
+      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
     })
     const service = new AuthenticationServiceApi(configuration)
 

@@ -5,6 +5,7 @@ import {
   User,
   UserCreateType,
   UserSchema,
+  UserStatusEnum,
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
@@ -21,7 +22,10 @@ export class UserRepositoryImpl implements UserRepository {
   async create(user: UserCreateType): Promise<Result<User>> {
     try {
       const response = await this.dataSource.create(user)
-      const userResult = UserSchema.safeParse(response.result)
+
+      const userResult = z.object({
+        id: z.string()
+      }).safeParse(response.result)
 
       if (!userResult.success) {
         return {
@@ -29,7 +33,16 @@ export class UserRepositoryImpl implements UserRepository {
           issues: userResult.error.issues
         }
       }
-      return { data: userResult.data }
+      return {
+        data: {
+          ...user,
+          status: UserStatusEnum.ACTIVE,
+          source: 'chorus',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          id: userResult.data.id
+        }
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

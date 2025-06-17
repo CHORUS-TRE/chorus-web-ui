@@ -1,8 +1,8 @@
-import { AuthenticationOAuthResponse } from '@/domain/model'
+import { Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 export interface AuthenticationGetOAuthUrlUseCase {
-  execute(id: string): Promise<AuthenticationOAuthResponse>
+  execute(id: string): Promise<Result<string>>
 }
 
 export class AuthenticationGetOAuthUrl
@@ -14,7 +14,7 @@ export class AuthenticationGetOAuthUrl
     this.repository = repository
   }
 
-  async execute(id: string): Promise<AuthenticationOAuthResponse> {
+  async execute(id: string): Promise<Result<string>> {
     return await this.repository.getOAuthUrl(id)
   }
 }

@@ -1,8 +1,8 @@
-import { LogoutResponse } from '@/domain/model'
+import { Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 export interface AuthenticationLogoutUseCase {
-  execute(): Promise<LogoutResponse>
+  execute(): Promise<Result<string>>
 }
 
 export class AuthenticationLogout implements AuthenticationLogoutUseCase {
@@ -12,7 +12,7 @@ export class AuthenticationLogout implements AuthenticationLogoutUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<LogoutResponse> {
+  async execute(): Promise<Result<string>> {
     return await this.repository.logout()
   }
 }
