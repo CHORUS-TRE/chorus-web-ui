@@ -40,10 +40,10 @@ export default async function RootLayout({
 
   if (authenticated) {
     const userResult = await userMe()
-    if (userResult.data) {
+    if (userResult?.data) {
       user = userResult.data
     } else {
-      console.error('Failed to get initial user state:', userResult.error)
+      console.error('Failed to get initial user state:', userResult?.error)
     }
   }
 

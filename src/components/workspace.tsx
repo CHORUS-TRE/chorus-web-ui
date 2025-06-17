@@ -213,7 +213,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 </span>
               </div>
             }
-            description={`Your open sessions in ${workspace?.name}.`}
+            description={`Sessions in ${workspace?.name}.`}
             content={
               <ScrollArea className="h-[160px] w-full">
                 <div className="grid gap-1">
@@ -243,7 +243,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                                   })
                                 }
                               }}
-                              className={`mb-2 flex cursor-pointer flex-col justify-between`}
+                              className={`mb-2 flex flex-col justify-between`}
                             >
                               <div className="flex-grow text-sm">
                                 <div className="mb-0.5 mt-0.5 text-xs">

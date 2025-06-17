@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { AppWindow, CircleX, LaptopMinimal, PackageOpen } from 'lucide-react'
+import { AppWindow, LaptopMinimal, PackageOpen, X } from 'lucide-react'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -33,13 +33,13 @@ export function MainLayout({ children }: MainLayoutProps) {
     setNotification,
     setBackground,
     toggleRightSidebar,
-    users,
-    setSideBarContent
+    users
   } = useAppState()
   const { user } = useAuth()
   const router = useRouter()
   const workspace = workspaces?.find((w) => w.id === background?.workspaceId)
   const workbench = workbenches?.find((w) => w.id === background?.sessionId)
+  const [showSessionList, setShowSessionList] = useState(false)
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false)
 
@@ -81,15 +81,43 @@ export function MainLayout({ children }: MainLayoutProps) {
           className="fixed left-0 top-11 z-30 h-full w-full bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 hover:text-accent"
           id="iframe-overlay"
         >
-          <div className="session-overlay flex h-8 w-full cursor-pointer items-center justify-end gap-4 rounded-lg p-2">
-            <Button
-              size="icon"
-              className={`overflow-hidden hover:bg-inherit`}
-              title="List existing sessions"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setSideBarContent(
+          <div className="session-overlay relative flex h-8 w-full cursor-pointer items-center justify-end gap-4 p-2">
+            {showSessionList && (
+              <Button
+                size="icon"
+                className={`overflow-hidden bg-transparent text-accent hover:bg-accent-background hover:text-black focus:bg-accent-background`}
+                title="Hide existing sessions"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setShowSessionList(false)
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+            {!showSessionList && (
+              <Button
+                size="icon"
+                className={`overflow-hidden bg-transparent text-accent hover:bg-accent-background hover:text-black focus:bg-accent-background`}
+                title="Show existing sessions list"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setShowSessionList(true)
+                }}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            )}
+            {showSessionList && (
+              <div
+                className={`absolute right-4 top-12 z-30 grid min-h-[75vh] w-96 gap-2`}
+              >
+                <div
+                  id="content"
+                  className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
+                >
                   <Card
                     title={
                       <>
@@ -100,19 +128,29 @@ export function MainLayout({ children }: MainLayoutProps) {
                     description={`Your open sessions`}
                     content={
                       <div className="grid gap-1">
+                        {workbenches?.length === 0 && (
+                          <div className="mb-2">
+                            <p className="text-sm text-muted">
+                              No sessions found
+                            </p>
+                          </div>
+                        )}
                         {workspaces
                           ?.filter((workspace) =>
                             workbenches?.some(
                               (workbench) =>
-                                workbench.workspaceId === workspace.id &&
-                                workbench.userId === user?.id
+                                workbench.workspaceId === workspace.id
+                              // && workbench.userId === user?.id
                             )
                           )
-                          ?.map(({ id: workspaceId }) => (
+                          ?.map(({ id: workspaceId, name }) => (
                             <div
                               className="mb-2"
                               key={`workspace-grid-${workspaceId}`}
                             >
+                              <div className="text-sm font-semibold text-white">
+                                {name}
+                              </div>
                               {workbenches
                                 ?.filter(
                                   (workbench) =>
@@ -169,14 +207,9 @@ export function MainLayout({ children }: MainLayoutProps) {
                       </div>
                     }
                   />
-                )
-                if (!showRightSidebar) {
-                  toggleRightSidebar()
-                }
-              }}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -244,7 +277,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                     setBackground(undefined)
                   }}
                 >
-                  <CircleX />
+                  <X />
                 </Button>
               </div>
             </div>
@@ -252,42 +285,44 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Link>
       )}
 
-      <div
-        className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-[80vw] -translate-x-1/2 gap-2 ${isClient ? (showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]') : 'grid-cols-[1fr]'}`}
-      >
+      {!showSessionList && (
         <div
-          id="content"
-          className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
+          className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-[80vw] -translate-x-1/2 gap-2 ${isClient ? (showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]') : 'grid-cols-[1fr]'}`}
         >
-          <>
-            <div className="w-full p-8">{children}</div>
-            <div className="absolute right-0 top-0 z-50 p-2">
-              <Button
-                disabled={!background?.sessionId}
-                size="icon"
-                className={`overflow-hidden text-accent hover:bg-inherit`}
-                variant="ghost"
-                title="Show session"
-                onClick={() => {
-                  router.push(
-                    `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-                  )
-                }}
-              >
-                <CircleX />
-              </Button>
-            </div>
-          </>
-        </div>
-        {isClient && (
           <div
-            className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
-            id="sidebar"
+            id="content"
+            className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
           >
-            <RightSidebar />
+            <>
+              <div className="w-full p-8">{children}</div>
+              <div className="absolute right-0 top-0 z-50 p-2">
+                <Button
+                  disabled={!background?.sessionId}
+                  size="icon"
+                  className={`overflow-hidden text-accent hover:bg-inherit`}
+                  variant="ghost"
+                  title="Show session"
+                  onClick={() => {
+                    router.push(
+                      `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
+                    )
+                  }}
+                >
+                  <X />
+                </Button>
+              </div>
+            </>
           </div>
-        )}
-      </div>
+          {isClient && (
+            <div
+              className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
+              id="sidebar"
+            >
+              <RightSidebar />
+            </div>
+          )}
+        </div>
+      )}
     </>
   )
 }

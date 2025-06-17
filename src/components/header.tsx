@@ -173,8 +173,8 @@ export function Header() {
                         <Box className="h-4 w-4" />
                         {background?.workspaceId
                           ? workspaces?.find(
-                            (w) => w.id === background?.workspaceId
-                          )?.name
+                              (w) => w.id === background?.workspaceId
+                            )?.name
                           : 'My Workspace'}
                       </div>
                     </NavLink>
@@ -196,8 +196,8 @@ export function Header() {
                           <Box className="h-4 w-4" />
                           {background?.workspaceId
                             ? workspaces?.find(
-                              (w) => w.id === background?.workspaceId
-                            )?.name
+                                (w) => w.id === background?.workspaceId
+                              )?.name
                             : 'My Workspace'}
                         </div>
                       </NavLink>
@@ -373,7 +373,7 @@ export function Header() {
                         className="cursor-pointer"
                         onClick={() => router.push('/users/me')}
                       >
-                        My Profile
+                        {user?.firstName} {user?.lastName} profile
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="cursor-pointer"
@@ -442,7 +442,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => { }}
+            onUpdate={() => {}}
           />
         )}
       </nav>

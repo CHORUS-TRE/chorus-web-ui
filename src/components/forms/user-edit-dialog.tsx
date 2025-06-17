@@ -1,40 +1,46 @@
-'use client';
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Pencil } from 'lucide-react';
-import { useActionState } from 'react';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Pencil } from 'lucide-react'
+import { useActionState } from 'react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { updateUser } from '~/components/actions/user-view-model';
-import { useAppState } from '~/components/store/app-state-context';
-import { Button } from '~/components/ui/button';
+import { updateUser } from '~/components/actions/user-view-model'
+import { useAppState } from '~/components/store/app-state-context'
+import { Button } from '~/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
+  DialogTrigger
+} from '~/components/ui/dialog'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import { Result } from '~/domain/model';
-import { User,UserUpdateSchema } from '~/domain/model/user';
+  FormMessage
+} from '~/components/ui/form'
+import { Input } from '~/components/ui/input'
+import { Result } from '~/domain/model'
+import { User, UserUpdateSchema } from '~/domain/model/user'
 
-type FormData = z.infer<typeof UserUpdateSchema>;
+type FormData = z.infer<typeof UserUpdateSchema>
 
-export function UserEditDialog({ user, onUserUpdated }: { user: User, onUserUpdated: () => void }) {
-  const [open, setOpen] = useState(false);
+export function UserEditDialog({
+  user,
+  onUserUpdated
+}: {
+  user: User
+  onUserUpdated: () => void
+}) {
+  const [open, setOpen] = useState(false)
 
-  const { setNotification } = useAppState();
+  const { setNotification } = useAppState()
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserUpdateSchema),
@@ -43,29 +49,36 @@ export function UserEditDialog({ user, onUserUpdated }: { user: User, onUserUpda
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,
-      password: '',
-    },
-  });
+      password: ''
+    }
+  })
 
-  const [state, formAction] = useActionState(updateUser, {} as Result<User>);
+  const [state, formAction] = useActionState(updateUser, {} as Result<User>)
 
   useEffect(() => {
     if (state.error) {
-      setNotification({ title: 'Error updating user', description: state.error, variant: 'destructive' });
+      setNotification({
+        title: 'Error updating user',
+        description: state.error,
+        variant: 'destructive'
+      })
     } else if (state.data) {
-      setNotification({ title: 'Success', description: 'User updated successfully.' });
-      onUserUpdated();
-      setOpen(false);
+      setNotification({
+        title: 'Success',
+        description: 'User updated successfully.'
+      })
+      onUserUpdated()
+      setOpen(false)
     }
-  }, [state, onUserUpdated]);
+  }, [state, onUserUpdated])
 
   const onSubmit = (data: FormData) => {
-    const formData = new FormData();
+    const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value || '');
-    });
-    formAction(formData);
-  };
+      formData.append(key, value || '')
+    })
+    formAction(formData)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -127,7 +140,11 @@ export function UserEditDialog({ user, onUserUpdated }: { user: User, onUserUpda
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} placeholder="Leave blank to keep current password" />
+                    <Input
+                      type="password"
+                      {...field}
+                      placeholder="Leave blank to keep current password"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,5 +155,5 @@ export function UserEditDialog({ user, onUserUpdated }: { user: User, onUserUpda
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

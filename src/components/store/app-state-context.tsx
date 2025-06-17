@@ -36,8 +36,6 @@ type NotificationType =
 type AppStateContextType = {
   showRightSidebar: boolean
   toggleRightSidebar: () => void
-  sideBarContent: ReactNode | undefined
-  setSideBarContent: Dispatch<SetStateAction<ReactNode>>
   showWorkspacesTable: boolean
   toggleWorkspaceView: () => void
   background:
@@ -76,8 +74,6 @@ type AppStateContextType = {
 const AppStateContext = createContext<AppStateContextType>({
   showRightSidebar: false,
   toggleRightSidebar: () => {},
-  setSideBarContent: () => {},
-  sideBarContent: undefined,
   showWorkspacesTable: true,
   toggleWorkspaceView: () => {},
   background: undefined,
@@ -114,9 +110,7 @@ export const AppStateProvider = ({
     }
     return true
   })
-  const [sideBarContent, setSideBarContent] = useState<ReactNode | undefined>(
-    undefined
-  )
+
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [background, setBackground] = useState<{
     sessionId?: string
@@ -334,8 +328,6 @@ export const AppStateProvider = ({
       value={{
         showRightSidebar,
         toggleRightSidebar: () => setShowRightSidebar(!showRightSidebar),
-        sideBarContent,
-        setSideBarContent,
         showWorkspacesTable,
         toggleWorkspaceView: () => setShowWorkspacesTable(!showWorkspacesTable),
         background,

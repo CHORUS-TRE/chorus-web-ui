@@ -13,20 +13,32 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
 
-export function UserDeleteDialog({ userId, onUserDeleted }: { userId: string, onUserDeleted: () => void }) {
-
+export function UserDeleteDialog({
+  userId,
+  onUserDeleted
+}: {
+  userId: string
+  onUserDeleted: () => void
+}) {
   const { setNotification } = useAppState()
 
   const handleDelete = async () => {
     const result = await deleteUser(userId)
     if (result.error) {
-      setNotification({ title: 'Error deleting user', description: result.error, variant: 'destructive' })
+      setNotification({
+        title: 'Error deleting user',
+        description: result.error,
+        variant: 'destructive'
+      })
     } else {
-      setNotification({ title: 'Success', description: 'User deleted successfully.' })
+      setNotification({
+        title: 'Success',
+        description: 'User deleted successfully.'
+      })
 
       onUserDeleted()
     }
@@ -43,7 +55,8 @@ export function UserDeleteDialog({ userId, onUserDeleted }: { userId: string, on
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the user account.
+            This action cannot be undone. This will permanently delete the user
+            account.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -159,8 +159,6 @@ export default function WorkspacesPage() {
             )}
           </TabsContent>
         </Tabs>
-
-
       </div>
 
       {createOpen && (
