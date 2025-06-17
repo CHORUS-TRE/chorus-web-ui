@@ -5,6 +5,8 @@ import { env } from 'next-runtime-env'
 
 import { UserApiDataSourceImpl } from '~/data/data-source'
 import { UserRepositoryImpl } from '~/data/repository'
+import { Result } from '~/domain/model'
+import { User } from '~/domain/model/user'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 
 const getRepository = async () => {
@@ -15,18 +17,20 @@ const getRepository = async () => {
   return new UserRepositoryImpl(dataSource)
 }
 
-export async function userMe() {
+export async function userMe(): Promise<Result<User> | undefined> {
   const userRepository = await getRepository()
   const useCase = new UserMe(userRepository)
   const user = await useCase.execute()
 
   if (user?.data) {
     return {
-      ...(user.data as User),
-      workspaceId:
-        env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-        localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-        undefined
+      data: {
+        ...(user.data as User),
+        workspaceId:
+          env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+          localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+          undefined
+      }
     }
   }
 }

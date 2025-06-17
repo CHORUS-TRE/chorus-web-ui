@@ -146,10 +146,13 @@ export default function WorkspacesGrid({
                             e.stopPropagation()
 
                             if (userId === user?.id) {
-                              setBackground({
-                                sessionId: id,
-                                workspaceId: workspace?.id
-                              })
+                              router.push(
+                                `/workspaces/${workspace?.id}/sessions/${id}`
+                              )
+                              // setBackground({
+                              //   sessionId: id,
+                              //   workspaceId: workspace?.id
+                              // })
                             }
                             // router.push(
                             //   `/workspaces/${workspace?.id}/sessions/${id}`

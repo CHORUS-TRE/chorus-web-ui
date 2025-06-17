@@ -23,9 +23,11 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       const response = await this.dataSource.create(user)
 
-      const userResult = z.object({
-        id: z.string()
-      }).safeParse(response.result)
+      const userResult = z
+        .object({
+          id: z.string()
+        })
+        .safeParse(response.result)
 
       if (!userResult.success) {
         return {

@@ -1,39 +1,43 @@
-'use client';
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useActionState } from 'react';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useActionState } from 'react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { createUser } from '~/components/actions/user-view-model';
-import { useAppState } from '~/components/store/app-state-context';
-import { Button } from '~/components/ui/button';
+import { createUser } from '~/components/actions/user-view-model'
+import { useAppState } from '~/components/store/app-state-context'
+import { Button } from '~/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
+  DialogTrigger
+} from '~/components/ui/dialog'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import { Result } from '~/domain/model';
-import { User,UserEditFormSchema } from '~/domain/model/user';
+  FormMessage
+} from '~/components/ui/form'
+import { Input } from '~/components/ui/input'
+import { Result } from '~/domain/model'
+import { User, UserEditFormSchema } from '~/domain/model/user'
 
-type FormData = z.infer<typeof UserEditFormSchema>;
+type FormData = z.infer<typeof UserEditFormSchema>
 
-export function UserCreateDialog({ onUserCreated }: { onUserCreated: () => void }) {
-  const [open, setOpen] = useState(false);
+export function UserCreateDialog({
+  onUserCreated
+}: {
+  onUserCreated: () => void
+}) {
+  const [open, setOpen] = useState(false)
 
-  const { setNotification } = useAppState();
+  const { setNotification } = useAppState()
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserEditFormSchema),
@@ -41,36 +45,45 @@ export function UserCreateDialog({ onUserCreated }: { onUserCreated: () => void 
       firstName: '',
       lastName: '',
       username: '',
-      password: '',
-    },
-  });
+      password: ''
+    }
+  })
 
-  const [state, formAction] = useActionState(createUser, {} as Result<User>);
+  const [state, formAction] = useActionState(createUser, {} as Result<User>)
 
   useEffect(() => {
     if (state.error) {
-      setNotification({ title: 'Error creating user', description: state.error, variant: 'destructive' });
+      setNotification({
+        title: 'Error creating user',
+        description: state.error,
+        variant: 'destructive'
+      })
     } else if (state.data) {
-      setNotification({ title: 'Success', description: 'User created successfully.' });
+      setNotification({
+        title: 'Success',
+        description: 'User created successfully.'
+      })
 
       onUserCreated()
       setOpen(false)
       form.reset()
     }
-  }, [state, onUserCreated, form]);
+  }, [state, onUserCreated, form])
 
   const onSubmit = (data: FormData) => {
-    const formData = new FormData();
+    const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    formAction(formData);
-  };
+      formData.append(key, value)
+    })
+    formAction(formData)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background">Create User</Button>
+        <Button className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background">
+          Create User
+        </Button>
       </DialogTrigger>
       <DialogContent className="bg-background text-white">
         <DialogHeader>
@@ -130,10 +143,15 @@ export function UserCreateDialog({ onUserCreated }: { onUserCreated: () => void 
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background">Create</Button>
+            <Button
+              type="submit"
+              className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+            >
+              Create
+            </Button>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
