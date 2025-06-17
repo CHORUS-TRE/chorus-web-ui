@@ -173,8 +173,8 @@ export function Header() {
                         <Box className="h-4 w-4" />
                         {background?.workspaceId
                           ? workspaces?.find(
-                              (w) => w.id === background?.workspaceId
-                            )?.name
+                            (w) => w.id === background?.workspaceId
+                          )?.name
                           : 'My Workspace'}
                       </div>
                     </NavLink>
@@ -196,8 +196,8 @@ export function Header() {
                           <Box className="h-4 w-4" />
                           {background?.workspaceId
                             ? workspaces?.find(
-                                (w) => w.id === background?.workspaceId
-                              )?.name
+                              (w) => w.id === background?.workspaceId
+                            )?.name
                             : 'My Workspace'}
                         </div>
                       </NavLink>
@@ -345,22 +345,13 @@ export function Header() {
                 type="search"
                 placeholder="Find workspaces, apps, content ..."
                 className="h-7 w-full border border-muted/40 bg-background pl-8 md:w-[240px] lg:w-[240px]"
+                id="search-input"
               />
             </div>
           )}
 
           <div className="ml-1 flex items-center gap-2">
             <div className="flex items-center justify-end">
-              {/* {isAuthenticated && (
-                <Button
-                  size="icon"
-                  className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
-                  variant="ghost"
-                  onClick={toggleRightSidebar}
-                >
-                  <CircleHelp />
-                </Button>
-              )} */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -371,46 +362,52 @@ export function Header() {
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                {isAuthenticated ? (
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-black text-white"
-                  >
-                    <DropdownMenuItem asChild>
-                      <Link href="/users/me">
-                        <p className="leading-7 [&:not(:first-child)]:mt-6">
-                          {user?.firstName} {user?.lastName}
-                        </p>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="#" passHref>
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogoutClick}>
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                ) : (
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-black text-white"
-                  >
-                    <DropdownMenuItem asChild>
-                      <Link href="/login">Login</Link>
-                    </DropdownMenuItem>
-                    {internalLogin && (
-                      <DropdownMenuItem asChild>
-                        <Link href="/register" passHref>
-                          Register
-                        </Link>
+                <DropdownMenuContent
+                  className="w-56 bg-black bg-opacity-85 text-white"
+                  align="end"
+                  forceMount
+                >
+                  {isAuthenticated ? (
+                    <>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push('/users/me')}
+                      >
+                        My Profile
                       </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                )}
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push('/admin/users')}
+                      >
+                        User Management
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-slate-500" />
+                      <DropdownMenuItem
+                        onClick={handleLogoutClick}
+                        className="cursor-pointer"
+                      >
+                        Logout
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push('/login')}
+                      >
+                        Login
+                      </DropdownMenuItem>
+                      {internalLogin && (
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => router.push('/register')}
+                        >
+                          Register
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )}
+                </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </div>
@@ -445,7 +442,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onUpdate={() => { }}
           />
         )}
       </nav>

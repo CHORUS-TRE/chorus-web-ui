@@ -31,6 +31,7 @@ import {
   WorkbenchUpdateType
 } from '@/domain/model'
 import { Button } from '~/components/button'
+import { DeleteDialog } from '~/components/forms/delete-dialog'
 import {
   Card,
   CardContent,
@@ -50,7 +51,6 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
-import { DeleteDialog } from '../delete-dialog'
 import { Textarea } from '../ui/textarea'
 
 const DEFAULT_VIEWPORT = {

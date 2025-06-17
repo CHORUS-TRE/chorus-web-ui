@@ -29,6 +29,7 @@ import {
   WorkspaceUpdatetype
 } from '@/domain/model/workspace'
 import { Button } from '~/components/button'
+import { DeleteDialog } from '~/components/forms/delete-dialog'
 import {
   Card,
   CardContent,
@@ -56,7 +57,6 @@ import {
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
 
-import { DeleteDialog } from '../delete-dialog'
 import { useAppState } from '../store/app-state-context'
 
 const initialState: Result<Workspace> = {
