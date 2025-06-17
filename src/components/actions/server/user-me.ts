@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { env } from 'next-runtime-env'
 
-import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
+import { UserApiDataSourceImpl } from '~/data/data-source'
 import { UserRepositoryImpl } from '~/data/repository'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 

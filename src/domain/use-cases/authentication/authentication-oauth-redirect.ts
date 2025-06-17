@@ -1,13 +1,8 @@
-import {
-  AuthenticationOAuthRedirectRequest,
-  AuthenticationOAuthRedirectResponse
-} from '@/domain/model'
+import { AuthenticationOAuthRedirectRequest, Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 export interface AuthenticationOAuthRedirectUseCase {
-  execute(
-    data: AuthenticationOAuthRedirectRequest
-  ): Promise<AuthenticationOAuthRedirectResponse>
+  execute(data: AuthenticationOAuthRedirectRequest): Promise<Result<string>>
 }
 
 export class AuthenticationOAuthRedirect
@@ -21,7 +16,7 @@ export class AuthenticationOAuthRedirect
 
   async execute(
     data: AuthenticationOAuthRedirectRequest
-  ): Promise<AuthenticationOAuthRedirectResponse> {
+  ): Promise<Result<string>> {
     return await this.repository.handleOAuthRedirect(data)
   }
 }

@@ -1,21 +1,18 @@
 import {
-  AuthenticationModesResponse,
+  AuthenticationMode,
   AuthenticationOAuthRedirectRequest,
-  AuthenticationOAuthRedirectResponse,
-  AuthenticationOAuthResponse,
   AuthenticationRequest,
-  AuthenticationResponse,
-  LogoutResponse
+  Result
 } from '@/domain/model'
 
 interface AuthenticationRepository {
-  login: (data: AuthenticationRequest) => Promise<AuthenticationResponse>
-  getAuthenticationModes: () => Promise<AuthenticationModesResponse>
-  getOAuthUrl: (id: string) => Promise<AuthenticationOAuthResponse>
+  login: (data: AuthenticationRequest) => Promise<Result<string>>
+  getAuthenticationModes: () => Promise<Result<AuthenticationMode[]>>
+  getOAuthUrl: (id: string) => Promise<Result<string>>
   handleOAuthRedirect: (
     data: AuthenticationOAuthRedirectRequest
-  ) => Promise<AuthenticationOAuthRedirectResponse>
-  logout: () => Promise<LogoutResponse>
+  ) => Promise<Result<string>>
+  logout: () => Promise<Result<string>>
 }
 
 export type { AuthenticationRepository }

@@ -15,7 +15,8 @@ import { Result, User } from '~/domain/model'
 
 const initialState: Result<User> = {
   data: undefined,
-  issues: undefined
+  issues: undefined,
+  error: undefined
 }
 
 function SubmitButton() {
@@ -43,7 +44,8 @@ export default function UserRegisterForm() {
   )
 
   useEffect(() => {
-    if (state.data?.id && !state.message?.includes('fail')) {
+    debugger
+    if (state.data?.id && !state.error?.includes('fail')) {
       redirect(`/login?username=${state.data.username}`)
     }
   }, [state])
@@ -126,6 +128,9 @@ export default function UserRegisterForm() {
               className="border border-muted/40 bg-background text-white"
               autoComplete="new-password"
             />
+            <p className="text-xs text-muted">
+              Password must be at least 8 characters long
+            </p>
             <div className="text-xs text-red-500">
               {state.issues?.find((e) => e.path.includes('password'))?.message}
             </div>

@@ -1,8 +1,8 @@
-import { AuthenticationModesResponse } from '@/domain/model'
+import { AuthenticationMode, Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 export interface AuthenticationGetModesUseCase {
-  execute(): Promise<AuthenticationModesResponse>
+  execute(): Promise<Result<AuthenticationMode[]>>
 }
 
 export class AuthenticationGetModes implements AuthenticationGetModesUseCase {
@@ -12,7 +12,7 @@ export class AuthenticationGetModes implements AuthenticationGetModesUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<AuthenticationModesResponse> {
+  async execute(): Promise<Result<AuthenticationMode[]>> {
     return await this.repository.getAuthenticationModes()
   }
 }

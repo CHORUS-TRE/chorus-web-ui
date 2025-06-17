@@ -3,11 +3,6 @@ export interface AuthenticationRequest {
   password: string
 }
 
-export interface AuthenticationResponse {
-  data?: string
-  error?: string
-}
-
 export const AuthenticationModeType = {
   INTERNAL: 'internal',
   OPENID: 'openid'
@@ -31,28 +26,9 @@ export interface AuthenticationMode {
   buttonText?: string
 }
 
-export interface AuthenticationModesResponse {
-  data?: AuthenticationMode[]
-  error?: string
-}
-
-export interface AuthenticationOAuthResponse {
-  data?: string // URL for redirection
-  error?: string
-}
-
 export interface AuthenticationOAuthRedirectRequest {
   id: string
   state?: string
   sessionState?: string
   code?: string
-}
-
-export interface AuthenticationOAuthRedirectResponse {
-  data?: string
-  error?: string
-}
-
-export interface LogoutResponse {
-  error?: string
 }
