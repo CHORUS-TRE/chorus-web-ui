@@ -19,7 +19,6 @@ import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
 import { getSession } from './server/session'
-import { IFormState } from './utils'
 
 const getRepository = async () => {
   const session = await getSession()
@@ -46,7 +45,7 @@ export async function workspaceList(): Promise<Result<Workspace[]>> {
 }
 
 export async function workspaceCreate(
-  prevState: IFormState,
+  prevState: Result<Workspace>,
   formData: FormData
 ): Promise<Result<Workspace>> {
   try {
@@ -81,7 +80,7 @@ export async function workspaceGet(id: string): Promise<Result<Workspace>> {
 }
 
 export async function workspaceUpdate(
-  prevState: IFormState,
+  prevState: Result<Workspace>,
   formData: FormData
 ): Promise<Result<Workspace>> {
   try {

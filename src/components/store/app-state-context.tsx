@@ -14,7 +14,7 @@ import {
 
 import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
 
-import { appInstanceList } from '../actions/app-instance-view-model'
+import { listAppInstances } from '../actions/app-instance-view-model'
 import { appList } from '../actions/app-view-model'
 import { listUsers } from '../actions/user-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
@@ -240,9 +240,11 @@ export const AppStateProvider = ({
       return
     }
     try {
-      const response = await appInstanceList()
+      const response = await listAppInstances()
       setAppInstances(
-        response.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        response.data?.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        )
       )
     } catch (error) {
       setNotification({

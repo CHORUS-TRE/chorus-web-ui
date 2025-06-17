@@ -1,9 +1,12 @@
+import { z } from 'zod'
+
 import { AppInstanceDataSource } from '@/data/data-source'
 import {
+  AppInstance,
   AppInstanceCreateType,
-  AppInstanceResponse,
-  AppInstancesResponse,
-  AppInstanceUpdateType
+  AppInstanceSchema,
+  AppInstanceUpdateType,
+  Result
 } from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 
@@ -14,56 +17,83 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
     this.dataSource = dataSource
   }
 
+  async get(id: string): Promise<Result<AppInstance>> {
+    try {
+      const response = await this.dataSource.get(id)
+      const instanceResult = AppInstanceSchema.safeParse(
+        response.result?.appInstance
+      )
+
+      if (!instanceResult.success) {
+        return {
+          error: 'API response validation failed for AppInstance get',
+          issues: instanceResult.error.issues
+        }
+      }
+      return { data: instanceResult.data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async list(): Promise<Result<AppInstance[]>> {
+    try {
+      const response = await this.dataSource.list()
+      const instancesResult = z
+        .array(AppInstanceSchema)
+        .safeParse(response.result)
+
+      if (!instancesResult.success) {
+        return {
+          error: 'API response validation failed for AppInstance list',
+          issues: instancesResult.error.issues
+        }
+      }
+
+      return { data: instancesResult.data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
   async create(
     appInstance: AppInstanceCreateType
-  ): Promise<AppInstanceResponse> {
+  ): Promise<Result<AppInstance>> {
     try {
       const response = await this.dataSource.create(appInstance)
-      if (!response) return { error: 'Error creating appInstance' }
+      const instanceResult = AppInstanceSchema.safeParse(response.result)
 
-      const w = await this.dataSource.get(response)
-
-      return { data: w }
+      if (!instanceResult.success) {
+        return {
+          error: 'API response validation failed for AppInstance create',
+          issues: instanceResult.error.issues
+        }
+      }
+      return { data: instanceResult.data }
     } catch (error) {
-      console.error('Error creating appInstance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
-    }
-  }
-
-  async get(id: string): Promise<AppInstanceResponse> {
-    try {
-      const data = await this.dataSource.get(id)
-      if (!data) return { error: 'Not found' }
-
-      return { data }
-    } catch (error) {
-      console.error('Error getting appInstance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
-    }
-  }
-
-  async delete(id: string): Promise<AppInstanceResponse> {
-    try {
-      const data = await this.dataSource.delete(id)
-      if (!data) return { error: 'Error deleting app instance' }
-
-      return { data: true }
-    } catch (error) {
-      console.error('Error deleting appInstance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
-    }
-  }
-
-  async list(): Promise<AppInstancesResponse> {
-    try {
-      const data = await this.dataSource.list()
-      if (!data) return { data: [] }
-
-      return { data }
-    } catch (error) {
-      console.error('Error listing appInstances', error)
       return {
-        data: [],
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async delete(id: string): Promise<Result<string>> {
+    try {
+      const response = await this.dataSource.delete(id)
+      const idResult = response?.result
+
+      if (!idResult) {
+        return {
+          error: 'API response validation failed for AppInstance delete'
+        }
+      }
+      return { data: id }
+    } catch (error) {
+      return {
         error: error instanceof Error ? error.message : String(error)
       }
     }
@@ -71,13 +101,22 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
   async update(
     appInstance: AppInstanceUpdateType
-  ): Promise<AppInstanceResponse> {
+  ): Promise<Result<AppInstance>> {
     try {
-      const data = await this.dataSource.update(appInstance)
-      return { data }
+      const response = await this.dataSource.update(appInstance)
+      const instanceResult = AppInstanceSchema.safeParse(response.result)
+
+      if (!instanceResult.success) {
+        return {
+          error: 'API response validation failed for AppInstance update',
+          issues: instanceResult.error.issues
+        }
+      }
+      return { data: instanceResult.data }
     } catch (error) {
-      console.error('Error updating appInstance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
     }
   }
 }

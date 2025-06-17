@@ -49,6 +49,8 @@ export const AppInstanceUpdateSchema = AppInstanceCreateSchema.extend({
   id: z.string()
 })
 
+export const AppInstanceEditFormSchema = AppInstanceCreateSchema.extend({})
+
 export type AppInstance = z.infer<typeof AppInstanceSchema>
 
 export type AppInstanceCreateType = z.infer<typeof AppInstanceCreateSchema>

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
 
-import { AuthenticationMode } from '@/domain/model'
+import { AuthenticationMode, Result } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
@@ -19,11 +19,10 @@ import {
   getOAuthUrl,
   getSession
 } from '../actions/authentication-view-model'
-import { IFormState } from '../actions/utils'
 import { useAppState } from '../store/app-state-context'
 import { useAuth } from '../store/auth-context'
 
-const initialState: IFormState = {
+const initialState: Result<AuthenticationMode[]> = {
   data: undefined,
   error: undefined,
   issues: undefined
@@ -143,7 +142,14 @@ export default function LoginForm() {
         const url = new URL(response.data)
         const currentState = url.searchParams.get('state') || ''
         url.searchParams.set('state', `${currentState}:${mode.openid.id}`)
-        window.location.href = url.toString()
+
+        const redirectPath = searchParams.get('redirect') || '/'
+        // Ensure the redirect URL is relative and doesn't contain protocol/domain
+        const isValidRedirect =
+          redirectPath.startsWith('/') && !redirectPath.includes('//')
+        // Redirect to the validated path or fallback to home
+        window.location.href =
+          url.toString() + (isValidRedirect ? redirectPath : '/')
       }
     }
   }

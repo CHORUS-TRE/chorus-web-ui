@@ -1,16 +1,16 @@
 import {
+  AppInstance,
   AppInstanceCreateType,
-  AppInstanceResponse,
-  AppInstancesResponse,
-  AppInstanceUpdateType
-} from '@/domain/model'
+  AppInstanceUpdateType,
+  Result
+} from '~/domain/model'
 
 interface AppInstanceRepository {
-  create: (appInstance: AppInstanceCreateType) => Promise<AppInstanceResponse>
-  get: (id: string) => Promise<AppInstanceResponse>
-  delete: (id: string) => Promise<AppInstanceResponse>
-  list: () => Promise<AppInstancesResponse>
-  update: (appInstance: AppInstanceUpdateType) => Promise<AppInstanceResponse>
+  create: (appInstance: AppInstanceCreateType) => Promise<Result<AppInstance>>
+  get: (id: string) => Promise<Result<AppInstance>>
+  delete: (id: string) => Promise<Result<string>>
+  list: () => Promise<Result<AppInstance[]>>
+  update: (appInstance: AppInstanceUpdateType) => Promise<Result<AppInstance>>
 }
 
 export type { AppInstanceRepository }
