@@ -31,9 +31,9 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { App, AppCreateSchema, AppState } from '~/domain/model'
+import { Result } from '~/domain/model'
 
 import { appCreate } from './actions/app-view-model'
-import { IFormState } from './actions/utils'
 import { ImageUploadField } from './image-upload-field'
 import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
@@ -230,7 +230,7 @@ export function AppCreateDialog({
         if (value) formData.append(key, String(value))
       })
 
-      const result = await appCreate({} as IFormState, formData)
+      const result = await appCreate({} as Result<App>, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {

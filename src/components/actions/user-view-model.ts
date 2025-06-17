@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { UserApiDataSourceImpl } from '~/data/data-source'
 import { UserRepositoryImpl } from '~/data/repository'
+import { Result } from '~/domain/model'
 import { User, UserEditFormSchema, UserUpdateSchema } from '~/domain/model/user'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
 import { UserDelete } from '~/domain/use-cases/user/user-delete'
@@ -13,7 +14,6 @@ import { UserMe } from '~/domain/use-cases/user/user-me'
 import { UserUpdate } from '~/domain/use-cases/user/user-update'
 
 import { getSession } from './server/session'
-import { IFormState } from './utils'
 
 const getRepository = async () => {
   const session = await getSession()
@@ -29,9 +29,9 @@ export async function userMe() {
 }
 
 export async function createUser(
-  prevState: IFormState<User>,
+  prevState: Result<User>,
   formData: FormData
-): Promise<IFormState<User>> {
+): Promise<Result<User>> {
   try {
     const userRepository = await getRepository()
     const useCase = new UserCreate(userRepository)
@@ -81,9 +81,9 @@ export async function deleteUser(id: string) {
 }
 
 export async function updateUser(
-  prevState: IFormState<User>,
+  prevState: Result<User>,
   formData: FormData
-): Promise<IFormState<User>> {
+): Promise<Result<User>> {
   const userRepository = await getRepository()
   const useCase = new UserUpdate(userRepository)
 

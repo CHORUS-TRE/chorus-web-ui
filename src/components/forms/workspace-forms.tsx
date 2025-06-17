@@ -56,11 +56,10 @@ import {
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
 
-import { IFormState } from '../actions/utils'
 import { DeleteDialog } from '../delete-dialog'
 import { useAppState } from '../store/app-state-context'
 
-const initialState: IFormState = {
+const initialState: Result<Workspace> = {
   data: undefined,
   error: undefined,
   issues: undefined
@@ -429,7 +428,7 @@ export function WorkspaceUpdateForm({
                           {[
                             WorkspaceState.ACTIVE,
                             WorkspaceState.INACTIVE,
-                            WorkspaceState.ARCHIVED
+                            WorkspaceState.DELETED
                           ].map((status) => (
                             <SelectItem
                               key={status}
@@ -446,8 +445,10 @@ export function WorkspaceUpdateForm({
                   )}
                 />
 
-                {form.formState.error && (
-                  <p className="text-red-500">{form.formState.error.message}</p>
+                {form.formState.errors.name && (
+                  <p className="text-red-500">
+                    {form.formState.errors.name.message}
+                  </p>
                 )}
               </CardContent>
               <CardFooter>

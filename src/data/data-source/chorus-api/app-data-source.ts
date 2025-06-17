@@ -1,19 +1,9 @@
 import { env } from 'next-runtime-env'
 
-import { App, AppCreateType, AppUpdateType, Result } from '@/domain/model'
-import {
-  AppCreateSchema,
-  AppSchema,
-  AppState,
-  AppUpdateSchema
-} from '@/domain/model/app'
+import { AppCreateType, AppUpdateType } from '@/domain/model'
 import {
   AppServiceApi,
-  AppServiceDeleteAppRequest,
-  AppServiceGetAppRequest,
   AppServiceListAppsRequest,
-  AppServiceUpdateAppRequest,
-  ChorusApp,
   ChorusCreateAppReply,
   ChorusDeleteAppReply,
   ChorusGetAppReply,
@@ -54,9 +44,7 @@ export class AppDataSourceImpl implements AppDataSource {
   }
 
   create(app: AppCreateType): Promise<ChorusCreateAppReply> {
-    console.log('app', app)
     const chorusApp = toChorusApp(app)
-    console.log('chorusApp', chorusApp)
     return this.client.appServiceCreateApp({
       body: chorusApp
     })

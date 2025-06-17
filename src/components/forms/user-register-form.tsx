@@ -7,12 +7,14 @@ import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import { createUser } from '@/components/actions/user-view-model'
-import { Button, IFormState, Input, Label, Separator } from '~/components/ui'
-import { User } from '~/domain/model'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
+import { Separator } from '~/components/ui/separator'
+import { Result, User } from '~/domain/model'
 
-const initialState: IFormState<User> = {
+const initialState: Result<User> = {
   data: undefined,
-  message: undefined,
   issues: undefined
 }
 
@@ -133,9 +135,9 @@ export default function UserRegisterForm() {
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">
-        {state.message}
+        {state.error}
       </p>
-      {state.message && <p className="text-red-500">{state.message}</p>}
+      {state.error && <p className="text-red-500">{state.error}</p>}
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}
