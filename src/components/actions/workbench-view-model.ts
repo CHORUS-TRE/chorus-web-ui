@@ -8,7 +8,7 @@ import {
   WorkbenchUpdateSchema,
   WorkbenchUpdateType
 } from '@/domain/model/workbench'
-import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-data-source'
+import { WorkbenchDataSourceImpl } from '~/data/data-source'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
@@ -17,7 +17,6 @@ import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
 
 import { getSession } from './server/session'
-import { IFormState } from './utils'
 
 const getRepository = async () => {
   const session = await getSession()
@@ -40,7 +39,7 @@ export async function workbenchDelete(id: string): Promise<Result<boolean>> {
 }
 
 export async function workbenchCreate(
-  prevState: IFormState<Workbench>,
+  prevState: Result<Workbench>,
   formData: FormData
 ): Promise<Result<Workbench>> {
   try {
@@ -96,7 +95,7 @@ export async function workbenchGet(id: string): Promise<Result<Workbench>> {
 }
 
 export async function workbenchUpdate(
-  prevState: IFormState<Workbench>,
+  prevState: Result<Workbench>,
   formData: FormData
 ): Promise<Result<Workbench>> {
   try {
