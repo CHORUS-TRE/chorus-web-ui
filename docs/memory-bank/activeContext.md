@@ -1,19 +1,21 @@
 # Active Context
 
-## 1. Current Focus
+## 1. Current Work Focus
 
-The primary focus is to systematically apply the established architectural and data flow patterns to all remaining entities in the application.
+The data flow refactoring for all major entities (`App`, `User`, `AppInstance`, `Workspace`, `Workbench`) is now complete. The current focus is on final documentation updates and preparing for the next major task.
 
 ## 2. Recent Changes
 
-- **`User` Entity Refactored:** The entire data flow for the `User` entity has been refactored, including its domain model, mapper, data source, repository, use cases, and view-model actions. The public `UserRegisterForm` was also updated.
-- **SSR Bug Fixed:** Resolved a critical server-side rendering error by moving initial authentication state fetching from a Client Component (`Providers`) to the root Server Component (`layout.tsx`). This pattern is now documented.
-- **Dedicated `userMe` Action:** Created a specific server action for fetching the current user's data, cleaning up the main view model.
+- **Refactoring Complete:** The `Workspace` and `Workbench` entities have been refactored, completing the architectural overhaul for all major entities.
+- **Architectural Rules Clarified:** The usage of Server Actions vs. client-side fetching has been clarified in `.cursorrules` and `systemPatterns.md`.
+- **Mermaid Diagrams Fixed:** All Mermaid diagrams in the project documentation have been corrected.
 
 ## 3. Next Steps
 
-- **Apply Patterns to `Workspace`:** The next entity to refactor is `Workspace`. This involves updating its entire data flow (domain, repository, data source, view-model, and UI) to match the established pattern.
+- Awaiting direction on the next task.
+- A potential future task that was mentioned is to create all the data flows in `apis.swagger.yaml`.
 
 ## 4. Active Decisions & Considerations
 
-- **Continue the Pattern:** The successful refactoring of `App` and `User` validates the current architectural approach. The process will be repeated for all remaining models.
+- The core architectural patterns (Clean Architecture, Repository/Data Source, Mappers) are now stable and must be followed for any new feature development.
+- The distinction between client-side fetching (default) and Server Actions (for forms) is a key pattern to maintain.
