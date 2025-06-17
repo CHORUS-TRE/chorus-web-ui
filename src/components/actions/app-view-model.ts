@@ -1,6 +1,6 @@
 'use client'
 
-import { AppDataSourceImpl } from '~/data/data-source/chorus-api/app-data-source'
+import { AppDataSourceImpl } from '~/data/data-source'
 import { AppRepositoryImpl } from '~/data/repository/app-repository-impl'
 import {
   AppCreateSchema,
@@ -16,7 +16,6 @@ import { AppList } from '~/domain/use-cases/app/app-list'
 import { AppUpdate } from '~/domain/use-cases/app/app-update'
 
 import { getSession } from './server/session'
-import { IFormState } from './utils'
 
 const getRepository = async () => {
   const session = await getSession()
@@ -43,7 +42,7 @@ export async function appList(): Promise<Result<App[]>> {
 }
 
 export async function appCreate(
-  prevState: IFormState,
+  prevState: Result<App>,
   formData: FormData
 ): Promise<Result<App>> {
   const app = Object.fromEntries(formData.entries()) as AppCreateType
@@ -61,7 +60,7 @@ export async function appCreate(
 }
 
 export async function appUpdate(
-  prevState: IFormState,
+  prevState: Result<App>,
   formData: FormData
 ): Promise<Result<App>> {
   try {

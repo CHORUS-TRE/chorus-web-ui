@@ -23,7 +23,7 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { App } from '~/domain/model'
 
-import { appInstanceCreate } from './actions/app-instance-view-model'
+import { createAppInstance } from './actions/app-instance-view-model'
 import { appDelete } from './actions/app-view-model'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { useAppState } from './store/app-state-context'
@@ -121,7 +121,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
     formData.append('sessionId', sessionId)
 
     try {
-      const result = await appInstanceCreate({}, formData)
+      const result = await createAppInstance(formData)
 
       if (result.error) {
         setNotification({

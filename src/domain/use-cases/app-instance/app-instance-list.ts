@@ -1,18 +1,10 @@
-import { AppInstancesResponse } from '@/domain/model'
-import { AppInstanceRepository } from '@/domain/repository'
+import { AppInstance, Result } from '~/domain/model'
+import { AppInstanceRepository } from '~/domain/repository'
 
-export interface AppInstanceListUseCase {
-  execute(): Promise<AppInstancesResponse>
-}
+export class AppInstanceList {
+  constructor(private readonly repository: AppInstanceRepository) {}
 
-export class AppInstanceList implements AppInstanceListUseCase {
-  private repository: AppInstanceRepository
-
-  constructor(repository: AppInstanceRepository) {
-    this.repository = repository
-  }
-
-  async execute(): Promise<AppInstancesResponse> {
-    return await this.repository.list()
+  async execute(): Promise<Result<AppInstance[]>> {
+    return this.repository.list()
   }
 }

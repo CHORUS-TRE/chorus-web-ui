@@ -30,10 +30,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { App, AppState, AppUpdateSchema } from '~/domain/model'
+import { App, AppState, AppUpdateSchema, Result } from '~/domain/model'
 
 import { appUpdate } from './actions/app-view-model'
-import { IFormState } from './actions/utils'
 import { PRESETS, type Presets } from './app-create-dialog'
 import { ImageUploadField } from './image-upload-field'
 import { useAppState } from './store/app-state-context'
@@ -106,7 +105,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
         if (value) formData.append(key, String(value))
       })
 
-      const result = await appUpdate({} as IFormState, formData)
+      const result = await appUpdate({} as Result<App>, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {
