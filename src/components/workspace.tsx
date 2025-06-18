@@ -37,6 +37,7 @@ import {
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { ScrollArea } from './ui/scroll-area'
+import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 // Add a simple custom bar chart component
 function SimpleBarChart({
@@ -214,78 +215,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </div>
             }
             description={`Sessions in ${workspace?.name}.`}
-            content={
-              <ScrollArea className="h-[160px] w-full">
-                <div className="grid gap-1">
-                  {workspaces
-                    ?.filter((workspace) => workspace.id === workspaceId)
-                    ?.map(({ id: workspaceId }) => (
-                      <div
-                        className="mb-2"
-                        key={`workspace-grid-${workspaceId}`}
-                      >
-                        {workbenches
-                          ?.filter(
-                            (workbench) => workbench.workspaceId === workspaceId
-                          )
-                          ?.sort((a, b) => (a.userId === user?.id ? -1 : 1))
-                          .map(({ id, createdAt, userId }) => (
-                            <div
-                              key={`workspace-sessions-${id}`}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-
-                                if (userId === user?.id) {
-                                  setBackground({
-                                    sessionId: id,
-                                    workspaceId: workspaceId
-                                  })
-                                }
-                              }}
-                              className={`mb-2 flex flex-col justify-between`}
-                            >
-                              <div className="flex-grow text-sm">
-                                <div className="mb-0.5 mt-0.5 text-xs">
-                                  <div
-                                    className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'text-accent hover:text-accent hover:underline' : 'text-muted'}`}
-                                  >
-                                    <AppWindow className="h-4 w-4 shrink-0" />
-                                    {appInstances
-                                      ?.filter(
-                                        (instance) =>
-                                          id === instance.workbenchId
-                                      )
-                                      .map(
-                                        (instance) =>
-                                          apps?.find(
-                                            (app) => app.id === instance.appId
-                                          )?.name || ''
-                                      )
-                                      .join(', ') || 'No apps started yet'}
-                                  </div>
-                                </div>
-                                <p className="text-xs text-muted">
-                                  Created by{' '}
-                                  {
-                                    users?.find((user) => user.id === userId)
-                                      ?.firstName
-                                  }{' '}
-                                  {
-                                    users?.find((user) => user.id === userId)
-                                      ?.lastName
-                                  }{' '}
-                                  {formatDistanceToNow(createdAt || new Date())}{' '}
-                                  ago
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    ))}
-                </div>
-              </ScrollArea>
-            }
+            content={<WorkspaceWorkbenchList workspaceId={workspaceId} />}
             footer={
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}
@@ -314,6 +244,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             />
           )}
         </div>
+
         <Card
           title={
             <>
