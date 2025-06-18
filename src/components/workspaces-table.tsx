@@ -99,7 +99,7 @@ export default function WorkspaceTable({
           <WorkspaceUpdateForm
             workspace={workspace}
             state={[open, setOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               setUpdated(true)
               setTimeout(() => {
                 setUpdated(false)
@@ -114,7 +114,7 @@ export default function WorkspaceTable({
           <WorkspaceDeleteForm
             id={workspace?.id}
             state={[deleteOpen, setDeleteOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               refreshWorkspaces()
               setDeleted(true)
               setTimeout(() => {

@@ -3,7 +3,6 @@ import { formatDistanceToNow } from 'date-fns'
 import {
   Activity,
   ArrowRight,
-  Book,
   CircleGauge,
   Database,
   EllipsisVerticalIcon,
@@ -87,27 +86,30 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const owner = users?.find((user) => user.id === workspace?.userId)
 
   useEffect(() => {
-    if (!workspaceId || !workbenches || workbenches?.length === 0) return
+    if (!workspaceId || !workbenches || workbenches.length === 0) return
 
-    if (!background?.sessionId || background?.workspaceId !== workspaceId) {
-      const firstSessionId = workbenches?.find(
-        (workbench) =>
-          workbench.workspaceId === workspaceId && workbench.userId === user?.id
-      )?.id
+    const firstSessionId = workbenches.find(
+      (workbench) =>
+        workbench.workspaceId === workspaceId && workbench.userId === user?.id
+    )?.id
 
-      if (!background?.sessionId && firstSessionId) {
-        setBackground({
-          sessionId: firstSessionId,
-          workspaceId: workspaceId
-        })
-      } else {
-        setBackground({
-          sessionId: undefined,
-          workspaceId: workspaceId
-        })
-      }
+    if (
+      background?.workspaceId !== workspaceId ||
+      background?.sessionId !== firstSessionId
+    ) {
+      setBackground({
+        sessionId: firstSessionId,
+        workspaceId: workspaceId
+      })
     }
-  }, [workspaceId, workbenches, setBackground])
+  }, [
+    workspaceId,
+    workbenches,
+    user?.id,
+    background?.sessionId,
+    background?.workspaceId,
+    setBackground
+  ])
 
   return (
     <>
@@ -175,7 +177,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             activeDeleteId === workspace?.id,
             () => setActiveDeleteId(null)
           ]}
-          onUpdate={() => {
+          onSuccess={() => {
             refreshWorkspaces()
 
             setNotification({
@@ -227,7 +229,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <WorkspaceUpdateForm
               workspace={workspace}
               state={[openEdit, setOpenEdit]}
-              onUpdate={() => {
+              onSuccess={() => {
                 setNotification({
                   title: 'Workspace updated',
                   description: 'Workspace updated',

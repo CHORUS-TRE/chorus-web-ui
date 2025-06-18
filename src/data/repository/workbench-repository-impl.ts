@@ -21,6 +21,10 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       if (!response.result?.id) {
         return { error: 'Error creating workbench' }
       }
+
+      // wait 5 sec
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+
       return this.get(response.result.id)
     } catch (error) {
       console.error('Error creating workbench', error)

@@ -1,14 +1,8 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import {
-  AppWindow,
-  EllipsisVerticalIcon,
-  LaptopMinimal,
-  Package
-} from 'lucide-react'
+import { EllipsisVerticalIcon, Package } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import {
@@ -30,7 +24,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
 
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
@@ -44,7 +37,6 @@ interface WorkspacesGridProps {
 
 export default function WorkspacesGrid({
   workspaces,
-  workbenches,
   user,
   onUpdate
 }: WorkspacesGridProps) {
@@ -52,15 +44,7 @@ export default function WorkspacesGrid({
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
   const { setNotification } = useAppState()
-  const {
-    apps,
-    appInstances,
-    refreshWorkspaces,
-    users,
-    setBackground,
-    background
-  } = useAppState()
-  const router = useRouter()
+  const { refreshWorkspaces, users } = useAppState()
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
       {workspaces?.map((workspace) => (
@@ -136,7 +120,7 @@ export default function WorkspacesGrid({
                 activeUpdateId === workspace.id,
                 () => setActiveUpdateId(null)
               ]}
-              onUpdate={() => {
+              onSuccess={() => {
                 setNotification({
                   title: 'Success!',
                   description: 'Workspace updated'
@@ -153,7 +137,7 @@ export default function WorkspacesGrid({
                 activeDeleteId === workspace.id,
                 () => setActiveDeleteId(null)
               ]}
-              onUpdate={() => {
+              onSuccess={() => {
                 refreshWorkspaces()
 
                 setNotification({

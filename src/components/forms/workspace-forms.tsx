@@ -2,9 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
-import { startTransition, useEffect, useMemo, useRef, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 import {
   workspaceCreate,
@@ -20,7 +19,6 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import {
-  Result,
   Workspace,
   WorkspaceCreateSchema,
   WorkspaceCreateType,
@@ -30,14 +28,7 @@ import {
 } from '@/domain/model/workspace'
 import { Button } from '~/components/button'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
+import { Card, CardContent, CardFooter } from '~/components/ui/card'
 import {
   Form,
   FormControl,
@@ -58,12 +49,6 @@ import {
 import { Textarea } from '~/components/ui/textarea'
 
 import { useAppState } from '../store/app-state-context'
-
-const initialState: Result<Workspace> = {
-  data: undefined,
-  error: undefined,
-  issues: undefined
-}
 
 export function WorkspaceCreateForm({
   state: [open, setOpen],
@@ -102,7 +87,7 @@ export function WorkspaceCreateForm({
     formData.append('status', WorkspaceState.ACTIVE)
 
     startTransition(async () => {
-      const result = await workspaceCreate(initialState, formData)
+      const result = await workspaceCreate({}, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {
@@ -309,7 +294,7 @@ export function WorkspaceUpdateForm({
     })
 
     startTransition(async () => {
-      const result = await workspaceUpdate(initialState, formData)
+      const result = await workspaceUpdate({}, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {

@@ -77,7 +77,7 @@ export async function listAppInstances() {
   return await useCase.execute()
 }
 
-export async function deleteAppInstance(id: string, workspaceId: string) {
+export async function deleteAppInstance(id: string) {
   const repository = await getRepository()
   const useCase = new AppInstanceDelete(repository)
   const result = await useCase.execute(id)

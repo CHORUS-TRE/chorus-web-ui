@@ -80,7 +80,7 @@ export const useUrlValidation = (url: string | null) => {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [url, validateUrl])
+  }, [url, validateUrl, status])
 
   return { error, isLoading }
 }

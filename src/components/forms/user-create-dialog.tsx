@@ -68,7 +68,7 @@ export function UserCreateDialog({
       setOpen(false)
       form.reset()
     }
-  }, [state, onUserCreated, form])
+  }, [state, onUserCreated, form, setNotification])
 
   const onSubmit = (data: FormData) => {
     const formData = new FormData()

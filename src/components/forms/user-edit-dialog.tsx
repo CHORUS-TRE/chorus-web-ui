@@ -70,7 +70,7 @@ export function UserEditDialog({
       onUserUpdated()
       setOpen(false)
     }
-  }, [state, onUserUpdated])
+  }, [state, onUserUpdated, setNotification])
 
   const onSubmit = (data: FormData) => {
     const formData = new FormData()

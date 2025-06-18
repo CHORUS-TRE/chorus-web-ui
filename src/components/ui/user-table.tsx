@@ -1,12 +1,10 @@
 'use client'
 
-import { Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { listUsers } from '~/components/actions/user-view-model'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
 import { UserEditDialog } from '~/components/forms/user-edit-dialog'
-import { Button } from '~/components/ui/button'
 import {
   Table,
   TableBody,
@@ -17,7 +15,7 @@ import {
 } from '~/components/ui/table'
 import { User } from '~/domain/model/user'
 
-export function UserTable({ key: _key }: { key?: number }) {
+export function UserTable() {
   const [users, setUsers] = useState<User[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -36,7 +34,7 @@ export function UserTable({ key: _key }: { key?: number }) {
       }
     }
     loadUsers()
-  }, [_key, refreshKey])
+  }, [refreshKey])
 
   if (error) {
     return <div className="text-red-500">{error}</div>

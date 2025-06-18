@@ -1,6 +1,6 @@
 'use client'
 
-import { AppWindow, MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
+import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -27,7 +27,6 @@ import { App, AppInstanceStatus } from '~/domain/model'
 
 import { createAppInstance } from './actions/app-instance-view-model'
 import { appDelete } from './actions/app-view-model'
-import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 import { Avatar, AvatarFallback } from './ui/avatar'
@@ -50,11 +49,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
     background,
     refreshWorkbenches,
     refreshWorkspaces,
-    workbenches,
-    workspaces,
-    setBackground,
-    appInstances,
-    apps
+    setBackground
   } = useAppState()
   const { user } = useAuth()
   const router = useRouter()

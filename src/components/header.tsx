@@ -10,7 +10,6 @@ import {
   User
 } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -416,7 +415,7 @@ export function Header() {
         <WorkbenchDeleteForm
           id={params.sessionId}
           state={[deleteOpen, setDeleteOpen]}
-          onUpdate={() => {
+          onSuccess={() => {
             setNotification({
               title: 'Success!',
               description: 'Session is deleting, redirecting to workspace...',
@@ -442,7 +441,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onUpdate={() => {}}
+            onSuccess={() => {}}
           />
         )}
       </nav>

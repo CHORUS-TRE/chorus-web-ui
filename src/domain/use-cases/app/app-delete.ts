@@ -1,4 +1,4 @@
-import { App, Result } from '@/domain/model'
+import { Result } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
 export interface AppDeleteUseCase {
