@@ -49,6 +49,7 @@ export async function createAppInstance(
     }
 
     const result = await useCase.execute(validation.data)
+
     if (result.error) {
       return { ...prevState, error: result.error }
     }

@@ -78,8 +78,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       {!background?.sessionId && (
         <div
-          className="fixed left-0 top-11 z-30 h-full w-full bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 hover:text-accent"
-          id="iframe-overlay"
+          className={`hover:text-accent" id="iframe-no-content-overlay fixed left-0 top-11 z-30 h-full w-full bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 ${showSessionList ? 'z-40' : 'z-30'}`}
         >
           <div className="session-overlay relative flex h-8 w-full cursor-pointer items-center justify-end gap-4 p-2">
             {showSessionList && (
@@ -112,7 +111,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             )}
             {showSessionList && (
               <div
-                className={`absolute right-4 top-12 z-30 grid min-h-[75vh] w-96 gap-2`}
+                className={`absolute right-4 top-12 z-30 grid min-h-[75vh] w-64 gap-2`}
               >
                 <div
                   id="content"
@@ -139,8 +138,8 @@ export function MainLayout({ children }: MainLayoutProps) {
                           ?.filter((workspace) =>
                             workbenches?.some(
                               (workbench) =>
-                                workbench.workspaceId === workspace.id
-                              // && workbench.userId === user?.id
+                                workbench.workspaceId === workspace.id &&
+                                workbench.userId === user?.id
                             )
                           )
                           ?.map(({ id: workspaceId, name }) => (
@@ -148,13 +147,14 @@ export function MainLayout({ children }: MainLayoutProps) {
                               className="mb-2"
                               key={`workspace-grid-${workspaceId}`}
                             >
-                              <div className="text-sm font-semibold text-white">
+                              <div className="mb-1 text-sm font-semibold text-white">
                                 {name}
                               </div>
                               {workbenches
                                 ?.filter(
                                   (workbench) =>
-                                    workbench.workspaceId === workspaceId
+                                    workbench.workspaceId === workspaceId &&
+                                    workbench.userId === user?.id
                                 )
                                 .map(({ id, createdAt, userId }) => (
                                   <Link
@@ -285,44 +285,42 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Link>
       )}
 
-      {!showSessionList && (
+      <div
+        className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-[80vw] -translate-x-1/2 gap-2 ${isClient ? (showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]') : 'grid-cols-[1fr]'}`}
+      >
         <div
-          className={`absolute left-1/2 top-24 z-30 grid min-h-[75vh] w-full max-w-[80vw] -translate-x-1/2 gap-2 ${isClient ? (showRightSidebar ? 'grid-cols-[1fr_300px]' : 'grid-cols-[1fr]') : 'grid-cols-[1fr]'}`}
+          id="content"
+          className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
         >
-          <div
-            id="content"
-            className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
-          >
-            <>
-              <div className="w-full p-8">{children}</div>
-              <div className="absolute right-0 top-0 z-50 p-2">
-                <Button
-                  disabled={!background?.sessionId}
-                  size="icon"
-                  className={`overflow-hidden text-accent hover:bg-inherit`}
-                  variant="ghost"
-                  title="Show session"
-                  onClick={() => {
-                    router.push(
-                      `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-                    )
-                  }}
-                >
-                  <X />
-                </Button>
-              </div>
-            </>
-          </div>
-          {isClient && (
-            <div
-              className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
-              id="sidebar"
-            >
-              <RightSidebar />
+          <>
+            <div className="w-full p-8">{children}</div>
+            <div className="absolute right-0 top-0 z-50 p-2">
+              <Button
+                disabled={!background?.sessionId}
+                size="icon"
+                className={`overflow-hidden text-accent hover:bg-inherit`}
+                variant="ghost"
+                title="Show session"
+                onClick={() => {
+                  router.push(
+                    `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
+                  )
+                }}
+              >
+                <X />
+              </Button>
             </div>
-          )}
+          </>
         </div>
-      )}
+        {isClient && (
+          <div
+            className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
+            id="sidebar"
+          >
+            <RightSidebar />
+          </div>
+        )}
+      </div>
     </>
   )
 }

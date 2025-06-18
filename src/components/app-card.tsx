@@ -1,7 +1,8 @@
 'use client'
 
-import { MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
+import { AppWindow, MoreVertical, Pencil, Plus, Trash } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from '~/components/button'
@@ -10,6 +11,7 @@ import { DeleteDialog } from '~/components/forms/delete-dialog'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
@@ -21,7 +23,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import { App } from '~/domain/model'
+import { App, AppInstanceStatus } from '~/domain/model'
 
 import { createAppInstance } from './actions/app-instance-view-model'
 import { appDelete } from './actions/app-view-model'
@@ -29,6 +31,8 @@ import { WorkbenchCreateForm } from './forms/workbench-forms'
 import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 import { Avatar, AvatarFallback } from './ui/avatar'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 interface AppCardProps {
   app: App
@@ -41,8 +45,19 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const { setNotification, background, workspaces } = useAppState()
+  const {
+    setNotification,
+    background,
+    refreshWorkbenches,
+    refreshWorkspaces,
+    workbenches,
+    workspaces,
+    setBackground,
+    appInstances,
+    apps
+  } = useAppState()
   const { user } = useAuth()
+  const router = useRouter()
 
   const handleDelete = async () => {
     if (isDeleting) return
@@ -93,17 +108,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
     const sessionId = background?.sessionId
     const workspaceId = background?.workspaceId
     if (!sessionId || !workspaceId) {
-      setNotification({
-        title: 'Select a session first',
-        description: 'You must start a session to launch an app',
-        variant: 'default',
-        action: {
-          label: 'Start a session',
-          onClick: () => {
-            setShowStartSessionDialog(true)
-          }
-        }
-      })
       return
     }
 
@@ -114,14 +118,15 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
     })
 
     const formData = new FormData()
-    formData.append('id', app.id)
+    formData.append('appId', app.id)
     formData.append('tenantId', '1')
     formData.append('userId', user?.id || '')
     formData.append('workspaceId', workspaceId)
-    formData.append('sessionId', sessionId)
+    formData.append('workbenchId', sessionId)
+    formData.append('status', AppInstanceStatus.ACTIVE)
 
     try {
-      const result = await createAppInstance(formData)
+      const result = await createAppInstance({}, formData)
 
       if (result.error) {
         setNotification({
@@ -131,13 +136,21 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         })
         return
       }
+
+      if (result.issues) {
+        console.error('result.issues', result.issues)
+        return
+      }
+
       setNotification({
         title: 'Success!',
         description: `${app.name} launched successfully`
       })
 
-      // refreshWorkbenches()
-      // refreshWorkspaces()
+      router.push(`/workspaces/${workspaceId}/sessions/${sessionId}`)
+
+      refreshWorkbenches()
+      refreshWorkspaces()
     } catch (error) {
       setNotification({
         title: 'Error launching app',
@@ -149,25 +162,25 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
   return (
     <>
-      <Card className="flex flex-col overflow-hidden border border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
-        <CardHeader className="relative flex flex-row items-start justify-between space-y-0 border-b border-muted/40 pb-2 pb-4">
+      <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+        <CardHeader className="relative pb-4">
           <div className="flex items-center space-x-4">
             {app.iconURL && (
               <Image
                 src={app.iconURL || ''}
                 alt={app.name || 'App logo'}
-                width={48}
-                height={48}
-                className="h-12 w-12 shrink-0"
+                width={32}
+                height={32}
+                className="h-8 w-8 shrink-0"
                 priority
               />
             )}
             {!app.iconURL && (
-              <Avatar className="h-12 w-12 shrink-0">
+              <Avatar className="h-8 w-8 shrink-0">
                 <AvatarFallback>{app.name?.slice(0, 2) || ''}</AvatarFallback>
               </Avatar>
             )}
-            <CardTitle className="shrink border-b-0 text-xl font-semibold text-white">
+            <CardTitle className="flex items-center gap-3 pr-2 text-white">
               {app.name || 'Unnamed App'}
             </CardTitle>
           </div>
@@ -203,33 +216,56 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          <CardDescription className="mb-3 text-xs text-muted">
+            {app.dockerImageName}:{app.dockerImageTag}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mt-4 flex flex-col">
-            <p className="text-white">
-              {app.description || 'No description available'}
-            </p>
-            <div className="text-sm text-muted">
-              {app.dockerImageName}:{app.dockerImageTag}
-            </div>
+          <div className="text-sm text-muted">
+            {app.description || 'No description available'}
           </div>
         </CardContent>
         <CardFooter className="mt-auto">
-          {showStartSessionDialog && (
-            <WorkbenchCreateForm
-              workspaceId={background?.workspaceId}
-              workspaceName={
-                workspaces?.find((w) => w.id === background?.workspaceId)?.name
+          <Button
+            onClick={() => {
+              if (background?.sessionId) {
+                handleStartApp()
+              } else {
+                setShowStartSessionDialog(true)
               }
-              openOnStart={true}
-            />
-          )}
-          <Button onClick={handleStartApp} className="" disabled={false}>
+            }}
+            className="small"
+            disabled={false}
+          >
             <Plus className="mr-2 h-4 w-4" />
-            Start App
+            {background?.sessionId ? 'Start App' : 'Start App...'}
           </Button>
         </CardFooter>
       </Card>
+
+      <Dialog
+        open={showStartSessionDialog}
+        onOpenChange={setShowStartSessionDialog}
+      >
+        <DialogContent className="bg-background text-white">
+          <DialogHeader>
+            <DialogTitle className="text-white">
+              Choose a session to start the app
+            </DialogTitle>
+          </DialogHeader>
+          <WorkspaceWorkbenchList
+            workspaceId={background?.workspaceId}
+            action={({ id, workspaceId }) => {
+              setBackground({
+                sessionId: id,
+                workspaceId: workspaceId
+              })
+              setShowStartSessionDialog(false)
+              handleStartApp()
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <AppEditDialog
         app={app}

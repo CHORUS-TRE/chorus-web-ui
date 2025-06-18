@@ -25,21 +25,13 @@ import {
   Workbench,
   WorkbenchCreateSchema,
   WorkbenchCreateType,
-  WorkbenchEditFormSchema,
   WorkbenchStatus,
   WorkbenchUpdateSchema,
   WorkbenchUpdateType
 } from '@/domain/model'
 import { Button } from '~/components/button'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
+import { Card, CardContent, CardFooter } from '~/components/ui/card'
 import {
   Form,
   FormControl,
@@ -186,7 +178,7 @@ export function WorkbenchCreateForm({
           {form.formState.isSubmitting ? 'Creating...' : 'Start session'}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-background text-white">
         <DialogHeader>
           <DialogTitle>Start Session</DialogTitle>
           <DialogDescription>Start a new session.</DialogDescription>

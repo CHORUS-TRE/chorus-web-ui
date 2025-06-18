@@ -9,9 +9,11 @@ import { useAuth } from './store/auth-context'
 import { ScrollArea } from './ui/scroll-area'
 
 export function WorkspaceWorkbenchList({
-  workspaceId
+  workspaceId,
+  action
 }: {
-  workspaceId: string
+  workspaceId?: string
+  action?: ({ id, workspaceId }: { id: string; workspaceId: string }) => void
 }) {
   const router = useRouter()
 
@@ -23,11 +25,12 @@ export function WorkspaceWorkbenchList({
     <ScrollArea className="h-[160px] w-full">
       <div className="grid gap-1">
         {workspaces
-          ?.filter((workspace) => workspace.id === workspaceId)
+          ?.filter((workspace) => workspace.id === workspaceId || !workspaceId)
           ?.map(({ id: workspaceId }) => (
             <div className="mb-2" key={`workspace-grid-${workspaceId}`}>
               {workbenches
                 ?.filter((workbench) => workbench.workspaceId === workspaceId)
+                ?.filter((workbench) => workbench.userId === user?.id)
                 ?.sort((a) => (a.userId === user?.id ? -1 : 1))
                 .map(({ id, createdAt, userId }) => (
                   <div
@@ -36,8 +39,12 @@ export function WorkspaceWorkbenchList({
                       e.preventDefault()
                       e.stopPropagation()
 
-                      if (userId === user?.id) {
+                      if (!action) {
                         router.push(`/workspaces/${workspaceId}/sessions/${id}`)
+                      } else {
+                        if (id && workspaceId) {
+                          action({ id, workspaceId })
+                        }
                       }
                     }}
                     className={`mb-2 flex flex-col justify-between`}
