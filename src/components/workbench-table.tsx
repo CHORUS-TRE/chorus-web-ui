@@ -126,7 +126,7 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">
             {appInstances
-              ?.filter((instance) => workbench?.id === instance.sessionId)
+              ?.filter((instance) => workbench?.id === instance.workbenchId)
               .map((instance, index, array) => {
                 const appName =
                   apps?.find((app) => app.id === instance.appId)?.name || ''
@@ -142,9 +142,9 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell
             className="hidden p-1 md:table-cell"
-            title={workbench?.createdAt.toLocaleDateString()}
+            title={workbench?.createdAt?.toLocaleDateString()}
           >
-            {workbench && formatDistanceToNow(workbench?.createdAt)} ago
+            {workbench && formatDistanceToNow(workbench?.createdAt ?? new Date())} ago
           </TableCell>
           <TableCell className="p-1">
             <Badge variant="outline">{workbench?.status}</Badge>

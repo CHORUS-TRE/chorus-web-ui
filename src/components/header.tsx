@@ -322,9 +322,11 @@ export function Header() {
                   <NavLink
                     href="#"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                    onClick={toggleRightSidebar}
                   >
-                    <div className="mt-1 flex place-items-center gap-1">
+                    <div
+                      className="mt-1 flex place-items-center gap-1"
+                      onClick={toggleRightSidebar}
+                    >
                       <CircleHelp className="h-4 w-4" />
                       Help
                     </div>

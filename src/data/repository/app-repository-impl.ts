@@ -70,10 +70,10 @@ export class AppRepositoryImpl implements AppRepository {
     }
   }
 
-  async delete(id: string): Promise<Result<boolean>> {
+  async delete(id: string): Promise<Result<string>> {
     try {
       await this.dataSource.delete(id)
-      return { data: true }
+      return { data: id }
     } catch (error) {
       console.error('Error deleting app', error)
       return { error: error instanceof Error ? error.message : String(error) }
