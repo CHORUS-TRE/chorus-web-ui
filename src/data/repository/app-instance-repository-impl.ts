@@ -65,15 +65,15 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
   ): Promise<Result<AppInstance>> {
     try {
       const response = await this.dataSource.create(appInstance)
-      const instanceResult = AppInstanceSchema.safeParse(response.result)
 
-      if (!instanceResult.success) {
+      if (!response.result?.id) {
         return {
-          error: 'API response validation failed for AppInstance create',
-          issues: instanceResult.error.issues
+          error: 'API response validation failed for AppInstance create'
         }
       }
-      return { data: instanceResult.data }
+      return {
+        data: appInstance.appId
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

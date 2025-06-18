@@ -27,7 +27,7 @@ export default function BackgroundIframe() {
 
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
-    const baseAPIURL = env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+    const baseAPIURL = `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/api/rest/v1`
     const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
 
     setUrl(newUrl)
@@ -94,7 +94,7 @@ export default function BackgroundIframe() {
         message="Loading session..."
         dismiss={error ? true : false}
       />
-      {error && (
+      {/* {error && (
         <div className="fixed inset-0 top-11 z-30 flex items-center justify-center bg-background/80">
           <Alert variant="default" className="w-[400px] text-white">
             <AlertCircle className="mt-1 h-4 w-4 text-white" />
@@ -104,7 +104,7 @@ export default function BackgroundIframe() {
             </AlertDescription>
           </Alert>
         </div>
-      )}
+      )} */}
       {!isLoading && !error && (
         <iframe
           title="Application Workspace"

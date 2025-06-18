@@ -2,7 +2,6 @@ import { ResponsiveLine } from '@nivo/line'
 import { formatDistanceToNow } from 'date-fns'
 import {
   Activity,
-  AppWindow,
   ArrowRight,
   Book,
   CircleGauge,
@@ -12,17 +11,14 @@ import {
   LaptopMinimal,
   Users
 } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { WorkspaceState } from '~/domain/model/workspace'
 
 import { Card } from './card'
-// import Dashboard from './dashboard'
 import { WorkbenchCreateForm } from './forms/workbench-forms'
 import {
   WorkspaceDeleteForm,
@@ -81,8 +77,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     users,
     setNotification,
     refreshWorkspaces,
-    appInstances,
-    apps,
     background,
     setBackground,
     workspaces
@@ -322,7 +316,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           />
         )}
 
-        {workspace && user?.workspaceId !== workspace?.id && (
+        {/* {workspace && user?.workspaceId !== workspace?.id && (
           <Card
             title={
               <>
@@ -346,7 +340,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </Button>
             }
           />
-        )}
+        )} */}
 
         <Card
           title={
