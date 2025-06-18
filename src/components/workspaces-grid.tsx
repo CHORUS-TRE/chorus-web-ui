@@ -33,6 +33,8 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
 
+import { WorkspaceWorkbenchList } from './workspace-workbench-list'
+
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
@@ -122,90 +124,7 @@ export default function WorkspacesGrid({
                   Sessions
                 </div> */}
 
-                <ScrollArea className="mb-4 max-h-[160px] pr-2">
-                  <div className="grid gap-1">
-                    {workbenches?.filter(
-                      (workbench) => workbench.workspaceId === workspace?.id
-                    ).length === 0 && (
-                      <div className="mb-1 flex items-center gap-2 text-xs">
-                        <LaptopMinimal className="h-4 w-4 shrink-0" />
-                        No sessions created yet
-                      </div>
-                    )}
-
-                    {workbenches
-                      ?.filter(
-                        (workbench) => workbench.workspaceId === workspace?.id
-                      )
-                      ?.sort((a, b) => (a.userId === user?.id ? -1 : 1))
-                      .map(({ userId, createdAt, id }) => (
-                        <div
-                          key={`workspace-grid-sessions-${id}`}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-
-                            if (userId === user?.id) {
-                              router.push(
-                                `/workspaces/${workspace?.id}/sessions/${id}`
-                              )
-                              // setBackground({
-                              //   sessionId: id,
-                              //   workspaceId: workspace?.id
-                              // })
-                            }
-                            // router.push(
-                            //   `/workspaces/${workspace?.id}/sessions/${id}`
-                            // )
-                          }}
-                          className="justify-between bg-background/40 text-white"
-                        >
-                          <div className="mb-2 flex-grow text-xs">
-                            {/* <div className="mb-1 flex items-center gap-2">
-                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                              {shortName}
-                            </div> */}
-
-                            <div className="mb-0.5 mt-0.5 text-xs">
-                              <div
-                                className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'text-accent hover:text-accent hover:underline' : 'text-muted'}`}
-                              >
-                                <AppWindow className="h-4 w-4 shrink-0" />
-                                {appInstances
-                                  ?.filter(
-                                    (instance) =>
-                                      workspace?.id === instance.workspaceId
-                                  )
-                                  ?.filter(
-                                    (instance) => id === instance.workbenchId
-                                  )
-                                  .map(
-                                    (instance) =>
-                                      apps?.find(
-                                        (app) => app.id === instance.appId
-                                      )?.name || ''
-                                  )
-                                  .join(', ') || 'No apps started yet'}
-                              </div>
-                              <p className="text-xs text-muted">
-                                Created by{' '}
-                                {
-                                  users?.find((user) => user.id === userId)
-                                    ?.firstName
-                                }{' '}
-                                {
-                                  users?.find((user) => user.id === userId)
-                                    ?.lastName
-                                }{' '}
-                                {formatDistanceToNow(createdAt || new Date())}{' '}
-                                ago
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </ScrollArea>
+                <WorkspaceWorkbenchList workspaceId={workspace.id} />
               </CardContent>
             </Card>
           </Link>
