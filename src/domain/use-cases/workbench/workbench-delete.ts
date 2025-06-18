@@ -1,8 +1,8 @@
-import { Result, Workbench } from '@/domain/model'
+import { Result } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
 export interface WorkbenchDeleteUseCase {
-  execute(id: string): Promise<Result<Workbench>>
+  execute(id: string): Promise<Result<string>>
 }
 
 export class WorkbenchDelete implements WorkbenchDeleteUseCase {

@@ -42,10 +42,10 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
-  async delete(id: string): Promise<Result<boolean>> {
+  async delete(id: string): Promise<Result<string>> {
     try {
       await this.dataSource.delete(id)
-      return { data: true }
+      return { data: id }
     } catch (error) {
       console.error('Error deleting workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }

@@ -164,7 +164,7 @@ export default function WorkspacesPage() {
         <WorkspaceCreateForm
           state={[createOpen, setCreateOpen]}
           userId={user?.id}
-          onUpdate={async () => {
+          onSuccess={async () => {
             await refreshWorkspaces()
             setNotification({
               title: 'Success!',

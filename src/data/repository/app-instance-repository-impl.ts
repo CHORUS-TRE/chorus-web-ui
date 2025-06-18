@@ -5,6 +5,7 @@ import {
   AppInstance,
   AppInstanceCreateType,
   AppInstanceSchema,
+  AppInstanceStatus,
   AppInstanceUpdateType,
   Result
 } from '@/domain/model'
@@ -72,7 +73,13 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
         }
       }
       return {
-        data: appInstance.appId
+        data: {
+          ...appInstance,
+          id: response.result.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          status: AppInstanceStatus.ACTIVE
+        }
       }
     } catch (error) {
       return {

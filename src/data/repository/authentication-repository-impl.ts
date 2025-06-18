@@ -1,12 +1,9 @@
 import {
-  AuthenticationModesResponse,
+  AuthenticationMode,
   AuthenticationOAuthRedirectRequest,
-  AuthenticationOAuthRedirectResponse,
-  AuthenticationOAuthResponse,
   AuthenticationRequest,
-  AuthenticationResponse,
-  LogoutResponse
 } from '@/domain/model'
+import { Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 import { AuthenticationDataSource } from '../data-source'
@@ -18,7 +15,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     this.dataSource = dataSource
   }
 
-  async login(data: AuthenticationRequest): Promise<AuthenticationResponse> {
+  async login(data: AuthenticationRequest): Promise<Result<string>> {
     try {
       const d = await this.dataSource.login(data)
 
@@ -29,7 +26,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     }
   }
 
-  async getAuthenticationModes(): Promise<AuthenticationModesResponse> {
+  async getAuthenticationModes(): Promise<Result<AuthenticationMode[]>> {
     try {
       const modes = await this.dataSource.getAuthenticationModes()
       return { data: modes }
@@ -39,7 +36,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     }
   }
 
-  async getOAuthUrl(id: string): Promise<AuthenticationOAuthResponse> {
+  async getOAuthUrl(id: string): Promise<Result<string>> {
     try {
       const url = await this.dataSource.getOAuthUrl(id)
       return { data: url }
@@ -51,7 +48,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   async handleOAuthRedirect(
     data: AuthenticationOAuthRedirectRequest
-  ): Promise<AuthenticationOAuthRedirectResponse> {
+  ): Promise<Result<string>> {
     try {
       const token = await this.dataSource.handleOAuthRedirect(data)
       return { data: token }
@@ -61,10 +58,10 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
     }
   }
 
-  async logout(): Promise<LogoutResponse> {
+  async logout(): Promise<Result<string>> {
     try {
       await this.dataSource.logout()
-      return {}
+      return { data: 'ok' }
     } catch (error) {
       console.error('Error logging out', error)
       return { error: error instanceof Error ? error.message : String(error) }

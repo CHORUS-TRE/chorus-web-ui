@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Result,
   Workbench,
   WorkbenchCreateSchema,
   WorkbenchCreateType,
@@ -10,6 +9,7 @@ import {
 } from '@/domain/model/workbench'
 import { WorkbenchDataSourceImpl } from '~/data/data-source'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
+import { Result } from '~/domain/model'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
@@ -24,7 +24,7 @@ const getRepository = async () => {
   return new WorkbenchRepositoryImpl(dataSource)
 }
 
-export async function workbenchDelete(id: string): Promise<Result<boolean>> {
+export async function workbenchDelete(id: string): Promise<Result<string>> {
   try {
     if (!id) {
       throw new Error('Invalid workbench id')
