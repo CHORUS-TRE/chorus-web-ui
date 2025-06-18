@@ -14,7 +14,7 @@ export default function Layout({
   children: React.ReactNode
 }>) {
   const params = useParams<{ workspaceId: string }>()
-  const { workspaces, background } = useAppState()
+  const { workspaces } = useAppState()
   const { user } = useAuth()
   const workspace = workspaces?.find((w) => w.id === params?.workspaceId)
   return (

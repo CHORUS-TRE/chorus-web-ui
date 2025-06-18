@@ -32,7 +32,6 @@ export function MainLayout({ children }: MainLayoutProps) {
     notification,
     setNotification,
     setBackground,
-    toggleRightSidebar,
     users
   } = useAppState()
   const { user } = useAuth()

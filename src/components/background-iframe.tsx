@@ -1,6 +1,5 @@
 'use client'
 
-import { AlertCircle } from 'lucide-react'
 import { env } from 'next-runtime-env'
 import { useEffect, useRef, useState } from 'react'
 
@@ -8,7 +7,6 @@ import { useAppState } from '@/components/store/app-state-context'
 import { useUrlValidation } from '@/hooks/use-url-validation'
 
 import { LoadingOverlay } from './loading-overlay'
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export default function BackgroundIframe() {
   const { background, setBackground } = useAppState()
@@ -16,7 +14,6 @@ export default function BackgroundIframe() {
 
   const [url, setUrl] = useState<string | null>(null)
   const { error, isLoading } = useUrlValidation(url)
-  const [localError, setLocalError] = useState<Error | null>(error)
 
   // URL initialization effect
   useEffect(() => {
@@ -52,7 +49,7 @@ export default function BackgroundIframe() {
 
     // check for http://localhost:3000/workspaces/56/sessions/423 404
     // Use window.addEventListener since pathname is just a string
-    window.addEventListener('popstate', (e) => {
+    window.addEventListener('popstate', () => {
       if (
         pathname !==
         `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
@@ -63,7 +60,7 @@ export default function BackgroundIframe() {
 
     // Clean up event listener
     return () => {
-      window.removeEventListener('popstate', (e) => {
+      window.removeEventListener('popstate', () => {
         if (
           pathname !==
           `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`

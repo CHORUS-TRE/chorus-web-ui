@@ -1,7 +1,6 @@
 'use client'
 
 import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
-import Link from 'next/link'
 import { useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'

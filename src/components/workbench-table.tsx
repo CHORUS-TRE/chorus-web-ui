@@ -83,7 +83,7 @@ export default function WorkbenchTable({
           <WorkbenchUpdateForm
             workbench={workbench}
             state={[open, setOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               refreshWorkbenches()
               setNotification({
                 title: 'Success!',
@@ -97,7 +97,7 @@ export default function WorkbenchTable({
           <WorkbenchDeleteForm
             id={workbench?.id}
             state={[deleteOpen, setDeleteOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               setTimeout(() => {
                 refreshWorkbenches()
               }, 2000)
