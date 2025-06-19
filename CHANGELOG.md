@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0...v1.1.0) (2025-06-19)
+
+
+### Bug Fixes
+
+* handle response updates in middleware error processing ([b933bd8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b933bd82e0c909cbcec25978174dbeda81199130))
+* layout ([62de89e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/62de89e730f392bb227cd6fd032d946dcd43bae1))
+* tests ([3540aa0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3540aa0c8433914addb9ba6f5e52a4b40c9ee4c0))
+* warnings ([a04bcd2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a04bcd25402090a7fefedc2a023bfd13d252698b))
+
+
+### Features
+
+* wokspace + one session draft ([9aeeecd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9aeeecdb2552a4ca3301b4b98297e8efbf548461))
+
 # 1.0.0 (2025-06-12)
 
 
