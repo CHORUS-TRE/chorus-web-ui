@@ -7,12 +7,13 @@
 // import { AuthenticationLogout } from '~/domain/use-cases/authentication/authentication-logout'
 import '@testing-library/jest-dom'
 
-import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api'
-import { AuthenticationRepositoryImpl } from '~/data/repository'
+import { AuthenticationApiDataSourceImpl } from '~/data/data-source/chorus-api/authentication-data-source'
+import { AuthenticationRepositoryImpl } from '~/data/repository/authentication-repository-impl'
 import {
   AuthenticationOAuthRedirectRequest,
   AuthenticationRequest
 } from '~/domain/model'
+import { AuthenticationOAuthRedirect } from '~/domain/use-cases/authentication'
 import { AuthenticationGetModes } from '~/domain/use-cases/authentication/authentication-get-modes'
 import { AuthenticationLogin } from '~/domain/use-cases/authentication/authentication-login'
 

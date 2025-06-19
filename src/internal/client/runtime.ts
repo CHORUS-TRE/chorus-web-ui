@@ -23,15 +23,15 @@ export interface ConfigurationParameters {
   password?: string // parameter for basic security
   apiKey?: string | ((name: string) => string) // parameter for apiKey security
   accessToken?:
-  | string
-  | Promise<string>
-  | ((name?: string, scopes?: string[]) => string | Promise<string>) // parameter for oauth2 security
+    | string
+    | Promise<string>
+    | ((name?: string, scopes?: string[]) => string | Promise<string>) // parameter for oauth2 security
   headers?: HTTPHeaders //header params we want to use on every request
   credentials?: RequestCredentials //value for the credentials param we want to use on each request
 }
 
 export class Configuration {
-  constructor(private configuration: ConfigurationParameters = {}) { }
+  constructor(private configuration: ConfigurationParameters = {}) {}
 
   set config(configuration: Configuration) {
     this.configuration = configuration
@@ -253,31 +253,26 @@ export class BaseAPI {
         fetchParams.init
       )
     } catch (e) {
+      let error = e
       for (const middleware of this.middleware) {
         if (middleware.onError) {
-          response =
-            (await middleware.onError({
-              fetch: this.fetchApi,
-              url: fetchParams.url,
-              init: fetchParams.init,
-              error: e,
-              response: response ? response.clone() : undefined
-            })) || response
+          response = await middleware.onError({
+            fetch: this.fetchApi,
+            url: fetchParams.url,
+            init: fetchParams.init,
+            error: error,
+            response: response
+          })
         }
       }
       if (response === undefined) {
         if (e instanceof Error) {
-          console.error('API Error:', {
-            error: e?.message,
-          })
-
           throw new FetchError(
             e,
             'The request failed and the interceptors did not return an alternative response'
           )
-        } else {
-          throw e
         }
+        throw e
       }
     }
     for (const middleware of this.middleware) {
@@ -365,13 +360,13 @@ export type HTTPMethod =
 export type HTTPHeaders = { [key: string]: string }
 export type HTTPQuery = {
   [key: string]:
-  | string
-  | number
-  | null
-  | boolean
-  | Array<string | number | null | boolean>
-  | Set<string | number | null | boolean>
-  | HTTPQuery
+    | string
+    | number
+    | null
+    | boolean
+    | Array<string | number | null | boolean>
+    | Set<string | number | null | boolean>
+    | HTTPQuery
 }
 export type HTTPBody = Json | FormData | URLSearchParams
 export type HTTPRequestInit = {
@@ -509,7 +504,7 @@ export class JSONApiResponse<T> {
   constructor(
     public raw: Response,
     private transformer: ResponseTransformer<T> = (jsonValue: any) => jsonValue
-  ) { }
+  ) {}
 
   async value(): Promise<T> {
     return this.transformer(await this.raw.json())
@@ -517,7 +512,7 @@ export class JSONApiResponse<T> {
 }
 
 export class VoidApiResponse {
-  constructor(public raw: Response) { }
+  constructor(public raw: Response) {}
 
   async value(): Promise<void> {
     return undefined
@@ -525,7 +520,7 @@ export class VoidApiResponse {
 }
 
 export class BlobApiResponse {
-  constructor(public raw: Response) { }
+  constructor(public raw: Response) {}
 
   async value(): Promise<Blob> {
     return await this.raw.blob()
@@ -533,7 +528,7 @@ export class BlobApiResponse {
 }
 
 export class TextApiResponse {
-  constructor(public raw: Response) { }
+  constructor(public raw: Response) {}
 
   async value(): Promise<string> {
     return await this.raw.text()

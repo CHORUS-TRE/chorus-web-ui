@@ -144,7 +144,9 @@ export default function WorkbenchTable({
             className="hidden p-1 md:table-cell"
             title={workbench?.createdAt?.toLocaleDateString()}
           >
-            {workbench && formatDistanceToNow(workbench?.createdAt ?? new Date())} ago
+            {workbench &&
+              formatDistanceToNow(workbench?.createdAt ?? new Date())}{' '}
+            ago
           </TableCell>
           <TableCell className="p-1">
             <Badge variant="outline">{workbench?.status}</Badge>

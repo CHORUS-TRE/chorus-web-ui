@@ -1,7 +1,7 @@
 import {
   AuthenticationMode,
   AuthenticationOAuthRedirectRequest,
-  AuthenticationRequest,
+  AuthenticationRequest
 } from '@/domain/model'
 import { Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'

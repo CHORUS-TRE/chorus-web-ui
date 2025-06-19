@@ -3,15 +3,16 @@
  */
 import '@testing-library/jest-dom'
 
-import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api'
-import { WorkspaceRepositoryImpl } from '~/data/repository'
+import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-data-source'
+import { WorkspaceRepositoryImpl } from '~/data/repository/workspace-repository-impl'
 import {
   Workspace,
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '~/domain/model/'
-import { WorkspaceCreate } from '~/domain/use-cases'
+import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
+import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 import { ChorusWorkspace as ChorusWorkspaceApi } from '~/internal/client'
 
@@ -32,14 +33,10 @@ const MOCK_WORKSPACE_RESULT = {
   name: MOCK_API_RESPONSE.name,
   shortName: '101',
   description: 'Study 101 is a test workspace to improve learning',
-  image: '',
   userId: '2',
   status: 'active',
-  sessionIds: [],
-  serviceIds: [],
   createdAt: new Date('2024-07-17T12:30:54Z'),
-  updatedAt: new Date('2024-07-17T12:30:54Z'),
-  archivedAt: undefined
+  updatedAt: new Date('2024-07-17T12:30:54Z')
 } as Workspace
 
 const MOCK_API_CREATE = {
@@ -200,7 +197,7 @@ describe('WorkspaceDataSourceImpl', () => {
 
       const result = await dataSource.create(MOCK_API_CREATE)
 
-      expect(result).toBe('1')
+      expect(result).toEqual({ result: { id: '1' } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -211,19 +208,16 @@ describe('WorkspaceDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed creation
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: null
-            }),
-          status: 201,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
       await expect(dataSource.create(MOCK_API_CREATE)).rejects.toThrow(
-        'Error creating workspace'
+        'The request failed and the interceptors did not return an alternative response'
       )
     })
   })
@@ -246,7 +240,7 @@ describe('WorkspaceDataSourceImpl', () => {
 
       const result = await dataSource.get('1')
 
-      expect(result).toMatchObject(MOCK_WORKSPACE_RESULT)
+      expect(result).toMatchObject({ result: { workspace: MOCK_API_RESPONSE } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -259,19 +253,16 @@ describe('WorkspaceDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed get
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: { workspace: null }
-            }),
-          status: 200,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
       await expect(dataSource.get('1')).rejects.toThrow(
-        'Error fetching workspace'
+        'The request failed and the interceptors did not return an alternative response'
       )
     })
   })
@@ -292,7 +283,7 @@ describe('WorkspaceDataSourceImpl', () => {
 
       const result = await dataSource.delete('1')
 
-      expect(result).toBe(true)
+      expect(result).toEqual({ result: { success: true } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -303,19 +294,16 @@ describe('WorkspaceDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed delete
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: null
-            }),
-          status: 200,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
       await expect(dataSource.delete('1')).rejects.toThrow(
-        'Error deleting workspace'
+        'The request failed and the interceptors did not return an alternative response'
       )
     })
   })
@@ -336,8 +324,7 @@ describe('WorkspaceDataSourceImpl', () => {
 
       const result = await dataSource.list()
 
-      expect(result).toHaveLength(1)
-      expect(result[0]).toMatchObject(MOCK_WORKSPACE_RESULT)
+      expect(result).toEqual({ result: [MOCK_API_RESPONSE] })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -350,19 +337,16 @@ describe('WorkspaceDataSourceImpl', () => {
 
     it('should return empty array when API response is empty', async () => {
       // Setup mock for empty list
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: null
-            }),
-          status: 200,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
       await expect(dataSource.list()).rejects.toThrow(
-        'Error fetching workspaces'
+        'The request failed and the interceptors did not return an alternative response'
       )
     })
   })
@@ -402,10 +386,12 @@ describe('WorkspaceDataSourceImpl', () => {
           })
         ) as jest.Mock
 
-      const result = await dataSource.update(MOCK_API_UPDATE)
+      const dataSource = new WorkspaceDataSourceImpl(session)
+      const repository = new WorkspaceRepositoryImpl(dataSource)
+      const result = await repository.update(MOCK_API_UPDATE)
 
       expect(global.fetch).toHaveBeenCalledTimes(2)
-      expect(result).toMatchObject(MOCK_UPDATED_WORKSPACE)
+      expect(result.data).toMatchObject(MOCK_UPDATED_WORKSPACE)
 
       // Verify update request
       const [updateUrl, updateOptions] = (global.fetch as jest.Mock).mock
@@ -423,19 +409,16 @@ describe('WorkspaceDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed update
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: null
-            }),
-          status: 200,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
       await expect(dataSource.update(MOCK_API_UPDATE)).rejects.toThrow(
-        'Error updating workspace'
+        'The request failed and the interceptors did not return an alternative response'
       )
     })
   })

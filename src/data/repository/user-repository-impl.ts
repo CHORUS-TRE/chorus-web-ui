@@ -5,7 +5,6 @@ import {
   User,
   UserCreateType,
   UserSchema,
-  UserStatusEnum,
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
@@ -35,16 +34,9 @@ export class UserRepositoryImpl implements UserRepository {
           issues: userResult.error.issues
         }
       }
-      return {
-        data: {
-          ...user,
-          status: UserStatusEnum.ACTIVE,
-          source: 'chorus',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          id: userResult.data.id
-        }
-      }
+
+      // After creating, fetch the full user data
+      return this.get(userResult.data.id)
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

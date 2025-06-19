@@ -84,14 +84,22 @@ export function WorkbenchCreateForm({
   useEffect(() => {
     // Set initial dimensions
     setViewportDimensions({
-      width: Math.floor(window?.visualViewport?.width || DEFAULT_VIEWPORT.width),
-      height: Math.floor(window?.visualViewport?.height || DEFAULT_VIEWPORT.height)
+      width: Math.floor(
+        window?.visualViewport?.width || DEFAULT_VIEWPORT.width
+      ),
+      height: Math.floor(
+        window?.visualViewport?.height || DEFAULT_VIEWPORT.height
+      )
     })
 
     const updateDimensions = () => {
       setViewportDimensions({
-        width: Math.floor(window?.visualViewport?.width || DEFAULT_VIEWPORT.width),
-        height: Math.floor(window?.visualViewport?.height || DEFAULT_VIEWPORT.height)
+        width: Math.floor(
+          window?.visualViewport?.width || DEFAULT_VIEWPORT.width
+        ),
+        height: Math.floor(
+          window?.visualViewport?.height || DEFAULT_VIEWPORT.height
+        )
       })
     }
     window?.visualViewport?.addEventListener('resize', updateDimensions)

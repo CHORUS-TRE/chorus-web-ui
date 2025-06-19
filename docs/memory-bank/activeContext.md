@@ -2,7 +2,7 @@
 
 ## 1. Current Work Focus
 
-The User Management UI feature is now complete. The current focus is on final documentation updates and preparing for the next major task. A potential next task is to create all the data flows in `apis.swagger.yaml`.
+The immediate priority is to diagnose and fix the failing tests in the existing test suite. The goal is to get the `pnpm test` command to pass successfully, ensuring the codebase is stable before proceeding with new feature development.
 
 ## 2. Recent Changes
 
@@ -13,8 +13,9 @@ The User Management UI feature is now complete. The current focus is on final do
 
 ## 3. Next Steps
 
-- Awaiting direction on the next task.
-- A potential future task that was mentioned is to create all the data flows in `apis.swagger.yaml`.
+- Execute `pnpm test` to get a baseline of failing tests.
+- Systematically fix each failing test.
+- Once the test suite is stable, await direction on the next major feature.
 
 ## 4. Active Decisions & Considerations
 

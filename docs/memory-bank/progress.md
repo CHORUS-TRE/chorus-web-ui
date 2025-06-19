@@ -24,4 +24,5 @@
 
 ## 4. Known Issues
 
+- The test suite is currently failing. Running `pnpm test` produces multiple errors that need to be addressed to ensure code quality and stability.
 - (None currently identified in the `App`, `User`, `AppInstance`, `Workspace`, or `Workbench` data flows.)

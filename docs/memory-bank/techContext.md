@@ -12,7 +12,7 @@
 ## 2. Development Setup
 
 - **Package Manager:** pnpm
-- **Testing:** Jest and React Testing Library (setup exists, but more tests are needed).
+- **Testing:** Jest and React Testing Library. The initial setup and some tests exist, but several are currently failing. A priority is to get the test suite to a stable, passing state.
 - **Linting & Formatting:** ESLint and Prettier.
 
 ## 3. Dependencies
