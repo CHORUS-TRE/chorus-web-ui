@@ -1,12 +1,11 @@
 import { formatDistanceToNow } from 'date-fns'
 import { AppWindow } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
 
 import { useAuth } from './store/auth-context'
-import { ScrollArea } from './ui/scroll-area'
 
 export function WorkspaceWorkbenchList({
   workspaceId,
@@ -21,62 +20,76 @@ export function WorkspaceWorkbenchList({
     useAppState()
   const { user } = useAuth()
 
-  return (
-    <ScrollArea className="h-[160px] w-full">
-      <div className="grid gap-1">
-        {workspaces
-          ?.filter((workspace) => workspace.id === workspaceId || !workspaceId)
-          ?.map(({ id: workspaceId }) => (
-            <div className="mb-2" key={`workspace-grid-${workspaceId}`}>
-              {workbenches
-                ?.filter((workbench) => workbench.workspaceId === workspaceId)
-                ?.filter((workbench) => workbench.userId === user?.id)
-                ?.sort((a) => (a.userId === user?.id ? -1 : 1))
-                .map(({ id, createdAt, userId }) => (
-                  <div
-                    key={`workspace-sessions-${id}`}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
+  const workbenchList = useMemo(() => {
+    return workbenches
+      ?.filter(
+        (workbench) => workbench.workspaceId === workspaceId || !workspaceId
+      )
+      ?.filter((workbench) => workbench.userId === user?.id)
+      ?.sort((a) => (a.userId === user?.id ? -1 : 1))
+  }, [workbenches, workspaceId, user?.id])
 
-                      if (!action) {
-                        router.push(`/workspaces/${workspaceId}/sessions/${id}`)
-                      } else {
-                        if (id && workspaceId) {
-                          action({ id, workspaceId })
-                        }
+  return (
+    <div className="grid gap-1">
+      {workspaces
+        ?.filter((workspace) => workspace.id === workspaceId || !workspaceId)
+        ?.map(({ id: mapWorkspaceId, name }) => (
+          <div className="mb-2" key={`workspace-grid-${mapWorkspaceId}`}>
+            {!workspaceId && <h3 className="mb-1 text-sm font-bold">{name}</h3>}
+
+            {workbenchList?.filter(
+              (workbench) => workbench.workspaceId === mapWorkspaceId
+            ).length === 0 && (
+              <div className="text-xs text-muted">No started session</div>
+            )}
+            {workbenchList
+              ?.filter((workbench) => workbench.workspaceId === mapWorkspaceId)
+              .map(({ id, createdAt, userId }) => (
+                <div
+                  key={`workspace-sessions-${id}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+
+                    if (!action) {
+                      router.push(
+                        `/workspaces/${mapWorkspaceId}/sessions/${id}`
+                      )
+                    } else {
+                      if (id && mapWorkspaceId) {
+                        action({ id, workspaceId: mapWorkspaceId })
                       }
-                    }}
-                    className={`mb-2 flex flex-col justify-between`}
-                  >
-                    <div className="flex-grow text-sm">
-                      <div className="mb-0.5 mt-0.5 text-xs">
-                        <div
-                          className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'cursor-pointer text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
-                        >
-                          <AppWindow className="h-4 w-4 shrink-0" />
-                          {appInstances
-                            ?.filter((instance) => id === instance.workbenchId)
-                            .map(
-                              (instance) =>
-                                apps?.find((app) => app.id === instance.appId)
-                                  ?.name || ''
-                            )
-                            .join(', ') || 'No apps started yet'}
-                        </div>
+                    }
+                  }}
+                  className={`mb-2 flex flex-col justify-between`}
+                >
+                  <div className="flex-grow text-sm">
+                    <div className="mb-0.5 mt-0.5 text-xs">
+                      <div
+                        className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'cursor-pointer text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
+                      >
+                        <AppWindow className="h-4 w-4 shrink-0" />
+                        {appInstances
+                          ?.filter((instance) => id === instance.workbenchId)
+                          .map(
+                            (instance) =>
+                              apps?.find((app) => app.id === instance.appId)
+                                ?.name || ''
+                          )
+                          .join(', ') || 'No apps started yet'}
                       </div>
-                      <p className="cursor-default text-xs text-muted">
-                        Created by{' '}
-                        {users?.find((user) => user.id === userId)?.firstName}{' '}
-                        {users?.find((user) => user.id === userId)?.lastName}{' '}
-                        {formatDistanceToNow(createdAt || new Date())} ago
-                      </p>
                     </div>
+                    <p className="cursor-default text-xs text-muted">
+                      Created by{' '}
+                      {users?.find((user) => user.id === userId)?.firstName}{' '}
+                      {users?.find((user) => user.id === userId)?.lastName}{' '}
+                      {formatDistanceToNow(createdAt || new Date())} ago
+                    </p>
                   </div>
-                ))}
-            </div>
-          ))}
-      </div>
-    </ScrollArea>
+                </div>
+              ))}
+          </div>
+        ))}
+    </div>
   )
 }

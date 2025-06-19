@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { AppWindow, LaptopMinimal, PackageOpen, X } from 'lucide-react'
+import { AppWindow, PackageOpen, X } from 'lucide-react'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,11 +11,11 @@ import { useAppState } from '@/components/store/app-state-context'
 import { Header } from '~/components/header'
 import { toast } from '~/hooks/use-toast'
 
-import { Card } from '../card'
 import RightSidebar from '../right-sidebar'
 import { useAuth } from '../store/auth-context'
 import { Button } from '../ui/button'
 import { ToastAction } from '../ui/toast'
+import { WorkspaceWorkbenchList } from '../workspace-workbench-list'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -31,8 +31,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     showRightSidebar,
     notification,
     setNotification,
-    setBackground,
-    users
+    setBackground
   } = useAppState()
   const { user } = useAuth()
   const router = useRouter()
@@ -110,102 +109,13 @@ export function MainLayout({ children }: MainLayoutProps) {
             )}
             {showSessionList && (
               <div
-                className={`absolute right-4 top-12 z-30 grid min-h-[75vh] w-64 gap-2`}
+                className={`absolute right-4 top-12 z-30 grid min-h-[75vh] gap-2`}
               >
                 <div
                   id="content"
-                  className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
+                  className="relative mr-8 w-full rounded-2xl border border-secondary bg-black bg-opacity-85 p-4"
                 >
-                  <Card
-                    title={
-                      <>
-                        <LaptopMinimal className="h-6 w-6 flex-shrink-0 text-white" />
-                        Sessions
-                      </>
-                    }
-                    description={`Your open sessions`}
-                    content={
-                      <div className="grid gap-1">
-                        {workbenches?.length === 0 && (
-                          <div className="mb-2">
-                            <p className="text-sm text-muted">
-                              No sessions found
-                            </p>
-                          </div>
-                        )}
-                        {workspaces
-                          ?.filter((workspace) =>
-                            workbenches?.some(
-                              (workbench) =>
-                                workbench.workspaceId === workspace.id &&
-                                workbench.userId === user?.id
-                            )
-                          )
-                          ?.map(({ id: workspaceId, name }) => (
-                            <div
-                              className="mb-2"
-                              key={`workspace-grid-${workspaceId}`}
-                            >
-                              <div className="mb-1 text-sm font-semibold text-white">
-                                {name}
-                              </div>
-                              {workbenches
-                                ?.filter(
-                                  (workbench) =>
-                                    workbench.workspaceId === workspaceId &&
-                                    workbench.userId === user?.id
-                                )
-                                .map(({ id, createdAt, userId }) => (
-                                  <Link
-                                    key={`workspace-sessions-${id}`}
-                                    href={`/workspaces/${workspaceId}/sessions/${id}`}
-                                    className="mb-2 flex cursor-pointer flex-col justify-between text-white"
-                                  >
-                                    <div className="flex-grow text-sm">
-                                      <div className="mb-0.5 mt-0.5 text-xs">
-                                        <div className="flex items-center gap-2 truncate text-xs font-semibold hover:text-accent hover:underline">
-                                          <AppWindow className="h-4 w-4 shrink-0" />
-                                          {appInstances
-                                            ?.filter(
-                                              (instance) =>
-                                                id === instance.workbenchId
-                                            )
-                                            .map(
-                                              (instance) =>
-                                                apps?.find(
-                                                  (app) =>
-                                                    app.id === instance.appId
-                                                )?.name || ''
-                                            )
-                                            .join(', ') ||
-                                            'No apps started yet'}
-                                        </div>
-                                      </div>
-                                      <p className="text-xs text-muted">
-                                        Created by{' '}
-                                        {
-                                          users?.find(
-                                            (user) => user.id === userId
-                                          )?.firstName
-                                        }{' '}
-                                        {
-                                          users?.find(
-                                            (user) => user.id === userId
-                                          )?.lastName
-                                        }{' '}
-                                        {formatDistanceToNow(
-                                          createdAt || new Date()
-                                        )}{' '}
-                                        ago
-                                      </p>
-                                    </div>
-                                  </Link>
-                                ))}
-                            </div>
-                          ))}
-                      </div>
-                    }
-                  />
+                  <WorkspaceWorkbenchList />
                 </div>
               </div>
             )}
