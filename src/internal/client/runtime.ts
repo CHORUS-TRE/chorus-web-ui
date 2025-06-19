@@ -256,13 +256,16 @@ export class BaseAPI {
       let error = e
       for (const middleware of this.middleware) {
         if (middleware.onError) {
-          response = await middleware.onError({
+          const res = await middleware.onError({
             fetch: this.fetchApi,
             url: fetchParams.url,
             init: fetchParams.init,
             error: error,
             response: response
           })
+          if (res instanceof Response) {
+            response = res
+          }
         }
       }
       if (response === undefined) {
