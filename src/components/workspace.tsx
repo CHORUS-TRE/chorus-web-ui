@@ -203,7 +203,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   {(() => {
                     const sessionCount =
                       workbenches?.filter(
-                        (workbench) => workbench.workspaceId === workspaceId
+                        (workbench) =>
+                          workbench.workspaceId === workspaceId &&
+                          workbench.userId === user?.id
                       )?.length || 0
                     return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`
                   })()}

@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import { AppWindow } from 'lucide-react'
+import { AppWindow, PictureInPicture2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
@@ -21,12 +21,14 @@ export function WorkspaceWorkbenchList({
   const { user } = useAuth()
 
   const workbenchList = useMemo(() => {
-    return workbenches
-      ?.filter(
-        (workbench) => workbench.workspaceId === workspaceId || !workspaceId
-      )
-      ?.filter((workbench) => workbench.userId === user?.id)
-      ?.sort((a) => (a.userId === user?.id ? -1 : 1))
+    return (
+      workbenches
+        ?.filter(
+          (workbench) => workbench.workspaceId === workspaceId || !workspaceId
+        )
+        // ?.filter((workbench) => workbench.userId === user?.id)
+        ?.sort((a) => (a.userId === user?.id ? -1 : 1))
+    )
   }, [workbenches, workspaceId, user?.id])
 
   return (
@@ -66,9 +68,15 @@ export function WorkspaceWorkbenchList({
                   <div className="flex-grow text-sm">
                     <div className="mb-0.5 mt-0.5 text-xs">
                       <div
-                        className={`flex items-center gap-2 truncate text-xs font-semibold ${background?.sessionId === id ? 'cursor-pointer text-secondary hover:text-accent hover:underline' : userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
+                        className={`flex items-center gap-2 truncate text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
                       >
-                        <AppWindow className="h-4 w-4 shrink-0" />
+                        {background?.sessionId === id && (
+                          <PictureInPicture2 className="h-4 w-4 shrink-0" />
+                        )}
+
+                        {background?.sessionId !== id && (
+                          <AppWindow className="h-4 w-4 shrink-0" />
+                        )}
                         {appInstances
                           ?.filter((instance) => id === instance.workbenchId)
                           .map(
@@ -76,7 +84,7 @@ export function WorkspaceWorkbenchList({
                               apps?.find((app) => app.id === instance.appId)
                                 ?.name || ''
                           )
-                          .join(', ') || 'No apps started yet'}
+                          .join(', ') || 'No apps started'}
                       </div>
                     </div>
                     <p className="cursor-default text-xs text-muted">

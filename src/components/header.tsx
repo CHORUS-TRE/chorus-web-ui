@@ -10,7 +10,7 @@ import {
   User
 } from 'lucide-react'
 import Image from 'next/image'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
@@ -58,7 +58,6 @@ import { Input } from './ui/input'
 
 export function Header() {
   const router = useRouter()
-  const paths = usePathname()
   const {
     workbenches,
     workspaces,
@@ -156,7 +155,7 @@ export function Header() {
           <>
             <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
               <NavigationMenuList className="flex items-center justify-center gap-3">
-                <NavigationMenuItem id="getting-started-step3">
+                {/* <NavigationMenuItem id="getting-started-step3">
                   {!isInAppContext && (
                     <NavLink
                       href={
@@ -178,10 +177,10 @@ export function Header() {
                       </div>
                     </NavLink>
                   )}
-                </NavigationMenuItem>
-                {isInAppContext && currentWorkbench && (
+                </NavigationMenuItem> */}
+                {background?.sessionId && workbenches && (
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger>
+                    <NavigationMenuTrigger className="border-none hover:border-none">
                       <NavLink
                         href={
                           background?.workspaceId
@@ -218,7 +217,7 @@ export function Header() {
                                     ?.filter(
                                       (instance) =>
                                         instance.workbenchId ===
-                                        currentWorkbench.id
+                                        background?.sessionId
                                     )
                                     ?.map(
                                       (instance) =>
@@ -231,7 +230,7 @@ export function Header() {
                                 return (
                                   <div className="flex items-center gap-2 text-xs">
                                     <AppWindow className="h-4 w-4 shrink-0" />
-                                    {filteredApps.join(', ')}
+                                    {filteredApps.join(', ') || 'No apps'}
                                   </div>
                                 )
                               })()}
