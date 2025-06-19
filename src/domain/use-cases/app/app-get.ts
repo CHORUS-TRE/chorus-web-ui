@@ -1,8 +1,8 @@
-import { AppResponse } from '@/domain/model'
+import { App, Result } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
 export interface AppGetUseCase {
-  execute(id: string): Promise<AppResponse>
+  execute(id: string): Promise<Result<App>>
 }
 
 export class AppGet implements AppGetUseCase {
@@ -12,7 +12,7 @@ export class AppGet implements AppGetUseCase {
     this.repository = repository
   }
 
-  async execute(id: string): Promise<AppResponse> {
+  async execute(id: string): Promise<Result<App>> {
     return await this.repository.get(id)
   }
 }

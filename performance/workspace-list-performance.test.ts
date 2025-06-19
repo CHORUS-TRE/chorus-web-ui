@@ -25,10 +25,9 @@ function generateTestWorkspaces(count: number) {
     shortName: `WS-${i}`,
     description: `This is a test workspace ${i} with a long description to simulate real-world data.`,
     image: '',
-    ownerId: 'owner-1',
-    memberIds: ['owner-1', 'member-1', 'member-2'],
-    tags: [`tag-${i % 5}`, `priority-${i % 3}`],
+    userId: 'owner-1',
     status: i % 5 === 0 ? 'archived' : 'active',
+    memberIds: Array.from({ length: i % 10 }, (_, j) => `member-${j}`),
     sessionIds: Array.from({ length: i % 10 }, (_, j) => `workbench-${j}`),
     serviceIds: Array.from({ length: i % 5 }, (_, j) => `service-${j}`),
     createdAt: new Date(Date.now() - i * 86400000), // i days ago

@@ -1,11 +1,11 @@
-import { AppCreate, AppResponse, AppsResponse } from '@/domain/model'
+import { App, AppCreateType, AppUpdateType, Result } from '@/domain/model'
 
 interface AppRepository {
-  list: () => Promise<AppsResponse>
-  create: (app: AppCreate) => Promise<AppResponse>
-  update: (app: AppCreate & { id: string }) => Promise<AppResponse>
-  delete: (id: string) => Promise<AppResponse>
-  get: (id: string) => Promise<AppResponse>
+  get: (id: string) => Promise<Result<App>>
+  list: () => Promise<Result<App[]>>
+  create: (app: AppCreateType) => Promise<Result<App>>
+  update: (app: AppUpdateType) => Promise<Result<App>>
+  delete: (id: string) => Promise<Result<string>>
 }
 
 export type { AppRepository }

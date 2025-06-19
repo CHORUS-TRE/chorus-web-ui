@@ -1,46 +1,58 @@
 import { z } from 'zod'
 
+export enum AppInstanceStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  DELETED = 'deleted'
+}
+
+export enum K8sAppInstanceStatus {
+  RUNNING = 'Running',
+  STOPPED = 'Stopped',
+  KILLED = 'Killed'
+}
+
+export enum K8sAppInstanceState {
+  UNKNOWN = 'Unknown',
+  RUNNING = 'Running',
+  COMPLETE = 'Complete',
+  PROGRESSING = 'Progressing',
+  FAILED = 'Failed'
+}
+
 export const AppInstanceSchema = z.object({
   id: z.string(),
   tenantId: z.string(),
-  ownerId: z.string(),
+  userId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  sessionId: z.string(),
-  status: z.string(),
+  workbenchId: z.string(),
+  status: z.nativeEnum(AppInstanceStatus),
+  k8sStatus: z.nativeEnum(K8sAppInstanceStatus).optional(),
+  k8sState: z.nativeEnum(K8sAppInstanceState).optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional(),
   createdAt: z.date(),
-  updatedAt: z.date(),
-  archivedAt: z.date().optional()
+  updatedAt: z.date()
 })
-
-export type AppInstance = z.infer<typeof AppInstanceSchema>
 
 export const AppInstanceCreateSchema = z.object({
   tenantId: z.string(),
-  ownerId: z.string(),
+  userId: z.string(),
   appId: z.string(),
   workspaceId: z.string(),
-  sessionId: z.string(),
+  workbenchId: z.string(),
   status: z.string()
 })
 
-export type AppInstanceCreateModel = z.infer<typeof AppInstanceCreateSchema>
+export const AppInstanceUpdateSchema = AppInstanceCreateSchema.extend({
+  id: z.string()
+})
 
-export interface AppInstanceResponse {
-  data?: AppInstance
-  error?: string
-}
+export const AppInstanceEditFormSchema = AppInstanceCreateSchema.extend({})
 
-export interface AppInstanceDeleteResponse {
-  data?: boolean
-  error?: string
-}
+export type AppInstance = z.infer<typeof AppInstanceSchema>
 
-export interface AppInstancesResponse {
-  data?: AppInstance[]
-  error?: string
-}
+export type AppInstanceCreateType = z.infer<typeof AppInstanceCreateSchema>
 
-export interface AppInstanceUpdateModel extends AppInstanceCreateModel {
-  id: string
-}
+export type AppInstanceUpdateType = z.infer<typeof AppInstanceUpdateSchema>

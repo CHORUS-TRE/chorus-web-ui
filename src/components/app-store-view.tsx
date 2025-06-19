@@ -4,39 +4,32 @@ import { CirclePlus } from 'lucide-react'
 import { useState } from 'react'
 
 import { AppCard } from '~/components/app-card'
-import { AppCreateDialog } from '~/components/app-create-dialog'
 import { Button } from '~/components/button'
+import { AppCreateDialog } from '~/components/forms/app-create-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { AppType } from '~/domain/model/app'
 
 import { useAppState } from './store/app-state-context'
 
 export function AppStoreView() {
-  const [selectedType, setSelectedType] = useState<AppType>('app' as AppType)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const { apps, refreshApps } = useAppState()
-  const filteredApps = apps?.filter((app) => app.type === selectedType)
 
   return (
     <div className="flex min-h-screen flex-col">
       <section className="w-full">
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
-            <Tabs
-              defaultValue="app"
-              onValueChange={(value) => setSelectedType(value as AppType)}
-              className="w-full"
-            >
+            <Tabs defaultValue="my-apps" className="w-full">
               <div className="mb-8 flex items-center justify-between">
                 <TabsList className="bg-background">
                   <TabsTrigger
-                    value="app"
+                    value="my-apps"
                     className="data-[state=active]:text-primary-foreground"
                   >
                     My Apps
                   </TabsTrigger>
                   <TabsTrigger
-                    value="app"
+                    value="apps"
                     className="data-[state=active]:text-primary-foreground"
                   >
                     Apps
@@ -67,17 +60,17 @@ export function AppStoreView() {
                 </Button>
               </div>
 
-              <TabsContent value="app" className="mt-0">
+              <TabsContent value="my-apps" className="mt-0">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredApps?.map((app) => (
+                  {apps?.map((app) => (
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
                 </div>
               </TabsContent>
 
-              <TabsContent value="service" className="mt-0">
+              <TabsContent value="apps" className="mt-0">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredApps?.map((app) => (
+                  {apps?.map((app) => (
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
                 </div>
@@ -85,18 +78,16 @@ export function AppStoreView() {
             </Tabs>
           </div>
 
-          {filteredApps?.length === 0 && (
+          {apps?.length === 0 && (
             <div className="flex flex-col items-center justify-center p-8 text-center">
-              <p className="text-lg text-muted-foreground">
-                No {selectedType} available.
-              </p>
+              <p className="text-lg text-muted">No app available.</p>
               <Button
                 onClick={() => setShowCreateDialog(true)}
                 variant="outline"
                 className="mt-4"
               >
                 <CirclePlus className="mr-2 h-4 w-4" />
-                Add your first {selectedType}
+                Add your first app
               </Button>
             </div>
           )}
@@ -107,7 +98,6 @@ export function AppStoreView() {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         onSuccess={refreshApps}
-        defaultType={selectedType}
       />
     </div>
   )

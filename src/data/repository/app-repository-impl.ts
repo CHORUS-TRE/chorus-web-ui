@@ -1,5 +1,11 @@
 import { AppDataSource } from '@/data/data-source'
-import { AppCreate, AppResponse, AppsResponse } from '@/domain/model'
+import {
+  App,
+  AppCreateType,
+  AppSchema,
+  AppUpdateType,
+  Result
+} from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
 export class AppRepositoryImpl implements AppRepository {
@@ -9,52 +15,67 @@ export class AppRepositoryImpl implements AppRepository {
     this.dataSource = dataSource
   }
 
-  async list(): Promise<AppsResponse> {
+  async get(id: string): Promise<Result<App>> {
     try {
-      const data = await this.dataSource.list()
-      return { data }
+      const response = await this.dataSource.get(id)
+      if (!response.result?.app) return { error: 'Error getting app' }
+
+      const app = AppSchema.parse(response.result.app)
+
+      return { data: app }
+    } catch (error) {
+      console.error('Error getting app', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async list(): Promise<Result<App[]>> {
+    try {
+      const response = await this.dataSource.list({})
+
+      if (!response.result) return { error: 'Error listing apps' }
+
+      const apps = response.result.map((r) => AppSchema.parse(r))
+
+      return { data: apps }
     } catch (error) {
       console.error('Error listing apps', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
-  async create(app: AppCreate): Promise<AppResponse> {
+  async create(app: AppCreateType): Promise<Result<App>> {
     try {
-      const data = await this.dataSource.create(app)
-      return { data }
+      const response = await this.dataSource.create(app)
+      if (!response.result?.id) {
+        return { error: 'Error creating app' }
+      }
+
+      // After creating, fetch the new app to get the full object from the server
+      return this.get(response.result.id)
     } catch (error) {
       console.error('Error creating app', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
-  async update(app: AppCreate & { id: string }): Promise<AppResponse> {
+  async update(app: AppUpdateType): Promise<Result<App>> {
     try {
-      const data = await this.dataSource.update(app)
-      return { data }
+      await this.dataSource.update(app)
+      // After updating, fetch the app to get the updated object from the server
+      return this.get(app.id)
     } catch (error) {
       console.error('Error updating app', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
-  async delete(id: string): Promise<AppResponse> {
+  async delete(id: string): Promise<Result<string>> {
     try {
-      const data = await this.dataSource.delete(id)
-      return { data }
+      await this.dataSource.delete(id)
+      return { data: id }
     } catch (error) {
       console.error('Error deleting app', error)
-      return { error: error instanceof Error ? error.message : String(error) }
-    }
-  }
-
-  async get(id: string): Promise<AppResponse> {
-    try {
-      const data = await this.dataSource.get(id)
-      return { data }
-    } catch (error) {
-      console.error('Error getting app', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }

@@ -1,8 +1,8 @@
-import { AuthenticationRequest, AuthenticationResponse } from '@/domain/model'
+import { AuthenticationRequest, Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 export interface AuthenticationLoginUseCase {
-  execute(data: AuthenticationRequest): Promise<AuthenticationResponse>
+  execute(data: AuthenticationRequest): Promise<Result<string>>
 }
 
 export class AuthenticationLogin implements AuthenticationLoginUseCase {
@@ -12,7 +12,7 @@ export class AuthenticationLogin implements AuthenticationLoginUseCase {
     this.repository = repository
   }
 
-  async execute(data: AuthenticationRequest): Promise<AuthenticationResponse> {
+  async execute(data: AuthenticationRequest): Promise<Result<string>> {
     return await this.repository.login(data)
   }
 }

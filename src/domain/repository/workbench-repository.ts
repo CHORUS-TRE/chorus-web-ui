@@ -1,17 +1,14 @@
 import {
-  WorkbenchCreateModel,
-  WorkbenchDeleteResponse,
-  WorkbenchesResponse,
-  WorkbenchResponse,
-  WorkbenchUpdateModel
-} from '@/domain/model'
+  Result,
+  Workbench,
+  WorkbenchCreateType,
+  WorkbenchUpdateType
+} from '../model'
 
-interface WorkbenchRepository {
-  create: (workbench: WorkbenchCreateModel) => Promise<WorkbenchResponse>
-  get: (id: string) => Promise<WorkbenchResponse>
-  delete: (id: string) => Promise<WorkbenchDeleteResponse>
-  list: () => Promise<WorkbenchesResponse>
-  update: (workbench: WorkbenchUpdateModel) => Promise<WorkbenchResponse>
+export interface WorkbenchRepository {
+  list: () => Promise<Result<Workbench[]>>
+  create: (workbench: WorkbenchCreateType) => Promise<Result<Workbench>>
+  update: (workbench: WorkbenchUpdateType) => Promise<Result<Workbench>>
+  delete: (id: string) => Promise<Result<string>>
+  get: (id: string) => Promise<Result<Workbench>>
 }
-
-export type { WorkbenchRepository }

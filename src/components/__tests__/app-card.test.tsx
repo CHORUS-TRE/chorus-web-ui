@@ -7,7 +7,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 
 import { AppCard } from '../../components/app-card'
-import { AppState, AppType } from '../../domain/model/app'
+import { AppState } from '../../domain/model/app'
 
 // Mock the app-state-context
 jest.mock('../../components/store/app-state-context', () => ({
@@ -77,13 +77,12 @@ jest.mock(
 const mockApp = {
   id: '1',
   tenantId: 'tenant-1',
-  ownerId: 'owner-1',
+  userId: 'owner-1',
   name: 'Test App',
   prettyName: 'Test Application',
   description: 'A test application',
   dockerImageName: 'test-image',
   dockerImageTag: 'latest',
-  type: AppType.APP,
   status: AppState.ACTIVE,
   url: 'https://example.com/app',
   createdAt: new Date('2023-01-01'),

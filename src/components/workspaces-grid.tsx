@@ -1,12 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import {
-  DraftingCompass,
-  EllipsisVerticalIcon,
-  LaptopMinimal,
-  Package
-} from 'lucide-react'
+import { EllipsisVerticalIcon, Package } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -29,8 +24,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { User, Workbench, Workspace } from '@/domain/model'
+
+import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
@@ -41,7 +37,6 @@ interface WorkspacesGridProps {
 
 export default function WorkspacesGrid({
   workspaces,
-  workbenches,
   user,
   onUpdate
 }: WorkspacesGridProps) {
@@ -49,8 +44,7 @@ export default function WorkspacesGrid({
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
   const { setNotification } = useAppState()
-  const { apps, appInstances, refreshWorkspaces } = useAppState()
-
+  const { refreshWorkspaces, users } = useAppState()
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
       {workspaces?.map((workspace) => (
@@ -85,75 +79,36 @@ export default function WorkspacesGrid({
             </DropdownMenu>
           </div>
           <Link href={`/workspaces/${workspace.id}`}>
-            <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg">
-              <CardHeader>
-                <div className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-                  <Package className="h-9 w-9 shrink-0 text-white" />
-                  <CardTitle>
-                    {workspace?.id === user?.workspaceId
-                      ? 'Home'
-                      : workspace?.name}
-                  </CardTitle>
-                </div>
-                <CardDescription>{workspace.description}</CardDescription>
+            <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-start gap-3 pr-2 text-white">
+                  <Package className="h-6 w-6 flex-shrink-0 text-white" />
+                  {workspace?.id === user?.workspaceId
+                    ? 'My Workspace'
+                    : workspace?.name}
+                </CardTitle>
+                <CardDescription>
+                  {workspace?.description}
+                  <p className="mb-3 text-xs text-muted">
+                    Created {formatDistanceToNow(workspace.updatedAt)} ago by{' '}
+                    {
+                      users?.find((user) => user.id === workspace?.userId)
+                        ?.firstName
+                    }{' '}
+                    {
+                      users?.find((user) => user.id === workspace?.userId)
+                        ?.lastName
+                    }
+                  </p>
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="mb-4 h-[160px] pr-2">
-                  <div className="grid gap-1">
-                    {workbenches
-                      ?.filter(
-                        (workbench) => workbench.workspaceId === workspace?.id
-                      )
-                      .map(({ shortName, createdAt, id }) => (
-                        <div
-                          key={`workspace-grid-sessions-${id}`}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            window.location.href = `/workspaces/${workspace?.id}/sessions/${id}`
-                          }}
-                          className="cursor-pointer justify-between rounded-lg border border-muted/30 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg"
-                        >
-                          <div className="mb-0.5 flex-grow text-sm">
-                            <div className="mb-1 flex items-center gap-2">
-                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                              {shortName}
-                            </div>
-                            <p className="text-xs text-muted">
-                              {formatDistanceToNow(createdAt)} ago
-                            </p>
-                            <div className="mt-1 text-xs text-muted-foreground">
-                              <div className="flex items-center gap-2 text-xs">
-                                <DraftingCompass className="h-4 w-4 shrink-0" />
-                                {appInstances
-                                  ?.filter(
-                                    (instance) =>
-                                      workspace?.id === instance.workspaceId
-                                  )
-                                  ?.filter(
-                                    (instance) => id === instance.sessionId
-                                  )
-                                  .slice(0, 3)
-                                  .map(
-                                    (instance) =>
-                                      apps?.find(
-                                        (app) => app.id === instance.appId
-                                      )?.name || ''
-                                  )
-                                  .join(', ')}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </ScrollArea>
-                <p className="text-xs text-muted-foreground">
-                  Owner: {user?.firstName} {user?.lastName}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Updated {formatDistanceToNow(workspace.updatedAt)} ago
-                </p>
+                {/* <div className="mb-1 flex items-center gap-2 text-sm font-bold">
+                  <LaptopMinimal className="h-4 w-4 shrink-0" />
+                  Sessions
+                </div> */}
+
+                <WorkspaceWorkbenchList workspaceId={workspace.id} />
               </CardContent>
             </Card>
           </Link>
@@ -165,7 +120,7 @@ export default function WorkspacesGrid({
                 activeUpdateId === workspace.id,
                 () => setActiveUpdateId(null)
               ]}
-              onUpdate={() => {
+              onSuccess={() => {
                 setNotification({
                   title: 'Success!',
                   description: 'Workspace updated'
@@ -182,7 +137,7 @@ export default function WorkspacesGrid({
                 activeDeleteId === workspace.id,
                 () => setActiveDeleteId(null)
               ]}
-              onUpdate={() => {
+              onSuccess={() => {
                 refreshWorkspaces()
 
                 setNotification({

@@ -38,6 +38,7 @@ export default function RightSidebar() {
       >
         <CircleX />
       </Button>
+
       <div className="flex h-full w-[300px] flex-col justify-between pr-8">
         <div>
           <h2 className="mb-8 flex items-center gap-2 text-xl text-white">
@@ -54,7 +55,7 @@ export default function RightSidebar() {
                 className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
                 id="getting-started-step1"
               >
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <CardTitle className="text-base">Getting started</CardTitle>
                   <CardDescription className="text-sm">
                     Get started with your research.
@@ -79,7 +80,7 @@ export default function RightSidebar() {
               <Card
                 className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
               >
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <CardTitle className="text-base">Documentation</CardTitle>
                   <CardDescription className="text-sm">
                     Learn more about the platform.
@@ -99,7 +100,7 @@ export default function RightSidebar() {
             </Link>
 
             {/* <Card className="bg-opacity-85 bg-black text-white">
-              <CardHeader>
+              <CardHeader className="pb-4">
                 <CardTitle>Contact Support</CardTitle>
                 <CardDescription>
                   Get help from the CHORUS team.
@@ -147,7 +148,7 @@ export default function RightSidebar() {
                     <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-accent bg-fixed opacity-0 transition duration-300 ease-in-out hover:opacity-60"></div>
                   </div>
                 </Link>
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <CardTitle>Footprint</CardTitle>
                   <CardDescription>
                     Research Environmental Impact.

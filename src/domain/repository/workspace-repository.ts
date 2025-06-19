@@ -1,17 +1,14 @@
 import {
-  WorkspaceCreateModel,
-  WorkspaceDeleteResponse,
-  WorkspaceResponse,
-  WorkspacesResponse,
-  WorkspaceUpdateModel
-} from '@/domain/model'
+  Result,
+  Workspace,
+  WorkspaceCreateType,
+  WorkspaceUpdatetype
+} from '../model'
 
-interface WorkspaceRepository {
-  create: (workspace: WorkspaceCreateModel) => Promise<WorkspaceResponse>
-  get: (id: string) => Promise<WorkspaceResponse>
-  delete: (id: string) => Promise<WorkspaceDeleteResponse>
-  list: () => Promise<WorkspacesResponse>
-  update: (workspace: WorkspaceUpdateModel) => Promise<WorkspaceResponse>
+export interface WorkspaceRepository {
+  list: () => Promise<Result<Workspace[]>>
+  create: (workspace: WorkspaceCreateType) => Promise<Result<Workspace>>
+  update: (workspace: WorkspaceUpdatetype) => Promise<Result<Workspace>>
+  delete: (id: string) => Promise<Result<string>>
+  get: (id: string) => Promise<Result<Workspace>>
 }
-
-export type { WorkspaceRepository }

@@ -13,7 +13,7 @@ export function Home() {
               CHORUS
             </span>
           </h1>
-          <p className="max-w-3xl text-lg text-muted-foreground md:text-xl lg:text-2xl">
+          <p className="max-w-3xl text-lg text-muted md:text-xl lg:text-2xl">
             A secure analytics platform revolutionizing research by addressing
             critical pain points such as data fragmentation, lack of
             collaboration, and compliance challenges.

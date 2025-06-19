@@ -4,14 +4,8 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { env } from 'next-runtime-env'
 
-import { AuthenticationApiDataSourceImpl } from '@/data/data-source/chorus-api'
+import { AuthenticationApiDataSourceImpl } from '@/data/data-source'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
-import {
-  AuthenticationModesResponse,
-  AuthenticationOAuthRedirectRequest,
-  AuthenticationOAuthRedirectResponse,
-  AuthenticationOAuthResponse
-} from '@/domain/model'
 import {
   AuthenticationGetModes,
   AuthenticationGetOAuthUrl,
@@ -19,6 +13,11 @@ import {
   AuthenticationLogout,
   AuthenticationOAuthRedirect
 } from '@/domain/use-cases'
+import {
+  AuthenticationMode,
+  AuthenticationOAuthRedirectRequest,
+  Result
+} from '~/domain/model'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function authenticationLogin(prevState: any, formData: FormData) {
@@ -29,7 +28,7 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
   const username = formData.get('username') as string
   const password = formData.get('password') as string
 
-  const login = await useCase.execute({ email: username, password })
+  const login = await useCase.execute({ username: username, password })
 
   if (login.error)
     return {
@@ -57,7 +56,9 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
   }
 }
 
-export async function getAuthenticationModes(): Promise<AuthenticationModesResponse> {
+export async function getAuthenticationModes(): Promise<
+  Result<AuthenticationMode[]>
+> {
   try {
     const dataSource = new AuthenticationApiDataSourceImpl()
     const repository = new AuthenticationRepositoryImpl(dataSource)
@@ -116,9 +117,7 @@ export async function getSession() {
   return session
 }
 
-export async function getOAuthUrl(
-  id: string
-): Promise<AuthenticationOAuthResponse> {
+export async function getOAuthUrl(id: string): Promise<Result<string>> {
   try {
     const dataSource = new AuthenticationApiDataSourceImpl()
 
@@ -134,7 +133,7 @@ export async function getOAuthUrl(
 
 export async function handleOAuthRedirect(
   data: AuthenticationOAuthRedirectRequest
-): Promise<AuthenticationOAuthRedirectResponse> {
+): Promise<Result<string>> {
   try {
     const dataSource = new AuthenticationApiDataSourceImpl()
     const repository = new AuthenticationRepositoryImpl(dataSource)

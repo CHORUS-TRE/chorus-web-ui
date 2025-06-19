@@ -3,39 +3,56 @@
  */
 import '@testing-library/jest-dom'
 
-import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api'
-import { UserRepositoryImpl } from '~/data/repository'
-import { User, UserCreateModel } from '~/domain/model/'
+import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api/user-data-source'
+import { UserRepositoryImpl } from '~/data/repository/user-repository-impl'
+import { User, UserCreateType } from '~/domain/model/'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
 import { UserGet } from '~/domain/use-cases/user/user-get'
 import { UserMe } from '~/domain/use-cases/user/user-me'
-import { ChorusUser as UserApi } from '~/internal/client'
+import { ChorusUser as ChorusUserApi } from '~/internal/client'
 
 const MOCK_USER_API_RESPONSE = {
   id: '1',
   firstName: 'Albert',
   lastName: 'Levert',
   username: 'albert@chuv.ch',
+  source: 'chorus',
   status: 'active',
   roles: ['admin'],
   totpEnabled: true,
   createdAt: new Date('2023-10-01T00:00:00Z'),
   updatedAt: new Date('2023-10-01T00:00:00Z'),
-  passwordChanged: true
-} as UserApi
+  passwordChanged: true,
+  source: 'chorus'
+} as ChorusUserApi
 
 const { username, ...rest } = MOCK_USER_API_RESPONSE
 const MOCK_USER_RESULT = {
   ...rest,
-  email: username
+  username: username
 } as User
 
 const MOCK_USER_CREATE_MODEL = {
-  email: 'new.user@example.com',
+  username: 'new.user@example.com',
   password: 'securePassword123',
   firstName: 'New',
   lastName: 'User'
-} as UserCreateModel
+} as UserCreateType
+
+const MOCK_NEW_USER_API_RESPONSE = {
+  id: '2',
+  firstName: 'New',
+  lastName: 'User',
+  username: 'new.user@example.com',
+  source: 'chorus',
+  status: 'active',
+  roles: [],
+  totpEnabled: false,
+  createdAt: new Date('2025-06-18T20:24:31.912Z'),
+  updatedAt: new Date('2025-06-18T20:24:31.912Z'),
+  passwordChanged: false,
+  source: 'chorus'
+} as ChorusUserApi
 
 describe('UserUseCases', () => {
   it('should get the current user', async () => {
@@ -93,16 +110,30 @@ describe('UserUseCases', () => {
   })
 
   it('should create a new user', async () => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            result: { id: '2' }
-          }),
-        status: 201,
-        ok: true
-      })
-    ) as jest.Mock
+    let requestCounter = 0
+    global.fetch = jest.fn((url, options) => {
+      requestCounter++
+
+      if (requestCounter === 1) {
+        expect(options?.method).toBe('POST')
+        return Promise.resolve({
+          json: () => Promise.resolve({ result: { id: '2' } }),
+          status: 201,
+          ok: true
+        })
+      } else if (requestCounter === 2) {
+        const method = options?.method || 'GET'
+        expect(method).toBe('GET')
+        expect(url).toContain('/users/2')
+        return Promise.resolve({
+          json: () =>
+            Promise.resolve({ result: { user: MOCK_NEW_USER_API_RESPONSE } }),
+          status: 200,
+          ok: true
+        })
+      }
+      return Promise.reject(new Error('Unexpected request'))
+    }) as jest.Mock
 
     const session = 'empty'
     const dataSource = new UserApiDataSourceImpl(session)
@@ -112,8 +143,10 @@ describe('UserUseCases', () => {
     const response = await useCase.execute(MOCK_USER_CREATE_MODEL)
     expect(response.error).toBeUndefined()
 
-    const userId = response.data
-    expect(userId).toBe('2')
+    const user = response.data
+    expect(user).toBeDefined()
+    expect(user?.id).toBe('2')
+    expect(user?.username).toBe(MOCK_USER_CREATE_MODEL.username)
   })
 })
 
@@ -145,7 +178,7 @@ describe('UserApiDataSourceImpl', () => {
 
       const result = await dataSource.me()
 
-      expect(result).toMatchObject(MOCK_USER_RESULT)
+      expect(result).toEqual({ result: { me: MOCK_USER_API_RESPONSE } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -158,18 +191,17 @@ describe('UserApiDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed me request
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: { me: null }
-            }),
-          status: 200,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
-      await expect(dataSource.me()).rejects.toThrow('Error fetching user')
+      await expect(dataSource.me()).rejects.toThrow(
+        'The request failed and the interceptors did not return an alternative response'
+      )
     })
   })
 
@@ -191,7 +223,7 @@ describe('UserApiDataSourceImpl', () => {
 
       const result = await dataSource.get('1')
 
-      expect(result).toMatchObject(MOCK_USER_RESULT)
+      expect(result).toEqual({ result: { user: MOCK_USER_API_RESPONSE } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -204,18 +236,17 @@ describe('UserApiDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed get request
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: { user: null }
-            }),
-          status: 200,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
-      await expect(dataSource.get('1')).rejects.toThrow('Error fetching user')
+      await expect(dataSource.get('1')).rejects.toThrow(
+        'The request failed and the interceptors did not return an alternative response'
+      )
     })
   })
 
@@ -235,7 +266,7 @@ describe('UserApiDataSourceImpl', () => {
 
       const result = await dataSource.create(MOCK_USER_CREATE_MODEL)
 
-      expect(result).toBe('2')
+      expect(result).toEqual({ result: { id: '2' } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -245,7 +276,7 @@ describe('UserApiDataSourceImpl', () => {
 
       // Verify request body contains correct data
       const body = JSON.parse(options.body)
-      expect(body).toHaveProperty('username', MOCK_USER_CREATE_MODEL.email)
+      expect(body).toHaveProperty('username', MOCK_USER_CREATE_MODEL.username)
       expect(body).toHaveProperty('password', MOCK_USER_CREATE_MODEL.password)
       expect(body).toHaveProperty('firstName', MOCK_USER_CREATE_MODEL.firstName)
       expect(body).toHaveProperty('lastName', MOCK_USER_CREATE_MODEL.lastName)
@@ -253,19 +284,16 @@ describe('UserApiDataSourceImpl', () => {
 
     it('should throw error when API response is empty', async () => {
       // Setup mock for failed create request
-      global.fetch = jest.fn().mockImplementationOnce(() =>
-        Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: null
-            }),
-          status: 201,
-          ok: true
-        })
-      ) as jest.Mock
+      global.fetch = jest.fn().mockImplementationOnce(() => {
+        return Promise.reject(
+          new Error(
+            'The request failed and the interceptors did not return an alternative response'
+          )
+        )
+      })
 
       await expect(dataSource.create(MOCK_USER_CREATE_MODEL)).rejects.toThrow(
-        'Error creating user'
+        'The request failed and the interceptors did not return an alternative response'
       )
     })
   })

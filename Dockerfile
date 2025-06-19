@@ -12,7 +12,7 @@ COPY . .
 
 RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
     corepack enable && \
-    corepack prepare pnpm@9.15.3 --activate && \
+    corepack prepare pnpm@10.12.1 --activate && \
     pnpm config set store-dir /tmp/pnpm-store && \
     pnpm i --frozen-lockfile && \
     pnpm build

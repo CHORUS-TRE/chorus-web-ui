@@ -1,18 +1,18 @@
-import { WorkbenchResponse, WorkbenchUpdateModel } from '@/domain/model'
+import { Result, Workbench, WorkbenchUpdateType } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
 export interface WorkbenchUpdateUseCase {
-  execute(data: WorkbenchUpdateModel): Promise<WorkbenchResponse>
+  execute(data: WorkbenchUpdateType): Promise<Result<Workbench>>
 }
 
-export class WorkbenchUpdateImpl implements WorkbenchUpdateUseCase {
+export class WorkbenchUpdate implements WorkbenchUpdateUseCase {
   private repository: WorkbenchRepository
 
   constructor(repository: WorkbenchRepository) {
     this.repository = repository
   }
 
-  async execute(workbench: WorkbenchUpdateModel): Promise<WorkbenchResponse> {
+  async execute(workbench: WorkbenchUpdateType): Promise<Result<Workbench>> {
     return await this.repository.update(workbench)
   }
 }

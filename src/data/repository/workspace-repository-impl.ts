@@ -1,12 +1,12 @@
-import { WorkspaceDataSource } from '@/data/data-source'
+import { WorkspaceDataSource } from '~/data/data-source'
 import {
-  WorkspaceCreateModel,
-  WorkspaceDeleteResponse,
-  WorkspaceResponse,
-  WorkspacesResponse,
-  WorkspaceUpdateModel
-} from '@/domain/model'
-import { WorkspaceRepository } from '@/domain/repository'
+  Result,
+  Workspace,
+  WorkspaceCreateType,
+  WorkspaceUpdatetype
+} from '~/domain/model'
+import { WorkspaceSchema } from '~/domain/model/workspace'
+import { WorkspaceRepository } from '~/domain/repository'
 
 export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   private dataSource: WorkspaceDataSource
@@ -15,62 +15,63 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     this.dataSource = dataSource
   }
 
-  async create(workspace: WorkspaceCreateModel): Promise<WorkspaceResponse> {
+  async create(workspace: WorkspaceCreateType): Promise<Result<Workspace>> {
     try {
       const response = await this.dataSource.create(workspace)
-      if (!response) return { error: 'Error creating workspace' }
-
-      const w = await this.dataSource.get(response)
-      return { data: w }
+      if (!response.result?.id) {
+        return { error: 'Error creating workspace' }
+      }
+      return this.get(response.result.id)
     } catch (error) {
       console.error('Error creating workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
-  async get(id: string): Promise<WorkspaceResponse> {
+  async get(id: string): Promise<Result<Workspace>> {
     try {
-      const data = await this.dataSource.get(id)
-      if (!data) return { error: 'Not found' }
-
-      return { data }
+      const response = await this.dataSource.get(id)
+      if (!response.result?.workspace) {
+        return { error: 'Not found' }
+      }
+      const validatedData = WorkspaceSchema.parse(response.result.workspace)
+      return { data: validatedData }
     } catch (error) {
       console.error('Error getting workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
-  async delete(id: string): Promise<WorkspaceDeleteResponse> {
+  async delete(id: string): Promise<Result<string>> {
     try {
-      const data = await this.dataSource.delete(id)
-      if (!data) return { error: 'Error deleting workspace' }
-
-      return { data: true }
+      await this.dataSource.delete(id)
+      return { data: id }
     } catch (error) {
       console.error('Error deleting workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 
-  async list(): Promise<WorkspacesResponse> {
+  async list(): Promise<Result<Workspace[]>> {
     try {
-      const data = await this.dataSource.list()
-      if (!data) return { data: [] }
-
-      return { data }
+      const response = await this.dataSource.list()
+      if (!response.result) {
+        return { data: [] }
+      }
+      const validatedData = response.result.map((w) => WorkspaceSchema.parse(w))
+      return { data: validatedData }
     } catch (error) {
       console.error('Error listing workspaces', error)
       return {
-        data: [],
         error: error instanceof Error ? error.message : String(error)
       }
     }
   }
 
-  async update(workspace: WorkspaceUpdateModel): Promise<WorkspaceResponse> {
+  async update(workspace: WorkspaceUpdatetype): Promise<Result<Workspace>> {
     try {
-      const data = await this.dataSource.update(workspace)
-      return { data }
+      await this.dataSource.update(workspace)
+      return this.get(workspace.id)
     } catch (error) {
       console.error('Error updating workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }

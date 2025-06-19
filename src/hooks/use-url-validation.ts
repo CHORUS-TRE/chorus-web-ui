@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const MAX_ATTEMPTS = 5
-const RETRY_INTERVAL = 1000
+const MAX_ATTEMPTS = 3
+const RETRY_INTERVAL = 1.5 * 1000
 
 export const useUrlValidation = (url: string | null) => {
-  const [isValid, setIsValid] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const attemptCountRef = useRef(0)
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const lastUrlRef = useRef<string | null>(null)
+  const [status, setStatus] = useState<number | undefined>(undefined)
 
   const validateUrl = useCallback(
     async (urlToCheck: string): Promise<boolean> => {
       try {
         const result = await fetch(urlToCheck, { method: 'HEAD' })
+        setStatus(result.status)
         return result.status === 200
       } catch (e) {
         throw new Error(
@@ -35,7 +36,6 @@ export const useUrlValidation = (url: string | null) => {
 
   useEffect(() => {
     if (!url) {
-      setIsValid(false)
       setIsLoading(false)
       return
     }
@@ -43,7 +43,9 @@ export const useUrlValidation = (url: string | null) => {
     const checkUrl = async () => {
       if (attemptCountRef.current >= MAX_ATTEMPTS) {
         setError(
-          new Error(`Max attempts reached. Please check the URL and try again.`)
+          new Error(
+            `${status ? status : ''} Please check the URL and try again.`
+          )
         )
         setIsLoading(false)
         return
@@ -51,15 +53,23 @@ export const useUrlValidation = (url: string | null) => {
 
       try {
         const isValid = await validateUrl(url)
-        setIsValid(isValid)
-        setError(null)
-        setIsLoading(false)
+
+        if (isValid) {
+          setStatus(undefined)
+          setError(null)
+          setIsLoading(false)
+          return
+        }
+
+        setIsLoading(true)
       } catch (err) {
         console.error('err', err)
-
-        attemptCountRef.current += 1
-        timeoutRef.current = setTimeout(checkUrl, RETRY_INTERVAL)
+        setError(err as Error)
+        setIsLoading(false)
       }
+
+      attemptCountRef.current += 1
+      timeoutRef.current = setTimeout(checkUrl, RETRY_INTERVAL)
     }
 
     setIsLoading(true)
@@ -70,7 +80,7 @@ export const useUrlValidation = (url: string | null) => {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [url, validateUrl])
+  }, [url, validateUrl, status])
 
-  return { isValid, error, isLoading }
+  return { error, isLoading }
 }

@@ -1,31 +1,22 @@
-import { cookies } from 'next/headers'
+'use client'
 
-import { userMe } from '@/components/actions/user-view-model'
 import { AppStateProvider } from '@/components/store/app-state-context'
 import { AuthProvider } from '@/components/store/auth-context'
+import { User } from '~/domain/model'
 
-async function getInitialAuthState() {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')
-
-  if (!session?.value) {
-    return { authenticated: false, user: undefined }
-  }
-
-  try {
-    const { data } = await userMe()
-    return { authenticated: true, user: data }
-  } catch (error) {
-    console.error('Failed to get initial user state:', error)
-    return { authenticated: false, user: undefined }
-  }
+interface ProvidersProps {
+  children: React.ReactNode
+  authenticated: boolean
+  initialUser?: User
 }
 
-export async function Providers({ children }: { children: React.ReactNode }) {
-  const { authenticated, user } = await getInitialAuthState()
-
+export function Providers({
+  children,
+  authenticated,
+  initialUser
+}: ProvidersProps) {
   return (
-    <AuthProvider authenticated={authenticated} initialUser={user}>
+    <AuthProvider authenticated={authenticated} initialUser={initialUser}>
       <AppStateProvider>{children}</AppStateProvider>
     </AuthProvider>
   )

@@ -16,7 +16,7 @@ interface User {
   id: string
   firstName: string
   lastName: string
-  email: string
+  username: string
   avatarUrl?: string
   createdAt: Date
   lastLogin?: Date
@@ -36,7 +36,7 @@ export default function UsersPage() {
             id: '1',
             firstName: 'John',
             lastName: 'Doe',
-            email: 'john@example.com',
+            username: 'john@example.com',
             createdAt: new Date('2024-01-01'),
             lastLogin: new Date('2024-02-15')
           },
@@ -44,7 +44,7 @@ export default function UsersPage() {
             id: '2',
             firstName: 'Jane',
             lastName: 'Smith',
-            email: 'jane@example.com',
+            username: 'jane@example.com',
             createdAt: new Date('2024-01-15'),
             lastLogin: new Date('2024-02-14')
           }
@@ -68,15 +68,13 @@ export default function UsersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-white">Users</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage users and their permissions
-        </p>
+        <p className="text-sm text-muted">Manage users and their permissions</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {users.map((user) => (
           <Card key={user.id} className="bg-black text-white">
-            <CardHeader className="flex flex-row items-center gap-4">
+            <CardHeader className="flex flex-row items-center gap-4 pb-4">
               <Avatar>
                 <AvatarImage src={user.avatarUrl} />
                 <AvatarFallback>
@@ -88,18 +86,18 @@ export default function UsersPage() {
                 <CardTitle className="text-lg">
                   {user.firstName} {user.lastName}
                 </CardTitle>
-                <CardDescription>{user.email}</CardDescription>
+                <CardDescription>{user.username}</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Member since</span>
+                  <span className="text-muted">Member since</span>
                   <span>{formatDistanceToNow(user.createdAt)} ago</span>
                 </div>
                 {user.lastLogin && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Last login</span>
+                    <span className="text-muted">Last login</span>
                     <span>{formatDistanceToNow(user.lastLogin)} ago</span>
                   </div>
                 )}

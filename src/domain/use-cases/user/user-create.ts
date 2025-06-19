@@ -1,18 +1,14 @@
-import { UserCreatedResponse, UserCreateModel } from '@/domain/model'
+import { Result, User, UserCreateType } from '@/domain/model'
 import { UserRepository } from '@/domain/repository'
 
 export interface UserCreateUseCase {
-  execute(user: UserCreateModel): Promise<UserCreatedResponse>
+  execute(user: UserCreateType): Promise<Result<User>>
 }
 
 export class UserCreate implements UserCreateUseCase {
-  private repository: UserRepository
+  constructor(private readonly userRepository: UserRepository) {}
 
-  constructor(repository: UserRepository) {
-    this.repository = repository
-  }
-
-  async execute(user: UserCreateModel): Promise<UserCreatedResponse> {
-    return await this.repository.create(user)
+  async execute(user: UserCreateType): Promise<Result<User>> {
+    return this.userRepository.create(user)
   }
 }

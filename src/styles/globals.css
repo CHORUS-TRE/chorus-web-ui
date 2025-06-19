@@ -22,7 +22,7 @@
     --primary: 229 100% 54%;
     --primary-foreground: 210 100% 100%;
 
-    --secondary: 240 75% 84.3%;
+    --secondary: 240 75% 84.3%; /* #32E8FF */
     --secondary-foreground: 229 100% 54%; /* Using primary color for contrast */
 
     --muted: 217 20% 65%;
@@ -48,7 +48,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply overflow-y-scroll bg-background text-foreground;
   }
 }
 
@@ -66,7 +66,7 @@
   }
 
   h4 {
-    @apply text-xl font-medium tracking-tight;
+    @apply text-base font-medium tracking-tight;
   }
 
   h5 {

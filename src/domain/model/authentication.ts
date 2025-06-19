@@ -1,11 +1,6 @@
 export interface AuthenticationRequest {
-  email: string
+  username: string
   password: string
-}
-
-export interface AuthenticationResponse {
-  data?: string
-  error?: string
 }
 
 export const AuthenticationModeType = {
@@ -31,28 +26,9 @@ export interface AuthenticationMode {
   buttonText?: string
 }
 
-export interface AuthenticationModesResponse {
-  data?: AuthenticationMode[]
-  error?: string
-}
-
-export interface AuthenticationOAuthResponse {
-  data?: string // URL for redirection
-  error?: string
-}
-
 export interface AuthenticationOAuthRedirectRequest {
   id: string
   state?: string
   sessionState?: string
   code?: string
-}
-
-export interface AuthenticationOAuthRedirectResponse {
-  data?: string
-  error?: string
-}
-
-export interface LogoutResponse {
-  error?: string
 }

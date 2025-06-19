@@ -1,60 +1,37 @@
-'use server'
-
-import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
-import { env } from 'next-runtime-env'
+'use client'
 
 import {
-  WorkbenchCreateModel,
+  Workbench,
   WorkbenchCreateSchema,
-  WorkbenchUpdateModel,
-  WorkbenchUpdateSchema
+  WorkbenchCreateType,
+  WorkbenchUpdateSchema,
+  WorkbenchUpdateType
 } from '@/domain/model/workbench'
-import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-api-data-source-impl'
+import { WorkbenchDataSourceImpl } from '~/data/data-source'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
-import { WorkbenchesResponse, WorkbenchResponse } from '~/domain/model'
+import { Result } from '~/domain/model'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
-import { WorkbenchUpdateImpl as WorkbenchUpdateUseCase } from '~/domain/use-cases/workbench/workbench-update'
+import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
 
-import { appInstanceCreate } from './app-instance-view-model'
-import { IFormState } from './utils'
-
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+import { getSession } from './server/session'
 
 const getRepository = async () => {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')?.value || ''
+  const session = await getSession()
   const dataSource = new WorkbenchDataSourceImpl(session)
   return new WorkbenchRepositoryImpl(dataSource)
 }
 
-export async function workbenchDelete(
-  prevState: IFormState,
-  formData: FormData
-): Promise<IFormState> {
+export async function workbenchDelete(id: string): Promise<Result<string>> {
   try {
-    const id = formData.get('id') as string
-
     if (!id) {
       throw new Error('Invalid workbench id')
     }
-
     const repository = await getRepository()
     const useCase = new WorkbenchDelete(repository)
-
-    const r = await useCase.execute(id)
-    if (r.error) {
-      return { error: r.error }
-    }
-
-    revalidatePath('/')
-
-    return { data: 'Successfully deleted workbench' }
+    return await useCase.execute(id)
   } catch (error) {
     console.error('Error deleting workbench', error)
     return { error: error instanceof Error ? error.message : String(error) }
@@ -62,66 +39,43 @@ export async function workbenchDelete(
 }
 
 export async function workbenchCreate(
-  prevState: IFormState,
+  prevState: Result<Workbench>,
   formData: FormData
-): Promise<IFormState> {
+): Promise<Result<Workbench>> {
   try {
     const repository = await getRepository()
     const useCase = new WorkbenchCreate(repository)
 
-    const workbench: WorkbenchCreateModel = {
-      name: formData.get('name') as string,
-      tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
-      description: formData.get('description') as string,
-      memberIds: formData.getAll('memberIds') as string[],
-      tags: formData.getAll('tags') as string[],
-      workspaceId: formData.get('workspaceId') as string,
-      initialResolutionWidth: Number(formData.get('initialResolutionWidth')),
-      initialResolutionHeight: Number(formData.get('initialResolutionHeight'))
-    }
+    const rawData = Object.fromEntries(formData.entries())
+    const workbench: WorkbenchCreateType = {
+      ...rawData,
+      initialResolutionWidth: Number(rawData.initialResolutionWidth),
+      initialResolutionHeight: Number(rawData.initialResolutionHeight)
+    } as WorkbenchCreateType
 
     const validation = WorkbenchCreateSchema.safeParse(workbench)
 
     if (!validation.success) {
-      return { issues: validation.error.issues }
+      return {
+        ...prevState,
+        issues: validation.error.issues
+      }
     }
 
-    const createdWorkbench = await useCase.execute(validation.data)
-
-    await delay((Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) || 8) * 1000)
-
-    if (createdWorkbench.error) {
-      return { error: createdWorkbench.error }
-    }
-
-    const appId = formData.get('id') as string
-
-    const appFormData = new FormData()
-    appFormData.set('tenantId', workbench.tenantId)
-    appFormData.set('ownerId', workbench.ownerId)
-    appFormData.set('id', appId)
-    appFormData.set('workspaceId', workbench.workspaceId)
-    appFormData.set('sessionId', createdWorkbench?.data?.id || '')
-
-    await appInstanceCreate(prevState, appFormData)
-
-    return {
-      ...prevState,
-      data: createdWorkbench?.data?.id,
-      error: createdWorkbench.error
-    }
+    return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error creating workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return {
+      ...prevState,
+      error: error instanceof Error ? error.message : String(error)
+    }
   }
 }
 
-export async function workbenchList(): Promise<WorkbenchesResponse> {
+export async function workbenchList(): Promise<Result<Workbench[]>> {
   try {
     const repository = await getRepository()
     const useCase = new WorkbenchList(repository)
-
     return await useCase.execute()
   } catch (error) {
     console.error('Error listing workbenches', error)
@@ -129,11 +83,10 @@ export async function workbenchList(): Promise<WorkbenchesResponse> {
   }
 }
 
-export async function workbenchGet(id: string): Promise<WorkbenchResponse> {
+export async function workbenchGet(id: string): Promise<Result<Workbench>> {
   try {
     const repository = await getRepository()
     const useCase = new WorkbenchGet(repository)
-
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workbench', error)
@@ -142,23 +95,19 @@ export async function workbenchGet(id: string): Promise<WorkbenchResponse> {
 }
 
 export async function workbenchUpdate(
-  prevState: IFormState,
+  prevState: Result<Workbench>,
   formData: FormData
-): Promise<IFormState> {
+): Promise<Result<Workbench>> {
   try {
     const repository = await getRepository()
-    const useCase = new WorkbenchUpdateUseCase(repository)
+    const useCase = new WorkbenchUpdate(repository)
 
-    const workbench: WorkbenchUpdateModel = {
-      id: formData.get('id') as string,
-      name: formData.get('name') as string,
-      tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
-      description: formData.get('description') as string,
-      memberIds: formData.getAll('memberIds') as string[],
-      tags: formData.getAll('tags') as string[],
-      workspaceId: formData.get('workspaceId') as string
-    }
+    const rawData = Object.fromEntries(formData.entries())
+    const workbench: WorkbenchUpdateType = {
+      ...rawData,
+      initialResolutionWidth: Number(rawData.initialResolutionWidth),
+      initialResolutionHeight: Number(rawData.initialResolutionHeight)
+    } as WorkbenchUpdateType
 
     const validation = WorkbenchUpdateSchema.safeParse(workbench)
 
@@ -166,16 +115,7 @@ export async function workbenchUpdate(
       return { issues: validation.error.issues }
     }
 
-    const updatedWorkbench = await useCase.execute(validation.data)
-
-    if (updatedWorkbench.error) {
-      return { error: updatedWorkbench.error }
-    }
-
-    return {
-      data: updatedWorkbench.data?.id,
-      error: updatedWorkbench.error
-    }
+    return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workbench', error)
     return { error: error instanceof Error ? error.message : String(error) }

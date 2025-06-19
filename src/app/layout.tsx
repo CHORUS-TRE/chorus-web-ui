@@ -4,18 +4,15 @@ import '@/styles/globals.css'
 import { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import { cookies } from 'next/headers'
-import Image from 'next/image'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React from 'react'
 
-import cover from '/public/cover.jpeg'
-import { AppStateProvider } from '@/components/store/app-state-context'
+import { userMe } from '@/components/actions/server/user-me'
 import BackgroundIframe from '~/components/background-iframe'
 import GettingStartedCard from '~/components/getting-started-card'
-import { AuthProvider } from '~/components/store/auth-context'
 import { Toaster } from '~/components/ui/toaster'
 import { steps } from '~/lib/tours'
 
@@ -38,7 +35,18 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies()
   const session = cookieStore.get('session')
-  const authenticated = session !== undefined
+  const authenticated = !!session
+  let user
+
+  if (authenticated) {
+    const userResult = await userMe()
+    if (userResult?.data) {
+      user = userResult.data
+    } else {
+      console.error('Failed to get initial user state:', userResult?.error)
+    }
+  }
+
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
 
@@ -57,34 +65,20 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${rubik.variable} antialiased`}>
-        <Providers>
-          <AuthProvider authenticated={authenticated}>
-            <AppStateProvider>
-              <NextStepProvider>
-                <NextStep
-                  steps={steps}
-                  showNextStep={false}
-                  displayArrow={true}
-                  clickThroughOverlay={true}
-                  cardComponent={GettingStartedCard}
-                >
-                  {children}
-                </NextStep>
-              </NextStepProvider>
-              <BackgroundIframe />
-              <Image
-                alt="Background"
-                src={cover}
-                placeholder="blur"
-                quality={75}
-                priority={false}
-                sizes="100vw"
-                id="background"
-                className="fixed left-0 top-0 h-full w-full"
-              />
-              <Toaster />
-            </AppStateProvider>
-          </AuthProvider>
+        <Providers authenticated={authenticated} initialUser={user}>
+          <NextStepProvider>
+            <NextStep
+              steps={steps}
+              showNextStep={false}
+              displayArrow={true}
+              clickThroughOverlay={true}
+              cardComponent={GettingStartedCard}
+            >
+              {children}
+            </NextStep>
+          </NextStepProvider>
+          <BackgroundIframe />
+          <Toaster />
         </Providers>
       </body>
     </html>

@@ -1,21 +1,22 @@
+'use client'
+
 import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
-import { userCreate } from '@/components/actions/user-view-model'
+import { createUser } from '@/components/actions/user-view-model'
+import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Separator } from '~/components/ui/separator'
+import { Result, User } from '~/domain/model'
 
-import { IFormState } from '../actions/utils'
-import { Button } from '../button'
-import { Separator } from '../ui/separator'
-
-const initialState: IFormState = {
+const initialState: Result<User> = {
   data: undefined,
-  error: undefined,
-  issues: undefined
+  issues: undefined,
+  error: undefined
 }
 
 function SubmitButton() {
@@ -37,11 +38,14 @@ function SubmitButton() {
 }
 
 export default function UserRegisterForm() {
-  const [state, formAction] = useActionState(userCreate, initialState)
+  const [state, formAction, isPending] = useActionState(
+    createUser,
+    initialState
+  )
 
   useEffect(() => {
-    if (state?.data && !state.error) {
-      redirect(`/login?email=${state.data}`)
+    if (state.data?.id && !state.error?.includes('fail')) {
+      redirect(`/login?username=${state.data.username}`)
     }
   }, [state])
 
@@ -50,7 +54,7 @@ export default function UserRegisterForm() {
       <div className="grid gap-4 text-center">
         <h2>Create an account</h2>
         <h5 className="text-muted">
-          Enter your email below to create your account
+          Enter your username below to create your account
         </h5>
       </div>
       <Separator className="mb-1" />
@@ -60,14 +64,17 @@ export default function UserRegisterForm() {
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input
+                disabled={isPending}
                 id="firstName"
                 name="firstName"
+                defaultValue={state.data?.firstName}
                 required
                 className="border border-muted/40 bg-background text-white"
+                autoComplete="given-name"
               />
               <div className="text-xs text-red-500">
                 {
-                  state?.issues?.find((e) => e.path.includes('firstName'))
+                  state.issues?.find((e) => e.path.includes('firstName'))
                     ?.message
                 }
               </div>
@@ -75,30 +82,36 @@ export default function UserRegisterForm() {
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
               <Input
+                disabled={isPending}
                 id="lastName"
                 name="lastName"
                 required
+                defaultValue={state.data?.lastName}
                 className="border border-muted/40 bg-background text-white"
+                autoComplete="family-name"
               />
               <div className="text-xs text-red-500">
                 {
-                  state?.issues?.find((e) => e.path.includes('lastName'))
+                  state.issues?.find((e) => e.path.includes('lastName'))
                     ?.message
                 }
               </div>
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">username</Label>
             <Input
-              id="email"
-              type="email"
-              name="email"
+              disabled={isPending}
+              id="username"
+              type="username"
+              name="username"
+              defaultValue={state.data?.username}
               required
               className="border border-muted/40 bg-background text-white"
+              autoComplete="username"
             />
             <div className="text-xs text-red-500">
-              {state?.issues?.find((e) => e.path.includes('email'))?.message}
+              {state.issues?.find((e) => e.path.includes('username'))?.message}
             </div>
           </div>
           <div className="grid gap-2">
@@ -106,6 +119,7 @@ export default function UserRegisterForm() {
               <Label htmlFor="password">Password</Label>
             </div>
             <Input
+              disabled={isPending}
               id="password"
               type="password"
               name="password"
@@ -113,8 +127,11 @@ export default function UserRegisterForm() {
               className="border border-muted/40 bg-background text-white"
               autoComplete="new-password"
             />
+            <p className="text-xs text-muted">
+              Password must be at least 8 characters long
+            </p>
             <div className="text-xs text-red-500">
-              {state?.issues?.find((e) => e.path.includes('password'))?.message}
+              {state.issues?.find((e) => e.path.includes('password'))?.message}
             </div>
           </div>
         </div>
@@ -122,9 +139,9 @@ export default function UserRegisterForm() {
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">
-        {JSON.stringify(state, null, 2)}
+        {state.error}
       </p>
-      {state?.error && <p className="text-red-500">{state.error}</p>}
+      {state.error && <p className="text-red-500">{state.error}</p>}
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}

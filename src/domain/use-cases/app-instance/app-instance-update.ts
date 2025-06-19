@@ -1,20 +1,12 @@
-import { AppInstanceResponse, AppInstanceUpdateModel } from '@/domain/model'
-import { AppInstanceRepository } from '@/domain/repository'
+import { AppInstance, AppInstanceUpdateType, Result } from '~/domain/model'
+import { AppInstanceRepository } from '~/domain/repository'
 
-export interface AppInstanceUpdateUseCase {
-  execute(data: AppInstanceUpdateModel): Promise<AppInstanceResponse>
-}
-
-export class AppInstanceUpdate implements AppInstanceUpdateUseCase {
-  private repository: AppInstanceRepository
-
-  constructor(repository: AppInstanceRepository) {
-    this.repository = repository
-  }
+export class AppInstanceUpdate {
+  constructor(private readonly repository: AppInstanceRepository) {}
 
   async execute(
-    appInstance: AppInstanceUpdateModel
-  ): Promise<AppInstanceResponse> {
-    return await this.repository.update(appInstance)
+    appInstance: AppInstanceUpdateType
+  ): Promise<Result<AppInstance>> {
+    return this.repository.update(appInstance)
   }
 }

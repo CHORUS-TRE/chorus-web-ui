@@ -99,7 +99,7 @@ export default function WorkspaceTable({
           <WorkspaceUpdateForm
             workspace={workspace}
             state={[open, setOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               setUpdated(true)
               setTimeout(() => {
                 setUpdated(false)
@@ -114,7 +114,7 @@ export default function WorkspaceTable({
           <WorkspaceDeleteForm
             id={workspace?.id}
             state={[deleteOpen, setDeleteOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               refreshWorkspaces()
               setDeleted(true)
               setTimeout(() => {
@@ -134,7 +134,9 @@ export default function WorkspaceTable({
             </Link>
           </TableCell>
           <TableCell className="p-1 font-normal">
-            {workspace?.id === user?.workspaceId ? 'Home' : workspace?.name}
+            {workspace?.id === user?.workspaceId
+              ? 'My Workspace'
+              : workspace?.name}
           </TableCell>
           <TableCell className="font-xs p-1">
             {workspace?.description}
@@ -181,7 +183,7 @@ export default function WorkspaceTable({
     <>
       <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
         {title && (
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </CardHeader>
@@ -201,7 +203,7 @@ export default function WorkspaceTable({
           </Table>
         </CardContent>
         <CardFooter>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted">
             Showing <strong>1-{workspaces?.length}</strong> of{' '}
             <strong>{workspaces?.length}</strong>
           </div>

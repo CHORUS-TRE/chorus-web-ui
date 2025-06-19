@@ -1,152 +1,121 @@
-'use server'
+'use client'
 
-import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
-
-import { AppInstanceDataSourceImpl } from '~/data/data-source/chorus-api/app-instance-api-data-source-impl'
+import { AppInstanceDataSourceImpl } from '~/data/data-source'
 import { AppInstanceRepositoryImpl } from '~/data/repository'
+import { Result } from '~/domain/model'
 import {
   AppInstance,
-  AppInstanceCreateModel,
-  AppInstanceResponse,
-  AppInstanceUpdateModel
-} from '~/domain/model'
-import { AppInstanceCreateSchema } from '~/domain/model/app-instance'
+  AppInstanceCreateSchema,
+  AppInstanceUpdateSchema
+} from '~/domain/model/app-instance'
 import { AppInstanceCreate } from '~/domain/use-cases/app-instance/app-instance-create'
 import { AppInstanceDelete } from '~/domain/use-cases/app-instance/app-instance-delete'
 import { AppInstanceGet } from '~/domain/use-cases/app-instance/app-instance-get'
 import { AppInstanceList } from '~/domain/use-cases/app-instance/app-instance-list'
 import { AppInstanceUpdate } from '~/domain/use-cases/app-instance/app-instance-update'
 
-import { IFormState } from './utils'
+import { getSession } from './server/session'
 
 const getRepository = async () => {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')?.value || ''
+  const session = await getSession()
   const dataSource = new AppInstanceDataSourceImpl(session)
 
   return new AppInstanceRepositoryImpl(dataSource)
 }
 
-export async function appInstanceCreate(
-  prevState: IFormState,
+export async function createAppInstance(
+  prevState: Result<AppInstance>,
   formData: FormData
-): Promise<IFormState> {
+): Promise<Result<AppInstance>> {
   try {
     const repository = await getRepository()
     const useCase = new AppInstanceCreate(repository)
 
-    const appInstance: AppInstanceCreateModel = {
-      appId: formData.get('id') as string,
+    const raw = {
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
+      appId: formData.get('appId') as string,
       workspaceId: formData.get('workspaceId') as string,
-      sessionId: formData.get('sessionId') as string,
-      status: 'active'
+      workbenchId: formData.get('workbenchId') as string,
+      status: formData.get('status') as string
     }
 
-    const validation = AppInstanceCreateSchema.safeParse(appInstance)
-
+    const validation = AppInstanceCreateSchema.safeParse(raw)
     if (!validation.success) {
-      return { issues: validation.error.issues }
+      return {
+        ...prevState,
+        issues: validation.error.issues
+      }
     }
 
-    const nextAppInstance = AppInstanceCreateSchema.parse(appInstance)
-    const createdAppInstance = await useCase.execute(nextAppInstance)
+    const result = await useCase.execute(validation.data)
 
-    if (createdAppInstance.error) {
-      return { error: createdAppInstance.error }
+    if (result.error) {
+      return { ...prevState, error: result.error }
     }
-
     return {
       ...prevState,
-      data: 'Successfully created appInstance',
-      error: createdAppInstance.error
+      data: result.data
     }
   } catch (error) {
-    console.error('Error creating appInstance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return {
+      ...prevState,
+      error: error instanceof Error ? error.message : String(error)
+    }
   }
 }
 
-export async function appInstanceGet(id: string): Promise<AppInstanceResponse> {
-  try {
-    const repository = await getRepository()
-    const useCase = new AppInstanceGet(repository)
-
-    return await useCase.execute(id)
-  } catch (error) {
-    console.error('Error getting appInstance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
-  }
+export async function getAppInstance(id: string) {
+  const repository = await getRepository()
+  const useCase = new AppInstanceGet(repository)
+  return await useCase.execute(id)
 }
 
-export async function appInstanceDelete(
-  prevState: IFormState,
+export async function listAppInstances() {
+  const repository = await getRepository()
+  const useCase = new AppInstanceList(repository)
+  return await useCase.execute()
+}
+
+export async function deleteAppInstance(id: string) {
+  const repository = await getRepository()
+  const useCase = new AppInstanceDelete(repository)
+  const result = await useCase.execute(id)
+
+  return result
+}
+
+export async function updateAppInstance(
+  prevState: Result<AppInstance>,
   formData: FormData
-): Promise<IFormState> {
-  try {
-    const id = formData.get('id') as string
-    if (!id) throw new Error('Invalid app instance id')
-
-    const repository = await getRepository()
-    const useCase = new AppInstanceDelete(repository)
-
-    const r = await useCase.execute(id)
-    if (r.error) return { error: r.error }
-
-    revalidatePath(
-      `/workspaces/${formData.get('workspaceId')}/${formData.get('sessionId')}`
-    )
-    return { data: 'Successfully deleted app instance' }
-  } catch (error) {
-    console.error('Error deleting appInstance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
-  }
-}
-
-export async function appInstanceUpdate(
-  prevState: IFormState,
-  formData: FormData
-): Promise<IFormState> {
+): Promise<Result<AppInstance>> {
   try {
     const repository = await getRepository()
     const useCase = new AppInstanceUpdate(repository)
 
-    const appInstance: AppInstanceUpdateModel = {
+    const raw = {
       id: formData.get('id') as string,
-      appId: formData.get('appId') as string,
       tenantId: formData.get('tenantId') as string,
-      ownerId: formData.get('ownerId') as string,
+      userId: formData.get('userId') as string,
+      appId: formData.get('appId') as string,
       workspaceId: formData.get('workspaceId') as string,
-      sessionId: formData.get('sessionId') as string,
-      status: 'active'
+      workbenchId: formData.get('workbenchId') as string,
+      status: formData.get('status') as string
     }
 
-    const r = await useCase.execute(appInstance)
-    if (r.error) return { error: r.error }
+    const validation = AppInstanceUpdateSchema.safeParse(raw)
+    if (!validation.success) {
+      return {
+        ...prevState,
+        issues: validation.error.issues
+      }
+    }
 
-    revalidatePath(
-      `/workspaces/${formData.get('workspaceId')}/${formData.get('sessionId')}`
-    )
-    return { data: 'Successfully updated app instance' }
+    return await useCase.execute(validation.data)
   } catch (error) {
-    console.error('Error updating appInstance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
-  }
-}
-
-export async function appInstanceList(): Promise<AppInstance[]> {
-  try {
-    const repository = await getRepository()
-    const useCase = new AppInstanceList(repository)
-
-    const r = await useCase.execute()
-    if (r.error) return []
-
-    return r.data || []
-  } catch (error) {
-    console.error(error)
-    return []
+    return {
+      ...prevState,
+      error: error instanceof Error ? error.message : String(error)
+    }
   }
 }

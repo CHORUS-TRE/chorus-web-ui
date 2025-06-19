@@ -1,8 +1,8 @@
-import { WorkbenchesResponse } from '@/domain/model/workbench'
+import { Result, Workbench } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
 export interface WorkbenchListUseCase {
-  execute(): Promise<WorkbenchesResponse>
+  execute(): Promise<Result<Workbench[]>>
 }
 
 export class WorkbenchList implements WorkbenchListUseCase {
@@ -12,7 +12,7 @@ export class WorkbenchList implements WorkbenchListUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<WorkbenchesResponse> {
+  async execute(): Promise<Result<Workbench[]>> {
     return await this.repository.list()
   }
 }

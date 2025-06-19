@@ -83,7 +83,7 @@ export default function WorkbenchTable({
           <WorkbenchUpdateForm
             workbench={workbench}
             state={[open, setOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               refreshWorkbenches()
               setNotification({
                 title: 'Success!',
@@ -97,7 +97,7 @@ export default function WorkbenchTable({
           <WorkbenchDeleteForm
             id={workbench?.id}
             state={[deleteOpen, setDeleteOpen]}
-            onUpdate={() => {
+            onSuccess={() => {
               setTimeout(() => {
                 refreshWorkbenches()
               }, 2000)
@@ -126,7 +126,7 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">
             {appInstances
-              ?.filter((instance) => workbench?.id === instance.sessionId)
+              ?.filter((instance) => workbench?.id === instance.workbenchId)
               .map((instance, index, array) => {
                 const appName =
                   apps?.find((app) => app.id === instance.appId)?.name || ''
@@ -142,9 +142,11 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell
             className="hidden p-1 md:table-cell"
-            title={workbench?.createdAt.toLocaleDateString()}
+            title={workbench?.createdAt?.toLocaleDateString()}
           >
-            {workbench && formatDistanceToNow(workbench?.createdAt)} ago
+            {workbench &&
+              formatDistanceToNow(workbench?.createdAt ?? new Date())}{' '}
+            ago
           </TableCell>
           <TableCell className="p-1">
             <Badge variant="outline">{workbench?.status}</Badge>
@@ -196,7 +198,7 @@ export default function WorkbenchTable({
   }) => (
     <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
       {title && (
-        <CardHeader>
+        <CardHeader className="pb-4">
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
@@ -216,7 +218,7 @@ export default function WorkbenchTable({
         </Table>
       </CardContent>
       <CardFooter>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted">
           Showing <strong>1-{workbenches?.length}</strong> of{' '}
           <strong>{workbenches?.length}</strong> apps
         </div>

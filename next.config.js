@@ -6,6 +6,9 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  eslint: {
+    dirs: ['app', 'src']
+  },
   output: 'standalone',
   logging: {
     fetches: {

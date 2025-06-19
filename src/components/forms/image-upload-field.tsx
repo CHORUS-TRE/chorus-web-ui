@@ -1,8 +1,13 @@
 import Image from 'next/image'
 import { ChangeEvent, useState } from 'react'
 
-import { FormControl, FormItem, FormLabel, FormMessage } from './ui/form'
-import { Input } from './ui/input'
+import {
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '~/components/ui/form'
+import { Input } from '~/components/ui/input'
 
 interface ImageUploadFieldProps {
   value: string

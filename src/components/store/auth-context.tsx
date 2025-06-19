@@ -1,5 +1,6 @@
 'use client'
 
+import { env } from 'next-runtime-env'
 import {
   createContext,
   ReactElement,
@@ -55,7 +56,13 @@ export const AuthProvider = ({
       if (error) throw error
 
       if (user?.id !== data?.id) {
-        setUser(data)
+        setUser({
+          ...(data as User),
+          workspaceId:
+            env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+            localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+            undefined
+        })
       }
     } catch (error) {
       console.error(error)
@@ -65,7 +72,7 @@ export const AuthProvider = ({
         window.location.href = '/'
       })
     }
-  }, [isAuthenticated, setBackground, setAuthenticated])
+  }, [isAuthenticated, setBackground, setAuthenticated, user])
 
   useEffect(() => {
     if (isAuthenticated && !refreshInterval.current) {

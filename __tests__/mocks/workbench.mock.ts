@@ -1,20 +1,18 @@
 import {
   Workbench,
-  WorkbenchCreateModel,
-  WorkbenchUpdateModel
+  WorkbenchCreateType,
+  WorkbenchUpdateType
 } from '~/domain/model'
 import { WorkbenchState } from '~/domain/model/workbench'
 
-export const MOCK_API_CREATE: WorkbenchCreateModel = {
+export const MOCK_API_CREATE: WorkbenchCreateType = {
   name: 'Test Workbench',
   description: 'Test Description',
   status: WorkbenchState.ACTIVE,
   tenantId: '1', // uint64 string
   userId: '1', // uint64 string
   workspaceId: '1', // uint64 string
-  appInstanceIds: ['1', '2'], // uint64 strings
-  memberIds: ['1'], // preserved for backward compatibility
-  tags: ['test'] // preserved for backward compatibility
+  appInstanceIds: ['1', '2'] // uint64 strings
 }
 
 export const MOCK_API_RESPONSE = {
@@ -28,8 +26,6 @@ export const MOCK_API_RESPONSE = {
   workspaceId: '1',
   appInsanceIds: ['1', '2'],
   appInstances: ['1', '2'],
-  memberIds: ['1'], // preserved for backward compatibility
-  tags: ['test'], // preserved for backward compatibility
   createdAt: '2024-03-20T00:00:00Z',
   updatedAt: '2024-03-20T00:00:00Z'
 }
@@ -45,14 +41,13 @@ export const MOCK_WORKBENCH_RESULT: Workbench = {
   workspaceId: '1',
   appInstanceIds: ['1', '2'],
   appInstances: ['1', '2'],
-  memberIds: ['1'], // preserved for backward compatibility
   tags: ['test'], // preserved for backward compatibility
   createdAt: new Date('2024-03-20T00:00:00Z'),
   updatedAt: new Date('2024-03-20T00:00:00Z'),
   archivedAt: undefined
 }
 
-export const MOCK_API_UPDATE: WorkbenchUpdateModel = {
+export const MOCK_API_UPDATE: WorkbenchUpdateType = {
   id: '1',
   name: 'Updated Test Workbench',
   description: 'Updated Test Description',
@@ -61,7 +56,6 @@ export const MOCK_API_UPDATE: WorkbenchUpdateModel = {
   userId: '1',
   workspaceId: '1',
   appInstanceIds: ['1', '2', '3'],
-  memberIds: ['1'], // preserved for backward compatibility
   tags: ['test', 'updated'] // preserved for backward compatibility
 }
 

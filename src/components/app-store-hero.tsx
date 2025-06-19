@@ -28,7 +28,7 @@ export default function AppStoreHero() {
                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                   Your One-Stop Shop for Data, Applications, and AI
                 </h1>
-                <p className="mt-6 text-lg leading-8 text-muted-foreground">
+                <p className="mt-6 text-lg leading-8 text-muted">
                   Discover, deploy, and manage enterprise-grade applications
                   seamlessly. Our App Store provides a curated collection of
                   secure, scalable, and integrated solutions for your needs.
@@ -87,7 +87,7 @@ function Feature({
         {icon}
       </div>
       <h3 className="mt-4 text-lg font-semibold">{title}</h3>
-      <p className="mt-2 text-muted-foreground">{description}</p>
+      <p className="mt-2 text-muted">{description}</p>
     </div>
   )
 }
