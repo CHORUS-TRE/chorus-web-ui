@@ -13,7 +13,6 @@ import {
   AuthenticationOAuthRedirectRequest,
   AuthenticationRequest
 } from '~/domain/model'
-import { AuthenticationOAuthRedirect } from '~/domain/use-cases/authentication'
 import { AuthenticationGetModes } from '~/domain/use-cases/authentication/authentication-get-modes'
 import { AuthenticationLogin } from '~/domain/use-cases/authentication/authentication-login'
 

@@ -8,9 +8,7 @@ import { UserRepositoryImpl } from '~/data/repository/user-repository-impl'
 import { User, UserCreateType } from '~/domain/model/'
 import { UserCreate } from '~/domain/use-cases/user/user-create'
 import { UserGet } from '~/domain/use-cases/user/user-get'
-import { UserList } from '~/domain/use-cases/user/user-list'
 import { UserMe } from '~/domain/use-cases/user/user-me'
-import { UserUpdate } from '~/domain/use-cases/user/user-update'
 import { ChorusUser as ChorusUserApi } from '~/internal/client'
 
 const MOCK_USER_API_RESPONSE = {

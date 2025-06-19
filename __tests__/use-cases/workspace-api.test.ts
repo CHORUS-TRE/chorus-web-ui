@@ -12,7 +12,6 @@ import {
 } from '~/domain/model/'
 import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
 import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
-import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 import { ChorusWorkspace as ChorusWorkspaceApi } from '~/internal/client'
 
