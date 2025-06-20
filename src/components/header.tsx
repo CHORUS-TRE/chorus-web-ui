@@ -178,122 +178,124 @@ export function Header() {
                     </NavLink>
                   )}
                 </NavigationMenuItem> */}
-                {background?.sessionId && workbenches && (
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="border-none hover:border-none">
-                      <NavLink
-                        href={
-                          background?.workspaceId
-                            ? `/workspaces/${background?.workspaceId}`
-                            : '/'
-                        }
-                        className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                        exact={false}
-                      >
-                        <div className="mt-1 flex place-items-center gap-1">
-                          <Box className="h-4 w-4" />
-                          {background?.workspaceId
-                            ? workspaces?.find(
+                <NavigationMenuItem>
+                  {background?.sessionId && workbenches && (
+                    <>
+                      <NavigationMenuTrigger className="border-none hover:border-none">
+                        <NavLink
+                          href={
+                            background?.workspaceId
+                              ? `/workspaces/${background?.workspaceId}`
+                              : '/'
+                          }
+                          className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                          exact={false}
+                        >
+                          <div className="mt-1 flex place-items-center gap-1">
+                            <Box className="h-4 w-4" />
+                            {background?.workspaceId
+                              ? workspaces?.find(
                                 (w) => w.id === background?.workspaceId
                               )?.name
-                            : 'My Workspace'}
-                        </div>
-                      </NavLink>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                      <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                        {/* Session Info Section */}
-                        <NavigationMenuItem>
+                              : 'My Workspace'}
+                          </div>
+                        </NavLink>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                        <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
+                          {/* Session Info Section */}
+                          <NavigationMenuItem>
+                            <ListItem
+                              title={`About this session`}
+                              className="p-1 font-semibold"
+                              onClick={() => setShowAboutDialog(true)}
+                              wrapWithLi={false}
+                            >
+                              <div className="pl-1 text-xs font-semibold">
+                                {(() => {
+                                  const filteredApps =
+                                    appInstances
+                                      ?.filter(
+                                        (instance) =>
+                                          instance.workbenchId ===
+                                          background?.sessionId
+                                      )
+                                      ?.map(
+                                        (instance) =>
+                                          apps?.find(
+                                            (app) => app.id === instance.appId
+                                          )?.name
+                                      )
+                                      ?.filter(Boolean) || []
+
+                                  return (
+                                    <div className="flex items-center gap-2 text-xs">
+                                      <AppWindow className="h-4 w-4 shrink-0" />
+                                      {filteredApps.join(', ') || 'No apps'}
+                                    </div>
+                                  )
+                                })()}
+                              </div>
+                            </ListItem>
+                          </NavigationMenuItem>
+                          <Separator className="m-1" />
+                          {/* Settings Section */}
                           <ListItem
-                            title={`About this session`}
-                            className="p-1 font-semibold"
-                            onClick={() => setShowAboutDialog(true)}
+                            title="Settings..."
+                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                            onClick={() => setUpdateOpen(true)}
                             wrapWithLi={false}
-                          >
-                            <div className="pl-1 text-xs font-semibold">
-                              {(() => {
-                                const filteredApps =
-                                  appInstances
-                                    ?.filter(
-                                      (instance) =>
-                                        instance.workbenchId ===
-                                        background?.sessionId
-                                    )
-                                    ?.map(
-                                      (instance) =>
-                                        apps?.find(
-                                          (app) => app.id === instance.appId
-                                        )?.name
-                                    )
-                                    ?.filter(Boolean) || []
+                          ></ListItem>
 
-                                return (
-                                  <div className="flex items-center gap-2 text-xs">
-                                    <AppWindow className="h-4 w-4 shrink-0" />
-                                    {filteredApps.join(', ') || 'No apps'}
-                                  </div>
-                                )
-                              })()}
-                            </div>
-                          </ListItem>
-                        </NavigationMenuItem>
-                        <Separator className="m-1" />
-                        {/* Settings Section */}
-                        <ListItem
-                          title="Settings..."
-                          className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                          onClick={() => setUpdateOpen(true)}
-                          wrapWithLi={false}
-                        ></ListItem>
+                          {/* Start New App Section */}
+                          <ListItem
+                            title="Start New App..."
+                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                            onClick={() => {
+                              router.push(`/app-store`)
+                            }}
+                            wrapWithLi={false}
+                          ></ListItem>
+                          <Separator className="m-1" />
+                          {/* Fullscreen Section */}
+                          <ListItem
+                            title="Toggle Fullscreen"
+                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                            onClick={() => {
+                              const iframe = document.getElementById('iframe')
+                              if (iframe) {
+                                iframe.requestFullscreen()
+                              }
+                            }}
+                            wrapWithLi={false}
+                          ></ListItem>
 
-                        {/* Start New App Section */}
-                        <ListItem
-                          title="Start New App..."
-                          className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                          onClick={() => {
-                            router.push(`/app-store`)
-                          }}
-                          wrapWithLi={false}
-                        ></ListItem>
-                        <Separator className="m-1" />
-                        {/* Fullscreen Section */}
-                        <ListItem
-                          title="Toggle Fullscreen"
-                          className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                          onClick={() => {
-                            const iframe = document.getElementById('iframe')
-                            if (iframe) {
-                              iframe.requestFullscreen()
-                            }
-                          }}
-                          wrapWithLi={false}
-                        ></ListItem>
+                          <Separator className="m-1" />
 
-                        <Separator className="m-1" />
-
-                        {/* Quit Section */}
-                        <ListItem
-                          title="Delete Session..."
-                          className="cursor-pointer p-1 font-semibold"
-                          onClick={() => setDeleteOpen(true)}
-                          wrapWithLi={false}
-                        ></ListItem>
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                )}
-                {/* <NavigationMenuItem id="getting-started-step3">
-                  <NavLink
-                    href={`/workspaces/${user?.workspaceId}`}
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                          {/* Quit Section */}
+                          <ListItem
+                            title="Delete Session..."
+                            className="cursor-pointer p-1 font-semibold"
+                            onClick={() => setDeleteOpen(true)}
+                            wrapWithLi={false}
+                          ></ListItem>
+                        </ul>
+                      </NavigationMenuContent>
+                    </>
+                  )}
+                  {!background?.sessionId && (
+                    <NavLink
+                      href={`/workspaces/${user?.workspaceId}`}
+                      className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                     // exact={user?.workspaceId === workspaceId}
-                  >
-                    <div className="mt-1 flex place-items-center gap-1">
-                      <Box className="h-4 w-4" />
-                      My Workspace
-                    </div>
-                  </NavLink>
-                </NavigationMenuItem> */}
+                    >
+                      <div className="mt-1 flex place-items-center gap-1">
+                        <Box className="h-4 w-4" />
+                        My Workspace
+                      </div>
+                    </NavLink>
+                  )}
+                </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step3">
                   <NavLink
                     href="/workspaces"
@@ -442,7 +444,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => {}}
+            onSuccess={() => { }}
           />
         )}
       </nav>
