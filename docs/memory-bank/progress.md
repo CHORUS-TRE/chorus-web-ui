@@ -13,16 +13,21 @@
 ## 2. Next Steps
 
 ### Next Concrete Feature
-- Awaiting direction on the next feature. A potential candidate is creating data flows in `apis.swagger.yaml`.
+- **User and Role Management:** The next major feature is to build a comprehensive user and role management interface. This will include:
+  - Adding role assignment capabilities to the platform-level user administration page.
+  - Creating a new view for managing team members and their roles within a specific workspace.
+  - Establishing the necessary data models and layers to support roles and permissions.
 
 ### Ongoing Tasks
 - **Increase Test Coverage:** Continuously add tests for new and existing data flow components to ensure stability.
 
 ## 3. Current Status
 
-- **Architecture Fully Implemented:** The core data and UI patterns have been successfully applied across all major entities. The application is in a consistent and maintainable state. The project is ready for the next phase of feature development.
+- **Architecture Fully Implemented:** The core data and UI patterns have been successfully applied across all major entities. The application is in a consistent and maintainable state.
+- **Actively developing User and Role Management feature:** Work is now underway to build the platform and workspace level interfaces for managing roles and user assignments.
 
 ## 4. Known Issues
 
-- The test suite is currently failing. Running `pnpm test` produces multiple errors that need to be addressed to ensure code quality and stability.
+- **Test Suite was Failing (now fixed):** Running `pnpm test` produced multiple errors that have now been addressed.
+- **Missing Role Definitions:** The implementation will proceed with placeholder roles, as the definitive list from the `chorus-gatekeeper` service is not yet integrated.
 - (None currently identified in the `App`, `User`, `AppInstance`, `Workspace`, or `Workbench` data flows.)

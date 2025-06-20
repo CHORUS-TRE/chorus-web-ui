@@ -2,7 +2,7 @@
 
 ## 1. Current Work Focus
 
-The immediate priority is to diagnose and fix the failing tests in the existing test suite. The goal is to get the `pnpm test` command to pass successfully, ensuring the codebase is stable before proceeding with new feature development.
+The current priority is to build a comprehensive user and role management interface. This involves creating views at both the platform and workspace level to manage users, roles, and their associated permissions, based on the provided UI mockups and requirements.
 
 ## 2. Recent Changes
 
@@ -13,11 +13,14 @@ The immediate priority is to diagnose and fix the failing tests in the existing 
 
 ## 3. Next Steps
 
-- Execute `pnpm test` to get a baseline of failing tests.
-- Systematically fix each failing test.
-- Once the test suite is stable, await direction on the next major feature.
+- Define data models for `Role` and `Permission`.
+- Implement mock data layers for roles and permissions for UI development.
+- Build the platform-level role management UI (the "permission matrix").
+- Integrate role assignment into the existing platform-level user management UI.
+- Build the workspace-level user and role management view.
 
 ## 4. Active Decisions & Considerations
 
+- The implementation will proceed with placeholder roles and permissions, as the definitive list from the `chorus-gatekeeper` service is not yet integrated.
 - The core architectural patterns (Clean Architecture, Repository/Data Source, Mappers) are stable and must be followed for any new feature development.
 - The distinction between client-side fetching (default) and Server Actions (for forms) is a key pattern to maintain.
