@@ -103,11 +103,6 @@ export default function WorkspacesGrid({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* <div className="mb-1 flex items-center gap-2 text-sm font-bold">
-                  <LaptopMinimal className="h-4 w-4 shrink-0" />
-                  Sessions
-                </div> */}
-
                 <WorkspaceWorkbenchList workspaceId={workspace.id} />
               </CardContent>
             </Card>

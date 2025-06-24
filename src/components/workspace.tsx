@@ -218,11 +218,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}
                 workspaceName={workspace?.name}
-                // onSuccess={(sessionId) => {
-                //   refreshWorkspaces()
-                //   refreshWorkbenches()
-
-                // }}
               />
             }
           />
