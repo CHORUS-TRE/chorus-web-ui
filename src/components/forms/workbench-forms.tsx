@@ -396,7 +396,7 @@ export function WorkbenchUpdateForm({
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className="bg-background text-white">
         <DialogHeader>
           <DialogTitle>Edit Session</DialogTitle>
           <DialogDescription>

@@ -1,11 +1,14 @@
 'use client'
-import { formatDistance } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 import {
   AppWindow,
+  Bell,
   Box,
   CircleHelp,
   Package,
   Search,
+  Settings,
+  Shield,
   Store,
   User
 } from 'lucide-react'
@@ -67,20 +70,18 @@ export function Header() {
     background,
     setBackground,
     refreshWorkbenches,
-    toggleRightSidebar
+    toggleRightSidebar,
+    users
   } = useAppState()
   const { user, isAuthenticated, setAuthenticated } = useAuth()
 
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
-  const [currentWorkbench, setCurrentWorkbench] = useState<Workbench>()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
-
-  const isInAppContext = params?.workspaceId && params?.sessionId
 
   const internalLogin = authModes.some(
     (mode) =>
@@ -94,15 +95,6 @@ export function Header() {
       window.location.href = '/'
     })
   }
-
-  useEffect(() => {
-    if (isInAppContext && workbenches) {
-      const workbench = workbenches.find((w) => w.id === params.sessionId)
-      if (workbench) {
-        setCurrentWorkbench(workbench)
-      }
-    }
-  }, [isInAppContext, workbenches, params.sessionId])
 
   useEffect(() => {
     if (isAuthenticated) return
@@ -126,6 +118,10 @@ export function Header() {
 
     fetchAuthModes()
   }, [setNotification, isAuthenticated])
+
+  const currentWorkbench = workbenches?.find(
+    (w) => w.id === background?.sessionId
+  )
 
   return (
     <>
@@ -195,8 +191,8 @@ export function Header() {
                             <Box className="h-4 w-4" />
                             {background?.workspaceId
                               ? workspaces?.find(
-                                (w) => w.id === background?.workspaceId
-                              )?.name
+                                  (w) => w.id === background?.workspaceId
+                                )?.name
                               : 'My Workspace'}
                           </div>
                         </NavLink>
@@ -287,7 +283,7 @@ export function Header() {
                     <NavLink
                       href={`/workspaces/${user?.workspaceId}`}
                       className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                    // exact={user?.workspaceId === workspaceId}
+                      // exact={user?.workspaceId === workspaceId}
                     >
                       <div className="mt-1 flex place-items-center gap-1">
                         <Box className="h-4 w-4" />
@@ -321,15 +317,12 @@ export function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
                   <NavLink
-                    href="#"
+                    href="/admin"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div
-                      className="mt-1 flex place-items-center gap-1"
-                      onClick={toggleRightSidebar}
-                    >
-                      <CircleHelp className="h-4 w-4" />
-                      Help
+                    <div className="mt-1 flex place-items-center gap-1">
+                      <Shield className="h-4 w-4" />
+                      Admin
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
@@ -351,67 +344,80 @@ export function Header() {
               />
             </div>
           )}
-
-          <div className="ml-1 flex items-center gap-2">
-            <div className="flex items-center justify-end">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    size="icon"
-                    className="overflow-hidden text-muted hover:bg-inherit hover:text-accent"
-                    variant="ghost"
-                  >
-                    <User className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-56 bg-black bg-opacity-85 text-white"
-                  align="end"
-                  forceMount
+          <div className="ml-1 flex items-center">
+            <Button
+              size="icon"
+              className="h-8 w-8 text-muted hover:bg-inherit hover:text-accent"
+              variant="ghost"
+              onClick={toggleRightSidebar}
+            >
+              <CircleHelp className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+              variant="ghost"
+            >
+              <Bell className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+                  variant="ghost"
                 >
-                  {isAuthenticated ? (
-                    <>
+                  <User className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-56 bg-black bg-opacity-85 text-white"
+                align="end"
+                forceMount
+              >
+                {isAuthenticated ? (
+                  <>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => router.push('/users/me')}
+                    >
+                      {user?.firstName} {user?.lastName} profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="flex cursor-pointer items-center gap-2"
+                      onClick={() => router.push('/admin/users')}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Preferences
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-slate-500" />
+                    <DropdownMenuItem
+                      onClick={handleLogoutClick}
+                      className="cursor-pointer"
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => router.push('/login')}
+                    >
+                      Login
+                    </DropdownMenuItem>
+                    {internalLogin && (
                       <DropdownMenuItem
                         className="cursor-pointer"
-                        onClick={() => router.push('/users/me')}
+                        onClick={() => router.push('/register')}
                       >
-                        {user?.firstName} {user?.lastName} profile
+                        Register
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => router.push('/admin/users')}
-                      >
-                        User Management
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-slate-500" />
-                      <DropdownMenuItem
-                        onClick={handleLogoutClick}
-                        className="cursor-pointer"
-                      >
-                        Logout
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => router.push('/login')}
-                      >
-                        Login
-                      </DropdownMenuItem>
-                      {internalLogin && (
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          onClick={() => router.push('/register')}
-                        >
-                          Register
-                        </DropdownMenuItem>
-                      )}
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                    )}
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -444,7 +450,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => { }}
+            onSuccess={() => {}}
           />
         )}
       </nav>
@@ -455,23 +461,24 @@ export function Header() {
             <AlertDialogTitle>About {currentWorkbench?.name}</AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
               <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  {currentWorkbench?.name?.slice(0, 2)}
-                </Avatar>
-                <div className="space-y-1">
-                  <p className="font-medium">{currentWorkbench?.shortName}</p>
-                  <p className="text-sm text-muted">
-                    Created{' '}
-                    {formatDistance(
-                      currentWorkbench?.createdAt ?? 0,
-                      new Date()
-                    )}{' '}
-                    ago
-                  </p>
-                </div>
+                <p className="cursor-default text-muted">
+                  Created by{' '}
+                  {
+                    users?.find((user) => user.id === currentWorkbench?.userId)
+                      ?.firstName
+                  }{' '}
+                  {
+                    users?.find((user) => user.id === currentWorkbench?.userId)
+                      ?.lastName
+                  }{' '}
+                  {formatDistanceToNow(
+                    currentWorkbench?.createdAt || new Date()
+                  )}
+                  ago
+                </p>
               </div>
               {currentWorkbench?.description && (
-                <p className="text-sm">{currentWorkbench.description}</p>
+                <p className="text-sm">{currentWorkbench?.description}</p>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
