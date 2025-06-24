@@ -21,18 +21,15 @@ export function WorkspaceWorkbenchList({
   const { user } = useAuth()
 
   const workbenchList = useMemo(() => {
-    return (
-      workbenches
-        ?.filter(
-          (workbench) => workbench.workspaceId === workspaceId || !workspaceId
-        )
-        // ?.filter((workbench) => workbench.userId === user?.id)
-        ?.sort((a) => (a.userId === user?.id ? -1 : 1))
-    )
+    return workbenches
+      ?.filter(
+        (workbench) => workbench.workspaceId === workspaceId || !workspaceId
+      )
+      ?.sort((a) => (a.userId === user?.id ? -1 : 1))
   }, [workbenches, workspaceId, user?.id])
 
   return (
-    <div className="grid gap-1">
+    <div className="grid w-full gap-1 truncate">
       {workspaces
         ?.filter((workspace) => workspace.id === workspaceId || !workspaceId)
         ?.map(({ id: mapWorkspaceId, name }) => (
@@ -66,17 +63,17 @@ export function WorkspaceWorkbenchList({
                   className={`mb-2 flex flex-col justify-between`}
                 >
                   <div className="flex-grow text-sm">
-                    <div className="mb-0.5 mt-0.5 text-xs">
-                      <div
-                        className={`flex items-center gap-2 truncate text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
-                      >
-                        {background?.sessionId === id && (
-                          <PictureInPicture2 className="h-4 w-4 shrink-0" />
-                        )}
+                    <div
+                      className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
+                    >
+                      {background?.sessionId === id && (
+                        <PictureInPicture2 className="h-4 w-4 shrink-0" />
+                      )}
 
-                        {background?.sessionId !== id && (
-                          <AppWindow className="h-4 w-4 shrink-0" />
-                        )}
+                      {background?.sessionId !== id && (
+                        <AppWindow className="h-4 w-4 shrink-0" />
+                      )}
+                      <span className="w-full min-w-0 flex-1">
                         {appInstances
                           ?.filter((instance) => id === instance.workbenchId)
                           .map(
@@ -85,15 +82,15 @@ export function WorkspaceWorkbenchList({
                                 ?.name || ''
                           )
                           .join(', ') || 'No apps started'}
-                      </div>
+                      </span>
                     </div>
-                    <p className="cursor-default text-xs text-muted">
-                      Created by{' '}
-                      {users?.find((user) => user.id === userId)?.firstName}{' '}
-                      {users?.find((user) => user.id === userId)?.lastName}{' '}
-                      {formatDistanceToNow(createdAt || new Date())} ago
-                    </p>
                   </div>
+                  <p className="cursor-default text-xs text-muted">
+                    Created by{' '}
+                    {users?.find((user) => user.id === userId)?.firstName}{' '}
+                    {users?.find((user) => user.id === userId)?.lastName}{' '}
+                    {formatDistanceToNow(createdAt || new Date())} ago
+                  </p>
                 </div>
               ))}
           </div>

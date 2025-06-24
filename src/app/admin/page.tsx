@@ -1,7 +1,15 @@
 'use client'
 
-import Admin from './admin'
+import React from 'react'
 
-export default function Page() {
-  return <Admin />
+const AdminDashboardPage = () => {
+  return (
+    <div>
+      <h1 className="mb-4 text-2xl font-bold text-white">Admin Dashboard</h1>
+      <p>Welcome to the Chorus administration panel.</p>
+      <p>Please select an option from the menu on the left.</p>
+    </div>
+  )
 }
+
+export default AdminDashboardPage
