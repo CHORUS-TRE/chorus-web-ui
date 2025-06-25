@@ -30,6 +30,7 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
 
   const login = await useCase.execute({ username: username, password })
 
+  console.log('login', login)
   if (login.error)
     return {
       ...prevState,
@@ -140,7 +141,7 @@ export async function handleOAuthRedirect(
     const useCase = new AuthenticationOAuthRedirect(repository)
 
     const response = await useCase.execute(data)
-
+    console.log('response', response)
     if (response.error) {
       return response
     }

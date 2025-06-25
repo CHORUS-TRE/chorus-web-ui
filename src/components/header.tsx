@@ -29,7 +29,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Avatar } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -49,7 +48,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
-import { AuthenticationMode, Workbench } from '~/domain/model'
+import { AuthenticationMode } from '~/domain/model'
 
 import {
   WorkbenchDeleteForm,

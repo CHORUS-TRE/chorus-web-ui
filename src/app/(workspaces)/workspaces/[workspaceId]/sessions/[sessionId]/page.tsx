@@ -38,7 +38,7 @@ export default function WorkbenchPage() {
 
   return (
     <>
-      <div className={`absolute left-0 top-0 z-40 h-11 min-w-full`} id="header">
+      <div className={`absolute left-0 top-0 z-40 h-11 min-w-full`}>
         <Header />
       </div>
     </>

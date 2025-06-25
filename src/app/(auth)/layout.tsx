@@ -32,7 +32,7 @@ export default function Layout({
 
   return (
     <>
-      <header className="fixed left-0 top-0 z-40 h-11 min-w-full" id="header">
+      <header className="fixed left-0 top-0 z-40 h-11 min-w-full">
         <Header />
       </header>
 
