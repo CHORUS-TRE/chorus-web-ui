@@ -3,8 +3,8 @@
 import { env } from 'next-runtime-env'
 import { useEffect, useRef, useState } from 'react'
 
+import { useUrlValidation } from '@/components/hooks/use-url-validation'
 import { useAppState } from '@/components/store/app-state-context'
-import { useUrlValidation } from '@/hooks/use-url-validation'
 
 import { LoadingOverlay } from './loading-overlay'
 

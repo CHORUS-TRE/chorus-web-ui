@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import { Header } from '@/components/header'
+import { toast } from '@/components/hooks/use-toast'
 import { useAppState } from '@/components/store/app-state-context'
-import { Header } from '~/components/header'
-import { toast } from '~/hooks/use-toast'
 
 import RightSidebar from '../right-sidebar'
 import { Button } from '../ui/button'
@@ -53,7 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <>
-      <div className="fixed left-0 top-0 z-40 h-11 min-w-full" id="header">
+      <div className="fixed left-0 top-0 z-40 h-11 min-w-full">
         <Header />
       </div>
 

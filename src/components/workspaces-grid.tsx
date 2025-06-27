@@ -81,8 +81,8 @@ export default function WorkspacesGrid({
           <Link href={`/workspaces/${workspace.id}`}>
             <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-start gap-3 pr-2 text-white">
-                  <Package className="h-6 w-6 flex-shrink-0 text-white" />
+                <CardTitle className="flex items-start gap-3 pr-2 text-white hover:text-accent hover:underline">
+                  <Package className="h-6 w-6 flex-shrink-0" />
                   {workspace?.id === user?.workspaceId
                     ? 'My Workspace'
                     : workspace?.name}
