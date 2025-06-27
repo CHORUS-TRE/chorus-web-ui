@@ -17,15 +17,11 @@ type Option = Record<'value' | 'label', string>
 export function MultiSelect({
   options,
   selected,
-  onChange,
-  className,
-  ...props
+  onChange
 }: {
   options: Option[]
   selected: string[]
   onChange: React.Dispatch<React.SetStateAction<string[]>>
-  className?: string
-  [key: string]: unknown
 }) {
   const [open, setOpen] = React.useState(false)
   const [inputValue, setInputValue] = React.useState('')

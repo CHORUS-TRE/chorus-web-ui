@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { listUsers } from '~/components/actions/user-view-model'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
 import { UserEditDialog } from '~/components/forms/user-edit-dialog'
+import { Badge } from '~/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -46,6 +47,8 @@ export function UserTable() {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Username</TableHead>
+          <TableHead>Roles</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -56,6 +59,20 @@ export function UserTable() {
               {user.firstName} {user.lastName}
             </TableCell>
             <TableCell>{user.username}</TableCell>
+            <TableCell>
+              <div className="flex space-x-1">
+                {user.roles2?.map((role) => (
+                  <Badge key={role.name}>{role.name}</Badge>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant={user.status === 'active' ? 'default' : 'destructive'}
+              >
+                {user.status}
+              </Badge>
+            </TableCell>
             <TableCell>
               <UserEditDialog user={user} onUserUpdated={handleUserChange} />
               <UserDeleteDialog

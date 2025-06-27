@@ -25,8 +25,19 @@ import {
   FormMessage
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { Result } from '~/domain/model'
-import { User, UserEditFormSchema } from '~/domain/model/user'
+import { MultiSelect } from '~/components/ui/multi-select'
+import { MockRoleDataSource } from '~/data/data-source/chorus-api/role-data-source'
+import { RoleRepositoryImpl } from '~/data/repository/role-repository-impl'
+import { Result, Role } from '~/domain/model'
+import {
+  User,
+  UserEditFormSchema as BaseUserEditFormSchema
+} from '~/domain/model/user'
+import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
+
+const UserEditFormSchema = BaseUserEditFormSchema.extend({
+  roles: z.array(z.string()).optional()
+})
 
 type FormData = z.infer<typeof UserEditFormSchema>
 
@@ -36,8 +47,25 @@ export function UserCreateDialog({
   onUserCreated: () => void
 }) {
   const [open, setOpen] = useState(false)
-
+  const [roles, setRoles] = useState<Role[]>([])
   const { setNotification } = useAppState()
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const dataSource = new MockRoleDataSource()
+      const repo = new RoleRepositoryImpl(dataSource)
+      const useCase = new RoleListUseCase(repo)
+      const result = await useCase.execute()
+
+      if (result.data) {
+        setRoles(result.data)
+      }
+    }
+
+    if (open) {
+      fetchRoles()
+    }
+  }, [open])
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserEditFormSchema),
@@ -45,7 +73,8 @@ export function UserCreateDialog({
       firstName: '',
       lastName: '',
       username: '',
-      password: ''
+      password: '',
+      roles: []
     }
   })
 
@@ -73,7 +102,11 @@ export function UserCreateDialog({
   const onSubmit = (data: FormData) => {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value)
+      if (Array.isArray(value)) {
+        value.forEach((v) => formData.append(key, v))
+      } else {
+        formData.append(key, value)
+      }
     })
     formAction(formData)
   }
@@ -85,7 +118,7 @@ export function UserCreateDialog({
           Create User
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-background text-white">
+      <DialogContent className="text-white">
         <DialogHeader>
           <DialogTitle>Create New User</DialogTitle>
         </DialogHeader>
@@ -138,6 +171,26 @@ export function UserCreateDialog({
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="roles"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Roles</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      options={roles.map((r) => ({
+                        value: r.name,
+                        label: r.name
+                      }))}
+                      selected={field.value || []}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

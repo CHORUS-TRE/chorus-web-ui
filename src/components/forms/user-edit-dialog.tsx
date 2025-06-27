@@ -26,8 +26,19 @@ import {
   FormMessage
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { Result } from '~/domain/model'
-import { User, UserUpdateSchema } from '~/domain/model/user'
+import { MultiSelect } from '~/components/ui/multi-select'
+import { MockRoleDataSource } from '~/data/data-source/chorus-api/role-data-source'
+import { RoleRepositoryImpl } from '~/data/repository/role-repository-impl'
+import { Result, Role } from '~/domain/model'
+import {
+  User,
+  UserUpdateSchema as BaseUserUpdateSchema
+} from '~/domain/model/user'
+import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
+
+const UserUpdateSchema = BaseUserUpdateSchema.extend({
+  roles: z.array(z.string()).optional()
+})
 
 type FormData = z.infer<typeof UserUpdateSchema>
 
@@ -39,8 +50,23 @@ export function UserEditDialog({
   onUserUpdated: () => void
 }) {
   const [open, setOpen] = useState(false)
-
+  const [roles, setRoles] = useState<Role[]>([])
   const { setNotification } = useAppState()
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const dataSource = new MockRoleDataSource()
+      const repo = new RoleRepositoryImpl(dataSource)
+      const useCase = new RoleListUseCase(repo)
+      const result = await useCase.execute()
+
+      if (result.data) {
+        setRoles(result.data)
+      }
+    }
+
+    fetchRoles()
+  }, [])
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserUpdateSchema),
@@ -49,7 +75,8 @@ export function UserEditDialog({
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,
-      password: ''
+      password: '',
+      roles: user.roles2?.map((r) => r.name) || []
     }
   })
 
@@ -75,7 +102,11 @@ export function UserEditDialog({
   const onSubmit = (data: FormData) => {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value || '')
+      if (Array.isArray(value)) {
+        value.forEach((v) => formData.append(key, v))
+      } else {
+        formData.append(key, value || '')
+      }
     })
     formAction(formData)
   }
@@ -87,7 +118,7 @@ export function UserEditDialog({
           <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="text-white">
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>
@@ -144,6 +175,26 @@ export function UserEditDialog({
                       type="password"
                       {...field}
                       placeholder="Leave blank to keep current password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="roles"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Roles</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      options={roles.map((r) => ({
+                        value: r.name,
+                        label: r.name
+                      }))}
+                      selected={field.value || []}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />

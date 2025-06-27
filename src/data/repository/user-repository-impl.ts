@@ -10,6 +10,7 @@ import {
 import { UserRepository } from '@/domain/repository'
 
 import { UserDataSource } from '../data-source'
+import { MOCK_ROLES } from '../data-source/chorus-api/role-data-source'
 
 export class UserRepositoryImpl implements UserRepository {
   private dataSource: UserDataSource
@@ -55,6 +56,11 @@ export class UserRepositoryImpl implements UserRepository {
           issues: userResult.error.issues
         }
       }
+
+      // Temporary mock data injection for UI development
+      if (userResult) {
+        userResult.data.roles2 = [MOCK_ROLES[0]]
+      }
       return { data: userResult.data }
     } catch (error) {
       return {
@@ -73,6 +79,11 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: userResult.error.issues
         }
+      }
+
+      // Temporary mock data injection for UI development
+      if (userResult) {
+        userResult.data.roles2 = [MOCK_ROLES[0]]
       }
       return { data: userResult.data }
     } catch (error) {
@@ -111,6 +122,12 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: usersResult.error.issues
         }
+      }
+      // Temporary mock data injection for UI development
+      if (usersResult) {
+        usersResult.data.forEach((user: User, index: number) => {
+          user.roles2 = [MOCK_ROLES[index % MOCK_ROLES.length]]
+        })
       }
 
       return { data: usersResult.data }

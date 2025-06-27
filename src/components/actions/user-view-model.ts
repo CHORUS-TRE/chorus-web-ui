@@ -38,7 +38,8 @@ export async function createUser(
       username: formData.get('username') as string,
       password: formData.get('password') as string,
       firstName: formData.get('firstName') as string,
-      lastName: formData.get('lastName') as string
+      lastName: formData.get('lastName') as string,
+      roles: formData.getAll('roles') as string[]
     }
 
     const validation = UserEditFormSchema.safeParse(raw)
@@ -90,7 +91,8 @@ export async function updateUser(
     username: formData.get('username') as string,
     password: formData.get('password') as string,
     firstName: formData.get('firstName') as string,
-    lastName: formData.get('lastName') as string
+    lastName: formData.get('lastName') as string,
+    roles: formData.getAll('roles') as string[]
   }
 
   const validation = UserUpdateSchema.safeParse(raw)
