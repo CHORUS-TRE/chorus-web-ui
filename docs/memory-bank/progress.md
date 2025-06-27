@@ -13,18 +13,19 @@
 ## 2. Next Steps
 
 ### Next Concrete Feature
+- **Client-Side Authentication Refactor:** The next major task is to refactor the authentication flow. This will involve moving auth state management from server components to client-side hooks and contexts.
+- **Background Iframe:** Following the authentication refactor, implement the background iframe to run user application sessions.
 
-- **Workspace-Level Role Management:** The next major feature is to build a view for managing team members and their roles *within a specific workspace*.
-- **Integrate Live Role Data:** Replace the current placeholder role and permission data with a direct integration to the `chorus-gatekeeper` service.
+### Future Work / On Hold
+- **Workspace-Level Role Management:** The feature to manage team members and their roles *within a specific workspace* is on hold pending completion of the authentication and iframe tasks.
 
 ### Ongoing Tasks
-
-- **Increase Test Coverage:** Continuously add tests for new and existing data flow components to ensure stability, particularly for the new role management features.
+- **Increase Test Coverage:** Continuously add tests for new and existing data flow components to ensure stability.
 
 ## 3. Current Status
 
+- **Pivoting to new feature work:** Having completed the platform-level role management feature, development is now shifting to a major refactor of the authentication system.
 - **Architecture Fully Implemented:** The core data and UI patterns have been successfully applied across all major entities. The application is in a consistent and maintainable state.
-- **Platform-level role management is complete.** Work is now focused on the workspace-level implementation and integrating live data.
 
 ## 4. Known Issues
 
