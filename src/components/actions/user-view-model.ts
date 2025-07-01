@@ -1,4 +1,5 @@
 'use client'
+import { env } from 'next-runtime-env'
 
 import { UserApiDataSourceImpl } from '~/data/data-source'
 import { UserRepositoryImpl } from '~/data/repository'
@@ -11,11 +12,14 @@ import { UserList } from '~/domain/use-cases/user/user-list'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 import { UserUpdate } from '~/domain/use-cases/user/user-update'
 
-import { getSession } from './server/session'
+import { getToken } from './authentication-view-model'
 
 const getRepository = async () => {
-  const session = await getSession()
-  const dataSource = new UserApiDataSourceImpl(session)
+  const token = await getToken()
+  const dataSource = new UserApiDataSourceImpl(
+    token || '',
+    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+  )
 
   return new UserRepositoryImpl(dataSource)
 }
@@ -23,13 +27,31 @@ const getRepository = async () => {
 export async function userMe() {
   const userRepository = await getRepository()
   const useCase = new UserMe(userRepository)
-  return await useCase.execute()
+  const user = await useCase.execute()
+
+  if (user.error) {
+    return {
+      error: user.error
+    }
+  }
+
+  if (user?.data) {
+    return {
+      data: {
+        ...(user.data as User),
+        workspaceId:
+          env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+          localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
+          undefined
+      }
+    }
+  }
 }
 
 export async function createUser(
-  prevState: Result<User>,
+  prevState: Result<Partial<User>>,
   formData: FormData
-): Promise<Result<User>> {
+): Promise<Result<Partial<User>>> {
   try {
     const userRepository = await getRepository()
     const useCase = new UserCreate(userRepository)
@@ -51,11 +73,30 @@ export async function createUser(
       }
     }
 
-    return await useCase.execute(validation.data)
+    const result = await useCase.execute(validation.data)
+    if (result.error) {
+      return {
+        ...prevState,
+        error: result.error
+      }
+    }
+
+    if (result.data) {
+      return {
+        data: {
+          ...(validation.data as User),
+          id: result.data
+        }
+      }
+    }
+
+    return {
+      ...prevState,
+      error: 'Unknown error'
+    }
   } catch (error) {
     console.error('Error creating user', error)
     return {
-      ...prevState,
       error: error instanceof Error ? error.message : String(error)
     }
   }

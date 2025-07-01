@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('OAuth redirect error:', error)
     return Response.redirect(
-      `${env('NEXT_PUBLIC_APP_URL')}/login?error=Authentication failed`,
+      `${env('NEXT_PUBLIC_APP_URL')}/?error=Authentication failed`,
       302
     )
   }

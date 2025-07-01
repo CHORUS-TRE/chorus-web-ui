@@ -1,7 +1,5 @@
-'use server'
+'use client'
 
-import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
 import { env } from 'next-runtime-env'
 
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source'
@@ -19,10 +17,18 @@ import {
   Result
 } from '~/domain/model'
 
+const getRepository = async (token?: string) => {
+  const dataSource = new AuthenticationApiDataSourceImpl(
+    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || '',
+    token
+  )
+
+  return new AuthenticationRepositoryImpl(dataSource)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function authenticationLogin(prevState: any, formData: FormData) {
-  const dataSource = new AuthenticationApiDataSourceImpl()
-  const repository = new AuthenticationRepositoryImpl(dataSource)
+export async function login(prevState: any, formData: FormData) {
+  const repository = await getRepository()
   const useCase = new AuthenticationLogin(repository)
 
   const username = formData.get('username') as string
@@ -30,7 +36,6 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
 
   const login = await useCase.execute({ username: username, password })
 
-  console.log('login', login)
   if (login.error)
     return {
       ...prevState,
@@ -43,26 +48,25 @@ export async function authenticationLogin(prevState: any, formData: FormData) {
       error: 'Something went wrong, please try again'
     }
 
-  const cookieStore = await cookies()
-  cookieStore.set('session', login.data, {
-    httpOnly: true,
-    secure: env('NODE_ENV') === 'production',
-    maxAge: 60 * 60 * 24 * 7, // One week
-    path: '/'
-  })
+  sessionStorage.setItem('token', login.data)
 
   return {
     ...prevState,
+    error: login.error,
     data: login.data
   }
+}
+
+export async function getToken() {
+  const token = sessionStorage.getItem('token') || undefined
+  return token
 }
 
 export async function getAuthenticationModes(): Promise<
   Result<AuthenticationMode[]>
 > {
   try {
-    const dataSource = new AuthenticationApiDataSourceImpl()
-    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const repository = await getRepository()
     const useCase = new AuthenticationGetModes(repository)
 
     return await useCase.execute()
@@ -74,8 +78,8 @@ export async function getAuthenticationModes(): Promise<
 
 export async function logout() {
   try {
-    const dataSource = new AuthenticationApiDataSourceImpl()
-    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const token = await getToken()
+    const repository = await getRepository(token)
     const useCase = new AuthenticationLogout(repository)
 
     const result = await useCase.execute()
@@ -85,44 +89,13 @@ export async function logout() {
     }
   } catch (error) {
     console.error('Error during logout:', error)
-  } finally {
-    // Always clear the local session, even if the backend call fails
-    const cookieStore = await cookies()
-    cookieStore.set('session', '', {
-      expires: new Date(0),
-      path: '/'
-    })
   }
-}
-
-export async function updateSession(request: NextRequest) {
-  const session = request.cookies.get('session')?.value
-  if (!session) return
-
-  // Refresh the session so it doesn't expire
-  const expires = new Date(Date.now() + 5 * 1000)
-  const res = NextResponse.next()
-  res.cookies.set({
-    name: 'session',
-    value: session,
-    httpOnly: true,
-    expires
-  })
-
-  return res
-}
-
-export async function getSession() {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')?.value || ''
-  return session
 }
 
 export async function getOAuthUrl(id: string): Promise<Result<string>> {
   try {
-    const dataSource = new AuthenticationApiDataSourceImpl()
+    const repository = await getRepository()
 
-    const repository = new AuthenticationRepositoryImpl(dataSource)
     const useCase = new AuthenticationGetOAuthUrl(repository)
 
     return await useCase.execute(id)
@@ -136,12 +109,10 @@ export async function handleOAuthRedirect(
   data: AuthenticationOAuthRedirectRequest
 ): Promise<Result<string>> {
   try {
-    const dataSource = new AuthenticationApiDataSourceImpl()
-    const repository = new AuthenticationRepositoryImpl(dataSource)
+    const repository = await getRepository()
     const useCase = new AuthenticationOAuthRedirect(repository)
 
     const response = await useCase.execute(data)
-    console.log('response', response)
     if (response.error) {
       return response
     }
@@ -153,13 +124,6 @@ export async function handleOAuthRedirect(
     if (!response.data) {
       throw new Error('No token received')
     }
-    const cookieStore = await cookies()
-    cookieStore.set('session', response.data || '', {
-      httpOnly: true,
-      secure: env('NODE_ENV') === 'production',
-      maxAge: 60 * 60 * 24 * 7, // One week
-      path: '/'
-    })
 
     return response
   } catch (error) {

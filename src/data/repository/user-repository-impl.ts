@@ -19,7 +19,7 @@ export class UserRepositoryImpl implements UserRepository {
     this.dataSource = dataSource
   }
 
-  async create(user: UserCreateType): Promise<Result<User>> {
+  async create(user: UserCreateType): Promise<Result<string>> {
     try {
       const response = await this.dataSource.create(user)
 
@@ -36,8 +36,7 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      // After creating, fetch the full user data
-      return this.get(userResult.data.id)
+      return { data: userResult.data.id }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

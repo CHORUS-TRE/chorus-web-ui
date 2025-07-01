@@ -3,20 +3,13 @@ import '@/styles/globals.css'
 
 import { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
-import { cookies } from 'next/headers'
 import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
-import { NextStep, NextStepProvider } from 'nextstepjs'
 import React from 'react'
 
-import { userMe } from '@/components/actions/server/user-me'
-import BackgroundIframe from '~/components/background-iframe'
-import GettingStartedCard from '~/components/getting-started-card'
-import { Toaster } from '~/components/ui/toaster'
-import { steps } from '~/lib/tours'
-
-import { Providers } from './providers'
+import { AppStateProvider } from '~/components/store/app-state-context'
+import { AuthProvider } from '~/components/store/auth-context'
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -33,20 +26,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')
-  const authenticated = !!session
-  let user
-
-  if (authenticated) {
-    const userResult = await userMe()
-    if (userResult?.data) {
-      user = userResult.data
-    } else {
-      console.error('Failed to get initial user state:', userResult?.error)
-    }
-  }
-
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
 
@@ -65,21 +44,9 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${rubik.variable} antialiased`}>
-        <Providers authenticated={authenticated} initialUser={user}>
-          <NextStepProvider>
-            <NextStep
-              steps={steps}
-              showNextStep={false}
-              displayArrow={true}
-              clickThroughOverlay={true}
-              cardComponent={GettingStartedCard}
-            >
-              {children}
-            </NextStep>
-          </NextStepProvider>
-          <BackgroundIframe />
-          <Toaster />
-        </Providers>
+        <AuthProvider>
+          <AppStateProvider>{children}</AppStateProvider>
+        </AuthProvider>
       </body>
     </html>
   )

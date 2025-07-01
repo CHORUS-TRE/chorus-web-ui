@@ -13,11 +13,9 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
-import { logout } from '@/components/actions/authentication-view-model'
-import { getAuthenticationModes } from '@/components/actions/authentication-view-model'
 import { useAppState } from '@/components/store/app-state-context'
 import {
   AlertDialog,
@@ -37,7 +35,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
-import { AuthenticationModeType } from '@/domain/model/authentication'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
   ListItem,
@@ -47,7 +44,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
-import { AuthenticationMode } from '~/domain/model'
 
 import {
   WorkbenchDeleteForm,
@@ -71,7 +67,7 @@ export function Header() {
     toggleRightSidebar,
     users
   } = useAppState()
-  const { user, isAuthenticated, setAuthenticated } = useAuth()
+  const { user, logout } = useAuth()
 
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
@@ -79,44 +75,6 @@ export function Header() {
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
-  const [authModes, setAuthModes] = useState<AuthenticationMode[]>([])
-
-  const internalLogin = authModes.some(
-    (mode) =>
-      mode.type === AuthenticationModeType.INTERNAL && mode.internal?.enabled
-  )
-
-  const handleLogoutClick = async () => {
-    setBackground(undefined)
-    setAuthenticated(false)
-    logout().then(() => {
-      window.location.href = '/'
-    })
-  }
-
-  useEffect(() => {
-    if (isAuthenticated) return
-
-    const fetchAuthModes = async () => {
-      try {
-        const response = await getAuthenticationModes()
-        setAuthModes(response.data || [])
-      } catch (error) {
-        setNotification({
-          title: 'Error fetching auth modes:',
-          description:
-            error instanceof Error
-              ? error.message
-              : 'Please retry later or contact support',
-          variant: 'destructive'
-        })
-        console.error('Error fetching auth modes:', error)
-      }
-    }
-
-    fetchAuthModes()
-  }, [setNotification, isAuthenticated])
-
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
   )
@@ -145,33 +103,10 @@ export function Header() {
           </NavLink>
         </div>
 
-        {isAuthenticated && (
+        {user && (
           <>
             <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
               <NavigationMenuList className="flex items-center justify-center gap-3">
-                {/* <NavigationMenuItem id="getting-started-step3">
-                  {!isInAppContext && (
-                    <NavLink
-                      href={
-                        background?.workspaceId
-                          ? `/workspaces/${background?.workspaceId}`
-                          : '/'
-                      }
-                      className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                      exact={false}
-                      enabled={paths === '/' || paths === ''}
-                    >
-                      <div className="mt-1 flex place-items-center gap-1">
-                        <Box className="h-4 w-4" />
-                        {background?.workspaceId
-                          ? workspaces?.find(
-                              (w) => w.id === background?.workspaceId
-                            )?.name
-                          : 'My Workspace'}
-                      </div>
-                    </NavLink>
-                  )}
-                </NavigationMenuItem> */}
                 <NavigationMenuItem>
                   {background?.sessionId && workbenches && (
                     <>
@@ -330,7 +265,7 @@ export function Header() {
         )}
 
         <div className="flex items-center justify-end">
-          {isAuthenticated && (
+          {user && (
             <div className="relative mr-2 hidden flex-1 xl:block">
               <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted" />
               <Input
@@ -351,13 +286,15 @@ export function Header() {
             >
               <CircleHelp className="h-4 w-4" />
             </Button>
-            <Button
-              size="icon"
-              className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
-              variant="ghost"
-            >
-              <Bell className="h-4 w-4" />
-            </Button>
+            {user && (
+              <Button
+                size="icon"
+                className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+                variant="ghost"
+              >
+                <Bell className="h-4 w-4" />
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -373,7 +310,7 @@ export function Header() {
                 align="end"
                 forceMount
               >
-                {isAuthenticated ? (
+                {user && (
                   <>
                     <DropdownMenuItem
                       className="cursor-pointer"
@@ -390,28 +327,11 @@ export function Header() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-slate-500" />
                     <DropdownMenuItem
-                      onClick={handleLogoutClick}
+                      onClick={logout}
                       className="cursor-pointer"
                     >
                       Logout
                     </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => router.push('/login')}
-                    >
-                      Login
-                    </DropdownMenuItem>
-                    {internalLogin && (
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => router.push('/register')}
-                      >
-                        Register
-                      </DropdownMenuItem>
-                    )}
                   </>
                 )}
               </DropdownMenuContent>

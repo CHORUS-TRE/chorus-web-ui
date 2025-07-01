@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env'
-
 import { UserCreateType, UserUpdateType } from '@/domain/model/user'
 import {
   ChorusCreateUserReply,
@@ -28,10 +26,10 @@ export type { UserDataSource }
 class UserApiDataSourceImpl implements UserDataSource {
   private service: UserServiceApi
 
-  constructor(token: string) {
+  constructor(token: string, basePath: string) {
     const configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+      basePath
     })
     this.service = new UserServiceApi(configuration)
   }

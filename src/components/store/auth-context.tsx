@@ -1,6 +1,5 @@
 'use client'
 
-import { env } from 'next-runtime-env'
 import {
   createContext,
   ReactElement,
@@ -12,78 +11,102 @@ import {
   useState
 } from 'react'
 
-import { logout } from '@/components/actions/authentication-view-model'
-import { User } from '@/domain/model'
+import {
+  getToken,
+  login,
+  logout
+} from '@/components/actions/authentication-view-model'
+import { Result, User } from '@/domain/model'
 
 import { userMe } from '../actions/user-view-model'
 import { useAppState } from './app-state-context'
 
 type AuthContextType = {
-  isAuthenticated: boolean
-  setAuthenticated: (value: boolean) => void
   user: User | undefined
+  logout: () => Promise<void>
+  login: (
+    prevState: Result<Partial<User>>,
+    formData: FormData
+  ) => Promise<Result<User>>
 }
 
 const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  setAuthenticated: () => {},
-  user: undefined
+  user: undefined,
+  logout: async () => {},
+  login: async () => {
+    return { data: undefined, error: undefined }
+  }
 })
 
 export const AuthProvider = ({
-  children,
-  authenticated,
-  initialUser
+  children
 }: {
   children: ReactNode
-  authenticated: boolean
-  initialUser?: User
 }): ReactElement => {
-  const [isAuthenticated, setAuthenticated] = useState<boolean>(authenticated)
-  const [user, setUser] = useState<User | undefined>(initialUser)
+  const [user, setUser] = useState<User>()
   const refreshInterval = useRef<NodeJS.Timeout | undefined>(undefined)
-
   const { setBackground } = useAppState()
 
-  const refreshUser = useCallback(async () => {
-    try {
-      if (!isAuthenticated) {
-        setUser(undefined)
-        return
+  const handleLogin = async (
+    prevState: Result<Partial<User>>,
+    formData: FormData
+  ) => {
+    const result = await login(prevState, formData)
+
+    if (result.error) {
+      return {
+        ...prevState,
+        error: result.error
       }
+    }
 
-      const { data, error } = await userMe()
-      if (error) throw error
+    if (result.data) {
+      const user = await userMe()
+      if (user?.data) {
+        setUser(user.data)
+      }
+    }
 
-      if (user?.id !== data?.id) {
-        setUser({
-          ...(data as User),
-          workspaceId:
-            env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-            localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-            undefined
-        })
+    return {
+      ...prevState,
+      data: 'success'
+    }
+  }
+
+  const handleLogout = useCallback(async () => {
+    await logout()
+    setBackground(undefined)
+    sessionStorage.removeItem('token')
+    setUser(undefined)
+    logout()
+  }, [setBackground])
+
+  const refreshUser = useCallback(async () => {
+    const token = await getToken()
+    if (!token) {
+      return
+    }
+
+    try {
+      const userResult = await userMe()
+      if (!userResult?.data) throw new Error('Failed to get user')
+
+      if (user?.id !== userResult.data?.id) {
+        setUser(userResult.data)
       }
     } catch (error) {
       console.error(error)
-      setBackground(undefined)
-      setAuthenticated(false)
-      logout().then(() => {
-        window.location.href = '/'
-      })
+      handleLogout()
     }
-  }, [isAuthenticated, setBackground, setAuthenticated, user])
+  }, [user, handleLogout])
 
   useEffect(() => {
-    if (isAuthenticated && !refreshInterval.current) {
-      // Initial refresh if we don't have a user
-      if (!user) {
-        refreshUser()
-      }
-
-      // Set up periodic refresh
-      refreshInterval.current = setInterval(refreshUser, 30 * 1000)
+    if (!user) {
+      refreshUser()
     }
+
+    // Set up periodic refresh
+    refreshInterval.current = setInterval(refreshUser, 30 * 1000)
 
     return () => {
       if (refreshInterval.current) {
@@ -91,15 +114,11 @@ export const AuthProvider = ({
         refreshInterval.current = undefined
       }
     }
-  }, [isAuthenticated, refreshUser, user])
+  }, [user, refreshUser])
 
   return (
     <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        setAuthenticated,
-        user
-      }}
+      value={{ user, login: handleLogin, logout: handleLogout }}
     >
       {children}
     </AuthContext.Provider>
@@ -112,9 +131,4 @@ export function useAuth(): AuthContextType {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
-}
-
-export function useIsAuthenticated(): boolean {
-  const context = useAuth()
-  return context.isAuthenticated
 }

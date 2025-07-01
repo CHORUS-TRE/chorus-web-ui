@@ -2,7 +2,7 @@ import { Result } from '@/domain/model'
 import { User, UserCreateType, UserUpdateType } from '@/domain/model/user'
 
 interface UserRepository {
-  create: (user: UserCreateType) => Promise<Result<User>>
+  create: (user: UserCreateType) => Promise<Result<string>>
   me: () => Promise<Result<User>>
   get: (id: string) => Promise<Result<User>>
   delete: (id: string) => Promise<Result<string>>
