@@ -2,32 +2,54 @@
 
 ## 1. What Works
 
-- **Platform-Level User and Role Management:** A full-featured UI for administrators to manage users (create, read, update, delete) is implemented. This now includes the ability to manage roles via a "permission matrix" and assign those roles to users.
-- **Complete End-to-End Data Flow:** The clean architecture data flow pattern for the `App`, `User`, `AppInstance`, `Workspace`, `Workbench`, and now `Role` entities is fully implemented and documented.
-- **Robust UI Components:** The UI components for creating and editing resources (`AppCreateDialog`, `AppEditDialog`, `UserCreateDialog`, etc.) are robust, providing clear validation, error handling, and user notifications.
-- **Public-Facing Registration:** The public-facing `UserRegisterForm` is aligned with the new patterns.
-- **Server-Side Data Loading:** Initial server-side data fetching for providers follows Next.js best practices, preventing client-side rendering errors.
-- **Effective Core Architecture:** The core Clean Architecture structure (`domain`, `data`, `presentation`) is proving effective.
-- **Integrated Notification System:** The application's notification system (`useAppState`) is successfully integrated into the data flow.
+- **Complete Role Management System:** Full platform-level role and permission management is implemented and functional:
+  - Role matrix UI at `/admin/roles` with permission assignment
+  - Recursive role inheritance support in domain models
+  - Complete data layer implementation (repositories, data sources, mappers)
+  - Integration with user management for role assignment
+  - RoleMatrix component for visual permission management
+- **Platform-Level User Management:** Full-featured UI for administrators to manage users (create, read, update, delete) with role assignment capabilities.
+- **Complete End-to-End Data Flow:** The clean architecture data flow pattern is fully implemented across all entities: `App`, `User`, `AppInstance`, `Workspace`, `Workbench`, and `Role`.
+- **Robust UI Components:** Comprehensive UI components for resource management with validation, error handling, and notifications.
+- **Public-Facing Registration:** The `UserRegisterForm` is aligned with architectural patterns.
+- **Server-Side Data Loading:** Initial server-side data fetching follows Next.js best practices.
+- **Effective Core Architecture:** The Clean Architecture structure proves effective across all implemented features.
+- **Integrated Notification System:** The notification system is successfully integrated throughout the data flow.
 
-## 2. Next Steps
+## 2. Current Work
 
-### Next Concrete Feature
-- **Client-Side Authentication Refactor:** The next major task is to refactor the authentication flow. This will involve moving auth state management from server components to client-side hooks and contexts.
-- **Background Iframe:** Following the authentication refactor, implement the background iframe to run user application sessions.
+### Active Development
+
+- **Authentication Refactor:** Major refactoring of authentication from server-side to client-side approach is in progress:
+  - Layout components restructured for authenticated/unauthenticated states
+  - Authentication middleware removed
+  - Background iframe integration for application hosting
+  - Login and registration flows updated
+
+### Next Concrete Features
+
+- **Complete Authentication Refactor:** Finalize the client-side authentication implementation
+- **Background Iframe Functionality:** Complete the application hosting infrastructure
+- **End-to-End Testing:** Validate the new authentication flow
 
 ### Future Work / On Hold
-- **Workspace-Level Role Management:** The feature to manage team members and their roles *within a specific workspace* is on hold pending completion of the authentication and iframe tasks.
+
+- **Workspace-Level Role Management:** Team member and role management within specific workspaces is on hold pending authentication completion.
 
 ### Ongoing Tasks
-- **Increase Test Coverage:** Continuously add tests for new and existing data flow components to ensure stability.
+
+- **Test Coverage Expansion:** Continue adding tests, especially for the new role management and authentication features.
 
 ## 3. Current Status
 
-- **Pivoting to new feature work:** Having completed the platform-level role management feature, development is now shifting to a major refactor of the authentication system.
-- **Architecture Fully Implemented:** The core data and UI patterns have been successfully applied across all major entities. The application is in a consistent and maintainable state.
+- **Major Architecture Milestone:** Role management implementation demonstrates the maturity and effectiveness of the established architectural patterns.
+- **Authentication Transition:** Currently in the middle of a significant authentication architecture refactor.
+- **Branch Status:** Working on `feat/roles-management` branch which contains both completed role work and ongoing authentication changes.
+- **Architecture Proven:** The core data and UI patterns have been successfully applied across all major entities.
 
 ## 4. Known Issues
 
-- **Using Placeholder Role Definitions:** The role management implementation currently uses mock/placeholder roles and permissions. These need to be replaced by integrating the `chorus-gatekeeper` service.
-- **Test Suite Needs Expansion:** While previously fixed, the test suite needs to be expanded to cover the new role management functionality.
+- **Authentication Transition:** Some instability expected during the ongoing authentication refactor.
+- **Mock Role Data:** Role management currently uses placeholder/mock data pending integration with `chorus-gatekeeper` service.
+- **Test Suite:** Needs expansion to cover new role management functionality and authentication changes.
+- **Branch Consolidation:** The current branch contains both completed and in-progress work that may need separation.

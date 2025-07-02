@@ -44,6 +44,10 @@ graph TD
 
 ## 2. Key Technical Decisions
 
+- **Authentication Architecture Shift:** Moving from server-side authentication middleware to client-side state management approach:
+  - Layout components split into authenticated/unauthenticated states
+  - Background iframe integration for application hosting
+  - Client-side context providers for auth state
 - **View-Model and Data Fetching Strategy:** The primary approach is client-side data fetching. "View-Model" files in `src/components/actions` use `fetch` to call API routes. As an exception for progressive enhancement, form submissions are handled by Next.js Server Actions, which call use cases and return state to the UI.
 - **Repository Pattern:** This is the core of our data handling strategy.
   - **Interface (`domain/repository`):** Defines the contract for data operations, using domain models (e.g., `App`, `AppCreateType`).
@@ -54,7 +58,20 @@ graph TD
 - **Zod for Validation:** Zod schemas in `domain/model` are the single source of truth for validation. They are used in server actions and repository implementations to ensure data integrity.
 - **Generated API Client:** Using OpenAPI generator to create a strongly-typed API client, ensuring type safety when communicating with the backend.
 
-## 3. Initial Data Loading for Client Providers
+## 3. Proven Patterns
+
+### Role Management Implementation
+The role management feature demonstrates the effectiveness of our architectural patterns:
+- **Recursive Domain Models:** Role entity supports inheritance with `z.lazy()` for recursive Zod schemas
+- **Complex UI Components:** RoleMatrix component handles complex permission/role relationships
+- **Mock Data Sources:** Effective pattern for development before backend integration
+
+### Authentication State Management
+- **Client-Side Context Providers:** Moving authentication state to React Context for better client-side control
+- **Layout Composition:** Authenticated/unauthenticated layout components for clear separation of concerns
+- **Background Integration:** Iframe components for hosting user applications within the main interface
+
+## 4. Initial Data Loading for Client Providers
 
 A common requirement is to provide initial state (e.g., authentication status) to client-side providers. To avoid server/client boundary errors, the following pattern is used:
 
