@@ -49,6 +49,7 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import { toast } from './hooks/use-toast'
 import NavLink from './nav-link'
 import { useAuth } from './store/auth-context'
 import { Input } from './ui/input'
@@ -60,7 +61,6 @@ export function Header() {
     workspaces,
     apps,
     appInstances,
-    setNotification,
     background,
     setBackground,
     refreshWorkbenches,
@@ -295,22 +295,22 @@ export function Header() {
                 <Bell className="h-4 w-4" />
               </Button>
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="icon"
-                  className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
-                  variant="ghost"
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="icon"
+                    className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+                    variant="ghost"
+                  >
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-56 bg-black bg-opacity-85 text-white"
+                  align="end"
+                  forceMount
                 >
-                  <User className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-black bg-opacity-85 text-white"
-                align="end"
-                forceMount
-              >
-                {user && (
                   <>
                     <DropdownMenuItem
                       className="cursor-pointer"
@@ -333,9 +333,9 @@ export function Header() {
                       Logout
                     </DropdownMenuItem>
                   </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
@@ -343,7 +343,7 @@ export function Header() {
           id={params.sessionId}
           state={[deleteOpen, setDeleteOpen]}
           onSuccess={() => {
-            setNotification({
+            toast({
               title: 'Success!',
               description: 'Session is deleting, redirecting to workspace...',
               variant: 'default'

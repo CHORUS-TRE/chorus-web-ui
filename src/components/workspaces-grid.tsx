@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
 
+import { toast } from './hooks/use-toast'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 interface WorkspacesGridProps {
@@ -43,7 +44,6 @@ export default function WorkspacesGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { setNotification } = useAppState()
   const { refreshWorkspaces, users } = useAppState()
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
@@ -116,7 +116,7 @@ export default function WorkspacesGrid({
                 () => setActiveUpdateId(null)
               ]}
               onSuccess={() => {
-                setNotification({
+                toast({
                   title: 'Success!',
                   description: 'Workspace updated'
                 })
@@ -135,7 +135,7 @@ export default function WorkspacesGrid({
               onSuccess={() => {
                 refreshWorkspaces()
 
-                setNotification({
+                toast({
                   title: 'Success!',
                   description: `Workspace ${workspace.name} deleted`
                 })

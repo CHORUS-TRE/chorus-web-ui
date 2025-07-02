@@ -23,6 +23,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
+import { toast } from './hooks/use-toast'
 import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
 import {
@@ -74,7 +75,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const {
     workbenches,
     users,
-    setNotification,
     refreshWorkspaces,
     background,
     setBackground,
@@ -180,7 +180,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           onSuccess={() => {
             refreshWorkspaces()
 
-            setNotification({
+            toast({
               title: 'Success!',
               description: `Workspace ${workspace?.name} deleted`
             })
@@ -227,7 +227,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               workspace={workspace}
               state={[openEdit, setOpenEdit]}
               onSuccess={() => {
-                setNotification({
+                toast({
                   title: 'Workspace updated',
                   description: 'Workspace updated',
                   variant: 'default'

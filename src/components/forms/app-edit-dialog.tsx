@@ -10,7 +10,6 @@ import { appUpdate } from '~/components/actions/app-view-model'
 import { Button } from '~/components/button'
 import { PRESETS, type Presets } from '~/components/forms/app-create-dialog'
 import { ImageUploadField } from '~/components/forms/image-upload-field'
-import { useAppState } from '~/components/store/app-state-context'
 import {
   Dialog,
   DialogContent,
@@ -36,6 +35,8 @@ import {
 } from '~/components/ui/select'
 import { App, AppState, AppUpdateSchema, Result } from '~/domain/model'
 
+import { toast } from '../hooks/use-toast'
+
 interface AppEditDialogProps {
   app: App
   open: boolean
@@ -52,7 +53,6 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
   onOpenChange,
   onSuccess
 }) => {
-  const { setNotification } = useAppState()
   const [showAdvanced, setShowAdvanced] = useState(false)
   const form = useForm<FormData>({
     resolver: zodResolver(AppUpdateSchema),
@@ -91,7 +91,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
 
   useEffect(() => {
     if (formState.errors) {
-      console.log(formState.errors)
+      console.error(formState.errors)
     }
   }, [formState.errors])
 
@@ -117,7 +117,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       }
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -126,7 +126,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'App updated successfully'
         })
@@ -135,7 +135,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
         form.reset()
       }
     } catch (error) {
-      setNotification({
+      toast({
         title: 'Error',
         description:
           error instanceof Error

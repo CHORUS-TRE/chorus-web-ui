@@ -19,6 +19,7 @@ import {
 import { Result, User } from '@/domain/model'
 
 import { userMe } from '../actions/user-view-model'
+import { LoadingOverlay } from '../loading-overlay'
 import { useAppState } from './app-state-context'
 
 type AuthContextType = {
@@ -44,6 +45,7 @@ export const AuthProvider = ({
   children: ReactNode
 }): ReactElement => {
   const [user, setUser] = useState<User>()
+  const [isLoading, setIsLoading] = useState(true)
   const refreshInterval = useRef<NodeJS.Timeout | undefined>(undefined)
   const { setBackground } = useAppState()
 
@@ -84,6 +86,7 @@ export const AuthProvider = ({
   const refreshUser = useCallback(async () => {
     const token = await getToken()
     if (!token) {
+      setIsLoading(false)
       return
     }
 
@@ -94,6 +97,8 @@ export const AuthProvider = ({
       if (user?.id !== userResult.data?.id) {
         setUser(userResult.data)
       }
+
+      setIsLoading(false)
     } catch (error) {
       console.error(error)
       handleLogout()
@@ -120,7 +125,7 @@ export const AuthProvider = ({
     <AuthContext.Provider
       value={{ user, login: handleLogin, logout: handleLogout }}
     >
-      {children}
+      {isLoading ? <LoadingOverlay isLoading={isLoading} /> : children}
     </AuthContext.Provider>
   )
 }

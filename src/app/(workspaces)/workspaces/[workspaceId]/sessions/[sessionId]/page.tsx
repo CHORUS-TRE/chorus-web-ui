@@ -4,37 +4,21 @@ import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { Header } from '@/components/header'
+import { toast } from '@/components/hooks/use-toast'
 import { useAppState } from '@/components/store/app-state-context'
 import { useAuth } from '~/components/store/auth-context'
-import { toast } from '~/hooks/use-toast'
 
 export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; sessionId: string }>()
-  const { setBackground, notification } = useAppState()
-  const { isAuthenticated } = useAuth()
+  const { setBackground } = useAppState()
+  const { user } = useAuth()
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setBackground(undefined)
-      return
-    }
-
     setBackground({
       sessionId: params.sessionId,
       workspaceId: params.workspaceId
     })
-  }, [isAuthenticated, params.sessionId, params.workspaceId, setBackground])
-
-  useEffect(() => {
-    if (notification) {
-      toast({
-        title: notification.title,
-        description: notification.description || '',
-        variant: notification.variant,
-        className: 'bg-background text-white'
-      })
-    }
-  }, [notification])
+  }, [user, params.sessionId, params.workspaceId, setBackground])
 
   return (
     <>

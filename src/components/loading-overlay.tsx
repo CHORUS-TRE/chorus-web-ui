@@ -1,6 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
+
+import logo from '/public/logo-chorus-primaire-white@2x.svg'
 
 interface LoadingOverlayProps {
   isLoading: boolean
@@ -11,7 +14,6 @@ interface LoadingOverlayProps {
 
 export function LoadingOverlay({
   isLoading,
-  message = 'Loading...',
   delay = 500,
   dismiss = false
 }: LoadingOverlayProps) {
@@ -48,9 +50,18 @@ export function LoadingOverlay({
       role="status"
       aria-label="Loading"
     >
-      <div className="flex flex-col items-center gap-4">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-white border-t-transparent" />
-        <p className="text-white">{message}</p>
+      <div className="justify-cente flex flex-col items-center gap-4">
+        <div className="animate-pulse bg-transparent">
+          <Image
+            src={logo}
+            alt="Chorus"
+            height={64}
+            className="aspect-auto"
+            id="logo"
+            priority
+          />
+        </div>
+        {/* <p className="text-white">{message}</p> */}
       </div>
     </div>
   )

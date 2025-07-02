@@ -42,6 +42,7 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 
+import { toast } from '../hooks/use-toast'
 import { Textarea } from '../ui/textarea'
 
 const DEFAULT_VIEWPORT = {
@@ -64,7 +65,6 @@ export function WorkbenchCreateForm({
 }) {
   const [open, setOpen] = useState(openOnStart)
   const [viewportDimensions, setViewportDimensions] = useState(DEFAULT_VIEWPORT)
-  const { setNotification } = useAppState()
   const router = useRouter()
 
   const form = useForm<WorkbenchCreateType>({
@@ -150,7 +150,7 @@ export function WorkbenchCreateForm({
       }
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -159,7 +159,7 @@ export function WorkbenchCreateForm({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'Session created successfully'
         })
@@ -272,7 +272,6 @@ export function WorkbenchDeleteForm({
   id?: string
   onSuccess?: () => void
 }) {
-  const { setNotification } = useAppState()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const onConfirm = async () => {
@@ -283,7 +282,7 @@ export function WorkbenchDeleteForm({
       setIsDeleting(false)
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -292,7 +291,7 @@ export function WorkbenchDeleteForm({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'Session deleted successfully.'
         })
@@ -323,7 +322,6 @@ export function WorkbenchUpdateForm({
   workbench: Workbench
   onSuccess?: (workbench: Workbench) => void
 }) {
-  const { setNotification } = useAppState()
   const form = useForm<WorkbenchUpdateType>({
     resolver: zodResolver(WorkbenchUpdateSchema),
     defaultValues: {
@@ -375,7 +373,7 @@ export function WorkbenchUpdateForm({
       }
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -384,7 +382,7 @@ export function WorkbenchUpdateForm({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'Session updated successfully'
         })

@@ -37,6 +37,7 @@ import {
   WorkbenchDeleteForm,
   WorkbenchUpdateForm
 } from './forms/workbench-forms'
+import { toast } from './hooks/use-toast'
 import { useAppState } from './store/app-state-context'
 
 export default function WorkbenchTable({
@@ -51,7 +52,6 @@ export default function WorkbenchTable({
 }) {
   const { workbenches, refreshWorkbenches, appInstances, apps, workspaces } =
     useAppState()
-  const { setNotification } = useAppState()
 
   const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
@@ -85,7 +85,7 @@ export default function WorkbenchTable({
             state={[open, setOpen]}
             onSuccess={() => {
               refreshWorkbenches()
-              setNotification({
+              toast({
                 title: 'Success!',
                 description: 'Session updated successfully'
               })
@@ -101,7 +101,7 @@ export default function WorkbenchTable({
               setTimeout(() => {
                 refreshWorkbenches()
               }, 2000)
-              setNotification({
+              toast({
                 title: 'Success!',
                 description: `Session ${workbench?.name} in ${
                   workspaces?.find((w) => w.id === workspaceId)?.name
@@ -233,7 +233,7 @@ export default function WorkbenchTable({
           workspaceId={workspaceId}
           // onSuccess={(sessionId) => {
           //   refreshWorkbenches()
-          //   setNotification({
+          //   toast({
           //     title: 'Success!',
           //     description: 'Session created successfully'
           //   })

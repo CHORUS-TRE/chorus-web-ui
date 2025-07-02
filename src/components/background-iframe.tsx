@@ -22,16 +22,25 @@ export default function BackgroundIframe() {
       return
     }
 
+    if (url) {
+      console.log('url already set', url)
+      return
+    }
+
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
     const baseAPIURL = `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/api/rest/v1`
     const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
 
-    setUrl(newUrl)
+    setUrl((prevState) => {
+      if (prevState === newUrl) return prevState
+      return newUrl
+    })
   }, [background])
 
   // Focus management effect
   useEffect(() => {
+    console.log('focus management effect')
     const iframe = iFrameRef.current
 
     if (!iframe) return
@@ -44,32 +53,32 @@ export default function BackgroundIframe() {
     return () => focusTimeout && clearTimeout(focusTimeout)
   }, [])
 
-  useEffect(() => {
-    const { pathname } = window.location
+  // useEffect(() => {
+  //   const { pathname } = window.location
 
-    // check for http://localhost:3000/workspaces/56/sessions/423 404
-    // Use window.addEventListener since pathname is just a string
-    window.addEventListener('popstate', () => {
-      if (
-        pathname !==
-        `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-      ) {
-        setBackground(undefined)
-      }
-    })
+  //   // check for http://localhost:3000/workspaces/56/sessions/423 404
+  //   // Use window.addEventListener since pathname is just a string
+  //   window.addEventListener('popstate', () => {
+  //     if (
+  //       pathname !==
+  //       `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
+  //     ) {
+  //       setBackground(undefined)
+  //     }
+  //   })
 
-    // Clean up event listener
-    return () => {
-      window.removeEventListener('popstate', () => {
-        if (
-          pathname !==
-          `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-        ) {
-          setBackground(undefined)
-        }
-      })
-    }
-  }, [error, setBackground, background])
+  //   // Clean up event listener
+  //   return () => {
+  //     window.removeEventListener('popstate', () => {
+  //       if (
+  //         pathname !==
+  //         `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
+  //       ) {
+  //         setBackground(undefined)
+  //       }
+  //     })
+  //   }
+  // }, [error, setBackground, background])
 
   const handleLoad = () => {
     const handleMouseOver = (e: MouseEvent) => {
@@ -82,15 +91,39 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }
 
-  if (!background?.sessionId) return null
+  // useEffect(() => {
+  //   if (!url) return
+
+  //   const xhr = new XMLHttpRequest()
+
+  //   xhr.open('GET', url)
+  //   xhr.onreadystatechange = () => {
+  //     if (xhr.readyState === xhr.DONE) {
+  //       if (xhr.status === 200) {
+  //         const data_url = URL.createObjectURL(xhr.response)
+  //         document
+  //           .querySelector('#workspace-iframe')
+  //           ?.setAttribute('src', data_url)
+  //       } else {
+  //         console.error('no data :(')
+  //       }
+  //     }
+  //   }
+  //   xhr.responseType = 'blob'
+  //   xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('token'))
+  //   // xhr.setRequestHeader('credentials', 'include')
+  //   xhr.send()
+  // }, [url])
+
+  // if (!background?.sessionId) return null
 
   return (
     <>
-      <LoadingOverlay
+      {/* <LoadingOverlay
         isLoading={isLoading}
         message="Loading session..."
         dismiss={error ? true : false}
-      />
+      /> */}
       {/* {error && (
         <div className="fixed inset-0 top-11 z-30 flex items-center justify-center bg-background/80">
           <Alert variant="default" className="w-[400px] text-white">
@@ -102,20 +135,18 @@ export default function BackgroundIframe() {
           </Alert>
         </div>
       )} */}
-      {!isLoading && !error && (
-        <iframe
-          title="Application Workspace"
-          src={url ? url : 'about:blank'}
-          allow="autoplay; fullscreen; clipboard-write;"
-          style={{ width: '100vw', height: '100vh' }}
-          className="fixed left-0 top-11 z-20 h-full w-full"
-          id="workspace-iframe"
-          ref={iFrameRef}
-          aria-label="Application Workspace"
-          onLoad={handleLoad}
-          tabIndex={0}
-        />
-      )}
+      <iframe
+        title="Application Workspace"
+        src={url ? url : 'about:blank'}
+        allow="autoplay; fullscreen; clipboard-write;"
+        style={{ width: '100vw', height: '100vh' }}
+        className="fixed left-0 top-11 z-20 h-full w-full"
+        id="workspace-iframe"
+        ref={iFrameRef}
+        aria-label="Application Workspace"
+        onLoad={handleLoad}
+        tabIndex={0}
+      />
     </>
   )
 }

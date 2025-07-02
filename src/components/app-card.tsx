@@ -27,6 +27,7 @@ import { App, AppInstanceStatus } from '~/domain/model'
 
 import { createAppInstance } from './actions/app-instance-view-model'
 import { appDelete } from './actions/app-view-model'
+import { toast } from './hooks/use-toast'
 import { useAppState } from './store/app-state-context'
 import { useAuth } from './store/auth-context'
 import { Avatar, AvatarFallback } from './ui/avatar'
@@ -44,13 +45,8 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const {
-    setNotification,
-    background,
-    refreshWorkbenches,
-    refreshWorkspaces,
-    setBackground
-  } = useAppState()
+  const { background, refreshWorkbenches, refreshWorkspaces, setBackground } =
+    useAppState()
   const { user } = useAuth()
   const router = useRouter()
 
@@ -59,12 +55,11 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
     try {
       setIsDeleting(true)
-      setNotification(undefined)
 
       const result = await appDelete(app.id)
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'App deletion failed',
           variant: 'destructive',
           description: result.error
@@ -78,7 +73,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         setIsDeleting(false)
       }, 100)
     } catch (error) {
-      setNotification({
+      toast({
         title: 'App deletion failed',
         variant: 'destructive',
         description:
@@ -89,7 +84,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   }
 
   const handleDeleteClick = () => {
-    setNotification(undefined)
     setShowDeleteDialog(true)
   }
 
@@ -106,7 +100,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
       return
     }
 
-    setNotification({
+    toast({
       title: 'Launching app...',
       description: `Starting ${app.name}`,
       variant: 'default'
@@ -124,7 +118,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
       const result = await createAppInstance({}, formData)
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error launching app',
           description: result.error,
           variant: 'destructive'
@@ -137,7 +131,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         return
       }
 
-      setNotification({
+      toast({
         title: 'Success!',
         description: `${app.name} launched successfully`
       })
@@ -147,7 +141,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
       refreshWorkbenches()
       refreshWorkspaces()
     } catch (error) {
-      setNotification({
+      toast({
         title: 'Error launching app',
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive'

@@ -1,5 +1,7 @@
 'use client'
 
+import { env } from 'next-runtime-env'
+
 import { AppInstanceDataSourceImpl } from '~/data/data-source'
 import { AppInstanceRepositoryImpl } from '~/data/repository'
 import { Result } from '~/domain/model'
@@ -14,11 +16,14 @@ import { AppInstanceGet } from '~/domain/use-cases/app-instance/app-instance-get
 import { AppInstanceList } from '~/domain/use-cases/app-instance/app-instance-list'
 import { AppInstanceUpdate } from '~/domain/use-cases/app-instance/app-instance-update'
 
-import { getSession } from './server/session'
+import { getToken } from './authentication-view-model'
 
 const getRepository = async () => {
-  const session = await getSession()
-  const dataSource = new AppInstanceDataSourceImpl(session)
+  const token = await getToken()
+  const dataSource = new AppInstanceDataSourceImpl(
+    token || '',
+    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+  )
 
   return new AppInstanceRepositoryImpl(dataSource)
 }

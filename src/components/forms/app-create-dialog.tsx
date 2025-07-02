@@ -9,7 +9,6 @@ import { z } from 'zod'
 import { appCreate } from '~/components/actions/app-view-model'
 import { Button } from '~/components/button'
 import { ImageUploadField } from '~/components/forms/image-upload-field'
-import { useAppState } from '~/components/store/app-state-context'
 import { useAuth } from '~/components/store/auth-context'
 import {
   Dialog,
@@ -36,6 +35,8 @@ import {
 } from '~/components/ui/select'
 import { App, AppCreateSchema, AppState } from '~/domain/model'
 import { Result } from '~/domain/model'
+
+import { toast } from '../hooks/use-toast'
 
 export type ResourcePreset = {
   requests: {
@@ -185,7 +186,6 @@ export function AppCreateDialog({
   onSuccess
 }: AppCreateDialogProps) {
   const { user } = useAuth()
-  const { setNotification } = useAppState()
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const form = useForm<FormData>({
@@ -218,7 +218,7 @@ export function AppCreateDialog({
 
   useEffect(() => {
     if (formState.errors) {
-      console.log(formState.errors)
+      console.error(formState.errors)
     }
   }, [formState.errors])
 
@@ -242,7 +242,7 @@ export function AppCreateDialog({
       }
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -251,7 +251,7 @@ export function AppCreateDialog({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'App created successfully'
         })
@@ -260,7 +260,7 @@ export function AppCreateDialog({
         form.reset()
       }
     } catch (error) {
-      setNotification({
+      toast({
         title: 'Error',
         description:
           error instanceof Error

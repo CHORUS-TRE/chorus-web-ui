@@ -35,6 +35,8 @@ import {
 } from '~/domain/model/user'
 import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
 
+import { toast } from '../hooks/use-toast'
+
 const UserEditFormSchema = BaseUserEditFormSchema.extend({
   roles: z.array(z.string()).optional()
 })
@@ -48,7 +50,6 @@ export function UserCreateDialog({
 }) {
   const [open, setOpen] = useState(false)
   const [roles, setRoles] = useState<Role[]>([])
-  const { setNotification } = useAppState()
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -82,13 +83,13 @@ export function UserCreateDialog({
 
   useEffect(() => {
     if (state.error) {
-      setNotification({
+      toast({
         title: 'Error creating user',
         description: state.error,
         variant: 'destructive'
       })
     } else if (state.data) {
-      setNotification({
+      toast({
         title: 'Success',
         description: 'User created successfully.'
       })
@@ -97,7 +98,7 @@ export function UserCreateDialog({
       setOpen(false)
       form.reset()
     }
-  }, [state, onUserCreated, form, setNotification])
+  }, [state, onUserCreated, form])
 
   const onSubmit = (data: FormData) => {
     const formData = new FormData()

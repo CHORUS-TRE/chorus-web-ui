@@ -14,18 +14,6 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { notification } = useAppState()
-
-  useEffect(() => {
-    if (notification) {
-      toast({
-        title: notification.title,
-        description: notification.description || '',
-        variant: notification.variant,
-        className: 'bg-background text-white'
-      })
-    }
-  }, [notification])
 
   const { setBackground } = useAppState()
   useEffect(() => {

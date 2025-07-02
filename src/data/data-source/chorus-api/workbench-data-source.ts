@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env'
-
 import {
   WorkbenchCreateType,
   WorkbenchUpdateType
@@ -33,10 +31,10 @@ export type { WorkbenchDataSource }
 class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   private service: WorkbenchServiceApi
 
-  constructor(token: string) {
+  constructor(token: string, basePath: string) {
     const configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+      basePath
     })
     this.service = new WorkbenchServiceApi(configuration)
   }

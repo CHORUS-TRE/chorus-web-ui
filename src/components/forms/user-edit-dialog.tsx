@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { updateUser } from '~/components/actions/user-view-model'
-import { useAppState } from '~/components/store/app-state-context'
 import { Button } from '~/components/ui/button'
 import {
   Dialog,
@@ -36,6 +35,8 @@ import {
 } from '~/domain/model/user'
 import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
 
+import { toast } from '../hooks/use-toast'
+
 const UserUpdateSchema = BaseUserUpdateSchema.extend({
   roles: z.array(z.string()).optional()
 })
@@ -51,7 +52,6 @@ export function UserEditDialog({
 }) {
   const [open, setOpen] = useState(false)
   const [roles, setRoles] = useState<Role[]>([])
-  const { setNotification } = useAppState()
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -84,20 +84,20 @@ export function UserEditDialog({
 
   useEffect(() => {
     if (state.error) {
-      setNotification({
+      toast({
         title: 'Error updating user',
         description: state.error,
         variant: 'destructive'
       })
     } else if (state.data) {
-      setNotification({
+      toast({
         title: 'Success',
         description: 'User updated successfully.'
       })
       onUserUpdated()
       setOpen(false)
     }
-  }, [state, onUserUpdated, setNotification])
+  }, [state, onUserUpdated])
 
   const onSubmit = (data: FormData) => {
     const formData = new FormData()
