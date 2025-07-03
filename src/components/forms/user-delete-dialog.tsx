@@ -3,7 +3,6 @@
 import { Trash2 } from 'lucide-react'
 
 import { deleteUser } from '~/components/actions/user-view-model'
-import { useAppState } from '~/components/store/app-state-context'
 import {
   AlertDialog,
   AlertDialogAction,

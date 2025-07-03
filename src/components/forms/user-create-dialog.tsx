@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { createUser } from '~/components/actions/user-view-model'
-import { useAppState } from '~/components/store/app-state-context'
 import { Button } from '~/components/ui/button'
 import {
   Dialog,

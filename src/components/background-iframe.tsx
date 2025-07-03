@@ -1,48 +1,44 @@
 'use client'
 
 import { env } from 'next-runtime-env'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { useUrlValidation } from '@/components/hooks/use-url-validation'
 import { useAppState } from '@/components/store/app-state-context'
 
-import { LoadingOverlay } from './loading-overlay'
+import { useAuth } from './store/auth-context'
 
 export default function BackgroundIframe() {
-  const { background, setBackground } = useAppState()
+  const { user } = useAuth()
+  const { background } = useAppState()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
-  const { error, isLoading } = useUrlValidation(url)
+  // const { error, isLoading } = useUrlValidation(url)
 
-  // URL initialization effect
-  useEffect(() => {
+  // Memoize URL computation to prevent unnecessary recalculations
+  const computedUrl = useMemo(() => {
     if (!background?.sessionId) {
-      setUrl(null)
-      return
-    }
-
-    if (url) {
-      console.log('url already set', url)
-      return
+      return null
     }
 
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
     const baseAPIURL = `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/api/rest/v1`
-    const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
+    return `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
+  }, [background?.sessionId])
 
-    setUrl((prevState) => {
-      if (prevState === newUrl) return prevState
-      return newUrl
-    })
-  }, [background])
-
-  // Focus management effect
+  // URL initialization effect
   useEffect(() => {
-    console.log('focus management effect')
-    const iframe = iFrameRef.current
+    if (computedUrl !== url) {
+      setUrl(computedUrl)
+    }
+  }, [computedUrl, url])
 
+  // Focus management effect - only run when URL changes
+  useEffect(() => {
+    if (!url) return
+
+    const iframe = iFrameRef.current
     if (!iframe) return
 
     iframe.focus()
@@ -51,36 +47,10 @@ export default function BackgroundIframe() {
     }, 1 * 1000)
 
     return () => focusTimeout && clearTimeout(focusTimeout)
-  }, [])
+  }, [url])
 
-  // useEffect(() => {
-  //   const { pathname } = window.location
-
-  //   // check for http://localhost:3000/workspaces/56/sessions/423 404
-  //   // Use window.addEventListener since pathname is just a string
-  //   window.addEventListener('popstate', () => {
-  //     if (
-  //       pathname !==
-  //       `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-  //     ) {
-  //       setBackground(undefined)
-  //     }
-  //   })
-
-  //   // Clean up event listener
-  //   return () => {
-  //     window.removeEventListener('popstate', () => {
-  //       if (
-  //         pathname !==
-  //         `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-  //       ) {
-  //         setBackground(undefined)
-  //       }
-  //     })
-  //   }
-  // }, [error, setBackground, background])
-
-  const handleLoad = () => {
+  // Memoize handleLoad to prevent iframe re-renders
+  const handleLoad = useCallback(() => {
     const handleMouseOver = (e: MouseEvent) => {
       iFrameRef.current?.focus()
       e.preventDefault()
@@ -89,7 +59,7 @@ export default function BackgroundIframe() {
 
     setTimeout(() => handleMouseOver, 1000)
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
-  }
+  }, [])
 
   // useEffect(() => {
   //   if (!url) return
@@ -115,7 +85,7 @@ export default function BackgroundIframe() {
   //   xhr.send()
   // }, [url])
 
-  // if (!background?.sessionId) return null
+  if (!background?.sessionId || !user) return null
 
   return (
     <>

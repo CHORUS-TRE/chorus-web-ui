@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
-import { AuthenticationMode, Result } from '@/domain/model'
+import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
@@ -20,7 +20,7 @@ import {
 import { toast } from '../hooks/use-toast'
 import { useAuth } from '../store/auth-context'
 
-const initialState: Result<AuthenticationMode[]> = {
+const initialState: Result<User> = {
   data: undefined,
   error: undefined,
   issues: undefined

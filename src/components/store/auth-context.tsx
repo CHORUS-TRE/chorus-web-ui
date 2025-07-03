@@ -26,7 +26,7 @@ type AuthContextType = {
   user: User | undefined
   logout: () => Promise<void>
   login: (
-    prevState: Result<Partial<User>>,
+    prevState: Result<User>,
     formData: FormData
   ) => Promise<Result<User>>
 }
@@ -50,10 +50,17 @@ export const AuthProvider = ({
   const { setBackground } = useAppState()
 
   const handleLogin = async (
-    prevState: Result<Partial<User>>,
+    prevState: Result<User>,
     formData: FormData
-  ) => {
-    const result = await login(prevState, formData)
+  ): Promise<Result<User>> => {
+    // Convert to the expected type for the authentication view model
+    const authState: Result<string> = {
+      data: undefined,
+      error: prevState.error,
+      issues: prevState.issues
+    }
+
+    const result = await login(authState, formData)
 
     if (result.error) {
       return {
@@ -66,12 +73,17 @@ export const AuthProvider = ({
       const user = await userMe()
       if (user?.data) {
         setUser(user.data)
+        return {
+          ...prevState,
+          data: user.data,
+          error: undefined
+        }
       }
     }
 
     return {
       ...prevState,
-      data: 'success'
+      error: 'Failed to retrieve user information'
     }
   }
 

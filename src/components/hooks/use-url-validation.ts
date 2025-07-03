@@ -5,7 +5,7 @@ const RETRY_INTERVAL = 1.5 * 1000
 
 export const useUrlValidation = (url: string | null) => {
   const [error, setError] = useState<Error | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const attemptCountRef = useRef(0)
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const lastUrlRef = useRef<string | null>(null)

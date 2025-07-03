@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { Header } from '@/components/header'
-import { toast } from '@/components/hooks/use-toast'
 import { useAppState } from '@/components/store/app-state-context'
 import { useAuth } from '~/components/store/auth-context'
 

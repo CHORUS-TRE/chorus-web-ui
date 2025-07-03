@@ -7,8 +7,8 @@ import { useAppState } from '@/components/store/app-state-context'
 import { AdminSidebar } from '@/components/ui/admin-sidebar'
 import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { UnauthenticatedApp } from '~/components/unauthenticated-app'
 import { useAuth } from '~/components/store/auth-context'
+import { UnauthenticatedApp } from '~/components/unauthenticated-app'
 
 export default function Layout({
   children
@@ -17,7 +17,6 @@ export default function Layout({
 }>) {
   const { setBackground } = useAppState()
   const { user } = useAuth()
-
 
   useEffect(() => {
     setBackground((prev) => {
@@ -29,7 +28,6 @@ export default function Layout({
   }, [setBackground])
 
   if (!user) return <UnauthenticatedApp />
-
 
   return (
     <>

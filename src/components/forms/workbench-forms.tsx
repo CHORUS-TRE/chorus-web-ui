@@ -12,7 +12,6 @@ import {
   workbenchDelete,
   workbenchUpdate
 } from '@/components/actions/workbench-view-model'
-import { useAppState } from '@/components/store/app-state-context'
 import {
   Dialog as DialogContainer,
   DialogContent,

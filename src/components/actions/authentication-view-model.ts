@@ -26,8 +26,10 @@ const getRepository = async (token?: string) => {
   return new AuthenticationRepositoryImpl(dataSource)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function login(prevState: any, formData: FormData) {
+export async function login(
+  prevState: Result<string>,
+  formData: FormData
+): Promise<Result<string>> {
   const repository = await getRepository()
   const useCase = new AuthenticationLogin(repository)
 

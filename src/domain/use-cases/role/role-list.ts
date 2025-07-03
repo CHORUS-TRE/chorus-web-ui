@@ -1,5 +1,5 @@
-import { Result } from '@/domain/model'
-import { Role, RoleRepository } from '@/domain/repository'
+import { Result, Role } from '@/domain/model'
+import { RoleRepository } from '@/domain/repository'
 
 export class RoleListUseCase {
   constructor(private readonly roleRepository: RoleRepository) {}
