@@ -9,6 +9,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState
 } from 'react'
 
@@ -19,19 +20,8 @@ import { appList } from '../actions/app-view-model'
 import { listUsers } from '../actions/user-view-model'
 import { workbenchList } from '../actions/workbench-view-model'
 import { workspaceList } from '../actions/workspace-view-model'
+import { toast } from '../hooks/use-toast'
 import { useAuth } from './auth-context'
-
-type NotificationType =
-  | {
-      title: string
-      description?: string
-      variant?: 'default' | 'destructive'
-      action?: {
-        label: string
-        onClick: () => void
-      }
-    }
-  | undefined
 
 type AppStateContextType = {
   showRightSidebar: boolean
@@ -56,8 +46,6 @@ type AppStateContextType = {
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
   users: User[] | undefined
-  notification: NotificationType
-  setNotification: Dispatch<SetStateAction<NotificationType>>
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   clearState: () => void
@@ -81,8 +69,6 @@ const AppStateContext = createContext<AppStateContextType>({
   workspaces: undefined,
   workbenches: undefined,
   users: undefined,
-  notification: undefined,
-  setNotification: () => {},
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
   clearState: () => {},
@@ -123,7 +109,6 @@ export const AppStateProvider = ({
     undefined
   )
   const [users, setUsers] = useState<User[] | undefined>(undefined)
-  const [notification, setNotification] = useState<NotificationType>(undefined)
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
@@ -140,6 +125,14 @@ export const AppStateProvider = ({
     setShowAppStoreHero((prev) => !prev)
   }, [])
 
+  const toggleRightSidebar = useCallback(() => {
+    setShowRightSidebar((prev) => !prev)
+  }, [])
+
+  const toggleWorkspaceView = useCallback(() => {
+    setShowWorkspacesTable((prev) => !prev)
+  }, [])
+
   const refreshWorkspaces = useCallback(async () => {
     if (!user) {
       return
@@ -148,7 +141,7 @@ export const AppStateProvider = ({
     try {
       const response = await workspaceList()
       if (response?.error)
-        setNotification({ title: response.error, variant: 'destructive' })
+        toast({ title: response.error, variant: 'destructive' })
       if (response?.data)
         setWorkspaces(
           response.data
@@ -156,7 +149,7 @@ export const AppStateProvider = ({
             .sort((a) => (a.id === user?.workspaceId ? -1 : 0))
         )
     } catch (error) {
-      setNotification({
+      toast({
         title: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
       })
@@ -178,9 +171,9 @@ export const AppStateProvider = ({
           ) as Workbench[]
         )
       if (response?.error)
-        setNotification({ title: response.error, variant: 'destructive' })
+        toast({ title: response.error, variant: 'destructive' })
     } catch (error) {
-      setNotification({
+      toast({
         title: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
       })
@@ -195,14 +188,14 @@ export const AppStateProvider = ({
       const response = await listUsers()
 
       if (response?.error) {
-        setNotification({ title: response.error, variant: 'destructive' })
+        toast({ title: response.error, variant: 'destructive' })
       }
 
       if (response?.data) {
         setUsers(response.data)
       }
     } catch (error) {
-      setNotification({
+      toast({
         title: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
       })
@@ -216,8 +209,7 @@ export const AppStateProvider = ({
 
     const result = await appList()
 
-    if (result?.error)
-      setNotification({ title: result.error, variant: 'destructive' })
+    if (result?.error) toast({ title: result.error, variant: 'destructive' })
 
     if (result?.data) {
       setApps(
@@ -241,7 +233,7 @@ export const AppStateProvider = ({
         )
       )
     } catch (error) {
-      setNotification({
+      toast({
         title: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
       })
@@ -265,7 +257,6 @@ export const AppStateProvider = ({
     setWorkbenches(undefined)
     setUsers(undefined)
     setBackground(undefined)
-    setNotification(undefined)
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
@@ -288,11 +279,6 @@ export const AppStateProvider = ({
 
   const initializeState = useCallback(async () => {
     if (!user) {
-      // setNotification({
-      //   title: 'Error',
-      //   description: 'User not found',
-      //   variant: 'destructive'
-      // })
       return
     }
 
@@ -303,7 +289,7 @@ export const AppStateProvider = ({
       await refreshApps()
       await refreshAppInstances()
     } catch (error) {
-      setNotification({
+      toast({
         title: 'Error',
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive'
@@ -323,33 +309,55 @@ export const AppStateProvider = ({
     initializeState()
   }, [initializeState])
 
+  const contextValue = useMemo(
+    () => ({
+      showRightSidebar,
+      toggleRightSidebar,
+      showWorkspacesTable,
+      toggleWorkspaceView,
+      background,
+      setBackground,
+      workspaces,
+      workbenches,
+      users,
+      refreshWorkspaces,
+      refreshWorkbenches,
+      clearState,
+      apps,
+      refreshApps,
+      appInstances,
+      refreshAppInstances,
+      showAppStoreHero,
+      toggleAppStoreHero,
+      hasSeenGettingStartedTour,
+      setHasSeenGettingStartedTour
+    }),
+    [
+      showRightSidebar,
+      toggleRightSidebar,
+      showWorkspacesTable,
+      toggleWorkspaceView,
+      background,
+      setBackground,
+      workspaces,
+      workbenches,
+      users,
+      refreshWorkspaces,
+      refreshWorkbenches,
+      clearState,
+      apps,
+      refreshApps,
+      appInstances,
+      refreshAppInstances,
+      showAppStoreHero,
+      toggleAppStoreHero,
+      hasSeenGettingStartedTour,
+      setHasSeenGettingStartedTour
+    ]
+  )
+
   return (
-    <AppStateContext.Provider
-      value={{
-        showRightSidebar,
-        toggleRightSidebar: () => setShowRightSidebar(!showRightSidebar),
-        showWorkspacesTable,
-        toggleWorkspaceView: () => setShowWorkspacesTable(!showWorkspacesTable),
-        background,
-        setBackground,
-        workspaces,
-        workbenches,
-        users,
-        notification,
-        setNotification,
-        refreshWorkspaces,
-        refreshWorkbenches,
-        clearState,
-        apps,
-        refreshApps,
-        appInstances,
-        refreshAppInstances,
-        showAppStoreHero,
-        toggleAppStoreHero,
-        hasSeenGettingStartedTour,
-        setHasSeenGettingStartedTour
-      }}
-    >
+    <AppStateContext.Provider value={contextValue}>
       {children}
     </AppStateContext.Provider>
   )

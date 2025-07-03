@@ -11,7 +11,7 @@ import {
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
@@ -23,6 +23,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
+import { toast } from './hooks/use-toast'
 import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
 import {
@@ -74,7 +75,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const {
     workbenches,
     users,
-    setNotification,
     refreshWorkspaces,
     background,
     setBackground,
@@ -180,7 +180,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           onSuccess={() => {
             refreshWorkspaces()
 
-            setNotification({
+            toast({
               title: 'Success!',
               description: `Workspace ${workspace?.name} deleted`
             })
@@ -188,7 +188,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
       </div>
 
-      <div className="my-1 grid w-full gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="my-1 grid w-full gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         <div key={workspace?.id} className="group relative">
           <Card
             title={
@@ -213,16 +213,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </div>
             }
             description={`Sessions in ${workspace?.name}.`}
-            content={<WorkspaceWorkbenchList workspaceId={workspaceId} />}
+            content={
+              <Suspense fallback={<div>Loading...</div>}>
+                <ScrollArea className="h-[200px]" type="hover">
+                  <WorkspaceWorkbenchList workspaceId={workspaceId} />
+                </ScrollArea>
+              </Suspense>
+            }
             footer={
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}
                 workspaceName={workspace?.name}
-                // onSuccess={(sessionId) => {
-                //   refreshWorkspaces()
-                //   refreshWorkbenches()
-
-                // }}
               />
             }
           />
@@ -232,7 +233,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               workspace={workspace}
               state={[openEdit, setOpenEdit]}
               onSuccess={() => {
-                setNotification({
+                toast({
                   title: 'Workspace updated',
                   description: 'Workspace updated',
                   variant: 'default'

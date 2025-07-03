@@ -5,11 +5,13 @@ import {
   User,
   UserCreateType,
   UserSchema,
+  UserStatusEnum,
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
 
 import { UserDataSource } from '../data-source'
+import { MOCK_ROLES } from '../data-source/chorus-api/role-data-source'
 
 export class UserRepositoryImpl implements UserRepository {
   private dataSource: UserDataSource
@@ -35,8 +37,19 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      // After creating, fetch the full user data
-      return this.get(userResult.data.id)
+      return {
+        data: {
+          id: userResult.data.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          status: UserStatusEnum.ACTIVE,
+          source: 'chorus',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          roles2: [MOCK_ROLES[0]]
+        }
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
@@ -54,6 +67,11 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: userResult.error.issues
         }
+      }
+
+      // Temporary mock data injection for UI development
+      if (userResult) {
+        userResult.data.roles2 = [MOCK_ROLES[0]]
       }
       return { data: userResult.data }
     } catch (error) {
@@ -73,6 +91,11 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: userResult.error.issues
         }
+      }
+
+      // Temporary mock data injection for UI development
+      if (userResult) {
+        userResult.data.roles2 = [MOCK_ROLES[0]]
       }
       return { data: userResult.data }
     } catch (error) {
@@ -111,6 +134,12 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: usersResult.error.issues
         }
+      }
+      // Temporary mock data injection for UI development
+      if (usersResult) {
+        usersResult.data.forEach((user: User, index: number) => {
+          user.roles2 = [MOCK_ROLES[index % MOCK_ROLES.length]]
+        })
       }
 
       return { data: usersResult.data }

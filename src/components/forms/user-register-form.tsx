@@ -45,24 +45,28 @@ export default function UserRegisterForm() {
 
   useEffect(() => {
     if (state.data?.id && !state.error?.includes('fail')) {
-      redirect(`/login?username=${state.data.username}`)
+      redirect(`/?username=${state.data.username}`)
     }
   }, [state])
 
   return (
-    <div className="mx-auto grid w-full min-w-60 gap-6 text-white">
-      <div className="grid gap-4 text-center">
-        <h2>Create an account</h2>
-        <h5 className="text-muted">
-          Enter your username below to create your account
-        </h5>
+    <div className="flex w-full flex-col items-center justify-center bg-black bg-opacity-20 p-8 md:w-1/2">
+      <div className="grid h-full w-full gap-2 p-8 text-white">
+        <div className="gap-4 text-center">
+          <h2>Create an account</h2>
+          <h5 className="text-muted">
+            Enter your username below to create your account
+          </h5>
+        </div>
       </div>
       <Separator className="mb-1" />
       <form action={formAction}>
         <div className="mb-4 grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
+              <Label htmlFor="firstName" className="text-white">
+                First name
+              </Label>
               <Input
                 disabled={isPending}
                 id="firstName"
@@ -80,7 +84,9 @@ export default function UserRegisterForm() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName" className="text-white">
+                Last name
+              </Label>
               <Input
                 disabled={isPending}
                 id="lastName"
@@ -99,7 +105,9 @@ export default function UserRegisterForm() {
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="username">username</Label>
+            <Label htmlFor="username" className="text-white">
+              username
+            </Label>
             <Input
               disabled={isPending}
               id="username"
@@ -116,7 +124,9 @@ export default function UserRegisterForm() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-white">
+                Password
+              </Label>
             </div>
             <Input
               disabled={isPending}
@@ -146,7 +156,7 @@ export default function UserRegisterForm() {
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}
         <Link
-          href="/login"
+          href="/"
           className="text-muted underline hover:text-accent"
           prefetch={false}
         >

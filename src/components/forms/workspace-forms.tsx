@@ -48,7 +48,7 @@ import {
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
 
-import { useAppState } from '../store/app-state-context'
+import { toast } from '../hooks/use-toast'
 
 export function WorkspaceCreateForm({
   state: [open, setOpen],
@@ -61,7 +61,6 @@ export function WorkspaceCreateForm({
   children?: React.ReactNode
   onSuccess?: (workspace: Workspace) => void
 }) {
-  const { setNotification } = useAppState()
   const form = useForm<WorkspaceCreateType>({
     resolver: zodResolver(WorkspaceCreateSchema),
     defaultValues: {
@@ -100,7 +99,7 @@ export function WorkspaceCreateForm({
       }
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -109,7 +108,7 @@ export function WorkspaceCreateForm({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'Workspace created successfully'
         })
@@ -206,7 +205,6 @@ export function WorkspaceDeleteForm({
   id?: string
   onSuccess?: () => void
 }) {
-  const { setNotification } = useAppState()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const onConfirm = async () => {
@@ -217,7 +215,7 @@ export function WorkspaceDeleteForm({
       setIsDeleting(false)
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -226,7 +224,7 @@ export function WorkspaceDeleteForm({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'Workspace deleted successfully.'
         })
@@ -259,7 +257,6 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onSuccess?: (workspace: Workspace) => void
 }) {
-  const { setNotification } = useAppState()
   const form = useForm<WorkspaceUpdatetype>({
     resolver: zodResolver(WorkspaceUpdateSchema),
     defaultValues: {
@@ -307,7 +304,7 @@ export function WorkspaceUpdateForm({
       }
 
       if (result.error) {
-        setNotification({
+        toast({
           title: 'Error',
           description: result.error,
           variant: 'destructive'
@@ -316,7 +313,7 @@ export function WorkspaceUpdateForm({
       }
 
       if (result.data) {
-        setNotification({
+        toast({
           title: 'Success',
           description: 'Workspace updated successfully'
         })

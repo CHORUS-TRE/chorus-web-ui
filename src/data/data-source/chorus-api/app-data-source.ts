@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env'
-
 import { AppCreateType, AppUpdateType } from '@/domain/model'
 import {
   AppServiceApi,
@@ -27,10 +25,10 @@ export type { AppDataSource }
 export class AppDataSourceImpl implements AppDataSource {
   private client: AppServiceApi
 
-  constructor(session: string) {
+  constructor(token: string, basePath: string) {
     const configuration = new Configuration({
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL'),
-      apiKey: `Bearer ${session}`
+      basePath,
+      apiKey: `Bearer ${token}`
     })
     this.client = new AppServiceApi(configuration)
   }

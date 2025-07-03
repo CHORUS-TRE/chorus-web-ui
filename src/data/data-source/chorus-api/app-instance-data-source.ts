@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env'
-
 import {
   AppInstanceCreateType,
   AppInstanceUpdateType
@@ -36,10 +34,10 @@ export type { AppInstanceDataSource }
 class AppInstanceDataSourceImpl implements AppInstanceDataSource {
   private service: AppInstanceServiceApi
 
-  constructor(token: string) {
+  constructor(token: string, basePath: string) {
     const configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+      basePath
     })
     this.service = new AppInstanceServiceApi(configuration)
   }

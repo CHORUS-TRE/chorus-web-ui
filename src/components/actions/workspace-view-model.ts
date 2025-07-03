@@ -1,5 +1,7 @@
 'use client'
 
+import { env } from 'next-runtime-env'
+
 import { WorkspaceDataSourceImpl } from '~/data/data-source'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
@@ -18,11 +20,14 @@ import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
-import { getSession } from './server/session'
+import { getToken } from './authentication-view-model'
 
 const getRepository = async () => {
-  const session = await getSession()
-  const dataSource = new WorkspaceDataSourceImpl(session)
+  const token = await getToken()
+  const dataSource = new WorkspaceDataSourceImpl(
+    token || '',
+    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+  )
   return new WorkspaceRepositoryImpl(dataSource)
 }
 

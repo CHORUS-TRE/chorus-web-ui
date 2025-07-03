@@ -1,10 +1,13 @@
 import { z } from 'zod'
 
+import { RoleSchema } from './role'
+
 export enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   DELETED = 'deleted'
 }
+
 export enum UserRoleEnum {
   ADMIN = 'admin',
   AUTHENTICATED = 'authenticated'
@@ -28,7 +31,8 @@ export const UserSchema = z.object({
   passwordChanged: z.boolean().optional(),
 
   // webui extra fields
-  workspaceId: z.string().optional()
+  workspaceId: z.string().optional(),
+  roles2: z.array(RoleSchema).optional()
 })
 
 export const UserCreateSchema = z.object({

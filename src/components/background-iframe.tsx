@@ -1,39 +1,44 @@
 'use client'
 
 import { env } from 'next-runtime-env'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAppState } from '@/components/store/app-state-context'
-import { useUrlValidation } from '@/hooks/use-url-validation'
 
-import { LoadingOverlay } from './loading-overlay'
+import { useAuth } from './store/auth-context'
 
 export default function BackgroundIframe() {
-  const { background, setBackground } = useAppState()
+  const { user } = useAuth()
+  const { background } = useAppState()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
-  const { error, isLoading } = useUrlValidation(url)
+  // const { error, isLoading } = useUrlValidation(url)
 
-  // URL initialization effect
-  useEffect(() => {
+  // Memoize URL computation to prevent unnecessary recalculations
+  const computedUrl = useMemo(() => {
     if (!background?.sessionId) {
-      setUrl(null)
-      return
+      return null
     }
 
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
     const baseAPIURL = `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/api/rest/v1`
-    const newUrl = `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
+    return `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
+  }, [background?.sessionId])
 
-    setUrl(newUrl)
-  }, [background])
-
-  // Focus management effect
+  // URL initialization effect
   useEffect(() => {
-    const iframe = iFrameRef.current
+    if (computedUrl !== url) {
+      setUrl(computedUrl)
+    }
+  }, [computedUrl, url])
 
+  // Focus management effect - only run when URL changes
+  useEffect(() => {
+    if (!url) return
+
+    const iframe = iFrameRef.current
     if (!iframe) return
 
     iframe.focus()
@@ -42,36 +47,10 @@ export default function BackgroundIframe() {
     }, 1 * 1000)
 
     return () => focusTimeout && clearTimeout(focusTimeout)
-  }, [])
+  }, [url])
 
-  useEffect(() => {
-    const { pathname } = window.location
-
-    // check for http://localhost:3000/workspaces/56/sessions/423 404
-    // Use window.addEventListener since pathname is just a string
-    window.addEventListener('popstate', () => {
-      if (
-        pathname !==
-        `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-      ) {
-        setBackground(undefined)
-      }
-    })
-
-    // Clean up event listener
-    return () => {
-      window.removeEventListener('popstate', () => {
-        if (
-          pathname !==
-          `/workspaces/${background?.workspaceId}/sessions/${background?.sessionId}`
-        ) {
-          setBackground(undefined)
-        }
-      })
-    }
-  }, [error, setBackground, background])
-
-  const handleLoad = () => {
+  // Memoize handleLoad to prevent iframe re-renders
+  const handleLoad = useCallback(() => {
     const handleMouseOver = (e: MouseEvent) => {
       iFrameRef.current?.focus()
       e.preventDefault()
@@ -80,17 +59,41 @@ export default function BackgroundIframe() {
 
     setTimeout(() => handleMouseOver, 1000)
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
-  }
+  }, [])
 
-  if (!background?.sessionId) return null
+  // useEffect(() => {
+  //   if (!url) return
+
+  //   const xhr = new XMLHttpRequest()
+
+  //   xhr.open('GET', url)
+  //   xhr.onreadystatechange = () => {
+  //     if (xhr.readyState === xhr.DONE) {
+  //       if (xhr.status === 200) {
+  //         const data_url = URL.createObjectURL(xhr.response)
+  //         document
+  //           .querySelector('#workspace-iframe')
+  //           ?.setAttribute('src', data_url)
+  //       } else {
+  //         console.error('no data :(')
+  //       }
+  //     }
+  //   }
+  //   xhr.responseType = 'blob'
+  //   xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('token'))
+  //   // xhr.setRequestHeader('credentials', 'include')
+  //   xhr.send()
+  // }, [url])
+
+  if (!background?.sessionId || !user) return null
 
   return (
     <>
-      <LoadingOverlay
+      {/* <LoadingOverlay
         isLoading={isLoading}
         message="Loading session..."
         dismiss={error ? true : false}
-      />
+      /> */}
       {/* {error && (
         <div className="fixed inset-0 top-11 z-30 flex items-center justify-center bg-background/80">
           <Alert variant="default" className="w-[400px] text-white">
@@ -102,20 +105,18 @@ export default function BackgroundIframe() {
           </Alert>
         </div>
       )} */}
-      {!isLoading && !error && (
-        <iframe
-          title="Application Workspace"
-          src={url ? url : 'about:blank'}
-          allow="autoplay; fullscreen; clipboard-write;"
-          style={{ width: '100vw', height: '100vh' }}
-          className="fixed left-0 top-11 z-20 h-full w-full"
-          id="workspace-iframe"
-          ref={iFrameRef}
-          aria-label="Application Workspace"
-          onLoad={handleLoad}
-          tabIndex={0}
-        />
-      )}
+      <iframe
+        title="Application Workspace"
+        src={url ? url : 'about:blank'}
+        allow="autoplay; fullscreen; clipboard-write;"
+        style={{ width: '100vw', height: '100vh' }}
+        className="fixed left-0 top-11 z-20 h-full w-full"
+        id="workspace-iframe"
+        ref={iFrameRef}
+        aria-label="Application Workspace"
+        onLoad={handleLoad}
+        tabIndex={0}
+      />
     </>
   )
 }

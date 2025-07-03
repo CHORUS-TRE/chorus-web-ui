@@ -2,22 +2,23 @@
 
 ## 1. Current Work Focus
 
-The immediate priority is to diagnose and fix the failing tests in the existing test suite. The goal is to get the `pnpm test` command to pass successfully, ensuring the codebase is stable before proceeding with new feature development.
+The current priority is to refactor the authentication flow to be primarily client-side. The goal is to move data fetching for authentication state out of server components and into client components to simplify state management and improve responsiveness.
 
 ## 2. Recent Changes
 
-- **User Management UI Implemented:** A complete UI for administrators to create, view, update, and delete users has been added.
-- **Data Flow Refactoring Complete:** The `Workspace` and `Workbench` entities were refactored, completing the architectural overhaul for all major entities.
-- **Architectural Rules Clarified:** The usage of Server Actions vs. client-side fetching has been clarified in `.cursorrules` and `systemPatterns.md`.
-- **Memory Bank Updated:** A full review and update of the memory bank has been completed to ensure all documentation is current and consistent.
+- **Role Management Feature Complete (Phase 1):** The platform-level user and role management features are complete. Further work on workspace-level roles is on hold.
+- **Platform-Level Role Management UI Implemented:** A new section for managing roles and permissions (the "permission matrix") has been built at `/admin/roles`.
+- **Role Assignment Integrated:** The user management UI (`/admin/users`) now supports assigning one or more roles to users during creation and editing.
+- **Data Layers for Roles Created:** The necessary data models, repositories, and use cases for the `Role` entity have been implemented.
 
 ## 3. Next Steps
 
-- Execute `pnpm test` to get a baseline of failing tests.
-- Systematically fix each failing test.
-- Once the test suite is stable, await direction on the next major feature.
+- Refactor authentication logic to use client-side data fetching.
+- Implement a background iframe component to host running user applications.
+- Re-evaluate and prioritize workspace-level role management after the current tasks are complete.
 
 ## 4. Active Decisions & Considerations
 
-- The core architectural patterns (Clean Architecture, Repository/Data Source, Mappers) are stable and must be followed for any new feature development.
+- The authentication refactor will shift logic from server components and server actions towards client-side hooks and view-models.
+- The core architectural patterns (Clean Architecture, Repository/Data Source, Mappers) must be followed for the new feature development.
 - The distinction between client-side fetching (default) and Server Actions (for forms) is a key pattern to maintain.

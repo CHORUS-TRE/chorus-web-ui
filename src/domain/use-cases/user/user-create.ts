@@ -1,4 +1,5 @@
-import { Result, User, UserCreateType } from '@/domain/model'
+import { Result, UserCreateType } from '@/domain/model'
+import { User } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
 
 export interface UserCreateUseCase {

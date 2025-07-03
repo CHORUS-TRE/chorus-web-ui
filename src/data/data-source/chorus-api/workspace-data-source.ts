@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env'
-
 import { WorkspaceCreateType, WorkspaceUpdatetype } from '~/domain/model'
 import {
   ChorusCreateWorkspaceReply,
@@ -30,10 +28,10 @@ export type { WorkspaceDataSource }
 class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   private service: WorkspaceServiceApi
 
-  constructor(token: string) {
+  constructor(token: string, basePath: string) {
     const configuration = new Configuration({
       apiKey: `Bearer ${token}`,
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+      basePath
     })
     this.service = new WorkspaceServiceApi(configuration)
   }

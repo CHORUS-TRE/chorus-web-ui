@@ -1,5 +1,7 @@
 'use client'
 
+import { env } from 'next-runtime-env'
+
 import {
   Workbench,
   WorkbenchCreateSchema,
@@ -16,11 +18,14 @@ import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
 
-import { getSession } from './server/session'
+import { getToken } from './authentication-view-model'
 
 const getRepository = async () => {
-  const session = await getSession()
-  const dataSource = new WorkbenchDataSourceImpl(session)
+  const token = await getToken()
+  const dataSource = new WorkbenchDataSourceImpl(
+    token || '',
+    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+  )
   return new WorkbenchRepositoryImpl(dataSource)
 }
 

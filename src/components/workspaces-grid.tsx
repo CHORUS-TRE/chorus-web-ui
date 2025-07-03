@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
 
+import { toast } from './hooks/use-toast'
+import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 interface WorkspacesGridProps {
@@ -43,10 +45,12 @@ export default function WorkspacesGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { setNotification } = useAppState()
   const { refreshWorkspaces, users } = useAppState()
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
+    <div
+      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      id="grid"
+    >
       {workspaces?.map((workspace) => (
         <div key={`workspace-grid-${workspace.id}`} className="group relative">
           <div className="absolute right-4 top-4 z-10">
@@ -81,8 +85,8 @@ export default function WorkspacesGrid({
           <Link href={`/workspaces/${workspace.id}`}>
             <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-start gap-3 pr-2 text-white">
-                  <Package className="h-6 w-6 flex-shrink-0 text-white" />
+                <CardTitle className="flex items-start gap-3 pr-2 text-white hover:text-accent hover:underline">
+                  <Package className="h-6 w-6 flex-shrink-0" />
                   {workspace?.id === user?.workspaceId
                     ? 'My Workspace'
                     : workspace?.name}
@@ -103,12 +107,9 @@ export default function WorkspacesGrid({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* <div className="mb-1 flex items-center gap-2 text-sm font-bold">
-                  <LaptopMinimal className="h-4 w-4 shrink-0" />
-                  Sessions
-                </div> */}
-
-                <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                <ScrollArea className="h-[200px]" type="hover">
+                  <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                </ScrollArea>
               </CardContent>
             </Card>
           </Link>
@@ -121,7 +122,7 @@ export default function WorkspacesGrid({
                 () => setActiveUpdateId(null)
               ]}
               onSuccess={() => {
-                setNotification({
+                toast({
                   title: 'Success!',
                   description: 'Workspace updated'
                 })
@@ -140,7 +141,7 @@ export default function WorkspacesGrid({
               onSuccess={() => {
                 refreshWorkspaces()
 
-                setNotification({
+                toast({
                   title: 'Success!',
                   description: `Workspace ${workspace.name} deleted`
                 })

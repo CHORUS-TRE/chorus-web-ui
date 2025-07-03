@@ -35,6 +35,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
+import { toast } from './hooks/use-toast'
 import { useAppState } from './store/app-state-context'
 
 export default function WorkspaceTable({
@@ -52,27 +53,27 @@ export default function WorkspaceTable({
 }) {
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
-  const { setNotification, refreshWorkspaces } = useAppState()
+  const { refreshWorkspaces } = useAppState()
 
   useEffect(() => {
     if (deleted) {
-      setNotification({
+      toast({
         title: 'Success!',
         description: 'Workspace deleted',
         variant: 'default'
       })
     }
-  }, [deleted, setNotification])
+  }, [deleted])
 
   useEffect(() => {
     if (updated) {
-      setNotification({
+      toast({
         title: 'Success!',
         description: 'Workspace updated',
         variant: 'default'
       })
     }
-  }, [updated, setNotification])
+  }, [updated])
 
   const TableHeads = () => (
     <>

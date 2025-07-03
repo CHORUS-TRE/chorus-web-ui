@@ -27,6 +27,8 @@ import {
 import { Label } from '@/components/ui/label'
 import { AppInstance, Result } from '~/domain/model'
 
+import { toast } from '../hooks/use-toast'
+
 const initialState: Result<AppInstance> = {
   data: undefined,
   issues: undefined
@@ -46,11 +48,11 @@ export function AppInstanceCreateForm({
   onUpdate?: () => void
 }) {
   const [state, formAction] = useActionState(createAppInstance, initialState)
-  const { setNotification, apps } = useAppState()
+  const { apps } = useAppState()
 
   useEffect(() => {
     if (state.error) {
-      setNotification({
+      toast({
         title: 'Error',
         description: state.error,
         variant: 'destructive'
@@ -60,7 +62,7 @@ export function AppInstanceCreateForm({
       setOpen(false)
       onUpdate?.()
     }
-  }, [state, setNotification, setOpen, onUpdate])
+  }, [state, setOpen, onUpdate])
 
   function SubmitButton() {
     const { pending } = useFormStatus()

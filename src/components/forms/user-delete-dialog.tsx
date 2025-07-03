@@ -3,7 +3,6 @@
 import { Trash2 } from 'lucide-react'
 
 import { deleteUser } from '~/components/actions/user-view-model'
-import { useAppState } from '~/components/store/app-state-context'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +16,8 @@ import {
 } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
 
+import { toast } from '../hooks/use-toast'
+
 export function UserDeleteDialog({
   userId,
   onUserDeleted
@@ -24,18 +25,16 @@ export function UserDeleteDialog({
   userId: string
   onUserDeleted: () => void
 }) {
-  const { setNotification } = useAppState()
-
   const handleDelete = async () => {
     const result = await deleteUser(userId)
     if (result.error) {
-      setNotification({
+      toast({
         title: 'Error deleting user',
         description: result.error,
         variant: 'destructive'
       })
     } else {
-      setNotification({
+      toast({
         title: 'Success',
         description: 'User deleted successfully.'
       })

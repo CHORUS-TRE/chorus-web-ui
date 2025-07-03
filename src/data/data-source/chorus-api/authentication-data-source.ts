@@ -1,6 +1,5 @@
 import { env } from 'next-runtime-env'
 
-import { getSession } from '@/components/actions/server/session'
 import {
   AuthenticationInternal,
   AuthenticationMode,
@@ -11,6 +10,7 @@ import {
 } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
+import { getToken } from '~/components/actions/authentication-view-model'
 import { Configuration } from '~/internal/client'
 
 interface AuthenticationDataSource {
@@ -29,10 +29,18 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   private configuration: Configuration
   private service: AuthenticationServiceApi
 
-  constructor() {
-    this.configuration = new Configuration({
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
-    })
+  constructor(basePath: string, token?: string) {
+    if (!token) {
+      this.configuration = new Configuration({
+        basePath
+      })
+    } else {
+      this.configuration = new Configuration({
+        basePath,
+        apiKey: `Bearer ${token}`
+      })
+    }
+
     this.service = new AuthenticationServiceApi(this.configuration)
   }
 
@@ -137,10 +145,10 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 
   async logout(): Promise<void> {
-    const session = await getSession()
+    const token = await getToken()
     const configuration = new Configuration({
-      apiKey: `Bearer ${session}`,
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL')
+      apiKey: `Bearer ${token}`,
+      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
     })
     const service = new AuthenticationServiceApi(configuration)
 

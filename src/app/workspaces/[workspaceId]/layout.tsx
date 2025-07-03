@@ -1,7 +1,6 @@
 'use client'
 
 import { Home, PackageOpen } from 'lucide-react'
-import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React from 'react'
 
@@ -27,22 +26,17 @@ export default function Layout({
             <PackageOpen className="h-9 w-9 text-white" />
           )}
 
-          <Link
-            href={`/workspaces/${workspace?.id}`}
-            className="text-white hover:bg-inherit hover:text-accent"
-          >
-            {workspace ? (
-              params?.workspaceId === user?.workspaceId ? (
-                'My Workspace'
-              ) : (
-                workspace.shortName
-              )
+          {workspace ? (
+            params?.workspaceId === user?.workspaceId ? (
+              'My Workspace'
             ) : (
-              <span className="animate-pulse text-muted">
-                Loading workspace...
-              </span>
-            )}
-          </Link>
+              workspace.shortName
+            )
+          ) : (
+            <span className="animate-pulse text-muted">
+              Loading workspace...
+            </span>
+          )}
         </h2>
       </div>
       {children}
