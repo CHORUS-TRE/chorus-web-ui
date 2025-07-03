@@ -47,7 +47,10 @@ export default function WorkspacesGrid({
 
   const { refreshWorkspaces, users } = useAppState()
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="grid">
+    <div
+      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      id="grid"
+    >
       {workspaces?.map((workspace) => (
         <div key={`workspace-grid-${workspace.id}`} className="group relative">
           <div className="absolute right-4 top-4 z-10">
