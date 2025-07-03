@@ -25,10 +25,7 @@ import { useAppState } from './app-state-context'
 type AuthContextType = {
   user: User | undefined
   logout: () => Promise<void>
-  login: (
-    prevState: Result<User>,
-    formData: FormData
-  ) => Promise<Result<User>>
+  login: (prevState: Result<User>, formData: FormData) => Promise<Result<User>>
 }
 
 const AuthContext = createContext<AuthContextType>({

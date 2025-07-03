@@ -5,6 +5,7 @@ import {
   User,
   UserCreateType,
   UserSchema,
+  UserStatusEnum,
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
@@ -19,7 +20,7 @@ export class UserRepositoryImpl implements UserRepository {
     this.dataSource = dataSource
   }
 
-  async create(user: UserCreateType): Promise<Result<string>> {
+  async create(user: UserCreateType): Promise<Result<User>> {
     try {
       const response = await this.dataSource.create(user)
 
@@ -36,7 +37,19 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      return { data: userResult.data.id }
+      return {
+        data: {
+          id: userResult.data.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          status: UserStatusEnum.ACTIVE,
+          source: 'chorus',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          roles2: [MOCK_ROLES[0]]
+        }
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
