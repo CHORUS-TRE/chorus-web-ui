@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.2.0...v1.2.1) (2025-07-03)
+
+
+### Bug Fixes
+
+* configure semantic release to handle refactor commits as patch releases ([cf37962](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cf37962389d3cfa38610afced4daaede07c7e142)), closes [#107](https://github.com/CHORUS-TRE/chorus-web-ui/issues/107)
+
 # [1.2.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.1.0...v1.2.0) (2025-07-03)
 
 
