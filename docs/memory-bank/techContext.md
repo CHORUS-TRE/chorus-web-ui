@@ -12,7 +12,7 @@
 ## 2. Development Setup
 
 - **Package Manager:** pnpm
-- **Testing:** Jest and React Testing Library. The initial setup and some tests exist, but several are currently failing. A priority is to get the test suite to a stable, passing state.
+- **Testing:** Jest and React Testing Library. The test suite is now stable and passing (61 tests passing, 10 skipped, 11 test suites).
 - **Linting & Formatting:** ESLint and Prettier.
 
 ## 3. Dependencies
@@ -27,3 +27,11 @@
 
 - The application must interact with a pre-existing Chorus API, for which an OpenAPI specification is available.
 - All data fetching and mutations should ideally go through the defined architectural layers (Actions -> Use Cases -> Repositories -> Data Sources).
+
+## 5. Testing Strategy
+
+- **Unit Tests:** Component and use case testing with Jest and React Testing Library
+- **Integration Tests:** End-to-end workflow testing
+- **Performance Tests:** Workspace list performance validation
+- **Accessibility Tests:** Button accessibility compliance
+- **Visual Tests:** Card component visual regression testing

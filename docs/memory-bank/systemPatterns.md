@@ -52,6 +52,7 @@ graph TD
 - **Repository Pattern:** This is the core of our data handling strategy.
   - **Interface (`domain/repository`):** Defines the contract for data operations, using domain models (e.g., `App`, `AppCreateType`).
   - **Implementation (`data/repository`):** Implements the interface. It calls the data source, and its primary responsibility is to catch errors and map the raw data source response into the standard `Result<T>` object (`{ data?, error?, issues? }`).
+  - **Consistent Create Pattern:** ALL repository create methods return the full entity object (`Result<Entity>`) rather than just IDs, ensuring predictable behavior across the codebase.
 - **Data Source Pattern:**
   - **Interface (`data/data-source`):** Defines the contract for interacting with the backend, using raw API client types (e.g., `ChorusApp`, `ChorusCreateAppReply`).
   - **Implementation (`data/data-source/chorus-api`):** Implements the interface, making direct calls to the generated API client. It is responsible for mapping domain types (e.g., `AppCreateType`) to API types (`ChorusApp`) before sending the request.
@@ -71,6 +72,11 @@ The role management feature demonstrates the effectiveness of our architectural 
 - **Layout Composition:** Authenticated/unauthenticated layout components for clear separation of concerns
 - **Background Integration:** Iframe components for hosting user applications within the main interface
 
+### Repository Create Pattern Consistency
+- **Synthetic Entity Creation:** When APIs return only IDs, repositories can create synthetic entities with provided data and reasonable defaults
+- **Predictable Return Types:** All create operations return the full entity object, making the API consistent across all domains
+- **Error Handling:** Consistent error handling patterns across all repository implementations
+
 ## 4. Initial Data Loading for Client Providers
 
 A common requirement is to provide initial state (e.g., authentication status) to client-side providers. To avoid server/client boundary errors, the following pattern is used:
@@ -80,3 +86,14 @@ A common requirement is to provide initial state (e.g., authentication status) t
 3.  **Accept in Client Component:** The `Providers` component (`'use client'`) is a standard (non-async) component that accepts the initial state via props and passes it to the React Context providers.
 
 This pattern ensures that no server functions are called during the initial client-side render, preventing fetch waterfalls and errors.
+
+## 5. Test Suite Stability
+
+The project maintains a comprehensive test suite with consistent patterns:
+- **Unit Tests:** Individual component and use case testing
+- **Integration Tests:** End-to-end workflow validation
+- **Performance Tests:** Critical path performance monitoring
+- **Accessibility Tests:** WCAG compliance validation
+- **Visual Tests:** Component visual regression testing
+
+All tests follow the established architectural patterns and validate the clean architecture implementation.

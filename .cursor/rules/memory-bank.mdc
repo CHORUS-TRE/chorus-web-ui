@@ -178,6 +178,24 @@ The format is flexible - focus on capturing valuable insights that help me work 
 - Repository/Data Source separation proves valuable for mock implementations
 - Use case layer effectively orchestrates complex business logic
 
+### Repository Pattern Consistency & Optimization
+
+**Consistent Create Pattern:**
+- ALL repository create methods must return the full entity object (`Result<Entity>`) not just IDs
+- This ensures predictable behavior across the entire codebase
+- Tests become more reliable when they can assert on complete entity data
+
+**Synthetic Entity Creation:**
+- When APIs return only IDs, repositories can create synthetic entities with provided data
+- Use reasonable defaults for system-generated fields (timestamps, status, etc.)
+- This approach eliminates unnecessary API calls while maintaining type safety
+- Example: UserRepository.create builds a complete User object from input + ID + defaults
+
+**Performance Optimization:**
+- Avoid extra API calls after creation when possible
+- Synthetic entities reduce network overhead
+- Mock data strategies work well for UI development phases
+
 ### Authentication Architecture Evolution
 
 **Client-Side State Management:**
@@ -201,6 +219,12 @@ The format is flexible - focus on capturing valuable insights that help me work 
 - Mock data sources enable UI development without backend dependencies
 - Complex UI components (like role matrices) need comprehensive testing
 - Authentication changes require end-to-end validation
+- Repository pattern consistency fixes make tests more reliable and predictable
+
+**Quality Assurance Patterns:**
+- Comprehensive test suite stability is achievable with consistent patterns
+- Test failures often reveal architectural inconsistencies that need fixing
+- Type safety combined with proper error handling prevents runtime issues
 
 **Project Intelligence Patterns:**
 - Clean Architecture patterns prove robust across different feature types
