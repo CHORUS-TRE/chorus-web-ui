@@ -49,9 +49,9 @@ export async function userMe() {
 }
 
 export async function createUser(
-  prevState: Result<Partial<User>>,
+  prevState: Result<User>,
   formData: FormData
-): Promise<Result<Partial<User>>> {
+): Promise<Result<User>> {
   try {
     const userRepository = await getRepository()
     const useCase = new UserCreate(userRepository)
@@ -81,19 +81,7 @@ export async function createUser(
       }
     }
 
-    if (result.data) {
-      return {
-        data: {
-          ...(validation.data as User),
-          id: result.data
-        }
-      }
-    }
-
-    return {
-      ...prevState,
-      error: 'Unknown error'
-    }
+    return result
   } catch (error) {
     console.error('Error creating user', error)
     return {
