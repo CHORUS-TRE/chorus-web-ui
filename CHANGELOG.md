@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.1.0...v1.2.0) (2025-07-03)
+
+
+### Features
+
+* add role management functionality with UI components ([147ede8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/147ede8780af4a0dfce50cd8701369940a13096d))
+* enhance layout components to support authenticated and unauthenticated states, integrate background iframe and toast notifications, and improve app management dialogs ([f40074b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f40074bab44c7eb6c5dc8ebe3b1a5f0e09d991a3))
+* implement layout components for authenticated and unauthenticated states, integrate background iframe and toast notifications ([1872946](https://github.com/CHORUS-TRE/chorus-web-ui/commit/18729466c3013a369fc9026dbda592b1d5a76838))
+
 # [1.1.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.0.0...v1.1.0) (2025-06-19)
 
 
