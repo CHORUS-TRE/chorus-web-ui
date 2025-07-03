@@ -218,7 +218,7 @@ export function AppCreateDialog({
 
   useEffect(() => {
     if (formState.errors) {
-      console.error(formState.errors)
+      console.log('formState.errors', formState.errors)
     }
   }, [formState.errors])
 

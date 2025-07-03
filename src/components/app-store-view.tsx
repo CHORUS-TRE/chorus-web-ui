@@ -94,11 +94,13 @@ export function AppStoreView() {
         </div>
       </section>
 
-      <AppCreateDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        onSuccess={refreshApps}
-      />
+      {showCreateDialog && (
+        <AppCreateDialog
+          open={showCreateDialog}
+          onOpenChange={setShowCreateDialog}
+          onSuccess={refreshApps}
+        />
+      )}
     </div>
   )
 }

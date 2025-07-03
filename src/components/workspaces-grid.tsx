@@ -27,6 +27,7 @@ import {
 import { User, Workbench, Workspace } from '@/domain/model'
 
 import { toast } from './hooks/use-toast'
+import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 interface WorkspacesGridProps {
@@ -103,7 +104,9 @@ export default function WorkspacesGrid({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                <ScrollArea className="h-[200px]" type="hover">
+                  <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                </ScrollArea>
               </CardContent>
             </Card>
           </Link>

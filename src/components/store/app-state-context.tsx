@@ -9,6 +9,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState
 } from 'react'
 
@@ -122,6 +123,14 @@ export const AppStateProvider = ({
 
   const toggleAppStoreHero = useCallback(() => {
     setShowAppStoreHero((prev) => !prev)
+  }, [])
+
+  const toggleRightSidebar = useCallback(() => {
+    setShowRightSidebar((prev) => !prev)
+  }, [])
+
+  const toggleWorkspaceView = useCallback(() => {
+    setShowWorkspacesTable((prev) => !prev)
   }, [])
 
   const refreshWorkspaces = useCallback(async () => {
@@ -300,31 +309,55 @@ export const AppStateProvider = ({
     initializeState()
   }, [initializeState])
 
+  const contextValue = useMemo(
+    () => ({
+      showRightSidebar,
+      toggleRightSidebar,
+      showWorkspacesTable,
+      toggleWorkspaceView,
+      background,
+      setBackground,
+      workspaces,
+      workbenches,
+      users,
+      refreshWorkspaces,
+      refreshWorkbenches,
+      clearState,
+      apps,
+      refreshApps,
+      appInstances,
+      refreshAppInstances,
+      showAppStoreHero,
+      toggleAppStoreHero,
+      hasSeenGettingStartedTour,
+      setHasSeenGettingStartedTour
+    }),
+    [
+      showRightSidebar,
+      toggleRightSidebar,
+      showWorkspacesTable,
+      toggleWorkspaceView,
+      background,
+      setBackground,
+      workspaces,
+      workbenches,
+      users,
+      refreshWorkspaces,
+      refreshWorkbenches,
+      clearState,
+      apps,
+      refreshApps,
+      appInstances,
+      refreshAppInstances,
+      showAppStoreHero,
+      toggleAppStoreHero,
+      hasSeenGettingStartedTour,
+      setHasSeenGettingStartedTour
+    ]
+  )
+
   return (
-    <AppStateContext.Provider
-      value={{
-        showRightSidebar,
-        toggleRightSidebar: () => setShowRightSidebar(!showRightSidebar),
-        showWorkspacesTable,
-        toggleWorkspaceView: () => setShowWorkspacesTable(!showWorkspacesTable),
-        background,
-        setBackground,
-        workspaces,
-        workbenches,
-        users,
-        refreshWorkspaces,
-        refreshWorkbenches,
-        clearState,
-        apps,
-        refreshApps,
-        appInstances,
-        refreshAppInstances,
-        showAppStoreHero,
-        toggleAppStoreHero,
-        hasSeenGettingStartedTour,
-        setHasSeenGettingStartedTour
-      }}
-    >
+    <AppStateContext.Provider value={contextValue}>
       {children}
     </AppStateContext.Provider>
   )

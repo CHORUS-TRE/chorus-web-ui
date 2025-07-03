@@ -2,12 +2,28 @@
 
 import React from 'react'
 
-import { MainLayout } from '@/components/layouts/main-layout'
+const AuthenticatedApp = React.lazy(() =>
+  import('@/components/authenticated-app').then((mod) => ({
+    default: mod.AuthenticatedApp
+  }))
+)
+const UnauthenticatedApp = React.lazy(() =>
+  import('@/components/unauthenticated-app').then((mod) => ({
+    default: mod.UnauthenticatedApp
+  }))
+)
+import { useAuth } from '~/components/store/auth-context'
 
 export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <MainLayout>{children}</MainLayout>
+  const { user } = useAuth()
+
+  return user ? (
+    <AuthenticatedApp>{children}</AuthenticatedApp>
+  ) : (
+    <UnauthenticatedApp />
+  )
 }

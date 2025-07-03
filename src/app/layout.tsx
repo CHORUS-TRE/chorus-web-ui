@@ -8,8 +8,10 @@ import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
 
+import BackgroundIframe from '~/components/background-iframe'
 import { AppStateProvider } from '~/components/store/app-state-context'
 import { AuthProvider } from '~/components/store/auth-context'
+import { Toaster } from '~/components/ui/toaster'
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -45,7 +47,11 @@ export default async function RootLayout({
       </head>
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider>
-          <AppStateProvider>{children}</AppStateProvider>
+          <AppStateProvider>
+            {children}
+            <BackgroundIframe />
+            <Toaster />
+          </AppStateProvider>
         </AuthProvider>
       </body>
     </html>

@@ -255,7 +255,7 @@ export function Header() {
                   >
                     <div className="mt-1 flex place-items-center gap-1">
                       <Settings className="h-4 w-4" />
-                      Settings
+                      Admin
                     </div>
                   </NavLink>
                 </NavigationMenuItem>

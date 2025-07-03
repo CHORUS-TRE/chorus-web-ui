@@ -11,7 +11,7 @@ import {
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppState } from '@/components/store/app-state-context'
@@ -213,7 +213,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </div>
             }
             description={`Sessions in ${workspace?.name}.`}
-            content={<WorkspaceWorkbenchList workspaceId={workspaceId} />}
+            content={
+              <Suspense fallback={<div>Loading...</div>}>
+                <ScrollArea className="h-[200px]" type="hover">
+                  <WorkspaceWorkbenchList workspaceId={workspaceId} />
+                </ScrollArea>
+              </Suspense>
+            }
             footer={
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}

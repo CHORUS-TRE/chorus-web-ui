@@ -4,11 +4,10 @@ import { X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { Header } from '@/components/header'
 import { useAppState } from '@/components/store/app-state-context'
-import BackgroundIframe from '~/components/background-iframe'
 import GettingStartedCard from '~/components/getting-started-card'
 import RightSidebar from '~/components/right-sidebar'
 import { Button } from '~/components/ui/button'
@@ -21,10 +20,6 @@ interface MainLayoutProps {
 export function AuthenticatedApp({ children }: MainLayoutProps) {
   const { background, showRightSidebar } = useAppState()
   const router = useRouter()
-
-  useEffect(() => {
-    console.count('rendering')
-  }, [])
 
   return (
     <>
@@ -88,7 +83,6 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
           </div>
         </NextStep>
       </NextStepProvider>
-      <BackgroundIframe />
     </>
   )
 }

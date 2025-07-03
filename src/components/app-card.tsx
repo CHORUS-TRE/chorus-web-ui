@@ -256,12 +256,14 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         </DialogContent>
       </Dialog>
 
-      <AppEditDialog
-        app={app}
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        onSuccess={onUpdate}
-      />
+      {showEditDialog && (
+        <AppEditDialog
+          app={app}
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          onSuccess={onUpdate}
+        />
+      )}
 
       <DeleteDialog
         open={showDeleteDialog}
