@@ -23,7 +23,7 @@ export const WorkbenchSchema = z.object({
   name: z.string().optional(),
   shortName: z.string().optional(),
   description: z.string().optional(),
-  status: z.nativeEnum(WorkbenchStatus),
+  status: z.nativeEnum(WorkbenchStatus).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),
   appInsanceIds: z.array(z.string()).optional(),

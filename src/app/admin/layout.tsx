@@ -20,8 +20,8 @@ export default function Layout({
 
   useEffect(() => {
     setBackground((prev) => {
-      if (prev?.sessionId) {
-        setBackground({ sessionId: undefined, workspaceId: prev.workspaceId })
+      if (prev?.workspaceId) {
+        return { sessionId: undefined, workspaceId: prev.workspaceId }
       }
       return prev
     })

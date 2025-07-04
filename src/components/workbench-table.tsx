@@ -32,11 +32,9 @@ import {
 } from '~/components/ui/table'
 import { Workbench } from '~/domain/model'
 
-import {
-  WorkbenchCreateForm,
-  WorkbenchDeleteForm,
-  WorkbenchUpdateForm
-} from './forms/workbench-forms'
+import { WorkbenchCreateForm } from './forms/workbench-create-form'
+import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
+import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 import { useAppState } from './store/app-state-context'
 
