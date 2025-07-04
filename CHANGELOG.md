@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.2.1...v1.2.2) (2025-07-04)
+
+
+### Bug Fixes
+
+* make workbench status optional in schema definition ([1606c6d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1606c6dacb4b8a05419e3b752810fdfb93c3deec))
+
 ## [1.2.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.2.0...v1.2.1) (2025-07-03)
 
 
