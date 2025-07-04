@@ -45,10 +45,8 @@ import {
   NavigationMenuTrigger
 } from '~/components/ui/navigation-menu'
 
-import {
-  WorkbenchDeleteForm,
-  WorkbenchUpdateForm
-} from './forms/workbench-forms'
+import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
+import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 import NavLink from './nav-link'
 import { useAuth } from './store/auth-context'

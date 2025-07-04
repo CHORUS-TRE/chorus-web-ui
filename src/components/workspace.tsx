@@ -18,7 +18,7 @@ import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 import { Card } from './card'
-import { WorkbenchCreateForm } from './forms/workbench-forms'
+import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
