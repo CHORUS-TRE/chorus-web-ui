@@ -7,6 +7,7 @@
 With the core implementation of the workbench k8sStatus feature complete, the current priority is to polish the error handling and user experience. This involves ensuring that all edge cases, such as polling timeouts and API errors, are handled gracefully in the UI.
 
 **Key Requirements:**
+
 - Provide clear, user-friendly error messages for all failure scenarios.
 - Implement and test timeout handling.
 - Ensure a smooth and consistent user experience across all related components.
@@ -20,17 +21,22 @@ With the core implementation of the workbench k8sStatus feature complete, the cu
   - The domain model for `Workbench` has been updated to include the `k8sStatus` field and a `K8sWorkbenchStatus` enum.
   - A new `useWorkbenchStatus` hook has been created to handle polling for the workbench status.
   - The `getWorkbench` action was added to support the new hook.
+- **Client-Side OAuth Redirect Complete:**
+  - The OAuth redirect flow was refactored to be fully client-side.
+  - Logic was consolidated from a server-side API route into the `oauthredirect/page.tsx` component, which now directly calls the required action.
 
 ## 3. Next Steps
 
 **Immediate Implementation Plan:**
 
 ### Phase 4: Error Handling & Polish (In Progress)
-1.  **TODO** - Handle polling errors gracefully in all affected components (`workbench-create-form`, `workbench-table`, `background-iframe`).
-2.  **TODO** - Add user-friendly timeout error messages after 5 minutes of polling.
-3.  **TODO** - Conduct a final review of the end-to-end user flow for polish and consistency.
+
+1. **TODO** - Handle polling errors gracefully in all affected components (`workbench-create-form`, `workbench-table`, `background-iframe`).
+2. **TODO** - Add user-friendly timeout error messages after 5 minutes of polling.
+3. **TODO** - Conduct a final review of the end-to-end user flow for polish and consistency.
 
 **Files to Modify:**
+
 - `src/components/forms/workbench-create-form.tsx`
 - `src/components/workbench-table.tsx`
 - `src/app/(workspaces)/workspaces/[workspaceId]/sessions/[sessionId]/page.tsx`

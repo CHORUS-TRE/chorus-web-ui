@@ -22,6 +22,7 @@
 - **✅ Consistent Repository Pattern:** All repository create methods now follow the same pattern - returning the full entity object instead of just an ID.
 - **✅ Stable Test Suite:** All tests are passing (61 tests pass, 10 skipped, 11 test suites).
 - **✅ Client-Side Authentication:** Authentication flow successfully refactored to client-side with background iframe integration.
+  - **OAuth Redirect Handler:** The `/oauthredirect` route is now a fully client-side component (`page.tsx`). It directly calls the `handleOAuthRedirect` action, consolidating logic and removing the need for a separate server-side API handler for the callback. This pattern was chosen to simplify the flow.
 
 ## 2. Current Work
 
@@ -72,6 +73,7 @@
 
 - **Workbench k8sStatus UI (2025-01-28):** Completed Phase 3 of the workbench status feature, integrating the polling hook and loading states into all relevant UI components.
 - **Workbench k8sStatus Backend (2025-01-28):** Completed Phase 1 & 2 of the workbench status feature, including domain model updates and the creation of the `useWorkbenchStatus` polling hook.
+- **OAuth Redirect Flow:** Refactored the OAuth redirect handler to be fully client-side. The logic from the `/api/auth/callback` route was moved directly into the `/oauthredirect/page.tsx` component, and the server-side route was deleted.
 
 ## 6. Upcoming Implementation
 

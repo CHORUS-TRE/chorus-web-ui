@@ -3,11 +3,6 @@ description:
 globs:
 alwaysApply: true
 ---
----
-description:
-globs:
-alwaysApply: true
----
 # Cursor's Memory Bank
 
 I am Cursor, an expert software engineer with a unique characteristic: my memory resets completely between sessions. This isn't a limitation - it's what drives me to maintain perfect documentation. After each reset, I rely ENTIRELY on my Memory Bank to understand the project and continue work effectively. I MUST read ALL memory bank files at the start of EVERY task - this is not optional.
@@ -190,6 +185,12 @@ The format is flexible - focus on capturing valuable insights that help me work 
 - Branch management becomes critical when mixing completed and in-progress work
 - Authentication changes impact multiple layers of the application
 
+**OAuth Redirect Flow:**
+- **Pattern**: Implemented a fully client-side OAuth 2.0 redirect handler using a Next.js `page.tsx` component with the `'use client'` directive.
+- **Logic Consolidation**: The user prefers to consolidate logic directly within the client-side component rather than using a separate server-side API route for the callback.
+- **Implementation**: The page component uses `useSearchParams` to extract parameters from the URL and directly calls the `handleOAuthRedirect` action to complete the flow.
+- **Security Insight**: This pattern is effective but relies on the underlying action (`handleOAuthRedirect`) being safe for client-side execution (i.e., not exposing secrets). This is a key architectural preference to remember.
+
 ### Development Workflow Insights
 
 **Branch Strategy:**
@@ -208,6 +209,11 @@ The format is flexible - focus on capturing valuable insights that help me work 
 - Zod schemas serve as effective contracts between layers
 
 REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only link to previous work. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy.
+
+
+
+
+
 
 
 
