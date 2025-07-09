@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.2.2...v1.3.0) (2025-07-09)
+
+
+### Features
+
+* enhance App schema with resource validation ([a718f88](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a718f88eea82e60a3a7fe994e9ca40649e16427a))
+* implement workbench k8sStatus loading state and refactor background iframe ([524196b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/524196b7f72090d9e74f457eae8cfff74e11ad98))
+
 ## [1.2.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.2.1...v1.2.2) (2025-07-04)
 
 
