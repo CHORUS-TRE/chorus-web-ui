@@ -1,3 +1,11 @@
+## [1.3.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.2...v1.3.3) (2025-07-09)
+
+
+### Bug Fixes
+
+* add delay after storing token during OAuth redirect handling ([de46e43](https://github.com/CHORUS-TRE/chorus-web-ui/commit/de46e430ff46e3c9107bc080e5e95f1cb71a0f3a))
+* comment out toast notification for user error response in AppStateProvider ([77b5d8b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/77b5d8bb7c34a484e91766216659c9aa9f7e06ca))
+
 ## [1.3.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.1...v1.3.2) (2025-07-09)
 
 
