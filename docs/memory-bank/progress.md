@@ -2,6 +2,9 @@
 
 ## 1. What Works
 
+- **Workbench k8sStatus Loading State:** The feature is now functionally complete.
+  - The UI correctly displays loading states and only shows the session iframe when the workbench is "Running".
+  - The backend domain models and polling hook are in place and integrated with the UI.
 - **Complete Role Management System:** Full platform-level role and permission management is implemented and functional:
   - Role matrix UI at `/admin/roles` with permission assignment
   - Recursive role inheritance support in domain models
@@ -24,27 +27,22 @@
 
 ### Active Development
 
-- **Workbench k8sStatus Loading State Implementation:** Major feature to implement proper loading states for workbench creation:
-  - **Phase 1:** Domain model updates with K8sWorkbenchStatus enum and k8sStatus field
-  - **Phase 2:** Polling mechanism with useWorkbenchStatus hook
-  - **Phase 3:** UI loading states and background iframe updates
-  - **Phase 4:** Error handling and polish
-  - **Goal:** Only show background iframe when workbench k8sStatus is "Running"
-  - **User Experience:** Prevent users from seeing non-functional sessions with proper loading feedback
+- **Workbench k8sStatus Loading State Implementation (Phase 4: Polish):**
+  - **Goal:** Polish the end-to-end user experience, focusing on graceful error handling and consistent UI feedback.
+  - **User Experience:** Ensure that any potential errors (API, timeout, etc.) are communicated clearly to the user.
 
 ### Technical Implementation Status
 
-- **Domain Model Updates:** Not started - need to add k8sStatus field and enum
-- **Polling Hook:** Not started - need to create useWorkbenchStatus hook
-- **Background Iframe Updates:** Not started - need to add k8sStatus checking
-- **Workbench Creation Flow:** Not started - need to add polling until "Running"
-- **UI Loading States:** Not started - need to add loading overlays and indicators
+- **Domain Model Updates:** ✅ Done
+- **Polling Hook:** ✅ Done
+- **Background Iframe Updates:** ✅ Done
+- **Workbench Creation Flow:** ✅ Done
+- **UI Loading States:** ✅ Done
+- **Error Handling & Polish:** In Progress
 
 ### Next Concrete Features
 
-- **Complete k8sStatus Implementation:** All phases of the workbench loading state feature
-- **Enhanced Error Handling:** Comprehensive error states for workbench failures
-- **Performance Optimization:** Proper cleanup of polling intervals and memory management
+- **Enhanced Error Handling:** Implement comprehensive error states for workbench failures in the UI.
 
 ### Future Work / On Hold
 
@@ -56,31 +54,30 @@
 
 ## 3. Current Status
 
+- **New Feature Complete:** The workbench k8sStatus feature is implemented. Focus is now on refinement.
 - **Major Architecture Milestone:** Role management and client-side authentication demonstrate the maturity and effectiveness of the established architectural patterns.
-- **New Feature Development:** Beginning implementation of workbench k8sStatus loading state feature following established patterns.
 - **Branch Status:** Working on `feat/k8sstatus` branch for the new workbench loading state functionality.
 - **Architecture Proven:** The core data and UI patterns have been successfully applied across all major entities and are ready for the new feature.
 - **✅ Test Suite Stability:** All tests are passing consistently.
 - **✅ Authentication Complete:** Client-side authentication refactor is complete and stable.
+- **Background Iframe Premature Display:** Resolved. The iframe now waits for the "Running" status.
 
 ## 4. Known Issues
 
-- **Workbench Loading State:** Currently missing - users may see non-functional sessions before k8sStatus reaches "Running"
-- **Background Iframe Premature Display:** The iframe displays immediately after workbench creation, not waiting for "Running" status
+- **API Client Desynchronization:** The `k8sStatus` field was manually added to the generated `ChorusWorkbench.ts` client model. The OpenAPI client should be regenerated to ensure consistency.
+- **Workbench Loading State:** The backend work is done, but the UI integration is still in progress. Some parts of the app may not yet reflect the true status of a workbench.
 - **Mock Role Data:** Role management currently uses placeholder/mock data pending integration with `chorus-gatekeeper` service.
 
 ## 5. Recent Fixes
 
-- **Authentication Refactor Complete (2025-01-27):** Successfully moved authentication from server-side to client-side approach:
-  - Layout components restructured for authenticated/unauthenticated states
-  - Background iframe integration for application hosting
-  - All TypeScript type errors resolved
-  - Proper error handling and loading states implemented
+- **Workbench k8sStatus UI (2025-01-28):** Completed Phase 3 of the workbench status feature, integrating the polling hook and loading states into all relevant UI components.
+- **Workbench k8sStatus Backend (2025-01-28):** Completed Phase 1 & 2 of the workbench status feature, including domain model updates and the creation of the `useWorkbenchStatus` polling hook.
 
 ## 6. Upcoming Implementation
 
-**Workbench k8sStatus Loading State Feature:**
-- **Timeline:** Multi-phase implementation following established patterns
-- **Impact:** Significant improvement to user experience when creating workbenches
-- **Technical Approach:** Clean Architecture patterns with domain models, custom hooks, and UI components
-- **Testing Strategy:** Comprehensive testing of polling logic, loading states, and error scenarios
+**Workbench k8sStatus Loading State Feature (Polish):**
+
+- **Timeline:** Finalizing implementation.
+- **Impact:** Ensure a robust and polished user experience for the new feature.
+- **Technical Approach:** Refine UI components to handle all error states and edge cases gracefully.
+- **Testing Strategy:** End-to-end testing of the complete feature, focusing on failure scenarios.

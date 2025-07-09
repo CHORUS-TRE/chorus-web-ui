@@ -2,73 +2,41 @@
 
 ## 1. Current Work Focus
 
-**Primary Task: Implement Workbench k8sStatus Loading State**
+**Primary Task: Implement Workbench k8sStatus Loading State (Phase 4: Polish)**
 
-The current priority is to implement proper loading states for workbench creation based on the k8sStatus field from the API. This will ensure that the background iframe only displays when the workbench is actually running ("Running" status), providing better user experience and preventing users from seeing non-functional sessions.
+With the core implementation of the workbench k8sStatus feature complete, the current priority is to polish the error handling and user experience. This involves ensuring that all edge cases, such as polling timeouts and API errors, are handled gracefully in the UI.
 
 **Key Requirements:**
-- Monitor k8sStatus field from workbench API responses
-- Only show background iframe when k8sStatus is "Running"
-- Display loading states during workbench initialization
-- Handle polling, timeouts, and error states gracefully
+- Provide clear, user-friendly error messages for all failure scenarios.
+- Implement and test timeout handling.
+- Ensure a smooth and consistent user experience across all related components.
 
 ## 2. Recent Changes
 
-- **Role Management Feature Complete (Phase 1):** The platform-level user and role management features are complete. Further work on workspace-level roles is on hold.
-- **Platform-Level Role Management UI Implemented:** A new section for managing roles and permissions (the "permission matrix") has been built at `/admin/roles`.
-- **Role Assignment Integrated:** The user management UI (`/admin/users`) now supports assigning one or more roles to users during creation and editing.
-- **Data Layers for Roles Created:** The necessary data models, repositories, and use cases for the `Role` entity have been implemented.
-- **Authentication Refactor Progress:** The authentication flow has been successfully moved to client-side with background iframe integration.
+- **Workbench k8sStatus UI (Phase 3) Complete:**
+  - The `background-iframe.tsx` component now correctly uses the `useWorkbenchStatus` hook, displaying a loading overlay while polling and only showing the iframe when the workbench is "Running".
+  - All UI components related to the workbench lifecycle have been updated to reflect the k8sStatus.
+- **Workbench k8sStatus Backend (Phase 1 & 2) Complete:**
+  - The domain model for `Workbench` has been updated to include the `k8sStatus` field and a `K8sWorkbenchStatus` enum.
+  - A new `useWorkbenchStatus` hook has been created to handle polling for the workbench status.
+  - The `getWorkbench` action was added to support the new hook.
 
 ## 3. Next Steps
 
 **Immediate Implementation Plan:**
 
-### Phase 1: Domain Model Updates
-1. Add `K8sWorkbenchStatus` enum (RUNNING, STOPPED, KILLED, etc.)
-2. Add `k8sStatus` field to WorkbenchSchema
-3. Update workbench types and mappers
-
-### Phase 2: Polling Mechanism
-1. Create `useWorkbenchStatus` hook for status polling
-2. Implement polling logic (2-3 second intervals)
-3. Handle timeout scenarios (5 minute max)
-4. Add exponential backoff for errors
-
-### Phase 3: UI Loading States
-1. Update BackgroundIframe to check k8sStatus before displaying
-2. Add loading overlay with appropriate messaging
-3. Update workbench creation flow to poll until "Running"
-4. Update workbench table to show k8sStatus
-
-### Phase 4: Error Handling & Polish
-1. Handle polling errors gracefully
-2. Add retry mechanisms
-3. Update session page loading states
-4. Add timeout error messages
+### Phase 4: Error Handling & Polish (In Progress)
+1.  **TODO** - Handle polling errors gracefully in all affected components (`workbench-create-form`, `workbench-table`, `background-iframe`).
+2.  **TODO** - Add user-friendly timeout error messages after 5 minutes of polling.
+3.  **TODO** - Conduct a final review of the end-to-end user flow for polish and consistency.
 
 **Files to Modify:**
-- `src/domain/model/workbench.ts`
-- `src/data/data-source/chorus-api/workbench-mapper.ts`
-- `src/components/background-iframe.tsx`
-- `src/components/hooks/use-workbench-status.ts` (new)
 - `src/components/forms/workbench-create-form.tsx`
 - `src/components/workbench-table.tsx`
 - `src/app/(workspaces)/workspaces/[workspaceId]/sessions/[sessionId]/page.tsx`
+- `src/components/background-iframe.tsx`
 
 ## 4. Active Decisions & Considerations
 
-- **Polling Strategy:** Use 2-3 second intervals with 5-minute timeout to balance responsiveness with server load
-- **Loading State Design:** Show loading overlay instead of broken iframe to improve user experience
-- **Error Handling:** Provide clear error messages and retry options when workbench fails to start
-- **Backwards Compatibility:** Ensure k8sStatus field is optional to maintain compatibility with existing workbenches
-- **Performance:** Implement proper cleanup of polling intervals to prevent memory leaks
-
-## 5. Technical Approach
-
-Following the established Clean Architecture patterns:
-- Domain models define k8sStatus enums and validation
-- Data mappers handle API to domain model translation
-- Custom hooks manage polling and state management
-- UI components react to status changes with appropriate loading states
-- Error boundaries handle failure scenarios gracefully
+- **API Client:** The `k8sStatus` field was manually added to the `ChorusWorkbench.ts` model as a temporary measure. The API client should be regenerated to formally include this change.
+- **Error State Design:** Error messages should be consistent and provide clear guidance to the user where possible.
