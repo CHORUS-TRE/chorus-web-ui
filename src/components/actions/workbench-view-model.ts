@@ -88,7 +88,7 @@ export async function workbenchList(): Promise<Result<Workbench[]>> {
   }
 }
 
-export async function workbenchGet(id: string): Promise<Result<Workbench>> {
+export async function getWorkbench(id: string): Promise<Result<Workbench>> {
   try {
     const repository = await getRepository()
     const useCase = new WorkbenchGet(repository)

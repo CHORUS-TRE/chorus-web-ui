@@ -1,11 +1,16 @@
 'use client'
 
+import { AlertCircle } from 'lucide-react'
 import { env } from 'next-runtime-env'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
 import { useAppState } from '@/components/store/app-state-context'
+import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
 
+import { LoadingOverlay } from './loading-overlay'
 import { useAuth } from './store/auth-context'
+import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export default function BackgroundIframe() {
   const { user } = useAuth()
@@ -13,13 +18,42 @@ export default function BackgroundIframe() {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
-  // const { error, isLoading } = useUrlValidation(url)
+  const [workbench, setWorkbench] = useState<Workbench | null>(null)
+
+  const {
+    isPolling,
+    error: pollingError,
+    startPolling,
+    stopPolling
+  } = useWorkbenchStatus({
+    workbenchId: background?.sessionId,
+    onSuccess: (fetchedWorkbench) => {
+      setWorkbench(fetchedWorkbench)
+    },
+    onError: (error) => {
+      console.error('Polling failed:', error)
+      stopPolling()
+    },
+    onTimeout: () => {
+      console.error('Polling timed out.')
+      stopPolling()
+    }
+  })
+
+  // Start polling when sessionId is available
+  useEffect(() => {
+    if (background?.sessionId) {
+      console.log('startPolling')
+      startPolling()
+    }
+    return () => {
+      stopPolling()
+    }
+  }, [background?.sessionId, startPolling, stopPolling])
 
   // Memoize URL computation to prevent unnecessary recalculations
   const computedUrl = useMemo(() => {
-    if (!background?.sessionId) {
-      return null
-    }
+    if (!background?.sessionId) return null
 
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
@@ -61,62 +95,42 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
-  // useEffect(() => {
-  //   if (!url) return
-
-  //   const xhr = new XMLHttpRequest()
-
-  //   xhr.open('GET', url)
-  //   xhr.onreadystatechange = () => {
-  //     if (xhr.readyState === xhr.DONE) {
-  //       if (xhr.status === 200) {
-  //         const data_url = URL.createObjectURL(xhr.response)
-  //         document
-  //           .querySelector('#workspace-iframe')
-  //           ?.setAttribute('src', data_url)
-  //       } else {
-  //         console.error('no data :(')
-  //       }
-  //     }
-  //   }
-  //   xhr.responseType = 'blob'
-  //   xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('token'))
-  //   // xhr.setRequestHeader('credentials', 'include')
-  //   xhr.send()
-  // }, [url])
-
   if (!background?.sessionId || !user) return null
+
+  const isReady = workbench?.k8sStatus === K8sWorkbenchStatus.RUNNING
 
   return (
     <>
-      {/* <LoadingOverlay
-        isLoading={isLoading}
-        message="Loading session..."
-        dismiss={error ? true : false}
-      /> */}
-      {/* {error && (
+      <LoadingOverlay
+        isLoading={isPolling && !isReady}
+        message="Loading session, this can take a few minutes..."
+        dismiss={pollingError ? true : false}
+      />
+      {pollingError && (
         <div className="fixed inset-0 top-11 z-30 flex items-center justify-center bg-background/80">
           <Alert variant="default" className="w-[400px] text-white">
             <AlertCircle className="mt-1 h-4 w-4 text-white" />
             <AlertTitle>Session did not load correctly</AlertTitle>
             <AlertDescription className="text-white">
-              {error.message}
+              {pollingError}
             </AlertDescription>
           </Alert>
         </div>
-      )} */}
-      <iframe
-        title="Application Workspace"
-        src={url ? url : 'about:blank'}
-        allow="autoplay; fullscreen; clipboard-write;"
-        style={{ width: '100vw', height: '100vh' }}
-        className="fixed left-0 top-11 z-20 h-full w-full"
-        id="workspace-iframe"
-        ref={iFrameRef}
-        aria-label="Application Workspace"
-        onLoad={handleLoad}
-        tabIndex={0}
-      />
+      )}
+      {isReady && (
+        <iframe
+          title="Application Workspace"
+          src={url ? url : 'about:blank'}
+          allow="autoplay; fullscreen; clipboard-write;"
+          style={{ width: '100vw', height: '100vh' }}
+          className="fixed left-0 top-11 z-20 h-full w-full"
+          id="workspace-iframe"
+          ref={iFrameRef}
+          aria-label="Application Workspace"
+          onLoad={handleLoad}
+          tabIndex={0}
+        />
+      )}
     </>
   )
 }

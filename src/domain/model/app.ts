@@ -1,12 +1,14 @@
 import { z } from 'zod'
 
+import { parseCPU, parseMemory } from '../utils/resource-parser'
+
 export enum AppState {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   DELETED = 'deleted'
 }
 
-export const AppSchema = z.object({
+const baseAppSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
@@ -88,7 +90,94 @@ export const AppSchema = z.object({
     .optional()
 })
 
-export const AppCreateSchema = AppSchema.omit({ id: true })
+export const AppSchema = baseAppSchema.superRefine((data, ctx) => {
+  // CPU Validation
+  if (
+    data.minCPU &&
+    data.maxCPU &&
+    parseCPU(data.minCPU) > parseCPU(data.maxCPU)
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Min CPU cannot be greater than Max CPU',
+      path: ['minCPU']
+    })
+  }
+
+  // Memory Validation
+  if (
+    data.minMemory &&
+    data.maxMemory &&
+    parseMemory(data.minMemory) > parseMemory(data.maxMemory)
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Min Memory cannot be greater than Max Memory',
+      path: ['minMemory']
+    })
+  }
+
+  // Ephemeral Storage Validation
+  if (
+    data.minEphemeralStorage &&
+    data.maxEphemeralStorage &&
+    parseMemory(data.minEphemeralStorage) >
+      parseMemory(data.maxEphemeralStorage)
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        'Min Ephemeral Storage cannot be greater than Max Ephemeral Storage',
+      path: ['minEphemeralStorage']
+    })
+  }
+})
+
+export const AppCreateSchema = baseAppSchema
+  .omit({ id: true })
+  .superRefine((data, ctx) => {
+    // CPU Validation
+    if (
+      data.minCPU &&
+      data.maxCPU &&
+      parseCPU(data.minCPU) > parseCPU(data.maxCPU)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Min CPU cannot be greater than Max CPU',
+        path: ['minCPU']
+      })
+    }
+
+    // Memory Validation
+    if (
+      data.minMemory &&
+      data.maxMemory &&
+      parseMemory(data.minMemory) > parseMemory(data.maxMemory)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Min Memory cannot be greater than Max Memory',
+        path: ['minMemory']
+      })
+    }
+
+    // Ephemeral Storage Validation
+    if (
+      data.minEphemeralStorage &&
+      data.maxEphemeralStorage &&
+      parseMemory(data.minEphemeralStorage) >
+        parseMemory(data.maxEphemeralStorage)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Min Ephemeral Storage cannot be greater than Max Ephemeral Storage',
+        path: ['minEphemeralStorage']
+      })
+    }
+  })
+
 export const AppUpdateSchema = AppSchema
 
 export type AppCreateType = z.infer<typeof AppCreateSchema>

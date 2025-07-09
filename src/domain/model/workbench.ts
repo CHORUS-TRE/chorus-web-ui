@@ -9,6 +9,12 @@ export enum WorkbenchState {
   EXITED = 'exited'
 }
 
+export enum K8sWorkbenchStatus {
+  RUNNING = 'Running',
+  PROGRESSING = 'Progressing',
+  FAILED = 'Failed'
+}
+
 export enum WorkbenchStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
@@ -24,6 +30,7 @@ export const WorkbenchSchema = z.object({
   shortName: z.string().optional(),
   description: z.string().optional(),
   status: z.nativeEnum(WorkbenchStatus).optional(),
+  k8sStatus: z.nativeEnum(K8sWorkbenchStatus).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),
   appInsanceIds: z.array(z.string()).optional(),

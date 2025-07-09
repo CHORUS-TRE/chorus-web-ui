@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { env } from 'next-runtime-env'
 import { startTransition, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
@@ -159,6 +160,9 @@ export function WorkbenchCreateForm({
           description: 'Session created successfully'
         })
         setOpen(false)
+        await new Promise((resolve) =>
+          setTimeout(resolve, Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) * 1000)
+        )
         router.push(
           `/workspaces/${workspaceId}/sessions/${result.data.id as string}`
         )

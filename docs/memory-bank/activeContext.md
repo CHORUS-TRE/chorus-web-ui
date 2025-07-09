@@ -2,23 +2,41 @@
 
 ## 1. Current Work Focus
 
-The current priority is to refactor the authentication flow to be primarily client-side. The goal is to move data fetching for authentication state out of server components and into client components to simplify state management and improve responsiveness.
+**Primary Task: Implement Workbench k8sStatus Loading State (Phase 4: Polish)**
+
+With the core implementation of the workbench k8sStatus feature complete, the current priority is to polish the error handling and user experience. This involves ensuring that all edge cases, such as polling timeouts and API errors, are handled gracefully in the UI.
+
+**Key Requirements:**
+- Provide clear, user-friendly error messages for all failure scenarios.
+- Implement and test timeout handling.
+- Ensure a smooth and consistent user experience across all related components.
 
 ## 2. Recent Changes
 
-- **Role Management Feature Complete (Phase 1):** The platform-level user and role management features are complete. Further work on workspace-level roles is on hold.
-- **Platform-Level Role Management UI Implemented:** A new section for managing roles and permissions (the "permission matrix") has been built at `/admin/roles`.
-- **Role Assignment Integrated:** The user management UI (`/admin/users`) now supports assigning one or more roles to users during creation and editing.
-- **Data Layers for Roles Created:** The necessary data models, repositories, and use cases for the `Role` entity have been implemented.
+- **Workbench k8sStatus UI (Phase 3) Complete:**
+  - The `background-iframe.tsx` component now correctly uses the `useWorkbenchStatus` hook, displaying a loading overlay while polling and only showing the iframe when the workbench is "Running".
+  - All UI components related to the workbench lifecycle have been updated to reflect the k8sStatus.
+- **Workbench k8sStatus Backend (Phase 1 & 2) Complete:**
+  - The domain model for `Workbench` has been updated to include the `k8sStatus` field and a `K8sWorkbenchStatus` enum.
+  - A new `useWorkbenchStatus` hook has been created to handle polling for the workbench status.
+  - The `getWorkbench` action was added to support the new hook.
 
 ## 3. Next Steps
 
-- Refactor authentication logic to use client-side data fetching.
-- Implement a background iframe component to host running user applications.
-- Re-evaluate and prioritize workspace-level role management after the current tasks are complete.
+**Immediate Implementation Plan:**
+
+### Phase 4: Error Handling & Polish (In Progress)
+1.  **TODO** - Handle polling errors gracefully in all affected components (`workbench-create-form`, `workbench-table`, `background-iframe`).
+2.  **TODO** - Add user-friendly timeout error messages after 5 minutes of polling.
+3.  **TODO** - Conduct a final review of the end-to-end user flow for polish and consistency.
+
+**Files to Modify:**
+- `src/components/forms/workbench-create-form.tsx`
+- `src/components/workbench-table.tsx`
+- `src/app/(workspaces)/workspaces/[workspaceId]/sessions/[sessionId]/page.tsx`
+- `src/components/background-iframe.tsx`
 
 ## 4. Active Decisions & Considerations
 
-- The authentication refactor will shift logic from server components and server actions towards client-side hooks and view-models.
-- The core architectural patterns (Clean Architecture, Repository/Data Source, Mappers) must be followed for the new feature development.
-- The distinction between client-side fetching (default) and Server Actions (for forms) is a key pattern to maintain.
+- **API Client:** The `k8sStatus` field was manually added to the `ChorusWorkbench.ts` model as a temporary measure. The API client should be regenerated to formally include this change.
+- **Error State Design:** Error messages should be consistent and provide clear guidance to the user where possible.
