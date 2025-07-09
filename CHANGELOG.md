@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.3...v1.3.4) (2025-07-09)
+
+
+### Bug Fixes
+
+* update OAuth redirect handling to use window.location.href and increase delay for token storage ([946b749](https://github.com/CHORUS-TRE/chorus-web-ui/commit/946b749eb1621f1b0460c476bd437a27b6731c81))
+
 ## [1.3.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.2...v1.3.3) (2025-07-09)
 
 
