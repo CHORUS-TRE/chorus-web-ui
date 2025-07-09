@@ -27,12 +27,11 @@ export default function OAuthRedirectPage() {
           }
 
           const response = await handleOAuthRedirect(queryParams)
-
           if (response.error) {
             throw new Error(response.error)
           }
 
-          router.push('/')
+          window.location.href = '/'
         } catch (error) {
           console.error('OAuth redirect error:', error)
           if (error instanceof Error) {

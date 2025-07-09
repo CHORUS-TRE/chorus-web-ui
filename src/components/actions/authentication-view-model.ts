@@ -123,8 +123,9 @@ export async function handleOAuthRedirect(
       return { error: 'No token received' }
     }
 
+    // allow the token to be set in the session storage
     sessionStorage.setItem('token', response.data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
 
     return response
   } catch (error) {
