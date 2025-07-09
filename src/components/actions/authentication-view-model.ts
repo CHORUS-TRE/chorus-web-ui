@@ -123,9 +123,7 @@ export async function handleOAuthRedirect(
       return { error: 'No token received' }
     }
 
-    if (!response.data) {
-      throw new Error('No token received')
-    }
+    sessionStorage.setItem('token', response.data)
 
     return response
   } catch (error) {
