@@ -188,7 +188,7 @@ export const AppStateProvider = ({
       const response = await listUsers()
 
       if (response?.error) {
-        toast({ title: response.error, variant: 'destructive' })
+        // toast({ title: response.error, variant: 'destructive' })
       }
 
       if (response?.data) {

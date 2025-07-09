@@ -124,6 +124,7 @@ export async function handleOAuthRedirect(
     }
 
     sessionStorage.setItem('token', response.data)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     return response
   } catch (error) {

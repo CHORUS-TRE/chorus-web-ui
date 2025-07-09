@@ -89,7 +89,6 @@ export const AuthProvider = ({
     setBackground(undefined)
     sessionStorage.removeItem('token')
     setUser(undefined)
-    logout()
   }, [setBackground])
 
   const refreshUser = useCallback(async () => {

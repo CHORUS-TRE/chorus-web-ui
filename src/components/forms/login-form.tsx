@@ -75,24 +75,6 @@ export default function LoginForm() {
       return
     }
 
-    if (state.data) {
-      // if (state.data) {
-      //   router.push('/')
-      // }
-      // const checkAuthOnBackend = async () => {
-      //   if (user) {
-      //     // Get the redirect path and validate it
-      //     const redirectPath = searchParams.get('redirect') || '/'
-      //     // Ensure the redirect URL is relative and doesn't contain protocol/domain
-      //     const isValidRedirect =
-      //       redirectPath.startsWith('/') && !redirectPath.includes('//')
-      //     // Redirect to the validated path or fallback to home
-      //     // window.location.href = isValidRedirect ? redirectPath : '/'
-      //     router.push(isValidRedirect ? redirectPath : '/')
-      //   }
-      // }
-      // checkAuthOnBackend()
-    }
   }, [state, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
