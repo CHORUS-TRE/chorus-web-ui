@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.1...v1.3.2) (2025-07-09)
+
+
+### Bug Fixes
+
+* store token in session storage during OAuth redirect handling ([6238752](https://github.com/CHORUS-TRE/chorus-web-ui/commit/62387528d6d85e82c3723adb8704b86b9604d1e3))
+
 ## [1.3.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.0...v1.3.1) (2025-07-09)
 
 # [1.3.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.2.2...v1.3.0) (2025-07-09)
