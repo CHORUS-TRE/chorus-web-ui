@@ -5,7 +5,8 @@ import { parseCPU, parseMemory } from '../utils/resource-parser'
 export enum AppState {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  DELETED = 'deleted',
+  UNKNOWN = ''
 }
 
 const baseAppSchema = z.object({
@@ -13,7 +14,12 @@ const baseAppSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
   status: z
-    .enum([AppState.ACTIVE, AppState.INACTIVE, AppState.DELETED])
+    .enum([
+      AppState.ACTIVE,
+      AppState.INACTIVE,
+      AppState.DELETED,
+      AppState.UNKNOWN
+    ])
     .optional(),
   dockerImageName: z.string().min(1, 'Docker image name is required'),
   dockerImageTag: z.string().min(1, 'Docker image tag is required'),

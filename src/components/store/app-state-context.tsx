@@ -144,9 +144,15 @@ export const AppStateProvider = ({
         toast({ title: response.error, variant: 'destructive' })
       if (response?.data)
         setWorkspaces(
-          response.data
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .sort((a) => (a.id === user?.workspaceId ? -1 : 0))
+          response.data.sort((a, b) => {
+            if (a.isMain && !b.isMain) return -1
+            if (!a.isMain && b.isMain) return 1
+            if (a.id === user?.workspaceId && b.id !== user?.workspaceId)
+              return -1
+            if (a.id !== user?.workspaceId && b.id === user?.workspaceId)
+              return 1
+            return b.createdAt.getTime() - a.createdAt.getTime()
+          })
         )
     } catch (error) {
       toast({

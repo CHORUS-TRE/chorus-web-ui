@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon, Package } from 'lucide-react'
+import { EllipsisVerticalIcon, Package, Star } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -87,9 +87,14 @@ export default function WorkspacesGrid({
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-start gap-3 pr-2 text-white hover:text-accent hover:underline">
                   <Package className="h-6 w-6 flex-shrink-0" />
-                  {workspace?.id === user?.workspaceId
-                    ? 'My Workspace'
-                    : workspace?.name}
+                  <span className="flex items-center gap-2">
+                    {workspace?.id === user?.workspaceId
+                      ? 'My Workspace'
+                      : workspace?.name}
+                    {workspace.isMain && (
+                      <Star className="h-4 w-4 text-yellow-400" />
+                    )}
+                  </span>
                 </CardTitle>
                 <CardDescription>
                   {workspace?.description}

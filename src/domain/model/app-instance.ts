@@ -3,13 +3,15 @@ import { z } from 'zod'
 export enum AppInstanceStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  DELETED = 'deleted',
+  UNKNOWN = ''
 }
 
 export enum K8sAppInstanceStatus {
   RUNNING = 'Running',
   STOPPED = 'Stopped',
-  KILLED = 'Killed'
+  KILLED = 'Killed',
+  UNKNOWN = ''
 }
 
 export enum K8sAppInstanceState {

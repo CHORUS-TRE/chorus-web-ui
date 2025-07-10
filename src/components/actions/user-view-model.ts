@@ -13,6 +13,7 @@ import { UserMe } from '~/domain/use-cases/user/user-me'
 import { UserUpdate } from '~/domain/use-cases/user/user-update'
 
 import { getToken } from './authentication-view-model'
+// import { useAppState } from '../store/app-state-context'
 
 const getRepository = async () => {
   const token = await getToken()
@@ -28,6 +29,7 @@ export async function userMe() {
   const userRepository = await getRepository()
   const useCase = new UserMe(userRepository)
   const user = await useCase.execute()
+  // const { workspaces } = useAppState()
 
   if (user.error) {
     return {
@@ -38,11 +40,8 @@ export async function userMe() {
   if (user?.data) {
     return {
       data: {
-        ...(user.data as User),
-        workspaceId:
-          env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-          localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-          undefined
+        ...(user.data as User)
+        // workspaceId: workspaces?.find((w) => w.isMain && w.userId === user.data?.id)?.id
       }
     }
   }

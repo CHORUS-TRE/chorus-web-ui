@@ -46,6 +46,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
+import { Switch } from '~/components/ui/switch'
 import { Textarea } from '~/components/ui/textarea'
 
 import { toast } from '../hooks/use-toast'
@@ -68,7 +69,8 @@ export function WorkspaceCreateForm({
       shortName: '',
       description: '',
       tenantId: '1',
-      userId: userId || ''
+      userId: userId || '',
+      isMain: false
     }
   })
 
@@ -174,6 +176,18 @@ export function WorkspaceCreateForm({
                   </div>
                 )}
               </div>
+              <div className="grid gap-2">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isMain"
+                    checked={form.watch('isMain')}
+                    onCheckedChange={(checked) =>
+                      form.setValue('isMain', checked)
+                    }
+                  />
+                  <Label htmlFor="isMain">Set as main workspace</Label>
+                </div>
+              </div>
               <input type="hidden" {...form.register('tenantId')} />
               <input type="hidden" {...form.register('userId')} />
             </CardContent>
@@ -265,6 +279,7 @@ export function WorkspaceUpdateForm({
       shortName: workspace?.shortName || '',
       description: workspace?.description || '',
       status: workspace?.status || WorkspaceState.ACTIVE,
+      isMain: workspace?.isMain || false,
       tenantId: '1',
       userId: workspace?.userId || ''
     }
@@ -278,6 +293,7 @@ export function WorkspaceUpdateForm({
         shortName: workspace?.shortName || '',
         description: workspace?.description || '',
         status: workspace?.status || WorkspaceState.ACTIVE,
+        isMain: workspace?.isMain || false,
         tenantId: '1',
         userId: workspace?.userId || ''
       })
@@ -423,6 +439,22 @@ export function WorkspaceUpdateForm({
                         </SelectContent>
                       </Select>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isMain"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <FormLabel>Main Workspace</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />

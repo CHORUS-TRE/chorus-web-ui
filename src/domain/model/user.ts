@@ -5,12 +5,14 @@ import { RoleSchema } from './role'
 export enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  DELETED = 'deleted',
+  UNKNOWN = ''
 }
 
 export enum UserRoleEnum {
   ADMIN = 'admin',
-  AUTHENTICATED = 'authenticated'
+  AUTHENTICATED = 'authenticated',
+  UNKNOWN = ''
 }
 
 export type UserStatus = `${UserStatusEnum}`
