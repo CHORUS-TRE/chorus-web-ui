@@ -12,12 +12,8 @@ import { UserList } from '~/domain/use-cases/user/user-list'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 import { UserUpdate } from '~/domain/use-cases/user/user-update'
 
-import { getToken } from './authentication-view-model'
-
 const getRepository = async () => {
-  const token = await getToken()
   const dataSource = new UserApiDataSourceImpl(
-    token || '',
     env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   )
 
@@ -37,13 +33,7 @@ export async function userMe() {
 
   if (user?.data) {
     return {
-      data: {
-        ...(user.data as User),
-        workspaceId:
-          env('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-          localStorage.getItem('NEXT_PUBLIC_ALBERT_WORKSPACE_ID') ||
-          undefined
-      }
+      data: user.data as User
     }
   }
 }

@@ -16,12 +16,8 @@ import { AppInstanceGet } from '~/domain/use-cases/app-instance/app-instance-get
 import { AppInstanceList } from '~/domain/use-cases/app-instance/app-instance-list'
 import { AppInstanceUpdate } from '~/domain/use-cases/app-instance/app-instance-update'
 
-import { getToken } from './authentication-view-model'
-
 const getRepository = async () => {
-  const token = await getToken()
   const dataSource = new AppInstanceDataSourceImpl(
-    token || '',
     env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   )
 

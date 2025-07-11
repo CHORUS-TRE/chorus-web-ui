@@ -3,7 +3,8 @@ import { z } from 'zod'
 export enum WorkspaceState {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  DELETED = 'deleted',
+  UNKNOWN = ''
 }
 
 export const WorkspaceSchema = z.object({
@@ -15,6 +16,7 @@ export const WorkspaceSchema = z.object({
   description: z.string().optional(),
   image: z.string().optional(),
   status: z.nativeEnum(WorkspaceState),
+  isMain: z.boolean().optional(),
   appInsanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
   createdAt: z.date(),
@@ -27,7 +29,7 @@ export const WorkspaceCreateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   shortName: z.string().min(3, 'Short name is required'),
   description: z.string().optional(),
-  status: z.nativeEnum(WorkspaceState).optional()
+  isMain: z.boolean().optional()
 })
 
 export const WorkspaceEditFormSchema = WorkspaceCreateSchema // For form validation

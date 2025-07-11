@@ -11,25 +11,24 @@ import {
   useState
 } from 'react'
 
-import {
-  getToken,
-  login,
-  logout
-} from '@/components/actions/authentication-view-model'
+import { login, logout } from '@/components/actions/authentication-view-model'
 import { Result, User } from '@/domain/model'
 
 import { userMe } from '../actions/user-view-model'
+import { workspaceList } from '../actions/workspace-view-model'
 import { LoadingOverlay } from '../loading-overlay'
 import { useAppState } from './app-state-context'
 
 type AuthContextType = {
   user: User | undefined
+  refreshUser: () => Promise<void>
   logout: () => Promise<void>
   login: (prevState: Result<User>, formData: FormData) => Promise<Result<User>>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: undefined,
+  refreshUser: async () => {},
   logout: async () => {},
   login: async () => {
     return { data: undefined, error: undefined }
@@ -45,6 +44,54 @@ export const AuthProvider = ({
   const [isLoading, setIsLoading] = useState(true)
   const refreshInterval = useRef<NodeJS.Timeout | undefined>(undefined)
   const { setBackground } = useAppState()
+
+  const handleLogout = useCallback(async () => {
+    if (user) {
+      await logout()
+    }
+    setIsLoading(false)
+    setBackground(undefined)
+    setUser(undefined)
+  }, [setBackground, user])
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const userResult = await userMe()
+      if (!userResult?.data) throw new Error('Failed to get user')
+
+      let nextUser = userResult.data
+      const workspaces = await workspaceList()
+      const isMain = workspaces?.data?.find(
+        (w) => w.isMain && w.userId === nextUser.id
+      )
+      if (isMain) {
+        nextUser = { ...nextUser, workspaceId: isMain.id }
+      }
+
+      setUser(nextUser)
+
+      setIsLoading(false)
+    } catch (error) {
+      console.error(error)
+      handleLogout()
+    }
+  }, [setUser, handleLogout])
+
+  useEffect(() => {
+    if (!user) {
+      refreshUser()
+    }
+
+    // Set up periodic refresh
+    refreshInterval.current = setInterval(refreshUser, 30 * 1000)
+
+    return () => {
+      if (refreshInterval.current) {
+        clearInterval(refreshInterval.current)
+        refreshInterval.current = undefined
+      }
+    }
+  }, [user, refreshUser])
 
   const handleLogin = async (
     prevState: Result<User>,
@@ -67,14 +114,11 @@ export const AuthProvider = ({
     }
 
     if (result.data) {
-      const user = await userMe()
-      if (user?.data) {
-        setUser(user.data)
-        return {
-          ...prevState,
-          data: user.data,
-          error: undefined
-        }
+      await refreshUser()
+
+      return {
+        ...prevState,
+        data: user
       }
     }
 
@@ -84,54 +128,9 @@ export const AuthProvider = ({
     }
   }
 
-  const handleLogout = useCallback(async () => {
-    await logout()
-    setBackground(undefined)
-    sessionStorage.removeItem('token')
-    setUser(undefined)
-  }, [setBackground])
-
-  const refreshUser = useCallback(async () => {
-    const token = await getToken()
-    if (!token) {
-      setIsLoading(false)
-      return
-    }
-
-    try {
-      const userResult = await userMe()
-      if (!userResult?.data) throw new Error('Failed to get user')
-
-      if (user?.id !== userResult.data?.id) {
-        setUser(userResult.data)
-      }
-
-      setIsLoading(false)
-    } catch (error) {
-      console.error(error)
-      handleLogout()
-    }
-  }, [user, handleLogout])
-
-  useEffect(() => {
-    if (!user) {
-      refreshUser()
-    }
-
-    // Set up periodic refresh
-    refreshInterval.current = setInterval(refreshUser, 30 * 1000)
-
-    return () => {
-      if (refreshInterval.current) {
-        clearInterval(refreshInterval.current)
-        refreshInterval.current = undefined
-      }
-    }
-  }, [user, refreshUser])
-
   return (
     <AuthContext.Provider
-      value={{ user, login: handleLogin, logout: handleLogout }}
+      value={{ user, login: handleLogin, logout: handleLogout, refreshUser }}
     >
       {isLoading ? <LoadingOverlay isLoading={isLoading} /> : children}
     </AuthContext.Provider>

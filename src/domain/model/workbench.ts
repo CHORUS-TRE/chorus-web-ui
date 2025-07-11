@@ -1,24 +1,17 @@
 import { z } from 'zod'
 
-export enum WorkbenchState {
-  UNINITIALIZED = 'uninitialized',
-  CREATED = 'created',
-  LOADING = 'loading',
-  ACTIVE = 'active',
-  STOPPING = 'stopping',
-  EXITED = 'exited'
-}
-
 export enum K8sWorkbenchStatus {
   RUNNING = 'Running',
   PROGRESSING = 'Progressing',
-  FAILED = 'Failed'
+  FAILED = 'Failed',
+  UNKNOWN = ''
 }
 
 export enum WorkbenchStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  DELETED = 'deleted'
+  DELETED = 'deleted',
+  UNKNOWN = ''
 }
 
 export const WorkbenchSchema = z.object({

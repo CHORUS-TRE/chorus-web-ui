@@ -5,6 +5,7 @@ import {
   Bell,
   Box,
   CircleHelp,
+  Home,
   Package,
   Search,
   Settings,
@@ -100,7 +101,6 @@ export function Header() {
             />
           </NavLink>
         </div>
-
         {user && (
           <>
             <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
@@ -112,18 +112,30 @@ export function Header() {
                         <NavLink
                           href={
                             background?.workspaceId
-                              ? `/workspaces/${background?.workspaceId}`
+                              ? workspaces?.find(
+                                  (w) => w.id === background?.workspaceId
+                                )?.isMain
+                                ? `/`
+                                : `/workspaces/${background?.workspaceId}`
                               : '/'
                           }
                           className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                           exact={false}
                         >
                           <div className="mt-1 flex place-items-center gap-1">
-                            <Box className="h-4 w-4" />
+                            {workspaceId === user?.workspaceId ? (
+                              <Home className="h-4 w-4 text-secondary" />
+                            ) : (
+                              <Box className="h-4 w-4 text-white" />
+                            )}
                             {background?.workspaceId
                               ? workspaces?.find(
                                   (w) => w.id === background?.workspaceId
-                                )?.name
+                                )?.isMain
+                                ? `My Workspace`
+                                : workspaces?.find(
+                                    (w) => w.id === background?.workspaceId
+                                  )?.name
                               : 'My Workspace'}
                           </div>
                         </NavLink>
@@ -212,13 +224,28 @@ export function Header() {
                   )}
                   {!background?.sessionId && (
                     <NavLink
-                      href={`/workspaces/${user?.workspaceId}`}
+                      href={
+                        workspaces?.find((w) => w.id === workspaceId)?.isMain
+                          ? `/`
+                          : workspaceId
+                            ? `/workspaces/${workspaceId}`
+                            : '/'
+                      }
                       className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                      // exact={user?.workspaceId === workspaceId}
+                      exact={user?.workspaceId === workspaceId}
                     >
                       <div className="mt-1 flex place-items-center gap-1">
-                        <Box className="h-4 w-4" />
-                        My Workspace
+                        {workspaceId === user?.workspaceId ? (
+                          <Home className="h-4 w-4 text-secondary" />
+                        ) : (
+                          <Box className="h-4 w-4 text-white" />
+                        )}
+                        {workspaces?.find((w) => w.id === workspaceId)?.isMain
+                          ? `My Workspace`
+                          : workspaceId
+                            ? workspaces?.find((w) => w.id === workspaceId)
+                                ?.name
+                            : 'My Workspace'}
                       </div>
                     </NavLink>
                   )}

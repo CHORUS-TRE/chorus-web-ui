@@ -43,7 +43,6 @@ export default function BackgroundIframe() {
   // Start polling when sessionId is available
   useEffect(() => {
     if (background?.sessionId) {
-      console.log('startPolling')
       startPolling()
     }
     return () => {

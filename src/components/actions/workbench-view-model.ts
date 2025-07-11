@@ -18,12 +18,8 @@ import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
 
-import { getToken } from './authentication-view-model'
-
 const getRepository = async () => {
-  const token = await getToken()
   const dataSource = new WorkbenchDataSourceImpl(
-    token || '',
     env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   )
   return new WorkbenchRepositoryImpl(dataSource)

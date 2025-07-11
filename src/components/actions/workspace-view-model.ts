@@ -20,12 +20,8 @@ import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
-import { getToken } from './authentication-view-model'
-
 const getRepository = async () => {
-  const token = await getToken()
   const dataSource = new WorkspaceDataSourceImpl(
-    token || '',
     env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   )
   return new WorkspaceRepositoryImpl(dataSource)
@@ -57,9 +53,12 @@ export async function workspaceCreate(
     const repository = await getRepository()
     const useCase = new WorkspaceCreate(repository)
 
-    const workspace = Object.fromEntries(
-      formData.entries()
-    ) as WorkspaceCreateType
+    const formValues = Object.fromEntries(formData.entries())
+
+    const workspace: WorkspaceCreateType = {
+      ...formValues,
+      isMain: formValues.isMain === 'true'
+    } as WorkspaceCreateType
 
     const validation = WorkspaceCreateSchema.safeParse(workspace)
     if (!validation.success) {
@@ -92,9 +91,11 @@ export async function workspaceUpdate(
     const repository = await getRepository()
     const useCase = new WorkspaceUpdate(repository)
 
-    const workspace = Object.fromEntries(
-      formData.entries()
-    ) as WorkspaceUpdatetype
+    const formValues = Object.fromEntries(formData.entries())
+    const workspace: WorkspaceUpdatetype = {
+      ...formValues,
+      isMain: formValues.isMain === 'true'
+    } as WorkspaceUpdatetype
 
     const validation = WorkspaceUpdateSchema.safeParse(workspace)
     if (!validation.success) {

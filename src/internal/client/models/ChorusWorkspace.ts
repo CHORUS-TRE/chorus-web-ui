@@ -63,6 +63,12 @@ export interface ChorusWorkspace {
   status?: string
   /**
    *
+   * @type {boolean}
+   * @memberof ChorusWorkspace
+   */
+  isMain?: boolean
+  /**
+   *
    * @type {Array<string>}
    * @memberof ChorusWorkspace
    */
@@ -115,6 +121,7 @@ export function ChorusWorkspaceFromJSONTyped(
     shortName: !exists(json, 'shortName') ? undefined : json['shortName'],
     description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
+    isMain: !exists(json, 'isMain') ? undefined : json['isMain'],
     appInsanceIds: !exists(json, 'appInsanceIds')
       ? undefined
       : json['appInsanceIds'],
@@ -145,6 +152,7 @@ export function ChorusWorkspaceToJSON(value?: ChorusWorkspace | null): any {
     shortName: value.shortName,
     description: value.description,
     status: value.status,
+    isMain: value.isMain,
     appInsanceIds: value.appInsanceIds,
     appInstances: value.appInstances,
     createdAt:

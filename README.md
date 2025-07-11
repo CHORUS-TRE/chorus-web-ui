@@ -155,7 +155,6 @@ docker run -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch 
           -e NEXT_PUBLIC_DATA_SOURCE_API_URL=https://backend.dev.chorus-tre.ch/api/rest/v1 \
           -e NEXT_PUBLIC_MATOMO_URL=https://matomo.dev.chorus-tre.ch \
           -e NEXT_PUBLIC_MATOMO_CONTAINER_ID=XHnjFrGP \
-          -e NEXT_PUBLIC_ALBERT_WORKSPACE_ID=35 \
           -p 3000:3000 \
           chorus/web-ui:latest
 ```

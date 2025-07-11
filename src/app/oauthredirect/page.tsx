@@ -8,7 +8,7 @@ import { handleOAuthRedirect } from '@/components/actions/authentication-view-mo
 export default function OAuthRedirectPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [message, setMessage] = useState('Processing authentication...')
+  const [message] = useState('Processing authentication...')
 
   useEffect(() => {
     async function processRedirect() {

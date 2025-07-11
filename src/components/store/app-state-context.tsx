@@ -142,12 +142,9 @@ export const AppStateProvider = ({
       const response = await workspaceList()
       if (response?.error)
         toast({ title: response.error, variant: 'destructive' })
-      if (response?.data)
-        setWorkspaces(
-          response.data
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .sort((a) => (a.id === user?.workspaceId ? -1 : 0))
-        )
+      if (response?.data) {
+        setWorkspaces(response.data)
+      }
     } catch (error) {
       toast({
         title: error instanceof Error ? error.message : String(error),
