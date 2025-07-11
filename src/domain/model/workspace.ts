@@ -29,7 +29,6 @@ export const WorkspaceCreateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   shortName: z.string().min(3, 'Short name is required'),
   description: z.string().optional(),
-  status: z.nativeEnum(WorkspaceState).optional(),
   isMain: z.boolean().optional()
 })
 

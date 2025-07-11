@@ -39,17 +39,12 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
 import { Switch } from '~/components/ui/switch'
 import { Textarea } from '~/components/ui/textarea'
 
 import { toast } from '../hooks/use-toast'
+import { useAppState } from '../store/app-state-context'
+import { useAuth } from '../store/auth-context'
 
 export function WorkspaceCreateForm({
   state: [open, setOpen],
@@ -62,6 +57,8 @@ export function WorkspaceCreateForm({
   children?: React.ReactNode
   onSuccess?: (workspace: Workspace) => void
 }) {
+  const { user } = useAuth()
+  const { workspaces } = useAppState()
   const form = useForm<WorkspaceCreateType>({
     resolver: zodResolver(WorkspaceCreateSchema),
     defaultValues: {
@@ -126,7 +123,7 @@ export function WorkspaceCreateForm({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Workspace</DialogTitle>
+          <DialogTitle className="text-white">Create Workspace</DialogTitle>
           <DialogDescription>
             Fill out the form to create a new workspace.
           </DialogDescription>
@@ -183,6 +180,13 @@ export function WorkspaceCreateForm({
                     checked={form.watch('isMain')}
                     onCheckedChange={(checked) =>
                       form.setValue('isMain', checked)
+                    }
+                    disabled={
+                      !(
+                        workspaces?.filter(
+                          (w) => w.isMain && w.userId === user?.id
+                        )?.length === 0
+                      )
                     }
                   />
                   <Label htmlFor="isMain">Set as main workspace</Label>
@@ -271,6 +275,8 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onSuccess?: (workspace: Workspace) => void
 }) {
+  const { workspaces } = useAppState()
+  const { user } = useAuth()
   const form = useForm<WorkspaceUpdatetype>({
     resolver: zodResolver(WorkspaceUpdateSchema),
     defaultValues: {
@@ -278,7 +284,6 @@ export function WorkspaceUpdateForm({
       name: workspace?.name || '',
       shortName: workspace?.shortName || '',
       description: workspace?.description || '',
-      status: workspace?.status || WorkspaceState.ACTIVE,
       isMain: workspace?.isMain || false,
       tenantId: '1',
       userId: workspace?.userId || ''
@@ -292,7 +297,6 @@ export function WorkspaceUpdateForm({
         name: workspace?.name || '',
         shortName: workspace?.shortName || '',
         description: workspace?.description || '',
-        status: workspace?.status || WorkspaceState.ACTIVE,
         isMain: workspace?.isMain || false,
         tenantId: '1',
         userId: workspace?.userId || ''
@@ -406,53 +410,24 @@ export function WorkspaceUpdateForm({
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="bg-background text-neutral-400">
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {[
-                            WorkspaceState.ACTIVE,
-                            WorkspaceState.INACTIVE,
-                            WorkspaceState.DELETED
-                          ].map((status) => (
-                            <SelectItem
-                              key={status}
-                              value={status}
-                              className="capitalize"
-                            >
-                              {status}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="isMain"
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <FormLabel>Main Workspace</FormLabel>
+                      <FormLabel>Private Workspace</FormLabel>
                       <FormControl>
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={
+                            !(
+                              workspace?.isMain ||
+                              (workspaces?.filter(
+                                (w) => w.isMain && w.userId === user?.id
+                              )?.length ?? 0) === 0
+                            )
+                          }
                         />
                       </FormControl>
                     </FormItem>

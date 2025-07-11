@@ -21,12 +21,14 @@ import { useAppState } from './app-state-context'
 
 type AuthContextType = {
   user: User | undefined
+  refreshUser: () => Promise<void>
   logout: () => Promise<void>
   login: (prevState: Result<User>, formData: FormData) => Promise<Result<User>>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: undefined,
+  refreshUser: async () => {},
   logout: async () => {},
   login: async () => {
     return { data: undefined, error: undefined }
@@ -64,21 +66,16 @@ export const AuthProvider = ({
       )
       if (isMain) {
         nextUser = { ...nextUser, workspaceId: isMain.id }
-      } else {
-        // TODO delete this when implemented
-        nextUser = { ...nextUser, workspaceId: workspaces?.data?.[0]?.id }
       }
 
-      if (user?.id !== userResult.data?.id) {
-        setUser(nextUser)
-      }
+      setUser(nextUser)
 
       setIsLoading(false)
     } catch (error) {
       console.error(error)
       handleLogout()
     }
-  }, [setUser, handleLogout, user])
+  }, [setUser, handleLogout])
 
   useEffect(() => {
     if (!user) {
@@ -133,7 +130,7 @@ export const AuthProvider = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, login: handleLogin, logout: handleLogout }}
+      value={{ user, login: handleLogin, logout: handleLogout, refreshUser }}
     >
       {isLoading ? <LoadingOverlay isLoading={isLoading} /> : children}
     </AuthContext.Provider>

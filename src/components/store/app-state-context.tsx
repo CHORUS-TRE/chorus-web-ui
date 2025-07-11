@@ -306,14 +306,6 @@ export const AppStateProvider = ({
     initializeState()
   }, [initializeState])
 
-  useEffect(() => {
-    console.log('mounted')
-
-    return () => {
-      console.log('unmounted')
-    }
-  }, [])
-
   const contextValue = useMemo(
     () => ({
       showRightSidebar,

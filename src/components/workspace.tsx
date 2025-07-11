@@ -80,13 +80,22 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     setBackground,
     workspaces
   } = useAppState()
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
 
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const owner = users?.find((user) => user.id === workspace?.userId)
 
   useEffect(() => {
     if (!workspaceId || !workbenches || workbenches.length === 0) return
+
+    // if (user?.id !== workspaceId) {
+    //   setBackground({
+    //     sessionId: undefined,
+    //     workspaceId: workspaceId
+    //   })
+
+    //   return
+    // }
 
     const firstSessionId = workbenches.find(
       (workbench) =>
@@ -142,34 +151,36 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </div>
         </div>
         <div className="absolute right-2 top-2 text-white">
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-haspopup="true"
-                variant="ghost"
-                className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
-              >
-                <EllipsisVerticalIcon className="h-4 w-4 text-accent" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-black text-white">
-              {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-              <DropdownMenuItem onClick={() => setOpenEdit(true)}>
-                Edit
-              </DropdownMenuItem>
-              {workspace?.id !== user?.workspaceId && (
-                <DropdownMenuItem
-                  onClick={() =>
-                    workspace?.id && setActiveDeleteId(workspace?.id)
-                  }
-                  className="text-red-500 focus:text-red-500"
+          {workspace?.userId === user?.id && (
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-haspopup="true"
+                  variant="ghost"
+                  className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
                 >
-                  Delete
+                  <EllipsisVerticalIcon className="h-4 w-4 text-accent" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black text-white">
+                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+                <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+                  Edit
                 </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {workspace?.id !== user?.workspaceId && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      workspace?.id && setActiveDeleteId(workspace?.id)
+                    }
+                    className="text-red-500 focus:text-red-500"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         <WorkspaceDeleteForm
           id={workspace?.id}
@@ -221,10 +232,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </Suspense>
             }
             footer={
-              <WorkbenchCreateForm
-                workspaceId={workspace?.id || ''}
-                workspaceName={workspace?.name}
-              />
+              workspace?.userId === user?.id && (
+                <WorkbenchCreateForm
+                  workspaceId={workspace?.id || ''}
+                  workspaceName={workspace?.name}
+                />
+              )
             }
           />
 
@@ -239,6 +252,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   variant: 'default'
                 })
                 refreshWorkspaces()
+                refreshUser()
               }}
             />
           )}

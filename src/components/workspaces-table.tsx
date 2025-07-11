@@ -131,7 +131,7 @@ export default function WorkspaceTable({
               href={`/workspaces/${workspace?.id}`}
               className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
             >
-              {workspace?.shortName}
+              {workspace?.name}
             </Link>
           </TableCell>
           <TableCell className="p-1 font-normal">
@@ -139,9 +139,7 @@ export default function WorkspaceTable({
               {workspace?.id === user?.workspaceId
                 ? 'My Workspace'
                 : workspace?.name}
-              {workspace?.isMain && (
-                <Star className="h-4 w-4 text-yellow-400" />
-              )}
+              {workspace?.isMain && <Star className="h-4 w-4 text-secondary" />}
             </span>
           </TableCell>
           <TableCell className="font-xs p-1">
