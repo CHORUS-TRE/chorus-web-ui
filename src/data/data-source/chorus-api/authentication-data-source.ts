@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env'
-
 import {
   AuthenticationInternal,
   AuthenticationMode,
@@ -10,7 +8,6 @@ import {
 } from '@/domain/model'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
-import { getToken } from '~/components/actions/authentication-view-model'
 import { Configuration } from '~/internal/client'
 
 interface AuthenticationDataSource {
@@ -29,17 +26,11 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   private configuration: Configuration
   private service: AuthenticationServiceApi
 
-  constructor(basePath: string, token?: string) {
-    if (!token) {
-      this.configuration = new Configuration({
-        basePath
-      })
-    } else {
-      this.configuration = new Configuration({
-        basePath,
-        apiKey: `Bearer ${token}`
-      })
-    }
+  constructor(basePath: string) {
+    this.configuration = new Configuration({
+      basePath,
+      credentials: 'include'
+    })
 
     this.service = new AuthenticationServiceApi(this.configuration)
   }
@@ -145,14 +136,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   }
 
   async logout(): Promise<void> {
-    const token = await getToken()
-    const configuration = new Configuration({
-      apiKey: `Bearer ${token}`,
-      basePath: env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
-    })
-    const service = new AuthenticationServiceApi(configuration)
-
-    const response = await service.authenticationServiceLogout({
+    const response = await this.service.authenticationServiceLogout({
       body: {}
     })
 

@@ -26,10 +26,10 @@ export type { UserDataSource }
 class UserApiDataSourceImpl implements UserDataSource {
   private service: UserServiceApi
 
-  constructor(token: string, basePath: string) {
+  constructor(basePath: string) {
     const configuration = new Configuration({
-      apiKey: `Bearer ${token}`,
-      basePath
+      basePath,
+      credentials: 'include'
     })
     this.service = new UserServiceApi(configuration)
   }

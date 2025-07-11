@@ -34,10 +34,10 @@ export type { AppInstanceDataSource }
 class AppInstanceDataSourceImpl implements AppInstanceDataSource {
   private service: AppInstanceServiceApi
 
-  constructor(token: string, basePath: string) {
+  constructor(basePath: string) {
     const configuration = new Configuration({
-      apiKey: `Bearer ${token}`,
-      basePath
+      basePath,
+      credentials: 'include'
     })
     this.service = new AppInstanceServiceApi(configuration)
   }

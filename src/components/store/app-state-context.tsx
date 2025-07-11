@@ -142,18 +142,9 @@ export const AppStateProvider = ({
       const response = await workspaceList()
       if (response?.error)
         toast({ title: response.error, variant: 'destructive' })
-      if (response?.data)
-        setWorkspaces(
-          response.data.sort((a, b) => {
-            if (a.isMain && !b.isMain) return -1
-            if (!a.isMain && b.isMain) return 1
-            if (a.id === user?.workspaceId && b.id !== user?.workspaceId)
-              return -1
-            if (a.id !== user?.workspaceId && b.id === user?.workspaceId)
-              return 1
-            return b.createdAt.getTime() - a.createdAt.getTime()
-          })
-        )
+      if (response?.data) {
+        setWorkspaces(response.data)
+      }
     } catch (error) {
       toast({
         title: error instanceof Error ? error.message : String(error),
@@ -314,6 +305,14 @@ export const AppStateProvider = ({
   useEffect(() => {
     initializeState()
   }, [initializeState])
+
+  useEffect(() => {
+    console.log('mounted')
+
+    return () => {
+      console.log('unmounted')
+    }
+  }, [])
 
   const contextValue = useMemo(
     () => ({

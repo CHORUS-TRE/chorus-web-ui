@@ -20,12 +20,8 @@ import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
 import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
-import { getToken } from './authentication-view-model'
-
 const getRepository = async () => {
-  const token = await getToken()
   const dataSource = new WorkspaceDataSourceImpl(
-    token || '',
     env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   )
   return new WorkspaceRepositoryImpl(dataSource)

@@ -28,10 +28,10 @@ export type { WorkspaceDataSource }
 class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   private service: WorkspaceServiceApi
 
-  constructor(token: string, basePath: string) {
+  constructor(basePath: string) {
     const configuration = new Configuration({
-      apiKey: `Bearer ${token}`,
-      basePath
+      basePath,
+      credentials: 'include'
     })
     this.service = new WorkspaceServiceApi(configuration)
   }

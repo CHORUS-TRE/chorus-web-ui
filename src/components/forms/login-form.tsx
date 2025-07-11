@@ -74,7 +74,6 @@ export default function LoginForm() {
 
       return
     }
-
   }, [state, searchParams])
 
   const handleOAuthLogin = async (mode: AuthenticationMode) => {
@@ -122,9 +121,11 @@ export default function LoginForm() {
   return (
     <div className="flex w-full flex-col items-center justify-center bg-black bg-opacity-20 p-8 md:w-1/2">
       <div className="grid h-full w-full gap-2 p-8 text-white">
-        <div className="gap-4 text-center">
-          <h2>Login</h2>
-        </div>
+        {isLoading ?? (
+          <div className="gap-4 text-center">
+            <h2>Login</h2>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex h-full animate-pulse content-center justify-center gap-4 bg-transparent">

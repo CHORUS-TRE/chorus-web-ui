@@ -25,10 +25,10 @@ export type { AppDataSource }
 export class AppDataSourceImpl implements AppDataSource {
   private client: AppServiceApi
 
-  constructor(token: string, basePath: string) {
+  constructor(basePath: string) {
     const configuration = new Configuration({
       basePath,
-      apiKey: `Bearer ${token}`
+      credentials: 'include'
     })
     this.client = new AppServiceApi(configuration)
   }

@@ -17,10 +17,9 @@ import {
   Result
 } from '~/domain/model'
 
-const getRepository = async (token?: string) => {
+const getRepository = async () => {
   const dataSource = new AuthenticationApiDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || '',
-    token
+    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   )
 
   return new AuthenticationRepositoryImpl(dataSource)
@@ -50,18 +49,10 @@ export async function login(
       error: 'Something went wrong, please try again'
     }
 
-  sessionStorage.setItem('token', login.data)
-
   return {
     ...prevState,
-    error: login.error,
     data: login.data
   }
-}
-
-export async function getToken() {
-  const token = sessionStorage.getItem('token') || undefined
-  return token
 }
 
 export async function getAuthenticationModes(): Promise<
@@ -80,8 +71,7 @@ export async function getAuthenticationModes(): Promise<
 
 export async function logout() {
   try {
-    const token = await getToken()
-    const repository = await getRepository(token)
+    const repository = await getRepository()
     const useCase = new AuthenticationLogout(repository)
 
     const result = await useCase.execute()
@@ -97,7 +87,6 @@ export async function logout() {
 export async function getOAuthUrl(id: string): Promise<Result<string>> {
   try {
     const repository = await getRepository()
-
     const useCase = new AuthenticationGetOAuthUrl(repository)
 
     return await useCase.execute(id)
@@ -123,8 +112,6 @@ export async function handleOAuthRedirect(
       return { error: 'No token received' }
     }
 
-    // allow the token to be set in the session storage
-    sessionStorage.setItem('token', response.data)
     await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
 
     return response
