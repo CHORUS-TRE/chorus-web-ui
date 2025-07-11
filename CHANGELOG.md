@@ -1,3 +1,11 @@
+# [1.4.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.4...v1.4.0) (2025-07-11)
+
+
+### Features
+
+* add isMain property to workspaces and update related components ([cee1a46](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cee1a46873243d01c8fb1a243d9b0a333776f6c3))
+* workspace isMain draft ([1034dfb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1034dfb85834026462b707a74875b308078058a7))
+
 ## [1.3.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.3...v1.3.4) (2025-07-09)
 
 
