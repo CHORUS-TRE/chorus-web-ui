@@ -2,10 +2,8 @@
 
 ## 1. What Works
 
-- **Workbench k8sStatus Loading State:** The feature is now functionally complete.
-  - The UI correctly displays loading states and only shows the session iframe when the workbench is "Running".
-  - The backend domain models and polling hook are in place and integrated with the UI.
-- **Complete Role Management System:** Full platform-level role and permission management is implemented and functional:
+- **Workbench k8sStatus Loading State:** The feature is functionally complete. The UI correctly displays loading states, polls the backend, and only shows the session iframe when the workbench is "Running".
+- **Complete Role Management System (Mock):** Full platform-level role and permission management is implemented with mock data.
   - Role matrix UI at `/admin/roles` with permission assignment
   - Recursive role inheritance support in domain models
   - Complete data layer implementation (repositories, data sources, mappers)
@@ -28,26 +26,25 @@
 
 ### Active Development
 
-- **Workbench k8sStatus Loading State Implementation (Phase 4: Polish):**
-  - **Goal:** Polish the end-to-end user experience, focusing on graceful error handling and consistent UI feedback.
-  - **User Experience:** Ensure that any potential errors (API, timeout, etc.) are communicated clearly to the user.
+- **Gatekeeper Authorization Integration:**
+  - **Goal:** Replace the mock role management system with a real implementation by integrating the `chorus-gatekeeper` service.
+  - **User Experience:** UI elements will become visible or disabled based on real-time user permissions.
 
 ### Technical Implementation Status
 
-- **Domain Model Updates:** ✅ Done
-- **Polling Hook:** ✅ Done
-- **Background Iframe Updates:** ✅ Done
-- **Workbench Creation Flow:** ✅ Done
-- **UI Loading States:** ✅ Done
-- **Error Handling & Polish:** In Progress
+- **Authorization Domain Models:** TODO
+- **Gatekeeper Data Source:** TODO
+- **Gatekeeper Repository:** TODO
+- **UI Integration:** TODO
 
 ### Next Concrete Features
 
-- **Enhanced Error Handling:** Implement comprehensive error states for workbench failures in the UI.
+- **Dynamic UI based on permissions.**
 
 ### Future Work / On Hold
 
-- **Workspace-Level Role Management:** Team member and role management within specific workspaces is on hold pending workbench status implementation.
+- **Workspace-Level Role Management:** Team member and role management within specific workspaces is on hold.
+- **Workbench k8sStatus Polish:** Final error handling and polish for this feature is de-prioritized.
 
 ### Ongoing Tasks
 
@@ -55,9 +52,9 @@
 
 ## 3. Current Status
 
-- **New Feature Complete:** The workbench k8sStatus feature is implemented. Focus is now on refinement.
+- **New Feature In Progress:** The focus has shifted from workbench status to implementing authorization.
 - **Major Architecture Milestone:** Role management and client-side authentication demonstrate the maturity and effectiveness of the established architectural patterns.
-- **Branch Status:** Working on `feat/k8sstatus` branch for the new workbench loading state functionality.
+- **Branch Status:** Working on `feat/authz` branch for Gatekeeper integration.
 - **Architecture Proven:** The core data and UI patterns have been successfully applied across all major entities and are ready for the new feature.
 - **✅ Test Suite Stability:** All tests are passing consistently.
 - **✅ Authentication Complete:** Client-side authentication refactor is complete and stable.
@@ -77,9 +74,9 @@
 
 ## 6. Upcoming Implementation
 
-**Workbench k8sStatus Loading State Feature (Polish):**
+**Gatekeeper Authorization Integration:**
 
-- **Timeline:** Finalizing implementation.
-- **Impact:** Ensure a robust and polished user experience for the new feature.
-- **Technical Approach:** Refine UI components to handle all error states and edge cases gracefully.
-- **Testing Strategy:** End-to-end testing of the complete feature, focusing on failure scenarios.
+- **Timeline:** Starting now.
+- **Impact:** Will provide real, fine-grained access control across the application, replacing the current mock data system.
+- **Technical Approach:** Implement a new data layer for `gatekeeper` and integrate it with UI components to dynamically show/hide elements based on user permissions.
+- **Testing Strategy:** End-to-end testing of the authorization flow.

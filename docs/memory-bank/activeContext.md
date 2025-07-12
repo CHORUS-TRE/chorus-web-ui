@@ -2,47 +2,43 @@
 
 ## 1. Current Work Focus
 
-**Primary Task: Implement Workbench k8sStatus Loading State (Phase 4: Polish)**
+**Primary Task: Implement Gatekeeper Authorization Integration**
 
-With the core implementation of the workbench k8sStatus feature complete, the current priority is to polish the error handling and user experience. This involves ensuring that all edge cases, such as polling timeouts and API errors, are handled gracefully in the UI.
+With the `k8sStatus` feature functionally complete, the project focus is shifting to implementing a robust authorization layer. This involves integrating the `chorus-gatekeeper` service to replace the existing mock role data and enforce permissions throughout the UI.
 
 **Key Requirements:**
 
-- Provide clear, user-friendly error messages for all failure scenarios.
-- Implement and test timeout handling.
-- Ensure a smooth and consistent user experience across all related components.
+- Define and implement domain models for authorization entities (permissions, policies).
+- Integrate the `gatekeeper` client/library.
+- Update UI components to reflect real-time user permissions.
+- Remove mock authorization data and handlers.
 
 ## 2. Recent Changes
 
-- **Workbench k8sStatus UI (Phase 3) Complete:**
-  - The `background-iframe.tsx` component now correctly uses the `useWorkbenchStatus` hook, displaying a loading overlay while polling and only showing the iframe when the workbench is "Running".
-  - All UI components related to the workbench lifecycle have been updated to reflect the k8sStatus.
-- **Workbench k8sStatus Backend (Phase 1 & 2) Complete:**
-  - The domain model for `Workbench` has been updated to include the `k8sStatus` field and a `K8sWorkbenchStatus` enum.
-  - A new `useWorkbenchStatus` hook has been created to handle polling for the workbench status.
-  - The `getWorkbench` action was added to support the new hook.
+- **Workbench k8sStatus Feature Complete:**
+  - The feature for polling and displaying workbench status is now considered functionally complete. Final polishing will be de-prioritized to focus on authorization.
 - **Client-Side OAuth Redirect Complete:**
   - The OAuth redirect flow was refactored to be fully client-side.
-  - Logic was consolidated from a server-side API route into the `oauthredirect/page.tsx` component, which now directly calls the required action.
+  - Logic was consolidated from a server-side API route into the `oauthredirect/page.tsx` component.
 
 ## 3. Next Steps
 
 **Immediate Implementation Plan:**
 
-### Phase 4: Error Handling & Polish (In Progress)
+### Phase 1: Models and Gatekeeper Integration
 
-1. **TODO** - Handle polling errors gracefully in all affected components (`workbench-create-form`, `workbench-table`, `background-iframe`).
-2. **TODO** - Add user-friendly timeout error messages after 5 minutes of polling.
-3. **TODO** - Conduct a final review of the end-to-end user flow for polish and consistency.
+1. **TODO** - Define Zod schemas for Gatekeeper entities (Permissions, Roles, Policies) in the domain layer.
+2. **TODO** - Implement data source and repository for fetching authorization data from the Gatekeeper service.
+3. **TODO** - Create use cases for managing authorization state.
 
 **Files to Modify:**
 
-- `src/components/forms/workbench-create-form.tsx`
-- `src/components/workbench-table.tsx`
-- `src/app/(workspaces)/workspaces/[workspaceId]/sessions/[sessionId]/page.tsx`
-- `src/components/background-iframe.tsx`
+- `src/domain/model/` (new files for authorization)
+- `src/data/data-source/` (new gatekeeper data source)
+- `src/data/repository/` (new authorization repository)
+- `src/domain/use-cases/` (new authorization use cases)
 
 ## 4. Active Decisions & Considerations
 
-- **API Client:** The `k8sStatus` field was manually added to the `ChorusWorkbench.ts` model as a temporary measure. The API client should be regenerated to formally include this change.
-- **Error State Design:** Error messages should be consistent and provide clear guidance to the user where possible.
+- **Gatekeeper Client Source:** The authorization logic will be based on the library provided in `src/lib/gatekeeper`.
+- **API Client Desynchronization:** The `k8sStatus` field was manually added to the `ChorusWorkbench.ts` model. The API client should still be regenerated when possible.
