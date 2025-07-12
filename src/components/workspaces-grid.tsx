@@ -37,6 +37,13 @@ interface WorkspacesGridProps {
   onUpdate?: () => void
 }
 
+const SwitchLink = ({ user, workspace, children }: { user: User, workspace: Workspace, children: React.ReactNode }) => {
+  return workspace.userId === user?.id ?
+    <Link href={`/workspaces/${workspace.id}`} className="transition-colors duration-300 hover:border-accent hover:bg-background/80 cursor-pointer">
+    {children}
+  </Link> : <>{children}</>
+}
+
 export default function WorkspacesGrid({
   workspaces,
   user,
@@ -45,7 +52,7 @@ export default function WorkspacesGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { refreshWorkspaces, users } = useAppState()
+  const { refreshWorkspaces, users, workbenches } = useAppState()
   return (
     <div
       className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
@@ -87,20 +94,18 @@ export default function WorkspacesGrid({
               </DropdownMenu>
             )}
           </div>
-          <Link href={`/workspaces/${workspace.id}`}>
-            <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80">
+          <SwitchLink user={user} workspace={workspace} >
+            <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-start gap-3 pr-2 text-white hover:text-accent hover:underline">
-                  {workspace.isMain && (
+                <CardTitle className="flex items-start gap-3 pr-2 text-white">
+                  {workspace.isMain && workspace.userId === user?.id && (
                     <HomeIcon className="h-6 w-6 text-secondary" />
                   )}
                   {!workspace.isMain && (
                     <Package className="h-6 w-6 flex-shrink-0" />
                   )}
                   <span className="flex items-center gap-2">
-                    {workspace?.id === user?.workspaceId
-                      ? 'My Workspace'
-                      : workspace?.name}
+                    {workspace?.name}
                   </span>
                 </CardTitle>
                 <CardDescription>{workspace?.description}</CardDescription>
@@ -117,12 +122,22 @@ export default function WorkspacesGrid({
                 </div>
               </CardHeader>
               <CardContent>
+                {workspace.userId === user?.id && (
                 <ScrollArea className="h-[200px]" type="hover">
                   <WorkspaceWorkbenchList workspaceId={workspace.id} />
                 </ScrollArea>
+                )}
+                {workspace.userId !== user?.id && (
+
+                  <div className="flex items-start justify-center h-full">
+                    <p className="text-muted">{workbenches?.filter(w => w.workspaceId === workspace.id).length || 0 }
+                      sessions
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          </Link>
+          </SwitchLink>
 
           {activeUpdateId === workspace.id && (
             <WorkspaceUpdateForm

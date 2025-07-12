@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-import { Result } from '@/domain/model'
+import { useAppState } from '@/components/store/app-state-context'
+import { Result, Workspace } from '@/domain/model'
 import {
   User,
   UserCreateType,
@@ -9,13 +10,13 @@ import {
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
+import { workspaceList } from '~/components/actions/workspace-view-model'
 
 import { UserDataSource } from '../data-source'
 import { MOCK_ROLES } from '../data-source/chorus-api/role-data-source'
 
 export class UserRepositoryImpl implements UserRepository {
   private dataSource: UserDataSource
-
   constructor(dataSource: UserDataSource) {
     this.dataSource = dataSource
   }
@@ -67,6 +68,14 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: userResult.error.issues
         }
+      }
+
+      const workspaces = await workspaceList()
+      const isMain = workspaces?.data?.find(
+        (w) => w.isMain && w.userId === userResult.data.id
+      )
+      if (isMain) {
+        userResult.data.workspaceId = isMain.id
       }
 
       // Temporary mock data injection for UI development

@@ -44,16 +44,16 @@ export default function WorkspacesPage() {
       </div>
 
       <div className="w-full">
-        <Tabs defaultValue="mine" className="">
+        {/* <Tabs defaultValdeue="mine" className=""> */}
           <div className="grid grid-flow-col grid-rows-1 gap-4">
-            <TabsList aria-label="Workspace view options">
+            {/* <TabsList aria-label="Workspace view options">
               <TabsTrigger value="mine" aria-label="View my workspaces">
                 My Workspaces
               </TabsTrigger>
               <TabsTrigger value="all" aria-label="View all workspaces">
                 All Workspaces
               </TabsTrigger>
-            </TabsList>
+            </TabsList> */}
             <div className="flex items-center justify-end gap-0">
               <UIButton
                 variant="ghost"
@@ -79,11 +79,11 @@ export default function WorkspacesPage() {
               </UIButton>
             </div>
           </div>
-          <TabsContent
+          {/* <TabsContent
             value="mine"
             className="border-none"
             aria-label="My workspaces content"
-          >
+          > */}
             <div className="mb-6">
               <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
                 <Package className="h-6 w-6" />
@@ -123,9 +123,9 @@ export default function WorkspacesPage() {
                 )}
               </>
             )}
-          </TabsContent>
-          <TabsContent value="all" aria-label="All workspaces content">
-            <div className="mb-6">
+          {/* </TabsContent>
+          <TabsContent value="all" aria-label="All workspaces content"> */}
+            <div className="mb-6 mt-6">
               <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
                 <Package className="h-6 w-6" />
                 All Workspaces
@@ -142,13 +142,13 @@ export default function WorkspacesPage() {
               <>
                 {showWorkspacesTable ? (
                   <WorkspaceTable
-                    workspaces={workspaces}
+                    workspaces={workspaces.filter(w => w.userId !== user?.id && !w.isMain)}
                     user={user}
                     onUpdate={refreshWorkspaces}
                   />
                 ) : (
                   <WorkspacesGrid
-                    workspaces={workspaces}
+                    workspaces={workspaces.filter(w => w.userId !== user?.id && !w.isMain)}
                     workbenches={workbenches}
                     user={user}
                     onUpdate={refreshWorkspaces}
@@ -156,8 +156,8 @@ export default function WorkspacesPage() {
                 )}
               </>
             )}
-          </TabsContent>
-        </Tabs>
+          {/* </TabsContent>
+        </Tabs> */}
       </div>
 
       {createOpen && (

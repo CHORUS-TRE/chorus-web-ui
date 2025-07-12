@@ -1,6 +1,6 @@
 'use client'
 
-import { EllipsisVerticalIcon, Star } from 'lucide-react'
+import { EllipsisVerticalIcon, HomeIcon, Star } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -135,11 +135,9 @@ export default function WorkspaceTable({
             </Link>
           </TableCell>
           <TableCell className="p-1 font-normal">
-            <span className="flex items-center gap-2">
-              {workspace?.id === user?.workspaceId
-                ? 'My Workspace'
-                : workspace?.name}
-              {workspace?.isMain && <Star className="h-4 w-4 text-secondary" />}
+            <span className="flex items-center justify-between gap-2">
+              {workspace?.name}
+              {workspace?.isMain && <HomeIcon className="h-4 w-4 text-secondary" />}
             </span>
           </TableCell>
           <TableCell className="font-xs p-1">

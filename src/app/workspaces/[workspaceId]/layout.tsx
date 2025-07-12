@@ -26,13 +26,9 @@ export default function Layout({
             <PackageOpen className="h-9 w-9 text-white" />
           )}
 
-          {workspace ? (
-            params?.workspaceId === user?.workspaceId ? (
-              'My Workspace'
-            ) : (
+          {workspace ?
               workspace.name
-            )
-          ) : (
+             : (
             <span className="animate-pulse text-muted">
               Loading workspace...
             </span>

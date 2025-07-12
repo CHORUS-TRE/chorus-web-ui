@@ -128,15 +128,9 @@ export function Header() {
                             ) : (
                               <Box className="h-4 w-4 text-white" />
                             )}
-                            {background?.workspaceId
-                              ? workspaces?.find(
-                                  (w) => w.id === background?.workspaceId
-                                )?.isMain
-                                ? `My Workspace`
-                                : workspaces?.find(
+                            {workspaces?.find(
                                     (w) => w.id === background?.workspaceId
-                                  )?.name
-                              : 'My Workspace'}
+                                  )?.name}
                           </div>
                         </NavLink>
                       </NavigationMenuTrigger>
@@ -240,12 +234,8 @@ export function Header() {
                         ) : (
                           <Box className="h-4 w-4 text-white" />
                         )}
-                        {workspaces?.find((w) => w.id === workspaceId)?.isMain
-                          ? `My Workspace`
-                          : workspaceId
-                            ? workspaces?.find((w) => w.id === workspaceId)
-                                ?.name
-                            : 'My Workspace'}
+                        {workspaces?.find((w) => w.id === workspaceId)
+                                ?.name}
                       </div>
                     </NavLink>
                   )}
