@@ -50,8 +50,7 @@ const MOCK_NEW_USER_API_RESPONSE = {
   totpEnabled: false,
   createdAt: new Date('2025-06-18T20:24:31.912Z'),
   updatedAt: new Date('2025-06-18T20:24:31.912Z'),
-  passwordChanged: false,
-  source: 'chorus'
+  passwordChanged: false
 } as ChorusUserApi
 
 describe('UserUseCases', () => {

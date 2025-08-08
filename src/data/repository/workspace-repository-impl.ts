@@ -58,7 +58,9 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       if (!response.result) {
         return { data: [] }
       }
-      const validatedData = response.result.map((w) => WorkspaceSchema.parse(w))
+      const validatedData = response?.result?.map((w) =>
+        WorkspaceSchema.parse(w)
+      )
       return { data: validatedData }
     } catch (error) {
       console.error('Error listing workspaces', error)
