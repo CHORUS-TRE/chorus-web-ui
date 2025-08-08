@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
@@ -21,6 +22,7 @@ export default function WorkspacesPage() {
     refreshWorkspaces
   } = useAppState()
   const { user } = useAuthentication()
+  const { canCreateWorkspace } = useAuthorizationViewModel()
 
   const [createOpen, setCreateOpen] = useState(false)
 
@@ -32,13 +34,15 @@ export default function WorkspacesPage() {
             <Package className="h-9 w-9 text-white" />
             Workspaces
           </h2>
-          <Button
-            onClick={() => setCreateOpen(true)}
-            className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-          >
-            <CirclePlus className="h-4 w-4" />
-            Create Workspace
-          </Button>
+          {canCreateWorkspace && (
+            <Button
+              onClick={() => setCreateOpen(true)}
+              className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+            >
+              <CirclePlus className="h-4 w-4" />
+              Create Workspace
+            </Button>
+          )}
         </div>
       </div>
 
