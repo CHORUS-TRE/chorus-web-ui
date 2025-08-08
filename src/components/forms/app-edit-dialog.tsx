@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { appUpdate } from '~/components/actions/app-view-model'
+import { appUpdate } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
 import { PRESETS, type Presets } from '~/components/forms/app-create-dialog'
 import { ImageUploadField } from '~/components/forms/image-upload-field'

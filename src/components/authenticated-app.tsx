@@ -7,7 +7,7 @@ import { NextStep, NextStepProvider } from 'nextstepjs'
 import React from 'react'
 
 import { Header } from '@/components/header'
-import { useAppState } from '@/components/store/app-state-context'
+import { useAppState } from '@/providers/app-state-provider'
 import GettingStartedCard from '~/components/getting-started-card'
 import RightSidebar from '~/components/right-sidebar'
 import { Button } from '~/components/ui/button'

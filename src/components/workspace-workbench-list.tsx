@@ -3,9 +3,8 @@ import { AppWindow, PictureInPicture2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
-import { useAppState } from '@/components/store/app-state-context'
-
-import { useAuth } from './store/auth-context'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export function WorkspaceWorkbenchList({
   workspaceId,
@@ -18,7 +17,7 @@ export function WorkspaceWorkbenchList({
 
   const { workbenches, users, appInstances, apps, background, workspaces } =
     useAppState()
-  const { user } = useAuth()
+  const { user } = useAuthentication()
 
   const workbenchList = useMemo(() => {
     return workbenches
@@ -62,7 +61,7 @@ export function WorkspaceWorkbenchList({
                   }}
                   className={`mb-2 flex flex-col justify-between`}
                 >
-                  <div className="flex-grow text-sm">
+                  <div className="mb-1 flex-grow text-sm">
                     <div
                       className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
                     >

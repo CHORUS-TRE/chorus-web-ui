@@ -7,9 +7,9 @@ import Link from 'next/link'
 import { useNextStep } from 'nextstepjs'
 import { useCallback, useEffect } from 'react'
 
+import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/ui/button'
 
-import { useAppState } from './store/app-state-context'
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
 
 export default function RightSidebar() {

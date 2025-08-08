@@ -25,6 +25,7 @@ export type { AuthenticationDataSource }
 class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   private configuration: Configuration
   private service: AuthenticationServiceApi
+  private serviceWithoutCredentials: AuthenticationServiceApi
 
   constructor(basePath: string) {
     this.configuration = new Configuration({
@@ -33,6 +34,13 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
     })
 
     this.service = new AuthenticationServiceApi(this.configuration)
+
+    this.serviceWithoutCredentials = new AuthenticationServiceApi(
+      new Configuration({
+        basePath,
+        credentials: 'omit'
+      })
+    )
   }
 
   async login(data: AuthenticationRequest): Promise<string> {
@@ -61,7 +69,7 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
   async getAuthenticationModes(): Promise<AuthenticationMode[]> {
     try {
       const response =
-        await this.service.authenticationServiceGetAuthenticationModes()
+        await this.serviceWithoutCredentials.authenticationServiceGetAuthenticationModes()
 
       if (!response.result) {
         return []

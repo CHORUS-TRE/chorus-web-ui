@@ -8,14 +8,16 @@ import {
   EllipsisVerticalIcon,
   Footprints,
   LaptopMinimal,
+  TableProperties,
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
-import { useAppState } from '@/components/store/app-state-context'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 import { Card } from './card'
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
@@ -24,7 +26,6 @@ import {
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
 import { toast } from './hooks/use-toast'
-import { useAuth } from './store/auth-context'
 import { ChartContainer } from './ui/chart'
 import {
   DropdownMenu,
@@ -80,7 +81,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     setBackground,
     workspaces
   } = useAppState()
-  const { user, refreshUser } = useAuth()
+  const { user, refreshUser } = useAuthentication()
 
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const owner = users?.find((user) => user.id === workspace?.userId)
@@ -203,30 +204,39 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <div key={workspace?.id} className="group relative">
           <Card
             title={
-              <div
-                className="flex items-center gap-2"
-                onClick={() => {
-                  router.push(`/workspaces/${workspaceId}/sessions`)
-                }}
-              >
-                <LaptopMinimal className="h-6 w-6 flex-shrink-0" />
-                <span className="text-white">
-                  {(() => {
-                    const sessionCount =
-                      workbenches?.filter(
-                        (workbench) =>
-                          workbench.workspaceId === workspaceId &&
-                          workbench.userId === user?.id
-                      )?.length || 0
-                    return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`
-                  })()}
-                </span>
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <LaptopMinimal className="h-6 w-6 flex-shrink-0" />
+                  <span className="text-white">
+                    {(() => {
+                      const sessionCount =
+                        workbenches?.filter(
+                          (workbench) =>
+                            workbench.workspaceId === workspaceId &&
+                            workbench.userId === user?.id
+                        )?.length || 0
+                      return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`
+                    })()}
+                  </span>
+                </div>
+                <Button
+                  className="h-8 w-8 text-muted ring-0 hover:bg-inherit hover:text-accent"
+                  variant="ghost"
+                  onClick={() => {
+                    router.push(`/workspaces/${workspaceId}/sessions`)
+                  }}
+                >
+                  <TableProperties className="h-4 w-4" />
+                </Button>
               </div>
             }
             description={`Sessions in ${workspace?.name}.`}
             content={
               <Suspense fallback={<div>Loading...</div>}>
-                <ScrollArea className="h-[200px]" type="hover">
+                <ScrollArea
+                  className="flex max-h-40 flex-col overflow-y-auto"
+                  type="hover"
+                >
                   <WorkspaceWorkbenchList workspaceId={workspaceId} />
                 </ScrollArea>
               </Suspense>
@@ -302,14 +312,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             }
             description="See who's on your team and their roles."
             content={
-              <ScrollArea className="mb-2 max-h-[160px] pr-2">
+              <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
                   {users?.map((user) => (
                     <div
                       className="flex items-center gap-4"
                       key={`team-${user.id}`}
                     >
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-6 w-6">
                         <AvatarImage src="/placeholder-user.jpg" />
                         <AvatarFallback>JD</AvatarFallback>
                       </Avatar>
@@ -317,7 +327,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                         <p className="text-sm">
                           {user.firstName} {user.lastName}
                         </p>
-                        <p className="text-sm text-muted">
+                        <p className="text-xs text-muted">
                           {user.roles?.join(', ')}
                         </p>
                       </div>

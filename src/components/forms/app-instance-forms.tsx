@@ -5,8 +5,6 @@ import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import { z } from 'zod'
 
-import { createAppInstance } from '@/components/actions/app-instance-view-model'
-import { useAppState } from '@/components/store/app-state-context'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -25,6 +23,8 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { useAppState } from '@/providers/app-state-provider'
+import { createAppInstance } from '@/view-model/app-instance-view-model'
 import { AppInstance, Result } from '~/domain/model'
 
 import { toast } from '../hooks/use-toast'

@@ -1,10 +1,11 @@
 'use client'
 
-import { EllipsisVerticalIcon, HomeIcon, Star } from 'lucide-react'
+import { EllipsisVerticalIcon, HomeIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { User, Workspace } from '@/domain/model'
+import { useAppState } from '@/providers/app-state-provider'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -36,13 +37,11 @@ import {
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
 import { toast } from './hooks/use-toast'
-import { useAppState } from './store/app-state-context'
 
 export default function WorkspaceTable({
   workspaces,
   title,
   description,
-  user,
   onUpdate
 }: {
   workspaces: Workspace[] | undefined
@@ -78,12 +77,12 @@ export default function WorkspaceTable({
   const TableHeads = () => (
     <>
       <TableHead className="font-semibold text-white">Name</TableHead>
-      <TableHead className="font-semibold text-white">Short Name</TableHead>
+      {/* <TableHead className="font-semibold text-white">Short Name</TableHead> */}
       <TableHead className="font-semibold text-white">Description</TableHead>
       <TableHead className="font-semibold text-white">Status</TableHead>
       {/* <TableHead className="hidden md:table-cell">Members</TableHead> */}
       <TableHead className="hidden font-semibold text-white md:table-cell">
-        Created at
+        Created
       </TableHead>
       <TableHead>
         <span className="sr-only">Actions</span>
@@ -129,23 +128,31 @@ export default function WorkspaceTable({
           <TableCell className="p-1 font-semibold">
             <Link
               href={`/workspaces/${workspace?.id}`}
-              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              className="inline-flex w-max items-center justify-center gap-x-2 border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
             >
+              {workspace?.isMain && (
+                <HomeIcon className="h-4 w-4 text-secondary" />
+              )}
               {workspace?.name}
             </Link>
           </TableCell>
-          <TableCell className="p-1 font-normal">
+          {/* <TableCell className="p-1 font-normal">
             <span className="flex items-center justify-between gap-2">
               {workspace?.name}
-              {workspace?.isMain && <HomeIcon className="h-4 w-4 text-secondary" />}
+              {workspace?.isMain && (
+                <HomeIcon className="h-4 w-4 text-secondary" />
+              )}
             </span>
-          </TableCell>
+          </TableCell> */}
           <TableCell className="font-xs p-1">
             {workspace?.description}
           </TableCell>
           <TableCell className="p-1">
-            <Badge variant="outline">{workspace?.status}</Badge>
+            {workspace?.status && (
+              <Badge variant="outline">{workspace?.status}</Badge>
+            )}
           </TableCell>
+
           <TableCell className="hidden p-1 md:table-cell">
             {workspace?.createdAt.toLocaleDateString()}
           </TableCell>

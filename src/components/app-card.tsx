@@ -5,6 +5,10 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { createAppInstance } from '@/view-model/app-instance-view-model'
+import { appDelete } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
 import { AppEditDialog } from '~/components/forms/app-edit-dialog'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
@@ -25,11 +29,7 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { App, AppInstanceStatus } from '~/domain/model'
 
-import { createAppInstance } from './actions/app-instance-view-model'
-import { appDelete } from './actions/app-view-model'
 import { toast } from './hooks/use-toast'
-import { useAppState } from './store/app-state-context'
-import { useAuth } from './store/auth-context'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
@@ -47,7 +47,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
   const { background, refreshWorkbenches, refreshWorkspaces, setBackground } =
     useAppState()
-  const { user } = useAuth()
+  const { user } = useAuthentication()
   const router = useRouter()
 
   const handleDelete = async () => {

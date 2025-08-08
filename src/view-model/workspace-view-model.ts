@@ -57,7 +57,10 @@ export async function workspaceCreate(
 
     const workspace: WorkspaceCreateType = {
       ...formValues,
-      isMain: formValues.isMain === 'true'
+      isMain: formValues.isMain === 'true',
+      shortName:
+        formValues.shortName ||
+        (formValues.name.slice(0, 3) as string).toLowerCase()
     } as WorkspaceCreateType
 
     const validation = WorkspaceCreateSchema.safeParse(workspace)
@@ -94,7 +97,10 @@ export async function workspaceUpdate(
     const formValues = Object.fromEntries(formData.entries())
     const workspace: WorkspaceUpdatetype = {
       ...formValues,
-      isMain: formValues.isMain === 'true'
+      isMain: formValues.isMain === 'true',
+      shortName:
+        formValues.shortName ||
+        (formValues.name.slice(0, 3) as string).toLowerCase()
     } as WorkspaceUpdatetype
 
     const validation = WorkspaceUpdateSchema.safeParse(workspace)

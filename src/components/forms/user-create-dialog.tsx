@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { createUser } from '~/components/actions/user-view-model'
+import { createUser } from '@/view-model/user-view-model'
 import { Button } from '~/components/ui/button'
 import {
   Dialog,

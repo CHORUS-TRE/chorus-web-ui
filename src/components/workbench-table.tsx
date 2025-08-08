@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import React from 'react'
 
+import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
 import {
@@ -36,7 +37,6 @@ import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
-import { useAppState } from './store/app-state-context'
 
 export default function WorkbenchTable({
   workspaceId,
@@ -119,7 +119,7 @@ export default function WorkbenchTable({
               href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
               className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
             >
-              {workbench?.shortName}
+              {workbench?.name}
             </Link>
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">

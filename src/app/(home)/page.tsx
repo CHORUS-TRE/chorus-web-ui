@@ -1,26 +1,32 @@
 'use client'
 
-import { CirclePlus, HomeIcon, Package } from 'lucide-react'
-import { useState } from 'react'
+import { CirclePlus, HomeIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { PrivateWorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
-import { useAppState } from '~/components/store/app-state-context'
-import { useAuth } from '~/components/store/auth-context'
 import { Button } from '~/components/ui/button'
 import { Workspace } from '~/components/workspace'
 
 const HomePage = () => {
-  const { user, refreshUser } = useAuth()
-  const { workspaces } = useAppState()
+  const { user, refreshUser } = useAuthentication()
+  const { workspaces, setBackground } = useAppState()
   const [createOpen, setCreateOpen] = useState(false)
+
+  useEffect(() => {
+    if (user?.workspaceId) {
+      setBackground({ workspaceId: user.workspaceId })
+    }
+  }, [user?.workspaceId, setBackground])
+
   return (
     <div className="flex w-full flex-col items-center justify-start">
       <div className="flex w-full flex-grow items-center justify-start">
         <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-          {user?.workspaceId && <HomeIcon className="h-9 w-9 text-secondary" />}
-          {!user?.workspaceId && <Package className="h-9 w-9 text-white" />}
-          {workspaces?.find(w => w.id === user?.workspaceId)?.name}
+          <HomeIcon className="h-9 w-9 text-secondary" />
+          {workspaces?.find((w) => w.id === user?.workspaceId)?.name}
         </h2>
       </div>
 
@@ -35,13 +41,13 @@ const HomePage = () => {
             </div>
             <Button
               onClick={() => setCreateOpen(true)}
-              className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+              className="rounded-full bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
             >
               <CirclePlus className="h-4 w-4" />
               Create Workspace
             </Button>
             {createOpen && (
-              <WorkspaceCreateForm
+              <PrivateWorkspaceCreateForm
                 state={[createOpen, setCreateOpen]}
                 userId={user?.id}
                 onSuccess={async () => {

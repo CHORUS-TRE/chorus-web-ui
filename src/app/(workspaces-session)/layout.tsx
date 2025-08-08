@@ -9,14 +9,14 @@ const UnauthenticatedApp = React.lazy(() =>
     default: mod.UnauthenticatedApp
   }))
 )
-import { useAuth } from '~/components/store/auth-context'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { user } = useAuth()
+  const { user } = useAuthentication()
 
   return user ? (
     <>

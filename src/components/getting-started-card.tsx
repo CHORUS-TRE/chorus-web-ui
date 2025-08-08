@@ -3,8 +3,9 @@
 import { CardComponentProps } from 'node_modules/nextstepjs/src/types'
 import React from 'react'
 
+import { useAppState } from '@/providers/app-state-provider'
+
 import { Button } from './button'
-import { useAppState } from './store/app-state-context'
 
 const GettingStartedCard: React.FC<CardComponentProps> = ({
   step,

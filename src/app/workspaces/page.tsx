@@ -3,12 +3,11 @@
 import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
 import { useState } from 'react'
 
-import { useAppState } from '@/components/store/app-state-context'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
-import { useAuth } from '~/components/store/auth-context'
 import { Button as UIButton } from '~/components/ui/button'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
@@ -21,7 +20,7 @@ export default function WorkspacesPage() {
     workbenches,
     refreshWorkspaces
   } = useAppState()
-  const { user } = useAuth()
+  const { user } = useAuthentication()
 
   const [createOpen, setCreateOpen] = useState(false)
 
@@ -45,8 +44,8 @@ export default function WorkspacesPage() {
 
       <div className="w-full">
         {/* <Tabs defaultValdeue="mine" className=""> */}
-          <div className="grid grid-flow-col grid-rows-1 gap-4">
-            {/* <TabsList aria-label="Workspace view options">
+        <div className="grid grid-flow-col grid-rows-1 gap-4">
+          {/* <TabsList aria-label="Workspace view options">
               <TabsTrigger value="mine" aria-label="View my workspaces">
                 My Workspaces
               </TabsTrigger>
@@ -54,109 +53,113 @@ export default function WorkspacesPage() {
                 All Workspaces
               </TabsTrigger>
             </TabsList> */}
-            <div className="flex items-center justify-end gap-0">
-              <UIButton
-                variant="ghost"
-                size="sm"
-                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${!showWorkspacesTable ? 'border-accent' : ''}`}
-                onClick={toggleWorkspaceView}
-                id="grid-button"
-                disabled={!showWorkspacesTable}
-                aria-label="Switch to grid view"
-              >
-                <LayoutGrid />
-              </UIButton>
-              <UIButton
-                variant="ghost"
-                size="sm"
-                className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${showWorkspacesTable ? 'border-accent' : ''}`}
-                onClick={toggleWorkspaceView}
-                id="table-button"
-                disabled={showWorkspacesTable}
-                aria-label="Switch to table view"
-              >
-                <Rows3 />
-              </UIButton>
-            </div>
+          <div className="flex items-center justify-end gap-0">
+            <UIButton
+              variant="ghost"
+              size="sm"
+              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${!showWorkspacesTable ? 'border-accent' : ''}`}
+              onClick={toggleWorkspaceView}
+              id="grid-button"
+              disabled={!showWorkspacesTable}
+              aria-label="Switch to grid view"
+            >
+              <LayoutGrid />
+            </UIButton>
+            <UIButton
+              variant="ghost"
+              size="sm"
+              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${showWorkspacesTable ? 'border-accent' : ''}`}
+              onClick={toggleWorkspaceView}
+              id="table-button"
+              disabled={showWorkspacesTable}
+              aria-label="Switch to table view"
+            >
+              <Rows3 />
+            </UIButton>
           </div>
-          {/* <TabsContent
+        </div>
+        {/* <TabsContent
             value="mine"
             className="border-none"
             aria-label="My workspaces content"
           > */}
-            <div className="mb-6">
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-                <Package className="h-6 w-6" />
-                My Workspaces
-              </h3>
-              <p className="mt-1 text-sm text-muted">
-                View and manage your workspaces
-              </p>
-            </div>
-            {!workspaces ? (
-              <span className="animate-pulse text-muted">
-                Loading my workspaces...
-              </span>
-            ) : (
-              <>
-                {showWorkspacesTable ? (
-                  <WorkspaceTable
-                    workspaces={workspaces.filter(
-                      (workspace) =>
-                        workspace.id === user?.workspaceId ||
-                        workspace.userId === user?.id
-                    )}
-                    user={user}
-                    onUpdate={refreshWorkspaces}
-                  />
-                ) : (
-                  <WorkspacesGrid
-                    workspaces={workspaces.filter(
-                      (workspace) =>
-                        workspace.id === user?.workspaceId ||
-                        workspace.userId === user?.id
-                    )}
-                    workbenches={workbenches}
-                    user={user}
-                    onUpdate={refreshWorkspaces}
-                  />
+        <div className="mb-6">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
+            <Package className="h-6 w-6" />
+            My Workspaces
+          </h3>
+          <p className="mt-1 text-sm text-muted">
+            View and manage your workspaces
+          </p>
+        </div>
+        {!workspaces ? (
+          <span className="animate-pulse text-muted">
+            Loading my workspaces...
+          </span>
+        ) : (
+          <>
+            {showWorkspacesTable ? (
+              <WorkspaceTable
+                workspaces={workspaces.filter(
+                  (workspace) =>
+                    workspace.id === user?.workspaceId ||
+                    workspace.userId === user?.id
                 )}
-              </>
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
+            ) : (
+              <WorkspacesGrid
+                workspaces={workspaces.filter(
+                  (workspace) =>
+                    workspace.id === user?.workspaceId ||
+                    workspace.userId === user?.id
+                )}
+                workbenches={workbenches}
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
             )}
-          {/* </TabsContent>
+          </>
+        )}
+        {/* </TabsContent>
           <TabsContent value="all" aria-label="All workspaces content"> */}
-            <div className="mb-6 mt-6">
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-                <Package className="h-6 w-6" />
-                All Workspaces
-              </h3>
-              <p className="mt-1 text-sm text-muted">
-                View and all available workspaces
-              </p>
-            </div>
-            {!workspaces ? (
-              <span className="animate-pulse text-muted">
-                Loading all workspaces...
-              </span>
-            ) : (
-              <>
-                {showWorkspacesTable ? (
-                  <WorkspaceTable
-                    workspaces={workspaces.filter(w => w.userId !== user?.id && !w.isMain)}
-                    user={user}
-                    onUpdate={refreshWorkspaces}
-                  />
-                ) : (
-                  <WorkspacesGrid
-                    workspaces={workspaces.filter(w => w.userId !== user?.id && !w.isMain)}
-                    workbenches={workbenches}
-                    user={user}
-                    onUpdate={refreshWorkspaces}
-                  />
+        <div className="mb-6 mt-6">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
+            <Package className="h-6 w-6" />
+            All Workspaces
+          </h3>
+          <p className="mt-1 text-sm text-muted">
+            View and all available workspaces
+          </p>
+        </div>
+        {!workspaces ? (
+          <span className="animate-pulse text-muted">
+            Loading all workspaces...
+          </span>
+        ) : (
+          <>
+            {showWorkspacesTable ? (
+              <WorkspaceTable
+                workspaces={workspaces.filter(
+                  (w) => w.userId !== user?.id && !w.isMain
                 )}
-              </>
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
+            ) : (
+              <WorkspacesGrid
+                workspaces={workspaces.filter(
+                  (w) => w.userId !== user?.id && !w.isMain
+                )}
+                workbenches={workbenches}
+                user={user}
+                onUpdate={refreshWorkspaces}
+              />
             )}
-          {/* </TabsContent>
+          </>
+        )}
+        {/* </TabsContent>
         </Tabs> */}
       </div>
 

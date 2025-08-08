@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
-import { useAppState } from '@/components/store/app-state-context'
-import { Result, Workspace } from '@/domain/model'
+import { Result } from '@/domain/model'
 import {
   User,
   UserCreateType,
@@ -10,7 +9,7 @@ import {
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
-import { workspaceList } from '~/components/actions/workspace-view-model'
+import { workspaceList } from '@/view-model/workspace-view-model'
 
 import { UserDataSource } from '../data-source'
 import { MOCK_ROLES } from '../data-source/chorus-api/role-data-source'

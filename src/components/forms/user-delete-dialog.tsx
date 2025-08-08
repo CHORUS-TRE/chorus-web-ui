@@ -2,7 +2,7 @@
 
 import { Trash2 } from 'lucide-react'
 
-import { deleteUser } from '~/components/actions/user-view-model'
+import { deleteUser } from '@/view-model/user-view-model'
 import {
   AlertDialog,
   AlertDialogAction,

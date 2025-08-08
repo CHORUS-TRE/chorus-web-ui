@@ -1,5 +1,3 @@
-
-
 import '@/app/build.css'
 import '@/styles/globals.css'
 
@@ -10,10 +8,11 @@ import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
 
+import { AppStateProvider } from '@/providers/app-state-provider'
+import { AuthProvider } from '@/providers/authentication-provider'
 import BackgroundIframe from '~/components/background-iframe'
-import { AppStateProvider } from '~/components/store/app-state-context'
-import { AuthProvider } from '~/components/store/auth-context'
 import { Toaster } from '~/components/ui/toaster'
+import { AuthorizationProvider } from '~/providers/authorization-provider'
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -49,11 +48,13 @@ export default async function RootLayout({
       </head>
       <body className={`${rubik.variable} antialiased`}>
         <AuthProvider>
-          <AppStateProvider>
-            {children}
-            <BackgroundIframe />
-            <Toaster />
-          </AppStateProvider>
+          <AuthorizationProvider>
+            <AppStateProvider>
+              {children}
+              <BackgroundIframe />
+              <Toaster />
+            </AppStateProvider>
+          </AuthorizationProvider>
         </AuthProvider>
       </body>
     </html>

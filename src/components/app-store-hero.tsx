@@ -2,8 +2,7 @@ import { Box, Cloud, Lock, Zap } from 'lucide-react'
 import Image from 'next/image'
 
 import { Button } from '@/components/button'
-
-import { useAppState } from './store/app-state-context'
+import { useAppState } from '@/providers/app-state-provider'
 
 export default function AppStoreHero() {
   const { toggleRightSidebar } = useAppState()

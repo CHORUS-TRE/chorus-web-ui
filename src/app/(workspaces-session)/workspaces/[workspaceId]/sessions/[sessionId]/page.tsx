@@ -4,13 +4,13 @@ import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { Header } from '@/components/header'
-import { useAppState } from '@/components/store/app-state-context'
-import { useAuth } from '~/components/store/auth-context'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const { setBackground } = useAppState()
-  const { user } = useAuth()
+  const { user } = useAuthentication()
 
   useEffect(() => {
     setBackground({

@@ -6,7 +6,6 @@ import { startTransition, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
-import { workbenchUpdate } from '@/components/actions/workbench-view-model'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -19,6 +18,7 @@ import {
   WorkbenchUpdateSchema,
   WorkbenchUpdateType
 } from '@/domain/model'
+import { workbenchUpdate } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/ui/card'
 import {

@@ -9,31 +9,42 @@ export class RoleRepositoryImpl implements RoleRepository {
   async list(): Promise<Result<Role[]>> {
     return this.dataSource.list()
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async get(roleId: string): Promise<Result<Role>> {
+  async get(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    roleId: string
+  ): Promise<Result<Role>> {
     throw new Error('Method not implemented.')
   }
-  async create(role: Role): Promise<Result<Role>> {
+  async create(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    role: Role
+  ): Promise<Result<Role>> {
     throw new Error('Method not implemented.')
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async update(role: Role): Promise<Result<Role>> {
+  async update(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    role: Role
+  ): Promise<Result<Role>> {
     throw new Error('Method not implemented.')
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async delete(roleId: string): Promise<Result<string>> {
+  async delete(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    roleId: string
+  ): Promise<Result<string>> {
     throw new Error('Method not implemented.')
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async assignUserRole(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     userId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     roleId: string
   ): Promise<Result<boolean>> {
     throw new Error('Method not implemented.')
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async unassignUserRole(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     userId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     roleId: string
   ): Promise<Result<boolean>> {
     throw new Error('Method not implemented.')

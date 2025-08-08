@@ -1,10 +1,10 @@
 'use client'
 
-import { useAuth } from '~/components/store/auth-context'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 
 export default function Me() {
-  const { user } = useAuth()
+  const { user } = useAuthentication()
 
   return (
     <div className="grid gap-6">

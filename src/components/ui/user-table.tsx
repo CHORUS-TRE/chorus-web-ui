@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { listUsers } from '~/components/actions/user-view-model'
+import { listUsers } from '@/view-model/user-view-model'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
 import { UserEditDialog } from '~/components/forms/user-edit-dialog'
 import { Badge } from '~/components/ui/badge'

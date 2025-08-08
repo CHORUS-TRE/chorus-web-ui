@@ -4,8 +4,8 @@ import { Home, PackageOpen } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import React from 'react'
 
-import { useAppState } from '~/components/store/app-state-context'
-import { useAuth } from '~/components/store/auth-context'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function Layout({
   children
@@ -14,7 +14,7 @@ export default function Layout({
 }>) {
   const params = useParams<{ workspaceId: string }>()
   const { workspaces } = useAppState()
-  const { user } = useAuth()
+  const { user } = useAuthentication()
   const workspace = workspaces?.find((w) => w.id === params?.workspaceId)
   return (
     <>
@@ -26,9 +26,9 @@ export default function Layout({
             <PackageOpen className="h-9 w-9 text-white" />
           )}
 
-          {workspace ?
-              workspace.name
-             : (
+          {workspace ? (
+            workspace.name
+          ) : (
             <span className="animate-pulse text-muted">
               Loading workspace...
             </span>
