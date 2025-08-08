@@ -152,15 +152,15 @@ export default function WorkspacesGrid({
                   )}
                   {workspace.userId !== user?.id && (
                     <div className="flex h-full items-start justify-start">
-                      <p className="text-xs text-muted">
+                      <div className="text-xs text-muted">
                         {(() => {
                           const count =
                             workbenches?.filter(
                               (w) => w.workspaceId === workspace.id
                             ).length || 0
-                          return `${count} ${count >= 1 ? 'session' : 'sessions'}`
+                          return `${count} workbench${count !== 1 ? 'es' : ''}`
                         })()}
-                      </p>
+                      </div>
                     </div>
                   )}
                 </CardContent>
