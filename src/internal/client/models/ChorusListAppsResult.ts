@@ -23,46 +23,46 @@ import {
 /**
  *
  * @export
- * @interface ChorusCreateAppResult
+ * @interface ChorusListAppsResult
  */
-export interface ChorusCreateAppResult {
+export interface ChorusListAppsResult {
   /**
    *
-   * @type {ChorusApp}
-   * @memberof ChorusCreateAppResult
+   * @type {Array<ChorusApp>}
+   * @memberof ChorusListAppsResult
    */
-  app?: ChorusApp
+  apps?: Array<ChorusApp>
 }
 
 /**
- * Check if a given object implements the ChorusCreateAppResult interface.
+ * Check if a given object implements the ChorusListAppsResult interface.
  */
-export function instanceOfChorusCreateAppResult(value: object): boolean {
+export function instanceOfChorusListAppsResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusCreateAppResultFromJSON(
-  json: any
-): ChorusCreateAppResult {
-  return ChorusCreateAppResultFromJSONTyped(json, false)
+export function ChorusListAppsResultFromJSON(json: any): ChorusListAppsResult {
+  return ChorusListAppsResultFromJSONTyped(json, false)
 }
 
-export function ChorusCreateAppResultFromJSONTyped(
+export function ChorusListAppsResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusCreateAppResult {
+): ChorusListAppsResult {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    app: !exists(json, 'app') ? undefined : ChorusAppFromJSON(json['app'])
+    apps: !exists(json, 'apps')
+      ? undefined
+      : (json['apps'] as Array<any>).map(ChorusAppFromJSON)
   }
 }
 
-export function ChorusCreateAppResultToJSON(
-  value?: ChorusCreateAppResult | null
+export function ChorusListAppsResultToJSON(
+  value?: ChorusListAppsResult | null
 ): any {
   if (value === undefined) {
     return undefined
@@ -71,6 +71,9 @@ export function ChorusCreateAppResultToJSON(
     return null
   }
   return {
-    app: ChorusAppToJSON(value.app)
+    apps:
+      value.apps === undefined
+        ? undefined
+        : (value.apps as Array<any>).map(ChorusAppToJSON)
   }
 }

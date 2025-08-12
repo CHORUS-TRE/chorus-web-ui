@@ -23,36 +23,36 @@ import {
 /**
  *
  * @export
- * @interface ChorusCreateWorkspaceResult
+ * @interface ChorusUpdateWorkspaceResult
  */
-export interface ChorusCreateWorkspaceResult {
+export interface ChorusUpdateWorkspaceResult {
   /**
    *
    * @type {ChorusWorkspace}
-   * @memberof ChorusCreateWorkspaceResult
+   * @memberof ChorusUpdateWorkspaceResult
    */
   workspace?: ChorusWorkspace
 }
 
 /**
- * Check if a given object implements the ChorusCreateWorkspaceResult interface.
+ * Check if a given object implements the ChorusUpdateWorkspaceResult interface.
  */
-export function instanceOfChorusCreateWorkspaceResult(value: object): boolean {
+export function instanceOfChorusUpdateWorkspaceResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusCreateWorkspaceResultFromJSON(
+export function ChorusUpdateWorkspaceResultFromJSON(
   json: any
-): ChorusCreateWorkspaceResult {
-  return ChorusCreateWorkspaceResultFromJSONTyped(json, false)
+): ChorusUpdateWorkspaceResult {
+  return ChorusUpdateWorkspaceResultFromJSONTyped(json, false)
 }
 
-export function ChorusCreateWorkspaceResultFromJSONTyped(
+export function ChorusUpdateWorkspaceResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusCreateWorkspaceResult {
+): ChorusUpdateWorkspaceResult {
   if (json === undefined || json === null) {
     return json
   }
@@ -63,8 +63,8 @@ export function ChorusCreateWorkspaceResultFromJSONTyped(
   }
 }
 
-export function ChorusCreateWorkspaceResultToJSON(
-  value?: ChorusCreateWorkspaceResult | null
+export function ChorusUpdateWorkspaceResultToJSON(
+  value?: ChorusUpdateWorkspaceResult | null
 ): any {
   if (value === undefined) {
     return undefined

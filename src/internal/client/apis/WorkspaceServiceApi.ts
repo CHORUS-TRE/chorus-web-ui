@@ -19,7 +19,6 @@ import type {
   ChorusGetWorkspaceReply,
   ChorusListWorkspacesReply,
   ChorusUpdateWorkspaceReply,
-  ChorusUpdateWorkspaceRequest,
   ChorusWorkspace,
   RpcStatus
 } from '../models/index'
@@ -34,8 +33,6 @@ import {
   ChorusListWorkspacesReplyToJSON,
   ChorusUpdateWorkspaceReplyFromJSON,
   ChorusUpdateWorkspaceReplyToJSON,
-  ChorusUpdateWorkspaceRequestFromJSON,
-  ChorusUpdateWorkspaceRequestToJSON,
   ChorusWorkspaceFromJSON,
   ChorusWorkspaceToJSON,
   RpcStatusFromJSON,
@@ -63,7 +60,7 @@ export interface WorkspaceServiceListWorkspacesRequest {
 }
 
 export interface WorkspaceServiceUpdateWorkspaceRequest {
-  body: ChorusUpdateWorkspaceRequest
+  body: ChorusWorkspace
 }
 
 /**
@@ -348,7 +345,7 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
         method: 'PUT',
         headers: headerParameters,
         query: queryParameters,
-        body: ChorusUpdateWorkspaceRequestToJSON(requestParameters.body)
+        body: ChorusWorkspaceToJSON(requestParameters.body)
       },
       initOverrides
     )

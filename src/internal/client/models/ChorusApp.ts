@@ -48,6 +48,12 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
+  prettyName?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
   description?: string
   /**
    *
@@ -79,12 +85,6 @@ export interface ChorusApp {
    * @memberof ChorusApp
    */
   shmSize?: string
-  /**
-   *
-   * @type {string}
-   * @memberof ChorusApp
-   */
-  kioskConfigURL?: string
   /**
    *
    * @type {string}
@@ -126,6 +126,12 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
+  kioskConfigURL?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
   iconURL?: string
   /**
    *
@@ -139,12 +145,6 @@ export interface ChorusApp {
    * @memberof ChorusApp
    */
   updatedAt?: Date
-  /**
-   *
-   * @type {string}
-   * @memberof ChorusApp
-   */
-  prettyName?: string
 }
 
 /**
@@ -172,6 +172,7 @@ export function ChorusAppFromJSONTyped(
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
     userId: !exists(json, 'userId') ? undefined : json['userId'],
     name: !exists(json, 'name') ? undefined : json['name'],
+    prettyName: !exists(json, 'prettyName') ? undefined : json['prettyName'],
     description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
     dockerImageRegistry: !exists(json, 'dockerImageRegistry')
@@ -184,9 +185,6 @@ export function ChorusAppFromJSONTyped(
       ? undefined
       : json['dockerImageTag'],
     shmSize: !exists(json, 'shmSize') ? undefined : json['shmSize'],
-    kioskConfigURL: !exists(json, 'kioskConfigURL')
-      ? undefined
-      : json['kioskConfigURL'],
     maxCPU: !exists(json, 'maxCPU') ? undefined : json['maxCPU'],
     minCPU: !exists(json, 'minCPU') ? undefined : json['minCPU'],
     maxMemory: !exists(json, 'maxMemory') ? undefined : json['maxMemory'],
@@ -197,14 +195,16 @@ export function ChorusAppFromJSONTyped(
     minEphemeralStorage: !exists(json, 'minEphemeralStorage')
       ? undefined
       : json['minEphemeralStorage'],
+    kioskConfigURL: !exists(json, 'kioskConfigURL')
+      ? undefined
+      : json['kioskConfigURL'],
     iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
-      : new Date(json['updatedAt']),
-    prettyName: !exists(json, 'prettyName') ? undefined : json['prettyName']
+      : new Date(json['updatedAt'])
   }
 }
 
@@ -220,24 +220,24 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     tenantId: value.tenantId,
     userId: value.userId,
     name: value.name,
+    prettyName: value.prettyName,
     description: value.description,
     status: value.status,
     dockerImageRegistry: value.dockerImageRegistry,
     dockerImageName: value.dockerImageName,
     dockerImageTag: value.dockerImageTag,
     shmSize: value.shmSize,
-    kioskConfigURL: value.kioskConfigURL,
     maxCPU: value.maxCPU,
     minCPU: value.minCPU,
     maxMemory: value.maxMemory,
     minMemory: value.minMemory,
     maxEphemeralStorage: value.maxEphemeralStorage,
     minEphemeralStorage: value.minEphemeralStorage,
+    kioskConfigURL: value.kioskConfigURL,
     iconURL: value.iconURL,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-    prettyName: value.prettyName
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
   }
 }

@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime'
-import type { ChorusListWorkspacesResult } from './ChorusListWorkspacesResult'
+import type { ChorusListUsersResult } from './ChorusListUsersResult'
 import {
-  ChorusListWorkspacesResultFromJSON,
-  ChorusListWorkspacesResultFromJSONTyped,
-  ChorusListWorkspacesResultToJSON
-} from './ChorusListWorkspacesResult'
+  ChorusListUsersResultFromJSON,
+  ChorusListUsersResultFromJSONTyped,
+  ChorusListUsersResultToJSON
+} from './ChorusListUsersResult'
 import type { ChorusPaginationResult } from './ChorusPaginationResult'
 import {
   ChorusPaginationResultFromJSON,
@@ -29,57 +29,55 @@ import {
 /**
  *
  * @export
- * @interface ChorusListWorkspacesReply
+ * @interface ChorusListUsersReply
  */
-export interface ChorusListWorkspacesReply {
+export interface ChorusListUsersReply {
   /**
    *
-   * @type {ChorusListWorkspacesResult}
-   * @memberof ChorusListWorkspacesReply
+   * @type {ChorusListUsersResult}
+   * @memberof ChorusListUsersReply
    */
-  result?: ChorusListWorkspacesResult
+  result?: ChorusListUsersResult
   /**
    *
    * @type {ChorusPaginationResult}
-   * @memberof ChorusListWorkspacesReply
+   * @memberof ChorusListUsersReply
    */
   pagination?: ChorusPaginationResult
 }
 
 /**
- * Check if a given object implements the ChorusListWorkspacesReply interface.
+ * Check if a given object implements the ChorusListUsersReply interface.
  */
-export function instanceOfChorusListWorkspacesReply(value: object): boolean {
+export function instanceOfChorusListUsersReply(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusListWorkspacesReplyFromJSON(
-  json: any
-): ChorusListWorkspacesReply {
-  return ChorusListWorkspacesReplyFromJSONTyped(json, false)
+export function ChorusListUsersReplyFromJSON(json: any): ChorusListUsersReply {
+  return ChorusListUsersReplyFromJSONTyped(json, false)
 }
 
-export function ChorusListWorkspacesReplyFromJSONTyped(
+export function ChorusListUsersReplyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusListWorkspacesReply {
+): ChorusListUsersReply {
   if (json === undefined || json === null) {
     return json
   }
   return {
     result: !exists(json, 'result')
       ? undefined
-      : ChorusListWorkspacesResultFromJSON(json['result']),
+      : ChorusListUsersResultFromJSON(json['result']),
     pagination: !exists(json, 'pagination')
       ? undefined
       : ChorusPaginationResultFromJSON(json['pagination'])
   }
 }
 
-export function ChorusListWorkspacesReplyToJSON(
-  value?: ChorusListWorkspacesReply | null
+export function ChorusListUsersReplyToJSON(
+  value?: ChorusListUsersReply | null
 ): any {
   if (value === undefined) {
     return undefined
@@ -88,7 +86,7 @@ export function ChorusListWorkspacesReplyToJSON(
     return null
   }
   return {
-    result: ChorusListWorkspacesResultToJSON(value.result),
+    result: ChorusListUsersResultToJSON(value.result),
     pagination: ChorusPaginationResultToJSON(value.pagination)
   }
 }

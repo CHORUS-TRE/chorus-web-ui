@@ -13,12 +13,18 @@
  */
 
 import { exists, mapValues } from '../runtime'
-import type { ChorusApp } from './ChorusApp'
+import type { ChorusListAppsResult } from './ChorusListAppsResult'
 import {
-  ChorusAppFromJSON,
-  ChorusAppFromJSONTyped,
-  ChorusAppToJSON
-} from './ChorusApp'
+  ChorusListAppsResultFromJSON,
+  ChorusListAppsResultFromJSONTyped,
+  ChorusListAppsResultToJSON
+} from './ChorusListAppsResult'
+import type { ChorusPaginationResult } from './ChorusPaginationResult'
+import {
+  ChorusPaginationResultFromJSON,
+  ChorusPaginationResultFromJSONTyped,
+  ChorusPaginationResultToJSON
+} from './ChorusPaginationResult'
 
 /**
  *
@@ -28,10 +34,16 @@ import {
 export interface ChorusListAppsReply {
   /**
    *
-   * @type {Array<ChorusApp>}
+   * @type {ChorusListAppsResult}
    * @memberof ChorusListAppsReply
    */
-  result?: Array<ChorusApp>
+  result?: ChorusListAppsResult
+  /**
+   *
+   * @type {ChorusPaginationResult}
+   * @memberof ChorusListAppsReply
+   */
+  pagination?: ChorusPaginationResult
 }
 
 /**
@@ -57,7 +69,10 @@ export function ChorusListAppsReplyFromJSONTyped(
   return {
     result: !exists(json, 'result')
       ? undefined
-      : (json['result'] as Array<any>).map(ChorusAppFromJSON)
+      : ChorusListAppsResultFromJSON(json['result']),
+    pagination: !exists(json, 'pagination')
+      ? undefined
+      : ChorusPaginationResultFromJSON(json['pagination'])
   }
 }
 
@@ -71,9 +86,7 @@ export function ChorusListAppsReplyToJSON(
     return null
   }
   return {
-    result:
-      value.result === undefined
-        ? undefined
-        : (value.result as Array<any>).map(ChorusAppToJSON)
+    result: ChorusListAppsResultToJSON(value.result),
+    pagination: ChorusPaginationResultToJSON(value.pagination)
   }
 }

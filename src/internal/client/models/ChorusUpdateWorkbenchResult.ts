@@ -23,36 +23,36 @@ import {
 /**
  *
  * @export
- * @interface ChorusCreateWorkbenchResult
+ * @interface ChorusUpdateWorkbenchResult
  */
-export interface ChorusCreateWorkbenchResult {
+export interface ChorusUpdateWorkbenchResult {
   /**
    *
    * @type {ChorusWorkbench}
-   * @memberof ChorusCreateWorkbenchResult
+   * @memberof ChorusUpdateWorkbenchResult
    */
   workbench?: ChorusWorkbench
 }
 
 /**
- * Check if a given object implements the ChorusCreateWorkbenchResult interface.
+ * Check if a given object implements the ChorusUpdateWorkbenchResult interface.
  */
-export function instanceOfChorusCreateWorkbenchResult(value: object): boolean {
+export function instanceOfChorusUpdateWorkbenchResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusCreateWorkbenchResultFromJSON(
+export function ChorusUpdateWorkbenchResultFromJSON(
   json: any
-): ChorusCreateWorkbenchResult {
-  return ChorusCreateWorkbenchResultFromJSONTyped(json, false)
+): ChorusUpdateWorkbenchResult {
+  return ChorusUpdateWorkbenchResultFromJSONTyped(json, false)
 }
 
-export function ChorusCreateWorkbenchResultFromJSONTyped(
+export function ChorusUpdateWorkbenchResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusCreateWorkbenchResult {
+): ChorusUpdateWorkbenchResult {
   if (json === undefined || json === null) {
     return json
   }
@@ -63,8 +63,8 @@ export function ChorusCreateWorkbenchResultFromJSONTyped(
   }
 }
 
-export function ChorusCreateWorkbenchResultToJSON(
-  value?: ChorusCreateWorkbenchResult | null
+export function ChorusUpdateWorkbenchResultToJSON(
+  value?: ChorusUpdateWorkbenchResult | null
 ): any {
   if (value === undefined) {
     return undefined

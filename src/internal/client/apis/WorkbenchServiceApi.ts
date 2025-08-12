@@ -19,7 +19,6 @@ import type {
   ChorusGetWorkbenchReply,
   ChorusListWorkbenchsReply,
   ChorusUpdateWorkbenchReply,
-  ChorusUpdateWorkbenchRequest,
   ChorusWorkbench,
   RpcStatus
 } from '../models/index'
@@ -34,8 +33,6 @@ import {
   ChorusListWorkbenchsReplyToJSON,
   ChorusUpdateWorkbenchReplyFromJSON,
   ChorusUpdateWorkbenchReplyToJSON,
-  ChorusUpdateWorkbenchRequestFromJSON,
-  ChorusUpdateWorkbenchRequestToJSON,
   ChorusWorkbenchFromJSON,
   ChorusWorkbenchToJSON,
   RpcStatusFromJSON,
@@ -63,7 +60,7 @@ export interface WorkbenchServiceListWorkbenchsRequest {
 }
 
 export interface WorkbenchServiceUpdateWorkbenchRequest {
-  body: ChorusUpdateWorkbenchRequest
+  body: ChorusWorkbench
 }
 
 /**
@@ -348,7 +345,7 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
         method: 'PUT',
         headers: headerParameters,
         query: queryParameters,
-        body: ChorusUpdateWorkbenchRequestToJSON(requestParameters.body)
+        body: ChorusWorkbenchToJSON(requestParameters.body)
       },
       initOverrides
     )

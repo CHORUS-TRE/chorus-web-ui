@@ -23,46 +23,48 @@ import {
 /**
  *
  * @export
- * @interface ChorusCreateUserResult
+ * @interface ChorusListUsersResult
  */
-export interface ChorusCreateUserResult {
+export interface ChorusListUsersResult {
   /**
    *
-   * @type {ChorusUser}
-   * @memberof ChorusCreateUserResult
+   * @type {Array<ChorusUser>}
+   * @memberof ChorusListUsersResult
    */
-  user?: ChorusUser
+  users?: Array<ChorusUser>
 }
 
 /**
- * Check if a given object implements the ChorusCreateUserResult interface.
+ * Check if a given object implements the ChorusListUsersResult interface.
  */
-export function instanceOfChorusCreateUserResult(value: object): boolean {
+export function instanceOfChorusListUsersResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusCreateUserResultFromJSON(
+export function ChorusListUsersResultFromJSON(
   json: any
-): ChorusCreateUserResult {
-  return ChorusCreateUserResultFromJSONTyped(json, false)
+): ChorusListUsersResult {
+  return ChorusListUsersResultFromJSONTyped(json, false)
 }
 
-export function ChorusCreateUserResultFromJSONTyped(
+export function ChorusListUsersResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusCreateUserResult {
+): ChorusListUsersResult {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    user: !exists(json, 'user') ? undefined : ChorusUserFromJSON(json['user'])
+    users: !exists(json, 'users')
+      ? undefined
+      : (json['users'] as Array<any>).map(ChorusUserFromJSON)
   }
 }
 
-export function ChorusCreateUserResultToJSON(
-  value?: ChorusCreateUserResult | null
+export function ChorusListUsersResultToJSON(
+  value?: ChorusListUsersResult | null
 ): any {
   if (value === undefined) {
     return undefined
@@ -71,6 +73,9 @@ export function ChorusCreateUserResultToJSON(
     return null
   }
   return {
-    user: ChorusUserToJSON(value.user)
+    users:
+      value.users === undefined
+        ? undefined
+        : (value.users as Array<any>).map(ChorusUserToJSON)
   }
 }

@@ -75,6 +75,12 @@ export interface ChorusUser {
   totpEnabled?: boolean
   /**
    *
+   * @type {boolean}
+   * @memberof ChorusUser
+   */
+  passwordChanged?: boolean
+  /**
+   *
    * @type {Date}
    * @memberof ChorusUser
    */
@@ -85,12 +91,6 @@ export interface ChorusUser {
    * @memberof ChorusUser
    */
   updatedAt?: Date
-  /**
-   *
-   * @type {boolean}
-   * @memberof ChorusUser
-   */
-  passwordChanged?: boolean
 }
 
 /**
@@ -123,15 +123,15 @@ export function ChorusUserFromJSONTyped(
     status: !exists(json, 'status') ? undefined : json['status'],
     roles: !exists(json, 'roles') ? undefined : json['roles'],
     totpEnabled: !exists(json, 'totpEnabled') ? undefined : json['totpEnabled'],
+    passwordChanged: !exists(json, 'passwordChanged')
+      ? undefined
+      : json['passwordChanged'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
-      : new Date(json['updatedAt']),
-    passwordChanged: !exists(json, 'passwordChanged')
-      ? undefined
-      : json['passwordChanged']
+      : new Date(json['updatedAt'])
   }
 }
 
@@ -152,10 +152,10 @@ export function ChorusUserToJSON(value?: ChorusUser | null): any {
     status: value.status,
     roles: value.roles,
     totpEnabled: value.totpEnabled,
+    passwordChanged: value.passwordChanged,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-    passwordChanged: value.passwordChanged
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
   }
 }

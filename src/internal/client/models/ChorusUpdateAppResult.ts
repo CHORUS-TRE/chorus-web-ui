@@ -23,36 +23,36 @@ import {
 /**
  *
  * @export
- * @interface ChorusCreateAppResult
+ * @interface ChorusUpdateAppResult
  */
-export interface ChorusCreateAppResult {
+export interface ChorusUpdateAppResult {
   /**
    *
    * @type {ChorusApp}
-   * @memberof ChorusCreateAppResult
+   * @memberof ChorusUpdateAppResult
    */
   app?: ChorusApp
 }
 
 /**
- * Check if a given object implements the ChorusCreateAppResult interface.
+ * Check if a given object implements the ChorusUpdateAppResult interface.
  */
-export function instanceOfChorusCreateAppResult(value: object): boolean {
+export function instanceOfChorusUpdateAppResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusCreateAppResultFromJSON(
+export function ChorusUpdateAppResultFromJSON(
   json: any
-): ChorusCreateAppResult {
-  return ChorusCreateAppResultFromJSONTyped(json, false)
+): ChorusUpdateAppResult {
+  return ChorusUpdateAppResultFromJSONTyped(json, false)
 }
 
-export function ChorusCreateAppResultFromJSONTyped(
+export function ChorusUpdateAppResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusCreateAppResult {
+): ChorusUpdateAppResult {
   if (json === undefined || json === null) {
     return json
   }
@@ -61,8 +61,8 @@ export function ChorusCreateAppResultFromJSONTyped(
   }
 }
 
-export function ChorusCreateAppResultToJSON(
-  value?: ChorusCreateAppResult | null
+export function ChorusUpdateAppResultToJSON(
+  value?: ChorusUpdateAppResult | null
 ): any {
   if (value === undefined) {
     return undefined

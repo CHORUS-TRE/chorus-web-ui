@@ -23,36 +23,36 @@ import {
 /**
  *
  * @export
- * @interface ChorusCreateUserResult
+ * @interface ChorusUpdateUserResult
  */
-export interface ChorusCreateUserResult {
+export interface ChorusUpdateUserResult {
   /**
    *
    * @type {ChorusUser}
-   * @memberof ChorusCreateUserResult
+   * @memberof ChorusUpdateUserResult
    */
   user?: ChorusUser
 }
 
 /**
- * Check if a given object implements the ChorusCreateUserResult interface.
+ * Check if a given object implements the ChorusUpdateUserResult interface.
  */
-export function instanceOfChorusCreateUserResult(value: object): boolean {
+export function instanceOfChorusUpdateUserResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusCreateUserResultFromJSON(
+export function ChorusUpdateUserResultFromJSON(
   json: any
-): ChorusCreateUserResult {
-  return ChorusCreateUserResultFromJSONTyped(json, false)
+): ChorusUpdateUserResult {
+  return ChorusUpdateUserResultFromJSONTyped(json, false)
 }
 
-export function ChorusCreateUserResultFromJSONTyped(
+export function ChorusUpdateUserResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusCreateUserResult {
+): ChorusUpdateUserResult {
   if (json === undefined || json === null) {
     return json
   }
@@ -61,8 +61,8 @@ export function ChorusCreateUserResultFromJSONTyped(
   }
 }
 
-export function ChorusCreateUserResultToJSON(
-  value?: ChorusCreateUserResult | null
+export function ChorusUpdateUserResultToJSON(
+  value?: ChorusUpdateUserResult | null
 ): any {
   if (value === undefined) {
     return undefined

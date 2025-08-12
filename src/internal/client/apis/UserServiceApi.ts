@@ -20,14 +20,13 @@ import type {
   ChorusEnableTotpRequest,
   ChorusGetUserMeReply,
   ChorusGetUserReply,
-  ChorusGetUsersReply,
+  ChorusListUsersReply,
   ChorusResetPasswordReply,
   ChorusResetTotpReply,
   ChorusResetTotpRequest,
   ChorusUpdatePasswordReply,
   ChorusUpdatePasswordRequest,
   ChorusUpdateUserReply,
-  ChorusUpdateUserRequest,
   ChorusUser,
   RpcStatus
 } from '../models/index'
@@ -44,8 +43,8 @@ import {
   ChorusGetUserMeReplyToJSON,
   ChorusGetUserReplyFromJSON,
   ChorusGetUserReplyToJSON,
-  ChorusGetUsersReplyFromJSON,
-  ChorusGetUsersReplyToJSON,
+  ChorusListUsersReplyFromJSON,
+  ChorusListUsersReplyToJSON,
   ChorusResetPasswordReplyFromJSON,
   ChorusResetPasswordReplyToJSON,
   ChorusResetTotpReplyFromJSON,
@@ -58,8 +57,6 @@ import {
   ChorusUpdatePasswordRequestToJSON,
   ChorusUpdateUserReplyFromJSON,
   ChorusUpdateUserReplyToJSON,
-  ChorusUpdateUserRequestFromJSON,
-  ChorusUpdateUserRequestToJSON,
   ChorusUserFromJSON,
   ChorusUserToJSON,
   RpcStatusFromJSON,
@@ -82,6 +79,14 @@ export interface UserServiceGetUserRequest {
   id: string
 }
 
+export interface UserServiceListUsersRequest {
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+}
+
 export interface UserServiceResetPasswordRequest {
   id: string
   body: object
@@ -96,7 +101,7 @@ export interface UserServiceUpdatePasswordRequest {
 }
 
 export interface UserServiceUpdateUserRequest {
-  body: ChorusUpdateUserRequest
+  body: ChorusUser
 }
 
 /**
@@ -378,10 +383,33 @@ export class UserServiceApi extends runtime.BaseAPI {
    * This endpoint returns a list of users
    * List users
    */
-  async userServiceGetUsersRaw(
+  async userServiceListUsersRaw(
+    requestParameters: UserServiceListUsersRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusGetUsersReply>> {
+  ): Promise<runtime.ApiResponse<ChorusListUsersReply>> {
     const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
 
     const headerParameters: runtime.HTTPHeaders = {}
 
@@ -401,7 +429,7 @@ export class UserServiceApi extends runtime.BaseAPI {
     )
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusGetUsersReplyFromJSON(jsonValue)
+      ChorusListUsersReplyFromJSON(jsonValue)
     )
   }
 
@@ -409,10 +437,14 @@ export class UserServiceApi extends runtime.BaseAPI {
    * This endpoint returns a list of users
    * List users
    */
-  async userServiceGetUsers(
+  async userServiceListUsers(
+    requestParameters: UserServiceListUsersRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusGetUsersReply> {
-    const response = await this.userServiceGetUsersRaw(initOverrides)
+  ): Promise<ChorusListUsersReply> {
+    const response = await this.userServiceListUsersRaw(
+      requestParameters,
+      initOverrides
+    )
     return await response.value()
   }
 
@@ -641,7 +673,7 @@ export class UserServiceApi extends runtime.BaseAPI {
         method: 'PUT',
         headers: headerParameters,
         query: queryParameters,
-        body: ChorusUpdateUserRequestToJSON(requestParameters.body)
+        body: ChorusUserToJSON(requestParameters.body)
       },
       initOverrides
     )

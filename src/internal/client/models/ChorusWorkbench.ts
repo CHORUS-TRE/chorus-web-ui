@@ -87,18 +87,6 @@ export interface ChorusWorkbench {
   initialResolutionHeight?: number
   /**
    *
-   * @type {Array<string>}
-   * @memberof ChorusWorkbench
-   */
-  appInsanceIds?: Array<string>
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof ChorusWorkbench
-   */
-  appInstances?: Array<string>
-  /**
-   *
    * @type {Date}
    * @memberof ChorusWorkbench
    */
@@ -147,12 +135,6 @@ export function ChorusWorkbenchFromJSONTyped(
     initialResolutionHeight: !exists(json, 'initialResolutionHeight')
       ? undefined
       : json['initialResolutionHeight'],
-    appInsanceIds: !exists(json, 'appInsanceIds')
-      ? undefined
-      : json['appInsanceIds'],
-    appInstances: !exists(json, 'appInstances')
-      ? undefined
-      : json['appInstances'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -181,8 +163,6 @@ export function ChorusWorkbenchToJSON(value?: ChorusWorkbench | null): any {
     k8sStatus: value.k8sStatus,
     initialResolutionWidth: value.initialResolutionWidth,
     initialResolutionHeight: value.initialResolutionHeight,
-    appInsanceIds: value.appInsanceIds,
-    appInstances: value.appInstances,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
