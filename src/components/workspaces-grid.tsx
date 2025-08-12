@@ -128,7 +128,7 @@ export default function WorkspacesGrid({
                   </CardTitle>
                   <CardDescription className="">
                     {workspace?.description}
-                    <span className="mb-2 text-xs text-muted">
+                    <span className="mb-2 block text-xs text-muted">
                       Created {formatDistanceToNow(workspace.updatedAt)} ago by{' '}
                       {
                         users?.find((user) => user.id === workspace?.userId)

@@ -26,7 +26,7 @@ const HomePage = () => {
       <div className="flex w-full flex-grow items-center justify-start">
         <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
           <HomeIcon className="h-9 w-9 text-secondary" />
-          {workspaces?.find((w) => w.id === user?.workspaceId)?.name}
+          {workspaces?.find((w) => w.id === user?.workspaceId)?.name || 'Home'}
         </h2>
       </div>
 

@@ -219,12 +219,14 @@ export function Header() {
                       </NavigationMenuContent>
                     </>
                   )}
-                  {!background?.sessionId && (
+                  {!background?.sessionId && workspaceId && (
                     <NavLink
                       href={
                         workspaces?.find((w) => w.id === user?.workspaceId)
                           ? `/workspaces/${user?.workspaceId}`
-                          : `/workspaces/${workspaceId}`
+                          : workspaceId && workspaceId !== user?.workspaceId
+                            ? `/workspaces/${workspaceId}`
+                            : '/'
                       }
                       className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                       exact={user?.workspaceId === workspaceId}

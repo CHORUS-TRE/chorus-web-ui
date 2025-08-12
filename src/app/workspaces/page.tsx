@@ -9,6 +9,12 @@ import { useAuthorizationViewModel } from '@/view-model/authorization-view-model
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
 import { Button as UIButton } from '~/components/ui/button'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
@@ -34,20 +40,19 @@ export default function WorkspacesPage() {
             <Package className="h-9 w-9 text-white" />
             Workspaces
           </h2>
-          {canCreateWorkspace && (
-            <Button
-              onClick={() => setCreateOpen(true)}
-              className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-            >
-              <CirclePlus className="h-4 w-4" />
-              Create Workspace
-            </Button>
-          )}
+          {/* {canCreateWorkspace && ( */}
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+          >
+            <CirclePlus className="h-4 w-4" />
+            Create Workspace
+          </Button>
+          {/* )} */}
         </div>
       </div>
 
       <div className="w-full">
-        {/* <Tabs defaultValdeue="mine" className=""> */}
         <div className="grid grid-flow-col grid-rows-1 gap-4">
           {/* <TabsList aria-label="Workspace view options">
               <TabsTrigger value="mine" aria-label="View my workspaces">
@@ -82,89 +87,99 @@ export default function WorkspacesPage() {
             </UIButton>
           </div>
         </div>
-        {/* <TabsContent
-            value="mine"
-            className="border-none"
-            aria-label="My workspaces content"
-          > */}
-        <div className="mb-6">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-            <Package className="h-6 w-6" />
-            My Workspaces
-          </h3>
-          <p className="mt-1 text-sm text-muted">
-            View and manage your workspaces
-          </p>
-        </div>
-        {!workspaces ? (
-          <span className="animate-pulse text-muted">
-            Loading my workspaces...
-          </span>
-        ) : (
-          <>
-            {showWorkspacesTable ? (
-              <WorkspaceTable
-                workspaces={workspaces.filter(
-                  (workspace) =>
-                    workspace.id === user?.workspaceId ||
-                    workspace.userId === user?.id
-                )}
-                user={user}
-                onUpdate={refreshWorkspaces}
-              />
-            ) : (
-              <WorkspacesGrid
-                workspaces={workspaces.filter(
-                  (workspace) =>
-                    workspace.id === user?.workspaceId ||
-                    workspace.userId === user?.id
-                )}
-                workbenches={workbenches}
-                user={user}
-                onUpdate={refreshWorkspaces}
-              />
-            )}
-          </>
-        )}
-        {/* </TabsContent>
-          <TabsContent value="all" aria-label="All workspaces content"> */}
-        <div className="mb-6 mt-6">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-            <Package className="h-6 w-6" />
-            All Workspaces
-          </h3>
-          <p className="mt-1 text-sm text-muted">
-            View and all available workspaces
-          </p>
-        </div>
-        {!workspaces ? (
-          <span className="animate-pulse text-muted">
-            Loading all workspaces...
-          </span>
-        ) : (
-          <>
-            {showWorkspacesTable ? (
-              <WorkspaceTable
-                workspaces={workspaces.filter(
-                  (w) => w.userId !== user?.id && !w.isMain
-                )}
-                user={user}
-                onUpdate={refreshWorkspaces}
-              />
-            ) : (
-              <WorkspacesGrid
-                workspaces={workspaces.filter(
-                  (w) => w.userId !== user?.id && !w.isMain
-                )}
-                workbenches={workbenches}
-                user={user}
-                onUpdate={refreshWorkspaces}
-              />
-            )}
-          </>
-        )}
-        {/* </TabsContent>
-        </Tabs> */}
+        <Accordion
+          type="multiple"
+          defaultValue={['my-workspaces']}
+          className="w-full"
+        >
+          <AccordionItem value="my-workspaces" className="border-b-0">
+            <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+              <div className="text-lg font-semibold text-white">
+                <div className="flex items-center gap-2">
+                  <Package className="h-6 w-6" />
+                  <div>My Workspaces</div>
+                </div>
+                <p className="text-sm font-normal text-muted">
+                  View and manage your workspaces
+                </p>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="border-b-0">
+              {!workspaces ? (
+                <span className="animate-pulse text-muted">
+                  Loading my workspaces...
+                </span>
+              ) : (
+                <>
+                  {showWorkspacesTable ? (
+                    <WorkspaceTable
+                      workspaces={workspaces.filter(
+                        (workspace) =>
+                          workspace.id === user?.workspaceId ||
+                          workspace.userId === user?.id
+                      )}
+                      user={user}
+                      onUpdate={refreshWorkspaces}
+                    />
+                  ) : (
+                    <WorkspacesGrid
+                      workspaces={workspaces.filter(
+                        (workspace) =>
+                          workspace.id === user?.workspaceId ||
+                          workspace.userId === user?.id
+                      )}
+                      workbenches={workbenches}
+                      user={user}
+                      onUpdate={refreshWorkspaces}
+                    />
+                  )}
+                </>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="all-workspaces" className="border-b-0">
+            <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+              <div className="text-lg font-semibold text-white">
+                <div className="flex items-center gap-2">
+                  <Package className="h-6 w-6" />
+                  <div>All Workspaces</div>
+                </div>
+                <p className="text-sm font-normal text-muted">
+                  View all available workspaces
+                </p>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="border-b-0">
+              {!workspaces ? (
+                <span className="animate-pulse text-muted">
+                  Loading all workspaces...
+                </span>
+              ) : (
+                <>
+                  {showWorkspacesTable ? (
+                    <WorkspaceTable
+                      workspaces={workspaces.filter(
+                        (w) => w.userId !== user?.id && !w.isMain
+                      )}
+                      user={user}
+                      onUpdate={refreshWorkspaces}
+                    />
+                  ) : (
+                    <WorkspacesGrid
+                      workspaces={workspaces.filter(
+                        (w) => w.userId !== user?.id && !w.isMain
+                      )}
+                      workbenches={workbenches}
+                      user={user}
+                      onUpdate={refreshWorkspaces}
+                    />
+                  )}
+                </>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
 
       {createOpen && (

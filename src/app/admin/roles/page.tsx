@@ -22,12 +22,9 @@ const RolesPage = () => {
   const [isAllowed, setIsAllowed] = useState<boolean | null>(null)
 
   const authRepo = useMemo(() => {
-    if (service) {
-      const authDataSource = new AuthorizationLocalDataSource(service)
-      return new AuthorizationRepositoryImpl(authDataSource)
-    }
-    return null
-  }, [service])
+    const authDataSource = new AuthorizationLocalDataSource()
+    return new AuthorizationRepositoryImpl(authDataSource)
+  }, [])
 
   useEffect(() => {
     if (isInitialized && authRepo && user) {
