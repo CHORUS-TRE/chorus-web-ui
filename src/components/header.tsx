@@ -125,9 +125,9 @@ export function Header() {
                           <div className="mt-1 flex place-items-center gap-1">
                             {workspaceId &&
                             workspaceId === user?.workspaceId ? (
-                              <Home className="h-4 w-4 text-secondary" />
+                              <AppWindow className="h-4 w-4 text-secondary" />
                             ) : (
-                              <Box className="h-4 w-4" />
+                              <AppWindow className="h-4 w-4" />
                             )}
                             {
                               workspaces?.find(
@@ -219,7 +219,7 @@ export function Header() {
                       </NavigationMenuContent>
                     </>
                   )}
-                  {/* {!background?.sessionId && user?.workspaceId && (
+                  {!background?.sessionId && (
                     <NavLink
                       href={
                         workspaces?.find((w) => w.id === user?.workspaceId)
@@ -230,10 +230,10 @@ export function Header() {
                       exact={user?.workspaceId === workspaceId}
                     >
                       <div className="mt-1 flex place-items-center gap-1">
-                        {!workspaceId && user?.workspaceId ? (
+                        {user?.workspaceId === background?.workspaceId ? (
                           <Home className="h-4 w-4" />
                         ) : (
-                          <Box className="h-4 w-4" />
+                          <AppWindow className="h-4 w-4" />
                         )}
                         {
                           workspaces?.find((w) => w.id === user?.workspaceId)
@@ -241,7 +241,7 @@ export function Header() {
                         }
                       </div>
                     </NavLink>
-                  )} */}
+                  )}
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step3">
                   <NavLink

@@ -2,20 +2,31 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-import { AuthorizationService } from '@/lib/gatekeeper/dist/index.mjs'
+import type { User } from '@/domain/model/user'
+import { Result } from '~/domain/model'
+
+declare global {
+  class Go {
+    importObject: WebAssembly.Imports
+    run(instance: WebAssembly.Instance): Promise<void>
+  }
+  // function createAuthenticationService(user: User): any;
+  // function isUserAllowed(user: User, permission: string): Result<boolean>;
+  // function getUserPermissions(user: User): Result<string[]>;
+}
 
 // Define the shape of the context
 interface AuthorizationContextType {
-  service: InstanceType<typeof AuthorizationService> | null // Use InstanceType to reference the instance type
+  isUserAllowed: (user: User, permission: string) => Promise<Result<boolean>>
+  getUserPermissions: (user: User) => Result<string[]>
   isInitialized: boolean
-  error: Error | null
 }
 
 // Create the context with a default value
 const AuthorizationContext = createContext<AuthorizationContextType>({
-  service: null,
-  isInitialized: false,
-  error: null
+  isUserAllowed: async () => ({ data: false }),
+  getUserPermissions: () => ({ data: [] }),
+  isInitialized: false
 })
 
 // Create a custom hook for easy access to the context
@@ -35,72 +46,96 @@ export const AuthorizationProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const [service, setService] = useState<InstanceType<
-    typeof AuthorizationService
-  > | null>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
-
   useEffect(() => {
-    const initializeService = async () => {
-      try {
-        // TODO: This schema needs to be fetched or provided correctly.
-        // For now, using a placeholder schema.
-        interface PlaceholderAuthorizationSchema {
-          roles: Array<{
-            name: string
-            description: string
-            permissions: Array<{
-              name: string
-              description: string
-              context: object
-            }>
-            inheritsFrom: string[]
-            attributes: object
-          }>
-          permissions: Array<object>
-        }
+    async function loadWasm() {
+      if (typeof window !== 'undefined') {
+        const wasmExec = document.createElement('script')
+        wasmExec.src = '/wasm_exec.js' // Place wasm_exec.js in your public folder
+        wasmExec.async = true
 
-        const schema: PlaceholderAuthorizationSchema = {
-          roles: [
-            {
-              name: 'admin',
-              description: 'Administrator',
-              permissions: [
-                { name: '*', description: 'Allow all actions', context: {} }
-              ],
-              inheritsFrom: [],
-              attributes: {}
-            },
-            {
-              name: 'user',
-              description: 'Standard User',
-              permissions: [
-                {
-                  name: 'read:own',
-                  description: 'Read own resources',
-                  context: {}
-                }
-              ],
-              inheritsFrom: [],
-              attributes: {}
-            }
-          ],
-          permissions: []
-        }
+        await new Promise((resolve) => {
+          wasmExec.onload = resolve
+          document.head.appendChild(wasmExec)
+        })
 
-        const authService = await AuthorizationService.init(schema) // Initialize and get the instance
-        setService(authService) // Set the initialized instance
-        setIsInitialized(true)
-      } catch (e) {
-        setError(e as Error)
-        console.error('Failed to initialize Authorization Service:', e)
+        const go = new (window as unknown as { Go: typeof Go }).Go()
+        WebAssembly.instantiateStreaming(
+          fetch('/gatekeeper.wasm'),
+          go.importObject
+        ).then((result) => {
+          const wasm = result.instance
+          go.run(wasm)
+
+          console.log('WASM run successfully', wasm.exports)
+
+          const user = {
+            roles: [
+              {
+                name: 'admin',
+                description: 'Administrator role',
+                permissions: [
+                  {
+                    name: 'read:users',
+                    description: 'Can read user data',
+                    context: {}
+                  }
+                ],
+                inheritsFrom: [],
+                attributes: {}
+              }
+            ]
+          }
+          const NewAuthorizationService = wasm.exports
+            .NewAuthorizationService as CallableFunction
+          // global.isUserAllowed = (user: User, permission: string) => {
+          // console.log('isUserAllowed called with:', user, permission)
+          try {
+            const service = NewAuthorizationService(user)
+            const toto = service.isUserAllowed(user, 'workspace:create')
+            console.log('isUserAllowed result:', toto)
+
+            return { data: toto }
+          } catch (error) {
+            return { error: String(error) }
+          }
+          // }
+
+          // console.log("Authentication service created")
+        })
       }
     }
 
-    initializeService()
+    loadWasm()
   }, [])
-  const value = { service, isInitialized, error }
+
+  const isUserAllowed = (user: User, permission: string): Result<boolean> => {
+    try {
+      const isAllowed = global.isUserAllowed(user, permission)
+      console.log(
+        'isUserAllowed called with:',
+        permission,
+        'Result:',
+        isAllowed
+      )
+      if (isAllowed.error) {
+        return { error: isAllowed.error }
+      }
+      return isAllowed
+    } catch (error) {
+      return { error: String(error) }
+    }
+  }
+
+  const getUserPermissions = (user: User): Result<string[]> => {
+    try {
+      const permissions = getUserPermissions(user)
+      return permissions
+    } catch (error) {
+      return { error: String(error) }
+    }
+  }
+
+  const value = { isUserAllowed, getUserPermissions, isInitialized: true }
 
   return (
     <AuthorizationContext.Provider value={value}>
