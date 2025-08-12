@@ -256,7 +256,7 @@ describe('UserApiDataSourceImpl', () => {
         Promise.resolve({
           json: () =>
             Promise.resolve({
-              result: { id: '2' }
+              result: { user: { id: '2' } }
             }),
           status: 201,
           ok: true
@@ -265,7 +265,7 @@ describe('UserApiDataSourceImpl', () => {
 
       const result = await dataSource.create(MOCK_USER_CREATE_MODEL)
 
-      expect(result).toEqual({ result: { id: '2' } })
+      expect(result).toEqual({ result: { user: { id: '2' } } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used

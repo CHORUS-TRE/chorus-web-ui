@@ -4,7 +4,7 @@ import {
   ChorusDeleteUserReply,
   ChorusGetUserMeReply,
   ChorusGetUserReply,
-  ChorusGetUsersReply,
+  ChorusListUsersReply,
   ChorusUpdateUserReply,
   Configuration,
   UserServiceApi
@@ -17,7 +17,7 @@ interface UserDataSource {
   create: (user: UserCreateType) => Promise<ChorusCreateUserReply>
   get: (id: string) => Promise<ChorusGetUserReply>
   delete: (id: string) => Promise<ChorusDeleteUserReply>
-  list: () => Promise<ChorusGetUsersReply>
+  list: () => Promise<ChorusListUsersReply>
   update: (user: UserUpdateType) => Promise<ChorusUpdateUserReply>
 }
 
@@ -57,16 +57,14 @@ class UserApiDataSourceImpl implements UserDataSource {
     return this.service.userServiceDeleteUser({ id })
   }
 
-  list(): Promise<ChorusGetUsersReply> {
-    return this.service.userServiceGetUsers()
+  list(): Promise<ChorusListUsersReply> {
+    return this.service.userServiceListUsers()
   }
 
   update(user: UserUpdateType): Promise<ChorusUpdateUserReply> {
     const chorusUser = toChorusUserUpdate(user)
     return this.service.userServiceUpdateUser({
-      body: {
-        user: chorusUser
-      }
+      body: chorusUser
     })
   }
 }

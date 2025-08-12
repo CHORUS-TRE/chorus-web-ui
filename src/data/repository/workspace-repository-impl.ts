@@ -18,10 +18,21 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async create(workspace: WorkspaceCreateType): Promise<Result<Workspace>> {
     try {
       const response = await this.dataSource.create(workspace)
-      if (!response.result?.id) {
+      if (!response.result?.workspace) {
         return { error: 'Error creating workspace' }
       }
-      return this.get(response.result.id)
+
+      const workspaceResult = WorkspaceSchema.safeParse(
+        response.result.workspace
+      )
+      if (!workspaceResult.success) {
+        return {
+          error: 'API response validation failed',
+          issues: workspaceResult.error.issues
+        }
+      }
+
+      return { data: workspaceResult.data }
     } catch (error) {
       console.error('Error creating workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
@@ -55,10 +66,10 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async list(): Promise<Result<Workspace[]>> {
     try {
       const response = await this.dataSource.list()
-      if (!response.result) {
+      if (!response.result?.workspaces) {
         return { data: [] }
       }
-      const validatedData = response?.result?.map((w) =>
+      const validatedData = response.result.workspaces.map((w) =>
         WorkspaceSchema.parse(w)
       )
       return { data: validatedData }

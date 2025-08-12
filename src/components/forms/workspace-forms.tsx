@@ -57,7 +57,7 @@ export function WorkspaceCreateForm({
     resolver: zodResolver(WorkspaceCreateSchema),
     defaultValues: {
       name: '',
-      shortName: '',
+      shortName: 'wks',
       description: '',
       tenantId: '1',
       userId: userId || '',
@@ -67,11 +67,19 @@ export function WorkspaceCreateForm({
 
   useEffect(() => {
     if (!open) {
-      form.reset()
+      form.reset({
+        name: '',
+        shortName: 'wks',
+        description: '',
+        tenantId: '1',
+        userId: userId || '',
+        isMain: false
+      })
     }
-  }, [open, form])
+  }, [open, form, userId])
 
   async function onSubmit(data: WorkspaceCreateType) {
+    console.log('WorkspaceCreateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -230,7 +238,7 @@ export function PrivateWorkspaceCreateForm({
     resolver: zodResolver(WorkspaceCreateSchema),
     defaultValues: {
       name: 'My Workspace',
-      shortName: '',
+      shortName: 'main',
       description: '',
       tenantId: '1',
       userId: userId || '',
@@ -240,11 +248,19 @@ export function PrivateWorkspaceCreateForm({
 
   useEffect(() => {
     if (!open) {
-      form.reset()
+      form.reset({
+        name: 'My Workspace',
+        shortName: 'main',
+        description: '',
+        tenantId: '1',
+        userId: userId || '',
+        isMain: true
+      })
     }
-  }, [open, form])
+  }, [open, form, userId])
 
   async function onSubmit(data: WorkspaceCreateType) {
+    console.log('PrivateWorkspaceCreateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -450,7 +466,7 @@ export function WorkspaceUpdateForm({
     defaultValues: {
       id: workspace?.id || '',
       name: workspace?.name || '',
-      shortName: workspace?.shortName || '',
+      shortName: workspace?.shortName || 'wks',
       description: workspace?.description || '',
       isMain: workspace?.isMain || false,
       tenantId: '1',
@@ -463,7 +479,7 @@ export function WorkspaceUpdateForm({
       form.reset({
         id: workspace?.id || '',
         name: workspace?.name || '',
-        shortName: workspace?.shortName || '',
+        shortName: workspace?.shortName || 'wks',
         description: workspace?.description || '',
         isMain: workspace?.isMain || false,
         tenantId: '1',
@@ -473,6 +489,7 @@ export function WorkspaceUpdateForm({
   }, [open, workspace, form])
 
   async function onSubmit(data: WorkspaceUpdatetype) {
+    console.log('WorkspaceUpdateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))

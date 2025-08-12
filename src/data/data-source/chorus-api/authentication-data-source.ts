@@ -71,12 +71,12 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       const response =
         await this.serviceWithoutCredentials.authenticationServiceGetAuthenticationModes()
 
-      if (!response.result) {
+      if (!response.result?.modes) {
         return []
       }
 
-      const result = response.result
-      const r = result.map(
+      const modes = response.result.modes
+      const r = modes.map(
         (mode: ChorusAuthenticationMode): AuthenticationMode => {
           const authMode: AuthenticationMode = {
             type: mode.type as AuthenticationModeType,

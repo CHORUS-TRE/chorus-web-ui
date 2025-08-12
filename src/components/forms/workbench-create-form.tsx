@@ -157,7 +157,7 @@ export function WorkbenchCreateForm({
       if (result.data) {
         toast({
           title: 'Success',
-          description: `Session is creating. Redirect in ${env('NEXT_PUBLIC_APP_DELAY_TIME')} seconds`
+          description: `Session is creating. Delaying navigation for ${env('NEXT_PUBLIC_APP_DELAY_TIME')} seconds. Reload the page to see the session if the redirect is not working.`
         })
         setOpen(false)
         await new Promise((resolve) => {

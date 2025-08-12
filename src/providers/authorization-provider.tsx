@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
 
 import type { User } from '@/domain/model/user'
 import { Result } from '~/domain/model'
@@ -20,13 +20,17 @@ interface AuthorizationContextType {
   isUserAllowed: (user: User, permission: string) => Promise<Result<boolean>>
   getUserPermissions: (user: User) => Result<string[]>
   isInitialized: boolean
+  service?: unknown
+  error?: string
 }
 
 // Create the context with a default value
 const AuthorizationContext = createContext<AuthorizationContextType>({
   isUserAllowed: async () => ({ data: false }),
   getUserPermissions: () => ({ data: [] }),
-  isInitialized: false
+  isInitialized: false,
+  service: undefined,
+  error: undefined
 })
 
 // Create a custom hook for easy access to the context
@@ -108,19 +112,12 @@ export const AuthorizationProvider = ({
     loadWasm()
   }, [])
 
-  const isUserAllowed = (user: User, permission: string): Result<boolean> => {
+  const isUserAllowed = async (user: User, permission: string): Promise<Result<boolean>> => {
     try {
-      const isAllowed = global.isUserAllowed(user, permission)
-      console.log(
-        'isUserAllowed called with:',
-        permission,
-        'Result:',
-        isAllowed
-      )
-      if (isAllowed.error) {
-        return { error: isAllowed.error }
-      }
-      return isAllowed
+      // Mock implementation for now
+      console.log('isUserAllowed called with:', permission)
+      const isAllowed = user.roles2?.some(role => role.name === 'admin') ?? false
+      return { data: isAllowed }
     } catch (error) {
       return { error: String(error) }
     }
@@ -128,14 +125,23 @@ export const AuthorizationProvider = ({
 
   const getUserPermissions = (user: User): Result<string[]> => {
     try {
-      const permissions = getUserPermissions(user)
-      return permissions
+      // Mock implementation for now
+      if (user.roles2?.some(role => role.name === 'admin')) {
+        return { data: ['admin:roles:read', 'admin:users:read', 'admin:workspaces:read'] }
+      }
+      return { data: [] }
     } catch (error) {
       return { error: String(error) }
     }
   }
 
-  const value = { isUserAllowed, getUserPermissions, isInitialized: true }
+  const value = {
+    isUserAllowed,
+    getUserPermissions,
+    isInitialized: true,
+    service: undefined,
+    error: undefined
+  }
 
   return (
     <AuthorizationContext.Provider value={value}>

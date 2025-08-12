@@ -68,7 +68,7 @@ class AppInstanceDataSourceImpl implements AppInstanceDataSource {
   ): Promise<ChorusUpdateAppInstanceReply> {
     const chorusAppInstance = toChorusAppInstanceUpdate(appInstance)
     return this.service.appInstanceServiceUpdateAppInstance({
-      body: { appInstance: chorusAppInstance }
+      body: chorusAppInstance
     })
   }
 }

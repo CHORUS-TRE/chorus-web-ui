@@ -24,12 +24,11 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       const response = await this.dataSource.create(user)
 
-      const userResult = z
-        .object({
-          id: z.string()
-        })
-        .safeParse(response.result)
+      if (!response.result?.user) {
+        return { error: 'API response validation failed' }
+      }
 
+      const userResult = UserSchema.safeParse(response.result.user)
       if (!userResult.success) {
         return {
           error: 'API response validation failed',
@@ -37,19 +36,10 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      return {
-        data: {
-          id: userResult.data.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          status: UserStatusEnum.ACTIVE,
-          source: 'chorus',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          roles2: [MOCK_ROLES[0]]
-        }
-      }
+      // Temporary mock data injection for UI development
+      userResult.data.roles2 = [MOCK_ROLES[0]]
+
+      return { data: userResult.data }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
@@ -135,7 +125,7 @@ export class UserRepositoryImpl implements UserRepository {
   async list(): Promise<Result<User[]>> {
     try {
       const response = await this.dataSource.list()
-      const usersResult = z.array(UserSchema).safeParse(response.result)
+      const usersResult = z.array(UserSchema).safeParse(response.result?.users)
 
       if (!usersResult.success) {
         return {
