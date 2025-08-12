@@ -11,12 +11,12 @@ export interface AuthorizationDataSource {
 export class AuthorizationLocalDataSource implements AuthorizationDataSource {
   isUserAllowed(user: User, permission: string): boolean {
     // Mock implementation for now - always return true for admin users
-    return user.roles2?.some(role => role.name === 'admin') ?? false
+    return user.roles2?.some((role) => role.name === 'admin') ?? false
   }
 
   getUserPermissions(user: User): string[] {
     // Mock implementation for now - return basic permissions for admin users
-    if (user.roles2?.some(role => role.name === 'admin')) {
+    if (user.roles2?.some((role) => role.name === 'admin')) {
       return ['admin:roles:read', 'admin:users:read', 'admin:workspaces:read']
     }
     return []

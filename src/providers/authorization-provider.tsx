@@ -112,11 +112,15 @@ export const AuthorizationProvider = ({
     loadWasm()
   }, [])
 
-  const isUserAllowed = async (user: User, permission: string): Promise<Result<boolean>> => {
+  const isUserAllowed = async (
+    user: User,
+    permission: string
+  ): Promise<Result<boolean>> => {
     try {
       // Mock implementation for now
       console.log('isUserAllowed called with:', permission)
-      const isAllowed = user.roles2?.some(role => role.name === 'admin') ?? false
+      const isAllowed =
+        user.roles2?.some((role) => role.name === 'admin') ?? false
       return { data: isAllowed }
     } catch (error) {
       return { error: String(error) }
@@ -126,8 +130,14 @@ export const AuthorizationProvider = ({
   const getUserPermissions = (user: User): Result<string[]> => {
     try {
       // Mock implementation for now
-      if (user.roles2?.some(role => role.name === 'admin')) {
-        return { data: ['admin:roles:read', 'admin:users:read', 'admin:workspaces:read'] }
+      if (user.roles2?.some((role) => role.name === 'admin')) {
+        return {
+          data: [
+            'admin:roles:read',
+            'admin:users:read',
+            'admin:workspaces:read'
+          ]
+        }
       }
       return { data: [] }
     } catch (error) {
