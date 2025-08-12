@@ -1,3 +1,18 @@
+# [1.5.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.4.0...v1.5.0) (2025-08-12)
+
+
+### Bug Fixes
+
+* handle error state in authorization view model ([940b76a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/940b76a900b2d1dc606424bb8844674ab04e8abe))
+
+
+### Features
+
+* add maintenance page component ([55d356a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/55d356adcaca2233eb4e25ebd68c535eaf98594b))
+* create authorization provider for managing user permissions ([ac08365](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ac0836549fbe15d5adf8309e539c2844bbd89962))
+* implement Gatekeeper authorization integration ([14ee847](https://github.com/CHORUS-TRE/chorus-web-ui/commit/14ee84719bef38fca665fd623f7fc3e2d4652122))
+* integrate WebAssembly support and update authorization handling - WIP ([151ef08](https://github.com/CHORUS-TRE/chorus-web-ui/commit/151ef08260c75db1c30ffb8551a1d5c0c17982e5))
+
 # [1.4.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.3.4...v1.4.0) (2025-07-11)
 
 
