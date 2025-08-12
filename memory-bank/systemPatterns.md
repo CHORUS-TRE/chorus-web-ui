@@ -57,6 +57,7 @@ graph TD
   - **Implementation (`data/data-source/chorus-api`):** Implements the interface, making direct calls to the generated API client. It is responsible for mapping domain types (e.g., `AppCreateType`) to API types (`ChorusApp`) before sending the request.
 - **Zod for Validation:** Zod schemas in `domain/model` are the single source of truth for validation. They are used in server actions and repository implementations to ensure data integrity.
 - **Generated API Client:** Using OpenAPI generator to create a strongly-typed API client, ensuring type safety when communicating with the backend.
+- **API Response Structure Evolution:** The API has evolved from flat responses to nested structures. Current pattern expects responses like `{ result: { users: [...] }, pagination: {...} }` instead of `{ result: [...] }`. Data sources handle potential mismatches between OpenAPI spec and actual backend responses.
 
 ## 3. Proven Patterns
 

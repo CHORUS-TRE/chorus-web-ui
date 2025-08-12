@@ -61,3 +61,32 @@
 - Clean Architecture patterns prove robust across different feature types
 - UI component libraries (shadcn/ui) integrate well with custom business logic
 - Zod schemas serve as effective contracts between layers
+
+### OpenAPI Specification Updates and API Evolution
+
+**API Response Structure Evolution:**
+
+- **Pattern Recognition:** When OpenAPI specifications are updated, expect changes in both response structure and method naming conventions
+- **Nested Response Handling:** Modern API patterns favor nested responses (e.g., `{result: {users: [...]}, pagination: {}}`) over flat structures
+- **Backward Compatibility:** Data sources should handle both old and new response formats during transition periods
+- **Method Naming:** API methods evolve from generic names (`Get`) to specific ones (`List` for collections)
+
+**Implementation Strategy for API Updates:**
+
+- **Layer-by-Layer Approach:** Update data sources first, then repositories, working from infrastructure up to presentation
+- **Request Body Changes:** API updates often change from wrapped objects (`{user: {...}}`) to direct objects (`{...}`)
+- **Generated Client Limitations:** Generated clients may fail to parse responses that don't match the spec exactly
+- **Error Handling:** Use try-catch patterns in data sources to handle response parsing failures gracefully
+
+**Form Validation Insights:**
+
+- **Silent Failures:** Forms may fail silently if Zod validation requirements aren't met in default values
+- **Minimum Length Requirements:** Fields like `shortName` with minimum length constraints need appropriate defaults
+- **Debugging Strategy:** Add `console.log` statements in `onSubmit` handlers to identify validation failures
+- **Reset Behavior:** `form.reset()` calls should include proper default values, not just empty objects
+
+**TypeScript Compilation Patterns:**
+
+- **Mock Implementations:** When integrating with external services (like WASM), provide mock implementations to maintain compilation
+- **Interface Compliance:** Ensure all interface implementations provide all required methods, even if temporarily mocked
+- **Global Type Issues:** Avoid direct `global` object access in TypeScript; prefer explicit implementations within providers

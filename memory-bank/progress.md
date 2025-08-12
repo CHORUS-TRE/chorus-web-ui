@@ -21,6 +21,11 @@
 - **✅ Stable Test Suite:** All tests are passing (61 tests pass, 10 skipped, 11 test suites).
 - **✅ Client-Side Authentication:** Authentication flow successfully refactored to client-side with background iframe integration.
   - **OAuth Redirect Handler:** The `/oauthredirect` route is now a fully client-side component (`page.tsx`). It directly calls the `handleOAuthRedirect` action, consolidating logic and removing the need for a separate server-side API handler for the callback. This pattern was chosen to simplify the flow.
+- **✅ OpenAPI API Update Complete:** All data sources and repositories updated to handle new nested API response structure.
+  - **Data Source Updates:** All data sources (`authentication`, `user`, `app`, `workbench`, `app-instance`, `workspace`) updated to handle new API method names and request body formats
+  - **Repository Updates:** All repositories updated to parse nested response objects (e.g., `response.result.users` instead of `response.result`)
+  - **Authorization Provider:** Mock implementations added to resolve TypeScript compilation errors while WASM integration is pending
+  - **Form Validation:** Workspace form validation issues resolved with proper default values for `shortName` field (minimum 3 characters required)
 
 ## 2. Current Work
 
@@ -63,11 +68,18 @@
 ## 4. Known Issues
 
 - **API Client Desynchronization:** The `k8sStatus` field was manually added to the generated `ChorusWorkbench.ts` client model. The OpenAPI client should be regenerated to ensure consistency.
-- **Workbench Loading State:** The backend work is done, but the UI integration is still in progress. Some parts of the app may not yet reflect the true status of a workbench.
+- **Backend API Response Structure Mismatch:** There may be a mismatch between the OpenAPI specification and actual backend API responses. The generated client expects nested structures (e.g., `{result: {apps: [...]}}`) but the backend may be returning direct arrays (e.g., `{result: [...]}`). This was temporarily resolved through error handling in the data source layer.
 - **Mock Role Data:** Role management currently uses placeholder/mock data pending integration with `chorus-gatekeeper` service.
 
 ## 5. Recent Fixes
 
+- **OpenAPI API Update Implementation (2025-01-28):** Comprehensive update to align frontend with new OpenAPI specification structure.
+  - **Data Source Layer:** Updated all data sources to handle new API method names (`List` instead of `Get` for list operations) and request body formats (direct entity objects instead of wrapped objects)
+  - **Repository Layer:** Updated all repositories to parse nested API responses (`response.result.users` instead of `response.result`)
+  - **Authorization Provider:** Added mock implementations for `isUserAllowed` and `getUserPermissions` to resolve compilation errors
+  - **Form Validation:** Fixed workspace form submission issues by providing proper default values for `shortName` field validation
+  - **Test Suite:** Updated all API-related tests to match new nested response structure
+  - **App Listing Error:** Resolved `json.result.map is not a function` error through proper response structure handling
 - **Workbench k8sStatus UI (2025-01-28):** Completed Phase 3 of the workbench status feature, integrating the polling hook and loading states into all relevant UI components.
 - **Workbench k8sStatus Backend (2025-01-28):** Completed Phase 1 & 2 of the workbench status feature, including domain model updates and the creation of the `useWorkbenchStatus` polling hook.
 - **OAuth Redirect Flow:** Refactored the OAuth redirect handler to be fully client-side. The logic from the `/api/auth/callback` route was moved directly into the `/oauthredirect/page.tsx` component, and the server-side route was deleted.
