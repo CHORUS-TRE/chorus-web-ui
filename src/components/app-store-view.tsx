@@ -3,12 +3,11 @@
 import { CirclePlus } from 'lucide-react'
 import { useState } from 'react'
 
+import { useAppState } from '@/providers/app-state-provider'
 import { AppCard } from '~/components/app-card'
 import { Button } from '~/components/button'
 import { AppCreateDialog } from '~/components/forms/app-create-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-
-import { useAppState } from './store/app-state-context'
 
 export function AppStoreView() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)

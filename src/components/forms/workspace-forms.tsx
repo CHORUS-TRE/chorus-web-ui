@@ -5,11 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { startTransition, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-import {
-  workspaceCreate,
-  workspaceDelete,
-  workspaceUpdate
-} from '@/components/actions/workspace-view-model'
+import { toast } from '@/components/hooks/use-toast'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -26,6 +22,11 @@ import {
   WorkspaceUpdateSchema,
   WorkspaceUpdatetype
 } from '@/domain/model/workspace'
+import {
+  workspaceCreate,
+  workspaceDelete,
+  workspaceUpdate
+} from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
 import { Card, CardContent, CardFooter } from '~/components/ui/card'
@@ -39,12 +40,7 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Switch } from '~/components/ui/switch'
 import { Textarea } from '~/components/ui/textarea'
-
-import { toast } from '../hooks/use-toast'
-import { useAppState } from '../store/app-state-context'
-import { useAuth } from '../store/auth-context'
 
 export function WorkspaceCreateForm({
   state: [open, setOpen],
@@ -57,13 +53,11 @@ export function WorkspaceCreateForm({
   children?: React.ReactNode
   onSuccess?: (workspace: Workspace) => void
 }) {
-  const { user } = useAuth()
-  const { workspaces } = useAppState()
   const form = useForm<WorkspaceCreateType>({
     resolver: zodResolver(WorkspaceCreateSchema),
     defaultValues: {
       name: '',
-      shortName: '',
+      shortName: 'wks',
       description: '',
       tenantId: '1',
       userId: userId || '',
@@ -73,11 +67,19 @@ export function WorkspaceCreateForm({
 
   useEffect(() => {
     if (!open) {
-      form.reset()
+      form.reset({
+        name: '',
+        shortName: 'wks',
+        description: '',
+        tenantId: '1',
+        userId: userId || '',
+        isMain: false
+      })
     }
-  }, [open, form])
+  }, [open, form, userId])
 
   async function onSubmit(data: WorkspaceCreateType) {
+    console.log('WorkspaceCreateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -145,7 +147,7 @@ export function WorkspaceCreateForm({
                   </div>
                 )}
               </div>
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <Label htmlFor="shortName">Short Name</Label>
                 <Input
                   id="shortName"
@@ -158,7 +160,7 @@ export function WorkspaceCreateForm({
                     {form.formState.errors.shortName.message}
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -173,7 +175,7 @@ export function WorkspaceCreateForm({
                   </div>
                 )}
               </div>
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2 hidden">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="isMain"
@@ -191,16 +193,200 @@ export function WorkspaceCreateForm({
                   />
                   <Label htmlFor="isMain">Set as main workspace</Label>
                 </div>
-              </div>
+              </div> */}
               <input type="hidden" {...form.register('tenantId')} />
               <input type="hidden" {...form.register('userId')} />
+              <input type="hidden" {...form.register('shortName')} />
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-end gap-4">
               <Button
-                className="ml-auto"
-                type="submit"
-                disabled={form.formState.isSubmitting}
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  form.reset()
+                }}
+                className="text-muted ring-muted focus:bg-background focus:text-accent"
               >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Create
+              </Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </DialogContent>
+    </DialogContainer>
+  )
+}
+
+export function PrivateWorkspaceCreateForm({
+  state: [open, setOpen],
+  userId,
+  children,
+  onSuccess
+}: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
+  userId?: string
+  children?: React.ReactNode
+  onSuccess?: (workspace: Workspace) => void
+}) {
+  const form = useForm<WorkspaceCreateType>({
+    resolver: zodResolver(WorkspaceCreateSchema),
+    defaultValues: {
+      name: 'My Workspace',
+      shortName: 'main',
+      description: '',
+      tenantId: '1',
+      userId: userId || '',
+      isMain: true
+    }
+  })
+
+  useEffect(() => {
+    if (!open) {
+      form.reset({
+        name: 'My Workspace',
+        shortName: 'main',
+        description: '',
+        tenantId: '1',
+        userId: userId || '',
+        isMain: true
+      })
+    }
+  }, [open, form, userId])
+
+  async function onSubmit(data: WorkspaceCreateType) {
+    console.log('PrivateWorkspaceCreateForm onSubmit called with:', data)
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) formData.append(key, String(value))
+    })
+    formData.append('status', WorkspaceState.ACTIVE)
+
+    startTransition(async () => {
+      const result = await workspaceCreate({}, formData)
+
+      if (result.issues) {
+        result.issues.forEach((issue) => {
+          form.setError(issue.path[0] as keyof WorkspaceCreateType, {
+            type: 'server',
+            message: issue.message
+          })
+        })
+        return
+      }
+
+      if (result.error) {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+        return
+      }
+
+      if (result.data) {
+        toast({
+          title: 'Success',
+          description: 'Workspace created successfully'
+        })
+        if (onSuccess) onSuccess(result.data)
+        setOpen(false)
+        form.reset()
+      }
+    })
+  }
+
+  return (
+    <DialogContainer open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="text-white">
+        <DialogHeader>
+          <DialogTitle className="text-white">
+            Create Your Private Workspace
+          </DialogTitle>
+          <DialogDescription>
+            Fill out the form to create your new workspace.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Card className="w-full border-none bg-background text-white">
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  {...form.register('name')}
+                  className="bg-background text-white"
+                  placeholder="Enter workspace name"
+                  disabled
+                />
+                {form.formState.errors.name && (
+                  <div className="text-xs text-red-500">
+                    {form.formState.errors.name.message}
+                  </div>
+                )}
+              </div>
+              {/* <div className="grid gap-2">
+                <Label htmlFor="shortName">Short Name</Label>
+                <Input
+                  id="shortName"
+                  {...form.register('shortName')}
+                  className="bg-background text-neutral-400"
+                  placeholder="Enter short name"
+                />
+                {form.formState.errors.shortName && (
+                  <div className="text-xs text-red-500">
+                    {form.formState.errors.shortName.message}
+                  </div>
+                )}
+              </div> */}
+              <div className="grid gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  {...form.register('description')}
+                  placeholder="Enter description"
+                  className="min-h-[100px] bg-background text-neutral-400"
+                />
+                {form.formState.errors.description && (
+                  <div className="text-xs text-red-500">
+                    {form.formState.errors.description.message}
+                  </div>
+                )}
+              </div>
+              {/* <div className="grid gap-2">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    type="hidden"
+                    id="isMain"
+                    checked={true}
+                    disabled
+                  />
+                  <Label htmlFor="isMain">Set as main workspace</Label>
+                </div>
+              </div> */}
+              <input type="hidden" {...form.register('isMain')} />
+              <input type="hidden" {...form.register('tenantId')} />
+              <input type="hidden" {...form.register('userId')} />
+              <input type="hidden" {...form.register('shortName')} />
+            </CardContent>
+            <CardFooter className="flex justify-end gap-4">
+              <Button
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  form.reset()
+                }}
+                className="text-muted ring-muted focus:bg-background focus:text-accent"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
@@ -275,14 +461,12 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onSuccess?: (workspace: Workspace) => void
 }) {
-  const { workspaces } = useAppState()
-  const { user } = useAuth()
   const form = useForm<WorkspaceUpdatetype>({
     resolver: zodResolver(WorkspaceUpdateSchema),
     defaultValues: {
       id: workspace?.id || '',
       name: workspace?.name || '',
-      shortName: workspace?.shortName || '',
+      shortName: workspace?.shortName || 'wks',
       description: workspace?.description || '',
       isMain: workspace?.isMain || false,
       tenantId: '1',
@@ -295,7 +479,7 @@ export function WorkspaceUpdateForm({
       form.reset({
         id: workspace?.id || '',
         name: workspace?.name || '',
-        shortName: workspace?.shortName || '',
+        shortName: workspace?.shortName || 'wks',
         description: workspace?.description || '',
         isMain: workspace?.isMain || false,
         tenantId: '1',
@@ -305,6 +489,7 @@ export function WorkspaceUpdateForm({
   }, [open, workspace, form])
 
   async function onSubmit(data: WorkspaceUpdatetype) {
+    console.log('WorkspaceUpdateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -359,6 +544,8 @@ export function WorkspaceUpdateForm({
                 <input type="hidden" {...form.register('id')} />
                 <input type="hidden" {...form.register('tenantId')} />
                 <input type="hidden" {...form.register('userId')} />
+                <input type="hidden" {...form.register('isMain')} />
+                <input type="hidden" {...form.register('shortName')} />
 
                 <FormField
                   control={form.control}
@@ -377,7 +564,7 @@ export function WorkspaceUpdateForm({
                   )}
                 />
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="shortName"
                   render={({ field }) => (
@@ -392,7 +579,7 @@ export function WorkspaceUpdateForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <FormField
                   control={form.control}
@@ -410,12 +597,12 @@ export function WorkspaceUpdateForm({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="isMain"
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <FormLabel>Private Workspace</FormLabel>
+                      <FormLabel>My Workspace</FormLabel>
                       <FormControl>
                         <Switch
                           checked={field.value}
@@ -432,7 +619,7 @@ export function WorkspaceUpdateForm({
                       </FormControl>
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 {form.formState.errors.name && (
                   <p className="text-red-500">

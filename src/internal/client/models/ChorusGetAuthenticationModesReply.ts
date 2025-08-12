@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime'
-import type { ChorusAuthenticationMode } from './ChorusAuthenticationMode'
+import type { ChorusGetAuthenticationModesResult } from './ChorusGetAuthenticationModesResult'
 import {
-  ChorusAuthenticationModeFromJSON,
-  ChorusAuthenticationModeFromJSONTyped,
-  ChorusAuthenticationModeToJSON
-} from './ChorusAuthenticationMode'
+  ChorusGetAuthenticationModesResultFromJSON,
+  ChorusGetAuthenticationModesResultFromJSONTyped,
+  ChorusGetAuthenticationModesResultToJSON
+} from './ChorusGetAuthenticationModesResult'
 
 /**
  *
@@ -28,10 +28,10 @@ import {
 export interface ChorusGetAuthenticationModesReply {
   /**
    *
-   * @type {Array<ChorusAuthenticationMode>}
+   * @type {ChorusGetAuthenticationModesResult}
    * @memberof ChorusGetAuthenticationModesReply
    */
-  result?: Array<ChorusAuthenticationMode>
+  result?: ChorusGetAuthenticationModesResult
 }
 
 /**
@@ -61,7 +61,7 @@ export function ChorusGetAuthenticationModesReplyFromJSONTyped(
   return {
     result: !exists(json, 'result')
       ? undefined
-      : (json['result'] as Array<any>).map(ChorusAuthenticationModeFromJSON)
+      : ChorusGetAuthenticationModesResultFromJSON(json['result'])
   }
 }
 
@@ -75,9 +75,6 @@ export function ChorusGetAuthenticationModesReplyToJSON(
     return null
   }
   return {
-    result:
-      value.result === undefined
-        ? undefined
-        : (value.result as Array<any>).map(ChorusAuthenticationModeToJSON)
+    result: ChorusGetAuthenticationModesResultToJSON(value.result)
   }
 }

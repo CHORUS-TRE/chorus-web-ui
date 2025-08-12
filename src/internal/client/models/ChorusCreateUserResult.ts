@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusUser } from './ChorusUser'
+import {
+  ChorusUserFromJSON,
+  ChorusUserFromJSONTyped,
+  ChorusUserToJSON
+} from './ChorusUser'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusCreateUserResult {
   /**
    *
-   * @type {string}
+   * @type {ChorusUser}
    * @memberof ChorusCreateUserResult
    */
-  id?: string
+  user?: ChorusUser
 }
 
 /**
@@ -50,7 +57,7 @@ export function ChorusCreateUserResultFromJSONTyped(
     return json
   }
   return {
-    id: !exists(json, 'id') ? undefined : json['id']
+    user: !exists(json, 'user') ? undefined : ChorusUserFromJSON(json['user'])
   }
 }
 
@@ -64,6 +71,6 @@ export function ChorusCreateUserResultToJSON(
     return null
   }
   return {
-    id: value.id
+    user: ChorusUserToJSON(value.user)
   }
 }

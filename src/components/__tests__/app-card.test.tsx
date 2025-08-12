@@ -10,14 +10,14 @@ import { AppCard } from '../../components/app-card'
 import { AppState } from '../../domain/model/app'
 
 // Mock the app-state-context
-jest.mock('../../components/store/app-state-context', () => ({
+jest.mock('../../providers/app-state-provider', () => ({
   useAppState: jest.fn().mockReturnValue({
     setNotification: jest.fn()
   })
 }))
 
 // Mock the app-view-model
-jest.mock('../../components/actions/app-view-model', () => ({
+jest.mock('../../view-model/app-view-model', () => ({
   appDelete: jest.fn().mockResolvedValue({ data: { id: '1' } })
 }))
 

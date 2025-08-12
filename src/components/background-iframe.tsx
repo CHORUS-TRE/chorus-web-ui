@@ -5,15 +5,15 @@ import { env } from 'next-runtime-env'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
-import { useAppState } from '@/components/store/app-state-context'
 import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 import { LoadingOverlay } from './loading-overlay'
-import { useAuth } from './store/auth-context'
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export default function BackgroundIframe() {
-  const { user } = useAuth()
+  const { user } = useAuthentication()
   const { background } = useAppState()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 

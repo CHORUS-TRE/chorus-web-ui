@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusUpdateAppResult } from './ChorusUpdateAppResult'
+import {
+  ChorusUpdateAppResultFromJSON,
+  ChorusUpdateAppResultFromJSONTyped,
+  ChorusUpdateAppResultToJSON
+} from './ChorusUpdateAppResult'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusUpdateAppReply {
   /**
    *
-   * @type {object}
+   * @type {ChorusUpdateAppResult}
    * @memberof ChorusUpdateAppReply
    */
-  result?: object
+  result?: ChorusUpdateAppResult
 }
 
 /**
@@ -48,7 +55,9 @@ export function ChorusUpdateAppReplyFromJSONTyped(
     return json
   }
   return {
-    result: !exists(json, 'result') ? undefined : json['result']
+    result: !exists(json, 'result')
+      ? undefined
+      : ChorusUpdateAppResultFromJSON(json['result'])
   }
 }
 
@@ -62,6 +71,6 @@ export function ChorusUpdateAppReplyToJSON(
     return null
   }
   return {
-    result: value.result
+    result: ChorusUpdateAppResultToJSON(value.result)
   }
 }

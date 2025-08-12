@@ -9,16 +9,16 @@ import { useActionState, useEffect, useState, useTransition } from 'react'
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
+import { useAuthentication } from '@/providers/authentication-provider'
+import {
+  getAuthenticationModes,
+  getOAuthUrl
+} from '@/view-model/authentication-view-model'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
-import {
-  getAuthenticationModes,
-  getOAuthUrl
-} from '../actions/authentication-view-model'
 import { toast } from '../hooks/use-toast'
-import { useAuth } from '../store/auth-context'
 
 const initialState: Result<User> = {
   data: undefined,
@@ -27,7 +27,7 @@ const initialState: Result<User> = {
 }
 
 export default function LoginForm() {
-  const { login } = useAuth()
+  const { login } = useAuthentication()
   const searchParams = useSearchParams()!
 
   const [state, formAction, pending] = useActionState(login, initialState)

@@ -3,11 +3,11 @@
 import React, { useEffect } from 'react'
 
 import { Header } from '@/components/header'
-import { useAppState } from '@/components/store/app-state-context'
 import { AdminSidebar } from '@/components/ui/admin-sidebar'
 import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { useAuth } from '~/components/store/auth-context'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { UnauthenticatedApp } from '~/components/unauthenticated-app'
 
 export default function Layout({
@@ -16,7 +16,7 @@ export default function Layout({
   children: React.ReactNode
 }>) {
   const { setBackground } = useAppState()
-  const { user } = useAuth()
+  const { user } = useAuthentication()
 
   useEffect(() => {
     setBackground((prev) => {

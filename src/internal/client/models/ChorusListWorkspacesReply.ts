@@ -13,12 +13,18 @@
  */
 
 import { exists, mapValues } from '../runtime'
-import type { ChorusWorkspace } from './ChorusWorkspace'
+import type { ChorusListWorkspacesResult } from './ChorusListWorkspacesResult'
 import {
-  ChorusWorkspaceFromJSON,
-  ChorusWorkspaceFromJSONTyped,
-  ChorusWorkspaceToJSON
-} from './ChorusWorkspace'
+  ChorusListWorkspacesResultFromJSON,
+  ChorusListWorkspacesResultFromJSONTyped,
+  ChorusListWorkspacesResultToJSON
+} from './ChorusListWorkspacesResult'
+import type { ChorusPaginationResult } from './ChorusPaginationResult'
+import {
+  ChorusPaginationResultFromJSON,
+  ChorusPaginationResultFromJSONTyped,
+  ChorusPaginationResultToJSON
+} from './ChorusPaginationResult'
 
 /**
  *
@@ -28,10 +34,16 @@ import {
 export interface ChorusListWorkspacesReply {
   /**
    *
-   * @type {Array<ChorusWorkspace>}
+   * @type {ChorusListWorkspacesResult}
    * @memberof ChorusListWorkspacesReply
    */
-  result?: Array<ChorusWorkspace>
+  result?: ChorusListWorkspacesResult
+  /**
+   *
+   * @type {ChorusPaginationResult}
+   * @memberof ChorusListWorkspacesReply
+   */
+  pagination?: ChorusPaginationResult
 }
 
 /**
@@ -59,7 +71,10 @@ export function ChorusListWorkspacesReplyFromJSONTyped(
   return {
     result: !exists(json, 'result')
       ? undefined
-      : (json['result'] as Array<any>).map(ChorusWorkspaceFromJSON)
+      : ChorusListWorkspacesResultFromJSON(json['result']),
+    pagination: !exists(json, 'pagination')
+      ? undefined
+      : ChorusPaginationResultFromJSON(json['pagination'])
   }
 }
 
@@ -73,9 +88,7 @@ export function ChorusListWorkspacesReplyToJSON(
     return null
   }
   return {
-    result:
-      value.result === undefined
-        ? undefined
-        : (value.result as Array<any>).map(ChorusWorkspaceToJSON)
+    result: ChorusListWorkspacesResultToJSON(value.result),
+    pagination: ChorusPaginationResultToJSON(value.pagination)
   }
 }

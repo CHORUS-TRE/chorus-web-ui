@@ -13,15 +13,15 @@ import {
   useState
 } from 'react'
 
+import { toast } from '@/components/hooks/use-toast'
 import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
+import { listAppInstances } from '@/view-model/app-instance-view-model'
+import { appList } from '@/view-model/app-view-model'
+import { listUsers } from '@/view-model/user-view-model'
+import { workbenchList } from '@/view-model/workbench-view-model'
+import { workspaceList } from '@/view-model/workspace-view-model'
 
-import { listAppInstances } from '../actions/app-instance-view-model'
-import { appList } from '../actions/app-view-model'
-import { listUsers } from '../actions/user-view-model'
-import { workbenchList } from '../actions/workbench-view-model'
-import { workspaceList } from '../actions/workspace-view-model'
-import { toast } from '../hooks/use-toast'
-import { useAuth } from './auth-context'
+import { useAuthentication } from './authentication-provider'
 
 type AppStateContextType = {
   showRightSidebar: boolean
@@ -87,7 +87,7 @@ export const AppStateProvider = ({
 }: {
   children: ReactNode
 }): ReactElement => {
-  const { user } = useAuth()
+  const { user } = useAuthentication()
   const [showRightSidebar, setShowRightSidebar] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('showRightSidebar')
@@ -224,6 +224,13 @@ export const AppStateProvider = ({
     }
     try {
       const response = await listAppInstances()
+      if (response?.error) {
+        toast({ title: response.error, variant: 'destructive' })
+      }
+      if (!response?.data) {
+        return
+      }
+      // Sort app instances by createdAt in descending order
       setAppInstances(
         response.data?.sort(
           (a, b) => b.createdAt.getTime() - a.createdAt.getTime()

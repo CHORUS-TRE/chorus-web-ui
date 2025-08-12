@@ -2,10 +2,10 @@
 
 import { ChevronDown, ChevronUp, Store } from 'lucide-react'
 
+import { useAppState } from '@/providers/app-state-provider'
 import AppStoreHero from '~/components/app-store-hero'
 import { AppStoreView } from '~/components/app-store-view'
 import { Button } from '~/components/button'
-import { useAppState } from '~/components/store/app-state-context'
 
 export default function Page() {
   const { showAppStoreHero, toggleAppStoreHero } = useAppState()

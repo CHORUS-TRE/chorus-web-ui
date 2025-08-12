@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { appCreate } from '~/components/actions/app-view-model'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { appCreate } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
 import { ImageUploadField } from '~/components/forms/image-upload-field'
-import { useAuth } from '~/components/store/auth-context'
 import {
   Dialog,
   DialogContent,
@@ -185,7 +185,7 @@ export function AppCreateDialog({
   onOpenChange,
   onSuccess
 }: AppCreateDialogProps) {
-  const { user } = useAuth()
+  const { user } = useAuthentication()
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const form = useForm<FormData>({

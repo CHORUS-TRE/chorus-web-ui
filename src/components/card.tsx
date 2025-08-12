@@ -28,7 +28,7 @@ const Card = ({
     )}
   >
     <CardHeader className="pb-4">
-      <CardTitle className="flex items-center gap-3 pr-2 text-white">
+      <CardTitle className="flex items-center gap-3 text-white">
         {title}
       </CardTitle>
       <CardDescription className="mb-3 text-xs text-muted">

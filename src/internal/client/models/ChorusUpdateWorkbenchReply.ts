@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusUpdateWorkbenchResult } from './ChorusUpdateWorkbenchResult'
+import {
+  ChorusUpdateWorkbenchResultFromJSON,
+  ChorusUpdateWorkbenchResultFromJSONTyped,
+  ChorusUpdateWorkbenchResultToJSON
+} from './ChorusUpdateWorkbenchResult'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusUpdateWorkbenchReply {
   /**
    *
-   * @type {object}
+   * @type {ChorusUpdateWorkbenchResult}
    * @memberof ChorusUpdateWorkbenchReply
    */
-  result?: object
+  result?: ChorusUpdateWorkbenchResult
 }
 
 /**
@@ -50,7 +57,9 @@ export function ChorusUpdateWorkbenchReplyFromJSONTyped(
     return json
   }
   return {
-    result: !exists(json, 'result') ? undefined : json['result']
+    result: !exists(json, 'result')
+      ? undefined
+      : ChorusUpdateWorkbenchResultFromJSON(json['result'])
   }
 }
 
@@ -64,6 +73,6 @@ export function ChorusUpdateWorkbenchReplyToJSON(
     return null
   }
   return {
-    result: value.result
+    result: ChorusUpdateWorkbenchResultToJSON(value.result)
   }
 }

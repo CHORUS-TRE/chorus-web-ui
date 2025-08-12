@@ -50,7 +50,7 @@ export class AppDataSourceImpl implements AppDataSource {
 
   update(app: AppUpdateType): Promise<ChorusUpdateAppReply> {
     const chorusApp = toChorusAppUpdate(app)
-    return this.client.appServiceUpdateApp({ body: { app: chorusApp } })
+    return this.client.appServiceUpdateApp({ body: chorusApp })
   }
 
   delete(id: string): Promise<ChorusDeleteAppReply> {

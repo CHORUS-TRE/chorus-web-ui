@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
-import { createUser } from '@/components/actions/user-view-model'
+import { createUser } from '@/view-model/user-view-model'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'

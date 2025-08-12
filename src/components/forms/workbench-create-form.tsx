@@ -8,7 +8,6 @@ import { startTransition, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
-import { workbenchCreate } from '@/components/actions/workbench-view-model'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -23,6 +22,7 @@ import {
   WorkbenchCreateType,
   WorkbenchStatus
 } from '@/domain/model'
+import { workbenchCreate } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/ui/card'
 import {
@@ -157,12 +157,20 @@ export function WorkbenchCreateForm({
       if (result.data) {
         toast({
           title: 'Success',
-          description: 'Session created successfully'
+          description: `Session is creating. Delaying navigation for ${env('NEXT_PUBLIC_APP_DELAY_TIME')} seconds. Reload the page to see the session if the redirect is not working.`
         })
         setOpen(false)
-        await new Promise((resolve) =>
-          setTimeout(resolve, Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) * 1000)
-        )
+        await new Promise((resolve) => {
+          console.log(
+            'Delaying navigation for',
+            env('NEXT_PUBLIC_APP_DELAY_TIME'),
+            'seconds'
+          )
+          return setTimeout(
+            resolve,
+            Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) * 1000
+          )
+        })
         router.push(
           `/workspaces/${workspaceId}/sessions/${result.data.id as string}`
         )

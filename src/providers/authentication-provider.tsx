@@ -11,13 +11,13 @@ import {
   useState
 } from 'react'
 
-import { login, logout } from '@/components/actions/authentication-view-model'
+import { LoadingOverlay } from '@/components/loading-overlay'
 import { Result, User } from '@/domain/model'
+import { login, logout } from '@/view-model/authentication-view-model'
+import { userMe } from '@/view-model/user-view-model'
+import { workspaceList } from '@/view-model/workspace-view-model'
 
-import { userMe } from '../actions/user-view-model'
-import { workspaceList } from '../actions/workspace-view-model'
-import { LoadingOverlay } from '../loading-overlay'
-import { useAppState } from './app-state-context'
+import { useAppState } from './app-state-provider'
 
 type AuthContextType = {
   user: User | undefined
@@ -26,7 +26,7 @@ type AuthContextType = {
   login: (prevState: Result<User>, formData: FormData) => Promise<Result<User>>
 }
 
-const AuthContext = createContext<AuthContextType>({
+const AuthenticationContext = createContext<AuthContextType>({
   user: undefined,
   refreshUser: async () => {},
   logout: async () => {},
@@ -57,6 +57,7 @@ export const AuthProvider = ({
   const refreshUser = useCallback(async () => {
     try {
       const userResult = await userMe()
+
       if (!userResult?.data) throw new Error('Failed to get user')
 
       let nextUser = userResult.data
@@ -129,18 +130,18 @@ export const AuthProvider = ({
   }
 
   return (
-    <AuthContext.Provider
+    <AuthenticationContext.Provider
       value={{ user, login: handleLogin, logout: handleLogout, refreshUser }}
     >
       {isLoading ? <LoadingOverlay isLoading={isLoading} /> : children}
-    </AuthContext.Provider>
+    </AuthenticationContext.Provider>
   )
 }
 
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext)
+export function useAuthentication(): AuthContextType {
+  const context = useContext(AuthenticationContext)
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuthentication must be used within an AuthProvider')
   }
   return context
 }

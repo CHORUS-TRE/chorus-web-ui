@@ -165,7 +165,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/chorusUpdateAppInstanceRequest'
+            $ref: '#/definitions/chorusAppInstance'
       tags:
         - AppInstanceService
   /api/rest/v1/app-instances/{id}:
@@ -388,7 +388,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/chorusUpdateAppRequest'
+            $ref: '#/definitions/chorusApp'
       tags:
         - AppService
   /api/rest/v1/apps/{id}:
@@ -731,7 +731,7 @@ paths:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/chorusAuthenticationReply'
+            $ref: '#/definitions/chorusRefreshTokenReply'
         "400":
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
@@ -1003,12 +1003,12 @@ paths:
     get:
       summary: List users
       description: This endpoint returns a list of users
-      operationId: UserService_GetUsers
+      operationId: UserService_ListUsers
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/chorusGetUsersReply'
+            $ref: '#/definitions/chorusListUsersReply'
         "400":
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
@@ -1031,6 +1031,38 @@ paths:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: pagination.offset
+          description: Optionally offset the number of results
+          in: query
+          required: false
+          type: integer
+          format: int64
+        - name: pagination.limit
+          description: Optionally limit the number of results (between 1 and 500)
+          in: query
+          required: false
+          type: integer
+          format: int64
+        - name: pagination.sort.order
+          in: query
+          required: false
+          type: string
+        - name: pagination.sort.type
+          in: query
+          required: false
+          type: string
+        - name: pagination.query
+          description: Optionally filter the results
+          in: query
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          x-example:
+            - user_id=9999
+            - status=STATUS_CREATED,STATUS_CLOSED
       tags:
         - UserService
     post:
@@ -1109,7 +1141,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/chorusUpdateUserRequest'
+            $ref: '#/definitions/chorusUser'
       tags:
         - UserService
   /api/rest/v1/users/me:
@@ -1531,7 +1563,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/chorusUpdateWorkbenchRequest'
+            $ref: '#/definitions/chorusWorkbench'
       tags:
         - WorkbenchService
   /api/rest/v1/workbenchs/{id}:
@@ -1754,7 +1786,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/chorusUpdateWorkspaceRequest'
+            $ref: '#/definitions/chorusWorkspace'
       tags:
         - WorkspaceService
   /api/rest/v1/workspaces/{id}:
@@ -1848,6 +1880,7 @@ definitions:
         type: string
   UserServiceResetPasswordBody:
     type: object
+    title: Reset Password
   chorusApp:
     type: object
     properties:
@@ -1862,6 +1895,8 @@ definitions:
         format: uint64
       name:
         type: string
+      prettyName:
+        type: string
       description:
         type: string
       status:
@@ -1873,8 +1908,6 @@ definitions:
       dockerImageTag:
         type: string
       shmSize:
-        type: string
-      kioskConfigURL:
         type: string
       maxCPU:
         type: string
@@ -1888,6 +1921,8 @@ definitions:
         type: string
       minEphemeralStorage:
         type: string
+      kioskConfigURL:
+        type: string
       iconURL:
         type: string
       createdAt:
@@ -1896,8 +1931,6 @@ definitions:
       updatedAt:
         type: string
         format: date-time
-      prettyName:
-        type: string
   chorusAppInstance:
     type: object
     properties:
@@ -1994,20 +2027,19 @@ definitions:
   chorusCreateAppInstanceResult:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
+      appInstance:
+        $ref: '#/definitions/chorusAppInstance'
   chorusCreateAppReply:
     type: object
     properties:
       result:
         $ref: '#/definitions/chorusCreateAppResult'
+    title: Create App
   chorusCreateAppResult:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
+      app:
+        $ref: '#/definitions/chorusApp'
   chorusCreateUserReply:
     type: object
     properties:
@@ -2017,9 +2049,8 @@ definitions:
   chorusCreateUserResult:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
+      user:
+        $ref: '#/definitions/chorusUser'
   chorusCreateWorkbenchReply:
     type: object
     properties:
@@ -2028,9 +2059,8 @@ definitions:
   chorusCreateWorkbenchResult:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
+      workbench:
+        $ref: '#/definitions/chorusWorkbench'
   chorusCreateWorkspaceReply:
     type: object
     properties:
@@ -2039,9 +2069,8 @@ definitions:
   chorusCreateWorkspaceResult:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
+      workspace:
+        $ref: '#/definitions/chorusWorkspace'
   chorusCredentials:
     type: object
     properties:
@@ -2123,6 +2152,11 @@ definitions:
     type: object
     properties:
       result:
+        $ref: '#/definitions/chorusGetAuthenticationModesResult'
+  chorusGetAuthenticationModesResult:
+    type: object
+    properties:
+      modes:
         type: array
         items:
           type: object
@@ -2150,7 +2184,6 @@ definitions:
     properties:
       me:
         $ref: '#/definitions/chorusUser'
-    title: Get User (me)
   chorusGetUserReply:
     type: object
     properties:
@@ -2161,14 +2194,6 @@ definitions:
     properties:
       user:
         $ref: '#/definitions/chorusUser'
-  chorusGetUsersReply:
-    type: object
-    properties:
-      result:
-        type: array
-        items:
-          type: object
-          $ref: '#/definitions/chorusUser'
   chorusGetWorkbenchReply:
     type: object
     properties:
@@ -2204,6 +2229,13 @@ definitions:
     type: object
     properties:
       result:
+        $ref: '#/definitions/chorusListAppInstancesResult'
+      pagination:
+        $ref: '#/definitions/chorusPaginationResult'
+  chorusListAppInstancesResult:
+    type: object
+    properties:
+      appInstances:
         type: array
         items:
           type: object
@@ -2212,14 +2244,43 @@ definitions:
     type: object
     properties:
       result:
+        $ref: '#/definitions/chorusListAppsResult'
+      pagination:
+        $ref: '#/definitions/chorusPaginationResult'
+  chorusListAppsResult:
+    type: object
+    properties:
+      apps:
         type: array
         items:
           type: object
           $ref: '#/definitions/chorusApp'
+  chorusListUsersReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusListUsersResult'
+      pagination:
+        $ref: '#/definitions/chorusPaginationResult'
+  chorusListUsersResult:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/chorusUser'
   chorusListWorkbenchsReply:
     type: object
     properties:
       result:
+        $ref: '#/definitions/chorusListWorkbenchsResult'
+      pagination:
+        $ref: '#/definitions/chorusPaginationResult'
+  chorusListWorkbenchsResult:
+    type: object
+    properties:
+      workbenchs:
         type: array
         items:
           type: object
@@ -2228,6 +2289,13 @@ definitions:
     type: object
     properties:
       result:
+        $ref: '#/definitions/chorusListWorkspacesResult'
+      pagination:
+        $ref: '#/definitions/chorusPaginationResult'
+  chorusListWorkspacesResult:
+    type: object
+    properties:
+      workspaces:
         type: array
         items:
           type: object
@@ -2291,8 +2359,36 @@ definitions:
         x-example:
           - user_id=9999
           - status=STATUS_CREATED,STATUS_CLOSED
+  chorusPaginationResult:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int64
+        description: Total number of results
+      offset:
+        type: integer
+        format: int64
+        description: Offset used for pagination
+      limit:
+        type: integer
+        format: int64
+        description: Limit used for pagination
+      sort:
+        $ref: '#/definitions/chorusSort'
+        description: Sort order used for pagination
+  chorusRefreshTokenReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusRefreshTokenResult'
   chorusRefreshTokenRequest:
     type: object
+  chorusRefreshTokenResult:
+    type: object
+    properties:
+      token:
+        type: string
   chorusResetPasswordReply:
     type: object
     properties:
@@ -2332,25 +2428,22 @@ definitions:
     properties:
       result:
         $ref: '#/definitions/chorusUpdateAppInstanceResult'
-  chorusUpdateAppInstanceRequest:
+  chorusUpdateAppInstanceResult:
     type: object
     properties:
       appInstance:
         $ref: '#/definitions/chorusAppInstance'
-  chorusUpdateAppInstanceResult:
-    type: object
   chorusUpdateAppReply:
     type: object
     properties:
       result:
         $ref: '#/definitions/chorusUpdateAppResult'
-  chorusUpdateAppRequest:
+    title: Update App
+  chorusUpdateAppResult:
     type: object
     properties:
       app:
         $ref: '#/definitions/chorusApp'
-  chorusUpdateAppResult:
-    type: object
   chorusUpdatePasswordReply:
     type: object
     properties:
@@ -2369,38 +2462,32 @@ definitions:
     properties:
       result:
         $ref: '#/definitions/chorusUpdateUserResult'
-  chorusUpdateUserRequest:
+    title: Update User
+  chorusUpdateUserResult:
     type: object
     properties:
       user:
         $ref: '#/definitions/chorusUser'
-    title: Update User
-  chorusUpdateUserResult:
-    type: object
   chorusUpdateWorkbenchReply:
     type: object
     properties:
       result:
         $ref: '#/definitions/chorusUpdateWorkbenchResult'
-  chorusUpdateWorkbenchRequest:
+  chorusUpdateWorkbenchResult:
     type: object
     properties:
       workbench:
         $ref: '#/definitions/chorusWorkbench'
-  chorusUpdateWorkbenchResult:
-    type: object
   chorusUpdateWorkspaceReply:
     type: object
     properties:
       result:
         $ref: '#/definitions/chorusUpdateWorkspaceResult'
-  chorusUpdateWorkspaceRequest:
+  chorusUpdateWorkspaceResult:
     type: object
     properties:
       workspace:
         $ref: '#/definitions/chorusWorkspace'
-  chorusUpdateWorkspaceResult:
-    type: object
   chorusUser:
     type: object
     properties:
@@ -2425,14 +2512,14 @@ definitions:
           type: string
       totpEnabled:
         type: boolean
+      passwordChanged:
+        type: boolean
       createdAt:
         type: string
         format: date-time
       updatedAt:
         type: string
         format: date-time
-      passwordChanged:
-        type: boolean
   chorusWorkbench:
     type: object
     properties:
@@ -2464,16 +2551,6 @@ definitions:
       initialResolutionHeight:
         type: integer
         format: int64
-      appInsanceIds:
-        type: array
-        items:
-          type: string
-          format: uint64
-      appInstances:
-        type: array
-        items:
-          type: string
-          format: uint64
       createdAt:
         type: string
         format: date-time

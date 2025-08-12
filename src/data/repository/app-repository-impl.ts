@@ -33,9 +33,9 @@ export class AppRepositoryImpl implements AppRepository {
     try {
       const response = await this.dataSource.list({})
 
-      if (!response.result) return { error: 'Error listing apps' }
+      if (!response.result?.apps) return { error: 'Error listing apps' }
 
-      const apps = response.result.map((r) => AppSchema.parse(r))
+      const apps = response.result.apps.map((r) => AppSchema.parse(r))
 
       return { data: apps }
     } catch (error) {
@@ -47,12 +47,19 @@ export class AppRepositoryImpl implements AppRepository {
   async create(app: AppCreateType): Promise<Result<App>> {
     try {
       const response = await this.dataSource.create(app)
-      if (!response.result?.id) {
+      if (!response.result?.app) {
         return { error: 'Error creating app' }
       }
 
-      // After creating, fetch the new app to get the full object from the server
-      return this.get(response.result.id)
+      const appResult = AppSchema.safeParse(response.result.app)
+      if (!appResult.success) {
+        return {
+          error: 'API response validation failed',
+          issues: appResult.error.issues
+        }
+      }
+
+      return { data: appResult.data }
     } catch (error) {
       console.error('Error creating app', error)
       return { error: error instanceof Error ? error.message : String(error) }

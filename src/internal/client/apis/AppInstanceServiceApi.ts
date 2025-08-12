@@ -20,7 +20,6 @@ import type {
   ChorusGetAppInstanceReply,
   ChorusListAppInstancesReply,
   ChorusUpdateAppInstanceReply,
-  ChorusUpdateAppInstanceRequest,
   RpcStatus
 } from '../models/index'
 import {
@@ -36,8 +35,6 @@ import {
   ChorusListAppInstancesReplyToJSON,
   ChorusUpdateAppInstanceReplyFromJSON,
   ChorusUpdateAppInstanceReplyToJSON,
-  ChorusUpdateAppInstanceRequestFromJSON,
-  ChorusUpdateAppInstanceRequestToJSON,
   RpcStatusFromJSON,
   RpcStatusToJSON
 } from '../models/index'
@@ -63,7 +60,7 @@ export interface AppInstanceServiceListAppInstancesRequest {
 }
 
 export interface AppInstanceServiceUpdateAppInstanceRequest {
-  body: ChorusUpdateAppInstanceRequest
+  body: ChorusAppInstance
 }
 
 /**
@@ -348,7 +345,7 @@ export class AppInstanceServiceApi extends runtime.BaseAPI {
         method: 'PUT',
         headers: headerParameters,
         query: queryParameters,
-        body: ChorusUpdateAppInstanceRequestToJSON(requestParameters.body)
+        body: ChorusAppInstanceToJSON(requestParameters.body)
       },
       initOverrides
     )

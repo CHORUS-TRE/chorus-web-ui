@@ -6,7 +6,7 @@ The application aims to follow a Clean Architecture pattern, separating concerns
 
 ```mermaid
 graph TD
-    A["Presentation (React Components/Pages)"] --> B["View-Model / Actions"];
+    A["Presentation (React Components/Pages)"] --> B["View-Model (Server Actions)"];
     B --> C["Application (Use Cases)"];
     C --> D["Domain (Entities/Interfaces)"];
     C --> E["Repository Interfaces"];
@@ -37,7 +37,7 @@ graph TD
 
 ```
 
-- **Presentation Layer (`src/app`, `src/components`):** Contains UI components and pages. The View-Model / Actions layer (`src/components/actions`) is called to handle user interactions.
+- **Presentation Layer (`src/app`, `src/components`, `src/providers`):** Contains UI components, pages and client-side state providers. The View-Model layer (`src/view-model`) is called to handle user interactions.
 - **Application Layer (`src/domain/use-cases`):** Orchestrates the flow of data and triggers business logic.
 - **Domain Layer (`src/domain/model`, `src/domain/repository`):** Contains core business entities, validation schemas (Zod), and repository interfaces.
 - **Infrastructure Layer (`src/data`):** Contains repository implementations and data sources that communicate with external services like the Chorus API.
@@ -47,8 +47,8 @@ graph TD
 - **Authentication Architecture Shift:** Moving from server-side authentication middleware to client-side state management approach:
   - Layout components split into authenticated/unauthenticated states
   - Background iframe integration for application hosting
-  - Client-side context providers for auth state
-- **View-Model and Data Fetching Strategy:** The primary approach is client-side data fetching. "View-Model" files in `src/components/actions` use `fetch` to call API routes. As an exception for progressive enhancement, form submissions are handled by Next.js Server Actions, which call use cases and return state to the UI.
+  - Client-side context providers (`src/providers`) for auth state
+- **View-Model and Data Fetching Strategy:** The primary approach is using Next.js Server Actions, which are defined in the `src/view-model` directory. These actions are called from UI components (often via `use-form-state` for forms) and are responsible for instantiating the necessary repository and calling the appropriate use case. This keeps the data-fetching logic separate from the UI components and centralizes it in the view-model layer.
 - **Repository Pattern:** This is the core of our data handling strategy.
   - **Interface (`domain/repository`):** Defines the contract for data operations, using domain models (e.g., `App`, `AppCreateType`).
   - **Implementation (`data/repository`):** Implements the interface. It calls the data source, and its primary responsibility is to catch errors and map the raw data source response into the standard `Result<T>` object (`{ data?, error?, issues? }`).
@@ -57,6 +57,7 @@ graph TD
   - **Implementation (`data/data-source/chorus-api`):** Implements the interface, making direct calls to the generated API client. It is responsible for mapping domain types (e.g., `AppCreateType`) to API types (`ChorusApp`) before sending the request.
 - **Zod for Validation:** Zod schemas in `domain/model` are the single source of truth for validation. They are used in server actions and repository implementations to ensure data integrity.
 - **Generated API Client:** Using OpenAPI generator to create a strongly-typed API client, ensuring type safety when communicating with the backend.
+- **API Response Structure Evolution:** The API has evolved from flat responses to nested structures. Current pattern expects responses like `{ result: { users: [...] }, pagination: {...} }` instead of `{ result: [...] }`. Data sources handle potential mismatches between OpenAPI spec and actual backend responses.
 
 ## 3. Proven Patterns
 
@@ -67,7 +68,7 @@ The role management feature demonstrates the effectiveness of our architectural 
 - **Mock Data Sources:** Effective pattern for development before backend integration
 
 ### Authentication State Management
-- **Client-Side Context Providers:** Moving authentication state to React Context for better client-side control
+- **Client-Side Context Providers:** Moving authentication state to React Context in `src/providers` for better client-side control
 - **Layout Composition:** Authenticated/unauthenticated layout components for clear separation of concerns
 - **Background Integration:** Iframe components for hosting user applications within the main interface
 

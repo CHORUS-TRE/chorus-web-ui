@@ -15,7 +15,7 @@ export enum K8sAppInstanceStatus {
 }
 
 export enum K8sAppInstanceState {
-  UNKNOWN = 'Unknown',
+  UNKNOWN = '',
   RUNNING = 'Running',
   COMPLETE = 'Complete',
   PROGRESSING = 'Progressing',

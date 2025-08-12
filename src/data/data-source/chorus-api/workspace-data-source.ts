@@ -58,9 +58,7 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   update(workspace: WorkspaceUpdatetype): Promise<ChorusUpdateWorkspaceReply> {
     const chorusWorkspace = toChorusWorkspaceUpdate(workspace)
     return this.service.workspaceServiceUpdateWorkspace({
-      body: {
-        workspace: chorusWorkspace
-      }
+      body: chorusWorkspace
     })
   }
 }

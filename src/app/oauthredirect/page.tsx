@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { handleOAuthRedirect } from '@/components/actions/authentication-view-model'
+import { handleOAuthRedirect } from '@/view-model/authentication-view-model'
 
 export default function OAuthRedirectPage() {
   const searchParams = useSearchParams()

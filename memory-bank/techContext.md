@@ -5,8 +5,8 @@
 - **Framework:** Next.js (with App Router)
 - **Language:** TypeScript
 - **Styling:** TailwindCSS with shadcn/ui components.
-- **State Management:** React Context API for global state (`AuthContext`, `AppStateContext`).
-- **Forms:** Using native form handling with Server Actions.
+- **State Management:** React Context API for global state (`src/providers`).
+- **Forms:** Using Next.js Server Actions via a view-model layer.
 - **API Client:** OpenAPI generator is used to create a typed client from a specification, located in `src/internal/client`.
 
 ## 2. Development Setup

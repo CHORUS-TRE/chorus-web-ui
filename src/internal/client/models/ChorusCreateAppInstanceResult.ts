@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusAppInstance } from './ChorusAppInstance'
+import {
+  ChorusAppInstanceFromJSON,
+  ChorusAppInstanceFromJSONTyped,
+  ChorusAppInstanceToJSON
+} from './ChorusAppInstance'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusCreateAppInstanceResult {
   /**
    *
-   * @type {string}
+   * @type {ChorusAppInstance}
    * @memberof ChorusCreateAppInstanceResult
    */
-  id?: string
+  appInstance?: ChorusAppInstance
 }
 
 /**
@@ -52,7 +59,9 @@ export function ChorusCreateAppInstanceResultFromJSONTyped(
     return json
   }
   return {
-    id: !exists(json, 'id') ? undefined : json['id']
+    appInstance: !exists(json, 'appInstance')
+      ? undefined
+      : ChorusAppInstanceFromJSON(json['appInstance'])
   }
 }
 
@@ -66,6 +75,6 @@ export function ChorusCreateAppInstanceResultToJSON(
     return null
   }
   return {
-    id: value.id
+    appInstance: ChorusAppInstanceToJSON(value.appInstance)
   }
 }

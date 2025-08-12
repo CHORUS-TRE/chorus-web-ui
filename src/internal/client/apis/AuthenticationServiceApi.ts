@@ -21,6 +21,7 @@ import type {
   ChorusCredentials,
   ChorusGetAuthenticationModesReply,
   ChorusLogoutReply,
+  ChorusRefreshTokenReply,
   RpcStatus
 } from '../models/index'
 import {
@@ -38,6 +39,8 @@ import {
   ChorusGetAuthenticationModesReplyToJSON,
   ChorusLogoutReplyFromJSON,
   ChorusLogoutReplyToJSON,
+  ChorusRefreshTokenReplyFromJSON,
+  ChorusRefreshTokenReplyToJSON,
   RpcStatusFromJSON,
   RpcStatusToJSON
 } from '../models/index'
@@ -419,7 +422,7 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
   async authenticationServiceRefreshTokenRaw(
     requestParameters: AuthenticationServiceRefreshTokenRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusAuthenticationReply>> {
+  ): Promise<runtime.ApiResponse<ChorusRefreshTokenReply>> {
     if (
       requestParameters.body === null ||
       requestParameters.body === undefined
@@ -453,7 +456,7 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
     )
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusAuthenticationReplyFromJSON(jsonValue)
+      ChorusRefreshTokenReplyFromJSON(jsonValue)
     )
   }
 
@@ -464,7 +467,7 @@ export class AuthenticationServiceApi extends runtime.BaseAPI {
   async authenticationServiceRefreshToken(
     requestParameters: AuthenticationServiceRefreshTokenRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusAuthenticationReply> {
+  ): Promise<ChorusRefreshTokenReply> {
     const response = await this.authenticationServiceRefreshTokenRaw(
       requestParameters,
       initOverrides

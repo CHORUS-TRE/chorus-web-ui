@@ -44,7 +44,7 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
       const response = await this.dataSource.list()
       const instancesResult = z
         .array(AppInstanceSchema)
-        .safeParse(response.result)
+        .safeParse(response.result?.appInstances)
 
       if (!instancesResult.success) {
         return {
@@ -67,20 +67,23 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
     try {
       const response = await this.dataSource.create(appInstance)
 
-      if (!response.result?.id) {
+      if (!response.result?.appInstance) {
         return {
           error: 'API response validation failed for AppInstance create'
         }
       }
-      return {
-        data: {
-          ...appInstance,
-          id: response.result.id,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          status: AppInstanceStatus.ACTIVE
+
+      const instanceResult = AppInstanceSchema.safeParse(
+        response.result.appInstance
+      )
+      if (!instanceResult.success) {
+        return {
+          error: 'API response validation failed for AppInstance create',
+          issues: instanceResult.error.issues
         }
       }
+
+      return { data: instanceResult.data }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

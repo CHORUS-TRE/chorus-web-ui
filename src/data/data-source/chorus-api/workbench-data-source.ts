@@ -61,7 +61,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   update(workbench: WorkbenchUpdateType): Promise<ChorusUpdateWorkbenchReply> {
     const chorusWorkbench = toChorusWorkbenchUpdate(workbench)
     return this.service.workbenchServiceUpdateWorkbench({
-      body: { workbench: chorusWorkbench }
+      body: chorusWorkbench
     })
   }
 }

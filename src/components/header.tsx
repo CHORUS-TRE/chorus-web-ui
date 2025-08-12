@@ -17,7 +17,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
-import { useAppState } from '@/components/store/app-state-context'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -36,6 +35,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
+import { useAppState } from '@/providers/app-state-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
   ListItem,
@@ -50,7 +51,6 @@ import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 import NavLink from './nav-link'
-import { useAuth } from './store/auth-context'
 import { Input } from './ui/input'
 
 export function Header() {
@@ -66,7 +66,7 @@ export function Header() {
     toggleRightSidebar,
     users
   } = useAppState()
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuthentication()
 
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
@@ -123,20 +123,17 @@ export function Header() {
                           exact={false}
                         >
                           <div className="mt-1 flex place-items-center gap-1">
-                            {workspaceId === user?.workspaceId ? (
-                              <Home className="h-4 w-4 text-secondary" />
+                            {workspaceId &&
+                            workspaceId === user?.workspaceId ? (
+                              <AppWindow className="h-4 w-4 text-secondary" />
                             ) : (
-                              <Box className="h-4 w-4 text-white" />
+                              <AppWindow className="h-4 w-4" />
                             )}
-                            {background?.workspaceId
-                              ? workspaces?.find(
-                                  (w) => w.id === background?.workspaceId
-                                )?.isMain
-                                ? `My Workspace`
-                                : workspaces?.find(
-                                    (w) => w.id === background?.workspaceId
-                                  )?.name
-                              : 'My Workspace'}
+                            {
+                              workspaces?.find(
+                                (w) => w.id === background?.workspaceId
+                              )?.name
+                            }
                           </div>
                         </NavLink>
                       </NavigationMenuTrigger>
@@ -222,12 +219,12 @@ export function Header() {
                       </NavigationMenuContent>
                     </>
                   )}
-                  {!background?.sessionId && (
+                  {!background?.sessionId && workspaceId && (
                     <NavLink
                       href={
-                        workspaces?.find((w) => w.id === workspaceId)?.isMain
-                          ? `/`
-                          : workspaceId
+                        workspaces?.find((w) => w.id === user?.workspaceId)
+                          ? `/workspaces/${user?.workspaceId}`
+                          : workspaceId && workspaceId !== user?.workspaceId
                             ? `/workspaces/${workspaceId}`
                             : '/'
                       }
@@ -235,17 +232,15 @@ export function Header() {
                       exact={user?.workspaceId === workspaceId}
                     >
                       <div className="mt-1 flex place-items-center gap-1">
-                        {workspaceId === user?.workspaceId ? (
-                          <Home className="h-4 w-4 text-secondary" />
+                        {user?.workspaceId === background?.workspaceId ? (
+                          <Home className="h-4 w-4" />
                         ) : (
-                          <Box className="h-4 w-4 text-white" />
+                          <AppWindow className="h-4 w-4" />
                         )}
-                        {workspaces?.find((w) => w.id === workspaceId)?.isMain
-                          ? `My Workspace`
-                          : workspaceId
-                            ? workspaces?.find((w) => w.id === workspaceId)
-                                ?.name
-                            : 'My Workspace'}
+                        {
+                          workspaces?.find((w) => w.id === user?.workspaceId)
+                            ?.name
+                        }
                       </div>
                     </NavLink>
                   )}

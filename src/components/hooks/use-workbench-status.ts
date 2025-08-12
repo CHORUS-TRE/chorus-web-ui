@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { getWorkbench } from '@/components/actions/workbench-view-model'
 import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
+import { getWorkbench } from '@/view-model/workbench-view-model'
 
 const POLLING_INTERVAL = 3000 // 3 seconds
 const TIMEOUT = 300000 // 5 minutes

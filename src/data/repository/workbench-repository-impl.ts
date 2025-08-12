@@ -18,14 +18,21 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   async create(workbench: WorkbenchCreateType): Promise<Result<Workbench>> {
     try {
       const response = await this.dataSource.create(workbench)
-      if (!response.result?.id) {
+      if (!response.result?.workbench) {
         return { error: 'Error creating workbench' }
       }
 
-      // wait 5 sec
-      await new Promise((resolve) => setTimeout(resolve, 5000))
+      const workbenchResult = WorkbenchSchema.safeParse(
+        response.result.workbench
+      )
+      if (!workbenchResult.success) {
+        return {
+          error: 'API response validation failed',
+          issues: workbenchResult.error.issues
+        }
+      }
 
-      return this.get(response.result.id)
+      return { data: workbenchResult.data }
     } catch (error) {
       console.error('Error creating workbench', error)
       return { error: error instanceof Error ? error.message : String(error) }
@@ -59,10 +66,12 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   async list(): Promise<Result<Workbench[]>> {
     try {
       const response = await this.dataSource.list()
-      if (!response.result) {
+      if (!response.result?.workbenchs) {
         return { data: [] }
       }
-      const validatedData = response.result.map((w) => WorkbenchSchema.parse(w))
+      const validatedData = response.result.workbenchs.map((w) =>
+        WorkbenchSchema.parse(w)
+      )
       return { data: validatedData }
     } catch (error) {
       console.error('Error listing workbenches', error)

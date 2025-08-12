@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusWorkspace } from './ChorusWorkspace'
+import {
+  ChorusWorkspaceFromJSON,
+  ChorusWorkspaceFromJSONTyped,
+  ChorusWorkspaceToJSON
+} from './ChorusWorkspace'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusCreateWorkspaceResult {
   /**
    *
-   * @type {string}
+   * @type {ChorusWorkspace}
    * @memberof ChorusCreateWorkspaceResult
    */
-  id?: string
+  workspace?: ChorusWorkspace
 }
 
 /**
@@ -50,7 +57,9 @@ export function ChorusCreateWorkspaceResultFromJSONTyped(
     return json
   }
   return {
-    id: !exists(json, 'id') ? undefined : json['id']
+    workspace: !exists(json, 'workspace')
+      ? undefined
+      : ChorusWorkspaceFromJSON(json['workspace'])
   }
 }
 
@@ -64,6 +73,6 @@ export function ChorusCreateWorkspaceResultToJSON(
     return null
   }
   return {
-    id: value.id
+    workspace: ChorusWorkspaceToJSON(value.workspace)
   }
 }
