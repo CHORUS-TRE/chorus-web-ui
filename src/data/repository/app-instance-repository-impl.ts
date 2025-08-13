@@ -5,7 +5,6 @@ import {
   AppInstance,
   AppInstanceCreateType,
   AppInstanceSchema,
-  AppInstanceStatus,
   AppInstanceUpdateType,
   Result
 } from '@/domain/model'

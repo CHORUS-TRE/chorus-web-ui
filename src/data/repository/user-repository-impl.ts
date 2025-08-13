@@ -5,7 +5,6 @@ import {
   User,
   UserCreateType,
   UserSchema,
-  UserStatusEnum,
   UserUpdateType
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'

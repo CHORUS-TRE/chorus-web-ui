@@ -1,18 +1,35 @@
 'use client'
 
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 import type { User } from '@/domain/model/user'
 import { Result } from '~/domain/model'
+
+interface WasmUser {
+  roles: Array<{
+    name: string
+    description: string
+    permissions: Array<{
+      name: string
+      description: string
+    }>
+  }>
+}
+
+interface WasmAuthenticationService {
+  isUserAllowed: (permission: { name: string; description: string }) => boolean
+  getUserPermissions: () => string[]
+}
 
 declare global {
   class Go {
     importObject: WebAssembly.Imports
     run(instance: WebAssembly.Instance): Promise<void>
   }
-  // function createAuthenticationService(user: User): any;
-  // function isUserAllowed(user: User, permission: string): Result<boolean>;
-  // function getUserPermissions(user: User): Result<string[]>;
+
+  interface Window {
+    createAuthenticationService: (user: WasmUser) => WasmAuthenticationService
+  }
 }
 
 // Define the shape of the context
@@ -20,7 +37,6 @@ interface AuthorizationContextType {
   isUserAllowed: (user: User, permission: string) => Promise<Result<boolean>>
   getUserPermissions: (user: User) => Result<string[]>
   isInitialized: boolean
-  service?: unknown
   error?: string
 }
 
@@ -29,7 +45,6 @@ const AuthorizationContext = createContext<AuthorizationContextType>({
   isUserAllowed: async () => ({ data: false }),
   getUserPermissions: () => ({ data: [] }),
   isInitialized: false,
-  service: undefined,
   error: undefined
 })
 
@@ -50,11 +65,13 @@ export const AuthorizationProvider = ({
 }: {
   children: React.ReactNode
 }) => {
+  const [isWasmInitialized, setIsWasmInitialized] = useState(false)
+
   useEffect(() => {
     async function loadWasm() {
       if (typeof window !== 'undefined') {
         const wasmExec = document.createElement('script')
-        wasmExec.src = '/wasm_exec.js' // Place wasm_exec.js in your public folder
+        wasmExec.src = '/wasm_exec.js'
         wasmExec.async = true
 
         await new Promise((resolve) => {
@@ -70,41 +87,18 @@ export const AuthorizationProvider = ({
           const wasm = result.instance
           go.run(wasm)
 
-          console.log('WASM run successfully', wasm.exports)
-
-          const user = {
-            roles: [
-              {
-                name: 'admin',
-                description: 'Administrator role',
-                permissions: [
-                  {
-                    name: 'read:users',
-                    description: 'Can read user data',
-                    context: {}
-                  }
-                ],
-                inheritsFrom: [],
-                attributes: {}
-              }
-            ]
+          if (typeof window.createAuthenticationService === 'function') {
+            setIsWasmInitialized(true)
+          } else {
+            console.log('createAuthenticationService not found globally')
+            console.log(
+              'Available global functions:',
+              Object.keys(window).filter(
+                (key) => typeof window[key as keyof Window] === 'function'
+              )
+            )
+            setIsWasmInitialized(false)
           }
-          const NewAuthorizationService = wasm.exports
-            .NewAuthorizationService as CallableFunction
-          // global.isUserAllowed = (user: User, permission: string) => {
-          // console.log('isUserAllowed called with:', user, permission)
-          try {
-            const service = NewAuthorizationService(user)
-            const toto = service.isUserAllowed(user, 'workspace:create')
-            console.log('isUserAllowed result:', toto)
-
-            return { data: toto }
-          } catch (error) {
-            return { error: String(error) }
-          }
-          // }
-
-          // console.log("Authentication service created")
         })
       }
     }
@@ -117,30 +111,71 @@ export const AuthorizationProvider = ({
     permission: string
   ): Promise<Result<boolean>> => {
     try {
-      // Mock implementation for now
-      console.log('isUserAllowed called with:', permission)
-      const isAllowed =
-        user.roles2?.some((role) => role.name === 'admin') ?? false
-      return { data: isAllowed }
+      if (isWasmInitialized) {
+        // Convert user to WASM format
+        const wasmUser: WasmUser = {
+          roles:
+            user.roles2?.map((role) => ({
+              name: role.name,
+              description: role.description,
+              permissions: role.permissions.map((perm) => ({
+                name: perm.name,
+                description: perm.description
+              }))
+            })) || []
+        }
+
+        // Create a new service instance for this user
+        const userService = window.createAuthenticationService(wasmUser)
+
+        // Call isUserAllowed with permission object
+        const permissionObj = {
+          name: permission,
+          description: `Permission: ${permission}`
+        }
+        const isAllowed = userService.isUserAllowed(permissionObj)
+
+        console.log(`WASM isUserAllowed result for ${permission}:`, isAllowed)
+        return { data: isAllowed }
+      }
+
+      // Fallback when WASM not initialized
+      return { data: false }
     } catch (error) {
+      console.error('Error in isUserAllowed:', error)
       return { error: String(error) }
     }
   }
 
   const getUserPermissions = (user: User): Result<string[]> => {
     try {
-      // Mock implementation for now
-      if (user.roles2?.some((role) => role.name === 'admin')) {
-        return {
-          data: [
-            'admin:roles:read',
-            'admin:users:read',
-            'admin:workspaces:read'
-          ]
+      if (isWasmInitialized) {
+        // Convert user to WASM format
+        const wasmUser: WasmUser = {
+          roles:
+            user.roles2?.map((role) => ({
+              name: role.name,
+              description: role.description,
+              permissions: role.permissions.map((perm) => ({
+                name: perm.name,
+                description: perm.description
+              }))
+            })) || []
         }
+
+        // Create a new service instance for this user
+        const userService = window.createAuthenticationService(wasmUser)
+
+        // Get user permissions
+        const permissions = userService.getUserPermissions()
+
+        return { data: permissions }
       }
+
+      // Fallback when WASM not initialized
       return { data: [] }
     } catch (error) {
+      console.error('Error in getUserPermissions:', error)
       return { error: String(error) }
     }
   }
@@ -148,8 +183,7 @@ export const AuthorizationProvider = ({
   const value = {
     isUserAllowed,
     getUserPermissions,
-    isInitialized: true,
-    service: undefined,
+    isInitialized: isWasmInitialized,
     error: undefined
   }
 

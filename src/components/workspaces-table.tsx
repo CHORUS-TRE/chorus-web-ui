@@ -130,9 +130,7 @@ export default function WorkspaceTable({
               href={`/workspaces/${workspace?.id}`}
               className="inline-flex w-max items-center justify-center gap-x-2 border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
             >
-              {workspace?.isMain && (
-                <HomeIcon className="h-4 w-4 text-secondary" />
-              )}
+              {workspace?.isMain && <HomeIcon className="h-4 w-4 text-white" />}
               {workspace?.name}
             </Link>
           </TableCell>

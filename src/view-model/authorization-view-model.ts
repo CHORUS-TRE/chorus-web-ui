@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { User } from '~/domain/model/user'
 
 export const useAuthorizationViewModel = () => {
   const { isUserAllowed, isInitialized } = useAuthorization()
@@ -11,26 +12,13 @@ export const useAuthorizationViewModel = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!user) {
-      setCanCreateWorkspace(false)
-      return
-    }
-
-    const checkAuthorization = async () => {
+    const checkAuthorization = async (user: User, permission: string) => {
       try {
-        if (isInitialized && user) {
-          // await service.initializeWasm()
-          // const authDataSource = new AuthorizationLocalDataSource(service)
-          // const authRepo = new AuthorizationRepositoryImpl(authDataSource)
-          // Ensure the service is initialized
-          const result = await isUserAllowed(user, 'workspaces:create')
-          console.log('User permissions:', result)
-          if (result.error) {
-            setError(result.error)
-          } else {
-            console.log('User is allowed to create workspace:', result.data)
-            setCanCreateWorkspace(result.data ?? false)
-          }
+        const result = await isUserAllowed(user, permission)
+        if (result.error) {
+          setError(result.error)
+        } else {
+          setCanCreateWorkspace(result.data ?? false)
         }
       } catch (err) {
         console.error('Error checking user permissions:', err)
@@ -38,8 +26,15 @@ export const useAuthorizationViewModel = () => {
       }
     }
 
-    checkAuthorization()
-  }, [isUserAllowed, user, isInitialized])
+    if (!user) {
+      setCanCreateWorkspace(false)
+      return
+    }
+
+    if (isInitialized && user) {
+      checkAuthorization(user, 'workspaces:create')
+    }
+  }, [user, isInitialized, isUserAllowed])
 
   return {
     canCreateWorkspace,

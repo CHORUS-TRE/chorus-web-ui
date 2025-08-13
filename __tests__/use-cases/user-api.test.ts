@@ -116,7 +116,8 @@ describe('UserUseCases', () => {
       if (requestCounter === 1) {
         expect(options?.method).toBe('POST')
         return Promise.resolve({
-          json: () => Promise.resolve({ result: { id: '2' } }),
+          json: () =>
+            Promise.resolve({ result: { user: MOCK_NEW_USER_API_RESPONSE } }),
           status: 201,
           ok: true
         })

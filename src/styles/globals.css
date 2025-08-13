@@ -151,3 +151,9 @@ nav li {
     @apply bg-background text-foreground;
   }
 }
+
+/*
+---break---
+*/
+
+@source '../node_modules/@llamaindex/chat-ui/**/*.{ts,tsx}';
