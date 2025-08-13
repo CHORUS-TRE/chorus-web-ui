@@ -1,37 +1,20 @@
 'use client'
 
 import { Shield, ShieldAlert } from 'lucide-react'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { RoleMatrix } from '@/components/ui/role-matrix'
-import { AuthorizationLocalDataSource } from '@/data/data-source/authorization-local-data-source'
 import { MockRoleDataSource } from '@/data/data-source/chorus-api/role-data-source'
-import { AuthorizationRepositoryImpl } from '@/data/repository/authorization-repository-impl'
 import { RoleRepositoryImpl } from '@/data/repository/role-repository-impl'
 import { Permission, Role } from '@/domain/model'
 import { RoleListUseCase } from '@/domain/use-cases/role/role-list'
-import { useAuthentication } from '@/providers/authentication-provider'
-import { useAuthorization } from '@/providers/authorization-provider'
+import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
 import { Button } from '~/components/ui/button'
 
 const RolesPage = () => {
-  const { user } = useAuthentication()
-  const { service, isInitialized, error } = useAuthorization()
   const [roles, setRoles] = useState<Role[]>([])
   const [permissions, setPermissions] = useState<Permission[]>([])
-  const [isAllowed, setIsAllowed] = useState<boolean | null>(null)
-
-  const authRepo = useMemo(() => {
-    const authDataSource = new AuthorizationLocalDataSource()
-    return new AuthorizationRepositoryImpl(authDataSource)
-  }, [])
-
-  useEffect(() => {
-    if (isInitialized && authRepo && user) {
-      const result = authRepo.isUserAllowed(user, 'admin:roles:read')
-      setIsAllowed(result.data ?? false)
-    }
-  }, [isInitialized, authRepo, user])
+  const { canCreateWorkspace } = useAuthorizationViewModel()
 
   useEffect(() => {
     // This part remains to fetch the data for display
@@ -54,26 +37,7 @@ const RolesPage = () => {
     fetchRoles()
   }, [])
 
-  if (error) {
-    return (
-      <div className="flex h-full w-full items-center justify-center text-red-500">
-        <ShieldAlert className="h-12 w-12" />
-        <p className="ml-4 text-xl">
-          Authorization Service failed to initialize.
-        </p>
-      </div>
-    )
-  }
-
-  if (!isInitialized || isAllowed === null) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <p className="text-xl">Checking permissions...</p>
-      </div>
-    )
-  }
-
-  if (!isAllowed) {
+  if (!canCreateWorkspace) {
     return (
       <div className="flex h-full w-full items-center justify-center text-red-500">
         <ShieldAlert className="h-12 w-12" />

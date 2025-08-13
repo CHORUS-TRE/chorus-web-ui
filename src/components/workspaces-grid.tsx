@@ -117,7 +117,7 @@ export default function WorkspacesGrid({
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-start gap-3 pr-2 text-white">
                     {workspace.isMain && workspace.userId === user?.id && (
-                      <HomeIcon className="h-6 w-6 text-secondary" />
+                      <HomeIcon className="h-6 w-6 text-white" />
                     )}
                     {!workspace.isMain && (
                       <Package className="h-6 w-6 flex-shrink-0" />

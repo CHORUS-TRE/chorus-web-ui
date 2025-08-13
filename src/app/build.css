@@ -2771,6 +2771,12 @@ nav li {
 ---break---
 */
 
+/*
+---break---
+*/
+
+@source '../node_modules/@llamaindex/chat-ui/**/*.{ts,tsx}';
+
 .file\:rounded-md::file-selector-button {
   border-radius: calc(var(--radius) - 2px);
 }

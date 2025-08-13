@@ -3,7 +3,6 @@ import { formatDistanceToNow } from 'date-fns'
 import {
   AppWindow,
   Bell,
-  Box,
   CircleHelp,
   Home,
   Package,
@@ -125,7 +124,7 @@ export function Header() {
                           <div className="mt-1 flex place-items-center gap-1">
                             {workspaceId &&
                             workspaceId === user?.workspaceId ? (
-                              <AppWindow className="h-4 w-4 text-secondary" />
+                              <AppWindow className="h-4 w-4 text-white" />
                             ) : (
                               <AppWindow className="h-4 w-4" />
                             )}

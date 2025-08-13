@@ -40,15 +40,15 @@ export default function WorkspacesPage() {
             <Package className="h-9 w-9 text-white" />
             Workspaces
           </h2>
-          {/* {canCreateWorkspace && ( */}
-          <Button
-            onClick={() => setCreateOpen(true)}
-            className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-          >
-            <CirclePlus className="h-4 w-4" />
-            Create Workspace
-          </Button>
-          {/* )} */}
+          {canCreateWorkspace && (
+            <Button
+              onClick={() => setCreateOpen(true)}
+              className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+            >
+              <CirclePlus className="h-4 w-4" />
+              Create Workspace
+            </Button>
+          )}
         </div>
       </div>
 
