@@ -78,26 +78,9 @@ describe('WorkbenchUseCases', () => {
         return Promise.resolve({
           json: () =>
             Promise.resolve({
-              result: { id: '1' }
+              result: { workbench: MOCK_API_RESPONSE }
             }),
           status: 201,
-          ok: true
-        })
-      }
-      // Second request: Getting the workbench details (GET)
-      else if (requestCounter === 2) {
-        expect(url).toContain('/1') // Should include the ID
-        // Check for GET method or undefined (as GET is the default)
-        const method = options?.method || 'GET'
-        expect(method).toBe('GET')
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve({
-              result: {
-                workbench: MOCK_API_RESPONSE
-              }
-            }),
-          status: 200,
           ok: true
         })
       }
@@ -116,7 +99,7 @@ describe('WorkbenchUseCases', () => {
     expect(response.error).toBeUndefined()
     expect(response.data).toBeDefined()
     expect(response.data).toMatchObject(MOCK_WORKBENCH_RESULT)
-    expect(global.fetch).toHaveBeenCalledTimes(2)
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   }, 10000)
 
   it('should get a workbench', async () => {
@@ -178,7 +161,7 @@ describe('WorkbenchUseCases', () => {
       Promise.resolve({
         json: () =>
           Promise.resolve({
-            result: [MOCK_API_RESPONSE]
+            result: { workbenchs: [MOCK_API_RESPONSE] }
           }),
         status: 200,
         ok: true
@@ -216,7 +199,7 @@ describe('WorkbenchDataSourceImpl', () => {
         Promise.resolve({
           json: () =>
             Promise.resolve({
-              result: { id: '1' }
+              result: { workbench: { id: '1' } }
             }),
           status: 201,
           ok: true
@@ -225,7 +208,7 @@ describe('WorkbenchDataSourceImpl', () => {
 
       const result = await dataSource.create(MOCK_API_CREATE)
 
-      expect(result).toEqual({ result: { id: '1' } })
+      expect(result).toEqual({ result: { workbench: { id: '1' } } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
@@ -343,7 +326,7 @@ describe('WorkbenchDataSourceImpl', () => {
         Promise.resolve({
           json: () =>
             Promise.resolve({
-              result: [MOCK_API_RESPONSE]
+              result: { workbenchs: [MOCK_API_RESPONSE] }
             }),
           status: 200,
           ok: true
@@ -352,7 +335,7 @@ describe('WorkbenchDataSourceImpl', () => {
 
       const result = await dataSource.list()
 
-      expect(result).toEqual({ result: [MOCK_API_RESPONSE] })
+      expect(result).toEqual({ result: { workbenchs: [MOCK_API_RESPONSE] } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
