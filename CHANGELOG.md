@@ -1,3 +1,5 @@
+## [1.5.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.5.0...v1.5.1) (2025-08-13)
+
 # [1.5.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.4.0...v1.5.0) (2025-08-12)
 
 
