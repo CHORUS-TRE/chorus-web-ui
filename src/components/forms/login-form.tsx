@@ -19,6 +19,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
 import { toast } from '../hooks/use-toast'
+import { storeRedirectUrl } from '@/utils/redirect-storage'
 
 const initialState: Result<User> = {
   data: undefined,
@@ -89,6 +90,13 @@ export default function LoginForm() {
       }
 
       if (response.data) {
+
+        // Store current page URL for redirect after OAuth completion
+        const currentPath = window.location.pathname + window.location.search
+        if (currentPath && currentPath !== '/') {
+          storeRedirectUrl(currentPath)
+        }
+
         const url = new URL(response.data)
         const currentState = url.searchParams.get('state') || ''
         url.searchParams.set('state', `${currentState}:${mode.openid.id}`)

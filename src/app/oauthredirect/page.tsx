@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { handleOAuthRedirect } from '@/view-model/authentication-view-model'
+import { getAndClearRedirectUrl, clearRedirectUrl } from '@/utils/redirect-storage'
 
 export default function OAuthRedirectPage() {
   const searchParams = useSearchParams()
@@ -31,9 +32,13 @@ export default function OAuthRedirectPage() {
             throw new Error(response.error)
           }
 
-          window.location.href = '/'
+          // Get stored redirect URL or fallback to home
+          const redirectUrl = getAndClearRedirectUrl() || '/'
+          window.location.href = redirectUrl
         } catch (error) {
           console.error('OAuth redirect error:', error)
+          clearRedirectUrl()
+
           if (error instanceof Error) {
             router.push(`/?error=${error.message}`)
           } else {
@@ -41,6 +46,8 @@ export default function OAuthRedirectPage() {
           }
         }
       } else {
+        // Clear any stored redirect URL on invalid request
+        clearRedirectUrl()
         router.push('/?error=Invalid authentication request')
       }
     }
