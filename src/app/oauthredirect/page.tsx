@@ -1,16 +1,17 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
+import {
+  clearRedirectUrl,
+  getAndClearRedirectUrl
+} from '@/utils/redirect-storage'
 import { handleOAuthRedirect } from '@/view-model/authentication-view-model'
-import { getAndClearRedirectUrl, clearRedirectUrl } from '@/utils/redirect-storage'
 
 export default function OAuthRedirectPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [message] = useState('Processing authentication...')
-
   useEffect(() => {
     async function processRedirect() {
       const code = searchParams.get('code')
@@ -54,6 +55,5 @@ export default function OAuthRedirectPage() {
 
     processRedirect()
   }, [searchParams, router])
-
-  return <div>{message}</div>
+  return null
 }

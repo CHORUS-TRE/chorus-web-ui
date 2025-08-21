@@ -10,6 +10,7 @@ import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { storeRedirectUrl } from '@/utils/redirect-storage'
 import {
   getAuthenticationModes,
   getOAuthUrl
@@ -19,7 +20,6 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
 import { toast } from '../hooks/use-toast'
-import { storeRedirectUrl } from '@/utils/redirect-storage'
 
 const initialState: Result<User> = {
   data: undefined,
@@ -90,7 +90,6 @@ export default function LoginForm() {
       }
 
       if (response.data) {
-
         // Store current page URL for redirect after OAuth completion
         const currentPath = window.location.pathname + window.location.search
         if (currentPath && currentPath !== '/') {
