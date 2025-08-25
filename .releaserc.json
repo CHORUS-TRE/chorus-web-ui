@@ -4,12 +4,31 @@
       "@semantic-release/commit-analyzer",
       {
         "releaseRules": [
-          {"type": "feat", "release": "minor"},
-          {"type": "fix", "release": "patch"},
-          {"type": "refactor", "release": "patch"},
-          {"type": "perf", "release": "patch"},
-          {"type": "docs", "scope": "README", "release": "patch"},
-          {"breaking": true, "release": "major"}
+          {
+            "type": "feat",
+            "release": "minor"
+          },
+          {
+            "type": "fix",
+            "release": "patch"
+          },
+          {
+            "type": "refactor",
+            "release": "patch"
+          },
+          {
+            "type": "perf",
+            "release": "patch"
+          },
+          {
+            "type": "docs",
+            "scope": "README",
+            "release": "patch"
+          },
+          {
+            "breaking": true,
+            "release": "major"
+          }
         ]
       }
     ],
@@ -18,16 +37,38 @@
       {
         "presetConfig": {
           "types": [
-            {"type": "feat", "section": "Features"},
-            {"type": "fix", "section": "Bug Fixes"},
-            {"type": "refactor", "section": "Code Refactoring"},
-            {"type": "perf", "section": "Performance Improvements"},
-            {"type": "docs", "section": "Documentation", "hidden": false}
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
+            },
+            {
+              "type": "refactor",
+              "section": "Code Refactoring"
+            },
+            {
+              "type": "perf",
+              "section": "Performance Improvements"
+            },
+            {
+              "type": "docs",
+              "section": "Documentation",
+              "hidden": false
+            }
           ]
         }
       }
     ],
     "@semantic-release/changelog",
+    [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/web-ui/"
+      }
+    ],
     [
       "@semantic-release/npm",
       {
@@ -39,12 +80,6 @@
       "@semantic-release/github",
       {
         "assets": "dist/*.tgz"
-      }
-    ],
-    [
-      "semantic-release-helm3",
-      {
-        "chartPath": "./charts/web-ui/"
       }
     ],
     [
