@@ -1,3 +1,11 @@
+# [1.6.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.5.1...v1.6.0) (2025-08-25)
+
+
+### Features
+
+* add layout component for OAuth redirect and refactor page handling ([6bd0b3a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6bd0b3a9d97c45a9cad5875b317ef54e47744968))
+* implement redirect URL management for OAuth flow ([b6dfc76](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b6dfc7678cb641bae84a5bed118023f822a49e5a))
+
 ## [1.5.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.5.0...v1.5.1) (2025-08-13)
 
 # [1.5.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.4.0...v1.5.0) (2025-08-12)
