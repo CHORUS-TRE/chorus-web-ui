@@ -1,15 +1,17 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
+import {
+  clearRedirectUrl,
+  getAndClearRedirectUrl
+} from '@/utils/redirect-storage'
 import { handleOAuthRedirect } from '@/view-model/authentication-view-model'
 
 export default function OAuthRedirectPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [message] = useState('Processing authentication...')
-
   useEffect(() => {
     async function processRedirect() {
       const code = searchParams.get('code')
@@ -31,9 +33,13 @@ export default function OAuthRedirectPage() {
             throw new Error(response.error)
           }
 
-          window.location.href = '/'
+          // Get stored redirect URL or fallback to home
+          const redirectUrl = getAndClearRedirectUrl() || '/'
+          window.location.href = redirectUrl
         } catch (error) {
           console.error('OAuth redirect error:', error)
+          clearRedirectUrl()
+
           if (error instanceof Error) {
             router.push(`/?error=${error.message}`)
           } else {
@@ -41,12 +47,13 @@ export default function OAuthRedirectPage() {
           }
         }
       } else {
+        // Clear any stored redirect URL on invalid request
+        clearRedirectUrl()
         router.push('/?error=Invalid authentication request')
       }
     }
 
     processRedirect()
   }, [searchParams, router])
-
-  return <div>{message}</div>
+  return null
 }

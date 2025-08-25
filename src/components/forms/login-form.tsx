@@ -10,6 +10,7 @@ import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { storeRedirectUrl } from '@/utils/redirect-storage'
 import {
   getAuthenticationModes,
   getOAuthUrl
@@ -89,6 +90,12 @@ export default function LoginForm() {
       }
 
       if (response.data) {
+        // Store current page URL for redirect after OAuth completion
+        const currentPath = window.location.pathname + window.location.search
+        if (currentPath && currentPath !== '/') {
+          storeRedirectUrl(currentPath)
+        }
+
         const url = new URL(response.data)
         const currentState = url.searchParams.get('state') || ''
         url.searchParams.set('state', `${currentState}:${mode.openid.id}`)

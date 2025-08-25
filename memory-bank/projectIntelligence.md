@@ -42,6 +42,27 @@
 
 -**Security Insight**: This pattern is effective but relies on the underlying action (`handleOAuthRedirect`) being safe for client-side execution (i.e., not exposing secrets). This is a key architectural preference to remember.
 
+**Deep Link Preservation During OAuth:**
+
+-**Challenge**: OAuth providers like Keycloak redirect to fixed URLs, losing the user's intended destination during authentication flow.
+
+-**Solution Pattern**: Client-side sessionStorage-based solution that preserves redirect URLs across OAuth flow:
+  - Capture current page URL before initiating OAuth
+  - Store securely in sessionStorage with validation
+  - Retrieve and use after OAuth completion
+  - Clean up automatically on errors or completion
+
+-**Security Considerations**:
+  - Validate redirect URLs to prevent open redirect attacks
+  - Ensure URLs are relative and don't contain external domains
+  - Handle edge cases like storage unavailability gracefully
+
+-**Implementation Details**:
+  - Created dedicated utility (`src/utils/redirect-storage.ts`) for URL management
+  - Modified login form to capture `window.location.pathname + window.location.search`
+  - Enhanced OAuth redirect handler to use stored URLs with fallback to home page
+  - Added comprehensive error handling and cleanup mechanisms
+
 ### Development Workflow Insights
 
 **Branch Strategy:**

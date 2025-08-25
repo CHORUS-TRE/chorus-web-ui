@@ -19,8 +19,17 @@
 - **Authentication Type System:** All authentication-related TypeScript type errors have been resolved with proper type safety maintained throughout the login flow.
 - **✅ Consistent Repository Pattern:** All repository create methods now follow the same pattern - returning the full entity object instead of just an ID.
 - **✅ Stable Test Suite:** All tests are passing (61 tests pass, 10 skipped, 11 test suites).
+- **✅ WASM Authorization Integration:** Successfully integrated the chorus-gatekeeper WASM module for real-time authorization checks.
+  - **WASM Loading:** Proper WASM module initialization with error handling and loading states
+  - **Authorization Functions:** Exposed `isUserAllowed` and `getUserPermissions` functions from WASM
+  - **TypeScript Integration:** Complete type safety with proper interfaces for WASM service
+  - **Context Provider:** Authorization context provides real WASM-based authorization throughout the app
 - **✅ Client-Side Authentication:** Authentication flow successfully refactored to client-side with background iframe integration.
   - **OAuth Redirect Handler:** The `/oauthredirect` route is now a fully client-side component (`page.tsx`). It directly calls the `handleOAuthRedirect` action, consolidating logic and removing the need for a separate server-side API handler for the callback. This pattern was chosen to simplify the flow.
+  - **✅ Deep Link Preservation:** Implemented client-side mechanism to preserve redirect URLs during OAuth flow
+    - Users visiting protected URLs (e.g., `/workspaces/143/sessions`) are now properly redirected back after Keycloak authentication
+    - Uses secure sessionStorage-based solution with comprehensive URL validation
+    - Handles edge cases including authentication errors and invalid URLs
 - **✅ OpenAPI API Update Complete:** All data sources and repositories updated to handle new nested API response structure.
   - **Data Source Updates:** All data sources (`authentication`, `user`, `app`, `workbench`, `app-instance`, `workspace`) updated to handle new API method names and request body formats
   - **Repository Updates:** All repositories updated to parse nested response objects (e.g., `response.result.users` instead of `response.result`)
@@ -31,16 +40,16 @@
 
 ### Active Development
 
-- **Gatekeeper Authorization Integration:**
-  - **Goal:** Replace the mock role management system with a real implementation by integrating the `chorus-gatekeeper` service.
-  - **User Experience:** UI elements will become visible or disabled based on real-time user permissions.
+- **Authorization UI Integration:**
+  - **Goal:** Connect the working WASM authorization system to UI components for dynamic permission-based rendering.
+  - **User Experience:** UI elements will become visible or disabled based on real-time user permissions from the WASM gatekeeper.
 
 ### Technical Implementation Status
 
-- **Authorization Domain Models:** TODO
-- **Gatekeeper Data Source:** TODO
-- **Gatekeeper Repository:** TODO
-- **UI Integration:** TODO
+- **✅ Authorization WASM Integration:** Complete - WASM module loads and exposes authorization functions
+- **✅ Authorization Provider:** Complete - Context provider with `isUserAllowed` and `getUserPermissions` functions
+- **✅ TypeScript Integration:** Complete - Full type safety for WASM interfaces
+- **UI Integration:** IN PROGRESS - Connect authorization context to UI components
 
 ### Next Concrete Features
 
@@ -69,10 +78,23 @@
 
 - **API Client Desynchronization:** The `k8sStatus` field was manually added to the generated `ChorusWorkbench.ts` client model. The OpenAPI client should be regenerated to ensure consistency.
 - **Backend API Response Structure Mismatch:** There may be a mismatch between the OpenAPI specification and actual backend API responses. The generated client expects nested structures (e.g., `{result: {apps: [...]}}`) but the backend may be returning direct arrays (e.g., `{result: [...]}`). This was temporarily resolved through error handling in the data source layer.
-- **Mock Role Data:** Role management currently uses placeholder/mock data pending integration with `chorus-gatekeeper` service.
+- **UI Authorization Integration:** While the WASM authorization system is working, UI components are not yet connected to use real permission checks for dynamic rendering.
 
 ## 5. Recent Fixes
 
+- **Test Suite Infrastructure (2025-01-13):** Comprehensive fix of failing test suite due to phantom dependencies and API structure mismatches.
+  - **Canvas Dependency Issue:** Removed phantom `@llamaindex/pdf-viewer` dependency that was causing canvas loading errors in test environment
+  - **API Response Structure:** Updated all test mocks to match the correct nested API response structure (`{ result: { workspace: {...} } }` instead of `{ result: { id: '1' } }`)
+  - **Complete Mock Objects:** Fixed test failures by providing complete mock objects that pass schema validation instead of minimal objects
+  - **Test Expectations:** Updated test expectations to match current repository behavior (single API call instead of create + get pattern)
+  - **TypeScript Configuration:** Added `ts-node` dependency for proper Jest TypeScript configuration parsing
+  - **Result:** All tests now pass consistently (61 tests pass, 10 skipped, 11 test suites)
+- **WASM Authorization Integration (2025-01-13):** Successfully integrated the chorus-gatekeeper WASM module for real authorization.
+  - **WASM Loading:** Implemented proper WASM module loading with error handling and initialization states
+  - **Function Exposure:** Successfully exposed `isUserAllowed` and `getUserPermissions` functions from WASM
+  - **TypeScript Safety:** Added complete TypeScript interfaces for WASM service and global functions
+  - **Authorization Context:** Updated authorization provider to use real WASM functions instead of mocks
+  - **React Hook Fix:** Resolved React Hook dependency warnings in authorization view model
 - **OpenAPI API Update Implementation (2025-01-28):** Comprehensive update to align frontend with new OpenAPI specification structure.
   - **Data Source Layer:** Updated all data sources to handle new API method names (`List` instead of `Get` for list operations) and request body formats (direct entity objects instead of wrapped objects)
   - **Repository Layer:** Updated all repositories to parse nested API responses (`response.result.users` instead of `response.result`)
@@ -83,12 +105,19 @@
 - **Workbench k8sStatus UI (2025-01-28):** Completed Phase 3 of the workbench status feature, integrating the polling hook and loading states into all relevant UI components.
 - **Workbench k8sStatus Backend (2025-01-28):** Completed Phase 1 & 2 of the workbench status feature, including domain model updates and the creation of the `useWorkbenchStatus` polling hook.
 - **OAuth Redirect Flow:** Refactored the OAuth redirect handler to be fully client-side. The logic from the `/api/auth/callback` route was moved directly into the `/oauthredirect/page.tsx` component, and the server-side route was deleted.
+- **OAuth Deep Link Enhancement (2025-01-30):** Implemented comprehensive client-side redirect mechanism for preserving user's intended destination during OAuth authentication flow.
+  - **Redirect Storage Utility:** Created `src/utils/redirect-storage.ts` with secure sessionStorage management
+  - **URL Validation:** Added comprehensive validation to prevent open redirect attacks
+  - **Login Form Enhancement:** Modified `handleOAuthLogin` to capture current page URL before OAuth redirect
+  - **Redirect Handler Update:** Enhanced `/oauthredirect/page.tsx` to retrieve and use stored URLs
+  - **Error Handling:** Added automatic cleanup of stored URLs on authentication failures
+  - **User Experience:** Users can now visit any protected URL and be redirected back after successful OAuth authentication
 
 ## 6. Upcoming Implementation
 
-**Gatekeeper Authorization Integration:**
+**Authorization UI Integration:**
 
-- **Timeline:** Starting now.
-- **Impact:** Will provide real, fine-grained access control across the application, replacing the current mock data system.
-- **Technical Approach:** Implement a new data layer for `gatekeeper` and integrate it with UI components to dynamically show/hide elements based on user permissions.
-- **Testing Strategy:** End-to-end testing of the authorization flow.
+- **Timeline:** Next priority.
+- **Impact:** Will provide dynamic UI rendering based on real user permissions from the WASM gatekeeper.
+- **Technical Approach:** Connect the working authorization context to UI components to dynamically show/hide elements based on user permissions.
+- **Current Status:** WASM integration complete, UI integration in progress.
