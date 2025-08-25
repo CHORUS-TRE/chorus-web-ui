@@ -71,6 +71,10 @@ The role management feature demonstrates the effectiveness of our architectural 
 - **Client-Side Context Providers:** Moving authentication state to React Context in `src/providers` for better client-side control
 - **Layout Composition:** Authenticated/unauthenticated layout components for clear separation of concerns
 - **Background Integration:** Iframe components for hosting user applications within the main interface
+- **OAuth Deep Link Preservation:** Client-side sessionStorage pattern for preserving user's intended destination during OAuth flow
+  - Utility-based approach with `src/utils/redirect-storage.ts`
+  - Comprehensive URL validation for security
+  - Automatic cleanup on completion or errors
 
 ## 4. Initial Data Loading for Client Providers
 

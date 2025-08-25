@@ -23,7 +23,14 @@
 - `zod`: Schema validation
 - `next-runtime-env`: Environment variable management
 
-## 4. Technical Constraints
+## 4. Browser APIs Used
+
+- **SessionStorage:** Used for client-side OAuth redirect URL preservation
+  - Temporary storage during authentication flow
+  - Automatic cleanup on completion or errors
+  - Graceful fallback when unavailable
+
+## 5. Technical Constraints
 
 - The application must interact with a pre-existing Chorus API, for which an OpenAPI specification is available.
 - All data fetching and mutations should ideally go through the defined architectural layers (Actions -> Use Cases -> Repositories -> Data Sources).

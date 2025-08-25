@@ -26,6 +26,10 @@
   - **Context Provider:** Authorization context provides real WASM-based authorization throughout the app
 - **✅ Client-Side Authentication:** Authentication flow successfully refactored to client-side with background iframe integration.
   - **OAuth Redirect Handler:** The `/oauthredirect` route is now a fully client-side component (`page.tsx`). It directly calls the `handleOAuthRedirect` action, consolidating logic and removing the need for a separate server-side API handler for the callback. This pattern was chosen to simplify the flow.
+  - **✅ Deep Link Preservation:** Implemented client-side mechanism to preserve redirect URLs during OAuth flow
+    - Users visiting protected URLs (e.g., `/workspaces/143/sessions`) are now properly redirected back after Keycloak authentication
+    - Uses secure sessionStorage-based solution with comprehensive URL validation
+    - Handles edge cases including authentication errors and invalid URLs
 - **✅ OpenAPI API Update Complete:** All data sources and repositories updated to handle new nested API response structure.
   - **Data Source Updates:** All data sources (`authentication`, `user`, `app`, `workbench`, `app-instance`, `workspace`) updated to handle new API method names and request body formats
   - **Repository Updates:** All repositories updated to parse nested response objects (e.g., `response.result.users` instead of `response.result`)
@@ -101,6 +105,13 @@
 - **Workbench k8sStatus UI (2025-01-28):** Completed Phase 3 of the workbench status feature, integrating the polling hook and loading states into all relevant UI components.
 - **Workbench k8sStatus Backend (2025-01-28):** Completed Phase 1 & 2 of the workbench status feature, including domain model updates and the creation of the `useWorkbenchStatus` polling hook.
 - **OAuth Redirect Flow:** Refactored the OAuth redirect handler to be fully client-side. The logic from the `/api/auth/callback` route was moved directly into the `/oauthredirect/page.tsx` component, and the server-side route was deleted.
+- **OAuth Deep Link Enhancement (2025-01-30):** Implemented comprehensive client-side redirect mechanism for preserving user's intended destination during OAuth authentication flow.
+  - **Redirect Storage Utility:** Created `src/utils/redirect-storage.ts` with secure sessionStorage management
+  - **URL Validation:** Added comprehensive validation to prevent open redirect attacks
+  - **Login Form Enhancement:** Modified `handleOAuthLogin` to capture current page URL before OAuth redirect
+  - **Redirect Handler Update:** Enhanced `/oauthredirect/page.tsx` to retrieve and use stored URLs
+  - **Error Handling:** Added automatic cleanup of stored URLs on authentication failures
+  - **User Experience:** Users can now visit any protected URL and be redirected back after successful OAuth authentication
 
 ## 6. Upcoming Implementation
 
