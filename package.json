@@ -68,6 +68,7 @@
     "react-admin": "^5.8.2",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.53.0",
+    "react-keyed-file-browser": "^1.14.0",
     "recharts": "^2.12.7",
     "sharp": "^0.33.5",
     "tailwind-merge": "^2.5.2",
