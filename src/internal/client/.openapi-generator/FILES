@@ -28,6 +28,8 @@ models/ChorusCreateUserReply.ts
 models/ChorusCreateUserResult.ts
 models/ChorusCreateWorkbenchReply.ts
 models/ChorusCreateWorkbenchResult.ts
+models/ChorusCreateWorkspaceFileReply.ts
+models/ChorusCreateWorkspaceFileResult.ts
 models/ChorusCreateWorkspaceReply.ts
 models/ChorusCreateWorkspaceResult.ts
 models/ChorusCredentials.ts
@@ -35,6 +37,7 @@ models/ChorusDeleteAppInstanceReply.ts
 models/ChorusDeleteAppReply.ts
 models/ChorusDeleteUserReply.ts
 models/ChorusDeleteWorkbenchReply.ts
+models/ChorusDeleteWorkspaceFileReply.ts
 models/ChorusDeleteWorkspaceReply.ts
 models/ChorusEnableTotpReply.ts
 models/ChorusEnableTotpRequest.ts
@@ -51,6 +54,8 @@ models/ChorusGetUserReply.ts
 models/ChorusGetUserResult.ts
 models/ChorusGetWorkbenchReply.ts
 models/ChorusGetWorkbenchResult.ts
+models/ChorusGetWorkspaceFileReply.ts
+models/ChorusGetWorkspaceFileResult.ts
 models/ChorusGetWorkspaceReply.ts
 models/ChorusGetWorkspaceResult.ts
 models/ChorusInitializeTenantRequest.ts
@@ -88,11 +93,14 @@ models/ChorusUpdateUserReply.ts
 models/ChorusUpdateUserResult.ts
 models/ChorusUpdateWorkbenchReply.ts
 models/ChorusUpdateWorkbenchResult.ts
+models/ChorusUpdateWorkspaceFileReply.ts
+models/ChorusUpdateWorkspaceFileResult.ts
 models/ChorusUpdateWorkspaceReply.ts
 models/ChorusUpdateWorkspaceResult.ts
 models/ChorusUser.ts
 models/ChorusWorkbench.ts
 models/ChorusWorkspace.ts
+models/ChorusWorkspaceFile.ts
 models/ProtobufAny.ts
 models/RpcStatus.ts
 models/index.ts
