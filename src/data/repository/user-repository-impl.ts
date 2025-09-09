@@ -35,8 +35,21 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      // Temporary mock data injection for UI development
-      userResult.data.roles2 = [MOCK_ROLES[0]]
+      // Convert API roles to internal role format for UI development
+      if (userResult && userResult.data.roles) {
+        // Map API roles to internal role format
+        const hasAdminRole = userResult.data.roles.some(
+          (role) => role.name === 'admin'
+        )
+        if (hasAdminRole) {
+          userResult.data.roles2 = [MOCK_ROLES[0]] // Admin role
+        } else {
+          userResult.data.roles2 = [MOCK_ROLES[2]] // User role
+        }
+      } else {
+        // Fallback for users without roles
+        userResult.data.roles2 = [MOCK_ROLES[2]]
+      }
 
       return { data: userResult.data }
     } catch (error) {
@@ -66,9 +79,20 @@ export class UserRepositoryImpl implements UserRepository {
         userResult.data.workspaceId = isMain.id
       }
 
-      // Temporary mock data injection for UI development
-      if (userResult) {
-        userResult.data.roles2 = [MOCK_ROLES[0]]
+      // Convert API roles to internal role format for UI development
+      if (userResult && userResult.data.roles) {
+        // Map API roles to internal role format
+        const hasAdminRole = userResult.data.roles.some(
+          (role) => role.name === 'admin'
+        )
+        if (hasAdminRole) {
+          userResult.data.roles2 = [MOCK_ROLES[0]] // Admin role
+        } else {
+          userResult.data.roles2 = [MOCK_ROLES[2]] // User role
+        }
+      } else {
+        // Fallback for users without roles
+        userResult.data.roles2 = [MOCK_ROLES[2]]
       }
       return { data: userResult.data }
     } catch (error) {
@@ -90,9 +114,20 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      // Temporary mock data injection for UI development
-      if (userResult) {
-        userResult.data.roles2 = [MOCK_ROLES[0]]
+      // Convert API roles to internal role format for UI development
+      if (userResult && userResult.data.roles) {
+        // Map API roles to internal role format
+        const hasAdminRole = userResult.data.roles.some(
+          (role) => role.name === 'admin'
+        )
+        if (hasAdminRole) {
+          userResult.data.roles2 = [MOCK_ROLES[0]] // Admin role
+        } else {
+          userResult.data.roles2 = [MOCK_ROLES[2]] // User role
+        }
+      } else {
+        // Fallback for users without roles
+        userResult.data.roles2 = [MOCK_ROLES[2]]
       }
       return { data: userResult.data }
     } catch (error) {
@@ -132,10 +167,23 @@ export class UserRepositoryImpl implements UserRepository {
           issues: usersResult.error.issues
         }
       }
-      // Temporary mock data injection for UI development
+      // Convert API roles to internal role format for UI development
       if (usersResult) {
         usersResult.data.forEach((user: User, index: number) => {
-          user.roles2 = [MOCK_ROLES[index % MOCK_ROLES.length]]
+          if (user.roles) {
+            // Map API roles to internal role format
+            const hasAdminRole = user.roles.some(
+              (role) => role.name === 'admin'
+            )
+            if (hasAdminRole) {
+              user.roles2 = [MOCK_ROLES[0]] // Admin role
+            } else {
+              user.roles2 = [MOCK_ROLES[2]] // User role
+            }
+          } else {
+            // Fallback for users without roles
+            user.roles2 = [MOCK_ROLES[index % MOCK_ROLES.length]]
+          }
         })
       }
 

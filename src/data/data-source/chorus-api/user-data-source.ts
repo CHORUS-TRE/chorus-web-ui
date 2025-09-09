@@ -39,7 +39,7 @@ class UserApiDataSourceImpl implements UserDataSource {
     return this.service.userServiceCreateUser({
       body: {
         ...chorusUser,
-        roles: ['admin'],
+        roles: [{ name: 'admin', context: {} }],
         status: 'active'
       }
     })

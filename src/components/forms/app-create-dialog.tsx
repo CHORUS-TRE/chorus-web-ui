@@ -279,7 +279,7 @@ export function AppCreateDialog({
   }, [open, form])
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       form.setValue('userId', user.id)
     }
   }, [user, form])

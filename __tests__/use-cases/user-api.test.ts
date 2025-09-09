@@ -18,12 +18,11 @@ const MOCK_USER_API_RESPONSE = {
   username: 'albert@chuv.ch',
   source: 'chorus',
   status: 'active',
-  roles: ['admin'],
+  roles: [{ name: 'admin', context: {} }],
   totpEnabled: true,
   createdAt: new Date('2023-10-01T00:00:00Z'),
   updatedAt: new Date('2023-10-01T00:00:00Z'),
-  passwordChanged: true,
-  source: 'chorus'
+  passwordChanged: true
 } as ChorusUserApi
 
 const { username, ...rest } = MOCK_USER_API_RESPONSE
@@ -46,7 +45,7 @@ const MOCK_NEW_USER_API_RESPONSE = {
   username: 'new.user@example.com',
   source: 'chorus',
   status: 'active',
-  roles: [],
+  roles: [{ name: 'user', context: {} }],
   totpEnabled: false,
   createdAt: new Date('2025-06-18T20:24:31.912Z'),
   updatedAt: new Date('2025-06-18T20:24:31.912Z'),

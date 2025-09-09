@@ -76,7 +76,7 @@ export function UserTable() {
             <TableCell>
               <UserEditDialog user={user} onUserUpdated={handleUserChange} />
               <UserDeleteDialog
-                userId={user.id}
+                userId={user.id || ''}
                 onUserDeleted={handleUserChange}
               />
             </TableCell>

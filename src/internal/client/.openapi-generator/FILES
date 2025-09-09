@@ -77,6 +77,7 @@ models/ChorusResetPasswordReply.ts
 models/ChorusResetTotpReply.ts
 models/ChorusResetTotpRequest.ts
 models/ChorusResetTotpResult.ts
+models/ChorusRole.ts
 models/ChorusSort.ts
 models/ChorusUpdateAppInstanceReply.ts
 models/ChorusUpdateAppInstanceResult.ts

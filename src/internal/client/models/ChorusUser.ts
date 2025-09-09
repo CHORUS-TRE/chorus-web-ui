@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusRole } from './ChorusRole'
+import {
+  ChorusRoleFromJSON,
+  ChorusRoleFromJSONTyped,
+  ChorusRoleToJSON
+} from './ChorusRole'
+
 /**
  *
  * @export
@@ -63,10 +70,10 @@ export interface ChorusUser {
   status?: string
   /**
    *
-   * @type {Array<string>}
+   * @type {Array<ChorusRole>}
    * @memberof ChorusUser
    */
-  roles?: Array<string>
+  roles?: Array<ChorusRole>
   /**
    *
    * @type {boolean}
@@ -121,7 +128,9 @@ export function ChorusUserFromJSONTyped(
     source: !exists(json, 'source') ? undefined : json['source'],
     password: !exists(json, 'password') ? undefined : json['password'],
     status: !exists(json, 'status') ? undefined : json['status'],
-    roles: !exists(json, 'roles') ? undefined : json['roles'],
+    roles: !exists(json, 'roles')
+      ? undefined
+      : (json['roles'] as Array<any>).map(ChorusRoleFromJSON),
     totpEnabled: !exists(json, 'totpEnabled') ? undefined : json['totpEnabled'],
     passwordChanged: !exists(json, 'passwordChanged')
       ? undefined
@@ -150,7 +159,10 @@ export function ChorusUserToJSON(value?: ChorusUser | null): any {
     source: value.source,
     password: value.password,
     status: value.status,
-    roles: value.roles,
+    roles:
+      value.roles === undefined
+        ? undefined
+        : (value.roles as Array<any>).map(ChorusRoleToJSON),
     totpEnabled: value.totpEnabled,
     passwordChanged: value.passwordChanged,
     createdAt:

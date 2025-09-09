@@ -19,17 +19,24 @@ export type UserStatus = `${UserStatusEnum}`
 export type UserRole = `${UserRoleEnum}`
 
 export const UserSchema = z.object({
-  id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  username: z.string(),
-  source: z.string(),
+  id: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  username: z.string().optional(),
+  source: z.string().optional(),
   password: z.string().optional(),
-  status: z.nativeEnum(UserStatusEnum),
-  roles: z.array(z.nativeEnum(UserRoleEnum)).optional(),
+  status: z.string().optional(),
+  roles: z
+    .array(
+      z.object({
+        name: z.string().optional(),
+        context: z.record(z.string()).optional()
+      })
+    )
+    .optional(),
   totpEnabled: z.boolean().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
   passwordChanged: z.boolean().optional(),
 
   // webui extra fields
