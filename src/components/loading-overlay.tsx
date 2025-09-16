@@ -9,23 +9,17 @@ interface LoadingOverlayProps {
   isLoading: boolean
   message?: string
   delay?: number
-  dismiss?: boolean
 }
 
 export function LoadingOverlay({
   isLoading,
-  delay = 500,
-  dismiss = false
+  message,
+  delay = 500
 }: LoadingOverlayProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
-
-    if (dismiss) {
-      setIsVisible(false)
-      return
-    }
 
     if (isLoading) {
       setIsVisible(true)
@@ -40,17 +34,17 @@ export function LoadingOverlay({
         clearTimeout(timeoutId)
       }
     }
-  }, [isLoading, delay, dismiss])
+  }, [isLoading, delay])
 
   if (!isVisible) return null
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="z-29 fixed inset-0 top-11 flex items-center justify-center bg-black/50"
       role="status"
       aria-label="Loading"
     >
-      <div className="justify-cente flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center justify-center gap-4">
         <div className="animate-pulse bg-transparent">
           <Image
             src={logo}
@@ -61,7 +55,9 @@ export function LoadingOverlay({
             priority
           />
         </div>
-        {/* <p className="text-white">{message}</p> */}
+        {message && (
+          <p className="max-w-md text-center text-white">{message}</p>
+        )}
       </div>
     </div>
   )

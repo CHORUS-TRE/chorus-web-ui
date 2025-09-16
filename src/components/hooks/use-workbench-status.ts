@@ -4,7 +4,7 @@ import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
 const POLLING_INTERVAL = 3000 // 3 seconds
-const TIMEOUT = 300000 // 5 minutes
+const TIMEOUT = 10 * 1000 // 10 seconds
 
 interface UseWorkbenchStatusProps {
   workbenchId?: string
@@ -21,6 +21,7 @@ export function useWorkbenchStatus({
 }: UseWorkbenchStatusProps) {
   const [isPolling, setIsPolling] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [timeoutError, setTimeoutError] = useState<string | null>(null)
 
   const stopPolling = useCallback(() => {
     setIsPolling(false)
@@ -50,6 +51,8 @@ export function useWorkbenchStatus({
 
     const intervalId = setInterval(poll, POLLING_INTERVAL)
     const timeoutId = setTimeout(() => {
+      const timeoutMessage = `Session loading timed out after ${Math.floor(TIMEOUT / 1000)} seconds.`
+      setTimeoutError(timeoutMessage)
       if (onTimeout) onTimeout()
       stopPolling()
     }, TIMEOUT)
@@ -65,7 +68,12 @@ export function useWorkbenchStatus({
 
   const startPolling = useCallback(() => {
     setIsPolling(true)
+    setError(null)
+    setTimeoutError(null)
   }, [])
 
-  return { isPolling, error, startPolling, stopPolling }
+  // Combine error and timeoutError for the main error state
+  const pollingError = error || timeoutError
+
+  return { isPolling, error: pollingError, startPolling, stopPolling }
 }
