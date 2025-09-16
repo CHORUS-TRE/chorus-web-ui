@@ -22,8 +22,7 @@ const MOCK_USER_API_RESPONSE = {
   totpEnabled: true,
   createdAt: new Date('2023-10-01T00:00:00Z'),
   updatedAt: new Date('2023-10-01T00:00:00Z'),
-  passwordChanged: true,
-  source: 'chorus'
+  passwordChanged: true
 } as ChorusUserApi
 
 const { username, ...rest } = MOCK_USER_API_RESPONSE
