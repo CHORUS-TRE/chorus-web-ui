@@ -19,13 +19,13 @@ export function Toolbar({
   return (
     <div className="flex items-center justify-between border-b bg-background p-4">
       <div className="flex items-center gap-2">
-        <Button onClick={onCreateFolder} size="sm">
+        <Button onClick={onCreateFolder} size="sm" variant="outline">
           <Plus className="mr-2 h-4 w-4" />
-          Nouveau
+          New folder
         </Button>
         <Button variant="outline" size="sm">
           <Upload className="mr-2 h-4 w-4" />
-          Importer
+          Import
         </Button>
       </div>
 
@@ -40,7 +40,7 @@ export function Toolbar({
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             size="sm"
             onClick={onToggleViewMode}
-            className="rounded-r-none"
+            className="rounded-r-none "
           >
             <List className="h-4 w-4" />
           </Button>

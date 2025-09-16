@@ -69,8 +69,8 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
       <div
         className={cn(
           'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm transition-colors hover:bg-muted/50',
-          isSelected && 'bg-primary/10 text-primary',
-          isCurrent && 'bg-primary/20 font-medium'
+          isSelected && 'bg-accent/10 text-accent',
+          isCurrent && 'bg-accent/20 font-medium'
         )}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={handleClick}
@@ -93,9 +93,9 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
         <div className="flex min-w-0 flex-1 items-center gap-1">
           {item.type === 'folder' ? (
             isExpanded ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0 text-accent" />
+              <FolderOpen className="h-4 w-4 flex-shrink-0 text-gray-400" />
             ) : (
-              <Folder className="h-4 w-4 flex-shrink-0 text-accent" />
+              <Folder className="h-4 w-4 flex-shrink-0 text-gray-400" />
             )
           ) : null}
           <span className="truncate">{item.name}</span>

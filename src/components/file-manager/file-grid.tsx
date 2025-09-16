@@ -29,7 +29,7 @@ interface FileGridProps {
 
 function getFileIcon(item: FileSystemItem) {
   if (item.type === 'folder') {
-    return <Folder className="h-5 w-5 text-primary" />
+    return <Folder className="h-5 w-5 text-gray-400" />
   }
 
   const ext = item.extension?.toLowerCase()
@@ -116,8 +116,8 @@ export function FileGrid({
             key={item.id}
             className={cn(
               'flex cursor-pointer flex-col items-center rounded-lg border p-3 transition-colors hover:bg-muted/50',
-              selectedItems.includes(item.id) && 'border-primary bg-primary/10',
-              dragOverItem === item.id && 'border-primary bg-primary/20'
+              selectedItems.includes(item.id) && 'border-accent bg-accent/10',
+              dragOverItem === item.id && 'border-accent bg-accent/20'
             )}
             onClick={(e) => handleItemClick(item, e)}
             draggable
@@ -143,7 +143,7 @@ export function FileGrid({
     <div className="overflow-auto">
       <div className="min-w-full">
         {/* Header */}
-        <div className="grid grid-cols-12 gap-4 border-b bg-muted/30 p-4 text-sm font-medium text-muted-foreground">
+        <div className="grid grid-cols-12 gap-4 border-b p-4 text-sm font-medium text-white">
           <div className="col-span-5">Name</div>
           <div className="col-span-2">Owner</div>
           <div className="col-span-3">Last opened</div>
@@ -157,8 +157,8 @@ export function FileGrid({
               key={item.id}
               className={cn(
                 'grid cursor-pointer grid-cols-12 gap-4 border-b p-4 transition-colors hover:bg-muted/50',
-                selectedItems.includes(item.id) && 'bg-primary/10',
-                dragOverItem === item.id && 'bg-primary/20'
+                selectedItems.includes(item.id) && 'bg-accent/10',
+                dragOverItem === item.id && 'bg-accent/20'
               )}
               onClick={(e) => handleItemClick(item, e)}
               draggable
@@ -171,13 +171,13 @@ export function FileGrid({
                 {getFileIcon(item)}
                 <span className="truncate">{item.name}</span>
               </div>
-              <div className="col-span-2 flex items-center text-sm text-muted-foreground">
+              <div className="col-span-2 flex items-center text-sm text-white/80">
                 {item.owner}
               </div>
-              <div className="col-span-3 flex items-center text-sm text-muted-foreground">
-                {formatDateUtil(item.modifiedAt)}
+              <div className="col-span-3 flex items-center text-sm text-white/80">
+                {formatDateUtil(item.modifiedAt.toISOString())}
               </div>
-              <div className="col-span-2 flex items-center justify-between text-sm text-muted-foreground">
+              <div className="col-span-2 flex items-center justify-between text-sm text-white/80">
                 <span>{formatFileSizeUtil(item.size)}</span>
                 <button className="rounded p-1 hover:bg-muted">
                   <MoreHorizontal className="h-4 w-4" />
