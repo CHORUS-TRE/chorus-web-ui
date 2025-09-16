@@ -5,15 +5,18 @@ import {
   Bell,
   CircleHelp,
   Home,
+  LaptopMinimal,
   Package,
+  PackageOpen,
   Search,
   Settings,
   Store,
   User
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
 import {
@@ -75,6 +78,20 @@ export function Header() {
   const [showAboutDialog, setShowAboutDialog] = useState(false)
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
+  )
+
+  const workspacesWithWorkbenches = useMemo(
+    () =>
+      workspaces?.filter((workspace) =>
+        workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
+      ),
+    [workspaces, workbenches]
+  )
+
+  const sortedWorkspacesWithWorkbenches = useMemo(
+    () =>
+      workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
+    [workspacesWithWorkbenches, workspaceId]
   )
 
   return (
@@ -277,6 +294,202 @@ export function Header() {
                       Admin
                     </div>
                   </NavLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
+                    <LaptopMinimal className="h-4 w-4" />
+                    <span>Open Sessions</span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                    {sortedWorkspacesWithWorkbenches?.length === 0 && (
+                      <div className="p-2 text-sm">No session found</div>
+                    )}
+                    <div className="flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto bg-black bg-opacity-85 p-2">
+                      <div className="flex flex-1 flex-col gap-1">
+                        {sortedWorkspacesWithWorkbenches
+                          ?.slice(
+                            0,
+                            Math.ceil(
+                              sortedWorkspacesWithWorkbenches.length / 2
+                            )
+                          )
+                          .map((workspace) => (
+                            <div
+                              className="mb-0 p-2"
+                              key={`dock-${workspace.id}`}
+                            >
+                              <Link
+                                href={`/workspaces/${workspace?.id}`}
+                                className={`text-muted hover:text-accent ${workspace.id === workspaceId ? 'text-accent/80' : ''}`}
+                              >
+                                <div
+                                  className={`mb-2 flex items-center gap-2 font-semibold`}
+                                >
+                                  {workspace.id === workspaceId ? (
+                                    <PackageOpen className="h-4 w-4" />
+                                  ) : (
+                                    <Package className="h-4 w-4" />
+                                  )}
+                                  {workspace?.id === user?.workspaceId
+                                    ? 'My Workspace'
+                                    : workspace?.shortName}
+                                </div>
+                              </Link>
+                              <div className="text-sm">
+                                {workbenches
+                                  ?.filter(
+                                    (workbench) =>
+                                      workbench.workspaceId === workspace?.id
+                                  )
+                                  .map(({ shortName, createdAt, id }) => (
+                                    <div
+                                      className="mb-2 h-full"
+                                      key={`${workspace?.id}-${id}`}
+                                    >
+                                      <Link
+                                        href={`/workspaces/${workspace?.id}/sessions/${id}`}
+                                        className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
+                                      >
+                                        <div className="text-sm font-semibold">
+                                          {/* <div className="flex items-center justify-between">
+                                            <div
+                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
+                                            >
+                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                                              {shortName}
+                                            </div>
+                                            <p className="text-xs text-muted">
+                                              {formatDistanceToNow(
+                                                createdAt ?? new Date()
+                                              )}{' '}
+                                              ago
+                                            </p>
+                                          </div> */}
+                                          <div className="text-xs text-muted">
+                                            <div className="flex items-center gap-2 text-xs">
+                                              <AppWindow className="h-4 w-4 shrink-0" />
+                                              {appInstances
+                                                ?.filter(
+                                                  (instance) =>
+                                                    workspace?.id ===
+                                                    instance.workspaceId
+                                                )
+                                                ?.filter(
+                                                  (instance) =>
+                                                    id === instance.workbenchId
+                                                )
+                                                .map(
+                                                  (instance) =>
+                                                    apps?.find(
+                                                      (app) =>
+                                                        app.id ===
+                                                        instance.appId
+                                                    )?.name || ''
+                                                )
+                                                .join(', ') || 'No apps'}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="mt-auto"></div>
+                                      </Link>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                      <div className="flex flex-1 flex-col gap-1">
+                        {sortedWorkspacesWithWorkbenches
+                          ?.slice(
+                            Math.ceil(
+                              sortedWorkspacesWithWorkbenches.length / 2
+                            )
+                          )
+                          .map((workspace) => (
+                            <div
+                              className="mb-0 p-2"
+                              key={`dock-${workspace.id}`}
+                            >
+                              <Link
+                                href={`/workspaces/${workspace?.id}`}
+                                className={`text-muted hover:text-accent ${workspace.id === workspaceId ? 'text-accent/80' : ''}`}
+                              >
+                                <div
+                                  className={`mb-2 flex items-center gap-2 font-semibold`}
+                                >
+                                  {workspace.id === workspaceId ? (
+                                    <PackageOpen className="h-4 w-4" />
+                                  ) : (
+                                    <Package className="h-4 w-4" />
+                                  )}
+                                  {workspace?.id === user?.workspaceId
+                                    ? 'Home'
+                                    : workspace?.shortName}
+                                </div>
+                              </Link>
+                              <div className="pl-1 text-sm">
+                                {workbenches
+                                  ?.filter(
+                                    (workbench) =>
+                                      workbench.workspaceId === workspace?.id
+                                  )
+                                  .map(({ shortName, createdAt, id }) => (
+                                    <div
+                                      className="mb-2 h-full"
+                                      key={`${workspace?.id}-${id}`}
+                                    >
+                                      <Link
+                                        href={`/workspaces/${workspace?.id}/sessions/${id}`}
+                                        className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
+                                      >
+                                        <div className="text-sm font-semibold">
+                                          {/* <div className="flex items-center justify-between">
+                                            <div
+                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
+                                            >
+                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
+                                              {shortName}
+                                            </div>
+                                            <p className="text-xs text-muted">
+                                              {formatDistanceToNow(createdAt)}{' '}
+                                              ago
+                                            </p>
+                                          </div> */}
+                                          <div className="text-xs text-muted">
+                                            <div className="flex items-center gap-2 text-xs">
+                                              <AppWindow className="h-4 w-4 shrink-0" />
+                                              {appInstances
+                                                ?.filter(
+                                                  (instance) =>
+                                                    workspace?.id ===
+                                                    instance.workspaceId
+                                                )
+                                                ?.filter(
+                                                  (instance) =>
+                                                    id === instance.workbenchId
+                                                )
+                                                .map(
+                                                  (instance) =>
+                                                    apps?.find(
+                                                      (app) =>
+                                                        app.id ===
+                                                        instance.appId
+                                                    )?.name || ''
+                                                )
+                                                .join(', ') || 'No apps'}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="mt-auto"></div>
+                                      </Link>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>

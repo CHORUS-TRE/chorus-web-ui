@@ -40,7 +40,7 @@ export function Toolbar({
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             size="sm"
             onClick={onToggleViewMode}
-            className="rounded-r-none "
+            className="rounded-r-none"
           >
             <List className="h-4 w-4" />
           </Button>
