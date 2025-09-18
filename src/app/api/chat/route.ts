@@ -28,17 +28,24 @@ export async function POST(req: Request) {
   //   includeUsage: true // Include usage information in streaming responses
   // })('qwen3:0.6b')
 
-  const model4 = createOpenAICompatible({
-    name: 'openwebui',
-    apiKey: process.env.NEXT_PUBLIC_OPEN_WEBUI_API_KEY,
-    baseURL: 'http://127.0.0.1:1028/api',
-    includeUsage: true, // Include usage information in streaming responses
+  // const model4 = createOpenAICompatible({
+  //   name: 'openwebui',
+  //   apiKey: process.env.NEXT_PUBLIC_OPEN_WEBUI_API_KEY,
+  //   baseURL: 'http://127.0.0.1:1028/api',
+  //   includeUsage: true, // Include usage information in streaming responses
+  // })('chorus')
 
-  })('qwen3:0.6b')
+
+  const model5 = createOpenAICompatible({
+    name: 'openwebui',
+    apiKey: process.env.NEXT_PUBLIC_OPENWEBUI_CHUV_API_KEY,
+    baseURL: 'https://chat.lforty.intranet.chuv/ollama/v1',
+    includeUsage: true, // Include usage information in streaming responses
+  })('Qwen3-8B')
 
 
     const result = streamText({
-      model: webSearch ? 'perplexity/sonar' : model4,
+      model: webSearch ? 'perplexity/sonar' : model5,
       // providerOptions: { ollama: { think: true } },
       messages: convertToModelMessages(messages),
       onError({ error }) {
