@@ -32,12 +32,6 @@ export interface ChorusGetWorkspaceFileResult {
    * @memberof ChorusGetWorkspaceFileResult
    */
   file?: ChorusWorkspaceFile
-  /**
-   *
-   * @type {Array<ChorusWorkspaceFile>}
-   * @memberof ChorusGetWorkspaceFileResult
-   */
-  children?: Array<ChorusWorkspaceFile>
 }
 
 /**
@@ -65,10 +59,7 @@ export function ChorusGetWorkspaceFileResultFromJSONTyped(
   return {
     file: !exists(json, 'file')
       ? undefined
-      : ChorusWorkspaceFileFromJSON(json['file']),
-    children: !exists(json, 'children')
-      ? undefined
-      : (json['children'] as Array<any>).map(ChorusWorkspaceFileFromJSON)
+      : ChorusWorkspaceFileFromJSON(json['file'])
   }
 }
 
@@ -82,10 +73,6 @@ export function ChorusGetWorkspaceFileResultToJSON(
     return null
   }
   return {
-    file: ChorusWorkspaceFileToJSON(value.file),
-    children:
-      value.children === undefined
-        ? undefined
-        : (value.children as Array<any>).map(ChorusWorkspaceFileToJSON)
+    file: ChorusWorkspaceFileToJSON(value.file)
   }
 }

@@ -67,6 +67,12 @@ export interface ChorusWorkspaceFile {
    * @memberof ChorusWorkspaceFile
    */
   content?: string
+  /**
+   *
+   * @type {Array<ChorusWorkspaceFile>}
+   * @memberof ChorusWorkspaceFile
+   */
+  children?: Array<ChorusWorkspaceFile>
 }
 
 /**
@@ -101,7 +107,10 @@ export function ChorusWorkspaceFileFromJSONTyped(
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
       : new Date(json['updatedAt']),
-    content: !exists(json, 'content') ? undefined : json['content']
+    content: !exists(json, 'content') ? undefined : json['content'],
+    children: !exists(json, 'children')
+      ? undefined
+      : (json['children'] as Array<any>).map(ChorusWorkspaceFileFromJSON)
   }
 }
 
@@ -124,6 +133,10 @@ export function ChorusWorkspaceFileToJSON(
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
       value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-    content: value.content
+    content: value.content,
+    children:
+      value.children === undefined
+        ? undefined
+        : (value.children as Array<any>).map(ChorusWorkspaceFileToJSON)
   }
 }

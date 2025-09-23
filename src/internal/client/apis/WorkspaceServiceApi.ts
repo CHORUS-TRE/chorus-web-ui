@@ -21,11 +21,14 @@ import type {
   ChorusGetWorkspaceFileReply,
   ChorusGetWorkspaceReply,
   ChorusListWorkspacesReply,
+  ChorusManageUserRoleInWorkspaceReply,
+  ChorusRemoveUserFromWorkspaceReply,
   ChorusUpdateWorkspaceFileReply,
   ChorusUpdateWorkspaceReply,
   ChorusWorkspace,
   ChorusWorkspaceFile,
-  RpcStatus
+  RpcStatus,
+  WorkspaceServiceManageUserRoleInWorkspaceBody
 } from '../models/index'
 import {
   ChorusCreateWorkspaceFileReplyFromJSON,
@@ -42,6 +45,10 @@ import {
   ChorusGetWorkspaceReplyToJSON,
   ChorusListWorkspacesReplyFromJSON,
   ChorusListWorkspacesReplyToJSON,
+  ChorusManageUserRoleInWorkspaceReplyFromJSON,
+  ChorusManageUserRoleInWorkspaceReplyToJSON,
+  ChorusRemoveUserFromWorkspaceReplyFromJSON,
+  ChorusRemoveUserFromWorkspaceReplyToJSON,
   ChorusUpdateWorkspaceFileReplyFromJSON,
   ChorusUpdateWorkspaceFileReplyToJSON,
   ChorusUpdateWorkspaceReplyFromJSON,
@@ -51,7 +58,9 @@ import {
   ChorusWorkspaceFileFromJSON,
   ChorusWorkspaceFileToJSON,
   RpcStatusFromJSON,
-  RpcStatusToJSON
+  RpcStatusToJSON,
+  WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSON,
+  WorkspaceServiceManageUserRoleInWorkspaceBodyToJSON
 } from '../models/index'
 
 export interface WorkspaceServiceCreateWorkspaceRequest {
@@ -87,6 +96,18 @@ export interface WorkspaceServiceListWorkspacesRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
+  filterWorkspaceIdsIn?: Array<string>
+}
+
+export interface WorkspaceServiceManageUserRoleInWorkspaceRequest {
+  id: string
+  userId: string
+  body: WorkspaceServiceManageUserRoleInWorkspaceBody
+}
+
+export interface WorkspaceServiceRemoveUserFromWorkspaceRequest {
+  id: string
+  userId: string
 }
 
 export interface WorkspaceServiceUpdateWorkspaceRequest {
@@ -532,6 +553,11 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
     }
 
+    if (requestParameters.filterWorkspaceIdsIn) {
+      queryParameters['filter.workspaceIdsIn'] =
+        requestParameters.filterWorkspaceIdsIn
+    }
+
     const headerParameters: runtime.HTTPHeaders = {}
 
     if (this.configuration && this.configuration.apiKey) {
@@ -563,6 +589,165 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusListWorkspacesReply> {
     const response = await this.workspaceServiceListWorkspacesRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint manages a user\'s role in a workspace
+   * Manage a user\'s role in a workspace
+   */
+  async workspaceServiceManageUserRoleInWorkspaceRaw(
+    requestParameters: WorkspaceServiceManageUserRoleInWorkspaceRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusManageUserRoleInWorkspaceReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workspaceServiceManageUserRoleInWorkspace.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workspaceServiceManageUserRoleInWorkspace.'
+      )
+    }
+
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling workspaceServiceManageUserRoleInWorkspace.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{id}/user/{userId}/role`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: WorkspaceServiceManageUserRoleInWorkspaceBodyToJSON(
+          requestParameters.body
+        )
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusManageUserRoleInWorkspaceReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint manages a user\'s role in a workspace
+   * Manage a user\'s role in a workspace
+   */
+  async workspaceServiceManageUserRoleInWorkspace(
+    requestParameters: WorkspaceServiceManageUserRoleInWorkspaceRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusManageUserRoleInWorkspaceReply> {
+    const response = await this.workspaceServiceManageUserRoleInWorkspaceRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint removes a user from a workspace
+   * Remove a user from a workspace
+   */
+  async workspaceServiceRemoveUserFromWorkspaceRaw(
+    requestParameters: WorkspaceServiceRemoveUserFromWorkspaceRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusRemoveUserFromWorkspaceReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workspaceServiceRemoveUserFromWorkspace.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workspaceServiceRemoveUserFromWorkspace.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{id}/user/{userId}`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusRemoveUserFromWorkspaceReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint removes a user from a workspace
+   * Remove a user from a workspace
+   */
+  async workspaceServiceRemoveUserFromWorkspace(
+    requestParameters: WorkspaceServiceRemoveUserFromWorkspaceRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusRemoveUserFromWorkspaceReply> {
+    const response = await this.workspaceServiceRemoveUserFromWorkspaceRaw(
       requestParameters,
       initOverrides
     )
