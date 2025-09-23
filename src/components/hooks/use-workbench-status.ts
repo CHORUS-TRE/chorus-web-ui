@@ -42,10 +42,10 @@ export function useWorkbenchStatus({
       }
 
       if (result.data) {
-        if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
+        // if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
           if (onSuccess) onSuccess(result.data)
           stopPolling()
-        }
+        // }
       }
     }
 
