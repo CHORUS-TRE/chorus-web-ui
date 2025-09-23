@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.0...v1.7.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* Update background-iframe.tsx env ([76a3f83](https://github.com/CHORUS-TRE/chorus-web-ui/commit/76a3f83bf365dde36587294292e1112ad6534292))
+
 # [1.7.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.6.0...v1.7.0) (2025-09-23)
 
 
