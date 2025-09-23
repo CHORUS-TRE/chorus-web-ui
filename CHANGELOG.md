@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.1...v1.7.2) (2025-09-23)
+
+
+### Bug Fixes
+
+* remove check for status ([4b14716](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4b147165d5984ca7314c7eb65bc0956668d19b2b))
+
 ## [1.7.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.0...v1.7.1) (2025-09-23)
 
 
