@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.6.0...v1.7.0) (2025-09-23)
+
+
+### Features
+
+* enhance BackgroundIframe and LoadingOverlay components with improved error handling and loading states ([aaf2e75](https://github.com/CHORUS-TRE/chorus-web-ui/commit/aaf2e75392565fc09b9e0a724633233c18af48bf))
+
 # [1.6.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.5.1...v1.6.0) (2025-08-25)
 
 
