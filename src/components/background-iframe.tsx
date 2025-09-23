@@ -1,5 +1,6 @@
 'use client'
 
+import { env } from 'next-runtime-env'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -53,14 +54,15 @@ export default function BackgroundIframe() {
   }, [background?.sessionId, startPolling, stopPolling, pollingError])
 
   // Memoize URL computation to prevent unnecessary recalculations
+  const apiBase = env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
   const computedUrl = useMemo(() => {
     if (!background?.sessionId) return null
 
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
-    const baseAPIURL = `${process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL}/api/rest/v1`
+    const baseAPIURL = `${apiBase}/api/rest/v1`
     return `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
-  }, [background?.sessionId])
+  }, [background?.sessionId, apiBase])
 
   // URL initialization effect
   useEffect(() => {
