@@ -1,20 +1,20 @@
 'use client'
 
-import { AlertCircle } from 'lucide-react'
-import { env } from 'next-runtime-env'
+import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
 import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { toast } from '~/components/hooks/use-toast'
 
 import { LoadingOverlay } from './loading-overlay'
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export default function BackgroundIframe() {
   const { user } = useAuthentication()
   const { background } = useAppState()
+  const pathname = usePathname()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
@@ -42,13 +42,15 @@ export default function BackgroundIframe() {
 
   // Start polling when sessionId is available
   useEffect(() => {
+    if (pollingError) return
+
     if (background?.sessionId) {
       startPolling()
     }
     return () => {
       stopPolling()
     }
-  }, [background?.sessionId, startPolling, stopPolling])
+  }, [background?.sessionId, startPolling, stopPolling, pollingError])
 
   // Memoize URL computation to prevent unnecessary recalculations
   const computedUrl = useMemo(() => {
@@ -56,7 +58,7 @@ export default function BackgroundIframe() {
 
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
-    const baseAPIURL = `${env('NEXT_PUBLIC_DATA_SOURCE_API_URL')}/api/rest/v1`
+    const baseAPIURL = `${process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL}/api/rest/v1`
     return `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
   }, [background?.sessionId])
 
@@ -94,26 +96,48 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
-  if (!background?.sessionId || !user) return null
-
   const isReady = workbench?.k8sStatus === K8sWorkbenchStatus.RUNNING
+
+  // Check if URL matches workspaces/[wid]/sessions/[sid] pattern
+  const isSessionPage = useMemo(() => {
+    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+    return sessionPageRegex.test(pathname)
+  }, [pathname])
+
+  // Show loading toast when polling starts
+  useEffect(() => {
+    if (isPolling && !isReady) {
+      toast({
+        title: 'Loading session...',
+        description: 'Please wait while we prepare your workspace.',
+        duration: 10000 // 10 seconds
+      })
+    }
+  }, [isPolling, isReady])
+
+  // Show error toast when polling fails
+  useEffect(() => {
+    if (pollingError) {
+      toast({
+        title: 'Session failed to load',
+        description: pollingError,
+        variant: 'destructive'
+      })
+    }
+  }, [pollingError])
+
+  if (!background?.sessionId || !user) return null
 
   return (
     <>
-      <LoadingOverlay
-        isLoading={isPolling && !isReady}
-        message="Loading session, this can take a few minutes..."
-        dismiss={pollingError ? true : false}
-      />
+      {isSessionPage && (
+        <LoadingOverlay
+          isLoading={(isPolling && !isReady) || pollingError !== null}
+        />
+      )}
       {pollingError && (
-        <div className="fixed inset-0 top-11 z-30 flex items-center justify-center bg-background/80">
-          <Alert variant="default" className="w-[400px] text-white">
-            <AlertCircle className="mt-1 h-4 w-4 text-white" />
-            <AlertTitle>Session did not load correctly</AlertTitle>
-            <AlertDescription className="text-white">
-              {pollingError}
-            </AlertDescription>
-          </Alert>
+        <div className="fixed bottom-3 right-3 z-30 text-gray-400">
+          {pollingError}
         </div>
       )}
       {isReady && (
