@@ -98,7 +98,7 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
-  const isReady = workbench?.k8sStatus === K8sWorkbenchStatus.RUNNING
+  // const isReady = workbench?.k8sStatus === K8sWorkbenchStatus.RUNNING
 
   // Check if URL matches workspaces/[wid]/sessions/[sid] pattern
   const isSessionPage = useMemo(() => {
@@ -108,14 +108,14 @@ export default function BackgroundIframe() {
 
   // Show loading toast when polling starts
   useEffect(() => {
-    if (isPolling && !isReady) {
+    if (isPolling) {
       toast({
         title: 'Loading session...',
         description: 'Please wait while we prepare your workspace.',
         duration: 10000 // 10 seconds
       })
     }
-  }, [isPolling, isReady])
+  }, [isPolling])
 
   // Show error toast when polling fails
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function BackgroundIframe() {
     <>
       {isSessionPage && (
         <LoadingOverlay
-          isLoading={(isPolling && !isReady) || pollingError !== null}
+          isLoading={(isPolling) || pollingError !== null}
         />
       )}
       {pollingError && (
@@ -142,7 +142,7 @@ export default function BackgroundIframe() {
           {pollingError}
         </div>
       )}
-      {isReady && (
+      {workbench && (
         <iframe
           title="Application Workspace"
           src={url ? url : 'about:blank'}
