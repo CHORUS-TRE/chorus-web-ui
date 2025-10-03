@@ -24,13 +24,13 @@ export interface ChorusWorkspaceFile {
    * @type {string}
    * @memberof ChorusWorkspaceFile
    */
-  name?: string
+  path?: string
   /**
    *
    * @type {string}
    * @memberof ChorusWorkspaceFile
    */
-  path?: string
+  name?: string
   /**
    *
    * @type {boolean}
@@ -54,12 +54,6 @@ export interface ChorusWorkspaceFile {
    * @type {Date}
    * @memberof ChorusWorkspaceFile
    */
-  createdAt?: Date
-  /**
-   *
-   * @type {Date}
-   * @memberof ChorusWorkspaceFile
-   */
   updatedAt?: Date
   /**
    *
@@ -67,12 +61,6 @@ export interface ChorusWorkspaceFile {
    * @memberof ChorusWorkspaceFile
    */
   content?: string
-  /**
-   *
-   * @type {Array<ChorusWorkspaceFile>}
-   * @memberof ChorusWorkspaceFile
-   */
-  children?: Array<ChorusWorkspaceFile>
 }
 
 /**
@@ -96,21 +84,15 @@ export function ChorusWorkspaceFileFromJSONTyped(
     return json
   }
   return {
-    name: !exists(json, 'name') ? undefined : json['name'],
     path: !exists(json, 'path') ? undefined : json['path'],
+    name: !exists(json, 'name') ? undefined : json['name'],
     isDirectory: !exists(json, 'isDirectory') ? undefined : json['isDirectory'],
     size: !exists(json, 'size') ? undefined : json['size'],
     mimeType: !exists(json, 'mimeType') ? undefined : json['mimeType'],
-    createdAt: !exists(json, 'createdAt')
-      ? undefined
-      : new Date(json['createdAt']),
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
       : new Date(json['updatedAt']),
-    content: !exists(json, 'content') ? undefined : json['content'],
-    children: !exists(json, 'children')
-      ? undefined
-      : (json['children'] as Array<any>).map(ChorusWorkspaceFileFromJSON)
+    content: !exists(json, 'content') ? undefined : json['content']
   }
 }
 
@@ -124,19 +106,13 @@ export function ChorusWorkspaceFileToJSON(
     return null
   }
   return {
-    name: value.name,
     path: value.path,
+    name: value.name,
     isDirectory: value.isDirectory,
     size: value.size,
     mimeType: value.mimeType,
-    createdAt:
-      value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
       value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-    content: value.content,
-    children:
-      value.children === undefined
-        ? undefined
-        : (value.children as Array<any>).map(ChorusWorkspaceFileToJSON)
+    content: value.content
   }
 }

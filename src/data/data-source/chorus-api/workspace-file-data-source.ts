@@ -6,6 +6,7 @@ import {
   ChorusCreateWorkspaceFileReply,
   ChorusDeleteWorkspaceFileReply,
   ChorusGetWorkspaceFileReply,
+  ChorusListWorkspaceFilesReply,
   ChorusUpdateWorkspaceFileReply,
   Configuration,
   WorkspaceServiceApi
@@ -22,6 +23,10 @@ interface WorkspaceFileDataSource {
     workspaceId: string,
     path: string
   ) => Promise<ChorusGetWorkspaceFileReply>
+  list: (
+    workspaceId: string,
+    path: string
+  ) => Promise<ChorusListWorkspaceFilesReply>
   update: (
     workspaceId: string,
     oldPath: string,
@@ -59,6 +64,13 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
 
   get(workspaceId: string, path: string): Promise<ChorusGetWorkspaceFileReply> {
     return this.service.workspaceServiceGetWorkspaceFile({
+      workspaceId,
+      path
+    })
+  }
+
+  list(workspaceId: string, path: string): Promise<ChorusListWorkspaceFilesReply> {
+    return this.service.workspaceServiceListWorkspaceFiles({
       workspaceId,
       path
     })

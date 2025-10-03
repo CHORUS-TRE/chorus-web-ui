@@ -89,10 +89,10 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
     path: string
   ): Promise<Result<WorkspaceFile[]>> {
     try {
-      const response = await this.dataSource.get(workspaceId, path)
+      const response = await this.dataSource.list(workspaceId, path)
 
-      if (response.result?.children) {
-        const workspaceFiles = response.result.children.map((file) =>
+      if (response.result?.files) {
+        const workspaceFiles = response.result.files.map((file) =>
           fromChorusWorkspaceFile(file)
         )
         return { data: workspaceFiles }

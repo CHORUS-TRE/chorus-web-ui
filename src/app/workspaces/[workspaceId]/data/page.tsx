@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ActionBar } from '~/components/file-manager/action-bar'
 import { Breadcrumb } from '~/components/file-manager/breadcrumb'
@@ -17,6 +17,10 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { useFileSystem } from '~/hooks/use-file-system'
+import {
+  workspaceFileCreate,
+  workspaceFileList
+} from '~/view-model/workspace-file-view-model'
 
 export default function FileManager() {
   const {
@@ -37,6 +41,22 @@ export default function FileManager() {
 
   const rootChildren = getChildren('root')
   const currentChildren = getChildren(state.currentFolderId)
+
+  useEffect(() => {
+    workspaceFileCreate('1', {
+      path: 'folder2/uploaded2.txt',
+      name: 'upload.txt',
+      isDirectory: false,
+      mimeType: 'text/plain',
+      content: ''
+    }).then((res) => {
+      console.log(res)
+    })
+
+    workspaceFileList('1', '').then((res) => {
+      console.log(res)
+    })
+  }, [])
 
   // Build breadcrumb path
   const buildPath = (
@@ -76,7 +96,7 @@ export default function FileManager() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-background text-white">
+    <div className="flex h-screen flex-col text-white">
       {/* Header */}
       {/* <div className="flex items-center justify-between border-b bg-background p-4 text-white">
         <div className="flex items-center gap-4">
@@ -110,7 +130,7 @@ export default function FileManager() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden text-white">
         {/* Sidebar */}
-        <div className="flex w-64 flex-col overflow-hidden border-r bg-sidebar">
+        <div className="flex w-64 flex-col overflow-hidden border-r">
           <div className="border-b p-4">
             <h2 className="font-medium text-sidebar-foreground text-white">
               My data

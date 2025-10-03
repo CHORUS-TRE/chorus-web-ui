@@ -20,6 +20,7 @@ import type {
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceFileReply,
   ChorusGetWorkspaceReply,
+  ChorusListWorkspaceFilesReply,
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
@@ -43,6 +44,8 @@ import {
   ChorusGetWorkspaceFileReplyToJSON,
   ChorusGetWorkspaceReplyFromJSON,
   ChorusGetWorkspaceReplyToJSON,
+  ChorusListWorkspaceFilesReplyFromJSON,
+  ChorusListWorkspaceFilesReplyToJSON,
   ChorusListWorkspacesReplyFromJSON,
   ChorusListWorkspacesReplyToJSON,
   ChorusManageUserRoleInWorkspaceReplyFromJSON,
@@ -86,6 +89,11 @@ export interface WorkspaceServiceGetWorkspaceRequest {
 }
 
 export interface WorkspaceServiceGetWorkspaceFileRequest {
+  workspaceId: string
+  path: string
+}
+
+export interface WorkspaceServiceListWorkspaceFilesRequest {
   workspaceId: string
   path: string
 }
@@ -225,7 +233,7 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workspaces/{workspaceId}/files`.replace(
+        path: `/api/rest/v1/workspaces/{workspaceId}/file`.replace(
           `{${'workspaceId'}}`,
           encodeURIComponent(String(requestParameters.workspaceId))
         ),
@@ -353,7 +361,7 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workspaces/{workspaceId}/files/{path}`
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}`
           .replace(
             `{${'workspaceId'}}`,
             encodeURIComponent(String(requestParameters.workspaceId))
@@ -447,8 +455,8 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint lists all files at given path within a workspace
-   * List files in a workspace
+   * This endpoint retrieves a file at the specified path within a workspace
+   * Get a file in a workspace
    */
   async workspaceServiceGetWorkspaceFileRaw(
     requestParameters: WorkspaceServiceGetWorkspaceFileRequest,
@@ -485,7 +493,7 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workspaces/{workspaceId}/files/{path}`
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}`
           .replace(
             `{${'workspaceId'}}`,
             encodeURIComponent(String(requestParameters.workspaceId))
@@ -507,14 +515,89 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint lists all files at given path within a workspace
-   * List files in a workspace
+   * This endpoint retrieves a file at the specified path within a workspace
+   * Get a file in a workspace
    */
   async workspaceServiceGetWorkspaceFile(
     requestParameters: WorkspaceServiceGetWorkspaceFileRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetWorkspaceFileReply> {
     const response = await this.workspaceServiceGetWorkspaceFileRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint lists all files at given path within a workspace
+   * List files in a workspace at a specified path
+   */
+  async workspaceServiceListWorkspaceFilesRaw(
+    requestParameters: WorkspaceServiceListWorkspaceFilesRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListWorkspaceFilesReply>> {
+    if (
+      requestParameters.workspaceId === null ||
+      requestParameters.workspaceId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'workspaceId',
+        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceServiceListWorkspaceFiles.'
+      )
+    }
+
+    if (
+      requestParameters.path === null ||
+      requestParameters.path === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'path',
+        'Required parameter requestParameters.path was null or undefined when calling workspaceServiceListWorkspaceFiles.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{workspaceId}/files/{path}`
+          .replace(
+            `{${'workspaceId'}}`,
+            encodeURIComponent(String(requestParameters.workspaceId))
+          )
+          .replace(
+            `{${'path'}}`,
+            encodeURIComponent(String(requestParameters.path))
+          ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListWorkspaceFilesReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint lists all files at given path within a workspace
+   * List files in a workspace at a specified path
+   */
+  async workspaceServiceListWorkspaceFiles(
+    requestParameters: WorkspaceServiceListWorkspaceFilesRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListWorkspaceFilesReply> {
+    const response = await this.workspaceServiceListWorkspaceFilesRaw(
       requestParameters,
       initOverrides
     )
@@ -865,7 +948,7 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workspaces/{workspaceId}/files/{oldPath}`
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{oldPath}`
           .replace(
             `{${'workspaceId'}}`,
             encodeURIComponent(String(requestParameters.workspaceId))

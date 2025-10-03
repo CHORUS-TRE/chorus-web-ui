@@ -68,6 +68,8 @@ models/ChorusListUsersReply.ts
 models/ChorusListUsersResult.ts
 models/ChorusListWorkbenchsReply.ts
 models/ChorusListWorkbenchsResult.ts
+models/ChorusListWorkspaceFilesReply.ts
+models/ChorusListWorkspaceFilesResult.ts
 models/ChorusListWorkspacesReply.ts
 models/ChorusListWorkspacesResult.ts
 models/ChorusLogoutReply.ts
