@@ -3,12 +3,12 @@
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
-import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
+import { useUrlProbing } from '@/components/hooks/use-url-probing'
+import { Workbench } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { toast } from '~/components/hooks/use-toast'
 
+import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'
 
 export default function BackgroundIframe() {
@@ -18,73 +18,26 @@ export default function BackgroundIframe() {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
   const [url, setUrl] = useState<string | null>(null)
-  const [workbench, setWorkbench] = useState<Workbench | null>(null)
 
-  const {
-    isPolling,
-    error: pollingError,
-    startPolling,
-    stopPolling
-  } = useWorkbenchStatus({
-    workbenchId: background?.sessionId,
-    onSuccess: (fetchedWorkbench) => {
-      setWorkbench(fetchedWorkbench)
-    },
-    onError: (error) => {
-      console.error('Polling failed:', error)
-      stopPolling()
-    },
-    onTimeout: () => {
-      console.error('Polling timed out.')
-      stopPolling()
-    }
-  })
+  const { isLoading, error } = useUrlProbing(background?.sessionId)
 
-  // Start polling when sessionId is available
-  useEffect(() => {
-    if (pollingError) return
-
-    if (background?.sessionId) {
-      startPolling()
-    }
-    return () => {
-      stopPolling()
-    }
-  }, [background?.sessionId, startPolling, stopPolling, pollingError])
-
-  // Memoize URL computation to prevent unnecessary recalculations
-  const computedUrl = useMemo(() => {
-    if (!background?.sessionId) return null
-
-    const currentLocation = window.location
-    const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
-    const baseAPIURL = `${process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL}/api/rest/v1`
-    return `${baseAPIURL ? baseAPIURL : currentURL}/workbenchs/${background.sessionId}/stream/`
-  }, [background?.sessionId])
+  const { status: workbenchStatus } = useWorkbenchStatus(background?.sessionId)
 
   // URL initialization effect
   useEffect(() => {
+    if (!background?.sessionId) return
+
+    const currentLocation = window.location
+    const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
+
+    const baseAPIURL = process.env.NEXT_PUBLIC_API_URL
+    const computedUrl = `${baseAPIURL ? baseAPIURL : currentURL}${process.env.NEXT_PUBLIC_API_SUFFIX}/workbenchs/${background.sessionId}/stream/`
+
     if (computedUrl !== url) {
       setUrl(computedUrl)
     }
-  }, [computedUrl, url])
+  }, [background?.sessionId, url])
 
-  // Focus management effect - only run when URL changes
-  useEffect(() => {
-    if (!url) return
-
-    const iframe = iFrameRef.current
-    if (!iframe) return
-
-    iframe.focus()
-    const focusTimeout = setTimeout(() => {
-      iframe.focus()
-    }, 1 * 1000)
-
-    return () => focusTimeout && clearTimeout(focusTimeout)
-  }, [url])
-
-  // Memoize handleLoad to prevent iframe re-renders
   const handleLoad = useCallback(() => {
     const handleMouseOver = (e: MouseEvent) => {
       iFrameRef.current?.focus()
@@ -96,64 +49,42 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
-  const isReady = workbench?.k8sStatus === K8sWorkbenchStatus.RUNNING
-
   // Check if URL matches workspaces/[wid]/sessions/[sid] pattern
   const isSessionPage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
     return sessionPageRegex.test(pathname)
   }, [pathname])
 
-  // Show loading toast when polling starts
-  useEffect(() => {
-    if (isPolling && !isReady) {
-      toast({
-        title: 'Loading session...',
-        description: 'Please wait while we prepare your workspace.',
-        duration: 10000 // 10 seconds
-      })
-    }
-  }, [isPolling, isReady])
-
-  // Show error toast when polling fails
-  useEffect(() => {
-    if (pollingError) {
-      toast({
-        title: 'Session failed to load',
-        description: pollingError,
-        variant: 'destructive'
-      })
-    }
-  }, [pollingError])
-
   if (!background?.sessionId || !user) return null
 
   return (
     <>
-      {isSessionPage && (
-        <LoadingOverlay
-          isLoading={(isPolling && !isReady) || pollingError !== null}
-        />
-      )}
-      {pollingError && (
+      {isSessionPage && isLoading && <LoadingOverlay isLoading={isLoading} />}
+
+      {error && (
         <div className="fixed bottom-3 right-3 z-30 text-gray-400">
-          {pollingError}
+          {error.message}
         </div>
       )}
-      {isReady && (
-        <iframe
-          title="Application Workspace"
-          src={url ? url : 'about:blank'}
-          allow="autoplay; fullscreen; clipboard-write;"
-          style={{ width: '100vw', height: '100vh' }}
-          className="fixed left-0 top-11 z-20 h-full w-full"
-          id="workspace-iframe"
-          ref={iFrameRef}
-          aria-label="Application Workspace"
-          onLoad={handleLoad}
-          tabIndex={0}
-        />
+
+      {workbenchStatus && (
+        <div className="fixed bottom-10 right-3 z-30 text-gray-400">
+          {workbenchStatus}
+        </div>
       )}
+
+      <iframe
+        title="Application Workspace"
+        src={url ? url : 'about:blank'}
+        allow="autoplay; fullscreen; clipboard-write;"
+        style={{ width: '100vw', height: '100vh' }}
+        className="fixed left-0 top-11 z-20 h-full w-full"
+        id="workspace-iframe"
+        ref={iFrameRef}
+        aria-label="Application Workspace"
+        onLoad={handleLoad}
+        tabIndex={0}
+      />
     </>
   )
 }

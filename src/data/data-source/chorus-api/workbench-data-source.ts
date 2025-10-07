@@ -11,10 +11,12 @@ import {
   Configuration,
   WorkbenchServiceApi
 } from '~/internal/client'
+import { BaseAPI } from '~/internal/client/runtime'
 
 import { toChorusWorkbench, toChorusWorkbenchUpdate } from './workbench-mapper'
 
 interface WorkbenchDataSource {
+  streamProbe: (id: string) => Promise<Response>
   create: (
     workbench: WorkbenchCreateType
   ) => Promise<ChorusCreateWorkbenchReply>
@@ -37,6 +39,26 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
       credentials: 'include'
     })
     this.service = new WorkbenchServiceApi(configuration)
+  }
+
+  streamProbe(id: string): Promise<Response> {
+    const computedUrl = `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_API_SUFFIX}/workbenchs/${id}/stream/`
+
+    const api = new BaseAPI(
+      new Configuration({
+        basePath: computedUrl,
+        credentials: 'include'
+      })
+    )
+    const response = api.request({
+      path: '',
+      method: 'GET',
+      headers: {
+        accept: '*/*'
+      }
+    })
+
+    return response
   }
 
   create(workbench: WorkbenchCreateType): Promise<ChorusCreateWorkbenchReply> {

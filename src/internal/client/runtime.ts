@@ -147,7 +147,7 @@ export class BaseAPI {
     return BaseAPI.jsonRegex.test(mime)
   }
 
-  protected async request(
+  async request(
     context: RequestOpts,
     initOverrides?: RequestInit | InitOverrideFunction
   ): Promise<Response> {

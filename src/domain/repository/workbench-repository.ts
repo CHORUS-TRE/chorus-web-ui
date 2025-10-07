@@ -11,4 +11,5 @@ export interface WorkbenchRepository {
   update: (workbench: WorkbenchUpdateType) => Promise<Result<Workbench>>
   delete: (id: string) => Promise<Result<string>>
   get: (id: string) => Promise<Result<Workbench>>
+  streamProbe: (id: string) => Promise<Result<boolean>>
 }
