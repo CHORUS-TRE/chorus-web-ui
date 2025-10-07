@@ -69,7 +69,10 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     })
   }
 
-  list(workspaceId: string, path: string): Promise<ChorusListWorkspaceFilesReply> {
+  list(
+    workspaceId: string,
+    path: string
+  ): Promise<ChorusListWorkspaceFilesReply> {
     return this.service.workspaceServiceListWorkspaceFiles({
       workspaceId,
       path

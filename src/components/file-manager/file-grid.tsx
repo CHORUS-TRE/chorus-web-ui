@@ -115,7 +115,7 @@ export function FileGrid({
           <div
             key={item.id}
             className={cn(
-              'flex cursor-pointer flex-col items-center rounded-lg border p-3 transition-colors hover:bg-muted/50',
+              'flex cursor-pointer flex-col items-center rounded-lg border border-muted/40 bg-background/60 p-3 transition-colors hover:bg-muted/50',
               selectedItems.includes(item.id) && 'border-accent bg-accent/10',
               dragOverItem === item.id && 'border-accent bg-accent/20'
             )}
@@ -143,7 +143,7 @@ export function FileGrid({
     <div className="overflow-auto">
       <div className="min-w-full">
         {/* Header */}
-        <div className="grid grid-cols-12 gap-4 border-b p-4 text-sm font-medium text-white">
+        <div className="grid grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 text-sm font-medium text-white">
           <div className="col-span-5">Name</div>
           <div className="col-span-2">Owner</div>
           <div className="col-span-3">Last opened</div>
@@ -156,7 +156,7 @@ export function FileGrid({
             <div
               key={item.id}
               className={cn(
-                'grid cursor-pointer grid-cols-12 gap-4 border-b p-4 transition-colors hover:bg-muted/50',
+                'grid cursor-pointer grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 transition-colors hover:bg-muted/50',
                 selectedItems.includes(item.id) && 'bg-accent/10',
                 dragOverItem === item.id && 'bg-accent/20'
               )}

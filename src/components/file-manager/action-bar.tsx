@@ -15,8 +15,9 @@ import { Input } from '~/components/ui/input'
 
 interface ActionBarProps {
   selectedItems: string[]
-  onDelete: (itemId: string) => void
-  onRename: (itemId: string, newName: string) => void
+  onDelete: (itemId: string) => Promise<void>
+  onRename: (itemId: string, newName: string) => Promise<void>
+  onDownload: (itemId: string) => Promise<void>
   onClearSelection: () => void
   getItemName: (itemId: string) => string
 }
@@ -25,6 +26,7 @@ export function ActionBar({
   selectedItems,
   onDelete,
   onRename,
+  onDownload,
   onClearSelection,
   getItemName
 }: ActionBarProps) {
@@ -43,17 +45,38 @@ export function ActionBar({
     }
   }
 
-  const handleRenameSubmit = () => {
+  const handleRenameSubmit = async () => {
     if (renameValue.trim() && selectedItems.length === 1) {
-      onRename(selectedItems[0], renameValue.trim())
-      setShowRenameDialog(false)
-      setRenameValue('')
+      try {
+        await onRename(selectedItems[0], renameValue.trim())
+        setShowRenameDialog(false)
+        setRenameValue('')
+      } catch (error) {
+        console.error('Error renaming item:', error)
+        // Error is already handled in the hook and displayed via error state
+      }
     }
   }
 
-  const handleDelete = () => {
-    selectedItems.forEach((itemId) => onDelete(itemId))
+  const handleDelete = async () => {
+    for (const itemId of selectedItems) {
+      try {
+        await onDelete(itemId)
+      } catch (error) {
+        console.error('Error deleting item:', error)
+      }
+    }
     onClearSelection()
+  }
+
+  const handleDownload = async () => {
+    for (const itemId of selectedItems) {
+      try {
+        await onDownload(itemId)
+      } catch (error) {
+        console.error('Error downloading item:', error)
+      }
+    }
   }
 
   return (
@@ -94,7 +117,7 @@ export function ActionBar({
             <Share2 className="h-4 w-4" />
           </Button>
 
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" onClick={handleDownload}>
             <Download className="h-4 w-4" />
           </Button>
 
