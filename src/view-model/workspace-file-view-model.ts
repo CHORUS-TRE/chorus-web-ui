@@ -15,10 +15,11 @@ import { WorkspaceFileDelete } from '~/domain/use-cases/workspace-file/workspace
 import { WorkspaceFileGet } from '~/domain/use-cases/workspace-file/workspace-file-get'
 import { WorkspaceFileList } from '~/domain/use-cases/workspace-file/workspace-file-list'
 import { WorkspaceFileUpdate } from '~/domain/use-cases/workspace-file/workspace-file-update'
+import { FetchError, ResponseError } from '~/internal/client/runtime'
 
 const getRepository = async () => {
   const dataSource = new WorkspaceFileDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+    env('NEXT_PUBLIC_API_URL') || ''
   )
   return new WorkspaceFileRepositoryImpl(dataSource)
 }
@@ -50,6 +51,18 @@ export async function workspaceFileGet(
     return await useCase.execute(workspaceId, path)
   } catch (error) {
     console.error('Error getting workspace file', error)
+    if (error instanceof ResponseError) {
+      // Handle HTTP errors like 502, 404, etc.
+      return {
+        error: `API Error: ${error.response.status} ${error.response.statusText}`
+      }
+    }
+    if (error instanceof FetchError) {
+      // Handle network errors, including CORS issues
+      return {
+        error: `Network Error: ${error.message}. Check browser console for CORS details.`
+      }
+    }
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

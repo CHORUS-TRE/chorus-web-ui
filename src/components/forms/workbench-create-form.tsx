@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { env } from 'next-runtime-env'
 import { startTransition, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
@@ -157,20 +156,10 @@ export function WorkbenchCreateForm({
       if (result.data) {
         toast({
           title: 'Success',
-          description: `Session is creating. Delaying navigation for ${env('NEXT_PUBLIC_APP_DELAY_TIME')} seconds. Reload the page to see the session if the redirect is not working.`
+          description: `Session is creating. Redirecting to session...`
         })
         setOpen(false)
-        await new Promise((resolve) => {
-          console.log(
-            'Delaying navigation for',
-            env('NEXT_PUBLIC_APP_DELAY_TIME'),
-            'seconds'
-          )
-          return setTimeout(
-            resolve,
-            Number(env('NEXT_PUBLIC_APP_DELAY_TIME')) * 1000
-          )
-        })
+
         router.push(
           `/workspaces/${workspaceId}/sessions/${result.data.id as string}`
         )

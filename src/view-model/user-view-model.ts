@@ -13,9 +13,7 @@ import { UserMe } from '~/domain/use-cases/user/user-me'
 import { UserUpdate } from '~/domain/use-cases/user/user-update'
 
 const getRepository = async () => {
-  const dataSource = new UserApiDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
-  )
+  const dataSource = new UserApiDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')
 
   return new UserRepositoryImpl(dataSource)
 }
