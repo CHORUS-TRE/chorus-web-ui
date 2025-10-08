@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { env } from 'next-runtime-env'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
@@ -29,8 +30,8 @@ export default function BackgroundIframe() {
     const currentLocation = window.location
     const currentURL = `${currentLocation.protocol}//${currentLocation.hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`
 
-    const baseAPIURL = process.env.NEXT_PUBLIC_API_URL
-    const computedUrl = `${baseAPIURL ? baseAPIURL : currentURL}${process.env.NEXT_PUBLIC_API_SUFFIX}/workbenchs/${background.sessionId}/stream/`
+    const baseAPIURL = env('NEXT_PUBLIC_API_URL')
+    const computedUrl = `${baseAPIURL ? baseAPIURL : currentURL}${env('NEXT_PUBLIC_API_SUFFIX')}/workbenchs/${background.sessionId}/stream/`
 
     if (computedUrl !== url) {
       setUrl(computedUrl)
