@@ -341,7 +341,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ shortName, createdAt, id }) => (
+                                  .map(({ id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -433,7 +433,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ shortName, createdAt, id }) => (
+                                  .map(({ id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}

@@ -48,9 +48,7 @@ export const useUrlProbing = (id: string | undefined) => {
     const checkUrl = async () => {
       if (attemptCountRef.current >= MAX_ATTEMPTS) {
         setError(
-          new Error(
-            `Max attempts reached. Please check the URL and try again.`
-          )
+          new Error(`Max attempts reached. Please check the URL and try again.`)
         )
         setIsLoading(false)
         return
@@ -69,7 +67,6 @@ export const useUrlProbing = (id: string | undefined) => {
           }
           return
         }
-
       } catch (err) {
         console.error('Probe error:', err)
       }

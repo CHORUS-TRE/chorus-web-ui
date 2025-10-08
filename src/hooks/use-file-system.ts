@@ -89,8 +89,8 @@ export function useFileSystem(workspaceId?: string) {
           })
 
           // Mark this path as fetched
-          setFetchedPaths((prev) => new Set([...prev, path]))
-          console.log('Fetched paths:', [...fetchedPaths, path])
+          setFetchedPaths((prev) => new Set(Array.from(prev).concat(path)))
+          console.log('Fetched paths:', Array.from(fetchedPaths).concat(path))
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch files')

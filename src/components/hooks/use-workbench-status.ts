@@ -7,7 +7,7 @@ const POLLING_INTERVAL = 1000 // 3 seconds
 const TIMEOUT = 10 * 1000 // 10 seconds
 
 export function useWorkbenchStatus(workbenchId?: string) {
-  const [status, setStatus] = useState<WorkbenchStatus | null>(null)
+  const [status, setStatus] = useState<K8sWorkbenchStatus | string | null>(null)
 
   useEffect(() => {
     if (!workbenchId) {
@@ -25,7 +25,7 @@ export function useWorkbenchStatus(workbenchId?: string) {
       }
 
       if (result.data) {
-        setStatus(result.data.k8sStatus)
+        setStatus(result.data.k8sStatus || null)
 
         if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
           clearInterval(intervalId)
@@ -37,7 +37,7 @@ export function useWorkbenchStatus(workbenchId?: string) {
     // Initial poll
     poll()
 
-    const intervalId:NodeJS.Timeout = setInterval(poll, POLLING_INTERVAL)
+    const intervalId: NodeJS.Timeout = setInterval(poll, POLLING_INTERVAL)
     const timeoutId = setTimeout(() => {
       clearInterval(intervalId)
     }, TIMEOUT)

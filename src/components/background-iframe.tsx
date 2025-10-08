@@ -4,10 +4,8 @@ import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
-import { Workbench } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { toast } from '~/components/hooks/use-toast'
 
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'
