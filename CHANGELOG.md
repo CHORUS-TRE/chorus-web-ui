@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.8.0...v1.9.0) (2025-10-08)
+
+
+### Features
+
+* refactor file management page ([b9470dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b9470dc84c4ada8aa5308b4d71c959dc6c6af0b6))
+
 # [1.8.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.3...v1.8.0) (2025-10-08)
 
 
