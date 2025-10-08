@@ -87,6 +87,8 @@
     "react-hook-form": "^7.53.0",
     "react-keyed-file-browser": "^1.14.0",
     "react-resizable-panels": "^2.1.7",
+    "react-zoomable-ui": "^0.11.0",
+    "reaflow": "^5.4.1",
     "recharts": "^2.12.7",
     "sharp": "^0.33.5",
     "sonner": "^1.7.4",
