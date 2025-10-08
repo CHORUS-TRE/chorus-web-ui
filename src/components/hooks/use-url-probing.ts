@@ -11,7 +11,6 @@ export const useUrlProbing = (id: string | undefined) => {
   const attemptCountRef = useRef(0)
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const lastUrlRef = useRef<string | null>(null)
-  const [status, setStatus] = useState('')
 
   const probeURL = useCallback(async (id: string): Promise<boolean> => {
     try {
@@ -22,7 +21,6 @@ export const useUrlProbing = (id: string | undefined) => {
         throw new Error(result.error)
       }
 
-      setStatus(result.data ? 'ok' : 'error')
       return result.data ? true : false
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Unknown error occurred')
@@ -39,15 +37,19 @@ export const useUrlProbing = (id: string | undefined) => {
 
   useEffect(() => {
     if (!id) {
-      setIsLoading(true)
+      setIsLoading(false)
+      setError(null)
       return
     }
+
+    setIsLoading(true)
+    setError(null)
 
     const checkUrl = async () => {
       if (attemptCountRef.current >= MAX_ATTEMPTS) {
         setError(
           new Error(
-            `${status ? status : ''} Please check the URL and try again.`
+            `Max attempts reached. Please check the URL and try again.`
           )
         )
         setIsLoading(false)
@@ -58,41 +60,34 @@ export const useUrlProbing = (id: string | undefined) => {
         const isValid = await probeURL(id)
 
         if (isValid) {
-          setStatus('ok')
           setError(null)
           setIsLoading(false)
-
+          // Clear any pending timeout
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current)
+            timeoutRef.current = undefined
+          }
           return
         }
 
-        setIsLoading(true)
       } catch (err) {
-        if (err === '404') {
-          setStatus('error')
-          setIsLoading(true)
-          attemptCountRef.current += 1
-          timeoutRef.current = setTimeout(checkUrl, RETRY_INTERVAL)
-          return
-        }
-
-        console.error('err', err)
-        setError(err as Error)
-        setIsLoading(false)
+        console.error('Probe error:', err)
       }
 
+      // Continue retrying
       attemptCountRef.current += 1
       timeoutRef.current = setTimeout(checkUrl, RETRY_INTERVAL)
     }
 
-    setIsLoading(true)
     checkUrl()
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
+        timeoutRef.current = undefined
       }
     }
-  }, [id, probeURL, status])
+  }, [id, probeURL])
 
   return { error, isLoading }
 }
