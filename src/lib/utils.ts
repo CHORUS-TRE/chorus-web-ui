@@ -17,3 +17,18 @@ export function formatDate(input: string | number): string {
     year: 'numeric'
   })
 }
+
+export function formatFileSize(bytes?: number): string {
+  if (!bytes) return '—'
+
+  const units = ['o', 'Ko', 'Mo', 'Go', 'To']
+  let size = bytes
+  let unitIndex = 0
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex++
+  }
+
+  return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
+}

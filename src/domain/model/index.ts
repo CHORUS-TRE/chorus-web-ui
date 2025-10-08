@@ -7,6 +7,7 @@ export * from './role'
 export * from './user'
 export * from './workbench'
 export * from './workspace'
+export * from './workspace-file'
 
 export interface Result<T> {
   data?: T

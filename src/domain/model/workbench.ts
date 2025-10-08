@@ -14,6 +14,19 @@ export enum WorkbenchStatus {
   UNKNOWN = ''
 }
 
+export enum ContainerState {
+  UNINITIALIZED = 'uninitialized',
+  CREATED = 'created',
+  LOADING = 'loading',
+  RUNNING = 'running',
+  PAUSING = 'pausing',
+  RESUMING = 'resuming',
+  PAUSED = 'paused',
+  STOPPING = 'stopping',
+  EXITED = 'exited',
+  DESTROYED = 'destroyed'
+}
+
 export const WorkbenchSchema = z.object({
   id: z.string().optional(),
   tenantId: z.string().optional(),

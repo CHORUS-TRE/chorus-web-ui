@@ -30,7 +30,7 @@ export function AdminSidebar() {
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '#', label: 'Teams', icon: Users },
     { href: '/admin/roles', label: 'Roles', icon: Shield },
-    { href: '#', label: 'Data', icon: Database },
+    { href: '/admin/data', label: 'Data', icon: Database },
     { href: '/admin/workspaces', label: 'Workspaces', icon: Box },
     { href: '#', label: 'Sessions', icon: Box },
     { href: '#', label: 'Apps', icon: Box }

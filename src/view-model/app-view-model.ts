@@ -18,9 +18,7 @@ import { AppList } from '~/domain/use-cases/app/app-list'
 import { AppUpdate } from '~/domain/use-cases/app/app-update'
 
 const getRepository = async () => {
-  const dataSource = new AppDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
-  )
+  const dataSource = new AppDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')
   return new AppRepositoryImpl(dataSource)
 }
 

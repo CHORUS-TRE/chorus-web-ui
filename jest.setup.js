@@ -172,4 +172,4 @@ jest.mock('next-runtime-env', () => ({
 }))
 
 // Mock env variables used by next-runtime-env
-process.env.NEXT_PUBLIC_DATA_SOURCE_API_URL = 'http://localhost:3000'
+process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3000'

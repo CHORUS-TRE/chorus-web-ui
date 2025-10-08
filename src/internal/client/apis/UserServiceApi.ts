@@ -85,6 +85,10 @@ export interface UserServiceListUsersRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
+  filterIdsIn?: Array<string>
+  filterWorkspaceIDs?: Array<string>
+  filterWorkbenchIDs?: Array<string>
+  filterSearch?: string
 }
 
 export interface UserServiceResetPasswordRequest {
@@ -409,6 +413,24 @@ export class UserServiceApi extends runtime.BaseAPI {
 
     if (requestParameters.paginationQuery) {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterIdsIn) {
+      queryParameters['filter.idsIn'] = requestParameters.filterIdsIn
+    }
+
+    if (requestParameters.filterWorkspaceIDs) {
+      queryParameters['filter.workspaceIDs'] =
+        requestParameters.filterWorkspaceIDs
+    }
+
+    if (requestParameters.filterWorkbenchIDs) {
+      queryParameters['filter.workbenchIDs'] =
+        requestParameters.filterWorkbenchIDs
+    }
+
+    if (requestParameters.filterSearch !== undefined) {
+      queryParameters['filter.search'] = requestParameters.filterSearch
     }
 
     const headerParameters: runtime.HTTPHeaders = {}

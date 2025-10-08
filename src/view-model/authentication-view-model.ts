@@ -19,7 +19,7 @@ import {
 
 const getRepository = async () => {
   const dataSource = new AuthenticationApiDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+    env('NEXT_PUBLIC_API_URL') || ''
   )
 
   return new AuthenticationRepositoryImpl(dataSource)

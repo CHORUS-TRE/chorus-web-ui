@@ -16,13 +16,44 @@ import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
+import { WorkbenchStreamProbe } from '~/domain/use-cases/workbench/workbench-stream-probe'
 import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
+import { FetchError, ResponseError } from '~/internal/client/runtime'
 
 const getRepository = async () => {
   const dataSource = new WorkbenchDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+    env('NEXT_PUBLIC_API_URL') || ''
   )
   return new WorkbenchRepositoryImpl(dataSource)
+}
+
+export async function workbenchStreamProbe(
+  id: string
+): Promise<Result<boolean>> {
+  try {
+    const repository = await getRepository()
+    const useCase = new WorkbenchStreamProbe(repository)
+
+    const result = await useCase.execute(id)
+    console.log('result', result, result.error)
+
+    return { data: result.data ? true : false, error: result.error }
+  } catch (error) {
+    if (error instanceof ResponseError) {
+      // Handle HTTP errors like 502, 404, etc.
+      return {
+        error: `API Error: ${error.response.status}`
+      }
+    }
+    if (error instanceof FetchError) {
+      // Handle network errors, including CORS issues
+      return {
+        error: `Network Error: ${error.message}. Check browser console for CORS details.`
+      }
+    }
+    console.error('Error probing workbench stream', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
 }
 
 export async function workbenchDelete(id: string): Promise<Result<string>> {

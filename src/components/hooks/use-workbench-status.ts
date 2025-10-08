@@ -1,79 +1,52 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
+import { K8sWorkbenchStatus } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
-const POLLING_INTERVAL = 3000 // 3 seconds
+const POLLING_INTERVAL = 1000 // 3 seconds
 const TIMEOUT = 10 * 1000 // 10 seconds
 
-interface UseWorkbenchStatusProps {
-  workbenchId?: string
-  onSuccess?: (workbench: Workbench) => void
-  onError?: (error: string) => void
-  onTimeout?: () => void
-}
-
-export function useWorkbenchStatus({
-  workbenchId,
-  onSuccess,
-  onError,
-  onTimeout
-}: UseWorkbenchStatusProps) {
-  const [isPolling, setIsPolling] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [timeoutError, setTimeoutError] = useState<string | null>(null)
-
-  const stopPolling = useCallback(() => {
-    setIsPolling(false)
-  }, [])
+export function useWorkbenchStatus(workbenchId?: string) {
+  const [status, setStatus] = useState<WorkbenchStatus | null>(null)
 
   useEffect(() => {
-    if (!workbenchId || !isPolling) {
+    if (!workbenchId) {
       return
     }
 
     const poll = async () => {
       const result = await getWorkbench(workbenchId)
+
       if (result.error) {
-        setError(result.error)
-        if (onError) onError(result.error)
-        stopPolling()
+        setStatus(result.error)
+        clearInterval(intervalId)
+        clearTimeout(timeoutId)
         return
       }
 
       if (result.data) {
-        // if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
-          if (onSuccess) onSuccess(result.data)
-          stopPolling()
-        // }
+        setStatus(result.data.k8sStatus)
+
+        if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
+          clearInterval(intervalId)
+          clearTimeout(timeoutId)
+        }
       }
     }
 
-    const intervalId = setInterval(poll, POLLING_INTERVAL)
-    const timeoutId = setTimeout(() => {
-      const timeoutMessage = `Session loading timed out after ${Math.floor(TIMEOUT / 1000)} seconds.`
-      setTimeoutError(timeoutMessage)
-      if (onTimeout) onTimeout()
-      stopPolling()
-    }, TIMEOUT)
-
     // Initial poll
     poll()
+
+    const intervalId:NodeJS.Timeout = setInterval(poll, POLLING_INTERVAL)
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId)
+    }, TIMEOUT)
 
     return () => {
       clearInterval(intervalId)
       clearTimeout(timeoutId)
     }
-  }, [workbenchId, isPolling, stopPolling, onSuccess, onError, onTimeout])
+  }, [workbenchId])
 
-  const startPolling = useCallback(() => {
-    setIsPolling(true)
-    setError(null)
-    setTimeoutError(null)
-  }, [])
-
-  // Combine error and timeoutError for the main error state
-  const pollingError = error || timeoutError
-
-  return { isPolling, error: pollingError, startPolling, stopPolling }
+  return { status }
 }

@@ -11,6 +11,7 @@ import {
   TableProperties,
   Users
 } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
@@ -270,10 +271,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
         <Card
           title={
-            <>
-              <Database className="h-6 w-6 text-white" />
+            <Link
+              href={`/workspaces/${workspaceId}/data`}
+              className="flex items-center gap-2"
+            >
+              <Database className="h-6 w-6 text-white hover:text-accent" />
               Data
-            </>
+            </Link>
           }
           description="View and manage your data sources."
           content={
