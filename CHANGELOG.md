@@ -1,3 +1,25 @@
+# [1.8.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.3...v1.8.0) (2025-10-08)
+
+
+### Bug Fixes
+
+* update OpenAI model ([b01c5ed](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b01c5ed8276bb5fd6fb70cf944a35bb1c2d5b08c))
+
+
+### Features
+
+* add endpoints and models for listing workspace files and update file management API ([5ce51cc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5ce51cce09e5d14f0bbe13410803a4fb27bd164c))
+* add react-keyed-file-browser dependency ([2852023](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2852023de5a445a2ddc8f9abe0caa266ffad1f11))
+* add role hierarchy and permissions management page with schema data ([91baa8e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/91baa8ee0fc26441a00045f2d8af23c59a207ed8))
+* add workspace file management endpoints and models ([8b1a5e1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8b1a5e1b3b2d3809f8109ae42b3c8868ef2ef9cd))
+* enhance BackgroundIframe and LoadingOverlay components with improved error handling and loading states ([15edf8f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/15edf8fa58eae7a66248562e71fe4628eec44d82))
+* enhance file manager with import, download, and search functionalities ([631d600](https://github.com/CHORUS-TRE/chorus-web-ui/commit/631d6006b51718cf2af98e211d51d802a24a79ee))
+* enhance Header with workspaces session ([c58d818](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c58d818058fe9ae3dd350f8957352e74441c6892))
+* implement file manager components and hooks for enhanced file system management ([b0f4735](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b0f4735b040500a6c888a871a58c0530010341c7))
+* implement URL probing and refactor workbench status handling in BackgroundIframe component ([b942a28](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b942a282930e6c453b6557c6d4217418ad6a5a65))
+* implement workspace file repository and use cases for file management ([0b40cde](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0b40cde63685717b77bf8bf2d16a832b9531af34))
+* refactor file manager by removing mock data and enhancing file management components ([43a6877](https://github.com/CHORUS-TRE/chorus-web-ui/commit/43a6877ba9b9b80741d4b78946a5ffaedc0e1053))
+
 ## [1.7.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.2...v1.7.3) (2025-09-24)
 
 
