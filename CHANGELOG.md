@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.1...v1.9.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* **background-iframe:** update API URL handling to use next-runtime-env for environment variables ([0b3d5be](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0b3d5bed8cd7c7ddd49bb10b787ffd78e8b737f3))
+
 ## [1.9.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.0...v1.9.1) (2025-10-08)
 
 
