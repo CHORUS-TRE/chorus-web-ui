@@ -107,15 +107,18 @@ const ChatBotDemo = () => {
                       />
                       {message.parts
                         .filter((part) => part.type === 'source-url')
-                        .map((part, i) => (
-                          <SourcesContent key={`${message.id}-${i}`}>
-                            <Source
-                              key={`${message.id}-${i}`}
-                              href={part.url}
-                              title={part.url}
-                            />
-                          </SourcesContent>
-                        ))}
+                        .map((part, i) => {
+                          const url = 'url' in part ? part.url : '#'
+                          return (
+                            <SourcesContent key={`${message.id}-${i}`}>
+                              <Source
+                                key={`${message.id}-${i}`}
+                                href={url}
+                                title={url}
+                              />
+                            </SourcesContent>
+                          )
+                        })}
                     </Sources>
                   )}
                 {message.parts.map((part, i) => {
@@ -131,12 +134,6 @@ const ChatBotDemo = () => {
                           {message.role === 'assistant' &&
                             i === messages.length - 1 && (
                               <Actions className="mt-2">
-                                <Action
-                                  onClick={() => regenerate()}
-                                  label="Retry"
-                                >
-                                  <RefreshCcwIcon className="size-3" />
-                                </Action>
                                 <Action
                                   onClick={() =>
                                     navigator.clipboard.writeText(part.text)
