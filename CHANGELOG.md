@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.0...v1.9.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* **chat:** update URL handling in chat component to ensure valid links ([0d3d2b7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0d3d2b7cc7bee2dcd7aa3b8e1b67002f3c7b3853))
+
 # [1.9.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.8.0...v1.9.0) (2025-10-08)
 
 
