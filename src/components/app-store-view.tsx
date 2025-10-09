@@ -60,7 +60,7 @@ export function AppStoreView() {
               </div>
 
               <TabsContent value="my-apps" className="mt-0">
-                <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,250px))] justify-center gap-6">
                   {apps?.map((app) => (
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
@@ -68,7 +68,7 @@ export function AppStoreView() {
               </TabsContent>
 
               <TabsContent value="apps" className="mt-0">
-                <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,250px))] justify-center gap-6">
                   {apps?.map((app) => (
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
