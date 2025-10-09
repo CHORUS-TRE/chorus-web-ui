@@ -1,3 +1,16 @@
+## [1.9.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.3...v1.9.4) (2025-10-09)
+
+
+### Bug Fixes
+
+* add maximum size for grid elements ([4db4ef9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4db4ef9f7322ec7c74f3684e24a909ff8da4dcb3))
+* add missing space in workspace info ([b446136](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b4461366489f317d1b29e9a0fe40f39a0ec3e633))
+* hide create user button in admin page ([9d3ced9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9d3ced9ec59a140cea34ef4889baa2b8df600a1c))
+* improve error message in user table component ([2d73508](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2d73508da976cafd6b2938dd758dce1e8c8244b2))
+* make grids responsive to sidebar changes ([5f21f9f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5f21f9f6c208893f22b221e6f9e1b269e14b393c))
+* update delete dialog to correctly close without deletion ([70151c3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/70151c33e0e87f511b3b67631f4ee76450cdbfca))
+* use createdAt for workspace cards info ([150ac72](https://github.com/CHORUS-TRE/chorus-web-ui/commit/150ac72be45de4984d90912a7320068fa5422b07))
+
 ## [1.9.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.2...v1.9.3) (2025-10-09)
 
 ## [1.9.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.1...v1.9.2) (2025-10-08)
