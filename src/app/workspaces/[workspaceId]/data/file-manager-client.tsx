@@ -51,8 +51,6 @@ export default function FileManagerClient({
   const rootChildren = getChildren('root')
   const currentChildren = getChildren(state.currentFolderId)
 
-  // Remove test API calls - data is now fetched through the hook
-
   // Build breadcrumb path
   const buildPath = (
     folderId: string | null
@@ -122,16 +120,6 @@ export default function FileManagerClient({
     return (
       <div className="flex h-screen flex-col items-center justify-center text-white">
         <div className="text-lg">Loading files...</div>
-      </div>
-    )
-  }
-
-  // Show error state
-  if (error) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center text-white">
-        <div className="mb-4 text-lg text-red-400">Error: {error}</div>
-        <Button onClick={refresh}>Retry</Button>
       </div>
     )
   }
