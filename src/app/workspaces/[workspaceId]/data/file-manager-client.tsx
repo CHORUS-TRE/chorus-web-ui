@@ -1,5 +1,6 @@
 'use client'
 
+import { CirclePlus } from 'lucide-react'
 import { useState } from 'react'
 
 import { ActionBar } from '~/components/file-manager/action-bar'
@@ -28,7 +29,6 @@ export default function FileManagerClient({
   const {
     state,
     loading,
-    error,
     searchQuery,
     getChildren,
     selectItem,
@@ -42,7 +42,7 @@ export default function FileManagerClient({
     setSearch,
     toggleViewMode,
     clearSelection,
-    refresh
+    fetchFolderContents
   } = useFileSystem(workspaceId)
 
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false)
@@ -115,6 +115,10 @@ export default function FileManagerClient({
     clearSelection()
   }
 
+  const handleExpandFolder = async (folderId: string) => {
+    await fetchFolderContents(folderId)
+  }
+
   // Show loading state
   if (loading && Object.keys(state.items).length === 0) {
     return (
@@ -164,6 +168,7 @@ export default function FileManagerClient({
               onNavigateToFolder={navigateToFolder}
               onMoveItem={moveItem}
               getChildren={getChildren}
+              onExpandFolder={handleExpandFolder}
             />
           </div>
         </div>
@@ -198,7 +203,7 @@ export default function FileManagerClient({
         open={showCreateFolderDialog}
         onOpenChange={setShowCreateFolderDialog}
       >
-        <DialogContent>
+        <DialogContent className="bg-background text-white">
           <DialogHeader>
             <DialogTitle className="text-white">New folder</DialogTitle>
           </DialogHeader>
@@ -217,12 +222,19 @@ export default function FileManagerClient({
           </div>
           <DialogFooter>
             <Button
-              variant="outline"
+              type="button"
               onClick={() => setShowCreateFolderDialog(false)}
+              className="focus:bg-background focus:text-accent"
             >
               Cancel
             </Button>
-            <Button onClick={handleCreateFolderSubmit}>Create</Button>
+            <Button
+              onClick={handleCreateFolderSubmit}
+              className="rounded-full bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+            >
+              <CirclePlus className="h-4 w-4" />
+              Create
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

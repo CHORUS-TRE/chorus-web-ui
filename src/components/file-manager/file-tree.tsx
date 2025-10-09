@@ -95,6 +95,7 @@ interface FileTreeProps {
   onNavigateToFolder: (folderId: string) => void
   onMoveItem: (itemId: string, newParentId: string) => void
   getChildren: (parentId: string | null) => FileSystemItem[]
+  onExpandFolder?: (folderId: string) => void
 }
 
 interface TreeNodeProps extends FileTreeProps {
@@ -105,13 +106,15 @@ interface TreeNodeProps extends FileTreeProps {
 function TreeNode({ item, level, ...props }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const children = props.getChildren(item.id)
-  const hasChildren = children.length > 0
   const isSelected = props.selectedItems.includes(item.id)
   const isCurrent = props.currentFolderId === item.id
 
-  const handleToggle = (e: React.MouseEvent) => {
+  const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (hasChildren) {
+    if (item.type === 'folder') {
+      if (!isExpanded && props.onExpandFolder) {
+        await props.onExpandFolder(item.id)
+      }
       setIsExpanded(!isExpanded)
     }
   }
@@ -188,7 +191,7 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
           <span className="truncate">{item.name}</span>
         </div>
       </div>
-      {hasChildren && isExpanded && (
+      {isExpanded && (
         <div>
           {children.map((child) => (
             <TreeNode
