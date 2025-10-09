@@ -69,7 +69,7 @@ export default function WorkspacesGrid({
   const { refreshWorkspaces, users, workbenches } = useAppState()
   return (
     <div
-      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]"
       id="grid"
     >
       {user &&
