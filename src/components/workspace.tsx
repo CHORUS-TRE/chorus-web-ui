@@ -201,7 +201,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
       </div>
 
-      <div className="my-1 grid w-full gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="my-1 grid w-full gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
         <div key={workspace?.id} className="group relative">
           <Card
             title={

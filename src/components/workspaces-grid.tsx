@@ -69,7 +69,7 @@ export default function WorkspacesGrid({
   const { refreshWorkspaces, users, workbenches } = useAppState()
   return (
     <div
-      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]"
       id="grid"
     >
       {user &&
@@ -129,7 +129,7 @@ export default function WorkspacesGrid({
                   <CardDescription className="">
                     {workspace?.description}
                     <span className="mb-2 block text-xs text-muted">
-                      Created {formatDistanceToNow(workspace.updatedAt)} ago by{' '}
+                      Created {formatDistanceToNow(workspace.createdAt)} ago by{' '}
                       {
                         users?.find((user) => user.id === workspace?.userId)
                           ?.firstName

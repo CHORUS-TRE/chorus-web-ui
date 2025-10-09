@@ -623,7 +623,7 @@ export function Header() {
                   }{' '}
                   {formatDistanceToNow(
                     currentWorkbench?.createdAt || new Date()
-                  )}
+                  )}{' '}
                   ago
                 </p>
               </div>

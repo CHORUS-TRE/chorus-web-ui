@@ -28,7 +28,7 @@ const UserManagementPage = () => {
               </p>
             </div>
           </div>
-          <UserCreateDialog onUserCreated={handleUserCreated} />
+          {/* <UserCreateDialog onUserCreated={handleUserCreated} /> */}
         </div>
       </div>
 

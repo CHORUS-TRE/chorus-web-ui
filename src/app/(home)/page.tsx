@@ -30,7 +30,7 @@ const HomePage = () => {
         </h2>
       </div>
 
-      <div className="flex flex-col items-center justify-start">
+      <div className="flex w-full flex-col items-center justify-start">
         {!user?.workspaceId && (
           <>
             {/* <span className="mb-4 animate-pulse text-muted">
