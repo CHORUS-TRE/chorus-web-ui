@@ -1,3 +1,11 @@
+## [1.9.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.4...v1.9.5) (2025-10-10)
+
+
+### Bug Fixes
+
+* **background-iframe:** reposition error message and update URL probing error text ([3b511a8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3b511a88640301c031b84b42775bb3976f9b4635))
+* **breadcrumbs:** add breadcrumb navigation to app store, workspaces, and workspace layout pages ([cc28cb0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cc28cb07f82acf9195553429a7efde9b3648933e))
+
 ## [1.9.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.3...v1.9.4) (2025-10-09)
 
 
