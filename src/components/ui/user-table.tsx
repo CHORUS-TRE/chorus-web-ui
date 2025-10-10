@@ -53,14 +53,21 @@ export function UserTable() {
   }
 
   return (
-    <Table className="text-white" aria-label="User table">
+    <Table
+      className="text-white"
+      aria-label={`User management table with ${users.length} users`}
+    >
+      <caption className="sr-only">
+        User management table showing user details and available actions. Use
+        arrow keys to navigate.
+      </caption>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Username</TableHead>
-          <TableHead>Roles</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead scope="col">Name</TableHead>
+          <TableHead scope="col">Username</TableHead>
+          <TableHead scope="col">Roles</TableHead>
+          <TableHead scope="col">Status</TableHead>
+          <TableHead scope="col">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

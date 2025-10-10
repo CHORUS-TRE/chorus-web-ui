@@ -9,7 +9,6 @@ import {
   Footprints,
   LaptopMinimal,
   MoreVertical,
-  RefreshCw,
   TableProperties,
   Users
 } from 'lucide-react'
@@ -87,7 +86,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const { user, refreshUser } = useAuthentication()
 
   const workspace = workspaces?.find((w) => w.id === workspaceId)
-  const owner = users?.find((user) => user.id === workspace?.userId)
+  const owner =
+    user?.id === workspace?.userId
+      ? user
+      : users?.find((user) => user.id === workspace?.userId)
 
   useEffect(() => {
     if (!workspaceId || !workbenches || workbenches.length === 0) return
@@ -138,7 +140,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             </div>
             <div className="detail-item">
               <h4 className="label text-sm text-muted">Status:</h4>
-              <p className="value font-semibold">{workspace?.status}</p>
+              <p className="value font-semibold">
+                {workspace?.status || 'Active'}
+              </p>
             </div>
             <div className="detail-item">
               <h4 className="label text-sm text-muted">Creation date:</h4>
@@ -209,25 +213,24 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             role="region"
             aria-labelledby="sessions-card-title"
             title={
-              <div className="flex w-full items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <LaptopMinimal className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-                  <span id="sessions-card-title" className="text-white">
-                    {(() => {
-                      const sessionCount =
-                        workbenches?.filter(
-                          (workbench) =>
-                            workbench.workspaceId === workspaceId &&
-                            workbench.userId === user?.id
-                        )?.length || 0
-                      return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`
-                    })()}
+              <div className="flex w-full items-center justify-between text-muted">
+                <Link
+                  href={`/workspaces/${workspaceId}/sessions`}
+                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
+                >
+                  <LaptopMinimal
+                    className="h-6 w-6 flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span id="sessions-card-title" className="">
+                    <span className="sr-only">Sessions</span>
+                    Sessions
                   </span>
-                </div>
-                <DropdownMenu>
+                </Link>
+                {/* <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      className="h-8 w-8 text-muted ring-0 hover:bg-inherit hover:text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                      className="h-8 w-8 bg-inherit text-accent ring-0 hover:bg-inherit hover:text-accent hover:ring-1 hover:ring-accent focus:bg-inherit focus:ring-0"
                       variant="ghost"
                       aria-label="Session management options"
                       aria-describedby="sessions-card-title"
@@ -237,42 +240,49 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                       <span className="sr-only">Session options</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-black text-white">
-                    <DropdownMenuItem 
-                      onClick={() => router.push(`/workspaces/${workspaceId}/sessions`)}
+                  <DropdownMenuContent
+                    align="end"
+                    className="bg-black text-white"
+                  >
+                    <DropdownMenuItem
+                      onClick={() =>
+                        router.push(`/workspaces/${workspaceId}/sessions`)
+                      }
                     >
-                      <TableProperties className="h-4 w-4 mr-2" />
-                      Manage All Sessions
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        // Refresh sessions logic could go here
-                        window.location.reload()
-                      }}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh Sessions
+                      <TableProperties className="mr-2 h-4 w-4" />
+                      Manage Sessions
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
+                </DropdownMenu> */}
               </div>
             }
-            description={`Sessions in ${workspace?.name}.`}
+            description={(() => {
+              const sessionCount =
+                workbenches?.filter(
+                  (workbench) =>
+                    workbench.workspaceId === workspaceId &&
+                    workbench.userId === user?.id
+                )?.length || 0
+              return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}.`
+            })()}
             content={
               <Suspense fallback={<div>Loading sessions...</div>}>
                 {(() => {
-                  const sessionCount = workbenches?.filter(
-                    (workbench) =>
-                      workbench.workspaceId === workspaceId &&
-                      workbench.userId === user?.id
-                  )?.length || 0
+                  const sessionCount =
+                    workbenches?.filter(
+                      (workbench) =>
+                        workbench.workspaceId === workspaceId &&
+                        workbench.userId === user?.id
+                    )?.length || 0
 
                   // Adaptive layout based on session count
                   const getScrollAreaClass = () => {
-                    if (sessionCount === 0) return "flex flex-col"
-                    if (sessionCount <= 2) return "flex max-h-24 flex-col overflow-y-auto"
-                    if (sessionCount <= 4) return "flex max-h-32 flex-col overflow-y-auto"
-                    return "flex max-h-40 flex-col overflow-y-auto"
+                    if (sessionCount === 0) return 'flex flex-col'
+                    if (sessionCount <= 2)
+                      return 'flex max-h-24 flex-col overflow-y-auto'
+                    if (sessionCount <= 4)
+                      return 'flex max-h-32 flex-col overflow-y-auto'
+                    return 'flex max-h-40 flex-col overflow-y-auto'
                   }
 
                   return (
@@ -292,55 +302,20 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 })()}
               </Suspense>
             }
-            footer={
-              (() => {
-                const sessionCount = workbenches?.filter(
-                  (workbench) =>
-                    workbench.workspaceId === workspaceId &&
-                    workbench.userId === user?.id
-                )?.length || 0
+            footer={(() => {
+              const isOwner = workspace?.userId === user?.id
 
-                const isOwner = workspace?.userId === user?.id
-
-                return (
-                  <div className="flex w-full flex-row items-center gap-2">
-                    {sessionCount > 0 ? (
-                      <Button 
-                        asChild 
-                        className="shrink-0 focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                        aria-describedby="sessions-card-title"
-                      >
-                        <Link href={`/workspaces/${workspaceId}/sessions`}>
-                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                          Manage {sessionCount} {sessionCount === 1 ? 'Session' : 'Sessions'}
-                        </Link>
-                      </Button>
-                    ) : (
-                      isOwner && (
-                        <Button 
-                          asChild 
-                          variant="outline"
-                          className="shrink-0 focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                          aria-describedby="sessions-card-title"
-                        >
-                          <Link href={`/workspaces/${workspaceId}/sessions`}>
-                            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                            View Sessions
-                          </Link>
-                        </Button>
-                      )
-                    )}
-
-                    {isOwner && (
-                      <WorkbenchCreateForm
-                        workspaceId={workspace?.id || ''}
-                        workspaceName={workspace?.name}
-                      />
-                    )}
-                  </div>
-                )
-              })()
-            }
+              return (
+                <div className="flex w-full flex-row items-center gap-2">
+                  {isOwner && (
+                    <WorkbenchCreateForm
+                      workspaceId={workspace?.id || ''}
+                      workspaceName={workspace?.name}
+                    />
+                  )}
+                </div>
+              )
+            })()}
           />
 
           {openEdit && (
@@ -362,13 +337,21 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
         <Card
           title={
-            <Link
-              href={`/workspaces/${workspaceId}/data`}
-              className="flex items-center gap-2"
-            >
-              <Database className="h-6 w-6 text-white hover:text-accent" />
-              Data
-            </Link>
+            <div className="flex w-full items-center justify-between text-muted">
+              <Link
+                href={`/workspaces/${workspaceId}/data`}
+                className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
+              >
+                <Database
+                  className="h-6 w-6 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Data</span>
+                  Data
+                </span>
+              </Link>
+            </div>
           }
           description="View and manage your data sources."
           content={
@@ -532,26 +515,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               Footprint
             </>
           }
-          description="Your group produced an average of 320g carbon per day since last week."
-          content={
-            <div className="text-sm text-muted">
-              <div className="mb-2">
-                <strong>
-                  Your group produced an average of 320g carbon per day since
-                  last week.
-                </strong>
-              </div>
-              <div className="mt-2">
-                <strong>Which can be offset by:</strong>
-              </div>
-              <div>7 trees</div>
-              <div className="mt-2">
-                <strong>Tips</strong>
-              </div>
-              <div>Use public transportation</div>
-              <div>Use a bike</div>
-            </div>
-          }
+          description=""
+          content={<div className="text-sm text-muted"></div>}
           footer={
             <Button disabled className="cursor-default">
               <ArrowRight className="h-4 w-4" />

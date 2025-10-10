@@ -1,6 +1,7 @@
 'use client'
 
 import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
@@ -15,6 +16,14 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '~/components/ui/accordion'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '~/components/ui/breadcrumb'
 import { Button as UIButton } from '~/components/ui/button'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
@@ -35,6 +44,20 @@ export default function WorkspacesPage() {
   return (
     <>
       <div className="w-full">
+        <Breadcrumb className="mb-4">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/">CHORUS</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Workspaces</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
             <Package className="h-9 w-9 text-white" />

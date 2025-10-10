@@ -1,7 +1,12 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon, HomeIcon, Package } from 'lucide-react'
+import {
+  CirclePlus,
+  EllipsisVerticalIcon,
+  HomeIcon,
+  Package
+} from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -14,6 +19,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
@@ -26,6 +32,7 @@ import {
 import { User, Workbench, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 
+import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { toast } from './hooks/use-toast'
 import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
@@ -164,6 +171,14 @@ export default function WorkspacesGrid({
                     </div>
                   )}
                 </CardContent>
+                <CardFooter className="flex items-end justify-start">
+                  {workspace.userId === user?.id && (
+                    <WorkbenchCreateForm
+                      workspaceId={workspace?.id || ''}
+                      workspaceName={workspace?.name}
+                    />
+                  )}
+                </CardFooter>
               </Card>
             </SwitchLink>
 

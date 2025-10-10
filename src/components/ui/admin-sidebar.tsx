@@ -28,12 +28,11 @@ export function AdminSidebar() {
   const routes: AdminRoute[] = [
     { href: '/admin', label: 'General', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Users', icon: Users },
-    { href: '#', label: 'Teams', icon: Users },
     { href: '/admin/roles', label: 'Roles', icon: Shield },
     { href: '/admin/data', label: 'Data', icon: Database },
-    { href: '/admin/workspaces', label: 'Workspaces', icon: Box },
-    { href: '#', label: 'Sessions', icon: Box },
-    { href: '#', label: 'Apps', icon: Box }
+    { href: '/admin/workspaces', label: 'Workspaces', icon: Box }
+    // Removed placeholder links to prevent navigation confusion
+    // TODO: Implement Teams, Sessions, Apps pages when ready
   ]
 
   return (

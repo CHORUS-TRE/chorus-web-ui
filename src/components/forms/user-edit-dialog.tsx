@@ -114,8 +114,13 @@ export function UserEditDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Pencil className="h-4 w-4" />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={`Edit user ${user.firstName} ${user.lastName}`}
+        >
+          <Pencil className="h-4 w-4" aria-hidden="true" />
+          <span className="sr-only">Edit user</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="text-white">
