@@ -62,7 +62,7 @@ export default function BackgroundIframe() {
       {isSessionPage && isLoading && <LoadingOverlay isLoading={isLoading} />}
 
       {error && (
-        <div className="fixed bottom-3 right-3 z-30 text-gray-400">
+        <div className="fixed left-1/2 top-2/3 z-20 -translate-x-1/2 -translate-y-1/2 transform text-gray-400">
           {error.message}
         </div>
       )}
