@@ -60,10 +60,13 @@ export function UserTable() {
             </TableCell>
             <TableCell>{user.username}</TableCell>
             <TableCell>
-              <div className="flex space-x-1">
                 {user.roles2?.map((role) => (
-                  <Badge key={role.name}>{role.name}</Badge>
+                  <span key={role.name}>
+                    <Badge>{role.name}</Badge>
+                    <br />
+                  </span>
                 ))}
+              <div className="flex space-x-1">
               </div>
             </TableCell>
             <TableCell>
