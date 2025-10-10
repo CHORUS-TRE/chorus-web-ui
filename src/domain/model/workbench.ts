@@ -1,6 +1,13 @@
 import { z } from 'zod'
 
 export enum K8sWorkbenchStatus {
+  RUNNING = 'Running',
+  PROGRESSING = 'Progressing',
+  FAILED = 'Failed',
+  UNKNOWN = ''
+}
+
+export enum WorkbenchServerPodStatus {
   WAITING = 'Waiting',
   STARTING = 'Starting',
   READY = 'Ready',
