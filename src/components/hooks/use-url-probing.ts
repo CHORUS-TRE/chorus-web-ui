@@ -1,42 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const MAX_ATTEMPTS = 3
-const RETRY_INTERVAL = 1.5 * 1000
+import { workbenchStreamProbe } from '~/view-model/workbench-view-model'
 
-export const useUrlValidation = (url: string | null) => {
+const MAX_ATTEMPTS = 10
+const RETRY_INTERVAL = 1000
+
+export const useUrlProbing = (id: string | undefined) => {
   const [error, setError] = useState<Error | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const attemptCountRef = useRef(0)
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const lastUrlRef = useRef<string | null>(null)
-  const [status, setStatus] = useState<number | undefined>(undefined)
+  const [status, setStatus] = useState('')
 
-  const validateUrl = useCallback(
-    async (urlToCheck: string): Promise<boolean> => {
-      try {
-        const result = await fetch(urlToCheck, { method: 'HEAD' })
-        setStatus(result.status)
-        return result.status === 200
-      } catch (e) {
-        throw new Error(
-          e instanceof Error ? e.message : 'Unknown error occurred'
-        )
+  const probeURL = useCallback(async (id: string): Promise<boolean> => {
+    try {
+      const result = await workbenchStreamProbe(id)
+
+      if (result.error) {
+        console.error('result.error', result.error)
+        throw new Error(result.error)
       }
-    },
-    []
-  )
+
+      setStatus(result.data ? 'ok' : 'error')
+      return result.data ? true : false
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Unknown error occurred')
+    }
+  }, [])
 
   // Reset attempt count when URL changes
   useEffect(() => {
-    if (url !== lastUrlRef.current) {
+    if (id && id !== lastUrlRef.current) {
       attemptCountRef.current = 0
-      lastUrlRef.current = url
+      lastUrlRef.current = id
     }
-  }, [url])
+  }, [id])
 
   useEffect(() => {
-    if (!url) {
-      setIsLoading(false)
+    if (!id) {
+      setIsLoading(true)
       return
     }
 
@@ -52,17 +55,26 @@ export const useUrlValidation = (url: string | null) => {
       }
 
       try {
-        const isValid = await validateUrl(url)
+        const isValid = await probeURL(id)
 
         if (isValid) {
-          setStatus(undefined)
+          setStatus('ok')
           setError(null)
           setIsLoading(false)
+
           return
         }
 
         setIsLoading(true)
       } catch (err) {
+        if (err === '404') {
+          setStatus('error')
+          setIsLoading(true)
+          attemptCountRef.current += 1
+          timeoutRef.current = setTimeout(checkUrl, RETRY_INTERVAL)
+          return
+        }
+
         console.error('err', err)
         setError(err as Error)
         setIsLoading(false)
@@ -80,7 +92,7 @@ export const useUrlValidation = (url: string | null) => {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [url, validateUrl, status])
+  }, [id, probeURL, status])
 
   return { error, isLoading }
 }

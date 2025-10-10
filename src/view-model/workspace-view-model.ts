@@ -22,7 +22,7 @@ import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
 
 const getRepository = async () => {
   const dataSource = new WorkspaceDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+    env('NEXT_PUBLIC_API_URL') || ''
   )
   return new WorkspaceRepositoryImpl(dataSource)
 }

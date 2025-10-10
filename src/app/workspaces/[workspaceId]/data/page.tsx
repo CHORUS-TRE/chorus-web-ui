@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { ActionBar } from '~/components/file-manager/action-bar'
 import { Breadcrumb } from '~/components/file-manager/breadcrumb'
@@ -17,14 +17,19 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { useFileSystem } from '~/hooks/use-file-system'
-import {
-  workspaceFileCreate,
-  workspaceFileList
-} from '~/view-model/workspace-file-view-model'
 
-export default function FileManager() {
+interface FileManagerProps {
+  params: {
+    workspaceId: string
+  }
+}
+
+export default function FileManager({ params }: FileManagerProps) {
   const {
     state,
+    loading,
+    error,
+    searchQuery,
     getChildren,
     selectItem,
     navigateToFolder,
@@ -32,9 +37,13 @@ export default function FileManager() {
     deleteItem,
     renameItem,
     createFolder,
+    importFile,
+    downloadFile,
+    setSearch,
     toggleViewMode,
-    clearSelection
-  } = useFileSystem()
+    clearSelection,
+    refresh
+  } = useFileSystem(params.workspaceId)
 
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false)
   const [newFolderName, setNewFolderName] = useState('')
@@ -42,21 +51,7 @@ export default function FileManager() {
   const rootChildren = getChildren('root')
   const currentChildren = getChildren(state.currentFolderId)
 
-  useEffect(() => {
-    workspaceFileCreate('1', {
-      path: 'folder2/uploaded2.txt',
-      name: 'upload.txt',
-      isDirectory: false,
-      mimeType: 'text/plain',
-      content: ''
-    }).then((res) => {
-      console.log(res)
-    })
-
-    workspaceFileList('1', '').then((res) => {
-      console.log(res)
-    })
-  }, [])
+  // Remove test API calls - data is now fetched through the hook
 
   // Build breadcrumb path
   const buildPath = (
@@ -79,11 +74,38 @@ export default function FileManager() {
     setShowCreateFolderDialog(true)
   }
 
-  const handleCreateFolderSubmit = () => {
+  const handleImport = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.multiple = true
+    input.onchange = async (event) => {
+      const files = (event.target as HTMLInputElement).files
+      if (files) {
+        for (const file of Array.from(files)) {
+          try {
+            await importFile(state.currentFolderId || 'root', file)
+          } catch (error) {
+            console.error('Error importing file:', error)
+          }
+        }
+      }
+    }
+    input.click()
+  }
+
+  const handleCreateFolderSubmit = async () => {
     if (newFolderName.trim()) {
-      createFolder(state.currentFolderId || 'root', newFolderName.trim())
-      setShowCreateFolderDialog(false)
-      setNewFolderName('')
+      try {
+        await createFolder(
+          state.currentFolderId || 'root',
+          newFolderName.trim()
+        )
+        setShowCreateFolderDialog(false)
+        setNewFolderName('')
+      } catch (error) {
+        console.error('Error creating folder:', error)
+        // Error is already handled in the hook and displayed via error state
+      }
     }
   }
 
@@ -95,27 +117,35 @@ export default function FileManager() {
     clearSelection()
   }
 
+  // Show loading state
+  if (loading && Object.keys(state.items).length === 0) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center text-white">
+        <div className="text-lg">Loading files...</div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center text-white">
+        <div className="mb-4 text-lg text-red-400">Error: {error}</div>
+        <Button onClick={refresh}>Retry</Button>
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-screen flex-col text-white">
-      {/* Header */}
-      {/* <div className="flex items-center justify-between border-b bg-background p-4 text-white">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-              <span className="text-sm font-bold text-accent-foreground">
-                D
-              </span>
-            </div>
-            <h1 className="text-xl font-semibold">Data</h1>
-          </div>
-        </div>
-      </div> */}
-
       {/* Toolbar */}
       <Toolbar
         viewMode={state.viewMode}
+        searchQuery={searchQuery}
         onToggleViewMode={toggleViewMode}
         onCreateFolder={handleCreateFolder}
+        onImport={handleImport}
+        onSearch={setSearch}
       />
 
       {/* Action Bar */}
@@ -123,6 +153,7 @@ export default function FileManager() {
         selectedItems={state.selectedItems}
         onDelete={deleteItem}
         onRename={renameItem}
+        onDownload={downloadFile}
         onClearSelection={clearSelection}
         getItemName={getItemName}
       />
@@ -130,8 +161,8 @@ export default function FileManager() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden text-white">
         {/* Sidebar */}
-        <div className="flex w-64 flex-col overflow-hidden border-r">
-          <div className="border-b p-4">
+        <div className="flex w-64 flex-col overflow-hidden rounded-2xl border-r border-muted/40 bg-background/60">
+          <div className="p-4">
             <h2 className="font-medium text-sidebar-foreground text-white">
               My data
             </h2>
@@ -181,13 +212,14 @@ export default function FileManager() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New folder</DialogTitle>
+            <DialogTitle className="text-white">New folder</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <Input
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder="New folder"
+              className="text-white"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleCreateFolderSubmit()

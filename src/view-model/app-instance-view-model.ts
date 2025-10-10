@@ -18,7 +18,7 @@ import { AppInstanceUpdate } from '~/domain/use-cases/app-instance/app-instance-
 
 const getRepository = async () => {
   const dataSource = new AppInstanceDataSourceImpl(
-    env('NEXT_PUBLIC_DATA_SOURCE_API_URL') || ''
+    env('NEXT_PUBLIC_API_URL') || ''
   )
 
   return new AppInstanceRepositoryImpl(dataSource)

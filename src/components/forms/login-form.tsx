@@ -121,8 +121,7 @@ export default function LoginForm() {
   }
 
   const internalLogin = authModes?.some(
-    (mode) =>
-      mode.type === AuthenticationModeType.INTERNAL && mode.internal?.enabled
+    (mode) => mode.type === AuthenticationModeType.INTERNAL
   )
 
   return (
@@ -207,6 +206,17 @@ export default function LoginForm() {
                     </Button>
                   </div>
                 </form>
+
+                <div className="mb-4 text-center text-sm text-white">
+                  Don&apos;t have an account?{' '}
+                  <Link
+                    href="/register"
+                    className="text-muted underline hover:text-accent"
+                    prefetch={false}
+                  >
+                    Register
+                  </Link>
+                </div>
               </>
             )}
 
@@ -241,19 +251,6 @@ export default function LoginForm() {
                   ))}
             </div>
           </>
-        )}
-
-        {internalLogin && (
-          <div className="mt-4 text-center text-sm text-white">
-            Don&apos;t have an account?{' '}
-            <Link
-              href="/register"
-              className="text-muted underline hover:text-accent"
-              prefetch={false}
-            >
-              Register
-            </Link>
-          </div>
         )}
       </div>
     </div>
