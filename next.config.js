@@ -5,7 +5,7 @@
 
 /** @type {import("next").NextConfig} */
 const config = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   // This is needed to ensure the Go WASM module can be loaded correctly
   webpack: (config, { isServer }) => {
     config.experiments = { asyncWebAssembly: true, layers: true }

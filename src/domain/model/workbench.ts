@@ -7,6 +7,20 @@ export enum K8sWorkbenchStatus {
   UNKNOWN = ''
 }
 
+export enum WorkbenchServerPodStatus {
+  WAITING = 'Waiting',
+  STARTING = 'Starting',
+  READY = 'Ready',
+  RUNNING = 'Running',
+  PROGRESSING = 'Progressing',
+  FAILING = 'Failing',
+  RESTARTING = 'Restarting',
+  TERMINATING = 'Terminating',
+  TERMINATED = 'Terminated',
+  FAILED = 'Failed',
+  UNKNOWN = 'Unknown'
+}
+
 export enum WorkbenchStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',

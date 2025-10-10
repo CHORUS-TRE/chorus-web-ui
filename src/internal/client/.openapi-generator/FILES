@@ -19,6 +19,8 @@ models/ChorusAuthenticateOauthResult.ts
 models/ChorusAuthenticationMode.ts
 models/ChorusAuthenticationReply.ts
 models/ChorusAuthenticationResult.ts
+models/ChorusBulkCreateAppsReply.ts
+models/ChorusBulkCreateAppsRequest.ts
 models/ChorusCountUnreadNotificationsReply.ts
 models/ChorusCreateAppInstanceReply.ts
 models/ChorusCreateAppInstanceResult.ts
