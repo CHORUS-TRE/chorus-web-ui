@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import { AppWindow, PictureInPicture2 } from 'lucide-react'
+import { AppWindow } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 

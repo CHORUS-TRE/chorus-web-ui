@@ -1,12 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import {
-  CirclePlus,
-  EllipsisVerticalIcon,
-  HomeIcon,
-  Package
-} from 'lucide-react'
+import { EllipsisVerticalIcon, HomeIcon, Package } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 

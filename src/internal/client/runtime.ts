@@ -253,29 +253,31 @@ export class BaseAPI {
         fetchParams.init
       )
     } catch (e) {
-      let error = e
       for (const middleware of this.middleware) {
         if (middleware.onError) {
-          const res = await middleware.onError({
-            fetch: this.fetchApi,
-            url: fetchParams.url,
-            init: fetchParams.init,
-            error: error,
-            response: response
-          })
-          if (res instanceof Response) {
-            response = res
-          }
+          response =
+            (await middleware.onError({
+              fetch: this.fetchApi,
+              url: fetchParams.url,
+              init: fetchParams.init,
+              error: e,
+              response: response ? response.clone() : undefined
+            })) || response
         }
       }
       if (response === undefined) {
         if (e instanceof Error) {
+          console.error('API Error:', {
+            error: e?.message
+          })
+
           throw new FetchError(
             e,
             'The request failed and the interceptors did not return an alternative response'
           )
+        } else {
+          throw e
         }
-        throw e
       }
     }
     for (const middleware of this.middleware) {

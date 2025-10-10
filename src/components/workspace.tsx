@@ -8,12 +8,9 @@ import {
   EllipsisVerticalIcon,
   Footprints,
   LaptopMinimal,
-  MoreVertical,
-  TableProperties,
   Users
 } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
@@ -72,7 +69,6 @@ function SimpleBarChart({
 }
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
-  const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
   const {
