@@ -56,11 +56,11 @@ export default function FileManagerClient({
     folderId: string | null
   ): { id: string; name: string }[] => {
     if (!folderId || folderId === 'root') {
-      return [{ id: 'root', name: 'My data' }]
+      return [{ id: 'root', name: 'workspace-archive' }]
     }
 
     const item = state.items[folderId]
-    if (!item) return [{ id: 'root', name: 'My data' }]
+    if (!item) return [{ id: 'root', name: 'workspace-archive' }]
 
     const parentPath = buildPath(item.parentId)
     return [...parentPath, { id: item.id, name: item.name }]
@@ -129,7 +129,7 @@ export default function FileManagerClient({
   }
 
   return (
-    <div className="flex h-screen flex-col text-white">
+    <div className="flex h-screen flex-col gap-2 text-white">
       {/* Toolbar */}
       <Toolbar
         viewMode={state.viewMode}
@@ -153,11 +153,11 @@ export default function FileManagerClient({
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden text-white">
         {/* Sidebar */}
-        <div className="flex w-64 flex-col overflow-hidden rounded-2xl border-r border-muted/40 bg-background/60">
-          <div className="p-4">
-            <h2 className="font-medium text-sidebar-foreground text-white">
-              My data
-            </h2>
+        <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40 bg-background/60">
+          <div className="border-b border-muted/40 p-4">
+            <div className="text-2xl font-medium text-sidebar-foreground text-white">
+              Archive
+            </div>
           </div>
           <div className="flex-1 overflow-auto">
             <FileTree
@@ -175,7 +175,7 @@ export default function FileManagerClient({
 
         {/* Main Panel */}
         <div
-          className="flex flex-1 flex-col overflow-hidden"
+          className="flex flex-1 flex-col overflow-hidden rounded-r-2xl border border-muted/40"
           onClick={handleBackgroundClick}
         >
           {/* Breadcrumb */}

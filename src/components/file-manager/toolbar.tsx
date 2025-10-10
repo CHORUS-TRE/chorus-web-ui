@@ -2,7 +2,8 @@
 
 import { LayoutGrid, List, Plus, Search, Settings, Upload } from 'lucide-react'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
+import { Button as UIButton } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 
 interface ToolbarProps {
@@ -23,51 +24,61 @@ export function Toolbar({
   onSearch
 }: ToolbarProps) {
   return (
-    <div className="flex items-center justify-between border-b border-muted/40 bg-background/60 p-4">
-      <div className="flex items-center gap-2">
-        <Button onClick={onCreateFolder} size="sm" variant="outline">
-          <Plus className="mr-2 h-4 w-4" />
+    <div className="flex items-center justify-between border-muted/40 p-4">
+      <div className="flex items-center gap-3">
+        <Button
+          onClick={onCreateFolder}
+          className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+        >
+          <Plus className="h-4 w-4" />
           New folder
         </Button>
-        <Button variant="outline" size="sm" onClick={onImport}>
-          <Upload className="mr-2 h-4 w-4" />
+        <Button
+          onClick={onImport}
+          className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+        >
+          <Upload className="h-4 w-4" />
           Import
         </Button>
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+        <div className="relative mr-2 hidden flex-1 xl:block">
+          <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted" />
           <Input
+            type="search"
             placeholder="Search in data"
-            className="w-64 pl-10"
+            className="h-7 w-full border border-muted/40 bg-background pl-10 md:w-[240px] lg:w-[240px]"
+            id="search-input"
             value={searchQuery}
             onChange={(e) => onSearch(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center rounded-md border">
-          <Button
-            variant={viewMode === 'list' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={onToggleViewMode}
-            className="rounded-r-none"
-          >
-            <List className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'grid' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={onToggleViewMode}
-            className="rounded-l-none"
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </Button>
+        <div className="grid grid-flow-col grid-rows-1 gap-4">
+          <div className="flex items-center justify-end gap-0">
+            <UIButton
+              variant="ghost"
+              size="sm"
+              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${viewMode === 'grid' ? 'border-accent' : ''}`}
+              onClick={onToggleViewMode}
+              id="grid-button"
+              aria-label="Switch to grid view"
+            >
+              <LayoutGrid />
+            </UIButton>
+            <UIButton
+              variant="ghost"
+              size="sm"
+              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${viewMode === 'list' ? 'border-accent' : ''}`}
+              onClick={onToggleViewMode}
+              id="list-button"
+              aria-label="Switch to list view"
+            >
+              <List />
+            </UIButton>
+          </div>
         </div>
-
-        <Button variant="ghost" size="sm">
-          <Settings className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   )
