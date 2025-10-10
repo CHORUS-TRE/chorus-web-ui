@@ -1,10 +1,17 @@
 import { z } from 'zod'
 
 export enum K8sWorkbenchStatus {
+  WAITING = 'Waiting',
+  STARTING = 'Starting',
+  READY = 'Ready',
   RUNNING = 'Running',
   PROGRESSING = 'Progressing',
+  FAILING = 'Failing',
+  RESTARTING = 'Restarting',
+  TERMINATING = 'Terminating',
+  TERMINATED = 'Terminated',
   FAILED = 'Failed',
-  UNKNOWN = ''
+  UNKNOWN = 'Unknown'
 }
 
 export enum WorkbenchStatus {
