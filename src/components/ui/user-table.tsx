@@ -19,6 +19,7 @@ import { User } from '~/domain/model/user'
 
 export function UserTable() {
   const [users, setUsers] = useState<User[]>([])
+  const [userCollapsed, setUserCollapsed] = useState<boolean[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
@@ -26,11 +27,18 @@ export function UserTable() {
     setRefreshKey((oldKey) => oldKey + 1)
   }
 
+  const toggleUserCollapse = (index: number) => {
+    const newCollapsed = users.map(() => true)
+    newCollapsed[index] = !userCollapsed[index]
+    setUserCollapsed(newCollapsed)
+  }
+
   useEffect(() => {
     async function loadUsers() {
       const result = await listUsers()
       if (result.data) {
         setUsers(result.data)
+        setUserCollapsed(result.data.map(() => true))
       } else {
         toast({
           title: 'Error',
@@ -63,43 +71,137 @@ export function UserTable() {
       </caption>
       <TableHeader>
         <TableRow>
+          <TableHead scope="col"></TableHead>
           <TableHead scope="col">Name</TableHead>
           <TableHead scope="col">Username</TableHead>
           <TableHead scope="col">Roles</TableHead>
+          <TableHead scope="col">Workspace</TableHead>
+          <TableHead scope="col">Workbench</TableHead>
+          <TableHead scope="col">User</TableHead>
           <TableHead scope="col">Status</TableHead>
           <TableHead scope="col">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>
-              {user.firstName} {user.lastName}
-            </TableCell>
-            <TableCell>{user.username}</TableCell>
-            <TableCell>
-              <div className="flex space-x-1">
-                {user.roles2?.map((role) => (
-                  <Badge key={role.name}>{role.name}</Badge>
-                ))}
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant={user.status === 'active' ? 'default' : 'destructive'}
+        {users.map((user, userIndex) =>
+          userCollapsed[userIndex] ? (
+            <TableRow key={user.id}>
+              <TableCell
+                onClick={() => {
+                  toggleUserCollapse(userIndex)
+                }}
+                className="cursor-pointer"
               >
-                {user.status}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <UserEditDialog user={user} onUserUpdated={handleUserChange} />
-              <UserDeleteDialog
-                userId={user.id}
-                onUserDeleted={handleUserChange}
-              />
-            </TableCell>
-          </TableRow>
-        ))}
+                {userCollapsed[userIndex] ? '▸' : '▾'}
+              </TableCell>
+              <TableCell>
+                {user.firstName} {user.lastName}
+              </TableCell>
+              <TableCell>{user.username}</TableCell>
+              <TableCell>
+                <Badge>{user.roles2?.length}</Badge>
+                <div className="flex space-x-1"></div>
+              </TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+
+              <TableCell>
+                <Badge
+                  variant={user.status === 'active' ? 'default' : 'destructive'}
+                >
+                  {user.status}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <UserEditDialog user={user} onUserUpdated={handleUserChange} />
+                <UserDeleteDialog
+                  userId={user.id}
+                  onUserDeleted={handleUserChange}
+                />
+              </TableCell>
+            </TableRow>
+          ) : (
+            <>
+              <TableRow key={user.id} className="border-muted/50">
+                <TableCell
+                  onClick={() => {
+                    toggleUserCollapse(userIndex)
+                  }}
+                  className="cursor-pointer"
+                >
+                  {userCollapsed[userIndex] ? '▸' : '▾'}
+                </TableCell>
+                <TableCell>
+                  {user.firstName} {user.lastName}
+                </TableCell>
+                <TableCell>{user.username}</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Badge
+                    variant={
+                      user.status === 'active' ? 'default' : 'destructive'
+                    }
+                  >
+                    {user.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <UserEditDialog
+                    user={user}
+                    onUserUpdated={handleUserChange}
+                  />
+                  <UserDeleteDialog
+                    userId={user.id}
+                    onUserDeleted={handleUserChange}
+                  />
+                </TableCell>
+              </TableRow>
+              {user.roles2?.map((role, roleIndex) => (
+                <TableRow
+                  key={`${user.id}-${role.name}`}
+                  className={
+                    roleIndex != (user.roles2?.length || 0) - 1
+                      ? 'border-muted/50'
+                      : ''
+                  }
+                >
+                  <TableCell className="p-2"></TableCell>
+                  <TableCell className="p-2"></TableCell>
+                  <TableCell className="p-2"></TableCell>
+                  <TableCell className="p-2">
+                    <Badge>{role.name}</Badge>
+                  </TableCell>
+                  <TableCell className="p-2">
+                    {role?.attributes?.workspace ? (
+                      <Badge className="bg-red-400">
+                        {role?.attributes?.workspace}
+                      </Badge>
+                    ) : null}
+                  </TableCell>
+                  <TableCell className="p-2">
+                    {role?.attributes?.workbench ? (
+                      <Badge className="bg-orange-400">
+                        {role?.attributes?.workbench}
+                      </Badge>
+                    ) : null}
+                  </TableCell>
+                  <TableCell className="p-2">
+                    {role?.attributes?.user ? (
+                      <Badge className="bg-yellow-400">
+                        {role?.attributes?.user}
+                      </Badge>
+                    ) : null}
+                  </TableCell>
+                  <TableCell className="p-2" colSpan={4}></TableCell>
+                </TableRow>
+              ))}
+            </>
+          )
+        )}
       </TableBody>
     </Table>
   )

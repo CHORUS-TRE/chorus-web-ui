@@ -133,9 +133,18 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
       // Temporary mock data injection for UI development
-      if (usersResult) {
+      if (usersResult && response.result?.users) {
         usersResult.data.forEach((user: User, index: number) => {
-          user.roles2 = [MOCK_ROLES[index % MOCK_ROLES.length]]
+          const rolesWithContext = response.result?.users?.[index]?.rolesWithContext
+          user.roles2 = rolesWithContext?.map(rwc => {
+            return {
+              name: rwc.name || 'unknown',
+              description: '',
+              permissions: [],
+              inheritsFrom: [],
+              attributes: rwc.context ?? {},
+            }
+          }) ?? []
         })
       }
 
