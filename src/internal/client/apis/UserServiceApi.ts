@@ -15,7 +15,9 @@
 import * as runtime from '../runtime'
 import type {
   ChorusCreateUserReply,
+  ChorusCreateUserRoleReply,
   ChorusDeleteUserReply,
+  ChorusDeleteUserRoleReply,
   ChorusEnableTotpReply,
   ChorusEnableTotpRequest,
   ChorusGetUserMeReply,
@@ -28,13 +30,18 @@ import type {
   ChorusUpdatePasswordRequest,
   ChorusUpdateUserReply,
   ChorusUser,
-  RpcStatus
+  RpcStatus,
+  UserServiceCreateUserRoleBody
 } from '../models/index'
 import {
   ChorusCreateUserReplyFromJSON,
   ChorusCreateUserReplyToJSON,
+  ChorusCreateUserRoleReplyFromJSON,
+  ChorusCreateUserRoleReplyToJSON,
   ChorusDeleteUserReplyFromJSON,
   ChorusDeleteUserReplyToJSON,
+  ChorusDeleteUserRoleReplyFromJSON,
+  ChorusDeleteUserRoleReplyToJSON,
   ChorusEnableTotpReplyFromJSON,
   ChorusEnableTotpReplyToJSON,
   ChorusEnableTotpRequestFromJSON,
@@ -60,15 +67,27 @@ import {
   ChorusUserFromJSON,
   ChorusUserToJSON,
   RpcStatusFromJSON,
-  RpcStatusToJSON
+  RpcStatusToJSON,
+  UserServiceCreateUserRoleBodyFromJSON,
+  UserServiceCreateUserRoleBodyToJSON
 } from '../models/index'
 
 export interface UserServiceCreateUserRequest {
   body: ChorusUser
 }
 
+export interface UserServiceCreateUserRoleRequest {
+  userId: string
+  body: UserServiceCreateUserRoleBody
+}
+
 export interface UserServiceDeleteUserRequest {
   id: string
+}
+
+export interface UserServiceDeleteUserRoleRequest {
+  userId: string
+  roleId: string
 }
 
 export interface UserServiceEnableTotpRequest {
@@ -168,6 +187,79 @@ export class UserServiceApi extends runtime.BaseAPI {
   }
 
   /**
+   * This endpoint creates a user\'s role
+   * Create a user\'s role
+   */
+  async userServiceCreateUserRoleRaw(
+    requestParameters: UserServiceCreateUserRoleRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusCreateUserRoleReply>> {
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling userServiceCreateUserRole.'
+      )
+    }
+
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling userServiceCreateUserRole.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/{userId}/role`.replace(
+          `{${'userId'}}`,
+          encodeURIComponent(String(requestParameters.userId))
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: UserServiceCreateUserRoleBodyToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusCreateUserRoleReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint creates a user\'s role
+   * Create a user\'s role
+   */
+  async userServiceCreateUserRole(
+    requestParameters: UserServiceCreateUserRoleRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusCreateUserRoleReply> {
+    const response = await this.userServiceCreateUserRoleRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
    * This endpoint deletes a user
    * Delete a user
    */
@@ -218,6 +310,81 @@ export class UserServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusDeleteUserReply> {
     const response = await this.userServiceDeleteUserRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint deletes a user\'s role
+   * Delete a user\'s role
+   */
+  async userServiceDeleteUserRoleRaw(
+    requestParameters: UserServiceDeleteUserRoleRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusDeleteUserRoleReply>> {
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling userServiceDeleteUserRole.'
+      )
+    }
+
+    if (
+      requestParameters.roleId === null ||
+      requestParameters.roleId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'roleId',
+        'Required parameter requestParameters.roleId was null or undefined when calling userServiceDeleteUserRole.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/{userId}/role/{roleId}`
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          )
+          .replace(
+            `{${'roleId'}}`,
+            encodeURIComponent(String(requestParameters.roleId))
+          ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusDeleteUserRoleReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint deletes a user\'s role
+   * Delete a user\'s role
+   */
+  async userServiceDeleteUserRole(
+    requestParameters: UserServiceDeleteUserRoleRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusDeleteUserRoleReply> {
+    const response = await this.userServiceDeleteUserRoleRaw(
       requestParameters,
       initOverrides
     )

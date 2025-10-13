@@ -24,6 +24,12 @@ export interface ChorusRole {
    * @type {string}
    * @memberof ChorusRole
    */
+  id?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusRole
+   */
   name?: string
   /**
    *
@@ -54,6 +60,7 @@ export function ChorusRoleFromJSONTyped(
     return json
   }
   return {
+    id: !exists(json, 'id') ? undefined : json['id'],
     name: !exists(json, 'name') ? undefined : json['name'],
     context: !exists(json, 'context') ? undefined : json['context']
   }
@@ -67,6 +74,7 @@ export function ChorusRoleToJSON(value?: ChorusRole | null): any {
     return null
   }
   return {
+    id: value.id,
     name: value.name,
     context: value.context
   }

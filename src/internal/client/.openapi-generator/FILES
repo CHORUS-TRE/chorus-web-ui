@@ -28,6 +28,8 @@ models/ChorusCreateAppReply.ts
 models/ChorusCreateAppResult.ts
 models/ChorusCreateUserReply.ts
 models/ChorusCreateUserResult.ts
+models/ChorusCreateUserRoleReply.ts
+models/ChorusCreateUserRoleResult.ts
 models/ChorusCreateWorkbenchReply.ts
 models/ChorusCreateWorkbenchResult.ts
 models/ChorusCreateWorkspaceFileReply.ts
@@ -38,6 +40,8 @@ models/ChorusCredentials.ts
 models/ChorusDeleteAppInstanceReply.ts
 models/ChorusDeleteAppReply.ts
 models/ChorusDeleteUserReply.ts
+models/ChorusDeleteUserRoleReply.ts
+models/ChorusDeleteUserRoleResult.ts
 models/ChorusDeleteWorkbenchReply.ts
 models/ChorusDeleteWorkspaceFileReply.ts
 models/ChorusDeleteWorkspaceReply.ts
@@ -119,6 +123,7 @@ models/ChorusWorkspaceFile.ts
 models/ChorusWorkspaceFilter.ts
 models/ProtobufAny.ts
 models/RpcStatus.ts
+models/UserServiceCreateUserRoleBody.ts
 models/WorkbenchServiceManageUserRoleInWorkbenchBody.ts
 models/WorkspaceServiceManageUserRoleInWorkspaceBody.ts
 models/index.ts

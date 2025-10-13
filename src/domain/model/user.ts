@@ -26,19 +26,23 @@ export const UserSchema = z.object({
   workspaceId: z.string().optional()
 })
 
+export const RoleSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  context: z.record(z.string())
+})
+
 export const UserCreateSchema = z.object({
   username: z.string(),
   password: z.string(),
   firstName: z.string().min(2),
   lastName: z.string().min(2),
-  rolesWithContext: z
-    .array(
-      z.object({
-        name: z.string(),
-        context: z.record(z.string())
-      })
-    )
-    .optional()
+  rolesWithContext: z.array(RoleSchema).optional()
+})
+
+export const UserRoleCreateSchema = z.object({
+  userId: z.string(),
+  role: RoleSchema
 })
 
 export const UserUpdateSchema = UserCreateSchema.extend({
@@ -48,5 +52,7 @@ export const UserUpdateSchema = UserCreateSchema.extend({
 export const UserEditFormSchema = UserCreateSchema
 
 export type User = z.infer<typeof UserSchema>
+export type Role = z.infer<typeof RoleSchema>
 export type UserCreateType = z.infer<typeof UserCreateSchema>
 export type UserUpdateType = z.infer<typeof UserUpdateSchema>
+export type UserRoleCreateType = z.infer<typeof UserRoleCreateSchema>
