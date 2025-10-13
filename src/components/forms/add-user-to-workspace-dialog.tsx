@@ -42,7 +42,7 @@ const AddUserToWorkspaceSchema = z.object({
   roleName: z.string().min(1, 'Please select a role')
 })
 
-type FormData = z.infer<typeof AddUserToWorkspaceSchema>
+type AddUserFormData = z.infer<typeof AddUserToWorkspaceSchema>
 
 export function AddUserToWorkspaceDialog({
   workspaceId,
@@ -60,7 +60,7 @@ export function AddUserToWorkspaceDialog({
     label: role.name
   }))
 
-  const form = useForm<FormData>({
+  const form = useForm<AddUserFormData>({
     resolver: zodResolver(AddUserToWorkspaceSchema),
     defaultValues: {
       userId: '',
@@ -114,7 +114,7 @@ export function AddUserToWorkspaceDialog({
     }
   }, [state, onUserAdded, form])
 
-  const handleFormSubmit = async (data: FormData) => {
+  const handleFormSubmit = (data: AddUserFormData) => {
     const formData = new FormData()
     formData.append('userId', data.userId)
     formData.append('roleName', data.roleName)
@@ -135,13 +135,7 @@ export function AddUserToWorkspaceDialog({
           <DialogTitle>Add User to Workspace</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form action={handleFormSubmit} className="space-y-4">
-            <input type="hidden" name="userId" value={form.watch('userId')} />
-            <input
-              type="hidden"
-              name="roleName"
-              value={form.watch('roleName')}
-            />
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
 
             <FormField
               control={form.control}

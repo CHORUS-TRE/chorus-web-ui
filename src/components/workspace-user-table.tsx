@@ -272,7 +272,7 @@ export default function WorkspaceUserTable({
           workspaceId={workspaceId}
           onUserAdded={handleUserChange}
         />
-        <UserCreateDialog onUserCreated={handleUserChange} />
+        {/* <UserCreateDialog onUserCreated={handleUserChange} /> */}
       </div>
       <CardContainer users={users} title={title} description={description} />
     </div>
