@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { workbenchStreamProbe } from '~/view-model/workbench-view-model'
 
 const MAX_ATTEMPTS = 10
-const RETRY_INTERVAL = 1000
+const RETRY_INTERVAL = 2 * 1000
 
 export const useUrlProbing = (id: string | undefined) => {
   const [error, setError] = useState<Error | null>(null)

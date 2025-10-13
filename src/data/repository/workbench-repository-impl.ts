@@ -15,6 +15,15 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     this.dataSource = dataSource
   }
 
+  async streamUrl(id: string): Promise<Result<string>> {
+    try {
+      const response = await this.dataSource.streamUrl(id)
+      return { data: response }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
   async streamProbe(id: string): Promise<Result<boolean>> {
     try {
       const response = await this.dataSource.streamProbe(id)

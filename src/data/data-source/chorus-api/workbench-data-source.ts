@@ -1,3 +1,5 @@
+import { env } from 'next-runtime-env'
+
 import {
   WorkbenchCreateType,
   WorkbenchUpdateType
@@ -16,6 +18,7 @@ import { BaseAPI } from '~/internal/client/runtime'
 import { toChorusWorkbench, toChorusWorkbenchUpdate } from './workbench-mapper'
 
 interface WorkbenchDataSource {
+  streamUrl: (id: string) => string
   streamProbe: (id: string) => Promise<Response>
   create: (
     workbench: WorkbenchCreateType
@@ -41,8 +44,12 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
     this.service = new WorkbenchServiceApi(configuration)
   }
 
+  streamUrl(id: string): string {
+    return `${env('NEXT_PUBLIC_API_URL')}${env('NEXT_PUBLIC_API_SUFFIX')}/workbenchs/${id}/stream/`
+  }
+
   streamProbe(id: string): Promise<Response> {
-    const computedUrl = `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_API_SUFFIX}/workbenchs/${id}/stream/`
+    const computedUrl = this.streamUrl(id)
 
     const api = new BaseAPI(
       new Configuration({

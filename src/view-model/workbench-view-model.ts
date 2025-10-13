@@ -17,6 +17,7 @@ import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
 import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
 import { WorkbenchStreamProbe } from '~/domain/use-cases/workbench/workbench-stream-probe'
+import { WorkbenchStreamUrl } from '~/domain/use-cases/workbench/workbench-stream-url'
 import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
 import { FetchError, ResponseError } from '~/internal/client/runtime'
 
@@ -27,6 +28,17 @@ const getRepository = async () => {
   return new WorkbenchRepositoryImpl(dataSource)
 }
 
+export async function workbenchStreamUrl(id: string): Promise<Result<string>> {
+  try {
+    const repository = await getRepository()
+    const useCase = new WorkbenchStreamUrl(repository)
+    return await useCase.execute(id)
+  } catch (error) {
+    console.error('Error getting workbench stream url', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
 export async function workbenchStreamProbe(
   id: string
 ): Promise<Result<boolean>> {
@@ -35,7 +47,6 @@ export async function workbenchStreamProbe(
     const useCase = new WorkbenchStreamProbe(repository)
 
     const result = await useCase.execute(id)
-    console.log('result', result, result.error)
 
     return { data: result.data ? true : false, error: result.error }
   } catch (error) {
