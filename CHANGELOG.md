@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.11.0...v1.11.1) (2025-10-13)
+
+
+### Bug Fixes
+
+* **workbench:** rename WorkbenchStreamProbeUseCase to WorkbenchStreamUrlUseCase ([f9da06d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f9da06dc7bba3a47949e8c8fa9656a6a7f16da64))
+
 # [1.11.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.10.1...v1.11.0) (2025-10-13)
 
 
