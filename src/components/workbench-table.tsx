@@ -123,9 +123,15 @@ export default function WorkbenchTable({
             </Link>
           </TableCell>
           <TableCell className="hidden p-1 md:table-cell">
-            {appInstances
-              ?.filter((instance) => workbench?.id === instance.workbenchId)
-              .map((instance, index, array) => {
+            {(() => {
+              const filteredInstances =
+                appInstances?.filter(
+                  (instance) => workbench?.id === instance.workbenchId
+                ) || []
+              if (filteredInstances.length === 0) {
+                return workbench?.name || ''
+              }
+              return filteredInstances.map((instance, index, array) => {
                 const appName =
                   apps?.find((app) => app.id === instance.appId)?.name || ''
                 const isLast = index === array.length - 1
@@ -136,7 +142,8 @@ export default function WorkbenchTable({
                     {!isLast && ', '}
                   </React.Fragment>
                 )
-              })}
+              })
+            })()}
           </TableCell>
           <TableCell
             className="hidden p-1 md:table-cell"

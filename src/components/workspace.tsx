@@ -381,41 +381,56 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         {workspace && user?.workspaceId !== workspace?.id && (
           <Card
             title={
-              <>
-                <Users className="h-6 w-6 text-white" />
-                Team
-              </>
+              <div className="flex w-full items-center justify-between text-muted">
+                <Link
+                  href={`/workspaces/${workspaceId}/users`}
+                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
+                >
+                  <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                  <span id="sessions-card-title" className="">
+                    <span className="sr-only">Team</span>
+                    Team
+                  </span>
+                </Link>
+              </div>
             }
             description="See who's on your team and their roles."
             content={
               <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
-                  {users?.map((user) => (
-                    <div
-                      className="flex items-center gap-4"
-                      key={`team-${user.id}`}
-                    >
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JD</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm">
-                          {user.firstName} {user.lastName}
-                        </p>
-                        <p className="text-xs text-muted">
-                          {user.roles?.join(', ')}
-                        </p>
+                  {users
+                    ?.filter((user) => user.workspaceId === workspaceId)
+                    .map((user) => (
+                      <div
+                        className="flex items-center gap-4"
+                        key={`team-${user.id}`}
+                      >
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src="/placeholder-user.jpg" />
+                          <AvatarFallback>JD</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm">
+                            {user.firstName} {user.lastName}
+                          </p>
+                          <p className="text-xs text-muted">
+                            {user.roles?.join(', ')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </ScrollArea>
             }
             footer={
-              <Button disabled className="cursor-default">
-                <ArrowRight className="h-4 w-4" />
-                View Team
+              <Button className="cursor-default" asChild>
+                <Link
+                  href={`/workspaces/${workspaceId}/users`}
+                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                  View Team
+                </Link>
               </Button>
             }
           />

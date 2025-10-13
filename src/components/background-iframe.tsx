@@ -13,8 +13,10 @@ import { LoadingOverlay } from './loading-overlay'
 
 export default function BackgroundIframe() {
   const [url, setUrl] = useState<string | null>(null)
+  const [showHud, setShowHud] = useState(true)
   const { user } = useAuthentication()
-  const { background } = useAppState()
+  const { background, workspaces, workbenches, appInstances, apps } =
+    useAppState()
   const pathname = usePathname()
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
@@ -35,6 +37,12 @@ export default function BackgroundIframe() {
     fetchUrl()
   }, [background?.sessionId])
 
+  // Check if URL matches workspaces/[wid]/sessions/[sid] pattern
+  const isSessionPage = useMemo(() => {
+    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+    return sessionPageRegex.test(pathname)
+  }, [pathname])
+
   const handleLoad = useCallback(() => {
     const handleMouseOver = (e: MouseEvent) => {
       iFrameRef.current?.focus()
@@ -46,11 +54,29 @@ export default function BackgroundIframe() {
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
-  // Check if URL matches workspaces/[wid]/sessions/[sid] pattern
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
+  // Get current session/workbench data
+  const currentWorkbench = useMemo(() => {
+    if (!background?.sessionId || !workbenches) return null
+    return workbenches.find((wb) => wb.id === background.sessionId)
+  }, [background?.sessionId, workbenches])
+
+  // Get current workspace data
+  const currentWorkspace = useMemo(() => {
+    if (!background?.workspaceId || !workspaces) return null
+    return workspaces.find((ws) => ws.id === background.workspaceId)
+  }, [background?.workspaceId, workspaces])
+
+  // Get running apps for this workbench
+  const runningApps = useMemo(() => {
+    if (!currentWorkbench?.appInstances || !appInstances || !apps) return []
+    const instances = appInstances.filter((instance) =>
+      currentWorkbench.appInstances?.includes(instance.id || '')
+    )
+    return instances.map((instance) => {
+      const app = apps.find((a) => a.id === instance.appId)
+      return app?.name || 'Unknown App'
+    })
+  }, [currentWorkbench, appInstances, apps])
 
   if (!background?.sessionId || !user) return null
 
@@ -64,15 +90,43 @@ export default function BackgroundIframe() {
         </div>
       )}
 
-      {workbenchStatus && (
-        <div
-          className={`fixed bottom-3 right-3 z-30 h-2 w-2 animate-pulse rounded-full ${
-            workbenchStatus === 'Running' ? 'bg-green-500' : 'bg-red-500'
-          }`}
-          aria-label={`Workbench status: ${workbenchStatus}`}
-          title={`Workbench status: ${workbenchStatus}`}
-        />
-      )}
+      {showHud &&
+        workbenchStatus &&
+        currentWorkspace &&
+        currentWorkbench &&
+        !isSessionPage && (
+          <>
+            <div
+              className="fixed bottom-3 right-3 z-20 rounded-lg bg-black/80 p-3 text-white backdrop-blur-sm"
+              aria-label="Session HUD"
+            >
+              <div className="flex items-center gap-2 text-sm">
+                <div
+                  className={`h-2 w-2 animate-pulse rounded-full ${
+                    workbenchStatus === 'Running'
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                  }`}
+                  aria-label={`Workbench status: ${workbenchStatus}`}
+                  title={`Workbench status: ${workbenchStatus}`}
+                />
+                <div className="flex flex-col gap-1">
+                  <div className="font-semibold">
+                    {currentWorkbench.name || 'Session'}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    {currentWorkspace.name || 'Workspace'}
+                  </div>
+                  {runningApps.length > 0 && (
+                    <div className="text-xs text-gray-400">
+                      Apps: {runningApps.join(', ')}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
       <iframe
         title="Application Workspace"

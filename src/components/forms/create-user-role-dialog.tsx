@@ -37,6 +37,7 @@ import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api/user-data-s
 import { UserRepositoryImpl } from '~/data/repository/user-repository-impl'
 import { Result } from '~/domain/model'
 import { Role, User } from '~/domain/model/user'
+import { getAllRoles } from '~/utils/schema-roles'
 
 import { toast } from '../hooks/use-toast'
 
@@ -73,16 +74,9 @@ export function CreateUserRoleDialog({
   const [state, formAction] = useActionState(createUserRole, {} as Result<User>)
 
   useEffect(() => {
-    // const fetchRoles = async () => {
-    //   const repo = new UserRepositoryImpl(new UserApiDataSourceImpl())
-    //   const useCase = new RoleListUseCase(repo)
-    //   const result = await useCase.execute()
-    //   if (result.data) setRoles(result.data)
-    //   if (result.error) {
-    //     toast({ title: 'Error', description: result.error, variant: 'destructive' })
-    //   }
-    // }
-    // fetchRoles()
+    // Load roles from schema definition
+    const schemaRoles = getAllRoles()
+    setRoles(schemaRoles)
   }, [])
 
   useEffect(() => {

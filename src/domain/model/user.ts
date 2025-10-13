@@ -1,5 +1,11 @@
 import { z } from 'zod'
 
+export const RoleSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  context: z.record(z.string())
+})
+
 export const UserSchema = z.object({
   id: z.string(),
   firstName: z.string(),
@@ -9,14 +15,7 @@ export const UserSchema = z.object({
   password: z.string().optional(),
   status: z.string(),
   roles: z.array(z.string()).optional(),
-  rolesWithContext: z
-    .array(
-      z.object({
-        name: z.string(),
-        context: z.record(z.string())
-      })
-    )
-    .optional(),
+  rolesWithContext: z.array(RoleSchema).optional(),
   totpEnabled: z.boolean().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -24,12 +23,6 @@ export const UserSchema = z.object({
 
   // webui extra fields
   workspaceId: z.string().optional()
-})
-
-export const RoleSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  context: z.record(z.string())
 })
 
 export const UserCreateSchema = z.object({
