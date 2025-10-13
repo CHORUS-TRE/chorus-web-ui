@@ -7,7 +7,7 @@ import { useActionState } from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ControllerRenderProps } from 'react-hook-form'
-import { object, z } from 'zod'
+import { z } from 'zod'
 
 import { updateUser } from '@/view-model/user-view-model'
 import { Badge } from '~/components/ui/badge'
@@ -36,7 +36,6 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-// import { MultiSelect } from '~/components/ui/multi-select'
 import { MockRoleDataSource } from '~/data/data-source/chorus-api/role-data-source'
 import { RoleRepositoryImpl } from '~/data/repository/role-repository-impl'
 import { Result, Role } from '~/domain/model'
@@ -49,7 +48,6 @@ import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
 import { toast } from '../hooks/use-toast'
 
 const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  // roles: z.array(z.string()).optional()
   roles: z
     .array(
       z.object({
@@ -298,18 +296,17 @@ export function UserEditDialog({
                                 ) : null}
                               </TableCell>
                               <TableCell className="p-2">
-                                {/* <span onClick={removeRoleWithIndex(field, i)}>x</span> */}
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  aria-label="Delete user"
+                                  aria-label="Delete role"
                                   onClick={removeRoleWithIndex(field, i)}
                                 >
                                   <Trash2
                                     className="h-4 w-4"
                                     aria-hidden="true"
                                   />
-                                  <span className="sr-only">Delete user</span>
+                                  <span className="sr-only">Delete role</span>
                                 </Button>
                               </TableCell>
                             </TableRow>
