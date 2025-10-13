@@ -1,6 +1,13 @@
 'use client'
 
 import React, { useEffect } from 'react'
+const AuthenticatedApp = React.lazy(() =>
+  import('@/components/authenticated-app').then((mod) => ({
+    default: mod.AuthenticatedApp
+  }))
+)
+import { Package } from 'lucide-react'
+import Link from 'next/link'
 
 import { Header } from '@/components/header'
 import { AdminSidebar } from '@/components/ui/admin-sidebar'
@@ -8,6 +15,14 @@ import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '~/components/ui/breadcrumb'
 import { UnauthenticatedApp } from '~/components/unauthenticated-app'
 
 export default function Layout({
@@ -31,22 +46,43 @@ export default function Layout({
 
   return (
     <>
-      <div className="fixed left-0 top-0 z-40 h-11 min-w-full">
-        <Header />
-      </div>
-      <div className="absolute left-0 top-0 z-40 mt-11 flex min-h-screen">
-        <SidebarProvider>
-          <nav className="">
-            <AdminSidebar />
-          </nav>
-          <main className="w-full text-white">
-            <SidebarTrigger />
-            <div className="flex-1 p-8">
-              <DynamicBreadcrumb />
-              {children}
+      <div className="w-full">
+        <AuthenticatedApp>
+          <>
+            <Breadcrumb className="mb-4">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href="/">CHORUS</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Admin</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
+                <Package className="h-9 w-9 text-white" />
+                Admin
+              </h2>
             </div>
-          </main>
-        </SidebarProvider>
+          </>
+          <div className="flex">
+            <SidebarProvider>
+              <AdminSidebar />
+              <main className="w-full text-white">
+                {/* <SidebarTrigger /> */}
+                <div className="flex-1 p-8">
+                  <DynamicBreadcrumb />
+                  {children}
+                </div>
+              </main>
+            </SidebarProvider>
+          </div>
+        </AuthenticatedApp>
       </div>
     </>
   )

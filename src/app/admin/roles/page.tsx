@@ -1,41 +1,13 @@
 'use client'
 
 import { Shield, ShieldAlert } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-import { RoleMatrix } from '@/components/ui/role-matrix'
-import { MockRoleDataSource } from '@/data/data-source/chorus-api/role-data-source'
-import { RoleRepositoryImpl } from '@/data/repository/role-repository-impl'
-import { Permission, Role } from '@/domain/model'
-import { RoleListUseCase } from '@/domain/use-cases/role/role-list'
 import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
 import { Button } from '~/components/ui/button'
 
 const RolesPage = () => {
-  const [roles, setRoles] = useState<Role[]>([])
-  const [permissions, setPermissions] = useState<Permission[]>([])
   const { canCreateWorkspace } = useAuthorizationViewModel()
-
-  useEffect(() => {
-    // This part remains to fetch the data for display
-    const fetchRoles = async () => {
-      const dataSource = new MockRoleDataSource()
-      const repo = new RoleRepositoryImpl(dataSource)
-      const useCase = new RoleListUseCase(repo)
-      const result = await useCase.execute()
-
-      if (result.data) {
-        setRoles(result.data)
-        const allPermissions = result.data.flatMap((role) => role.permissions)
-        const uniquePermissions = Array.from(
-          new Map(allPermissions.map((p) => [p.name, p])).values()
-        )
-        setPermissions(uniquePermissions)
-      }
-    }
-
-    fetchRoles()
-  }, [])
 
   if (!canCreateWorkspace) {
     return (
@@ -73,7 +45,12 @@ const RolesPage = () => {
       </div>
 
       <div className="w-full text-white">
-        <RoleMatrix roles={roles} permissions={permissions} />
+        <div className="rounded-lg bg-muted/10 p-8 text-center">
+          <p className="text-lg text-muted-foreground">
+            Role management is now handled through user rolesWithContext. Please
+            use the user management interface to assign roles to users.
+          </p>
+        </div>
       </div>
     </>
   )

@@ -36,7 +36,7 @@ export function AdminSidebar() {
   ]
 
   return (
-    <Sidebar>
+    <Sidebar className="relative">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>

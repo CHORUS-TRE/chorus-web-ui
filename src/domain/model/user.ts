@@ -1,23 +1,5 @@
 import { z } from 'zod'
 
-import { RoleSchema } from './role'
-
-export enum UserStatusEnum {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DELETED = 'deleted',
-  UNKNOWN = ''
-}
-
-export enum UserRoleEnum {
-  ADMIN = 'admin',
-  AUTHENTICATED = 'authenticated',
-  UNKNOWN = ''
-}
-
-export type UserStatus = `${UserStatusEnum}`
-export type UserRole = `${UserRoleEnum}`
-
 export const UserSchema = z.object({
   id: z.string(),
   firstName: z.string(),
@@ -25,23 +7,38 @@ export const UserSchema = z.object({
   username: z.string(),
   source: z.string(),
   password: z.string().optional(),
-  status: z.nativeEnum(UserStatusEnum),
-  roles: z.array(z.nativeEnum(UserRoleEnum)).optional(),
+  status: z.string(),
+  roles: z.array(z.string()).optional(),
+  rolesWithContext: z
+    .array(
+      z.object({
+        name: z.string(),
+        context: z.record(z.string())
+      })
+    )
+    .optional(),
   totpEnabled: z.boolean().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
   passwordChanged: z.boolean().optional(),
 
   // webui extra fields
-  workspaceId: z.string().optional(),
-  roles2: z.array(RoleSchema).optional()
+  workspaceId: z.string().optional()
 })
 
 export const UserCreateSchema = z.object({
   username: z.string(),
   password: z.string(),
   firstName: z.string().min(2),
-  lastName: z.string().min(2)
+  lastName: z.string().min(2),
+  rolesWithContext: z
+    .array(
+      z.object({
+        name: z.string(),
+        context: z.record(z.string())
+      })
+    )
+    .optional()
 })
 
 export const UserUpdateSchema = UserCreateSchema.extend({

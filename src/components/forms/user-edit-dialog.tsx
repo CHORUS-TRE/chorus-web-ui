@@ -2,12 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pencil } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { useActionState } from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { ControllerRenderProps } from 'react-hook-form'
 import { z } from 'zod'
 
 import { updateUser } from '@/view-model/user-view-model'
+import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
   Dialog,
@@ -25,20 +28,40 @@ import {
   FormMessage
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { MultiSelect } from '~/components/ui/multi-select'
-import { MockRoleDataSource } from '~/data/data-source/chorus-api/role-data-source'
-import { RoleRepositoryImpl } from '~/data/repository/role-repository-impl'
-import { Result, Role } from '~/domain/model'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table'
+import { Result } from '~/domain/model'
 import {
   User,
   UserUpdateSchema as BaseUserUpdateSchema
 } from '~/domain/model/user'
-import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
 
 import { toast } from '../hooks/use-toast'
 
+// const UserUpdateSchema = BaseUserUpdateSchema.extend({
+//   roles: z
+//     .array(
+//       z.object({
+//         name: z.string(),
+//         attributes: z.record(z.string()).optional()
+//       })
+//     )
+//     .optional()
+// })
+
 const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  roles: z.array(z.string()).optional()
+  rolesWithContext: z.array(
+    z.object({
+      name: z.string(),
+      context: z.record(z.string())
+    })
+  )
 })
 
 type FormData = z.infer<typeof UserUpdateSchema>
@@ -51,22 +74,32 @@ export function UserEditDialog({
   onUserUpdated: () => void
 }) {
   const [open, setOpen] = useState(false)
-  const [roles, setRoles] = useState<Role[]>([])
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const dataSource = new MockRoleDataSource()
-      const repo = new RoleRepositoryImpl(dataSource)
-      const useCase = new RoleListUseCase(repo)
-      const result = await useCase.execute()
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     const dataSource = new MockRoleDataSource()
+  //     const repo = new RoleRepositoryImpl(dataSource)
+  //     const useCase = new RoleListUseCase(repo)
+  //     const result = await useCase.execute()
 
-      if (result.data) {
-        setRoles(result.data)
-      }
-    }
+  //     console.log('roleListUseCase roles', result.data)
 
-    fetchRoles()
-  }, [])
+  //     if (result.data) {
+  //       setRoles(result.data)
+  //     }
+  //   }
+
+  //   fetchRoles()
+  // }, [])
+
+  type UserEditValues = {
+    id: string
+    firstName: string
+    lastName: string
+    username: string
+    password: string
+    rolesWithContext: { name: string; context: Record<string, string> }[]
+  }
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserUpdateSchema),
@@ -76,7 +109,7 @@ export function UserEditDialog({
       lastName: user.lastName,
       username: user.username,
       password: '',
-      roles: user.roles2?.map((r) => r.name) || []
+      rolesWithContext: user.rolesWithContext || []
     }
   })
 
@@ -103,12 +136,23 @@ export function UserEditDialog({
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        value.forEach((v) => formData.append(key, v))
+        value.forEach((v) => formData.append(key, JSON.stringify(v)))
       } else {
-        formData.append(key, value || '')
+        formData.append(key, String(value || ''))
       }
     })
     formAction(formData)
+  }
+
+  const removeRoleWithIndex = (
+    field: ControllerRenderProps<UserEditValues, 'rolesWithContext'>,
+    index: number
+  ) => {
+    return () => {
+      const newRoles = field.value ? [...field.value] : []
+      newRoles.splice(index, 1)
+      field.onChange(newRoles)
+    }
   }
 
   return (
@@ -188,19 +232,89 @@ export function UserEditDialog({
             />
             <FormField
               control={form.control}
-              name="roles"
+              name="rolesWithContext"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Roles</FormLabel>
                   <FormControl>
-                    <MultiSelect
-                      options={roles.map((r) => ({
-                        value: r.name,
-                        label: r.name
-                      }))}
-                      selected={field.value || []}
-                      onChange={field.onChange}
-                    />
+                    <Table
+                      className="text-white"
+                      aria-label={`User roles management table with ${field?.value?.length} roles`}
+                    >
+                      <caption className="sr-only">
+                        User roles management table showing roles and available
+                        actions. Use arrow keys to navigate.
+                      </caption>
+                      <div className="max-h-60 overflow-auto">
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead scope="col">Role</TableHead>
+                            <TableHead scope="col">Workspace</TableHead>
+                            <TableHead scope="col">Workbench</TableHead>
+                            <TableHead scope="col">User</TableHead>
+                            <TableHead scope="col">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {field.value?.map((r, i) => (
+                            <TableRow
+                              key={`role-row-${r.name}-${i}`}
+                              className="border-muted/50"
+                            >
+                              <TableCell className="p-2">
+                                <Badge key={`role-badge-${r.name}-${i}`}>
+                                  {r.name}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="p-2">
+                                {r.context?.workspace ? (
+                                  <Badge
+                                    className="bg-red-400"
+                                    key={`role-badge-${r.name}-${i}`}
+                                  >
+                                    {r.context?.workspace}
+                                  </Badge>
+                                ) : null}
+                              </TableCell>
+                              <TableCell className="p-2">
+                                {r.context?.workbench ? (
+                                  <Badge
+                                    className="bg-orange-400"
+                                    key={`role-badge-${r.name}-${i}`}
+                                  >
+                                    {r.context?.workbench}
+                                  </Badge>
+                                ) : null}
+                              </TableCell>
+                              <TableCell className="p-2">
+                                {r.context?.user ? (
+                                  <Badge
+                                    className="bg-yellow-400"
+                                    key={`role-badge-${r.name}-${i}`}
+                                  >
+                                    {r.context?.user}
+                                  </Badge>
+                                ) : null}
+                              </TableCell>
+                              <TableCell className="p-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Delete role"
+                                  onClick={removeRoleWithIndex(field, i)}
+                                >
+                                  <Trash2
+                                    className="h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                  <span className="sr-only">Delete role</span>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </div>
+                    </Table>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

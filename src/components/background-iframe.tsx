@@ -68,9 +68,13 @@ export default function BackgroundIframe() {
       )}
 
       {workbenchStatus && (
-        <div className="fixed bottom-10 right-3 z-30 text-gray-400">
-          {workbenchStatus}
-        </div>
+        <div
+          className={`fixed bottom-3 right-3 z-30 h-2 w-2 animate-pulse rounded-full ${
+            workbenchStatus === 'Running' ? 'bg-green-500' : 'bg-red-500'
+          }`}
+          aria-label={`Workbench status: ${workbenchStatus}`}
+          title={`Workbench status: ${workbenchStatus}`}
+        />
       )}
 
       <iframe
