@@ -4,6 +4,7 @@ import { Result } from '@/domain/model'
 import {
   User,
   UserCreateType,
+  UserRoleCreateType,
   UserSchema,
   UserUpdateType
 } from '@/domain/model/user'
@@ -27,6 +28,46 @@ export class UserRepositoryImpl implements UserRepository {
       }
 
       const userResult = UserSchema.safeParse(response.result.user)
+
+      if (!userResult.success) {
+        return {
+          error: 'API response validation failed',
+          issues: userResult.error.issues
+        }
+      }
+
+      return { data: userResult.data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async createRole(userRole: UserRoleCreateType): Promise<Result<User>> {
+    try {
+      const response = await this.dataSource.createRole(userRole)
+      const userResult = UserSchema.safeParse(response?.result?.user)
+
+      if (!userResult.success) {
+        return {
+          error: 'API response validation failed',
+          issues: userResult.error.issues
+        }
+      }
+
+      return { data: userResult.data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async deleteRole(userId: string, roleId: string): Promise<Result<User>> {
+    try {
+      const response = await this.dataSource.deleteRole(userId, roleId)
+      const userResult = UserSchema.safeParse(response?.result?.user)
 
       if (!userResult.success) {
         return {

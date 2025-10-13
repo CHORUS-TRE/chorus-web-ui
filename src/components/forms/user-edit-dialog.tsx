@@ -5,11 +5,13 @@ import { Pencil } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
 import { useActionState } from 'react'
 import { useEffect, useState } from 'react'
+import { Create } from 'react-admin'
 import { useForm } from 'react-hook-form'
 import { ControllerRenderProps } from 'react-hook-form'
 import { z } from 'zod'
 
 import { updateUser } from '@/view-model/user-view-model'
+import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -43,17 +45,6 @@ import {
 } from '~/domain/model/user'
 
 import { toast } from '../hooks/use-toast'
-
-// const UserUpdateSchema = BaseUserUpdateSchema.extend({
-//   roles: z
-//     .array(
-//       z.object({
-//         name: z.string(),
-//         attributes: z.record(z.string()).optional()
-//       })
-//     )
-//     .optional()
-// })
 
 const UserUpdateSchema = BaseUserUpdateSchema.extend({
   rolesWithContext: z.array(
@@ -235,7 +226,9 @@ export function UserEditDialog({
               name="rolesWithContext"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Roles</FormLabel>
+                  <FormLabel>
+                    Roles <CreateUserRoleDialog userId={user.id} />
+                  </FormLabel>
                   <FormControl>
                     <Table
                       className="text-white"

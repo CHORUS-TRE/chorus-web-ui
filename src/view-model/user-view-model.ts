@@ -123,3 +123,31 @@ export async function updateUser(
 
   return await useCase.execute(validation.data)
 }
+
+export async function createUserRole(
+  prevState: Result<User>,
+  formData: FormData
+): Promise<Result<User>> {
+  const userRepository = await getRepository()
+  const useCase = new UserUpdate(userRepository)
+
+  const raw = {
+    id: formData.get('id') as string,
+    username: formData.get('username') as string,
+    password: formData.get('password') as string,
+    firstName: formData.get('firstName') as string,
+    lastName: formData.get('lastName') as string,
+    roles: formData.getAll('roles') as string[]
+  }
+
+  const validation = UserUpdateSchema.safeParse(raw)
+
+  if (!validation.success) {
+    return {
+      ...prevState,
+      issues: validation.error.issues
+    }
+  }
+
+  return await useCase.execute(validation.data)
+}
