@@ -87,8 +87,10 @@ export function UserTable() {
           userCollapsed[userIndex] ? (
             <TableRow key={user.id}>
               <TableCell
-                onClick={() => { toggleUserCollapse(userIndex) }}
-                className='cursor-pointer'
+                onClick={() => {
+                  toggleUserCollapse(userIndex)
+                }}
+                className="cursor-pointer"
               >
                 {userCollapsed[userIndex] ? '▸' : '▾'}
               </TableCell>
@@ -123,11 +125,13 @@ export function UserTable() {
             <>
               <TableRow key={user.id} className="border-muted/50">
                 <TableCell
-                onClick={() => { toggleUserCollapse(userIndex) }}
-                className='cursor-pointer'
-              >
-                {userCollapsed[userIndex] ? '▸' : '▾'}
-              </TableCell>
+                  onClick={() => {
+                    toggleUserCollapse(userIndex)
+                  }}
+                  className="cursor-pointer"
+                >
+                  {userCollapsed[userIndex] ? '▸' : '▾'}
+                </TableCell>
                 <TableCell>
                   {user.firstName} {user.lastName}
                 </TableCell>
@@ -159,7 +163,11 @@ export function UserTable() {
               {user.roles2?.map((role, roleIndex) => (
                 <TableRow
                   key={`${user.id}-${role.name}`}
-                  className={roleIndex != (user.roles2?.length || 0) - 1 ? "border-muted/50" : "" }
+                  className={
+                    roleIndex != (user.roles2?.length || 0) - 1
+                      ? 'border-muted/50'
+                      : ''
+                  }
                 >
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
