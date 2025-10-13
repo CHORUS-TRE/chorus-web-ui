@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.10.1...v1.11.0) (2025-10-13)
+
+
+### Features
+
+* **workbench:** implement workbench stream URL retrieval ([8defe62](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8defe62d29ebc1111358dda3d83265a2a9f68768))
+
 ## [1.10.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.10.0...v1.10.1) (2025-10-13)
 
 
