@@ -162,7 +162,7 @@ export function UserTable() {
               </TableRow>
               {user.roles2?.map((role, roleIndex) => (
                 <TableRow
-                  key={`${user.id}-${role.name}`}
+                  key={`${user.id}-${role.name}-${roleIndex}`}
                   className={
                     roleIndex != (user.roles2?.length || 0) - 1
                       ? 'border-muted/50'
