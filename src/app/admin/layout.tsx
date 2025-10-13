@@ -70,11 +70,11 @@ export default function Layout({
               </h2>
             </div>
           </>
-          <div className="mt-11 flex">
+          <div className="flex">
             <SidebarProvider>
               <AdminSidebar />
               <main className="w-full text-white">
-                <SidebarTrigger />
+                {/* <SidebarTrigger /> */}
                 <div className="flex-1 p-8">
                   <DynamicBreadcrumb />
                   {children}

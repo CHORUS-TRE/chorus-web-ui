@@ -129,8 +129,18 @@ export function AIChatInterface() {
                     ) : (
                       <div className="space-y-4">
                         {messages.map((message) => (
-                          <Message key={message.id} from={message.role}>
-                            {message.content}
+                          <Message
+                            key={message.id}
+                            from={
+                              message.role as 'user' | 'assistant' | 'system'
+                            }
+                          >
+                            {message.parts.map((part, i) => {
+                              if (part.type === 'text') {
+                                return <div key={i}>{part.text}</div>
+                              }
+                              return null
+                            })}
                           </Message>
                         ))}
                         {isLoading && (

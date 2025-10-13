@@ -39,15 +39,17 @@ export async function POST(request: NextRequest) {
       Object.keys(mergedProps).forEach((key) => {
         if (
           typeof mergedProps[key] === 'string' &&
-          mergedProps[key].includes('{{API_DATA}}')
+          (mergedProps[key] as string).includes('{{API_DATA}}')
         ) {
           mergedProps[key] = sampleData
         } else if (
           typeof mergedProps[key] === 'string' &&
-          mergedProps[key].includes('{{API_DATA.')
+          (mergedProps[key] as string).includes('{{API_DATA.')
         ) {
           // Extract nested property path
-          const match = mergedProps[key].match(/\{\{API_DATA\.(.+?)\}\}/)
+          const match = (mergedProps[key] as string).match(
+            /\{\{API_DATA\.(.+?)\}\}/
+          )
           if (match) {
             const path = match[1]
             mergedProps[key] = getNestedProperty(sampleData, path)
@@ -84,7 +86,12 @@ export async function POST(request: NextRequest) {
 
 // Helper function to get nested properties
 function getNestedProperty(obj: unknown, path: string): unknown {
-  return path.split('.').reduce((current, prop) => current?.[prop], obj)
+  return path.split('.').reduce((current, prop) => {
+    if (current && typeof current === 'object' && current !== null) {
+      return (current as Record<string, unknown>)[prop]
+    }
+    return undefined
+  }, obj)
 }
 
 // Generate enhanced preview HTML with styling
@@ -270,8 +277,8 @@ function generateEnhancedPreview(
     }
 
     case 'GeneratedProgressBar': {
-      const current = props.current || 75
-      const total = props.total || 100
+      const current = Number(props.current) || 75
+      const total = Number(props.total) || 100
       const percentage = Math.round((current / total) * 100)
       const label = props.label || 'Progress'
 
@@ -299,7 +306,7 @@ function generateEnhancedPreview(
 
     case 'GeneratedSearchFilter': {
       const placeholder = props.placeholder || 'Search...'
-      const filters = props.filters || []
+      const filters = Array.isArray(props.filters) ? props.filters : []
 
       return (
         baseStyles +

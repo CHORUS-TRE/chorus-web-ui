@@ -66,12 +66,12 @@ export class SimplePromptParser {
     let bestType = 'generic'
     let bestScore = 0
 
-    for (const [type, score] of scores.entries()) {
+    scores.forEach((score, type) => {
       if (score > bestScore) {
         bestType = type
         bestScore = score
       }
-    }
+    })
 
     // Extract entities mentioned in the prompt
     const extractedEntities = this.extractEntities(normalizedPrompt)

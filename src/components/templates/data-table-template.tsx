@@ -71,12 +71,16 @@ export function GeneratedDataTable({
     if (!sortColumn) return filteredData
 
     return [...filteredData].sort((a, b) => {
-      const aVal = a[sortColumn]
-      const bVal = b[sortColumn]
+      const aVal = (a as Record<string, unknown>)[sortColumn]
+      const bVal = (b as Record<string, unknown>)[sortColumn]
 
       let comparison = 0
-      if (aVal < bVal) comparison = -1
-      if (aVal > bVal) comparison = 1
+      // Convert to string for comparison if needed
+      const aStr = String(aVal ?? '')
+      const bStr = String(bVal ?? '')
+
+      if (aStr < bStr) comparison = -1
+      if (aStr > bStr) comparison = 1
 
       return sortDirection === 'desc' ? -comparison : comparison
     })
@@ -117,7 +121,10 @@ export function GeneratedDataTable({
   }
 
   // Render cell based on column type
-  const renderCell = (value: unknown, column: DataTableProps['columns'][0]) => {
+  const renderCell = (
+    value: unknown,
+    column: DataTableProps['columns'][0]
+  ): React.ReactNode => {
     switch (column.type) {
       case 'status':
         return (
@@ -126,9 +133,11 @@ export function GeneratedDataTable({
           </Badge>
         )
       case 'date':
-        return new Date(value).toLocaleDateString()
+        return new Date(String(value)).toLocaleDateString()
       case 'number':
-        return typeof value === 'number' ? value.toLocaleString() : value
+        return typeof value === 'number'
+          ? value.toLocaleString()
+          : String(value || '')
       case 'action':
         return (
           <Button variant="ghost" size="sm">

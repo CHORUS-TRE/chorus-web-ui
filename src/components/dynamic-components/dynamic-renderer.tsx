@@ -1,7 +1,7 @@
 'use client'
 
 import { Filter, Search } from 'lucide-react'
-import React, { Suspense } from 'react'
+import React from 'react'
 
 import { GeneratedDataTable } from '@/components/templates/data-table-template'
 import {
@@ -14,15 +14,7 @@ import {
   GeneratedTimeline
 } from '@/components/templates/enhanced-components'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -311,15 +303,17 @@ export function DynamicRenderer({
         Object.keys(props).forEach((key) => {
           if (
             typeof props[key] === 'string' &&
-            props[key].includes('{{API_DATA}}')
+            (props[key] as string).includes('{{API_DATA}}')
           ) {
             props[key] = data
           } else if (
             typeof props[key] === 'string' &&
-            props[key].includes('{{API_DATA.')
+            (props[key] as string).includes('{{API_DATA.')
           ) {
             // Extract nested property path
-            const match = props[key].match(/\{\{API_DATA\.(.+?)\}\}/)
+            const match = (props[key] as string).match(
+              /\{\{API_DATA\.(.+?)\}\}/
+            )
             if (match) {
               const path = match[1]
               props[key] = getNestedProperty(data, path)
@@ -364,6 +358,7 @@ export function DynamicRenderer({
   return (
     <ComponentErrorBoundary componentSpec={componentSpec}>
       <div className={className}>
+        {/* @ts-expect-error - Dynamic component system requires flexible prop types */}
         <Component {...resolvedProps} />
       </div>
     </ComponentErrorBoundary>
@@ -372,5 +367,10 @@ export function DynamicRenderer({
 
 // Helper function to get nested properties
 function getNestedProperty(obj: unknown, path: string): unknown {
-  return path.split('.').reduce((current, prop) => current?.[prop], obj)
+  return path.split('.').reduce((current, prop) => {
+    if (current && typeof current === 'object' && current !== null) {
+      return (current as Record<string, unknown>)[prop]
+    }
+    return undefined
+  }, obj)
 }

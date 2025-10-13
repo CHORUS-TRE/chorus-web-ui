@@ -4,14 +4,11 @@ import {
   Activity,
   BarChart3,
   Beaker,
-  ChevronRight,
-  Code,
   Copy,
   Database,
   ExternalLink,
   Eye,
   FileText,
-  Filter,
   Grid3X3,
   Layers,
   List,
@@ -20,7 +17,7 @@ import {
   Sparkles,
   Users
 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { GeneratedDataTable } from '@/components/templates/data-table-template'
 // Import our enhanced components
@@ -33,7 +30,6 @@ import {
   GeneratedSampleTracker,
   GeneratedTimeline
 } from '@/components/templates/enhanced-components'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -86,7 +82,6 @@ export function ComponentExplorer() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedComponent, setSelectedComponent] =
     useState<ComponentInfo | null>(null)
-  const [activeDemo, setActiveDemo] = useState<string>('')
 
   // Component registry inspired by AgenticGenUI
   const components: ComponentInfo[] = [
@@ -96,7 +91,9 @@ export function ComponentExplorer() {
       description:
         'Advanced data table with filtering, sorting, and export capabilities designed for research data visualization.',
       category: 'data-visualization',
-      component: GeneratedDataTable,
+      component: GeneratedDataTable as unknown as React.ComponentType<
+        Record<string, unknown>
+      >,
       props: {
         title: 'Research Dataset',
         data: [

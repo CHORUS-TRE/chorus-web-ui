@@ -2,7 +2,6 @@
 
 import {
   AlertCircle,
-  CheckCircle,
   Code,
   Copy,
   Download,
@@ -24,7 +23,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -127,7 +125,7 @@ export function ComponentGenerator({
             selectedWorkspace === 'none'
               ? undefined
               : selectedWorkspace || undefined,
-          userRole: user?.role || 'researcher',
+          userRole: user?.roles?.[0] || 'researcher',
           pageContext,
           userId: user?.id || 'demo-user'
         }
@@ -361,9 +359,11 @@ export function ComponentGenerator({
                             </div>
                           </div>
                           <div className="flex flex-wrap gap-1">
-                            {template.promptPatterns
-                              .slice(0, 3)
-                              .map((pattern: string) => (
+                            {(
+                              template as { promptPatterns?: string[] }
+                            ).promptPatterns
+                              ?.slice(0, 3)
+                              ?.map((pattern: string) => (
                                 <Badge
                                   key={pattern}
                                   variant="secondary"
@@ -371,7 +371,11 @@ export function ComponentGenerator({
                                 >
                                   {pattern}
                                 </Badge>
-                              ))}
+                              )) || (
+                              <Badge variant="outline" className="text-xs">
+                                {template.category}
+                              </Badge>
+                            )}
                           </div>
                         </div>
                       </Card>
@@ -557,26 +561,28 @@ export function ComponentGenerator({
 function getSampleData(componentType: string): Record<string, unknown> {
   switch (componentType) {
     case 'GeneratedDataTable':
-      return [
-        {
-          id: '1',
-          name: 'Research Project Alpha',
-          status: 'active',
-          created: '2024-01-15'
-        },
-        {
-          id: '2',
-          name: 'Data Analysis Beta',
-          status: 'completed',
-          created: '2024-02-20'
-        },
-        {
-          id: '3',
-          name: 'Collaboration Gamma',
-          status: 'pending',
-          created: '2024-03-10'
-        }
-      ]
+      return {
+        data: [
+          {
+            id: '1',
+            name: 'Research Project Alpha',
+            status: 'active',
+            created: '2024-01-15'
+          },
+          {
+            id: '2',
+            name: 'Data Analysis Beta',
+            status: 'completed',
+            created: '2024-02-20'
+          },
+          {
+            id: '3',
+            name: 'Collaboration Gamma',
+            status: 'pending',
+            created: '2024-03-10'
+          }
+        ]
+      }
 
     case 'GeneratedMetricCard':
       return { value: 1234, trend: 'up' }

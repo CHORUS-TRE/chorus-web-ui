@@ -114,6 +114,7 @@ export function BottomChat({
         })
       } catch (error) {
         // Remove loading message and add error message
+        console.error('Error generating component:', error)
         setMessages((prev) => {
           const filtered = prev.filter((msg) =>
             msg.content.includes('Generating')

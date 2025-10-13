@@ -144,7 +144,7 @@ export class ComponentTemplateRegistry {
     let bestMatch: ComponentTemplate | null = null
     let bestScore = 0
 
-    for (const template of this.templates.values()) {
+    this.templates.forEach((template) => {
       const score = template.promptPatterns.reduce((acc, pattern) => {
         return normalizedPrompt.includes(pattern.toLowerCase()) ? acc + 1 : acc
       }, 0)
@@ -153,7 +153,7 @@ export class ComponentTemplateRegistry {
         bestScore = score
         bestMatch = template
       }
-    }
+    })
 
     return bestScore > 0 ? bestMatch : null
   }
@@ -247,7 +247,7 @@ export class ComponentTemplateRegistry {
     }
   }
 
-  private generateSearchFilter(context: GenerationContext): ComponentSpec {
+  private generateSearchFilter(_context: GenerationContext): ComponentSpec {
     return {
       id: `search-filter-${Date.now()}`,
       component: 'GeneratedSearchFilter',

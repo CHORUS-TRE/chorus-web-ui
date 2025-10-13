@@ -1,7 +1,10 @@
 // API endpoint for getting available component templates
 import { NextResponse } from 'next/server'
 
-import { enhancedTemplateRegistry } from '@/services/component-generation/enhanced-template-registry'
+import {
+  enhancedTemplateRegistry,
+  ResearchComponentCategory
+} from '@/services/component-generation/enhanced-template-registry'
 
 export async function GET(request: Request) {
   try {
@@ -14,7 +17,7 @@ export async function GET(request: Request) {
     // Filter by category if specified
     if (category) {
       templates = enhancedTemplateRegistry.getTemplatesByCategory(
-        category as string
+        category as ResearchComponentCategory
       )
     }
 

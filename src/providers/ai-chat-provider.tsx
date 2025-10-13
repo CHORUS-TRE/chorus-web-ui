@@ -1,12 +1,13 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
+import type { UIMessage } from 'ai'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 interface AIChatContextType {
   isOpen: boolean
   isMinimized: boolean
-  messages: Array<{ id: string; role: string; content: string }>
+  messages: UIMessage[]
   input: string
   isLoading: boolean
   toggleChat: () => void

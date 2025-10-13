@@ -41,7 +41,19 @@ export interface ComponentTemplate {
   id: string
   name: string
   description: string
-  category: 'data' | 'form' | 'layout' | 'action'
+  category:
+    | 'data'
+    | 'form'
+    | 'layout'
+    | 'action'
+    | 'data-visualization'
+    | 'research-workflow'
+    | 'lab-management'
+    | 'collaboration'
+    | 'forms-collection'
+    | 'analytics-metrics'
+    | 'protocol-management'
+    | 'sample-tracking'
   promptPatterns: string[]
   generate: (context: GenerationContext) => ComponentSpec
   apiBinding?: APIBinding

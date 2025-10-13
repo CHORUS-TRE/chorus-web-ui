@@ -72,7 +72,7 @@ export function Header() {
   const { user, logout } = useAuthentication()
   const pathname = usePathname()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
-  const workspaceId = params?.workspaceId
+  const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
@@ -185,6 +185,7 @@ export function Header() {
                               ></ListItem>
                             )}
                             <Separator className="m-1" />
+
                             <ListItem
                               title={`About this session`}
                               className="p-1 font-semibold"
@@ -233,6 +234,14 @@ export function Header() {
                             className="cursor-pointer p-1 font-semibold hover:bg-accent"
                             onClick={() => {
                               router.push(`/app-store`)
+                            }}
+                            wrapWithLi={false}
+                          ></ListItem>
+                          <ListItem
+                            title="Data"
+                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                            onClick={() => {
+                              router.push(`/workspaces/${workspaceId}/data`)
                             }}
                             wrapWithLi={false}
                           ></ListItem>

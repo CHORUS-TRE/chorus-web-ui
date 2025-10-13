@@ -135,7 +135,8 @@ export default function ComponentGeneratorPage() {
                     <CardContent className="p-6">
                       <div className="mb-4">
                         <h3 className="mb-2 text-lg font-semibold text-blue-400">
-                          {component.spec?.name || 'Generated Component'}
+                          {(component.spec as { name?: string })?.name ||
+                            'Generated Component'}
                         </h3>
                         <p className="mb-2 text-sm text-gray-300">
                           <strong>Prompt:</strong> {component.prompt}
