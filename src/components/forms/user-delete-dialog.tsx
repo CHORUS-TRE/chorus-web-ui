@@ -20,11 +20,17 @@ import { toast } from '../hooks/use-toast'
 
 export function UserDeleteDialog({
   userId,
-  onUserDeleted
+  onUserDeleted,
+  open,
+  onOpenChange
 }: {
   userId: string
   onUserDeleted: () => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
+  const isControlled = open !== undefined
+
   const handleDelete = async () => {
     const result = await deleteUser(userId)
     if (result.error) {
@@ -40,17 +46,22 @@ export function UserDeleteDialog({
       })
 
       onUserDeleted()
+      if (isControlled && onOpenChange) {
+        onOpenChange(false)
+      }
     }
   }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Delete user">
-          <Trash2 className="h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Delete user</span>
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      {!isControlled && (
+        <AlertDialogTrigger asChild>
+          <Button variant="ghost" size="icon" aria-label="Delete user">
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+            <span className="sr-only">Delete user</span>
+          </Button>
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent className="bg-background text-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

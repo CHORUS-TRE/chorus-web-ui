@@ -8,12 +8,16 @@ import {
   Home,
   LaptopMinimal,
   LogOut,
+  Maximize,
   Package,
   PackageOpen,
+  Plus,
   Search,
   Settings,
   Store,
-  User
+  Trash2,
+  User,
+  Users
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -38,12 +42,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Separator } from '@/components/ui/separator'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
-  ListItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -131,145 +133,173 @@ export function Header() {
                 <NavigationMenuItem>
                   {background?.sessionId && workbenches && (
                     <>
-                      <NavigationMenuTrigger className="border-none hover:border-none">
-                        <NavLink
-                          href={
-                            background?.workspaceId
-                              ? workspaces?.find(
-                                  (w) => w.id === background?.workspaceId
-                                )?.isMain
-                                ? `/`
-                                : `/workspaces/${background?.workspaceId}`
-                              : '/'
+                      <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                        <div className="flex place-items-center gap-1">
+                          {workspaceId && workspaceId === user?.workspaceId ? (
+                            <AppWindow className="h-4 w-4 text-white" />
+                          ) : (
+                            <AppWindow className="h-4 w-4" />
+                          )}
+                          {
+                            workspaces?.find(
+                              (w) => w.id === background?.workspaceId
+                            )?.name
                           }
-                          className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                          exact={false}
-                        >
-                          <div className="mt-1 flex place-items-center gap-1">
-                            {workspaceId &&
-                            workspaceId === user?.workspaceId ? (
-                              <AppWindow className="h-4 w-4 text-white" />
-                            ) : (
-                              <AppWindow className="h-4 w-4" />
-                            )}
-                            {
-                              workspaces?.find(
-                                (w) => w.id === background?.workspaceId
-                              )?.name
-                            }
-                          </div>
-                        </NavLink>
+                        </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
-                        <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
-                          {/* Session Info Section */}
-                          <NavigationMenuItem>
-                            {isSessionPage ? (
-                              <ListItem
-                                title="Switch to workspace."
-                                className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                                onClick={() =>
-                                  router.push(`/workspaces/${workspaceId}`)
-                                }
-                                wrapWithLi={false}
-                              ></ListItem>
-                            ) : (
-                              <ListItem
-                                title="Switch to session."
-                                className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                      <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-white shadow-xl">
+                        <div className="w-[240px] p-2">
+                          {/* Workspace Navigation */}
+                          <div className="mb-1">
+                            <div className="space-y-0.5">
+                              {isSessionPage ? (
+                                <div
+                                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                  onClick={() =>
+                                    router.push(`/workspaces/${workspaceId}`)
+                                  }
+                                >
+                                  <Home className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                  <span className="text-sm">
+                                    Workspace Home
+                                  </span>
+                                </div>
+                              ) : (
+                                <div
+                                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                  onClick={() =>
+                                    router.push(
+                                      `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
+                                    )
+                                  }
+                                >
+                                  <LaptopMinimal className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                  <span className="text-sm">
+                                    Workspace Session
+                                  </span>
+                                </div>
+                              )}
+
+                              <div
+                                className="ml-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
                                 onClick={() =>
                                   router.push(
-                                    `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
+                                    `/workspaces/${workspaceId}/sessions`
                                   )
                                 }
-                                wrapWithLi={false}
-                              ></ListItem>
-                            )}
-                            <Separator className="m-1" />
-
-                            <ListItem
-                              title={`About this session`}
-                              className="p-1 font-semibold"
-                              onClick={() => setShowAboutDialog(true)}
-                              wrapWithLi={false}
-                            >
-                              <div className="pl-1 text-xs font-semibold">
-                                {(() => {
-                                  const filteredApps =
-                                    appInstances
-                                      ?.filter(
-                                        (instance) =>
-                                          instance.workbenchId ===
-                                          background?.sessionId
-                                      )
-                                      ?.map(
-                                        (instance) =>
-                                          apps?.find(
-                                            (app) => app.id === instance.appId
-                                          )?.name
-                                      )
-                                      ?.filter(Boolean) || []
-
-                                  return (
-                                    <div className="flex items-center gap-2 text-xs">
-                                      <AppWindow className="h-4 w-4 shrink-0" />
-                                      {filteredApps.join(', ') || 'No apps'}
-                                    </div>
-                                  )
-                                })()}
+                              >
+                                <LaptopMinimal className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Sessions</span>
                               </div>
-                            </ListItem>
-                          </NavigationMenuItem>
-                          <Separator className="m-1" />
-                          {/* Settings Section */}
-                          <ListItem
-                            title="Settings..."
-                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                            onClick={() => setUpdateOpen(true)}
-                            wrapWithLi={false}
-                          ></ListItem>
 
-                          {/* Start New App Section */}
-                          <ListItem
-                            title="Start New App..."
-                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                            onClick={() => {
-                              router.push(`/app-store`)
-                            }}
-                            wrapWithLi={false}
-                          ></ListItem>
-                          <ListItem
-                            title="Data"
-                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                            onClick={() => {
-                              router.push(`/workspaces/${workspaceId}/data`)
-                            }}
-                            wrapWithLi={false}
-                          ></ListItem>
-                          <Separator className="m-1" />
-                          {/* Fullscreen Section */}
-                          <ListItem
-                            title="Toggle Fullscreen"
-                            className="cursor-pointer p-1 font-semibold hover:bg-accent"
-                            onClick={() => {
-                              const iframe = document.getElementById('iframe')
-                              if (iframe) {
-                                iframe.requestFullscreen()
-                              }
-                            }}
-                            wrapWithLi={false}
-                          ></ListItem>
+                              <div
+                                className="ml-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                onClick={() =>
+                                  router.push(
+                                    `/workspaces/${workspaceId}/users`
+                                  )
+                                }
+                              >
+                                <Users className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Team</span>
+                              </div>
 
-                          <Separator className="m-1" />
+                              <div
+                                className="ml-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                onClick={() =>
+                                  router.push(`/workspaces/${workspaceId}/data`)
+                                }
+                              >
+                                <Database className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Data</span>
+                              </div>
+                            </div>
+                          </div>
 
-                          {/* Quit Section */}
-                          <ListItem
-                            title="Delete Session..."
-                            className="cursor-pointer p-1 font-semibold"
-                            onClick={() => setDeleteOpen(true)}
-                            wrapWithLi={false}
-                          ></ListItem>
-                        </ul>
+                          {/* Actions */}
+                          <div className="mb-1 border-t border-muted/20 pt-2">
+                            <div className="space-y-0.5">
+                              <div
+                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                onClick={() => router.push(`/app-store`)}
+                              >
+                                <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Start New App</span>
+                              </div>
+
+                              <div
+                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                onClick={() => setUpdateOpen(true)}
+                              >
+                                <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Settings</span>
+                              </div>
+
+                              <div
+                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                onClick={() => {
+                                  const iframe =
+                                    document.getElementById('iframe')
+                                  if (iframe) {
+                                    iframe.requestFullscreen()
+                                  }
+                                }}
+                              >
+                                <Maximize className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">
+                                  Toggle Fullscreen
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* About this session */}
+                          <div className="mb-1">
+                            <div
+                              className="flex cursor-pointer items-start gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                              onClick={() => setShowAboutDialog(true)}
+                            >
+                              <AppWindow className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm">Session Info</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {(() => {
+                                    const filteredApps =
+                                      appInstances
+                                        ?.filter(
+                                          (instance) =>
+                                            instance.workbenchId ===
+                                            background?.sessionId
+                                        )
+                                        ?.map(
+                                          (instance) =>
+                                            apps?.find(
+                                              (app) => app.id === instance.appId
+                                            )?.name
+                                        )
+                                        ?.filter(Boolean) || []
+                                    return (
+                                      filteredApps.join(', ') ||
+                                      currentWorkbench?.name ||
+                                      'No apps running'
+                                    )
+                                  })()}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Danger Zone */}
+                          <div className="border-t border-muted/20 pt-1">
+                            <div
+                              className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+                              onClick={() => setDeleteOpen(true)}
+                            >
+                              <Trash2 className="h-4 w-4 shrink-0" />
+                              <span className="text-sm">Delete Session</span>
+                            </div>
+                          </div>
+                        </div>
                       </NavigationMenuContent>
                     </>
                   )}
@@ -285,7 +315,7 @@ export function Header() {
                       className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                       exact={user?.workspaceId === workspaceId}
                     >
-                      <div className="mt-1 flex place-items-center gap-1">
+                      <div className="flex place-items-center gap-1">
                         {user?.workspaceId === background?.workspaceId ? (
                           <Home className="h-4 w-4" />
                         ) : (
@@ -300,23 +330,81 @@ export function Header() {
                   )}
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step3">
-                  <NavLink
-                    href="/workspaces"
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                    exact={true}
-                  >
-                    <div className="mt-1 flex place-items-center gap-1">
+                  <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                    <div className="flex place-items-center gap-1">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
-                  </NavLink>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-white shadow-xl">
+                    <div className="w-[280px] p-2">
+                      <div className="space-y-1">
+                        {/* All Workspaces Link */}
+                        <div
+                          className="mb-2 flex cursor-pointer items-center gap-2 rounded border-b border-muted/20 px-2 py-1.5 pb-2 transition-colors hover:bg-accent/10"
+                          onClick={() => router.push('/workspaces')}
+                        >
+                          <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
+                          <span className="text-sm font-medium">
+                            All Workspaces
+                          </span>
+                        </div>
+
+                        {/* Individual Workspaces */}
+                        {workspaces
+                          ?.filter((workspace) => workspace.userId === user?.id)
+                          .map((workspace) => (
+                            <div
+                              key={workspace.id}
+                              className={`flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10 ${
+                                workspace.id === workspaceId
+                                  ? 'bg-accent/10'
+                                  : ''
+                              }`}
+                              onClick={() =>
+                                router.push(`/workspaces/${workspace.id}`)
+                              }
+                            >
+                              {workspace.id === workspaceId ? (
+                                <PackageOpen className="h-4 w-4 shrink-0 text-accent" />
+                              ) : (
+                                <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm">
+                                  {workspace.id === user?.workspaceId
+                                    ? 'My Workspace'
+                                    : workspace.name || workspace.shortName}
+                                </div>
+                                {workspace.description && (
+                                  <div className="truncate text-xs text-muted-foreground">
+                                    {workspace.description}
+                                  </div>
+                                )}
+                              </div>
+                              {workspace.id === workspaceId && (
+                                <div className="text-xs text-accent">
+                                  Current
+                                </div>
+                              )}
+                            </div>
+                          ))}
+
+                        {(!workspaces || workspaces.length === 0) && (
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                            No workspaces available
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
                   <NavLink
                     href={`/data`}
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex place-items-center gap-1">
+                    <div className="flex place-items-center gap-1">
                       <Database className="h-4 w-4" />
                       Data
                     </div>
@@ -327,7 +415,7 @@ export function Header() {
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex place-items-center gap-1">
+                    <div className="flex place-items-center gap-1">
                       <Store className="h-4 w-4" />
                       App Store
                     </div>
@@ -335,9 +423,11 @@ export function Header() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
-                    <LaptopMinimal className="h-4 w-4" />
-                    <span>Open Sessions</span>
+                  <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                    <div className="flex place-items-center gap-1">
+                      <LaptopMinimal className="h-4 w-4" />
+                      <span>Open Sessions</span>
+                    </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
@@ -362,7 +452,7 @@ export function Header() {
                                 className={`text-muted hover:text-accent ${workspace.id === workspaceId ? 'text-accent/80' : ''}`}
                               >
                                 <div
-                                  className={`mb-2 flex items-center gap-2 font-semibold`}
+                                  className={`mb-1 flex items-center gap-2 font-semibold`}
                                 >
                                   {workspace.id === workspaceId ? (
                                     <PackageOpen className="h-4 w-4" />
@@ -380,13 +470,13 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ id }) => (
+                                  .map((workbench) => (
                                     <div
-                                      className="mb-2 h-full"
-                                      key={`${workspace?.id}-${id}`}
+                                      className="mb-1 h-full"
+                                      key={`${workspace?.id}-${workbench.id}`}
                                     >
                                       <Link
-                                        href={`/workspaces/${workspace?.id}/sessions/${id}`}
+                                        href={`/workspaces/${workspace?.id}/sessions/${workbench.id}`}
                                         className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
                                       >
                                         <div className="text-sm font-semibold">
@@ -415,7 +505,8 @@ export function Header() {
                                                 )
                                                 ?.filter(
                                                   (instance) =>
-                                                    id === instance.workbenchId
+                                                    workbench.id ===
+                                                    instance.workbenchId
                                                 )
                                                 .map(
                                                   (instance) =>
@@ -425,7 +516,9 @@ export function Header() {
                                                         instance.appId
                                                     )?.name || ''
                                                 )
-                                                .join(', ') || 'No apps'}
+                                                .join(', ') ||
+                                                workbench.name ||
+                                                'No apps'}
                                             </div>
                                           </div>
                                         </div>
@@ -454,7 +547,7 @@ export function Header() {
                                 className={`text-muted hover:text-accent ${workspace.id === workspaceId ? 'text-accent/80' : ''}`}
                               >
                                 <div
-                                  className={`mb-2 flex items-center gap-2 font-semibold`}
+                                  className={`mb-1 flex items-center gap-2 font-semibold`}
                                 >
                                   {workspace.id === workspaceId ? (
                                     <PackageOpen className="h-4 w-4" />
@@ -472,13 +565,13 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ id }) => (
+                                  .map((workbench) => (
                                     <div
-                                      className="mb-2 h-full"
-                                      key={`${workspace?.id}-${id}`}
+                                      className="mb-1 h-full"
+                                      key={`${workspace?.id}-${workbench.id}`}
                                     >
                                       <Link
-                                        href={`/workspaces/${workspace?.id}/sessions/${id}`}
+                                        href={`/workspaces/${workspace?.id}/sessions/${workbench.id}`}
                                         className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
                                       >
                                         <div className="text-sm font-semibold">
@@ -505,7 +598,8 @@ export function Header() {
                                                 )
                                                 ?.filter(
                                                   (instance) =>
-                                                    id === instance.workbenchId
+                                                    workbench.id ===
+                                                    instance.workbenchId
                                                 )
                                                 .map(
                                                   (instance) =>
@@ -515,7 +609,9 @@ export function Header() {
                                                         instance.appId
                                                     )?.name || ''
                                                 )
-                                                .join(', ') || 'No apps'}
+                                                .join(', ') ||
+                                                workbench.name ||
+                                                'No apps'}
                                             </div>
                                           </div>
                                         </div>
@@ -535,7 +631,7 @@ export function Header() {
                     href="/admin"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
-                    <div className="mt-1 flex place-items-center gap-1">
+                    <div className="flex place-items-center gap-1">
                       <Settings className="h-4 w-4" />
                       Admin
                     </div>

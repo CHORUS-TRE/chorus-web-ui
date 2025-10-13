@@ -59,12 +59,19 @@ type FormData = z.infer<typeof UserUpdateSchema>
 
 export function UserEditDialog({
   user,
-  onUserUpdated
+  onUserUpdated,
+  open,
+  onOpenChange
 }: {
   user: User
   onUserUpdated: () => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = open !== undefined
+  const dialogOpen = isControlled ? open : internalOpen
+  const setDialogOpen = isControlled ? onOpenChange! : setInternalOpen
 
   // useEffect(() => {
   //   const fetchRoles = async () => {
@@ -119,7 +126,7 @@ export function UserEditDialog({
         description: 'User updated successfully.'
       })
       onUserUpdated()
-      setOpen(false)
+      setDialogOpen(false)
     }
   }, [state, onUserUpdated])
 
@@ -147,17 +154,19 @@ export function UserEditDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={`Edit user ${user.firstName} ${user.lastName}`}
-        >
-          <Pencil className="h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Edit user</span>
-        </Button>
-      </DialogTrigger>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={`Edit user ${user.firstName} ${user.lastName}`}
+          >
+            <Pencil className="h-4 w-4" aria-hidden="true" />
+            <span className="sr-only">Edit user</span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="text-white">
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
