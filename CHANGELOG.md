@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.10.0...v1.10.1) (2025-10-13)
+
+
+### Bug Fixes
+
+* improve workspace data page ui ([#125](https://github.com/CHORUS-TRE/chorus-web-ui/issues/125)) ([8868fff](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8868fff086a4fedc78b8e7625df5a6710404364c))
+
 # [1.10.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.5...v1.10.0) (2025-10-13)
 
 
