@@ -1,7 +1,7 @@
 import { Result } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
-export interface WorkbenchStreamProbeUseCase {
+export interface WorkbenchStreamUrlUseCase {
   execute(id: string): Promise<Result<string>>
 }
 
