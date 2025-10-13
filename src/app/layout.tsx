@@ -8,8 +8,10 @@ import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
 
+import { AIChatProvider } from '@/providers/ai-chat-provider'
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthProvider } from '@/providers/authentication-provider'
+import { AIChatWidget } from '~/components/ai-chat/ai-chat-widget'
 import BackgroundIframe from '~/components/background-iframe'
 import { Toaster } from '~/components/ui/toaster'
 import { AuthorizationProvider } from '~/providers/authorization-provider'
@@ -50,9 +52,12 @@ export default async function RootLayout({
         <AuthProvider>
           <AuthorizationProvider>
             <AppStateProvider>
+              {/* <AIChatProvider> */}
               {children}
               <BackgroundIframe />
               <Toaster />
+              {/* <AIChatWidget /> */}
+              {/* </AIChatProvider> */}
             </AppStateProvider>
           </AuthorizationProvider>
         </AuthProvider>

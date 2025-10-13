@@ -36,26 +36,32 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-import { MockRoleDataSource } from '~/data/data-source/chorus-api/role-data-source'
-import { RoleRepositoryImpl } from '~/data/repository/role-repository-impl'
-import { Result, Role } from '~/domain/model'
+import { Result } from '~/domain/model'
 import {
   User,
   UserUpdateSchema as BaseUserUpdateSchema
 } from '~/domain/model/user'
-import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
 
 import { toast } from '../hooks/use-toast'
 
+// const UserUpdateSchema = BaseUserUpdateSchema.extend({
+//   roles: z
+//     .array(
+//       z.object({
+//         name: z.string(),
+//         attributes: z.record(z.string()).optional()
+//       })
+//     )
+//     .optional()
+// })
+
 const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  roles: z
-    .array(
-      z.object({
-        name: z.string(),
-        attributes: z.record(z.string()).optional()
-      })
-    )
-    .optional()
+  rolesWithContext: z.array(
+    z.object({
+      name: z.string(),
+      context: z.record(z.string())
+    })
+  )
 })
 
 type FormData = z.infer<typeof UserUpdateSchema>
@@ -68,24 +74,23 @@ export function UserEditDialog({
   onUserUpdated: () => void
 }) {
   const [open, setOpen] = useState(false)
-  const [roles, setRoles] = useState<Role[]>([])
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const dataSource = new MockRoleDataSource()
-      const repo = new RoleRepositoryImpl(dataSource)
-      const useCase = new RoleListUseCase(repo)
-      const result = await useCase.execute()
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     const dataSource = new MockRoleDataSource()
+  //     const repo = new RoleRepositoryImpl(dataSource)
+  //     const useCase = new RoleListUseCase(repo)
+  //     const result = await useCase.execute()
 
-      console.log('roleListUseCase roles', result.data)
+  //     console.log('roleListUseCase roles', result.data)
 
-      if (result.data) {
-        setRoles(result.data)
-      }
-    }
+  //     if (result.data) {
+  //       setRoles(result.data)
+  //     }
+  //   }
 
-    fetchRoles()
-  }, [])
+  //   fetchRoles()
+  // }, [])
 
   type UserEditValues = {
     id: string
@@ -93,7 +98,7 @@ export function UserEditDialog({
     lastName: string
     username: string
     password: string
-    roles?: { name: string; attributes?: Record<string, string> }[]
+    rolesWithContext: { name: string; context: Record<string, string> }[]
   }
 
   const form = useForm<FormData>({
@@ -104,11 +109,7 @@ export function UserEditDialog({
       lastName: user.lastName,
       username: user.username,
       password: '',
-      roles:
-        user.roles2?.map((r) => ({
-          name: r.name,
-          attributes: r.attributes
-        })) || []
+      rolesWithContext: user.rolesWithContext || []
     }
   })
 
@@ -137,14 +138,14 @@ export function UserEditDialog({
       if (Array.isArray(value)) {
         value.forEach((v) => formData.append(key, JSON.stringify(v)))
       } else {
-        formData.append(key, value || '')
+        formData.append(key, String(value || ''))
       }
     })
     formAction(formData)
   }
 
   const removeRoleWithIndex = (
-    field: ControllerRenderProps<UserEditValues, 'roles'>,
+    field: ControllerRenderProps<UserEditValues, 'rolesWithContext'>,
     index: number
   ) => {
     return () => {
@@ -231,7 +232,7 @@ export function UserEditDialog({
             />
             <FormField
               control={form.control}
-              name="roles"
+              name="rolesWithContext"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Roles</FormLabel>
@@ -266,32 +267,32 @@ export function UserEditDialog({
                                 </Badge>
                               </TableCell>
                               <TableCell className="p-2">
-                                {r.attributes?.workspace ? (
+                                {r.context?.workspace ? (
                                   <Badge
                                     className="bg-red-400"
                                     key={`role-badge-${r.name}-${i}`}
                                   >
-                                    {r.attributes?.workspace}
+                                    {r.context?.workspace}
                                   </Badge>
                                 ) : null}
                               </TableCell>
                               <TableCell className="p-2">
-                                {r.attributes?.workbench ? (
+                                {r.context?.workbench ? (
                                   <Badge
                                     className="bg-orange-400"
                                     key={`role-badge-${r.name}-${i}`}
                                   >
-                                    {r.attributes?.workbench}
+                                    {r.context?.workbench}
                                   </Badge>
                                 ) : null}
                               </TableCell>
                               <TableCell className="p-2">
-                                {r.attributes?.user ? (
+                                {r.context?.user ? (
                                   <Badge
                                     className="bg-yellow-400"
                                     key={`role-badge-${r.name}-${i}`}
                                   >
-                                    {r.attributes?.user}
+                                    {r.context?.user}
                                   </Badge>
                                 ) : null}
                               </TableCell>

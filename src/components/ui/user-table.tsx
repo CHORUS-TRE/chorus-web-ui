@@ -99,7 +99,7 @@ export function UserTable() {
               </TableCell>
               <TableCell>{user.username}</TableCell>
               <TableCell>
-                <Badge>{user.roles2?.length}</Badge>
+                <Badge>{user.rolesWithContext?.length}</Badge>
                 <div className="flex space-x-1"></div>
               </TableCell>
               <TableCell></TableCell>
@@ -160,11 +160,11 @@ export function UserTable() {
                   />
                 </TableCell>
               </TableRow>
-              {user.roles2?.map((role, roleIndex) => (
+              {user.rolesWithContext?.map((role, roleIndex) => (
                 <TableRow
                   key={`${user.id}-${role.name}-${roleIndex}`}
                   className={
-                    roleIndex != (user.roles2?.length || 0) - 1
+                    roleIndex != (user.rolesWithContext?.length || 0) - 1
                       ? 'border-muted/50'
                       : ''
                   }
@@ -176,23 +176,23 @@ export function UserTable() {
                     <Badge>{role.name}</Badge>
                   </TableCell>
                   <TableCell className="p-2">
-                    {role?.attributes?.workspace ? (
+                    {role?.context?.workspace ? (
                       <Badge className="bg-red-400">
-                        {role?.attributes?.workspace}
+                        {role?.context?.workspace}
                       </Badge>
                     ) : null}
                   </TableCell>
                   <TableCell className="p-2">
-                    {role?.attributes?.workbench ? (
+                    {role?.context?.workbench ? (
                       <Badge className="bg-orange-400">
-                        {role?.attributes?.workbench}
+                        {role?.context?.workbench}
                       </Badge>
                     ) : null}
                   </TableCell>
                   <TableCell className="p-2">
-                    {role?.attributes?.user ? (
+                    {role?.context?.user ? (
                       <Badge className="bg-yellow-400">
-                        {role?.attributes?.user}
+                        {role?.context?.user}
                       </Badge>
                     ) : null}
                   </TableCell>

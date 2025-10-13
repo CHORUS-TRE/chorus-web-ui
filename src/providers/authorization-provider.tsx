@@ -115,13 +115,19 @@ export const AuthorizationProvider = ({
         // Convert user to WASM format
         const wasmUser: WasmUser = {
           roles:
-            user.roles2?.map((role) => ({
+            user.rolesWithContext?.map((role) => ({
               name: role.name,
-              description: role.description,
-              permissions: role.permissions.map((perm) => ({
-                name: perm.name,
-                description: perm.description
-              }))
+              description: `Role: ${role.name}`,
+              permissions: [
+                {
+                  name: `${role.name}:read`,
+                  description: `Read permission for ${role.name}`
+                },
+                {
+                  name: `${role.name}:write`,
+                  description: `Write permission for ${role.name}`
+                }
+              ]
             })) || []
         }
 
@@ -153,13 +159,19 @@ export const AuthorizationProvider = ({
         // Convert user to WASM format
         const wasmUser: WasmUser = {
           roles:
-            user.roles2?.map((role) => ({
+            user.rolesWithContext?.map((role) => ({
               name: role.name,
-              description: role.description,
-              permissions: role.permissions.map((perm) => ({
-                name: perm.name,
-                description: perm.description
-              }))
+              description: `Role: ${role.name}`,
+              permissions: [
+                {
+                  name: `${role.name}:read`,
+                  description: `Read permission for ${role.name}`
+                },
+                {
+                  name: `${role.name}:write`,
+                  description: `Write permission for ${role.name}`
+                }
+              ]
             })) || []
         }
 
