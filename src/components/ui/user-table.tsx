@@ -27,6 +27,12 @@ export function UserTable() {
     setRefreshKey((oldKey) => oldKey + 1)
   }
 
+  const toggleUserCollapse = (index: number) => {
+    const newCollapsed = users.map(() => true)
+    newCollapsed[index] = !userCollapsed[index]
+    setUserCollapsed(newCollapsed)
+  }
+
   useEffect(() => {
     async function loadUsers() {
       const result = await listUsers()
@@ -80,12 +86,11 @@ export function UserTable() {
         {users.map((user, userIndex) =>
           userCollapsed[userIndex] ? (
             <TableRow key={user.id}>
-              <TableCell onClick={() => {
-                const newCollapsed = [...userCollapsed]
-                newCollapsed[userIndex] = !newCollapsed[userIndex]
-                setUserCollapsed(newCollapsed)
-              }} style={{ cursor: 'pointer' }}>
-                {userCollapsed[userIndex] ? ('▸') : ('▾')}
+              <TableCell
+                onClick={() => { toggleUserCollapse(userIndex) }}
+                className='cursor-pointer'
+              >
+                {userCollapsed[userIndex] ? '▸' : '▾'}
               </TableCell>
               <TableCell>
                 {user.firstName} {user.lastName}
@@ -98,7 +103,7 @@ export function UserTable() {
               <TableCell></TableCell>
               <TableCell></TableCell>
               <TableCell></TableCell>
-              
+
               <TableCell>
                 <Badge
                   variant={user.status === 'active' ? 'default' : 'destructive'}
@@ -117,9 +122,12 @@ export function UserTable() {
           ) : (
             <>
               <TableRow key={user.id} className="border-muted/50">
-                <TableCell>
-                  {userCollapsed[userIndex] ? ('▸') : ('▾')}
-                </TableCell>
+                <TableCell
+                onClick={() => { toggleUserCollapse(userIndex) }}
+                className='cursor-pointer'
+              >
+                {userCollapsed[userIndex] ? '▸' : '▾'}
+              </TableCell>
                 <TableCell>
                   {user.firstName} {user.lastName}
                 </TableCell>
@@ -130,21 +138,29 @@ export function UserTable() {
                 <TableCell></TableCell>
                 <TableCell>
                   <Badge
-                    variant={user.status === 'active' ? 'default' : 'destructive'}
+                    variant={
+                      user.status === 'active' ? 'default' : 'destructive'
+                    }
                   >
                     {user.status}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <UserEditDialog user={user} onUserUpdated={handleUserChange} />
+                  <UserEditDialog
+                    user={user}
+                    onUserUpdated={handleUserChange}
+                  />
                   <UserDeleteDialog
                     userId={user.id}
                     onUserDeleted={handleUserChange}
                   />
                 </TableCell>
               </TableRow>
-              {user.roles2?.map((role) => (
-                <TableRow key={`${user.id}-${role.name}`} className="border-muted/50">
+              {user.roles2?.map((role, roleIndex) => (
+                <TableRow
+                  key={`${user.id}-${role.name}`}
+                  className={roleIndex != (user.roles2?.length || 0) - 1 ? "border-muted/50" : "" }
+                >
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
@@ -152,22 +168,25 @@ export function UserTable() {
                     <Badge>{role.name}</Badge>
                   </TableCell>
                   <TableCell className="p-2">
-                    { role?.attributes?.workspace ? 
-                      (<Badge className='bg-red-400'>{role?.attributes?.workspace}</Badge>) : 
-                      null 
-                    }
+                    {role?.attributes?.workspace ? (
+                      <Badge className="bg-red-400">
+                        {role?.attributes?.workspace}
+                      </Badge>
+                    ) : null}
                   </TableCell>
                   <TableCell className="p-2">
-                    { role?.attributes?.workbench ? 
-                      (<Badge className='bg-orange-400'>{role?.attributes?.workbench}</Badge>) : 
-                      null 
-                    }
+                    {role?.attributes?.workbench ? (
+                      <Badge className="bg-orange-400">
+                        {role?.attributes?.workbench}
+                      </Badge>
+                    ) : null}
                   </TableCell>
                   <TableCell className="p-2">
-                    { role?.attributes?.user ? 
-                      (<Badge className='bg-yellow-400'>{role?.attributes?.user}</Badge>) : 
-                      null 
-                    }
+                    {role?.attributes?.user ? (
+                      <Badge className="bg-yellow-400">
+                        {role?.attributes?.user}
+                      </Badge>
+                    ) : null}
                   </TableCell>
                   <TableCell className="p-2" colSpan={4}></TableCell>
                 </TableRow>
