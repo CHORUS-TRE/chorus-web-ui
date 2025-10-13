@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.5...v1.10.0) (2025-10-13)
+
+
+### Features
+
+* add workbench server pod status to workbench ([#123](https://github.com/CHORUS-TRE/chorus-web-ui/issues/123)) ([823d601](https://github.com/CHORUS-TRE/chorus-web-ui/commit/823d60153ed3bed5de696bccb3852788addd3666))
+
 ## [1.9.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.4...v1.9.5) (2025-10-10)
 
 

@@ -15,6 +15,8 @@
 import * as runtime from '../runtime'
 import type {
   ChorusApp,
+  ChorusBulkCreateAppsReply,
+  ChorusBulkCreateAppsRequest,
   ChorusCreateAppReply,
   ChorusDeleteAppReply,
   ChorusGetAppReply,
@@ -25,6 +27,10 @@ import type {
 import {
   ChorusAppFromJSON,
   ChorusAppToJSON,
+  ChorusBulkCreateAppsReplyFromJSON,
+  ChorusBulkCreateAppsReplyToJSON,
+  ChorusBulkCreateAppsRequestFromJSON,
+  ChorusBulkCreateAppsRequestToJSON,
   ChorusCreateAppReplyFromJSON,
   ChorusCreateAppReplyToJSON,
   ChorusDeleteAppReplyFromJSON,
@@ -38,6 +44,10 @@ import {
   RpcStatusFromJSON,
   RpcStatusToJSON
 } from '../models/index'
+
+export interface AppServiceBulkCreateAppsRequest {
+  body: ChorusBulkCreateAppsRequest
+}
 
 export interface AppServiceCreateAppRequest {
   body: ChorusApp
@@ -67,6 +77,66 @@ export interface AppServiceUpdateAppRequest {
  *
  */
 export class AppServiceApi extends runtime.BaseAPI {
+  /**
+   * This endpoint creates multiple apps
+   * Create multiple apps
+   */
+  async appServiceBulkCreateAppsRaw(
+    requestParameters: AppServiceBulkCreateAppsRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusBulkCreateAppsReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling appServiceBulkCreateApps.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/apps/bulk`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ChorusBulkCreateAppsRequestToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusBulkCreateAppsReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint creates multiple apps
+   * Create multiple apps
+   */
+  async appServiceBulkCreateApps(
+    requestParameters: AppServiceBulkCreateAppsRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusBulkCreateAppsReply> {
+    const response = await this.appServiceBulkCreateAppsRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
   /**
    * This endpoint creates an app
    * Create an app
