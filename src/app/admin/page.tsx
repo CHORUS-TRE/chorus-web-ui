@@ -11,11 +11,11 @@ const AdminDashboardPage = () => {
           <div>
             <h2 className="mb-2 flex w-full flex-row items-center gap-3 text-start text-white">
               <Settings className="h-9 w-9 text-white" />
-              Admin Settings
+              Settings
             </h2>
             <div className="">
               <p className="text-sm text-muted-foreground">
-                Welcome to the Chorus administration panel.
+                Welcome to the Chorus settings.
               </p>
             </div>
           </div>

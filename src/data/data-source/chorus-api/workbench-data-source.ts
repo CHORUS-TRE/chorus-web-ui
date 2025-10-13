@@ -57,12 +57,8 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
         credentials: 'include'
       })
     )
-    const response = api.request({
-      path: '',
-      method: 'GET',
-      headers: {
-        accept: '*/*'
-      }
+    const response = fetch(computedUrl, {
+      credentials: 'include'
     })
 
     return response

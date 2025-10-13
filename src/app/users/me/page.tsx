@@ -96,7 +96,7 @@ export default function Me() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" disabled>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </Button>
@@ -268,15 +268,15 @@ export default function Me() {
         <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
           <CardContent className="pt-6">
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline">
+              <Button variant="outline" disabled>
                 <Settings className="mr-2 h-4 w-4" />
                 Edit Profile
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" disabled>
                 <Key className="mr-2 h-4 w-4" />
                 Change Password
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" disabled>
                 <Shield className="mr-2 h-4 w-4" />
                 Security Settings
               </Button>

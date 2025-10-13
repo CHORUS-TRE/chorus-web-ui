@@ -14,11 +14,15 @@ export const useAuthorizationViewModel = () => {
   useEffect(() => {
     const checkAuthorization = async (user: User, permission: string) => {
       try {
-        const result = await isUserAllowed(user, permission)
-        if (result.error) {
-          setError(result.error)
+        // const result = await isUserAllowed(user, permission)
+        const result = user.rolesWithContext?.find(
+          (role) => role.name === 'SuperAdmin'
+        )
+
+        if (result) {
+          setCanCreateWorkspace(true)
         } else {
-          setCanCreateWorkspace(result.data ?? false)
+          setCanCreateWorkspace(false)
         }
       } catch (err) {
         console.error('Error checking user permissions:', err)

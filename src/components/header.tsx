@@ -7,6 +7,7 @@ import {
   Database,
   Home,
   LaptopMinimal,
+  LogOut,
   Package,
   PackageOpen,
   Search,
@@ -598,29 +599,25 @@ export function Header() {
                 >
                   <>
                     <DropdownMenuItem
-                      className="cursor-pointer"
+                      className="flex cursor-pointer items-center gap-2"
                       onClick={() => router.push('/users/me')}
                     >
+                      <User className="h-4 w-4" />
                       {user?.firstName} {user?.lastName} profile
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => router.push('/admin')}
                       className="flex cursor-pointer items-center gap-2"
                     >
-                      <Settings className="h-4 w-4" /> Admin
+                      <Settings className="h-4 w-4" /> Settings
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="flex cursor-pointer items-center gap-2"
-                      onClick={() => router.push('/admin/users')}
-                    >
-                      <Settings className="h-4 w-4" />
-                      Preferences
-                    </DropdownMenuItem>
+
                     <DropdownMenuSeparator className="bg-slate-500" />
                     <DropdownMenuItem
                       onClick={logout}
-                      className="cursor-pointer"
+                      className="flex cursor-pointer items-center gap-2"
                     >
+                      <LogOut className="h-4 w-4" />
                       Logout
                     </DropdownMenuItem>
                   </>

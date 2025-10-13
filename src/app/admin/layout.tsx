@@ -9,10 +9,9 @@ const AuthenticatedApp = React.lazy(() =>
 import { Package } from 'lucide-react'
 import Link from 'next/link'
 
-import { Header } from '@/components/header'
 import { AdminSidebar } from '@/components/ui/admin-sidebar'
 import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import {
@@ -58,7 +57,7 @@ export default function Layout({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Admin</BreadcrumbPage>
+                  <BreadcrumbPage>settings</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -66,7 +65,7 @@ export default function Layout({
             <div className="flex items-center justify-between gap-3">
               <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
                 <Package className="h-9 w-9 text-white" />
-                Admin
+                Settings
               </h2>
             </div>
           </>

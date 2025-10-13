@@ -149,16 +149,15 @@ export default function RoleHierarchyPage() {
         </div>
       </div>
 
-      <div style={{ width: 1200, height: 800, position: 'relative' }}>
+      <div style={{ width, height, position: 'relative' }}>
         <Space
-          style={{ border: 'solid 1px red' }}
           onCreate={(viewPort) => {
             viewPort.setBounds({ x: [0, width], y: [0, height] })
             viewPort.camera.centerFitAreaIntoView({
               left: 0,
               top: 0,
-              width: width,
-              height: height
+              width,
+              height
             })
           }}
         >
@@ -178,8 +177,8 @@ export default function RoleHierarchyPage() {
               nodeSpacing: '25',
               treeSpacing: '25'
             }}
-            width={1200}
-            height={800}
+            width={width}
+            height={height}
             maxWidth={2000}
             maxHeight={2000}
           />
