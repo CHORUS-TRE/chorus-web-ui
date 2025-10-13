@@ -35,29 +35,27 @@ export async function POST(req: Request) {
   //   includeUsage: true, // Include usage information in streaming responses
   // })('chorus')
 
-
   const model5 = createOpenAICompatible({
     name: 'openwebui',
     apiKey: process.env.NEXT_PUBLIC_OPENWEBUI_CHUV_API_KEY,
     baseURL: 'https://chat.lforty.intranet.chuv/ollama/v1',
-    includeUsage: true, // Include usage information in streaming responses
+    includeUsage: true // Include usage information in streaming responses
   })('Qwen3-8B')
 
+  const result = streamText({
+    model: webSearch ? 'perplexity/sonar' : model5,
+    // providerOptions: { ollama: { think: true } },
+    messages: convertToModelMessages(messages),
+    onError({ error }) {
+      console.error(error)
+    }
+  })
 
-    const result = streamText({
-      model: webSearch ? 'perplexity/sonar' : model5,
-      // providerOptions: { ollama: { think: true } },
-      messages: convertToModelMessages(messages),
-      onError({ error }) {
-        console.error(error)
-      }
-    })
+  // send sources and reasoning back to the client
+  const data = result.toUIMessageStreamResponse({
+    sendSources: true,
+    sendReasoning: true
+  })
 
-    // send sources and reasoning back to the client
-    const data = result.toUIMessageStreamResponse({
-      sendSources: true,
-      sendReasoning: true
-    })
-
-    return data
+  return data
 }

@@ -114,9 +114,10 @@ export default function WorkspacesGrid({
                 </DropdownMenu>
               )}
             </div>
-            <SwitchLink user={user} workspace={workspace}>
-              <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white">
-                <CardHeader className="pb-2">
+
+            <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white">
+              <CardHeader className="pb-2">
+                <SwitchLink user={user} workspace={workspace}>
                   <CardTitle className="flex items-start gap-3 pr-2 text-white">
                     {workspace.isMain && workspace.userId === user?.id && (
                       <HomeIcon className="h-6 w-6 text-white" />
@@ -128,21 +129,23 @@ export default function WorkspacesGrid({
                       {workspace?.name}
                     </span>
                   </CardTitle>
-                  <CardDescription className="">
-                    {workspace?.description}
-                    <span className="mb-2 block text-xs text-muted">
-                      Created {formatDistanceToNow(workspace.createdAt)} ago by{' '}
-                      {
-                        users?.find((user) => user.id === workspace?.userId)
-                          ?.firstName
-                      }{' '}
-                      {
-                        users?.find((user) => user.id === workspace?.userId)
-                          ?.lastName
-                      }
-                    </span>
-                  </CardDescription>
-                </CardHeader>
+                </SwitchLink>
+                <CardDescription className="">
+                  {workspace?.description}
+                  <span className="mb-2 block text-xs text-muted">
+                    Created {formatDistanceToNow(workspace.createdAt)} ago by{' '}
+                    {
+                      users?.find((user) => user.id === workspace?.userId)
+                        ?.firstName
+                    }{' '}
+                    {
+                      users?.find((user) => user.id === workspace?.userId)
+                        ?.lastName
+                    }
+                  </span>
+                </CardDescription>
+              </CardHeader>
+              <SwitchLink user={user} workspace={workspace}>
                 <CardContent className="">
                   {workspace.userId === user?.id && (
                     <ScrollArea
@@ -166,16 +169,18 @@ export default function WorkspacesGrid({
                     </div>
                   )}
                 </CardContent>
-                <CardFooter className="flex items-end justify-start">
-                  {workspace.userId === user?.id && (
+              </SwitchLink>
+              <CardFooter className="flex items-end justify-start">
+                {workspace.userId === user?.id && (
+                  <>
                     <WorkbenchCreateForm
                       workspaceId={workspace?.id || ''}
                       workspaceName={workspace?.name}
                     />
-                  )}
-                </CardFooter>
-              </Card>
-            </SwitchLink>
+                  </>
+                )}
+              </CardFooter>
+            </Card>
 
             {activeUpdateId === workspace.id && (
               <WorkspaceUpdateForm

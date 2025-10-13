@@ -78,14 +78,13 @@ export function UserTable() {
             </TableCell>
             <TableCell>{user.username}</TableCell>
             <TableCell>
-                {user.roles2?.map((role) => (
-                  <span key={role.name}>
-                    <Badge>{role.name}</Badge>
-                    <br />
-                  </span>
-                ))}
-              <div className="flex space-x-1">
-              </div>
+              {user.rolesWithContext?.map((role) => (
+                <span key={role.name}>
+                  <Badge>{role.name}</Badge>
+                  <br />
+                </span>
+              ))}
+              <div className="flex space-x-1"></div>
             </TableCell>
             <TableCell>
               <Badge

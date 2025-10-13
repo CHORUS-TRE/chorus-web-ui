@@ -4,6 +4,7 @@ import {
   AppWindow,
   Bell,
   CircleHelp,
+  Database,
   Home,
   LaptopMinimal,
   Package,
@@ -15,7 +16,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
@@ -69,7 +70,7 @@ export function Header() {
     users
   } = useAppState()
   const { user, logout } = useAuthentication()
-
+  const pathname = usePathname()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -93,6 +94,11 @@ export function Header() {
       workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
     [workspacesWithWorkbenches, workspaceId]
   )
+
+  const isSessionPage = useMemo(() => {
+    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+    return sessionPageRegex.test(pathname)
+  }, [pathname])
 
   return (
     <>
@@ -157,6 +163,28 @@ export function Header() {
                         <ul className="grid w-[320px] gap-1 bg-black bg-opacity-85 p-2">
                           {/* Session Info Section */}
                           <NavigationMenuItem>
+                            {isSessionPage ? (
+                              <ListItem
+                                title="Switch to workspace."
+                                className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                                onClick={() =>
+                                  router.push(`/workspaces/${workspaceId}`)
+                                }
+                                wrapWithLi={false}
+                              ></ListItem>
+                            ) : (
+                              <ListItem
+                                title="Switch to session."
+                                className="cursor-pointer p-1 font-semibold hover:bg-accent"
+                                onClick={() =>
+                                  router.push(
+                                    `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
+                                  )
+                                }
+                                wrapWithLi={false}
+                              ></ListItem>
+                            )}
+                            <Separator className="m-1" />
                             <ListItem
                               title={`About this session`}
                               className="p-1 font-semibold"
@@ -275,6 +303,17 @@ export function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
                   <NavLink
+                    href={`/data`}
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex place-items-center gap-1">
+                      <Database className="h-4 w-4" />
+                      Data
+                    </div>
+                  </NavLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem id="getting-started-step4">
+                  <NavLink
                     href="/app-store"
                     className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
                   >
@@ -284,17 +323,7 @@ export function Header() {
                     </div>
                   </NavLink>
                 </NavigationMenuItem>
-                <NavigationMenuItem id="getting-started-step4">
-                  <NavLink
-                    href="/admin"
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  >
-                    <div className="mt-1 flex place-items-center gap-1">
-                      <Settings className="h-4 w-4" />
-                      Admin
-                    </div>
-                  </NavLink>
-                </NavigationMenuItem>
+
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="mt-[2px] flex place-items-center gap-1">
                     <LaptopMinimal className="h-4 w-4" />
@@ -491,6 +520,17 @@ export function Header() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+                {/* <NavigationMenuItem id="getting-started-step4">
+                  <NavLink
+                    href="/admin"
+                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+                  >
+                    <div className="mt-1 flex place-items-center gap-1">
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </div>
+                  </NavLink>
+                </NavigationMenuItem> */}
               </NavigationMenuList>
             </NavigationMenu>
           </>
@@ -553,6 +593,12 @@ export function Header() {
                       onClick={() => router.push('/users/me')}
                     >
                       {user?.firstName} {user?.lastName} profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push('/admin')}
+                      className="flex cursor-pointer items-center gap-2"
+                    >
+                      <Settings className="h-4 w-4" /> Admin
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="flex cursor-pointer items-center gap-2"

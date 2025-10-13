@@ -26,19 +26,23 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { MultiSelect } from '~/components/ui/multi-select'
-import { MockRoleDataSource } from '~/data/data-source/chorus-api/role-data-source'
-import { RoleRepositoryImpl } from '~/data/repository/role-repository-impl'
-import { Result, Role } from '~/domain/model'
+import { Result } from '~/domain/model'
 import {
   User,
   UserUpdateSchema as BaseUserUpdateSchema
 } from '~/domain/model/user'
-import { RoleListUseCase } from '~/domain/use-cases/role/role-list'
 
 import { toast } from '../hooks/use-toast'
 
 const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  roles: z.array(z.string()).optional()
+  rolesWithContext: z
+    .array(
+      z.object({
+        name: z.string(),
+        context: z.record(z.string())
+      })
+    )
+    .optional()
 })
 
 type FormData = z.infer<typeof UserUpdateSchema>
@@ -51,22 +55,14 @@ export function UserEditDialog({
   onUserUpdated: () => void
 }) {
   const [open, setOpen] = useState(false)
-  const [roles, setRoles] = useState<Role[]>([])
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const dataSource = new MockRoleDataSource()
-      const repo = new RoleRepositoryImpl(dataSource)
-      const useCase = new RoleListUseCase(repo)
-      const result = await useCase.execute()
-
-      if (result.data) {
-        setRoles(result.data)
-      }
-    }
-
-    fetchRoles()
-  }, [])
+  // Define available roles with context - this should eventually come from a service
+  const availableRoles = [
+    { name: 'admin', label: 'Administrator' },
+    { name: 'user', label: 'User' },
+    { name: 'researcher', label: 'Researcher' },
+    { name: 'workspace-manager', label: 'Workspace Manager' }
+  ]
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserUpdateSchema),
@@ -76,7 +72,7 @@ export function UserEditDialog({
       lastName: user.lastName,
       username: user.username,
       password: '',
-      roles: user.roles2?.map((r) => r.name) || []
+      rolesWithContext: user.rolesWithContext || []
     }
   })
 
@@ -102,10 +98,13 @@ export function UserEditDialog({
   const onSubmit = (data: FormData) => {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((v) => formData.append(key, v))
+      if (key === 'rolesWithContext' && Array.isArray(value)) {
+        // Serialize rolesWithContext array
+        formData.append(key, JSON.stringify(value))
+      } else if (Array.isArray(value)) {
+        value.forEach((v) => formData.append(key, String(v)))
       } else {
-        formData.append(key, value || '')
+        formData.append(key, String(value || ''))
       }
     })
     formAction(formData)
@@ -188,18 +187,32 @@ export function UserEditDialog({
             />
             <FormField
               control={form.control}
-              name="roles"
+              name="rolesWithContext"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Roles</FormLabel>
                   <FormControl>
                     <MultiSelect
-                      options={roles.map((r) => ({
+                      options={availableRoles.map((r) => ({
                         value: r.name,
-                        label: r.name
+                        label: r.label
                       }))}
-                      selected={field.value || []}
-                      onChange={field.onChange}
+                      selected={(field.value || []).map((role) => role.name)}
+                      onChange={(selectedRoles) => {
+                        const roleNames =
+                          typeof selectedRoles === 'function'
+                            ? selectedRoles(
+                                (field.value || []).map((role) => role.name)
+                              )
+                            : selectedRoles
+                        const rolesWithContext = roleNames.map(
+                          (roleName: string) => ({
+                            name: roleName,
+                            context: {} as Record<string, string> // Default empty context, can be configured later
+                          })
+                        )
+                        field.onChange(rolesWithContext)
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
