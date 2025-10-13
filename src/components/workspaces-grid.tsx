@@ -14,6 +14,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
@@ -26,6 +27,7 @@ import {
 import { User, Workbench, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 
+import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { toast } from './hooks/use-toast'
 import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
@@ -69,7 +71,7 @@ export default function WorkspacesGrid({
   const { refreshWorkspaces, users, workbenches } = useAppState()
   return (
     <div
-      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]"
       id="grid"
     >
       {user &&
@@ -129,7 +131,7 @@ export default function WorkspacesGrid({
                   <CardDescription className="">
                     {workspace?.description}
                     <span className="mb-2 block text-xs text-muted">
-                      Created {formatDistanceToNow(workspace.updatedAt)} ago by{' '}
+                      Created {formatDistanceToNow(workspace.createdAt)} ago by{' '}
                       {
                         users?.find((user) => user.id === workspace?.userId)
                           ?.firstName
@@ -164,6 +166,14 @@ export default function WorkspacesGrid({
                     </div>
                   )}
                 </CardContent>
+                <CardFooter className="flex items-end justify-start">
+                  {workspace.userId === user?.id && (
+                    <WorkbenchCreateForm
+                      workspaceId={workspace?.id || ''}
+                      workspaceName={workspace?.name}
+                    />
+                  )}
+                </CardFooter>
               </Card>
             </SwitchLink>
 

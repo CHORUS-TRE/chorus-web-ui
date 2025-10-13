@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { listUsers } from '@/view-model/user-view-model'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
 import { UserEditDialog } from '~/components/forms/user-edit-dialog'
+import { toast } from '~/components/hooks/use-toast'
 import { Badge } from '~/components/ui/badge'
 import {
   Table,
@@ -31,6 +32,11 @@ export function UserTable() {
       if (result.data) {
         setUsers(result.data)
       } else {
+        toast({
+          title: 'Error',
+          description: result.error || 'Failed to load users.',
+          variant: 'destructive'
+        })
         setError(result.error || 'Failed to load users.')
       }
     }
@@ -38,18 +44,30 @@ export function UserTable() {
   }, [refreshKey])
 
   if (error) {
-    return <div className="text-red-500">{error}</div>
+    return (
+      <div className="mt-2">
+        An error occurred while listing platform users. Verify you have the
+        necessary permissions to view this content.
+      </div>
+    )
   }
 
   return (
-    <Table className="text-white" aria-label="User table">
+    <Table
+      className="text-white"
+      aria-label={`User management table with ${users.length} users`}
+    >
+      <caption className="sr-only">
+        User management table showing user details and available actions. Use
+        arrow keys to navigate.
+      </caption>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Username</TableHead>
-          <TableHead>Roles</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead scope="col">Name</TableHead>
+          <TableHead scope="col">Username</TableHead>
+          <TableHead scope="col">Roles</TableHead>
+          <TableHead scope="col">Status</TableHead>
+          <TableHead scope="col">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { toast } from '~/components/hooks/use-toast'
 import type { FileSystemItem, FileSystemState } from '~/types/file-system'
 import { mapWorkspaceFilesToFileSystem } from '~/utils/file-system-mapper'
 import {
@@ -49,10 +50,9 @@ export function useFileSystem(workspaceId?: string) {
   const [fetchedPaths, setFetchedPaths] = useState<Set<string>>(new Set())
 
   const fetchWorkspaceFiles = useCallback(
-    async (workspaceId: string, path: string) => {
+    async (workspaceId: string, path: string, force = false) => {
       // Check if we already fetched this path
-      if (fetchedPaths.has(path)) {
-        console.log(`Path ${path} already fetched, skipping API call`)
+      if (!force && fetchedPaths.has(path)) {
         return
       }
 
@@ -62,7 +62,6 @@ export function useFileSystem(workspaceId?: string) {
       try {
         // Add trailing slash for folder paths
         const apiPath = path && !path.endsWith('/') ? `${path}/` : path
-        console.log(`Fetching workspace files for path: ${apiPath}`)
         const result = await workspaceFileList(workspaceId, apiPath)
 
         if (result.error) {
@@ -71,9 +70,6 @@ export function useFileSystem(workspaceId?: string) {
         }
 
         if (result.data) {
-          console.log(
-            `Received ${result.data.length} files for path: ${apiPath}`
-          )
           const fileSystemItems = mapWorkspaceFilesToFileSystem(result.data)
 
           setState((prev) => {
@@ -81,16 +77,12 @@ export function useFileSystem(workspaceId?: string) {
               ...prev,
               items: { ...prev.items, ...fileSystemItems }
             }
-            console.log('Updated file system state:', {
-              totalItems: Object.keys(newState.items).length,
-              items: newState.items
-            })
+
             return newState
           })
 
           // Mark this path as fetched
-          setFetchedPaths((prev) => new Set([...prev, path]))
-          console.log('Fetched paths:', [...fetchedPaths, path])
+          setFetchedPaths((prev) => new Set(Array.from(prev).concat(path)))
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch files')
@@ -145,7 +137,6 @@ export function useFileSystem(workspaceId?: string) {
 
   const navigateToFolder = useCallback(
     (folderId: string) => {
-      console.log(`Navigating to folder: ${folderId}`)
       setState((prev) => ({
         ...prev,
         currentFolderId: folderId,
@@ -156,11 +147,9 @@ export function useFileSystem(workspaceId?: string) {
       if (workspaceId) {
         if (folderId === 'root') {
           // Navigate to root - don't fetch again if already fetched
-          console.log('Navigating to root folder')
         } else {
           const folder = state.items[folderId]
           if (folder) {
-            console.log(`Fetching files for folder: ${folder.path}`)
             fetchWorkspaceFiles(workspaceId, folder.path)
           }
         }
@@ -189,10 +178,6 @@ export function useFileSystem(workspaceId?: string) {
         return
       }
 
-      console.log(
-        `Moving ${item.type}: ${item.name} from ${item.path} to folder: ${newParent.path}`
-      )
-
       try {
         // Calculate new path based on the new parent folder
         const newParentPath = newParent.path || ''
@@ -211,12 +196,9 @@ export function useFileSystem(workspaceId?: string) {
         })
 
         if (result.error) {
-          console.error('Failed to move item:', result.error)
           setError(result.error)
           return
         }
-
-        console.log('Item moved successfully:', result.data)
 
         // Update local state
         setState((prev) => ({
@@ -235,20 +217,10 @@ export function useFileSystem(workspaceId?: string) {
         const currentFolder = state.items[state.currentFolderId || 'root']
         const currentPath = currentFolder?.path || ''
 
-        // Remove from fetched paths to force refresh
-        setFetchedPaths((prev) => {
-          const newSet = new Set(prev)
-          newSet.delete(currentPath)
-          if (newParentPath !== currentPath) {
-            newSet.delete(newParentPath)
-          }
-          return newSet
-        })
-
-        // Fetch updated folder contents
-        await fetchWorkspaceFiles(workspaceId, currentPath)
+        // Force fetch updated folder contents
+        await fetchWorkspaceFiles(workspaceId, currentPath, true)
         if (newParentPath !== currentPath) {
-          await fetchWorkspaceFiles(workspaceId, newParentPath)
+          await fetchWorkspaceFiles(workspaceId, newParentPath, true)
         }
       } catch (err) {
         const errorMessage =
@@ -273,9 +245,6 @@ export function useFileSystem(workspaceId?: string) {
         return
       }
 
-      console.log(`Deleting ${item.type}: ${item.name} at path: ${item.path}`)
-      console.log('Item details:', item)
-
       try {
         const result = await workspaceFileDelete(workspaceId, item.path)
 
@@ -284,18 +253,6 @@ export function useFileSystem(workspaceId?: string) {
           setError(result.error)
           return
         }
-
-        console.log('Item deleted successfully:', result.data)
-
-        // Remove from fetched paths to force refresh
-        const currentFolder = state.items[state.currentFolderId || 'root']
-        const currentPath = currentFolder?.path || ''
-
-        setFetchedPaths((prev) => {
-          const newSet = new Set(prev)
-          newSet.delete(currentPath)
-          return newSet
-        })
 
         // Update local state to remove the item and its children
         setState((prev) => {
@@ -319,8 +276,10 @@ export function useFileSystem(workspaceId?: string) {
           }
         })
 
-        // Refresh the current folder to reflect changes
-        await fetchWorkspaceFiles(workspaceId, currentPath)
+        // Force fetch updated folder contents
+        const currentFolder = state.items[state.currentFolderId || 'root']
+        const currentPath = currentFolder?.path || ''
+        await fetchWorkspaceFiles(workspaceId, currentPath, true)
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to delete item'
@@ -343,10 +302,6 @@ export function useFileSystem(workspaceId?: string) {
         console.error('Item not found:', itemId)
         return
       }
-
-      console.log(
-        `Renaming ${item.type}: ${item.name} to ${newName} at path: ${item.path}`
-      )
 
       try {
         // Calculate new path based on the item's current path and new name
@@ -372,8 +327,6 @@ export function useFileSystem(workspaceId?: string) {
           return
         }
 
-        console.log('Item renamed successfully:', result.data)
-
         // Update local state
         setState((prev) => ({
           ...prev,
@@ -391,15 +344,8 @@ export function useFileSystem(workspaceId?: string) {
         const currentFolder = state.items[state.currentFolderId || 'root']
         const currentPath = currentFolder?.path || ''
 
-        // Remove from fetched paths to force refresh
-        setFetchedPaths((prev) => {
-          const newSet = new Set(prev)
-          newSet.delete(currentPath)
-          return newSet
-        })
-
-        // Fetch updated folder contents
-        await fetchWorkspaceFiles(workspaceId, currentPath)
+        // Force fetch updated folder contents
+        await fetchWorkspaceFiles(workspaceId, currentPath, true)
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to rename item'
@@ -421,8 +367,6 @@ export function useFileSystem(workspaceId?: string) {
       const parentPath = parentItem?.path || ''
       const newPath = parentPath ? `${parentPath}/${name}/` : `${name}/`
 
-      console.log(`Creating folder: ${name} at path: ${newPath}`)
-
       try {
         const result = await workspaceFileCreate(workspaceId, {
           name,
@@ -438,21 +382,12 @@ export function useFileSystem(workspaceId?: string) {
         }
 
         if (result.data) {
-          console.log('Folder created successfully:', result.data)
-
           // Refresh the current folder to show the new folder
           const currentFolder = state.items[state.currentFolderId || 'root']
           const currentPath = currentFolder?.path || ''
 
-          // Remove from fetched paths to force refresh
-          setFetchedPaths((prev) => {
-            const newSet = new Set(prev)
-            newSet.delete(currentPath)
-            return newSet
-          })
-
-          // Fetch updated folder contents
-          await fetchWorkspaceFiles(workspaceId, currentPath)
+          // Force fetch updated folder contents
+          await fetchWorkspaceFiles(workspaceId, currentPath, true)
         }
       } catch (err) {
         const errorMessage =
@@ -475,7 +410,12 @@ export function useFileSystem(workspaceId?: string) {
       const parentPath = parentItem?.path || ''
       const filePath = parentPath ? `${parentPath}/${file.name}` : file.name
 
-      console.log(`Importing file: ${file.name} to path: ${filePath}`)
+      // Show loading toast
+      const loadingToast = toast({
+        title: 'Uploading file...',
+        description: `Uploading ${file.name}`,
+        variant: 'default'
+      })
 
       try {
         // Read file content as base64 or text
@@ -493,31 +433,46 @@ export function useFileSystem(workspaceId?: string) {
         if (result.error) {
           console.error('Failed to import file:', result.error)
           setError(result.error)
+
+          // Update toast to show error
+          loadingToast.update({
+            id: loadingToast.id,
+            title: 'Upload failed',
+            description: result.error,
+            variant: 'destructive'
+          })
           return
         }
 
         if (result.data) {
-          console.log('File imported successfully:', result.data)
+          // Update toast to show success
+          loadingToast.update({
+            id: loadingToast.id,
+            title: 'File uploaded',
+            description: `${file.name} has been uploaded successfully`,
+            variant: 'default'
+          })
 
           // Refresh the current folder to show the new file
           const currentFolder = state.items[state.currentFolderId || 'root']
           const currentPath = currentFolder?.path || ''
 
-          // Remove from fetched paths to force refresh
-          setFetchedPaths((prev) => {
-            const newSet = new Set(prev)
-            newSet.delete(currentPath)
-            return newSet
-          })
-
-          // Fetch updated folder contents
-          await fetchWorkspaceFiles(workspaceId, currentPath)
+          // Force fetch updated folder contents
+          await fetchWorkspaceFiles(workspaceId, currentPath, true)
         }
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to import file'
         console.error('Error importing file:', errorMessage)
         setError(errorMessage)
+
+        // Update toast to show error
+        loadingToast.update({
+          id: loadingToast.id,
+          title: 'Upload failed',
+          description: errorMessage,
+          variant: 'destructive'
+        })
       }
     },
     [workspaceId, state.items, state.currentFolderId, fetchWorkspaceFiles]
@@ -554,8 +509,6 @@ export function useFileSystem(workspaceId?: string) {
         return
       }
 
-      console.log(`Downloading file: ${item.name} from path: ${item.path}`)
-
       try {
         const result = await workspaceFileGet(workspaceId, item.path)
 
@@ -566,8 +519,6 @@ export function useFileSystem(workspaceId?: string) {
         }
 
         if (result.data) {
-          console.log('File downloaded successfully:', result.data)
-
           // Create download link
           let blob: Blob
           const content = result.data.content
@@ -614,6 +565,32 @@ export function useFileSystem(workspaceId?: string) {
     [workspaceId, state.items]
   )
 
+  const fetchFolderContents = useCallback(
+    async (folderId: string) => {
+      if (!workspaceId) {
+        console.error('No workspace ID provided for folder fetch')
+        return
+      }
+
+      const folder = state.items[folderId]
+      if (!folder || folder.type !== 'folder') {
+        console.error('Invalid folder or folder not found:', folderId)
+        return
+      }
+
+      try {
+        // Use the existing fetchWorkspaceFiles with force=true to bypass cache
+        await fetchWorkspaceFiles(workspaceId, folder.path, true)
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to fetch folder contents'
+        console.error('fetchFolderContents: Error:', errorMessage)
+        setError(errorMessage)
+      }
+    },
+    [workspaceId, state.items, fetchWorkspaceFiles]
+  )
+
   return {
     state,
     loading,
@@ -631,6 +608,7 @@ export function useFileSystem(workspaceId?: string) {
     setSearch,
     toggleViewMode,
     clearSelection,
+    fetchFolderContents,
     refresh: () => workspaceId && fetchWorkspaceFiles(workspaceId, '')
   }
 }

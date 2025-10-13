@@ -1,11 +1,91 @@
 'use client'
 
-import { ChevronDown, ChevronRight, Folder, FolderOpen } from 'lucide-react'
+import {
+  Archive,
+  ChevronDown,
+  ChevronRight,
+  File,
+  FileAudio,
+  FileCode,
+  FileImage,
+  FileSpreadsheet,
+  FileText,
+  FileVideo,
+  Folder,
+  FolderOpen
+} from 'lucide-react'
 import type React from 'react'
 import { useState } from 'react'
 
 import { cn } from '~/lib/utils'
 import type { FileSystemItem } from '~/types/file-system'
+
+// Helper function to get file icon based on extension
+function getFileIcon(extension?: string) {
+  if (!extension) return File
+
+  const ext = extension.toLowerCase()
+
+  // Text files
+  if (['txt', 'md', 'doc', 'docx', 'rtf'].includes(ext)) {
+    return FileText
+  }
+
+  // Images
+  if (
+    ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext)
+  ) {
+    return FileImage
+  }
+
+  // Videos
+  if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(ext)) {
+    return FileVideo
+  }
+
+  // Audio
+  if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'wma'].includes(ext)) {
+    return FileAudio
+  }
+
+  // Code files
+  if (
+    [
+      'js',
+      'ts',
+      'tsx',
+      'jsx',
+      'html',
+      'css',
+      'scss',
+      'py',
+      'java',
+      'cpp',
+      'c',
+      'php',
+      'rb',
+      'go',
+      'rs',
+      'swift',
+      'kt'
+    ].includes(ext)
+  ) {
+    return FileCode
+  }
+
+  // Spreadsheets
+  if (['xls', 'xlsx', 'csv', 'ods'].includes(ext)) {
+    return FileSpreadsheet
+  }
+
+  // Archives
+  if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(ext)) {
+    return Archive
+  }
+
+  // Default file icon
+  return File
+}
 
 interface FileTreeProps {
   items: FileSystemItem[]
@@ -15,6 +95,7 @@ interface FileTreeProps {
   onNavigateToFolder: (folderId: string) => void
   onMoveItem: (itemId: string, newParentId: string) => void
   getChildren: (parentId: string | null) => FileSystemItem[]
+  onExpandFolder?: (folderId: string) => void
 }
 
 interface TreeNodeProps extends FileTreeProps {
@@ -23,15 +104,17 @@ interface TreeNodeProps extends FileTreeProps {
 }
 
 function TreeNode({ item, level, ...props }: TreeNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(level === 0 || item.id === 'hip')
+  const [isExpanded, setIsExpanded] = useState(false)
   const children = props.getChildren(item.id)
-  const hasChildren = children.length > 0
   const isSelected = props.selectedItems.includes(item.id)
   const isCurrent = props.currentFolderId === item.id
 
-  const handleToggle = (e: React.MouseEvent) => {
+  const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (hasChildren) {
+    if (item.type === 'folder') {
+      if (!isExpanded && props.onExpandFolder) {
+        await props.onExpandFolder(item.id)
+      }
       setIsExpanded(!isExpanded)
     }
   }
@@ -83,7 +166,7 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
           className="flex h-4 w-4 items-center justify-center"
           onClick={handleToggle}
         >
-          {hasChildren &&
+          {item.type === 'folder' &&
             (isExpanded ? (
               <ChevronDown className="h-3 w-3" />
             ) : (
@@ -97,11 +180,18 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
             ) : (
               <Folder className="h-4 w-4 flex-shrink-0 text-gray-400" />
             )
-          ) : null}
+          ) : (
+            (() => {
+              const FileIcon = getFileIcon(item.extension)
+              return (
+                <FileIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
+              )
+            })()
+          )}
           <span className="truncate">{item.name}</span>
         </div>
       </div>
-      {hasChildren && isExpanded && (
+      {isExpanded && (
         <div>
           {children.map((child) => (
             <TreeNode

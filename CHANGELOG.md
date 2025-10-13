@@ -1,3 +1,97 @@
+## [1.9.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.4...v1.9.5) (2025-10-10)
+
+
+### Bug Fixes
+
+* **background-iframe:** reposition error message and update URL probing error text ([3b511a8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3b511a88640301c031b84b42775bb3976f9b4635))
+* **breadcrumbs:** add breadcrumb navigation to app store, workspaces, and workspace layout pages ([cc28cb0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cc28cb07f82acf9195553429a7efde9b3648933e))
+
+## [1.9.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.3...v1.9.4) (2025-10-09)
+
+
+### Bug Fixes
+
+* add maximum size for grid elements ([4db4ef9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4db4ef9f7322ec7c74f3684e24a909ff8da4dcb3))
+* add missing space in workspace info ([b446136](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b4461366489f317d1b29e9a0fe40f39a0ec3e633))
+* hide create user button in admin page ([9d3ced9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9d3ced9ec59a140cea34ef4889baa2b8df600a1c))
+* improve error message in user table component ([2d73508](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2d73508da976cafd6b2938dd758dce1e8c8244b2))
+* make grids responsive to sidebar changes ([5f21f9f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5f21f9f6c208893f22b221e6f9e1b269e14b393c))
+* update delete dialog to correctly close without deletion ([70151c3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/70151c33e0e87f511b3b67631f4ee76450cdbfca))
+* use createdAt for workspace cards info ([150ac72](https://github.com/CHORUS-TRE/chorus-web-ui/commit/150ac72be45de4984d90912a7320068fa5422b07))
+
+## [1.9.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.2...v1.9.3) (2025-10-09)
+
+## [1.9.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.1...v1.9.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* **background-iframe:** update API URL handling to use next-runtime-env for environment variables ([0b3d5be](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0b3d5bed8cd7c7ddd49bb10b787ffd78e8b737f3))
+
+## [1.9.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.9.0...v1.9.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* **chat:** update URL handling in chat component to ensure valid links ([0d3d2b7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0d3d2b7cc7bee2dcd7aa3b8e1b67002f3c7b3853))
+
+# [1.9.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.8.0...v1.9.0) (2025-10-08)
+
+
+### Features
+
+* refactor file management page ([b9470dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b9470dc84c4ada8aa5308b4d71c959dc6c6af0b6))
+
+# [1.8.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.3...v1.8.0) (2025-10-08)
+
+
+### Bug Fixes
+
+* update OpenAI model ([b01c5ed](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b01c5ed8276bb5fd6fb70cf944a35bb1c2d5b08c))
+
+
+### Features
+
+* add endpoints and models for listing workspace files and update file management API ([5ce51cc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5ce51cce09e5d14f0bbe13410803a4fb27bd164c))
+* add react-keyed-file-browser dependency ([2852023](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2852023de5a445a2ddc8f9abe0caa266ffad1f11))
+* add role hierarchy and permissions management page with schema data ([91baa8e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/91baa8ee0fc26441a00045f2d8af23c59a207ed8))
+* add workspace file management endpoints and models ([8b1a5e1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8b1a5e1b3b2d3809f8109ae42b3c8868ef2ef9cd))
+* enhance BackgroundIframe and LoadingOverlay components with improved error handling and loading states ([15edf8f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/15edf8fa58eae7a66248562e71fe4628eec44d82))
+* enhance file manager with import, download, and search functionalities ([631d600](https://github.com/CHORUS-TRE/chorus-web-ui/commit/631d6006b51718cf2af98e211d51d802a24a79ee))
+* enhance Header with workspaces session ([c58d818](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c58d818058fe9ae3dd350f8957352e74441c6892))
+* implement file manager components and hooks for enhanced file system management ([b0f4735](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b0f4735b040500a6c888a871a58c0530010341c7))
+* implement URL probing and refactor workbench status handling in BackgroundIframe component ([b942a28](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b942a282930e6c453b6557c6d4217418ad6a5a65))
+* implement workspace file repository and use cases for file management ([0b40cde](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0b40cde63685717b77bf8bf2d16a832b9531af34))
+* refactor file manager by removing mock data and enhancing file management components ([43a6877](https://github.com/CHORUS-TRE/chorus-web-ui/commit/43a6877ba9b9b80741d4b78946a5ffaedc0e1053))
+
+## [1.7.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.2...v1.7.3) (2025-09-24)
+
+
+### Bug Fixes
+
+* Update background-iframe.tsx for readiness ([4fca22e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4fca22ee6e0b323d41b1b1d992268c905df5f240))
+
+## [1.7.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.1...v1.7.2) (2025-09-23)
+
+
+### Bug Fixes
+
+* remove check for status ([4b14716](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4b147165d5984ca7314c7eb65bc0956668d19b2b))
+
+## [1.7.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.7.0...v1.7.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* Update background-iframe.tsx env ([76a3f83](https://github.com/CHORUS-TRE/chorus-web-ui/commit/76a3f83bf365dde36587294292e1112ad6534292))
+
+# [1.7.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.6.0...v1.7.0) (2025-09-23)
+
+
+### Features
+
+* enhance BackgroundIframe and LoadingOverlay components with improved error handling and loading states ([aaf2e75](https://github.com/CHORUS-TRE/chorus-web-ui/commit/aaf2e75392565fc09b9e0a724633233c18af48bf))
+
 # [1.6.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.5.1...v1.6.0) (2025-08-25)
 
 

@@ -1,56 +1,52 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { K8sWorkbenchStatus, Workbench } from '@/domain/model'
+import { K8sWorkbenchStatus } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
 const POLLING_INTERVAL = 1000 // 3 seconds
 const TIMEOUT = 10 * 1000 // 10 seconds
 
 export function useWorkbenchStatus(workbenchId?: string) {
-  const [isPolling, setIsPolling] = useState(false)
-  const [status, setStatus] = useState<WorkbenchStatus | null>(null)
-  const stopPolling = useCallback(() => {
-    setIsPolling(false)
-  }, [])
-  const startPolling = useCallback(() => {
-    setIsPolling(true)
-  }, [])
+  const [status, setStatus] = useState<K8sWorkbenchStatus | string | null>(null)
 
   useEffect(() => {
-    if (!workbenchId || isPolling) {
+    if (!workbenchId) {
       return
     }
 
     const poll = async () => {
       const result = await getWorkbench(workbenchId)
+
       if (result.error) {
         setStatus(result.error)
-        stopPolling()
+        clearInterval(intervalId)
+        clearTimeout(timeoutId)
         return
       }
 
       if (result.data) {
-        if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
-          stopPolling()
-        }
+        setStatus(result.data.k8sStatus || null)
 
-        setStatus(result.data.k8sStatus)
+        if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
+          clearInterval(intervalId)
+          clearTimeout(timeoutId)
+        }
       }
     }
 
-    const intervalId = setInterval(poll, POLLING_INTERVAL)
-    const timeoutId = setTimeout(() => {
-      stopPolling()
-    }, TIMEOUT)
-
     // Initial poll
     poll()
+
+    const intervalId: NodeJS.Timeout = setInterval(poll, POLLING_INTERVAL)
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId)
+    }, TIMEOUT)
 
     return () => {
       clearInterval(intervalId)
       clearTimeout(timeoutId)
     }
-  }, [workbenchId, startPolling, stopPolling, isPolling])
+  }, [workbenchId])
 
   return { status }
 }

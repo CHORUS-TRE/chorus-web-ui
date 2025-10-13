@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import { AppWindow, PictureInPicture2 } from 'lucide-react'
+import { AppWindow } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
@@ -28,7 +28,7 @@ export function WorkspaceWorkbenchList({
   }, [workbenches, workspaceId, user?.id])
 
   return (
-    <div className="grid w-full gap-1 truncate">
+    <div className="grid w-full gap-1" role="list" aria-label="Sessions">
       {workspaces
         ?.filter((workspace) => workspace.id === workspaceId || !workspaceId)
         ?.map(({ id: mapWorkspaceId, name }) => (
@@ -38,17 +38,36 @@ export function WorkspaceWorkbenchList({
             {workbenchList?.filter(
               (workbench) => workbench.workspaceId === mapWorkspaceId
             ).length === 0 && (
-              <div className="text-xs text-muted">No started session</div>
+              <div className="text-xs text-muted" role="status">
+                No sessions started
+              </div>
             )}
             {workbenchList
               ?.filter((workbench) => workbench.workspaceId === mapWorkspaceId)
-              .map(({ id, createdAt, userId }) => (
-                <div
-                  key={`workspace-sessions-${id}`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
+              .map(({ id, createdAt, userId, name: sessionName }) => {
+                const userName =
+                  user?.id === userId
+                    ? user
+                    : users?.find((user) => user.id === userId)
+                const userDisplayName =
+                  `${userName?.firstName || '#user-' + userId} ${userName?.lastName || ''}`.trim()
+                const appNames =
+                  appInstances
+                    ?.filter((instance) => id === instance.workbenchId)
+                    .map(
+                      (instance) =>
+                        apps?.find((app) => app.id === instance.appId)?.name ||
+                        ''
+                    )
+                    .join(', ') ||
+                  sessionName ||
+                  'No apps'
+                const isActive = background?.sessionId === id
+                const isUserSession = userId === user?.id
 
+                const handleKeyDown = (e: React.KeyboardEvent) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
                     if (!action) {
                       router.push(
                         `/workspaces/${mapWorkspaceId}/sessions/${id}`
@@ -58,40 +77,76 @@ export function WorkspaceWorkbenchList({
                         action({ id, workspaceId: mapWorkspaceId })
                       }
                     }
-                  }}
-                  className={`mb-2 flex flex-col justify-between`}
-                >
-                  <div className="mb-1 flex-grow text-sm">
-                    <div
-                      className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
-                    >
-                      {background?.sessionId === id && (
-                        <PictureInPicture2 className="h-4 w-4 shrink-0" />
-                      )}
+                  }
+                }
 
-                      {background?.sessionId !== id && (
-                        <AppWindow className="h-4 w-4 shrink-0" />
-                      )}
-                      <span className="w-full min-w-0 flex-1">
-                        {appInstances
-                          ?.filter((instance) => id === instance.workbenchId)
-                          .map(
-                            (instance) =>
-                              apps?.find((app) => app.id === instance.appId)
-                                ?.name || ''
-                          )
-                          .join(', ') || 'No apps started'}
-                      </span>
+                return (
+                  <div
+                    key={`workspace-sessions-${id}`}
+                    role="listitem"
+                    tabIndex={isUserSession ? 0 : -1}
+                    aria-label={`Session with ${appNames}, created by ${userDisplayName} ${formatDistanceToNow(createdAt || new Date())} ago${isActive ? ', currently active' : ''}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+
+                      if (!action) {
+                        router.push(
+                          `/workspaces/${mapWorkspaceId}/sessions/${id}`
+                        )
+                      } else {
+                        if (id && mapWorkspaceId) {
+                          action({ id, workspaceId: mapWorkspaceId })
+                        }
+                      }
+                    }}
+                    onKeyDown={handleKeyDown}
+                    className={`mb-2 flex flex-col justify-between`}
+                  >
+                    <div className="mb-1 flex-grow text-sm">
+                      <div
+                        className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {isActive && (
+                            <>
+                              <div
+                                className="h-2 w-2 animate-pulse rounded-full bg-green-500"
+                                aria-hidden="true"
+                              />
+                              {/* <PictureInPicture2
+                                className="h-4 w-4 shrink-0"
+                                aria-hidden="true"
+                              /> */}
+                            </>
+                          )}
+
+                          {!isActive && (
+                            <>
+                              {/* <div
+                                className="h-2 w-2 rounded-full bg-gray-400"
+                                aria-hidden="true"
+                              /> */}
+                              <AppWindow
+                                className="h-4 w-4 shrink-0 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </>
+                          )}
+                        </div>
+                        <span className="w-full min-w-0 flex-1">
+                          {appNames}
+                        </span>
+                      </div>
                     </div>
+                    <p className="cursor-default text-xs text-muted">
+                      {userDisplayName}
+                      {', '}
+                      {formatDistanceToNow(createdAt || new Date())} ago
+                    </p>
                   </div>
-                  <p className="cursor-default text-xs text-muted">
-                    Created by{' '}
-                    {users?.find((user) => user.id === userId)?.firstName}{' '}
-                    {users?.find((user) => user.id === userId)?.lastName}{' '}
-                    {formatDistanceToNow(createdAt || new Date())} ago
-                  </p>
-                </div>
-              ))}
+                )
+              })}
           </div>
         ))}
     </div>

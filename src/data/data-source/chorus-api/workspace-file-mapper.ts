@@ -35,7 +35,7 @@ export const fromChorusWorkspaceFile = (
     isDirectory: file.isDirectory || false,
     size: file.size,
     mimeType: file.mimeType,
-    createdAt: file.createdAt ? new Date(file.createdAt) : new Date(),
+    createdAt: file.updatedAt ? new Date(file.updatedAt) : new Date(),
     updatedAt: file.updatedAt ? new Date(file.updatedAt) : new Date(),
     content: file.content
   }

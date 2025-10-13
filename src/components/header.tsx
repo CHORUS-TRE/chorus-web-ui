@@ -341,7 +341,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ shortName, createdAt, id }) => (
+                                  .map(({ id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -433,7 +433,7 @@ export function Header() {
                                     (workbench) =>
                                       workbench.workspaceId === workspace?.id
                                   )
-                                  .map(({ shortName, createdAt, id }) => (
+                                  .map(({ id }) => (
                                     <div
                                       className="mb-2 h-full"
                                       key={`${workspace?.id}-${id}`}
@@ -512,19 +512,23 @@ export function Header() {
           <div className="ml-1 flex items-center">
             <Button
               size="icon"
-              className="h-8 w-8 text-muted hover:bg-inherit hover:text-accent"
+              className="h-8 w-8 text-muted hover:bg-inherit hover:text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2"
               variant="ghost"
               onClick={toggleRightSidebar}
+              aria-label="Help and support"
             >
-              <CircleHelp className="h-4 w-4" />
+              <CircleHelp className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Help</span>
             </Button>
             {user && (
               <Button
                 size="icon"
-                className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
+                className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2"
                 variant="ghost"
+                aria-label="Notifications"
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">Notifications</span>
               </Button>
             )}
             {user && (
@@ -623,7 +627,7 @@ export function Header() {
                   }{' '}
                   {formatDistanceToNow(
                     currentWorkbench?.createdAt || new Date()
-                  )}
+                  )}{' '}
                   ago
                 </p>
               </div>

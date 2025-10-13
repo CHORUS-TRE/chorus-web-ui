@@ -2,7 +2,7 @@ import { Result } from '@/domain/model'
 import { WorkbenchRepository } from '@/domain/repository'
 
 export interface WorkbenchStreamProbeUseCase {
-  execute(id: string): Promise<Result<Document>>
+  execute(id: string): Promise<Result<boolean>>
 }
 
 export class WorkbenchStreamProbe implements WorkbenchStreamProbeUseCase {
@@ -12,7 +12,7 @@ export class WorkbenchStreamProbe implements WorkbenchStreamProbeUseCase {
     this.repository = repository
   }
 
-  async execute(id: string): Promise<Result<Document>> {
+  async execute(id: string): Promise<Result<boolean>> {
     return await this.repository.streamProbe(id)
   }
 }
