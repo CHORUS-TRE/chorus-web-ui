@@ -37,7 +37,7 @@ export const useUrlProbing = (id: string | undefined) => {
 
   useEffect(() => {
     if (!id) {
-      setIsLoading(false)
+      setIsLoading(true)
       setError(null)
       return
     }
@@ -58,8 +58,11 @@ export const useUrlProbing = (id: string | undefined) => {
         const isValid = await probeURL(id)
 
         if (isValid) {
-          setError(null)
-          setIsLoading(false)
+          setTimeout(() => {
+            setError(null)
+            setIsLoading(false)
+          }, 1000)
+
           // Clear any pending timeout
           if (timeoutRef.current) {
             clearTimeout(timeoutRef.current)
