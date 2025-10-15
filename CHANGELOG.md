@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.12.1...v1.13.0) (2025-10-15)
+
+
+### Features
+
+* **workbench:** enhance user information display in workbench table and workspace grid ([e12ba0c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e12ba0c78c4a44e61efccc5f3c436a2c725721ea))
+
 ## [1.12.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.12.0...v1.12.1) (2025-10-15)
 
 # [1.12.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.11.2...v1.12.0) (2025-10-15)
