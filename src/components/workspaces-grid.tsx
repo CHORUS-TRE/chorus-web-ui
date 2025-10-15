@@ -48,10 +48,13 @@ const SwitchLink = ({
   workspace: Workspace
   children: React.ReactNode
 }) => {
-  return workspace.userId === user?.id ? (
+  return workspace.id ===
+    user.rolesWithContext?.find(
+      (role) => role.context.workspace === workspace.id
+    )?.context.workspace ? (
     <Link
       href={`/workspaces/${workspace.id}`}
-      className="cursor-pointer transition-colors duration-300 hover:border-accent hover:bg-background/80"
+      className="cursor-pointer border-b-2 border-transparent text-muted transition-colors duration-300 hover:border-accent"
     >
       {children}
     </Link>
@@ -80,7 +83,7 @@ export default function WorkspacesGrid({
             key={`workspace-grid-${workspace.id}`}
             className="group relative"
           >
-            <div className="absolute right-4 top-4 z-10">
+            <div className="absolute right-1 top-1 z-10">
               {workspace.userId === user?.id && (
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
@@ -117,23 +120,20 @@ export default function WorkspacesGrid({
 
             <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white">
               <CardHeader className="pb-2">
-                <SwitchLink user={user} workspace={workspace}>
-                  <CardTitle className="flex items-start gap-3 pr-2 text-white">
-                    {workspace.isMain && workspace.userId === user?.id && (
-                      <HomeIcon className="h-6 w-6 text-white" />
-                    )}
-                    {!workspace.isMain && (
-                      <Package className="h-6 w-6 flex-shrink-0" />
-                    )}
-                    <span className="flex items-center gap-2">
-                      {workspace?.name}
-                    </span>
-                  </CardTitle>
-                </SwitchLink>
+                <CardTitle className="flex items-start gap-3 pr-2">
+                  {workspace.isMain && (
+                    <HomeIcon className="h-6 w-6 flex-shrink-0 text-muted" />
+                  )}
+                  {!workspace.isMain && (
+                    <Package className="h-6 w-6 flex-shrink-0 text-muted" />
+                  )}
+                  <SwitchLink user={user} workspace={workspace}>
+                    {workspace?.name}
+                  </SwitchLink>
+                </CardTitle>
                 <CardDescription className="">
                   {workspace?.description}
-                  <span className="mb-2 block text-xs text-muted">
-                    Created {formatDistanceToNow(workspace.createdAt)} ago by{' '}
+                  <span className="text-bold block text-sm text-muted">
                     {
                       users?.find((user) => user.id === workspace?.userId)
                         ?.firstName
@@ -143,29 +143,28 @@ export default function WorkspacesGrid({
                         ?.lastName
                     }
                   </span>
+                  <span className="block text-xs text-muted">
+                    Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
+                  </span>
+                  <div className="mb-2 text-xs text-muted">
+                    {(() => {
+                      const count =
+                        workbenches?.filter(
+                          (w) => w.workspaceId === workspace.id
+                        ).length || 0
+                      return `${count} active session${count !== 1 ? 's' : ''}`
+                    })()}
+                  </div>
                 </CardDescription>
               </CardHeader>
-              <SwitchLink user={user} workspace={workspace}>
-                <CardContent className="">
-                  <ScrollArea
-                    className="flex max-h-40 flex-col overflow-y-auto"
-                    type="hover"
-                  >
-                    <WorkspaceWorkbenchList workspaceId={workspace.id} />
-                  </ScrollArea>
-                  <div className="flex h-full items-start justify-start">
-                    <div className="text-xs text-muted">
-                      {(() => {
-                        const count =
-                          workbenches?.filter(
-                            (w) => w.workspaceId === workspace.id
-                          ).length || 0
-                        return `${count} session${count !== 1 ? 's' : ''}`
-                      })()}
-                    </div>
-                  </div>
-                </CardContent>
-              </SwitchLink>
+              <CardContent className="">
+                <ScrollArea
+                  className="flex max-h-40 flex-col overflow-y-auto"
+                  type="hover"
+                >
+                  <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                </ScrollArea>
+              </CardContent>
               <CardFooter className="flex items-end justify-start">
                 <WorkbenchCreateForm
                   workspaceId={workspace?.id || ''}
