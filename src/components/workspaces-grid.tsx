@@ -147,38 +147,30 @@ export default function WorkspacesGrid({
               </CardHeader>
               <SwitchLink user={user} workspace={workspace}>
                 <CardContent className="">
-                  {workspace.userId === user?.id && (
-                    <ScrollArea
-                      className="flex max-h-40 flex-col overflow-y-auto"
-                      type="hover"
-                    >
-                      <WorkspaceWorkbenchList workspaceId={workspace.id} />
-                    </ScrollArea>
-                  )}
-                  {workspace.userId !== user?.id && (
-                    <div className="flex h-full items-start justify-start">
-                      <div className="text-xs text-muted">
-                        {(() => {
-                          const count =
-                            workbenches?.filter(
-                              (w) => w.workspaceId === workspace.id
-                            ).length || 0
-                          return `${count} session${count !== 1 ? 's' : ''}`
-                        })()}
-                      </div>
+                  <ScrollArea
+                    className="flex max-h-40 flex-col overflow-y-auto"
+                    type="hover"
+                  >
+                    <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                  </ScrollArea>
+                  <div className="flex h-full items-start justify-start">
+                    <div className="text-xs text-muted">
+                      {(() => {
+                        const count =
+                          workbenches?.filter(
+                            (w) => w.workspaceId === workspace.id
+                          ).length || 0
+                        return `${count} session${count !== 1 ? 's' : ''}`
+                      })()}
                     </div>
-                  )}
+                  </div>
                 </CardContent>
               </SwitchLink>
               <CardFooter className="flex items-end justify-start">
-                {workspace.userId === user?.id && (
-                  <>
-                    <WorkbenchCreateForm
-                      workspaceId={workspace?.id || ''}
-                      workspaceName={workspace?.name}
-                    />
-                  </>
-                )}
+                <WorkbenchCreateForm
+                  workspaceId={workspace?.id || ''}
+                  workspaceName={workspace?.name}
+                />
               </CardFooter>
             </Card>
 

@@ -136,20 +136,20 @@ export default function WorkspacesPage() {
                 <>
                   {showWorkspacesTable ? (
                     <WorkspaceTable
-                      workspaces={workspaces.filter(
-                        (workspace) =>
-                          workspace.id === user?.workspaceId ||
-                          workspace.userId === user?.id
+                      workspaces={workspaces.filter((workspace) =>
+                        user?.rolesWithContext?.some(
+                          (role) => role.context.workspace === workspace.id
+                        )
                       )}
                       user={user}
                       onUpdate={refreshWorkspaces}
                     />
                   ) : (
                     <WorkspacesGrid
-                      workspaces={workspaces.filter(
-                        (workspace) =>
-                          workspace.id === user?.workspaceId ||
-                          workspace.userId === user?.id
+                      workspaces={workspaces.filter((workspace) =>
+                        user?.rolesWithContext?.some(
+                          (role) => role.context.workspace === workspace.id
+                        )
                       )}
                       workbenches={workbenches}
                       user={user}
