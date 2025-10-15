@@ -163,7 +163,7 @@ export default function WorkspacesGrid({
                             workbenches?.filter(
                               (w) => w.workspaceId === workspace.id
                             ).length || 0
-                          return `${count} workbench${count !== 1 ? 'es' : ''}`
+                          return `${count} session${count !== 1 ? 's' : ''}`
                         })()}
                       </div>
                     </div>

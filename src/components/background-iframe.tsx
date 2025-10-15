@@ -13,7 +13,7 @@ import { LoadingOverlay } from './loading-overlay'
 
 export default function BackgroundIframe() {
   const [url, setUrl] = useState<string | null>(null)
-  const [showHud, setShowHud] = useState(true)
+  const [showHud, setShowHud] = useState(false)
   const { user } = useAuthentication()
   const { background, workspaces, workbenches, appInstances, apps } =
     useAppState()
@@ -34,6 +34,7 @@ export default function BackgroundIframe() {
         setUrl(result.data)
       }
     }
+
     fetchUrl()
   }, [background?.sessionId])
 
@@ -45,6 +46,7 @@ export default function BackgroundIframe() {
 
   const handleLoad = useCallback(() => {
     const handleMouseOver = (e: MouseEvent) => {
+      // setShowHud(false)
       iFrameRef.current?.focus()
       e.preventDefault()
       e.stopPropagation()
@@ -97,7 +99,7 @@ export default function BackgroundIframe() {
         !isSessionPage && (
           <>
             <div
-              className="fixed bottom-3 right-3 z-20 rounded-lg bg-black/80 p-3 text-white backdrop-blur-sm"
+              className="fixed bottom-3 right-3 z-30 rounded-lg bg-black/80 p-3 text-white backdrop-blur-sm"
               aria-label="Session HUD"
             >
               <div className="flex items-center gap-2 text-sm">

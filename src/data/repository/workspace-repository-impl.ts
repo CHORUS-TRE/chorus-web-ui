@@ -5,6 +5,7 @@ import {
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '~/domain/model'
+import { User } from '~/domain/model/user'
 import { WorkspaceSchema } from '~/domain/model/workspace'
 import { WorkspaceRepository } from '~/domain/repository'
 
@@ -87,6 +88,63 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return this.get(workspace.id)
     } catch (error) {
       console.error('Error updating workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async manageUserRole(
+    workspaceId: string,
+    userId: string,
+    roleName: string
+  ): Promise<Result<User>> {
+    try {
+      const response = await this.dataSource.manageUserRole(
+        workspaceId,
+        userId,
+        {
+          role: {
+            id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(),
+            name: roleName,
+            context: {
+              workspace: workspaceId
+            }
+          }
+        }
+      )
+
+      if (!response.result?.workspace) {
+        return { error: 'Error managing user role' }
+      }
+
+      // Since the API returns workspace data not user data,
+      // we'll return a success indicator and let the UI refresh the user list
+      return {
+        data: {
+          id: userId,
+          firstName: '',
+          lastName: '',
+          username: '',
+          source: '',
+          status: '',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      }
+    } catch (error) {
+      console.error('Error managing user role in workspace', error)
+
+      // Try to extract more specific error information from the API response
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as {
+          response?: { status?: number; statusText?: string }
+        }
+        if (apiError.response?.status) {
+          return {
+            error: `API Error ${apiError.response.status}: ${apiError.response.statusText || 'Unknown error'}`
+          }
+        }
+      }
+
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }

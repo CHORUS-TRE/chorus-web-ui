@@ -10,6 +10,7 @@ import {
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '~/domain/model'
+import { User } from '~/domain/model/user'
 import {
   WorkspaceCreateSchema,
   WorkspaceUpdateSchema
@@ -111,6 +112,30 @@ export async function workspaceUpdate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceAddUserRole(
+  prevState: Result<User>,
+  formData: FormData
+): Promise<Result<User>> {
+  try {
+    const repository = await getRepository()
+
+    const workspaceId = formData.get('workspaceId') as string
+    const userId = formData.get('userId') as string
+    const roleName = formData.get('roleName') as string
+
+    if (!workspaceId || !userId || !roleName) {
+      return {
+        error: 'Missing required fields: workspaceId, userId, or roleName'
+      }
+    }
+
+    return await repository.manageUserRole(workspaceId, userId, roleName)
+  } catch (error) {
+    console.error('Error adding user role to workspace', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

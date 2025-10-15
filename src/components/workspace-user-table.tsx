@@ -2,7 +2,7 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon, UserPlus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
@@ -35,7 +35,7 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
-import { User } from '~/domain/model/user'
+import { Role, User } from '~/domain/model/user'
 
 export default function WorkspaceUserTable({
   workspaceId,
@@ -52,7 +52,7 @@ export default function WorkspaceUserTable({
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true)
     const result = await listUsers()
     if (result.data) {
@@ -73,17 +73,17 @@ export default function WorkspaceUserTable({
       })
     }
     setLoading(false)
-  }
+  }, [workspaceId])
 
   useEffect(() => {
     if (workspaceId) {
       loadUsers()
     }
-  }, [workspaceId])
+  }, [workspaceId, loadUsers])
 
-  const handleUserChange = () => {
+  const handleUserChange = useCallback(() => {
     loadUsers()
-  }
+  }, [loadUsers])
 
   const getWorkspaceRoles = (user: User) => {
     return (
@@ -107,7 +107,12 @@ export default function WorkspaceUserTable({
   )
 
   const TableRow = ({ user }: { user: User }) => {
-    const workspaceRoles = getWorkspaceRoles(user)
+    const workspaceRoles = getWorkspaceRoles(user).reduce((acc, role) => {
+      if (!acc.some((r) => r.name === role.name)) {
+        acc.push(role)
+      }
+      return acc
+    }, [] as Role[])
 
     return (
       <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">

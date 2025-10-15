@@ -1,12 +1,13 @@
 'use client'
 
 import {
-  Building,
-  Calendar,
+  AppWindow,
+  Box,
   CheckCircle,
   Clock,
+  Crown,
   Key,
-  Mail,
+  LaptopMinimal,
   Settings,
   Shield,
   User,
@@ -57,6 +58,40 @@ export default function Me() {
       default:
         return <Clock className="h-4 w-4" />
     }
+  }
+
+  const groupRolesByWorkspace = () => {
+    if (!user.rolesWithContext || user.rolesWithContext.length === 0) {
+      return {}
+    }
+
+    const groups: Record<
+      string,
+      Record<string, typeof user.rolesWithContext>
+    > = {}
+
+    user.rolesWithContext.forEach((role) => {
+      const workspaceId = role.context.workspace || 'undefined'
+      const roleName = role.name
+
+      if (!groups[workspaceId]) {
+        groups[workspaceId] = {}
+      }
+
+      if (!groups[workspaceId][roleName]) {
+        groups[workspaceId][roleName] = []
+      }
+
+      groups[workspaceId][roleName].push(role)
+    })
+
+    return groups
+  }
+
+  const formatContextDisplay = (context: Record<string, string>) => {
+    return Object.entries(context)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ')
   }
 
   return (
@@ -194,6 +229,26 @@ export default function Me() {
           </Card>
         </div>
 
+        {/* Workspace Information */}
+        {user.workspaceId && (
+          <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AppWindow className="h-5 w-5" />
+                Workspace
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Current Workspace ID
+                </label>
+                <p className="font-mono text-sm">{user.workspaceId}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Roles & Permissions */}
         <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
           <CardHeader>
@@ -204,28 +259,84 @@ export default function Me() {
           </CardHeader>
           <CardContent>
             {user.rolesWithContext && user.rolesWithContext.length > 0 ? (
-              <div className="space-y-4">
-                <h4 className="font-medium">Roles with Context</h4>
-                <div className="grid gap-3">
-                  {user.rolesWithContext.map((role, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between rounded-lg border p-3"
-                    >
-                      <div>
-                        <div className="font-medium">{role.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {Object.entries(role.context).map(([key, value]) => (
-                            <span key={key} className="mr-2">
-                              {key}: {value}
-                            </span>
-                          ))}
-                        </div>
+              <div className="space-y-6">
+                <h4 className="font-medium">Roles & Permissions</h4>
+                {Object.entries(groupRolesByWorkspace())
+                  .sort(([a], [b]) =>
+                    a.match(/^\*/s) ? -1 : b.match(/^undefined/) ? 1 : 0
+                  )
+                  .map(([workspaceId, roles]) => (
+                    <div key={workspaceId} className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        {workspaceId === 'global' ? (
+                          <Crown className="h-5 w-5" />
+                        ) : (
+                          <AppWindow className="h-5 w-5 text-muted-foreground" />
+                        )}
+                        <h5 className="text-lg font-semibold">
+                          {workspaceId === 'undefined'
+                            ? 'CHORUS Global Roles'
+                            : `Workspace ${workspaceId}`}
+                        </h5>
                       </div>
-                      <Badge variant="outline">{role.name}</Badge>
+                      <div className="space-y-3 pl-6">
+                        {Object.entries(roles)
+                          .sort(([a], [b]) => {
+                            // Put WorkspaceAdmin  before WorkbenchAdmin
+                            if (
+                              a.includes('Workbench') &&
+                              b.includes('Workspace')
+                            )
+                              return 1
+                            if (
+                              a.includes('Workspace') &&
+                              b.includes('Workbench')
+                            )
+                              return -1
+                            return a.localeCompare(b)
+                          })
+                          .map(([roleName, roleInstances]) => (
+                            <div
+                              key={`${workspaceId}-${roleName}`}
+                              className="space-y-2"
+                            >
+                              <div className="flex items-center justify-between">
+                                <Badge variant="outline" className="text-xs">
+                                  {roleName}
+                                </Badge>
+                              </div>
+                              <div className="pl-4">
+                                <div className="grid grid-cols-1 gap-3 md:grid-cols-4 lg:grid-cols-5">
+                                  {roleInstances.map((role, index) => (
+                                    <div
+                                      key={index}
+                                      className="rounded-lg border border-muted/40 bg-muted/10 p-3 transition-colors hover:bg-muted/20"
+                                    >
+                                      {role.context.workbench ? (
+                                        <div className="space-y-2">
+                                          <div className="flex items-center gap-2">
+                                            <LaptopMinimal className="h-4 w-4 text-muted-foreground" />
+                                            <span className="text-sm font-medium">
+                                              Session {role.context.workbench}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="space-y-2">
+                                          <div className="text-sm text-white">
+                                            {formatContextDisplay(role.context)}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   ))}
-                </div>
               </div>
             ) : user.roles && user.roles.length > 0 ? (
               <div className="space-y-4">
@@ -243,26 +354,6 @@ export default function Me() {
             )}
           </CardContent>
         </Card>
-
-        {/* Workspace Information */}
-        {user.workspaceId && (
-          <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Workspace
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Current Workspace ID
-                </label>
-                <p className="font-mono text-sm">{user.workspaceId}x</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Actions */}
         <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
