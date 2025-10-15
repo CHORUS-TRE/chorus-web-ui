@@ -176,9 +176,9 @@ export function CreateUserRoleDialog({
                 name="workbench"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Workbench Context</FormLabel>
+                    <FormLabel>Session Context</FormLabel>
                     <FormControl>
-                      <Input placeholder="workbench id or slug" {...field} />
+                      <Input placeholder="session id or slug" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

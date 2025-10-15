@@ -3,11 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserPlus } from 'lucide-react'
 import { useActionState } from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { createUserRole, listUsers } from '@/view-model/user-view-model'
+import { listUsers } from '@/view-model/user-view-model'
+import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/ui/button'
 import {
   Dialog,
@@ -53,6 +54,7 @@ export function AddUserToWorkspaceDialog({
 }) {
   const [open, setOpen] = useState(false)
   const [availableUsers, setAvailableUsers] = useState<User[]>([])
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false)
 
   // Available roles for workspace members from schema
   const workspaceRoles = getWorkspaceRoles().map((role) => ({
@@ -68,10 +70,16 @@ export function AddUserToWorkspaceDialog({
     }
   })
 
-  const [state, formAction] = useActionState(createUserRole, {} as Result<User>)
+  const [state, formAction] = useActionState(
+    workspaceAddUserRole,
+    {} as Result<User>
+  )
 
-  useEffect(() => {
-    const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
+    if (isLoadingUsers) return // Prevent multiple concurrent requests
+
+    setIsLoadingUsers(true)
+    try {
       const result = await listUsers()
       if (result.data) {
         // Filter out users who already have roles in this workspace
@@ -89,12 +97,16 @@ export function AddUserToWorkspaceDialog({
           variant: 'destructive'
         })
       }
+    } finally {
+      setIsLoadingUsers(false)
     }
+  }, [workspaceId])
 
-    if (open) {
+  useEffect(() => {
+    if (open && !isLoadingUsers) {
       loadUsers()
     }
-  }, [open, workspaceId])
+  }, [open, loadUsers])
 
   useEffect(() => {
     if (state.error) {
@@ -103,24 +115,24 @@ export function AddUserToWorkspaceDialog({
         description: state.error,
         variant: 'destructive'
       })
-    } else if (state.data) {
+    } else if (state.issues) {
+      toast({
+        title: 'Validation Error',
+        description: state.issues
+          .map((issue) => JSON.stringify(issue))
+          .join(', '),
+        variant: 'destructive'
+      })
+    } else if (state.data && state.data.id) {
       toast({
         title: 'Success',
         description: 'User added to workspace successfully.'
       })
-      onUserAdded()
       setOpen(false)
       form.reset()
+      onUserAdded()
     }
   }, [state, onUserAdded, form])
-
-  const handleFormSubmit = (data: AddUserFormData) => {
-    const formData = new FormData()
-    formData.append('userId', data.userId)
-    formData.append('roleName', data.roleName)
-    formData.append('workspace', workspaceId)
-    formAction(formData)
-  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -135,8 +147,7 @@ export function AddUserToWorkspaceDialog({
           <DialogTitle>Add User to Workspace</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-
+          <form action={formAction} className="space-y-4">
             <FormField
               control={form.control}
               name="userId"
@@ -185,6 +196,15 @@ export function AddUserToWorkspaceDialog({
                   <FormMessage />
                 </FormItem>
               )}
+            />
+
+            {/* Hidden fields for form submission */}
+            <input type="hidden" name="workspaceId" value={workspaceId} />
+            <input type="hidden" name="userId" value={form.watch('userId')} />
+            <input
+              type="hidden"
+              name="roleName"
+              value={form.watch('roleName')}
             />
 
             <div className="flex justify-end gap-2">

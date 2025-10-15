@@ -100,7 +100,7 @@ export default function ComponentGeneratorPage() {
             </p>
 
             <div className="mt-8 flex items-center justify-center gap-4">
-              <Link href="/component-explorer">
+              <Link href="/chat/component-explorer">
                 <Button
                   variant="outline"
                   size="lg"

@@ -399,7 +399,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
                   {users
-                    ?.filter((user) => user.workspaceId === workspaceId)
+                    ?.filter((user) =>
+                      user.rolesWithContext?.some(
+                        (role) => role.context.workspace === workspaceId
+                      )
+                    )
                     .map((user) => (
                       <div
                         className="flex items-center gap-4"

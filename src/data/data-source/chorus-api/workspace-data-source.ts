@@ -4,9 +4,11 @@ import {
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
   ChorusListWorkspacesReply,
+  ChorusManageUserRoleInWorkspaceReply,
   ChorusUpdateWorkspaceReply,
   Configuration,
-  WorkspaceServiceApi
+  WorkspaceServiceApi,
+  WorkspaceServiceManageUserRoleInWorkspaceBody
 } from '~/internal/client'
 
 import { toChorusWorkspace, toChorusWorkspaceUpdate } from './workspace-mapper'
@@ -21,6 +23,11 @@ interface WorkspaceDataSource {
   update: (
     workspace: WorkspaceUpdatetype
   ) => Promise<ChorusUpdateWorkspaceReply>
+  manageUserRole: (
+    workspaceId: string,
+    userId: string,
+    body: WorkspaceServiceManageUserRoleInWorkspaceBody
+  ) => Promise<ChorusManageUserRoleInWorkspaceReply>
 }
 
 export type { WorkspaceDataSource }
@@ -59,6 +66,18 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
     const chorusWorkspace = toChorusWorkspaceUpdate(workspace)
     return this.service.workspaceServiceUpdateWorkspace({
       body: chorusWorkspace
+    })
+  }
+
+  manageUserRole(
+    workspaceId: string,
+    userId: string,
+    body: WorkspaceServiceManageUserRoleInWorkspaceBody
+  ): Promise<ChorusManageUserRoleInWorkspaceReply> {
+    return this.service.workspaceServiceManageUserRoleInWorkspace({
+      id: workspaceId,
+      userId,
+      body
     })
   }
 }

@@ -26,19 +26,12 @@ export const SCHEMA_ROLES: Role[] = [
 
 // Get roles that are relevant for workspace context
 export const getWorkspaceRoles = (): Role[] => {
-  return SCHEMA_ROLES.filter(
-    (role) =>
-      role.name.startsWith('Workspace') ||
-      role.name === 'SuperAdmin' ||
-      role.name === 'PlateformUserManager'
-  )
+  return SCHEMA_ROLES.filter((role) => role.name.startsWith('Workspace'))
 }
 
 // Get roles that are relevant for workbench context
 export const getWorkbenchRoles = (): Role[] => {
-  return SCHEMA_ROLES.filter(
-    (role) => role.name.startsWith('Workbench') || role.name === 'SuperAdmin'
-  )
+  return SCHEMA_ROLES.filter((role) => role.name.startsWith('Workbench'))
 }
 
 // Get all available roles
