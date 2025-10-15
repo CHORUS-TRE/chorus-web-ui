@@ -1,3 +1,15 @@
+# [1.12.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.11.2...v1.12.0) (2025-10-15)
+
+
+### Bug Fixes
+
+* **background-iframe:** disable HUD and adjust loading state in URL probing ([9f31f5e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9f31f5ee688bb96ed9a18526f95e52c735fa0cf7))
+
+
+### Features
+
+* **workspace:** enhance user role management and update UI components ([0f27a7a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0f27a7a2c400c2feaf541da228b4ceaa2ac03e7c))
+
 ## [1.11.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.11.1...v1.11.2) (2025-10-13)
 
 ## [1.11.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.11.0...v1.11.1) (2025-10-13)
