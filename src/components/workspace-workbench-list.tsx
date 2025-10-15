@@ -101,42 +101,26 @@ export function WorkspaceWorkbenchList({
                       }
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`mb-2 flex flex-col justify-between`}
+                    className={`mb-3 flex flex-col justify-between`}
                   >
                     <div className="mb-1 flex-grow text-sm">
                       <div
                         className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
                       >
-                        <div className="flex items-center gap-2">
-                          {isActive && (
-                            <>
-                              <div
-                                className="h-2 w-2 animate-pulse rounded-full bg-green-500"
-                                aria-hidden="true"
-                              />
-                              {/* <PictureInPicture2
-                                className="h-4 w-4 shrink-0"
-                                aria-hidden="true"
-                              /> */}
-                            </>
-                          )}
+                        {isActive && (
+                          <div
+                            className="h-2 w-2 animate-pulse rounded-full bg-green-500"
+                            aria-hidden="true"
+                          />
+                        )}
 
-                          {!isActive && (
-                            <>
-                              {/* <div
-                                className="h-2 w-2 rounded-full bg-gray-400"
-                                aria-hidden="true"
-                              /> */}
-                              <AppWindow
-                                className="h-4 w-4 shrink-0 text-gray-400"
-                                aria-hidden="true"
-                              />
-                            </>
-                          )}
-                        </div>
-                        <span className="w-full min-w-0 flex-1">
-                          {appNames}
-                        </span>
+                        {!isActive && (
+                          <AppWindow
+                            className="h-4 w-4 shrink-0 text-muted"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <div className="w-full min-w-0 flex-1">{appNames}</div>
                       </div>
                     </div>
                     <p className="cursor-default text-xs text-muted">

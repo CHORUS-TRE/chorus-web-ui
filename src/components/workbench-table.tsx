@@ -48,8 +48,14 @@ export default function WorkbenchTable({
   description?: string
   onUpdate?: (id: string) => void
 }) {
-  const { workbenches, refreshWorkbenches, appInstances, apps, workspaces } =
-    useAppState()
+  const {
+    workbenches,
+    refreshWorkbenches,
+    appInstances,
+    apps,
+    workspaces,
+    users
+  } = useAppState()
 
   const filteredWorkbenches = workbenches?.filter(
     (w) => w.workspaceId === workspaceId
@@ -63,7 +69,6 @@ export default function WorkbenchTable({
       <TableHead className="text-white">Session</TableHead>
       <TableHead className="text-white">Running Apps</TableHead>
       <TableHead className="hidden text-white md:table-cell">Created</TableHead>
-
       <TableHead className="text-white">Status</TableHead>
       <TableHead className="text-white" colSpan={2}>
         <span className="text-white">Actions</span>
@@ -147,11 +152,13 @@ export default function WorkbenchTable({
           </TableCell>
           <TableCell
             className="hidden p-1 md:table-cell"
-            title={workbench?.createdAt?.toLocaleDateString()}
+            title={`${workbench?.createdAt?.toLocaleDateString()} by ${users?.find((user) => user.id === workbench?.userId)?.firstName} ${users?.find((user) => user.id === workbench?.userId)?.lastName}`}
           >
             {workbench &&
               formatDistanceToNow(workbench?.createdAt ?? new Date())}{' '}
-            ago
+            ago, by{' '}
+            {users?.find((user) => user.id === workbench?.userId)?.firstName}{' '}
+            {users?.find((user) => user.id === workbench?.userId)?.lastName}
           </TableCell>
           <TableCell className="p-1">
             <Badge variant="outline">{workbench?.status}</Badge>
