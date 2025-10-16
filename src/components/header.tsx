@@ -133,7 +133,13 @@ export function Header() {
                 <NavigationMenuItem>
                   {background?.sessionId && workbenches && (
                     <>
-                      <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                      <NavigationMenuTrigger
+                        className="inline-flex w-max cursor-pointer items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                        onClick={() => {
+                          // Navigate to workspace when clicked
+                          router.push(`/workspaces/${workspaceId}`)
+                        }}
+                      >
                         <div className="flex place-items-center gap-1">
                           {workspaceId && workspaceId === user?.workspaceId ? (
                             <AppWindow className="h-4 w-4 text-white" />
@@ -330,7 +336,13 @@ export function Header() {
                   )}
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step3">
-                  <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                  <NavigationMenuTrigger
+                    className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                    onClick={() => {
+                      // Navigate to workspace when clicked
+                      router.push('/workspaces/')
+                    }}
+                  >
                     <div className="flex place-items-center gap-1">
                       <Package className="h-4 w-4" />
                       Workspaces

@@ -142,8 +142,8 @@ function generatePreviewHTML(
         <div class="preview-component">
           <div class="border rounded-lg p-4 max-w-md">
             <div class="relative mb-4">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="${props.placeholder || 'Search...'}"
                 class="w-full pl-8 pr-4 py-2 border rounded-md"
               />
@@ -173,6 +173,187 @@ function generatePreviewHTML(
             `
                 : ''
             }
+          </div>
+        </div>
+      `
+
+    case 'GeneratedProtocolBuilder':
+      return `
+        <div class="preview-component">
+          <div class="border rounded-lg p-4">
+            <h3 class="text-lg font-semibold mb-2">${props.title || 'Protocol Builder'}</h3>
+            <p class="text-sm text-gray-600 mb-4">Interactive form for creating and managing research protocols</p>
+            <div class="space-y-4">
+              ${
+                Array.isArray(props.sections)
+                  ? (props.sections as string[])
+                      .map(
+                        (section, index) => `
+                <div class="border rounded p-3 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium text-gray-600">${index + 1}. ${section}</span>
+                    <button class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Edit</button>
+                  </div>
+                </div>
+              `
+                      )
+                      .join('')
+                  : `
+                <div class="border rounded p-3 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium text-gray-600">1. Protocol Section</span>
+                    <button class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Edit</button>
+                  </div>
+                </div>
+              `
+              }
+              <button class="w-full mt-4 p-2 border-2 border-dashed border-gray-300 rounded text-gray-500 hover:border-gray-400">
+                + Add Section
+              </button>
+            </div>
+            <div class="mt-4 text-xs text-gray-500">
+              Features: ${props.collaborative ? 'Collaborative editing, ' : ''}Version control, Templates
+            </div>
+          </div>
+        </div>
+      `
+
+    case 'GeneratedMetricsDashboard':
+      return `
+        <div class="preview-component">
+          <div class="border rounded-lg p-4">
+            <h3 class="text-lg font-semibold mb-4">${props.title || 'Research Metrics'}</h3>
+            <div class="grid grid-cols-2 gap-4">
+              ${
+                Array.isArray(props.metrics)
+                  ? (
+                      props.metrics as Array<{
+                        name: string
+                        value: number
+                        trend: string
+                        change: number
+                      }>
+                    )
+                      .slice(0, 4)
+                      .map(
+                        (metric) => `
+                <div class="border rounded p-3 bg-gray-50">
+                  <div class="text-xs text-gray-600">${metric.name}</div>
+                  <div class="text-xl font-bold">${metric.value}</div>
+                  <div class="text-xs ${metric.trend === 'up' ? 'text-green-600' : metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'}">
+                    ${metric.trend === 'up' ? '↗' : metric.trend === 'down' ? '↘' : '→'} ${metric.change}%
+                  </div>
+                </div>
+              `
+                      )
+                      .join('')
+                  : `
+                <div class="border rounded p-3 bg-gray-50">
+                  <div class="text-xs text-gray-600">Sample Metric</div>
+                  <div class="text-xl font-bold">123</div>
+                  <div class="text-xs text-green-600">↗ 5.2%</div>
+                </div>
+              `
+              }
+            </div>
+          </div>
+        </div>
+      `
+
+    case 'GeneratedEquipmentTracker':
+      return `
+        <div class="preview-component">
+          <div class="border rounded-lg p-4">
+            <h3 class="text-lg font-semibold mb-2">${props.title || 'Lab Equipment'}</h3>
+            <div class="space-y-2">
+              ${
+                Array.isArray(props.equipment)
+                  ? (
+                      props.equipment as Array<{
+                        id: string
+                        name: string
+                        status: string
+                        location: string
+                      }>
+                    )
+                      .map(
+                        (item) => `
+                <div class="flex items-center justify-between p-2 border rounded">
+                  <div>
+                    <span class="font-medium">${item.name}</span>
+                    <span class="text-xs text-gray-500 ml-2">${item.id}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs bg-${item.status === 'available' ? 'green' : item.status === 'in-use' ? 'yellow' : 'red'}-100 text-${item.status === 'available' ? 'green' : item.status === 'in-use' ? 'yellow' : 'red'}-700 px-2 py-1 rounded">${item.status}</span>
+                    <span class="text-xs text-gray-500">${item.location}</span>
+                  </div>
+                </div>
+              `
+                      )
+                      .join('')
+                  : `
+                <div class="flex items-center justify-between p-2 border rounded">
+                  <div>
+                    <span class="font-medium">Sample Equipment</span>
+                    <span class="text-xs text-gray-500 ml-2">EQ001</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">available</span>
+                    <span class="text-xs text-gray-500">Lab 1</span>
+                  </div>
+                </div>
+              `
+              }
+            </div>
+          </div>
+        </div>
+      `
+
+    case 'GeneratedSampleTracker':
+      return `
+        <div class="preview-component">
+          <div class="border rounded-lg p-4">
+            <h3 class="text-lg font-semibold mb-2">${props.title || 'Sample Tracker'}</h3>
+            <div class="space-y-2">
+              ${
+                Array.isArray(props.samples)
+                  ? (
+                      props.samples as Array<{
+                        id: string
+                        type: string
+                        status: string
+                        location: string
+                      }>
+                    )
+                      .map(
+                        (sample) => `
+                <div class="flex items-center justify-between p-2 border rounded">
+                  <div>
+                    <span class="font-medium">${sample.id}</span>
+                    <span class="text-xs text-gray-500 ml-2">${sample.type}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">${sample.status}</span>
+                    <span class="text-xs text-gray-500">${sample.location}</span>
+                  </div>
+                </div>
+              `
+                      )
+                      .join('')
+                  : `
+                <div class="flex items-center justify-between p-2 border rounded">
+                  <div>
+                    <span class="font-medium">S001</span>
+                    <span class="text-xs text-gray-500 ml-2">blood</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">stored</span>
+                    <span class="text-xs text-gray-500">Freezer A1</span>
+                  </div>
+                </div>
+              `
+              }
+            </div>
           </div>
         </div>
       `

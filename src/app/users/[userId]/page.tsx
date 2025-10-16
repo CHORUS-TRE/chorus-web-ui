@@ -13,6 +13,7 @@ import {
   XCircle
 } from 'lucide-react'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -41,14 +42,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '~/components/ui/breadcrumb'
+import { useAppState } from '~/providers/app-state-provider'
 import {
   getEnhancedRole,
   getPermissionDescription,
   getRoleDescription,
   getRolePermissions
 } from '~/utils/schema-roles'
-import { useParams } from 'next/navigation'
-import { useAppState } from '~/providers/app-state-provider'
 
 export default function UserProfile() {
   // const { user } = useAuthentication()
@@ -96,7 +96,10 @@ export default function UserProfile() {
   }
 
   const groupRolesByWorkspace = () => {
-    if (!profileUser.rolesWithContext || profileUser.rolesWithContext.length === 0) {
+    if (
+      !profileUser.rolesWithContext ||
+      profileUser.rolesWithContext.length === 0
+    ) {
       return {}
     }
 
@@ -291,7 +294,9 @@ export default function UserProfile() {
                   <h1 className="text-3xl font-bold">
                     {profileUser.firstName} {profileUser.lastName}
                   </h1>
-                  <p className="text-muted-foreground">@{profileUser.username}</p>
+                  <p className="text-muted-foreground">
+                    @{profileUser.username}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-2">
                   {getStatusIcon(profileUser.status)}
@@ -375,13 +380,19 @@ export default function UserProfile() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Two-Factor Auth</span>
-                <Badge variant={profileUser.totpEnabled ? 'default' : 'secondary'}>
+                <Badge
+                  variant={profileUser.totpEnabled ? 'default' : 'secondary'}
+                >
                   {profileUser.totpEnabled ? 'Enabled' : 'Disabled'}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Password Changed</span>
-                <Badge variant={profileUser.passwordChanged ? 'default' : 'secondary'}>
+                <Badge
+                  variant={
+                    profileUser.passwordChanged ? 'default' : 'secondary'
+                  }
+                >
                   {profileUser.passwordChanged ? 'Yes' : 'No'}
                 </Badge>
               </div>
@@ -428,7 +439,9 @@ export default function UserProfile() {
                   </Link>
                 </label>
                 <p className="font-mono text-sm">
-                  {profileUser.workspaceId ? profileUser.workspaceId : 'Unassigned'}
+                  {profileUser.workspaceId
+                    ? profileUser.workspaceId
+                    : 'Unassigned'}
                 </p>
               </div>
             </CardContent>
@@ -444,7 +457,8 @@ export default function UserProfile() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {profileUser.rolesWithContext && profileUser.rolesWithContext.length > 0 ? (
+            {profileUser.rolesWithContext &&
+            profileUser.rolesWithContext.length > 0 ? (
               <div className="space-y-6">
                 {Object.entries(groupRolesByWorkspace())
                   .sort(([a], [b]) =>
