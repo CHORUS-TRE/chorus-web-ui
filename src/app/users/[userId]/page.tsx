@@ -47,11 +47,19 @@ import {
   getRoleDescription,
   getRolePermissions
 } from '~/utils/schema-roles'
+import { useParams } from 'next/navigation'
+import { useAppState } from '~/providers/app-state-provider'
 
-export default function Me() {
-  const { user } = useAuthentication()
+export default function UserProfile() {
+  // const { user } = useAuthentication()
 
-  if (!user) {
+  const params = useParams<{ userId: string }>()
+  const userId = params?.userId
+
+  const { users: userList } = useAppState()
+  const profileUser = userList?.find((u) => u.id === userId)
+
+  if (!profileUser) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
@@ -88,16 +96,16 @@ export default function Me() {
   }
 
   const groupRolesByWorkspace = () => {
-    if (!user.rolesWithContext || user.rolesWithContext.length === 0) {
+    if (!profileUser.rolesWithContext || profileUser.rolesWithContext.length === 0) {
       return {}
     }
 
     const groups: Record<
       string,
-      Record<string, typeof user.rolesWithContext>
+      Record<string, typeof profileUser.rolesWithContext>
     > = {}
 
-    user.rolesWithContext.forEach((role) => {
+    profileUser.rolesWithContext.forEach((role) => {
       const workspaceId = role.context.workspace || 'undefined'
       const roleName = role.name
 
@@ -262,7 +270,7 @@ export default function Me() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage>
-              {user.firstName} {user.lastName}
+              {profileUser.firstName} {profileUser.lastName}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
@@ -274,23 +282,23 @@ export default function Me() {
             <div className="flex items-start space-x-4">
               <Avatar className="h-20 w-20">
                 <AvatarFallback className="text-2xl">
-                  {user.firstName.charAt(0)}
-                  {user.lastName.charAt(0)}
+                  {profileUser.firstName.charAt(0)}
+                  {profileUser.lastName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 space-y-2">
                 <div>
                   <h1 className="text-3xl font-bold">
-                    {user.firstName} {user.lastName}
+                    {profileUser.firstName} {profileUser.lastName}
                   </h1>
-                  <p className="text-muted-foreground">@{user.username}</p>
+                  <p className="text-muted-foreground">@{profileUser.username}</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {getStatusIcon(user.status)}
-                  <Badge className={getStatusColor(user.status)}>
-                    {user.status}
+                  {getStatusIcon(profileUser.status)}
+                  <Badge className={getStatusColor(profileUser.status)}>
+                    {profileUser.status}
                   </Badge>
-                  {user.totpEnabled && (
+                  {profileUser.totpEnabled && (
                     <Badge
                       variant="outline"
                       className="flex items-center gap-1"
@@ -325,27 +333,27 @@ export default function Me() {
                 <label className="text-sm font-medium text-muted-foreground">
                   User ID
                 </label>
-                <p className="font-mono text-sm">{user.id}</p>
+                <p className="font-mono text-sm">{profileUser.id}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
                   Username
                 </label>
-                <p>{user.username}</p>
+                <p>{profileUser.username}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
                   Full Name
                 </label>
                 <p>
-                  {user.firstName} {user.lastName}
+                  {profileUser.firstName} {profileUser.lastName}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
                   Authentication Source
                 </label>
-                <p>{user.source}</p>
+                <p>{profileUser.source}</p>
               </div>
             </CardContent>
           </Card>
@@ -361,20 +369,20 @@ export default function Me() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Account Status</span>
-                <Badge className={getStatusColor(user.status)}>
-                  {user.status}
+                <Badge className={getStatusColor(profileUser.status)}>
+                  {profileUser.status}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Two-Factor Auth</span>
-                <Badge variant={user.totpEnabled ? 'default' : 'secondary'}>
-                  {user.totpEnabled ? 'Enabled' : 'Disabled'}
+                <Badge variant={profileUser.totpEnabled ? 'default' : 'secondary'}>
+                  {profileUser.totpEnabled ? 'Enabled' : 'Disabled'}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Password Changed</span>
-                <Badge variant={user.passwordChanged ? 'default' : 'secondary'}>
-                  {user.passwordChanged ? 'Yes' : 'No'}
+                <Badge variant={profileUser.passwordChanged ? 'default' : 'secondary'}>
+                  {profileUser.passwordChanged ? 'Yes' : 'No'}
                 </Badge>
               </div>
               <Separator />
@@ -384,7 +392,7 @@ export default function Me() {
                     Created
                   </span>
                   <p className="text-sm">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(profileUser.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
@@ -392,7 +400,7 @@ export default function Me() {
                     Last Updated
                   </span>
                   <p className="text-sm">
-                    {new Date(user.updatedAt).toLocaleDateString()}
+                    {new Date(profileUser.updatedAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -401,26 +409,26 @@ export default function Me() {
         </div>
 
         {/* Workspace Information */}
-        {user.workspaceId && (
+        {profileUser.workspaceId && (
           <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AppWindow className="h-5 w-5" />
                 Personal Workspace
                 <Badge variant="outline" className="text-xs">
-                  {user.workspaceId ? 'Assigned' : 'Unassigned'}
+                  {profileUser.workspaceId ? 'Assigned' : 'Unassigned'}
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  <Link href={`/workspaces/${user.workspaceId}`}>
+                  <Link href={`/workspaces/${profileUser.workspaceId}`}>
                     Current Workspace ID
                   </Link>
                 </label>
                 <p className="font-mono text-sm">
-                  {user.workspaceId ? user.workspaceId : 'Unassigned'}
+                  {profileUser.workspaceId ? profileUser.workspaceId : 'Unassigned'}
                 </p>
               </div>
             </CardContent>
@@ -436,7 +444,7 @@ export default function Me() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {user.rolesWithContext && user.rolesWithContext.length > 0 ? (
+            {profileUser.rolesWithContext && profileUser.rolesWithContext.length > 0 ? (
               <div className="space-y-6">
                 {Object.entries(groupRolesByWorkspace())
                   .sort(([a], [b]) =>
@@ -592,11 +600,11 @@ export default function Me() {
                     </div>
                   ))}
               </div>
-            ) : user.roles && user.roles.length > 0 ? (
+            ) : profileUser.roles && profileUser.roles.length > 0 ? (
               <div className="space-y-4">
                 <h4 className="font-medium">Basic Roles</h4>
                 <div className="flex flex-wrap gap-2">
-                  {user.roles.map((role, index) => (
+                  {profileUser.roles.map((role, index) => (
                     <Badge key={index} variant="secondary">
                       {role}
                     </Badge>

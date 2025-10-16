@@ -698,7 +698,7 @@ export function Header() {
                   <>
                     <DropdownMenuItem
                       className="flex cursor-pointer items-center gap-2"
-                      onClick={() => router.push('/users/me')}
+                      onClick={() => router.push(`/users/${user?.id}`)}
                     >
                       <User className="h-4 w-4" />
                       {user?.firstName} {user?.lastName} profile
