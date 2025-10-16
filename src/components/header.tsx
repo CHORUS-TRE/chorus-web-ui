@@ -142,7 +142,7 @@ export function Header() {
                       >
                         <div className="flex place-items-center gap-1">
                           {workspaceId && workspaceId === user?.workspaceId ? (
-                            <AppWindow className="h-4 w-4 text-white" />
+                            <AppWindow className="h-4 w-4 text-muted" />
                           ) : (
                             <AppWindow className="h-4 w-4" />
                           )}
@@ -153,7 +153,7 @@ export function Header() {
                           }
                         </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-white shadow-xl">
+                      <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-muted shadow-xl">
                         <div className="w-[240px] p-2">
                           {/* Workspace Navigation */}
                           <div className="mb-1">
@@ -348,7 +348,7 @@ export function Header() {
                       Workspaces
                     </div>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-white shadow-xl">
+                  <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-muted shadow-xl">
                     <div className="w-[280px] p-2">
                       <div className="space-y-1">
                         {/* All Workspaces Link */}
