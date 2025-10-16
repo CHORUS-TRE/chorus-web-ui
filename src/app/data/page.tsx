@@ -18,11 +18,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '~/components/ui/breadcrumb'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function DataPage() {
-  const { workspaces } = useAppState()
+  const { workspaces, users } = useAppState()
   const { user } = useAuthentication()
 
   const publicChuvData = [
@@ -80,7 +86,11 @@ export default function DataPage() {
           <AccordionContent className="border-b-0">
             <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
               {workspaces
-                ?.filter((workspace) => workspace.userId === user?.id)
+                ?.filter((workspace) =>
+                  user?.rolesWithContext?.some(
+                    (role) => role.context.workspace === workspace.id
+                  )
+                )
                 .map((w) => (
                   <Card
                     key={`workspace-data-${w.id}`}
@@ -88,6 +98,10 @@ export default function DataPage() {
                   >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-white">{w.name}</CardTitle>
+                      <CardDescription className="text-muted">
+                        {users?.find((user) => user.id === w.userId)?.firstName}{' '}
+                        {users?.find((user) => user.id === w.userId)?.lastName}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Link
@@ -99,8 +113,11 @@ export default function DataPage() {
                     </CardContent>
                   </Card>
                 ))}
-              {!workspaces?.filter((workspace) => workspace.userId === user?.id)
-                .length && (
+              {!workspaces?.filter((workspace) =>
+                user?.rolesWithContext?.some(
+                  (role) => role.context.workspace === workspace.id
+                )
+              ).length && (
                 <div className="text-muted">No workspaces found.</div>
               )}
             </div>
@@ -141,8 +158,11 @@ export default function DataPage() {
                     </CardContent>
                   </Card>
                 ))}
-              {!workspaces?.filter((workspace) => workspace.userId === user?.id)
-                .length && (
+              {!workspaces?.filter((workspace) =>
+                user?.rolesWithContext?.some(
+                  (role) => role.context.workspace === workspace.id
+                )
+              ).length && (
                 <div className="text-muted">No workspaces found.</div>
               )}
             </div>

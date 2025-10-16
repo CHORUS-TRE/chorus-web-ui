@@ -2,7 +2,6 @@
 
 import {
   AppWindow,
-  Box,
   CheckCircle,
   Clock,
   Crown,
@@ -13,13 +12,41 @@ import {
   User,
   XCircle
 } from 'lucide-react'
+import Link from 'next/link'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from '@/components/ui/hover-card'
 import { Separator } from '@/components/ui/separator'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import { useAuthentication } from '@/providers/authentication-provider'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '~/components/ui/breadcrumb'
+import {
+  getEnhancedRole,
+  getPermissionDescription,
+  getRoleDescription,
+  getRolePermissions
+} from '~/utils/schema-roles'
 
 export default function Me() {
   const { user } = useAuthentication()
@@ -94,8 +121,152 @@ export default function Me() {
       .join(', ')
   }
 
+  const RoleHoverCard = ({
+    roleName,
+    children
+  }: {
+    roleName: string
+    children: React.ReactNode
+  }) => {
+    const role = getEnhancedRole(roleName)
+    const permissions = getRolePermissions(roleName)
+    const description = getRoleDescription(roleName)
+
+    if (!role) {
+      return <>{children}</>
+    }
+
+    return (
+      <HoverCard>
+        <HoverCardTrigger asChild>{children}</HoverCardTrigger>
+        <HoverCardContent
+          className="max-h-[500px] w-[600px] overflow-y-auto border border-muted/40 bg-background/95 p-4 text-white"
+          side="bottom"
+          align="start"
+          sideOffset={5}
+          avoidCollisions={false}
+        >
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-semibold text-white">{roleName}</h4>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {description}
+              </p>
+            </div>
+
+            {role.inheritsFrom && role.inheritsFrom.length > 0 && (
+              <div>
+                <h5 className="mb-1 text-xs font-medium text-muted-foreground">
+                  Inherits from:
+                </h5>
+                <div className="flex flex-wrap gap-1">
+                  {role.inheritsFrom.map((inheritedRole) => (
+                    <Badge
+                      key={inheritedRole}
+                      variant="outline"
+                      className="text-xs"
+                    >
+                      {inheritedRole}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <h5 className="mb-2 text-xs font-medium text-muted-foreground">
+                Permissions ({permissions.length})
+              </h5>
+              <div className="max-h-56 overflow-y-auto rounded-md border border-muted/40">
+                <Table>
+                  <TableHeader className="sticky top-0 bg-background/95">
+                    <TableRow>
+                      <TableHead className="h-8 w-2/5 text-xs text-muted-foreground">
+                        Action
+                      </TableHead>
+                      <TableHead className="h-8 w-2/5 text-xs text-muted-foreground">
+                        Description
+                      </TableHead>
+                      <TableHead className="h-8 w-1/5 text-xs text-muted-foreground">
+                        Source
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {permissions.map((permission) => {
+                      const isDirectPermission =
+                        role.permissions.includes(permission)
+                      const description = getPermissionDescription(permission)
+                      return (
+                        <TableRow key={permission} className="border-muted/40">
+                          <TableCell className="py-2 font-mono text-xs text-accent">
+                            {permission}
+                          </TableCell>
+                          <TableCell className="py-2 text-xs text-muted-foreground">
+                            {description}
+                          </TableCell>
+                          <TableCell className="py-2 text-xs">
+                            {isDirectPermission ? (
+                              <Badge variant="default" className="text-xs">
+                                Direct
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="text-xs">
+                                Inherited
+                              </Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            {role.attributes && Object.keys(role.attributes).length > 0 && (
+              <div>
+                <h5 className="mb-1 text-xs font-medium text-muted-foreground">
+                  Context Scope:
+                </h5>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(role.attributes).map(([key, value]) => (
+                    <Badge key={key} variant="outline" className="text-xs">
+                      {key}: {value === '*' ? 'All' : value}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    )
+  }
+
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">CHORUS</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>
+              <Link href="/users">Users</Link>
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>
+              {user.firstName} {user.lastName}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <div className="space-y-8">
         {/* Profile Header */}
         <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
@@ -235,15 +406,22 @@ export default function Me() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AppWindow className="h-5 w-5" />
-                Workspace
+                Personal Workspace
+                <Badge variant="outline" className="text-xs">
+                  {user.workspaceId ? 'Assigned' : 'Unassigned'}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Current Workspace ID
+                  <Link href={`/workspaces/${user.workspaceId}`}>
+                    Current Workspace ID
+                  </Link>
                 </label>
-                <p className="font-mono text-sm">{user.workspaceId}</p>
+                <p className="font-mono text-sm">
+                  {user.workspaceId ? user.workspaceId : 'Unassigned'}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -260,7 +438,6 @@ export default function Me() {
           <CardContent>
             {user.rolesWithContext && user.rolesWithContext.length > 0 ? (
               <div className="space-y-6">
-                <h4 className="font-medium">Roles & Permissions</h4>
                 {Object.entries(groupRolesByWorkspace())
                   .sort(([a], [b]) =>
                     a.match(/^\*/s) ? -1 : b.match(/^undefined/) ? 1 : 0
@@ -282,7 +459,7 @@ export default function Me() {
                       <div className="space-y-3 pl-6">
                         {Object.entries(roles)
                           .sort(([a], [b]) => {
-                            // Put WorkspaceAdmin  before WorkbenchAdmin
+                            // Put WorkspaceAdmin before WorkbenchAdmin
                             if (
                               a.includes('Workbench') &&
                               b.includes('Workspace')
@@ -298,39 +475,116 @@ export default function Me() {
                           .map(([roleName, roleInstances]) => (
                             <div
                               key={`${workspaceId}-${roleName}`}
-                              className="space-y-2"
+                              className="space-y-3"
                             >
-                              <div className="flex items-center justify-between">
-                                <Badge variant="outline" className="text-xs">
-                                  {roleName}
-                                </Badge>
-                              </div>
-                              <div className="pl-4">
-                                <div className="grid grid-cols-1 gap-3 md:grid-cols-4 lg:grid-cols-5">
-                                  {roleInstances.map((role, index) => (
-                                    <div
-                                      key={index}
-                                      className="rounded-lg border border-muted/40 bg-muted/10 p-3 transition-colors hover:bg-muted/20"
-                                    >
-                                      {role.context.workbench ? (
-                                        <div className="space-y-2">
+                              <RoleHoverCard roleName={roleName}>
+                                <div className="flex cursor-help items-center gap-2 border-l-2 border-accent/50 pl-3">
+                                  {roleName.includes('Workspace') ? (
+                                    <AppWindow className="h-4 w-4" />
+                                  ) : roleName.includes('Workbench') ? (
+                                    <LaptopMinimal className="h-4 w-4" />
+                                  ) : (
+                                    <Shield className="h-4 w-4" />
+                                  )}
+                                  <h6 className="text-sm font-semibold text-white">
+                                    {roleName}
+                                  </h6>
+                                  <Badge variant="outline" className="text-xs">
+                                    {roleInstances.length}
+                                  </Badge>
+                                </div>
+                              </RoleHoverCard>
+
+                              <div className="ml-6 space-y-2">
+                                {/* Group by workspace/workbench type */}
+                                {roleName.includes('Workspace') && (
+                                  <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-4">
+                                    {roleInstances.map((role, index) => (
+                                      <Link
+                                        key={index}
+                                        href={`/workspaces/${role.context.workspace || workspaceId}`}
+                                        className="group"
+                                      >
+                                        <div className="rounded-lg border border-muted/40 bg-gradient-to-br from-muted/10 to-muted/5 p-3 transition-all hover:border-accent/50 hover:bg-gradient-to-br hover:from-accent/10 hover:to-accent/5">
                                           <div className="flex items-center gap-2">
-                                            <LaptopMinimal className="h-4 w-4 text-muted-foreground" />
-                                            <span className="text-sm font-medium">
-                                              Session {role.context.workbench}
+                                            <AppWindow className="h-4 w-4 text-muted group-hover:text-accent" />
+                                            <span className="text-xs font-medium text-muted">
+                                              Workspace{' '}
+                                              {role.context.workspace ||
+                                                workspaceId}
                                             </span>
                                           </div>
                                         </div>
-                                      ) : (
-                                        <div className="space-y-2">
-                                          <div className="text-sm text-white">
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {roleName.includes('Workbench') && (
+                                  <div className="space-y-1">
+                                    {/* Group workbench sessions under each workspace */}
+                                    {Object.entries(
+                                      roleInstances.reduce(
+                                        (acc, role) => {
+                                          const ws =
+                                            role.context.workspace ||
+                                            'undefined'
+                                          if (!acc[ws]) acc[ws] = []
+                                          acc[ws].push(role)
+                                          return acc
+                                        },
+                                        {} as Record<
+                                          string,
+                                          typeof roleInstances
+                                        >
+                                      )
+                                    ).map(([wsId, wsRoles]) => (
+                                      <div key={wsId} className="space-y-2">
+                                        <div className="ml-4 grid grid-cols-1 gap-2 md:grid-cols-4 lg:grid-cols-6">
+                                          {wsRoles.map((role, index) => (
+                                            <Link
+                                              key={index}
+                                              href={`/workspaces/${role.context.workspace}/sessions/${role.context.workbench}`}
+                                              className="group"
+                                            >
+                                              <div className="rounded-lg border border-muted/40 bg-muted/10 p-2 transition-all hover:border-accent/50 hover:bg-muted/20">
+                                                <div className="flex items-center gap-2">
+                                                  <LaptopMinimal className="h-3 w-3 text-muted" />
+                                                  <span className="text-xs font-medium text-muted">
+                                                    {role.context.workbench}
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </Link>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Global roles */}
+                                {!roleName.includes('Workspace') &&
+                                  !roleName.includes('Workbench') && (
+                                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+                                      {roleInstances.map((role, index) => (
+                                        <div
+                                          key={index}
+                                          className="rounded-lg border border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-3"
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <Crown className="h-4 w-4 text-purple-400" />
+                                            <span className="text-sm font-medium">
+                                              Global Access
+                                            </span>
+                                          </div>
+                                          <div className="mt-1 text-xs text-muted-foreground">
                                             {formatContextDisplay(role.context)}
                                           </div>
                                         </div>
-                                      )}
+                                      ))}
                                     </div>
-                                  ))}
-                                </div>
+                                  )}
                               </div>
                             </div>
                           ))}

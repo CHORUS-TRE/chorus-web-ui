@@ -175,25 +175,7 @@ export function WorkspaceCreateForm({
                   </div>
                 )}
               </div>
-              {/* <div className="grid gap-2 hidden">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="isMain"
-                    checked={form.watch('isMain')}
-                    onCheckedChange={(checked) =>
-                      form.setValue('isMain', checked)
-                    }
-                    disabled={
-                      !(
-                        workspaces?.filter(
-                          (w) => w.isMain && w.userId === user?.id
-                        )?.length === 0
-                      )
-                    }
-                  />
-                  <Label htmlFor="isMain">Set as main workspace</Label>
-                </div>
-              </div> */}
+
               <input type="hidden" {...form.register('tenantId')} />
               <input type="hidden" {...form.register('userId')} />
               <input type="hidden" {...form.register('shortName')} />
@@ -597,29 +579,6 @@ export function WorkspaceUpdateForm({
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                  control={form.control}
-                  name="isMain"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <FormLabel>My Workspace</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          disabled={
-                            !(
-                              workspace?.isMain ||
-                              (workspaces?.filter(
-                                (w) => w.isMain && w.userId === user?.id
-                              )?.length ?? 0) === 0
-                            )
-                          }
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                /> */}
 
                 {form.formState.errors.name && (
                   <p className="text-red-500">

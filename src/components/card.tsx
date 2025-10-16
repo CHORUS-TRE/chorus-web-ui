@@ -17,7 +17,7 @@ const Card = ({
   ...props
 }: {
   title?: React.ReactNode
-  description?: string
+  description?: React.ReactNode
   content?: React.ReactNode
   footer?: React.ReactNode
   className?: string
@@ -41,7 +41,7 @@ const Card = ({
     </CardHeader>
     <CardContent>{content}</CardContent>
     <div className="flex-grow" />
-    <CardFooter>{footer}</CardFooter>
+    <CardFooter className="flex items-end justify-start">{footer}</CardFooter>
   </ShadcnCard>
 )
 

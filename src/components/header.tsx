@@ -459,9 +459,10 @@ export function Header() {
                                   ) : (
                                     <Package className="h-4 w-4" />
                                   )}
-                                  {workspace?.id === user?.workspaceId
-                                    ? 'My Workspace'
-                                    : workspace?.shortName}
+                                  {workspace?.name},{' '}
+                                  {users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.username || '#user-' + workspace?.userId}
                                 </div>
                               </Link>
                               <div className="text-sm">
@@ -554,9 +555,10 @@ export function Header() {
                                   ) : (
                                     <Package className="h-4 w-4" />
                                   )}
-                                  {workspace?.id === user?.workspaceId
-                                    ? 'Home'
-                                    : workspace?.shortName}
+                                  {workspace?.name},{' '}
+                                  {users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.username || '#user-' + workspace?.userId}
                                 </div>
                               </Link>
                               <div className="pl-1 text-sm">

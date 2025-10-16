@@ -1,6 +1,8 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
+import { CirclePlus, Users } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -11,6 +13,16 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '~/components/ui/breadcrumb'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import { useAppState } from '~/providers/app-state-provider'
 
 interface User {
   id: string
@@ -23,60 +35,40 @@ interface User {
 }
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { users } = useAppState()
 
-  useEffect(() => {
-    // TODO: Replace with actual API call
-    const fetchUsers = async () => {
-      try {
-        // Simulated API response
-        const mockUsers: User[] = [
-          {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            username: 'john@example.com',
-            createdAt: new Date('2024-01-01'),
-            lastLogin: new Date('2024-02-15')
-          },
-          {
-            id: '2',
-            firstName: 'Jane',
-            lastName: 'Smith',
-            username: 'jane@example.com',
-            createdAt: new Date('2024-01-15'),
-            lastLogin: new Date('2024-02-14')
-          }
-        ]
-        setUsers(mockUsers)
-      } catch (error) {
-        console.error('Error fetching users:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchUsers()
-  }, [])
-
-  if (isLoading) {
+  if (!users) {
     return <div className="flex justify-center p-8">Loading users...</div>
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Users</h1>
-        <p className="text-sm text-muted">Manage users and their permissions</p>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
+          <Users className="h-9 w-9 text-white" />
+          Users
+        </h2>
       </div>
+
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">CHORUS</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Users</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {users.map((user) => (
           <Card key={user.id} className="bg-black text-white">
             <CardHeader className="flex flex-row items-center gap-4 pb-4">
               <Avatar>
-                <AvatarImage src={user.avatarUrl} />
                 <AvatarFallback>
                   {user.firstName[0]}
                   {user.lastName[0]}
@@ -84,7 +76,9 @@ export default function UsersPage() {
               </Avatar>
               <div>
                 <CardTitle className="text-lg">
-                  {user.firstName} {user.lastName}
+                  <Link href={`/users/${user.id}`}>
+                    {user.firstName} {user.lastName}
+                  </Link>
                 </CardTitle>
                 <CardDescription>{user.username}</CardDescription>
               </div>
@@ -95,12 +89,24 @@ export default function UsersPage() {
                   <span className="text-muted">Member since</span>
                   <span>{formatDistanceToNow(user.createdAt)} ago</span>
                 </div>
-                {user.lastLogin && (
-                  <div className="flex justify-between">
-                    <span className="text-muted">Last login</span>
-                    <span>{formatDistanceToNow(user.lastLogin)} ago</span>
-                  </div>
-                )}
+                <ScrollArea className="h-16">
+                  {user.rolesWithContext && (
+                    <div className="flex justify-between">
+                      <span className="text-muted">Roles: </span>
+                      <span className="text-xs text-muted">
+                        {user.rolesWithContext
+                          .map((role) => [role.name, role.context])
+                          .map(
+                            ([name, context]) =>
+                              `${name}: ${Object.entries(context)
+                                .map(([key, value]) => `${key}: ${value}`)
+                                .join(', ')}`
+                          )
+                          .join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </ScrollArea>
               </div>
             </CardContent>
           </Card>
