@@ -116,15 +116,14 @@ export class EnhancedTemplateRegistry {
         'Comprehensive dashboard showing key research metrics and KPIs',
       category: 'analytics-metrics',
       promptPatterns: [
-        'metrics',
-        'dashboard',
-        'kpi',
-        'statistics',
-        'analytics',
-        'overview',
-        'summary',
-        'progress',
-        'performance'
+        'metrics dashboard',
+        'research metrics',
+        'kpi dashboard',
+        'analytics dashboard',
+        'metrics overview',
+        'performance dashboard',
+        'show metrics',
+        'research statistics'
       ],
       requiredProps: [
         {
@@ -582,43 +581,86 @@ export class EnhancedTemplateRegistry {
     const normalizedPrompt = prompt.toLowerCase().trim()
     const scores = new Map<string, number>()
 
-    // Direct pattern matching
+    console.log(`[TemplateRegistry] Finding template for prompt: "${prompt}"`)
+
+    // Exact phrase matching (highest priority)
+    this.templates.forEach((template, id) => {
+      template.promptPatterns.forEach((pattern) => {
+        const normalizedPattern = pattern.toLowerCase()
+        if (normalizedPrompt === normalizedPattern) {
+          const currentScore = scores.get(id) || 0
+          scores.set(id, currentScore + 20) // Highest score for exact matches
+          console.log(
+            `[TemplateRegistry] Exact match: "${pattern}" in template "${id}" (score: 20)`
+          )
+        } else if (normalizedPrompt.includes(normalizedPattern)) {
+          const currentScore = scores.get(id) || 0
+          scores.set(id, currentScore + 15) // High score for substring matches
+          console.log(
+            `[TemplateRegistry] Substring match: "${pattern}" in template "${id}" (score: 15)`
+          )
+        }
+      })
+    })
+
+    // Individual keyword matching (lower priority)
     this.promptPatternIndex.forEach((templateIds, pattern) => {
-      if (normalizedPrompt.includes(pattern)) {
+      // Only score single keyword matches if no phrase matches found
+      const words = normalizedPrompt.split(' ')
+      if (words.includes(pattern) && words.length <= 3) {
         templateIds.forEach((id) => {
           const currentScore = scores.get(id) || 0
-          scores.set(id, currentScore + 10) // High score for direct matches
+          scores.set(id, currentScore + 5) // Lower score for keyword-only matches
+          console.log(
+            `[TemplateRegistry] Keyword match: "${pattern}" in template "${id}" (score: 5)`
+          )
         })
       }
     })
 
-    // Fuzzy matching for partial matches
-    this.templates.forEach((template, id) => {
-      template.promptPatterns.forEach((pattern) => {
-        const similarity = this.calculateSimilarity(
-          normalizedPrompt,
-          pattern.toLowerCase()
-        )
-        if (similarity > 0.3) {
-          // Minimum similarity threshold
-          const currentScore = scores.get(id) || 0
-          scores.set(id, currentScore + similarity * 5)
-        }
+    // Fuzzy matching for partial matches (lowest priority)
+    if (scores.size === 0) {
+      console.log(
+        `[TemplateRegistry] No direct matches, trying fuzzy matching...`
+      )
+      this.templates.forEach((template, id) => {
+        template.promptPatterns.forEach((pattern) => {
+          const similarity = this.calculateSimilarity(
+            normalizedPrompt,
+            pattern.toLowerCase()
+          )
+          if (similarity > 0.6) {
+            // Higher threshold for fuzzy matching
+            const currentScore = scores.get(id) || 0
+            scores.set(id, currentScore + similarity * 3)
+            console.log(
+              `[TemplateRegistry] Fuzzy match: "${pattern}" in template "${id}" (similarity: ${similarity.toFixed(2)})`
+            )
+          }
+        })
       })
-    })
+    }
 
     // Find template with highest score
     let bestTemplateId = ''
     let bestScore = 0
 
     scores.forEach((score, templateId) => {
+      console.log(
+        `[TemplateRegistry] Template "${templateId}" final score: ${score}`
+      )
       if (score > bestScore) {
         bestScore = score
         bestTemplateId = templateId
       }
     })
 
-    return bestScore > 0 ? this.templates.get(bestTemplateId) || null : null
+    console.log(
+      `[TemplateRegistry] Best template: "${bestTemplateId}" with score: ${bestScore}`
+    )
+
+    // Require minimum score threshold
+    return bestScore >= 5 ? this.templates.get(bestTemplateId) || null : null
   }
 
   /**

@@ -1,6 +1,13 @@
 'use client'
 
-import { Code2, Cpu, FlaskConical, Layers, Settings } from 'lucide-react'
+import {
+  Code2,
+  Cpu,
+  FlaskConical,
+  Layers,
+  PackageOpen,
+  Settings
+} from 'lucide-react'
 import Link from 'next/link'
 
 import {
@@ -26,9 +33,29 @@ export default function SandboxPage() {
       description: 'Build and test protocols for the CHORUS platform',
       href: 'sandbox/chorus-protocol-builder',
       icon: FlaskConical,
-      status: 'Active'
+      status: 'Beta'
     },
-
+    {
+      title: 'Workspace',
+      description: 'Manage your clinical project',
+      href: 'sandbox/workspace',
+      icon: PackageOpen,
+      status: 'Beta'
+    },
+    {
+      title: 'Clinical Studies Dashboard',
+      description: 'Manage clinical studies',
+      href: 'sandbox/clinical-lifecycle-ashboard',
+      icon: PackageOpen,
+      status: 'Beta'
+    },
+    {
+      title: 'Role Schema Viz',
+      description: 'Visualize the schema roles & permissions',
+      href: 'sandbox/schema-viz',
+      icon: Layers,
+      status: 'Beta'
+    },
     {
       title: 'Component Explorer',
       description: 'Browse and test dynamic component library',
@@ -41,7 +68,7 @@ export default function SandboxPage() {
       description: 'AI-powered component generation and testing environment',
       href: 'sandbox/component-generator',
       icon: Cpu,
-      status: 'Beta'
+      status: 'Development'
     }
   ]
 
