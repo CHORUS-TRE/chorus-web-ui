@@ -84,34 +84,10 @@ export default function ComponentGeneratorPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-7xl">
           {/* Hero Section */}
-          <div className="mb-16 text-center">
-            <div className="mb-6 flex items-center justify-center">
-              <div className="rounded-full bg-primary/10 p-4">
-                <Sparkles className="h-12 w-12 text-primary" />
-              </div>
-            </div>
-            <h1 className="mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+          <div className="mb-8 text-center">
+            <h1 className="mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-4xl font-bold md:text-5xl">
               Dynamic Component Generator
             </h1>
-            <p className="mx-auto max-w-3xl text-xl leading-relaxed text-muted-foreground">
-              Generate research-specific UI components using natural language.
-              Simply describe what you need and watch as AI creates functional
-              components integrated with your CHORUS data.
-            </p>
-
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <Link href="/chat/component-explorer">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="flex items-center gap-2 border-white/20 text-white hover:bg-white/10 hover:text-white"
-                >
-                  <Layers className="h-4 w-4" />
-                  Explore Components
-                  <ExternalLink className="h-3 w-3" />
-                </Button>
-              </Link>
-            </div>
           </div>
 
           {/* Generated Components Display */}
@@ -191,7 +167,7 @@ export default function ComponentGeneratorPage() {
 
           {/* Feature Cards */}
           <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Card className="border-0 bg-gradient-to-br from-blue-50 to-blue-100/50 shadow-lg transition-all duration-300 hover:shadow-xl dark:from-blue-950/50 dark:to-blue-900/30">
+            {/* <Card className="border-0 bg-gradient-to-br from-blue-50 to-blue-100/50 shadow-lg transition-all duration-300 hover:shadow-xl dark:from-blue-950/50 dark:to-blue-900/30">
               <CardContent className="p-8 text-center">
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10">
                   <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400" />
@@ -234,7 +210,7 @@ export default function ComponentGeneratorPage() {
                   visualization
                 </p>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>

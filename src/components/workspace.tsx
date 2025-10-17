@@ -14,11 +14,11 @@ import Link from 'next/link'
 import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
+import { Card } from '@/components/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 
-import { Card } from './card'
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import {
   WorkspaceDeleteForm,
@@ -298,20 +298,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 })()}
               </Suspense>
             }
-            footer={(() => {
-              const isOwner = workspace?.userId === user?.id
-
-              return (
-                <div className="flex w-full flex-row items-center gap-2">
-                  {isOwner && (
-                    <WorkbenchCreateForm
-                      workspaceId={workspace?.id || ''}
-                      workspaceName={workspace?.name}
-                    />
-                  )}
-                </div>
-              )
-            })()}
+            footer={
+              <div className="flex w-full flex-row items-center gap-2">
+                <WorkbenchCreateForm
+                  workspaceId={workspace?.id || ''}
+                  workspaceName={workspace?.name}
+                />
+              </div>
+            }
           />
 
           {openEdit && (

@@ -217,7 +217,7 @@ export function BottomChat({
 
         {/* Chat Header */}
         <div className="flex items-center justify-between border-b border-gray-800 p-4">
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <div className="rounded-lg bg-blue-600/20 p-2">
               <Sparkles className="h-5 w-5 text-blue-400" />
             </div>
@@ -229,7 +229,7 @@ export function BottomChat({
                 Describe what you want to create
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-center gap-2">
             <Button

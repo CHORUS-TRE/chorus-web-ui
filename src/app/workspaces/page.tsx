@@ -77,14 +77,6 @@ export default function WorkspacesPage() {
 
       <div className="w-full">
         <div className="grid grid-flow-col grid-rows-1 gap-4">
-          {/* <TabsList aria-label="Workspace view options">
-              <TabsTrigger value="mine" aria-label="View my workspaces">
-                My Workspaces
-              </TabsTrigger>
-              <TabsTrigger value="all" aria-label="View all workspaces">
-                All Workspaces
-              </TabsTrigger>
-            </TabsList> */}
           <div className="flex items-center justify-end gap-0">
             <UIButton
               variant="ghost"

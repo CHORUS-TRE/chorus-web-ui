@@ -133,10 +133,16 @@ export function Header() {
                 <NavigationMenuItem>
                   {background?.sessionId && workbenches && (
                     <>
-                      <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                      <NavigationMenuTrigger
+                        className="inline-flex w-max cursor-pointer items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                        onClick={() => {
+                          // Navigate to workspace when clicked
+                          router.push(`/workspaces/${workspaceId}`)
+                        }}
+                      >
                         <div className="flex place-items-center gap-1">
                           {workspaceId && workspaceId === user?.workspaceId ? (
-                            <AppWindow className="h-4 w-4 text-white" />
+                            <AppWindow className="h-4 w-4 text-muted" />
                           ) : (
                             <AppWindow className="h-4 w-4" />
                           )}
@@ -147,7 +153,7 @@ export function Header() {
                           }
                         </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-white shadow-xl">
+                      <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-muted shadow-xl">
                         <div className="w-[240px] p-2">
                           {/* Workspace Navigation */}
                           <div className="mb-1">
@@ -330,13 +336,19 @@ export function Header() {
                   )}
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step3">
-                  <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
+                  <NavigationMenuTrigger
+                    className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                    onClick={() => {
+                      // Navigate to workspace when clicked
+                      router.push('/workspaces/')
+                    }}
+                  >
                     <div className="flex place-items-center gap-1">
                       <Package className="h-4 w-4" />
                       Workspaces
                     </div>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-white shadow-xl">
+                  <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-muted shadow-xl">
                     <div className="w-[280px] p-2">
                       <div className="space-y-1">
                         {/* All Workspaces Link */}
@@ -459,9 +471,10 @@ export function Header() {
                                   ) : (
                                     <Package className="h-4 w-4" />
                                   )}
-                                  {workspace?.id === user?.workspaceId
-                                    ? 'My Workspace'
-                                    : workspace?.shortName}
+                                  {workspace?.name},{' '}
+                                  {users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.username || '#user-' + workspace?.userId}
                                 </div>
                               </Link>
                               <div className="text-sm">
@@ -554,9 +567,10 @@ export function Header() {
                                   ) : (
                                     <Package className="h-4 w-4" />
                                   )}
-                                  {workspace?.id === user?.workspaceId
-                                    ? 'Home'
-                                    : workspace?.shortName}
+                                  {workspace?.name},{' '}
+                                  {users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.username || '#user-' + workspace?.userId}
                                 </div>
                               </Link>
                               <div className="pl-1 text-sm">
@@ -696,7 +710,7 @@ export function Header() {
                   <>
                     <DropdownMenuItem
                       className="flex cursor-pointer items-center gap-2"
-                      onClick={() => router.push('/users/me')}
+                      onClick={() => router.push(`/users/${user?.id}`)}
                     >
                       <User className="h-4 w-4" />
                       {user?.firstName} {user?.lastName} profile

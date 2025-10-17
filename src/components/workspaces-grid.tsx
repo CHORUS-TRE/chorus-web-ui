@@ -5,6 +5,7 @@ import { EllipsisVerticalIcon, HomeIcon, Package } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
+import { Card as Card1 } from '@/components/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
@@ -54,7 +55,7 @@ const SwitchLink = ({
     )?.context.workspace ? (
     <Link
       href={`/workspaces/${workspace.id}`}
-      className="cursor-pointer border-b-2 border-transparent text-muted transition-colors duration-300 hover:border-accent"
+      className="cursor-pointer border-b border-transparent text-muted transition-colors duration-300 hover:border-accent hover:text-accent"
     >
       {children}
     </Link>
@@ -83,7 +84,7 @@ export default function WorkspacesGrid({
             key={`workspace-grid-${workspace.id}`}
             className="group relative"
           >
-            <div className="absolute right-1 top-1 z-10">
+            <div className="absolute right-0 top-0 z-10">
               {workspace.userId === user?.id && (
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
@@ -118,9 +119,9 @@ export default function WorkspacesGrid({
               )}
             </div>
 
-            <Card className="h-full rounded-2xl border-muted/40 bg-background/60 text-white">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-start gap-3 pr-2">
+            <Card1
+              title={
+                <>
                   {workspace.isMain && (
                     <HomeIcon className="h-6 w-6 flex-shrink-0 text-muted" />
                   )}
@@ -130,10 +131,12 @@ export default function WorkspacesGrid({
                   <SwitchLink user={user} workspace={workspace}>
                     {workspace?.name}
                   </SwitchLink>
-                </CardTitle>
-                <CardDescription className="">
-                  {workspace?.description}
-                  <span className="text-bold block text-sm text-muted">
+                </>
+              }
+              description={
+                <div className="mt-1">
+                  <span className="text-xs text-white">
+                    Owner:{' '}
                     {
                       users?.find((user) => user.id === workspace?.userId)
                         ?.firstName
@@ -143,10 +146,14 @@ export default function WorkspacesGrid({
                         ?.lastName
                     }
                   </span>
-                  <span className="block text-xs text-muted">
+                  <span className="block text-xs text-white">
                     Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
                   </span>
-                  <div className="mb-2 text-xs text-muted">
+                </div>
+              }
+              content={
+                <div className="">
+                  <div className="mb-2 border-b border-muted/40 pb-2 text-xs font-bold text-white">
                     {(() => {
                       const count =
                         workbenches?.filter(
@@ -155,23 +162,21 @@ export default function WorkspacesGrid({
                       return `${count} active session${count !== 1 ? 's' : ''}`
                     })()}
                   </div>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="">
-                <ScrollArea
-                  className="flex max-h-40 flex-col overflow-y-auto"
-                  type="hover"
-                >
-                  <WorkspaceWorkbenchList workspaceId={workspace.id} />
-                </ScrollArea>
-              </CardContent>
-              <CardFooter className="flex items-end justify-start">
+                  <ScrollArea
+                    className="flex max-h-40 flex-col overflow-y-auto"
+                    type="hover"
+                  >
+                    <WorkspaceWorkbenchList workspaceId={workspace.id} />
+                  </ScrollArea>
+                </div>
+              }
+              footer={
                 <WorkbenchCreateForm
                   workspaceId={workspace?.id || ''}
                   workspaceName={workspace?.name}
                 />
-              </CardFooter>
-            </Card>
+              }
+            />
 
             {activeUpdateId === workspace.id && (
               <WorkspaceUpdateForm

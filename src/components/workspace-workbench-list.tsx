@@ -38,9 +38,7 @@ export function WorkspaceWorkbenchList({
             {workbenchList?.filter(
               (workbench) => workbench.workspaceId === mapWorkspaceId
             ).length === 0 && (
-              <div className="text-xs text-muted" role="status">
-                No sessions started
-              </div>
+              <div className="text-xs text-muted" role="status"></div>
             )}
             {workbenchList
               ?.filter((workbench) => workbench.workspaceId === mapWorkspaceId)
@@ -105,7 +103,7 @@ export function WorkspaceWorkbenchList({
                   >
                     <div className="mb-1 flex-grow text-sm">
                       <div
-                        className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-accent hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
+                        className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-muted hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
                       >
                         {isActive && (
                           <div
@@ -123,11 +121,13 @@ export function WorkspaceWorkbenchList({
                         <div className="w-full min-w-0 flex-1">{appNames}</div>
                       </div>
                     </div>
-                    <p className="cursor-default text-xs text-muted">
+                    <p className="cursor-default text-xs text-white">
                       {userDisplayName}
                       {', '}
                       {formatDistanceToNow(createdAt || new Date())} ago
                     </p>
+
+                    <div className="mt-2 border-b border-dotted border-muted/40" />
                   </div>
                 )
               })}
