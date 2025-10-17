@@ -1,3 +1,17 @@
+# [1.14.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.13.0...v1.14.0) (2025-10-17)
+
+
+### Bug Fixes
+
+* **header:** update AppWindow and NavigationMenuContent colors to use 'text-muted' ([3946080](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3946080e4b931deef28bff94af7287c4d3a97f21))
+
+
+### Features
+
+* **admin:** moved pocs to /sandbox, updated user profile ([afdb0b4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/afdb0b40979e45139dede727bbf6bc2b1cf3ba33))
+* **sandbox:** add Clinical Studies Dashboard and Project Specific Dashboard pages with detailed tracking and metrics ([1e1d494](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1e1d494944530867fed2ce9f54bc64ea5b7aa9b1))
+* **user-profile:** add user profile page with detailed information and role management ([51c9549](https://github.com/CHORUS-TRE/chorus-web-ui/commit/51c95498a36d43151442f7f15280280552727e0d))
+
 # [1.13.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.12.1...v1.13.0) (2025-10-15)
 
 
