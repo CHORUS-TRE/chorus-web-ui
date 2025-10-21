@@ -144,15 +144,22 @@ export default function SandboxPage() {
           {sandboxItems.map((item) => {
             const IconComponent = item.icon
 
-            const ConditionalLink = ({ key, href, children }: { key: string, href: string, children: React.ReactNode }) => !item.children ? (
-              <Link key={key} href={href} className="group">
-                {children}
-              </Link>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {children}
-              </div>
-            )
+            const ConditionalLink = ({
+              key,
+              href,
+              children
+            }: {
+              key: string
+              href: string
+              children: React.ReactNode
+            }) =>
+              !item.children ? (
+                <Link key={key} href={href} className="group">
+                  {children}
+                </Link>
+              ) : (
+                <div className="flex flex-col gap-2">{children}</div>
+              )
 
             return (
               <ConditionalLink key={item.title} href={item.href}>
@@ -178,7 +185,7 @@ export default function SandboxPage() {
                     <CardDescription>
                       <p className="text-muted-foreground">
                         {item.description}
-                        </p>
+                      </p>
 
                       {item.children && (
                         <div className="flex flex-col gap-1">

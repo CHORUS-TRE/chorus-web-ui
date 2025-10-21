@@ -11,6 +11,7 @@ import React from 'react'
 import { AIChatProvider } from '@/providers/ai-chat-provider'
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthProvider } from '@/providers/authentication-provider'
+import { ThemeProvider } from '@/providers/theme-provider'
 import { AIChatWidget } from '~/components/ai-chat/ai-chat-widget'
 import BackgroundIframe from '~/components/background-iframe'
 import { Toaster } from '~/components/ui/toaster'
@@ -35,7 +36,7 @@ export default async function RootLayout({
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <PublicEnvScript />
         <Script id="matomo-tag-manager" strategy="afterInteractive">
@@ -49,18 +50,25 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${rubik.variable} antialiased`}>
-        <AuthProvider>
-          <AuthorizationProvider>
-            <AppStateProvider>
-              {/* <AIChatProvider> */}
-              {children}
-              <BackgroundIframe />
-              <Toaster />
-              {/* <AIChatWidget /> */}
-              {/* </AIChatProvider> */}
-            </AppStateProvider>
-          </AuthorizationProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <AuthorizationProvider>
+              <AppStateProvider>
+                {/* <AIChatProvider> */}
+                {children}
+                <BackgroundIframe />
+                <Toaster />
+                {/* <AIChatWidget /> */}
+                {/* </AIChatProvider> */}
+              </AppStateProvider>
+            </AuthorizationProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -124,7 +124,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   return (
     <>
-      <div className="relative mb-4 flex w-full items-center justify-between gap-2 rounded-2xl border border-muted/40 bg-background/60 p-4 text-white">
+      <div className="card-glass relative mb-4 flex w-full items-center justify-between gap-2 p-4">
         <div className="workspace-info mr-8 w-full">
           <h3 className="mb-2 text-lg">{workspace?.description}</h3>
           <div className="workspace-details flex w-full items-center justify-between gap-2">
@@ -167,7 +167,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuContent align="end" className="glass-popover">
                 {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                 <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                   Edit

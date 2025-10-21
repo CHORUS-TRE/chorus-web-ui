@@ -23,15 +23,13 @@ const Card = ({
   className?: string
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'content'>) => (
   <ShadcnCard
-    className={cn(
-      'flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white',
-      className
-    )}
+    variant="glass"
+    className={cn('flex h-full flex-col', className)}
     {...props}
   >
     <CardHeader className="pb-4">
       {title && (
-        <CardTitle className="flex items-center gap-3 text-white">
+        <CardTitle className="flex items-center gap-3 text-foreground">
           {title}
         </CardTitle>
       )}

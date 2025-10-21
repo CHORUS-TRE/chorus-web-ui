@@ -57,6 +57,7 @@ import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 import NavLink from './nav-link'
+import { ThemeToggle } from './theme-toggle'
 import { Input } from './ui/input'
 
 export function Header() {
@@ -106,7 +107,7 @@ export function Header() {
   return (
     <>
       <nav
-        className="relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 bg-black bg-opacity-85 px-4 py-1 text-slate-100 shadow-lg backdrop-blur-sm md:flex-nowrap"
+        className="overlay-dark relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 px-4 py-1 text-foreground shadow-lg md:flex-nowrap"
         id="header"
         onMouseLeave={() => {
           setTimeout(() => {
@@ -153,7 +154,7 @@ export function Header() {
                           }
                         </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-muted shadow-xl">
+                      <NavigationMenuContent className="glass-popover text-muted">
                         <div className="w-[240px] p-2">
                           {/* Workspace Navigation */}
                           <div className="mb-1">
@@ -172,7 +173,7 @@ export function Header() {
                                 </div>
                               ) : (
                                 <div
-                                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                  className="interactive-item"
                                   onClick={() =>
                                     router.push(
                                       `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
@@ -187,7 +188,7 @@ export function Header() {
                               )}
 
                               <div
-                                className="ml-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                className="interactive-item ml-2"
                                 onClick={() =>
                                   router.push(
                                     `/workspaces/${workspaceId}/sessions`
@@ -199,7 +200,7 @@ export function Header() {
                               </div>
 
                               <div
-                                className="ml-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                className="interactive-item ml-2"
                                 onClick={() =>
                                   router.push(
                                     `/workspaces/${workspaceId}/users`
@@ -211,7 +212,7 @@ export function Header() {
                               </div>
 
                               <div
-                                className="ml-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                className="interactive-item ml-2"
                                 onClick={() =>
                                   router.push(`/workspaces/${workspaceId}/data`)
                                 }
@@ -226,7 +227,7 @@ export function Header() {
                           <div className="mb-1 border-t border-muted/20 pt-2">
                             <div className="space-y-0.5">
                               <div
-                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                className="interactive-item"
                                 onClick={() => router.push(`/app-store`)}
                               >
                                 <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -234,7 +235,7 @@ export function Header() {
                               </div>
 
                               <div
-                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                className="interactive-item"
                                 onClick={() => setUpdateOpen(true)}
                               >
                                 <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -242,7 +243,7 @@ export function Header() {
                               </div>
 
                               <div
-                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                                className="interactive-item"
                                 onClick={() => {
                                   const iframe =
                                     document.getElementById('iframe')
@@ -262,7 +263,7 @@ export function Header() {
                           {/* About this session */}
                           <div className="mb-1">
                             <div
-                              className="flex cursor-pointer items-start gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
+                              className="interactive-item items-start"
                               onClick={() => setShowAboutDialog(true)}
                             >
                               <AppWindow className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
@@ -348,12 +349,12 @@ export function Header() {
                       Workspaces
                     </div>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="border border-muted/20 bg-black bg-opacity-95 text-muted shadow-xl">
+                  <NavigationMenuContent className="glass-popover text-muted">
                     <div className="w-[280px] p-2">
                       <div className="space-y-1">
                         {/* All Workspaces Link */}
                         <div
-                          className="mb-2 flex cursor-pointer items-center gap-2 rounded border-b border-muted/20 px-2 py-1.5 pb-2 transition-colors hover:bg-accent/10"
+                          className="interactive-item mb-2 border-b border-muted/20 pb-2"
                           onClick={() => router.push('/workspaces')}
                         >
                           <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -368,7 +369,7 @@ export function Header() {
                           .map((workspace) => (
                             <div
                               key={workspace.id}
-                              className={`flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10 ${
+                              className={`interactive-item ${
                                 workspace.id === workspaceId
                                   ? 'bg-accent/10'
                                   : ''
@@ -441,11 +442,11 @@ export function Header() {
                       <span>Open Sessions</span>
                     </div>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-black bg-opacity-85 text-white">
+                  <NavigationMenuContent className="glass-popover text-foreground">
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
                       <div className="p-2 text-sm">No session found</div>
                     )}
-                    <div className="flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto bg-black bg-opacity-85 p-2">
+                    <div className="flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto p-2">
                       <div className="flex flex-1 flex-col gap-1">
                         {sortedWorkspacesWithWorkbenches
                           ?.slice(
@@ -490,7 +491,7 @@ export function Header() {
                                     >
                                       <Link
                                         href={`/workspaces/${workspace?.id}/sessions/${workbench.id}`}
-                                        className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
+                                        className="glass-surface flex h-full flex-col rounded-lg p-2 transition-colors duration-300 hover:border-accent hover:shadow-lg"
                                       >
                                         <div className="text-sm font-semibold">
                                           {/* <div className="flex items-center justify-between">
@@ -586,7 +587,7 @@ export function Header() {
                                     >
                                       <Link
                                         href={`/workspaces/${workspace?.id}/sessions/${workbench.id}`}
-                                        className={`flex h-full flex-col rounded-lg border border-muted/40 bg-background/40 p-2 text-white transition-colors duration-300 hover:border-accent hover:shadow-lg`}
+                                        className="glass-surface flex h-full flex-col rounded-lg p-2 transition-colors duration-300 hover:border-accent hover:shadow-lg"
                                       >
                                         <div className="text-sm font-semibold">
                                           {/* <div className="flex items-center justify-between">
@@ -670,6 +671,7 @@ export function Header() {
             </div>
           )}
           <div className="ml-1 flex items-center">
+            <ThemeToggle />
             <Button
               size="icon"
               className="h-8 w-8 text-muted hover:bg-inherit hover:text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2"
@@ -703,7 +705,7 @@ export function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-56 bg-black bg-opacity-85 text-white"
+                  className="glass-popover w-56"
                   align="end"
                   forceMount
                 >
@@ -772,7 +774,7 @@ export function Header() {
       </nav>
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
-        <AlertDialogContent className="bg-black bg-opacity-85 text-white">
+        <AlertDialogContent className="glass-popover">
           <AlertDialogHeader>
             <AlertDialogTitle>About {currentWorkbench?.name}</AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
