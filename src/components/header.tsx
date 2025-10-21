@@ -134,7 +134,7 @@ export function Header() {
                   {background?.sessionId && workbenches && (
                     <>
                       <NavigationMenuTrigger
-                        className="inline-flex w-max cursor-pointer items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
+                        className="inline-flex w-max cursor-pointer items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
                         onClick={() => {
                           // Navigate to workspace when clicked
                           router.push(`/workspaces/${workspaceId}`)

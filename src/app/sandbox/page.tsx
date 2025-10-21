@@ -3,6 +3,7 @@
 import {
   Code2,
   Cpu,
+  FileText,
   FlaskConical,
   Layers,
   PackageOpen,
@@ -29,26 +30,43 @@ import {
 export default function SandboxPage() {
   const sandboxItems = [
     {
-      title: 'CHORUS Protocol Builder',
-      description: 'Build and test protocols for the CHORUS platform',
-      href: 'sandbox/chorus-protocol-builder',
-      icon: FlaskConical,
-      status: 'Beta'
+      title: 'CHORUS Templates',
+      description: 'View the templates of the CHORUS platform',
+      href: 'sandbox/templates',
+      icon: FileText,
+      status: 'Beta',
+      children: [
+        {
+          title: 'CHORUS Architecture',
+          description: 'View the architecture of the CHORUS platform',
+          href: 'sandbox/architecture',
+          icon: Layers,
+          status: 'Beta'
+        },
+        {
+          title: 'CHORUS Protocol Builder',
+          description: 'Build and test protocols for the CHORUS platform',
+          href: 'sandbox/chorus-protocol-builder',
+          icon: FlaskConical,
+          status: 'Beta'
+        },
+        {
+          title: 'CHORUS Clinical Lifecycle Dashboard',
+          description: 'Manage your clinical project',
+          href: 'sandbox/workspace',
+          icon: PackageOpen,
+          status: 'Beta'
+        },
+        {
+          title: 'Clinical Studies Dashboard',
+          description: 'Manage clinical studies',
+          href: 'sandbox/clinical-lifecycle-ashboard',
+          icon: PackageOpen,
+          status: 'Beta'
+        }
+      ]
     },
-    {
-      title: 'Workspace',
-      description: 'Manage your clinical project',
-      href: 'sandbox/workspace',
-      icon: PackageOpen,
-      status: 'Beta'
-    },
-    {
-      title: 'Clinical Studies Dashboard',
-      description: 'Manage clinical studies',
-      href: 'sandbox/clinical-lifecycle-ashboard',
-      icon: PackageOpen,
-      status: 'Beta'
-    },
+
     {
       title: 'Role Schema Viz',
       description: 'Visualize the schema roles & permissions',
@@ -125,8 +143,19 @@ export default function SandboxPage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
           {sandboxItems.map((item) => {
             const IconComponent = item.icon
+
+            const ConditionalLink = ({ key, href, children }: { key: string, href: string, children: React.ReactNode }) => !item.children ? (
+              <Link key={key} href={href} className="group">
+                {children}
+              </Link>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {children}
+              </div>
+            )
+
             return (
-              <Link key={item.href} href={item.href} className="group">
+              <ConditionalLink key={item.title} href={item.href}>
                 <Card className="h-full border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
@@ -146,12 +175,24 @@ export default function SandboxPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-muted-foreground">
-                      {item.description}
+                    <CardDescription>
+                      <p className="text-muted-foreground">
+                        {item.description}
+                        </p>
+
+                      {item.children && (
+                        <div className="flex flex-col gap-1">
+                          {item.children.map((child) => (
+                            <Link key={child.title} href={child.href}>
+                              {child.title}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </CardDescription>
                   </CardContent>
                 </Card>
-              </Link>
+              </ConditionalLink>
             )
           })}
         </div>
