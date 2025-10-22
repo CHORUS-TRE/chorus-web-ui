@@ -52,7 +52,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
           >
             <div
               id="content"
-              className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
+              className="overlay-dark relative w-full rounded-2xl border border-secondary"
             >
               <>
                 <div className="w-full p-8">{children}</div>
@@ -75,7 +75,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
               </>
             </div>
             <div
-              className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
+              className={`overlay-dark rounded-2xl border border-secondary p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
               id="sidebar"
             >
               <RightSidebar />

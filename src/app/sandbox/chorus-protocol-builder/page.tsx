@@ -220,7 +220,7 @@ const ProtocolDashboard = () => {
     value,
     subtitle,
     color = 'text-accent',
-    bgColor = 'border-muted/40 bg-background/60'
+    bgColor = 'card-glass'
   }: {
     icon: React.ReactNode
     title: string
@@ -230,15 +230,15 @@ const ProtocolDashboard = () => {
     bgColor: string
   }) => (
     <Card
-      className={`relative overflow-hidden ${bgColor} text-white transition-all hover:border-accent/50 hover:bg-background/80`}
+      className={`relative overflow-hidden ${bgColor} transition-all hover:border-accent/50 hover:bg-background/80`}
     >
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm font-medium text-white">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium">
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-white">{value}</div>
+        <div className="text-2xl font-bold">{value}</div>
         {subtitle && (
           <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
         )}
@@ -270,8 +270,8 @@ const ProtocolDashboard = () => {
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-            <FlaskConical className="h-9 w-9 text-white" />
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+            <FlaskConical className="h-9 w-9" />
             Guide de Rédaction de Protocole de Recherche
           </h2>
         </div>
@@ -294,7 +294,7 @@ const ProtocolDashboard = () => {
             value={`${Math.round(progress)}%`}
             subtitle={`${completedSections.size}/${protocolSections.length} sections`}
             color="text-accent"
-            bgColor="border-muted/40 bg-background/60"
+            bgColor="card-glass"
           />
           <StatCard
             icon={<AlertTriangle className="h-4 w-4" />}
@@ -302,7 +302,7 @@ const ProtocolDashboard = () => {
             value={`${completedRequired}/${requiredSections.length}`}
             subtitle="sections critiques"
             color="text-accent"
-            bgColor="border-muted/40 bg-background/60"
+            bgColor="card-glass"
           />
           <StatCard
             icon={<Clock className="h-4 w-4" />}
@@ -310,7 +310,7 @@ const ProtocolDashboard = () => {
             value="2-4h"
             subtitle="pour un protocole complet"
             color="text-accent"
-            bgColor="border-muted/40 bg-background/60"
+            bgColor="card-glass"
           />
           <StatCard
             icon={<Shield className="h-4 w-4" />}
@@ -320,15 +320,15 @@ const ProtocolDashboard = () => {
             }
             subtitle="validation éthique"
             color="text-accent"
-            bgColor="border-muted/40 bg-background/60"
+            bgColor="card-glass"
           />
         </div>
 
         {/* Progress Bar */}
-        <Card className="mb-6 border-muted/40 bg-background/60 text-white">
+        <Card className="card-glass mb-6">
           <CardContent className="p-6">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium">
                 Avancement du protocole
               </span>
               <span className="text-sm text-muted-foreground">
@@ -353,7 +353,7 @@ const ProtocolDashboard = () => {
               {protocolSections.map((section, idx) => (
                 <Card
                   key={section.id}
-                  className={`border-muted/40 bg-background/60 text-white transition-all duration-200 ${
+                  className={`card-glass transition-all duration-200 ${
                     completedSections.has(section.id)
                       ? 'border-accent hover:border-accent/70'
                       : 'hover:border-accent/50 hover:bg-background/80'
@@ -373,7 +373,7 @@ const ProtocolDashboard = () => {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="mb-1 flex items-center gap-2 font-semibold text-white">
+                            <h3 className="mb-1 flex items-center gap-2 font-semibold">
                               {section.title}
                               {section.required && (
                                 <Badge
@@ -390,7 +390,7 @@ const ProtocolDashboard = () => {
 
                             {section.tips && (
                               <div className="space-y-1">
-                                <p className="text-xs font-medium text-white">
+                                <p className="text-xs font-medium">
                                   💡 Conseils:
                                 </p>
                                 {section.tips.map((tip, tipIdx) => (
@@ -443,10 +443,10 @@ const ProtocolDashboard = () => {
                   return (
                     <Card
                       key={category}
-                      className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80"
+                      className="card-glass transition-all hover:border-accent/50 hover:bg-background/80"
                     >
                       <CardHeader>
-                        <CardTitle className="text-sm text-white">
+                        <CardTitle className="text-sm">
                           {
                             categoryNames[
                               category as keyof typeof categoryNames
@@ -484,10 +484,10 @@ const ProtocolDashboard = () => {
               {Object.entries(studyTypes).map(([code, type]) => (
                 <Card
                   key={code}
-                  className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80"
+                  className="card-glass transition-all hover:border-accent/50 hover:bg-background/80"
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-white">
+                    <CardTitle className="flex items-center gap-2">
                       <Badge
                         variant="outline"
                         className="border-accent text-accent"
@@ -502,7 +502,7 @@ const ProtocolDashboard = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <p className="mb-2 text-sm font-medium text-white">
+                      <p className="mb-2 text-sm font-medium">
                         Exigences spécifiques:
                       </p>
                       {type.requirements.map((req, idx) => (
@@ -522,9 +522,9 @@ const ProtocolDashboard = () => {
           </TabsContent>
 
           <TabsContent value="ethics" className="space-y-6">
-            <Card className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+            <Card className="card-glass transition-all hover:border-accent/50 hover:bg-background/80">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
+                <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-accent" />
                   Checklist Éthique et Réglementaire
                 </CardTitle>
@@ -540,9 +540,7 @@ const ProtocolDashboard = () => {
                       className="flex items-center gap-3 rounded-lg bg-muted/20 p-3"
                     >
                       <Checkbox />
-                      <span className="flex-1 text-sm text-white">
-                        {check.item}
-                      </span>
+                      <span className="flex-1 text-sm">{check.item}</span>
                       {check.required && (
                         <Badge variant="destructive" className="text-xs">
                           Obligatoire
@@ -552,9 +550,9 @@ const ProtocolDashboard = () => {
                   ))}
                 </div>
 
-                <Alert className="mt-6 border-muted/40 bg-background/40">
+                <Alert className="card-glass mt-6">
                   <AlertTriangle className="h-4 w-4 text-accent" />
-                  <AlertDescription className="text-white">
+                  <AlertDescription className="">
                     <strong>Important:</strong> Le protocole doit comporter une
                     signature originale manuscrite. Pour les mineurs, vérifiez
                     les tranches d&apos;âge et utilisez les modèles appropriés
@@ -565,41 +563,36 @@ const ProtocolDashboard = () => {
             </Card>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+              <Card className="card-glass transition-all hover:border-accent/50 hover:bg-background/80">
                 <CardHeader>
-                  <CardTitle className="text-white">
-                    Contacts Importants
-                  </CardTitle>
+                  <CardTitle className="">Contacts Importants</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="text-muted-foreground">
-                    <strong className="text-white">Promoteur CHUV:</strong>{' '}
-                    bpr@chuv.ch
+                    <strong className="">Promoteur CHUV:</strong> bpr@chuv.ch
                   </div>
                   <div className="text-muted-foreground">
-                    <strong className="text-white">Affaires juridiques:</strong>{' '}
+                    <strong className="">Affaires juridiques:</strong>{' '}
                     contrats.afi@chuv.ch
                   </div>
                   <div className="text-muted-foreground">
-                    <strong className="text-white">COB (registres):</strong>{' '}
+                    <strong className="">COB (registres):</strong>{' '}
                     Info.cob@chuv.ch
                   </div>
                   <div className="text-muted-foreground">
-                    <strong className="text-white">Data Science:</strong>{' '}
-                    Évaluation patients éligibles
+                    <strong className="">Data Science:</strong> Évaluation
+                    patients éligibles
                   </div>
                   <div className="text-muted-foreground">
-                    <strong className="text-white">UCR:</strong> Unité du
-                    consentement à la recherche
+                    <strong className="">UCR:</strong> Unité du consentement à
+                    la recherche
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+              <Card className="card-glass transition-all hover:border-accent/50 hover:bg-background/80">
                 <CardHeader>
-                  <CardTitle className="text-white">
-                    Versions et Numérotation
-                  </CardTitle>
+                  <CardTitle className="">Versions et Numérotation</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
@@ -636,44 +629,44 @@ const ProtocolDashboard = () => {
 
           <TabsContent value="tips" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              <Card className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+              <Card className="card-glass transition-all hover:border-accent/50 hover:bg-background/80">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2">
                     <Heart className="h-5 w-5 text-accent" />
                     Bonnes Pratiques
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div className="text-muted-foreground">
-                    📝 <strong className="text-white">Langage:</strong> Simple,
-                    clair, direct - évitez le jargon
+                    📝 <strong className="">Langage:</strong> Simple, clair,
+                    direct - évitez le jargon
                   </div>
                   <div className="text-muted-foreground">
-                    🎯 <strong className="text-white">Objectifs:</strong> Un
-                    seul objectif primaire recommandé
+                    🎯 <strong className="">Objectifs:</strong> Un seul objectif
+                    primaire recommandé
                   </div>
                   <div className="text-muted-foreground">
-                    ⏱️ <strong className="text-white">Délais:</strong> 24h
-                    minimum de réflexion pour les patients
+                    ⏱️ <strong className="">Délais:</strong> 24h minimum de
+                    réflexion pour les patients
                   </div>
                   <div className="text-muted-foreground">
-                    💾 <strong className="text-white">Données:</strong> Toujours
-                    sur serveur sécurisé CHUV
+                    💾 <strong className="">Données:</strong> Toujours sur
+                    serveur sécurisé CHUV
                   </div>
                   <div className="text-muted-foreground">
-                    📋 <strong className="text-white">Visites:</strong> Tableaux
+                    📋 <strong className="">Visites:</strong> Tableaux
                     récapitulatifs + fenêtres temporelles
                   </div>
                   <div className="text-muted-foreground">
-                    🔒 <strong className="text-white">Sécurité:</strong> Données
-                    codées, accès limité à l&apos;équipe
+                    🔒 <strong className="">Sécurité:</strong> Données codées,
+                    accès limité à l&apos;équipe
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+              <Card className="card-glass transition-all hover:border-accent/50 hover:bg-background/80">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-accent" />
                     Pièges à Éviter
                   </CardTitle>
@@ -691,14 +684,14 @@ const ProtocolDashboard = () => {
               </Card>
             </div>
 
-            <Card className="border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+            <Card className="card-glass transition-all hover:border-accent/50 hover:bg-background/80">
               <CardHeader>
-                <CardTitle className="text-white">Phrase d&apos;or</CardTitle>
+                <CardTitle className="">Phrase d&apos;or</CardTitle>
               </CardHeader>
               <CardContent>
-                <Alert className="border-muted/40 bg-background/40">
+                <Alert className="card-glass">
                   <BookOpen className="h-4 w-4 text-accent" />
-                  <AlertDescription className="text-base italic text-white">
+                  <AlertDescription className="text-base italic">
                     &quot;Utilisez un langage simple facile à comprendre. Vous
                     êtes les experts, simplifiez pour que le protocole soit
                     compréhensible ; Favorisez une formulation claire et directe

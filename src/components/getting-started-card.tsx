@@ -100,7 +100,7 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
               skipTour?.()
               setHasSeenGettingStartedTour(true)
             }}
-            className="bg-primary text-white"
+            className="bg-primary"
           >
             Close
           </Button>

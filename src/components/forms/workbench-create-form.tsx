@@ -171,24 +171,19 @@ export function WorkbenchCreateForm({
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="flex items-center justify-start gap-1 rounded-full bg-background text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-background focus:ring-2 focus:ring-accent"
-          type="button"
-          variant="default"
-          disabled={isCreating}
-        >
+        <Button variant="accent-ring" type="button" disabled={isCreating}>
           <CirclePlus className="h-4 w-4" />
           {isCreating ? 'Creating...' : 'Start session'}
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-background text-white">
+      <DialogContent className="bg-background">
         <DialogHeader>
           <DialogTitle>Start Session</DialogTitle>
           <DialogDescription>Start a new session.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="w-full max-w-md border-none bg-background text-white">
+            <Card className="w-full max-w-md border-none bg-background">
               <CardContent className="grid gap-4">
                 <input
                   type="hidden"

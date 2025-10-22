@@ -81,7 +81,7 @@ export function ActionBar({
 
   return (
     <>
-      <div className="flex items-center gap-2 rounded-2xl border border-muted/40 bg-background/60 p-2 text-white">
+      <div className="flex items-center gap-2 rounded-2xl border border-muted/40 bg-background/60 p-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>
             {selectedItems.length} sélectionné

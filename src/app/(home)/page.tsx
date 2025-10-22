@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { Button } from '~/components/button'
 import { PrivateWorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
 import {
@@ -16,7 +17,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '~/components/ui/breadcrumb'
-import { Button } from '~/components/ui/button'
 import { Workspace } from '~/components/workspace'
 
 const HomePage = () => {
@@ -57,8 +57,8 @@ const HomePage = () => {
 
       <div className="flex w-full flex-col items-center justify-start">
         <div className="flex w-full flex-grow items-center justify-start">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-            <HomeIcon className="h-9 w-9 text-white" />
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+            <HomeIcon className="h-9 w-9" />
             {workspaces?.find((w) => w.id === user?.workspaceId)?.name ||
               'Home'}
           </h2>
@@ -73,10 +73,7 @@ const HomePage = () => {
               <div className="mb-4 text-muted">
                 Create a personal workspace to get started
               </div>
-              <Button
-                onClick={() => setCreateOpen(true)}
-                className="rounded-full bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-              >
+              <Button onClick={() => setCreateOpen(true)} variant="accent-ring">
                 <CirclePlus className="h-4 w-4" />
                 Create Workspace
               </Button>

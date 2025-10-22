@@ -143,7 +143,7 @@ export function FileGrid({
     <div className="overflow-auto">
       <div className="min-w-full">
         {/* Header */}
-        <div className="grid grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 text-sm font-medium text-white">
+        <div className="grid grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 text-sm font-medium">
           <div className="col-span-5">Name</div>
           <div className="col-span-2">Owner</div>
           <div className="col-span-3">Last opened</div>
@@ -171,13 +171,13 @@ export function FileGrid({
                 {getFileIcon(item)}
                 <span className="truncate">{item.name}</span>
               </div>
-              <div className="col-span-2 flex items-center text-sm text-white/80">
+              <div className="text-sm/80 col-span-2 flex items-center">
                 {item.owner}
               </div>
-              <div className="col-span-3 flex items-center text-sm text-white/80">
+              <div className="text-sm/80 col-span-3 flex items-center">
                 {formatDateUtil(item.modifiedAt.toISOString())}
               </div>
-              <div className="col-span-2 flex items-center justify-between text-sm text-white/80">
+              <div className="text-sm/80 col-span-2 flex items-center justify-between">
                 <span>{formatFileSizeUtil(item.size)}</span>
                 <button className="rounded p-1 hover:bg-muted">
                   <MoreHorizontal className="h-4 w-4" />

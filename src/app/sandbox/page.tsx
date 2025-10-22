@@ -123,8 +123,8 @@ export default function SandboxPage() {
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-            <FlaskConical className="h-9 w-9 text-white" />
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+            <FlaskConical className="h-9 w-9" />
             Development Sandbox
           </h2>
         </div>
@@ -132,9 +132,7 @@ export default function SandboxPage() {
 
       <div className="w-full">
         <div className="mb-6">
-          <h3 className="mb-2 text-lg font-semibold text-white">
-            Testing Environment
-          </h3>
+          <h3 className="mb-2 text-lg font-semibold">Testing Environment</h3>
           <p className="text-sm text-muted">
             Experimental features and development tools for the CHORUS platform
           </p>
@@ -163,7 +161,7 @@ export default function SandboxPage() {
 
             return (
               <ConditionalLink key={item.title} href={item.href}>
-                <Card className="h-full border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
+                <Card className="card-glass h-full transition-all hover:border-accent/50 hover:bg-background/80">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -204,10 +202,10 @@ export default function SandboxPage() {
           })}
         </div>
 
-        <div className="mt-8 rounded-lg border border-muted/40 bg-background/20 p-4">
+        <div className="card-glass mt-8 rounded-lg border p-4">
           <div className="mb-2 flex items-center gap-2">
             <FlaskConical className="h-4 w-4 text-accent" />
-            <h4 className="text-sm font-semibold text-white">About Sandbox</h4>
+            <h4 className="text-sm font-semibold">About Sandbox</h4>
           </div>
           <p className="text-xs text-muted-foreground">
             The sandbox environment provides access to experimental features,

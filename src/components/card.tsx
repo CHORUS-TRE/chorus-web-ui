@@ -29,7 +29,7 @@ const Card = ({
   >
     <CardHeader className="pb-4">
       {title && (
-        <CardTitle className="flex items-center gap-3 text-foreground">
+        <CardTitle className="mb-0 flex items-center gap-3 text-foreground">
           {title}
         </CardTitle>
       )}

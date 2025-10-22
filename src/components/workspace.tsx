@@ -6,6 +6,7 @@ import {
   CircleGauge,
   Database,
   EllipsisVerticalIcon,
+  Folder,
   Footprints,
   LaptopMinimal,
   Users
@@ -18,6 +19,7 @@ import { Card } from '@/components/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useFileSystem } from '~/hooks/use-file-system'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import {
@@ -80,7 +82,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     workspaces
   } = useAppState()
   const { user, refreshUser } = useAuthentication()
+  const { getChildren } = useFileSystem(workspaceId)
 
+  const rootChildren = getChildren('root')
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const owner =
     user?.id === workspace?.userId
@@ -89,15 +93,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   useEffect(() => {
     if (!workspaceId || !workbenches || workbenches.length === 0) return
-
-    // if (user?.id !== workspaceId) {
-    //   setBackground({
-    //     sessionId: undefined,
-    //     workspaceId: workspaceId
-    //   })
-
-    //   return
-    // }
 
     const firstSessionId = workbenches.find(
       (workbench) =>
@@ -129,32 +124,32 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           <h3 className="mb-2 text-lg">{workspace?.description}</h3>
           <div className="workspace-details flex w-full items-center justify-between gap-2">
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Owner:</h4>
+              <h4 className="label text-xs">Owner:</h4>
               <p className="value font-semibold">
                 {owner?.firstName} {owner?.lastName}
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Status:</h4>
+              <h4 className="label text-xs">Status:</h4>
               <p className="value font-semibold">
                 {workspace?.status || 'Active'}
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Creation date:</h4>
+              <h4 className="label text-xs">Creation date:</h4>
               <p className="value font-semibold">
                 {formatDistanceToNow(workspace?.createdAt || new Date())} ago
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Updated:</h4>
+              <h4 className="label text-xs">Updated:</h4>
               <p className="value font-semibold">
                 {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
               </p>
             </div>
           </div>
         </div>
-        <div className="absolute right-2 top-2 text-white">
+        <div className="absolute right-2 top-2">
           {workspace?.userId === user?.id && (
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
@@ -223,41 +218,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                     Sessions
                   </span>
                 </Link>
-                {/* <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      className="h-8 w-8 bg-inherit text-accent ring-0 hover:bg-inherit hover:text-accent hover:ring-1 hover:ring-accent focus:bg-inherit focus:ring-0"
-                      variant="ghost"
-                      aria-label="Session management options"
-                      aria-describedby="sessions-card-title"
-                      aria-haspopup="true"
-                    >
-                      <MoreVertical className="h-4 w-4" aria-hidden="true" />
-                      <span className="sr-only">Session options</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-black text-white"
-                  >
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(`/workspaces/${workspaceId}/sessions`)
-                      }
-                    >
-                      <TableProperties className="mr-2 h-4 w-4" />
-                      Manage Sessions
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu> */}
               </div>
             }
             description={(() => {
               const sessionCount =
                 workbenches?.filter(
-                  (workbench) =>
-                    workbench.workspaceId === workspaceId &&
-                    workbench.userId === user?.id
+                  (workbench) => workbench.workspaceId === workspaceId
                 )?.length || 0
               return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}.`
             })()}
@@ -347,18 +313,30 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           content={
             <>
               <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">Database</p>
-                  <p className="text-xs">3</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">API</p>
-                  <p className="text-xs">2</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">Files</p>
-                  <p className="text-xs">1026</p>
-                </div>
+                {rootChildren
+                  .filter((child) => child.type === 'folder')
+                  .map((child) => (
+                    <div
+                      className="flex items-center justify-between"
+                      key={child.id}
+                    >
+                      <p className="text-xs">{child.name}</p>
+                      <p className="text-xs">
+                        <Folder className="h-4 w-4" />
+                      </p>
+                    </div>
+                  ))}
+                {rootChildren
+                  .filter((child) => child.type === 'file')
+                  .map((child) => (
+                    <div
+                      className="flex items-center justify-between"
+                      key={child.id}
+                    >
+                      <p className="text-xs">{child.name}</p>
+                      <p className="text-xs">{child.size || 0} KB</p>
+                    </div>
+                  ))}
               </div>
             </>
           }
@@ -438,7 +416,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           <Card
             title={
               <>
-                <Book className="h-6 w-6 text-white" />
+                <Book className="h-6 w-6" />
                 Wiki
               </>
             }
@@ -463,7 +441,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <Card
           title={
             <>
-              <CircleGauge className="h-6 w-6 text-white" />
+              <CircleGauge className="h-6 w-6" />
               Resources
             </>
           }
@@ -503,7 +481,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <Card
           title={
             <>
-              <Activity className="h-6 w-6 text-white" />
+              <Activity className="h-6 w-6" />
               Activities
             </>
           }
@@ -520,7 +498,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <Card
           title={
             <>
-              <Footprints className="h-6 w-6 text-white" />
+              <Footprints className="h-6 w-6" />
               Footprint
             </>
           }

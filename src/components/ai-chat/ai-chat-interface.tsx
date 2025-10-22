@@ -65,7 +65,7 @@ export function AIChatInterface() {
             } transition-all duration-300 ease-in-out`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between bg-gradient-to-r from-blue-600 to-purple-600 p-4 text-white">
+            <div className="flex items-center justify-between bg-gradient-to-r from-blue-600 to-purple-600 p-4">
               <div className="flex items-center space-x-2">
                 <div className="h-2 w-2 rounded-full bg-green-400"></div>
                 <span className="text-sm font-medium">AI Assistant</span>
@@ -77,7 +77,7 @@ export function AIChatInterface() {
                   onClick={isMinimized ? expandChat : minimizeChat}
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-white hover:bg-white/20"
+                  className="h-8 w-8 hover:bg-white/20"
                   aria-label={isMinimized ? 'Expand chat' : 'Minimize chat'}
                 >
                   {isMinimized ? (
@@ -90,7 +90,7 @@ export function AIChatInterface() {
                   onClick={toggleChat}
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-white hover:bg-white/20"
+                  className="h-8 w-8 hover:bg-white/20"
                   aria-label="Close chat"
                 >
                   <X className="h-4 w-4" />

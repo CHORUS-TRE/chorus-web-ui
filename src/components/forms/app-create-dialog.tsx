@@ -218,7 +218,7 @@ export function AppCreateDialog({
 
   useEffect(() => {
     if (formState.errors) {
-      console.log('formState.errors', formState.errors)
+      console.error('AppCreateDialog formState.errors', formState.errors)
     }
   }, [formState.errors])
 
@@ -291,7 +291,7 @@ export function AppCreateDialog({
       >
         <DialogHeader>
           <div className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-white">Create New App</DialogTitle>
+            <DialogTitle className="">Create New App</DialogTitle>
             <Link
               href="#"
               onClick={() => setShowAdvanced(!showAdvanced)}
@@ -320,12 +320,12 @@ export function AppCreateDialog({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Name</FormLabel>
+                      <FormLabel className="">Name</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder="Enter app name"
-                          className="bg-background text-white placeholder:text-muted"
+                          className="bg-background placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -338,12 +338,12 @@ export function AppCreateDialog({
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Description</FormLabel>
+                      <FormLabel className="">Description</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder="Enter description"
-                          className="bg-background text-white placeholder:text-muted"
+                          className="bg-background placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -369,14 +369,12 @@ export function AppCreateDialog({
                   name="dockerImageRegistry"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">
-                        Docker Image Registry
-                      </FormLabel>
+                      <FormLabel className="">Docker Image Registry</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder="e.g., docker.io"
-                          className="bg-background text-white placeholder:text-muted"
+                          className="bg-background placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -390,14 +388,12 @@ export function AppCreateDialog({
                     name="dockerImageName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">
-                          Docker Image
-                        </FormLabel>
+                        <FormLabel className="">Docker Image</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             placeholder="e.g., nginx"
-                            className="bg-background text-white placeholder:text-muted"
+                            className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -410,12 +406,12 @@ export function AppCreateDialog({
                     name="dockerImageTag"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">Image Tag</FormLabel>
+                        <FormLabel className="">Image Tag</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             placeholder="e.g., latest"
-                            className="bg-background text-white placeholder:text-muted"
+                            className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -432,14 +428,12 @@ export function AppCreateDialog({
                     name="kioskConfigURL"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">
-                          Kiosk Config URL
-                        </FormLabel>
+                        <FormLabel className="">Kiosk Config URL</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             placeholder="Enter kiosk config URL"
-                            className="bg-background text-white placeholder:text-muted"
+                            className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -453,9 +447,7 @@ export function AppCreateDialog({
                       name="preset"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">
-                            Resource Preset
-                          </FormLabel>
+                          <FormLabel className="">Resource Preset</FormLabel>
                           <Select
                             onValueChange={(value) => {
                               field.onChange(value)
@@ -494,7 +486,7 @@ export function AppCreateDialog({
                               }
                             }}
                           >
-                            <SelectTrigger className="bg-background text-white placeholder:text-muted">
+                            <SelectTrigger className="bg-background placeholder:text-muted">
                               <SelectValue placeholder="Select a preset" />
                             </SelectTrigger>
                             <SelectContent>
@@ -533,14 +525,12 @@ export function AppCreateDialog({
                       name="shmSize"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">
-                            Shared Memory Size
-                          </FormLabel>
+                          <FormLabel className="">Shared Memory Size</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               placeholder="e.g., 64m"
-                              className="bg-background text-white placeholder:text-muted"
+                              className="bg-background placeholder:text-muted"
                             />
                           </FormControl>
                           <FormMessage className="text-destructive" />
@@ -554,14 +544,14 @@ export function AppCreateDialog({
                         name="minEphemeralStorage"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="">
                               Min Ephemeral Storage
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -574,14 +564,14 @@ export function AppCreateDialog({
                         name="maxEphemeralStorage"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="">
                               Max Ephemeral Storage
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -596,14 +586,12 @@ export function AppCreateDialog({
                         name="minCPU"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
-                              Min CPU
-                            </FormLabel>
+                            <FormLabel className="">Min CPU</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 placeholder="e.g., 1"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -616,14 +604,12 @@ export function AppCreateDialog({
                         name="maxCPU"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
-                              Max CPU
-                            </FormLabel>
+                            <FormLabel className="">Max CPU</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 placeholder="e.g., 2"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -638,14 +624,12 @@ export function AppCreateDialog({
                         name="minMemory"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
-                              Min Memory
-                            </FormLabel>
+                            <FormLabel className="">Min Memory</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -658,14 +642,12 @@ export function AppCreateDialog({
                         name="maxMemory"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
-                              Max Memory
-                            </FormLabel>
+                            <FormLabel className="">Max Memory</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -692,7 +674,7 @@ export function AppCreateDialog({
                   onOpenChange(false)
                   form.reset()
                 }}
-                className="bg-background text-white"
+                className="bg-background"
               >
                 Cancel
               </Button>

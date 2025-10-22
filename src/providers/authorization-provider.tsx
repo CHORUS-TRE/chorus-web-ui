@@ -90,8 +90,8 @@ export const AuthorizationProvider = ({
           if (typeof window.createAuthenticationService === 'function') {
             setIsWasmInitialized(true)
           } else {
-            console.log('createAuthenticationService not found globally')
-            console.log(
+            console.error('createAuthenticationService not found globally')
+            console.error(
               'Available global functions:',
               Object.keys(window).filter(
                 (key) => typeof window[key as keyof Window] === 'function'
@@ -141,7 +141,6 @@ export const AuthorizationProvider = ({
         }
         const isAllowed = userService.isUserAllowed(permissionObj)
 
-        console.log(`WASM isUserAllowed result for ${permission}:`, isAllowed)
         return { data: isAllowed }
       }
 

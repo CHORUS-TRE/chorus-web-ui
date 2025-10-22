@@ -59,8 +59,8 @@ export default function WorkspacesPage() {
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-            <Package className="h-9 w-9 text-white" />
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+            <Package className="h-9 w-9" />
             Workspaces
           </h2>
           {canCreateWorkspace && (
@@ -109,7 +109,7 @@ export default function WorkspacesPage() {
         >
           <AccordionItem value="my-workspaces" className="border-b-0">
             <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
-              <div className="text-lg font-semibold text-white">
+              <div className="text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Package className="h-6 w-6" />
                   <div>My Workspaces</div>
@@ -155,7 +155,7 @@ export default function WorkspacesPage() {
 
           <AccordionItem value="all-workspaces" className="border-b-0">
             <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
-              <div className="text-lg font-semibold text-white">
+              <div className="text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Package className="h-6 w-6" />
                   <div>All Workspaces</div>

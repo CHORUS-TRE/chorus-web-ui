@@ -44,8 +44,8 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-          <Users className="h-9 w-9 text-white" />
+        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+          <Users className="h-9 w-9" />
           Users
         </h2>
       </div>
@@ -66,7 +66,7 @@ export default function UsersPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {users.map((user) => (
-          <Card key={user.id} className="bg-black text-white">
+          <Card key={user.id} className="bg-black">
             <CardHeader className="flex flex-row items-center gap-4 pb-4">
               <Avatar>
                 <AvatarFallback>

@@ -68,10 +68,12 @@ export default function WorkbenchTable({
       </TableHead> */}
       <TableHead className="text-foreground">Session</TableHead>
       <TableHead className="text-foreground">Running Apps</TableHead>
-      <TableHead className="hidden text-white md:table-cell">Created</TableHead>
+      <TableHead className="hidden text-foreground md:table-cell">
+        Created
+      </TableHead>
       <TableHead className="text-foreground">Status</TableHead>
-      <TableHead className="text-white" colSpan={2}>
-        <span className="text-white">Actions</span>
+      <TableHead className="text-foreground" colSpan={2}>
+        <span>Actions</span>
       </TableHead>
     </>
   )
@@ -244,18 +246,7 @@ export default function WorkbenchTable({
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
       <div className="flex items-center justify-end">
-        <WorkbenchCreateForm
-          workspaceId={workspaceId}
-          // onSuccess={(sessionId) => {
-          //   refreshWorkbenches()
-          //   toast({
-          //     title: 'Success!',
-          //     description: 'Session created successfully'
-          //   })
-          //   setBackground({ sessionId, workspaceId })
-          //   if (onUpdate) onUpdate(sessionId)
-          // }}
-        />
+        <WorkbenchCreateForm workspaceId={workspaceId} />
       </div>
       <CardContainer
         workbenches={filteredWorkbenches}

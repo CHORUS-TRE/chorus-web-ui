@@ -20,7 +20,7 @@ export default function LoginInfo() {
           className="mb-12 h-36 w-auto max-w-full flex-grow"
           priority
         />
-        <div className="max-w-xs text-center text-white">
+        <div className="max-w-xs text-center">
           <h1 className="mb-2 text-2xl font-bold">
             A secure, open-source platform revolutionizing collaborative medical
             research and AI development.

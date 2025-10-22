@@ -365,7 +365,11 @@ export function Header() {
 
                         {/* Individual Workspaces */}
                         {workspaces
-                          ?.filter((workspace) => workspace.userId === user?.id)
+                          ?.filter((workspace) =>
+                            user?.rolesWithContext?.some(
+                              (role) => role.context.workspace === workspace.id
+                            )
+                          )
                           .map((workspace) => (
                             <div
                               key={workspace.id}
@@ -385,15 +389,17 @@ export function Header() {
                               )}
                               <div className="min-w-0 flex-1">
                                 <div className="text-sm">
-                                  {workspace.id === user?.workspaceId
-                                    ? 'My Workspace'
-                                    : workspace.name || workspace.shortName}
+                                  {workspace.name || workspace.shortName}
                                 </div>
-                                {workspace.description && (
-                                  <div className="truncate text-xs text-muted-foreground">
-                                    {workspace.description}
-                                  </div>
-                                )}
+                                <div className="truncate text-xs text-muted-foreground">
+                                  {users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.firstName +
+                                    ' ' +
+                                    users?.find(
+                                      (user) => user.id === workspace?.userId
+                                    )?.lastName || '#user-' + workspace?.userId}
+                                </div>
                               </div>
                               {workspace.id === workspaceId && (
                                 <div className="text-xs text-accent">
@@ -496,7 +502,7 @@ export function Header() {
                                         <div className="text-sm font-semibold">
                                           {/* <div className="flex items-center justify-between">
                                             <div
-                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
+                                              className={`mb-1 flex items-center gap-2 ${id === background?.sessionId ? 'text-accent' : ''}`}
                                             >
                                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                               {shortName}
@@ -592,7 +598,7 @@ export function Header() {
                                         <div className="text-sm font-semibold">
                                           {/* <div className="flex items-center justify-between">
                                             <div
-                                              className={`mb-1 flex items-center gap-2 text-white ${id === background?.sessionId ? 'text-accent' : ''}`}
+                                              className={`mb-1 flex items-center gap-2 ${id === background?.sessionId ? 'text-accent' : ''}`}
                                             >
                                               <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
                                               {shortName}

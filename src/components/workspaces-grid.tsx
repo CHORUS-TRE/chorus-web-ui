@@ -85,23 +85,11 @@ export default function WorkspacesGrid({
             className="group relative"
           >
             <div className="absolute right-0 top-0 z-10">
-              {workspace.userId === user?.id && (
+              {user?.rolesWithContext?.some(
+                (role) => role.context.workspace === workspace.id
+              ) && (
                 <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      aria-haspopup="true"
-                      size="icon"
-                      variant="ghost"
-                      className="text-muted hover:bg-background/20 hover:text-accent"
-                    >
-                      <EllipsisVerticalIcon className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-black text-white"
-                  >
+                  <DropdownMenuContent align="end" className="glass-popover">
                     {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                     <DropdownMenuItem
                       onClick={() => setActiveUpdateId(workspace.id)}
@@ -135,7 +123,7 @@ export default function WorkspacesGrid({
               }
               description={
                 <div className="mt-1">
-                  <span className="text-xs text-white">
+                  <span className="text-xs">
                     Owner:{' '}
                     {
                       users?.find((user) => user.id === workspace?.userId)
@@ -146,14 +134,14 @@ export default function WorkspacesGrid({
                         ?.lastName
                     }
                   </span>
-                  <span className="block text-xs text-white">
+                  <span className="block text-xs">
                     Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
                   </span>
                 </div>
               }
               content={
                 <div className="">
-                  <div className="mb-2 border-b border-muted/40 pb-2 text-xs font-bold text-white">
+                  <div className="mb-2 border-b border-muted/40 pb-2 text-xs font-bold">
                     {(() => {
                       const count =
                         workbenches?.filter(

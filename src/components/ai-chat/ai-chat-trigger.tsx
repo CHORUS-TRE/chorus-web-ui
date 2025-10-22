@@ -25,7 +25,7 @@ export function AIChatTrigger() {
             className="h-14 w-14 rounded-full bg-blue-600 shadow-lg transition-all duration-200 hover:bg-blue-700 hover:shadow-xl"
             aria-label="Open AI Chat"
           >
-            <MessageCircle className="h-6 w-6 text-white" />
+            <MessageCircle className="h-6 w-6" />
           </Button>
         </motion.div>
       )}

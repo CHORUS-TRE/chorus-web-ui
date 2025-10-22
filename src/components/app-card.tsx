@@ -151,7 +151,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
   return (
     <>
-      <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+      <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60">
         <CardHeader className="relative pb-4">
           <div className="flex items-center space-x-4">
             {app.iconURL && (
@@ -169,7 +169,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
                 <AvatarFallback>{app.name?.slice(0, 2) || ''}</AvatarFallback>
               </Avatar>
             )}
-            <CardTitle className="flex items-center gap-3 pr-2 text-white">
+            <CardTitle className="flex items-center gap-3 pr-2">
               {app.name || 'Unnamed App'}
             </CardTitle>
           </div>
@@ -185,7 +185,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuContent align="end" className="bg-black">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() => setShowEditDialog(true)}
@@ -236,9 +236,9 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         open={showStartSessionDialog}
         onOpenChange={setShowStartSessionDialog}
       >
-        <DialogContent className="bg-background text-white">
+        <DialogContent className="bg-background">
           <DialogHeader>
-            <DialogTitle className="text-white">
+            <DialogTitle className="">
               Choose a session to start the app
             </DialogTitle>
           </DialogHeader>

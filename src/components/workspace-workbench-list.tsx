@@ -121,7 +121,7 @@ export function WorkspaceWorkbenchList({
                         <div className="w-full min-w-0 flex-1">{appNames}</div>
                       </div>
                     </div>
-                    <p className="cursor-default text-xs text-white">
+                    <p className="cursor-default text-xs">
                       {userDisplayName}
                       {', '}
                       {formatDistanceToNow(createdAt || new Date())} ago

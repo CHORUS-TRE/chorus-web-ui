@@ -62,7 +62,7 @@ export function UserDeleteDialog({
           </Button>
         </AlertDialogTrigger>
       )}
-      <AlertDialogContent className="bg-background text-white">
+      <AlertDialogContent className="bg-background">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>

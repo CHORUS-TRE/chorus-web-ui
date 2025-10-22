@@ -151,7 +151,7 @@ export default function UserProfile() {
       <HoverCard>
         <HoverCardTrigger asChild>{children}</HoverCardTrigger>
         <HoverCardContent
-          className="max-h-[500px] w-[600px] overflow-y-auto border border-muted/40 bg-background/95 p-4 text-white"
+          className="card-glass max-h-[500px] w-[600px] overflow-y-auto border p-4"
           side="bottom"
           align="start"
           sideOffset={5}
@@ -159,7 +159,7 @@ export default function UserProfile() {
         >
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold text-white">{roleName}</h4>
+              <h4 className="text-sm font-semibold">{roleName}</h4>
               <p className="mt-1 text-xs text-muted-foreground">
                 {description}
               </p>
@@ -280,7 +280,7 @@ export default function UserProfile() {
       </Breadcrumb>
       <div className="space-y-8">
         {/* Profile Header */}
-        <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+        <Card className="card-glass flex h-full flex-col rounded-2xl">
           <CardContent className="pt-6">
             <div className="flex items-start space-x-4">
               <Avatar className="h-20 w-20">
@@ -326,7 +326,7 @@ export default function UserProfile() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Basic Information */}
-          <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+          <Card className="card-glass flex h-full flex-col rounded-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
@@ -364,7 +364,7 @@ export default function UserProfile() {
           </Card>
 
           {/* Account Status */}
-          <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+          <Card className="card-glass flex h-full flex-col rounded-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />
@@ -421,7 +421,7 @@ export default function UserProfile() {
 
         {/* Workspace Information */}
         {profileUser.workspaceId && (
-          <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+          <Card className="card-glass flex h-full flex-col rounded-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AppWindow className="h-5 w-5" />
@@ -449,7 +449,7 @@ export default function UserProfile() {
         )}
 
         {/* Roles & Permissions */}
-        <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+        <Card className="card-glass flex h-full flex-col rounded-2xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
@@ -508,7 +508,7 @@ export default function UserProfile() {
                                   ) : (
                                     <Shield className="h-4 w-4" />
                                   )}
-                                  <h6 className="text-sm font-semibold text-white">
+                                  <h6 className="text-sm font-semibold">
                                     {roleName}
                                   </h6>
                                   <Badge variant="outline" className="text-xs">
@@ -632,7 +632,7 @@ export default function UserProfile() {
         </Card>
 
         {/* Actions */}
-        <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white">
+        <Card className="card-glass flex h-full flex-col rounded-2xl">
           <CardContent className="pt-6">
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" disabled>

@@ -68,7 +68,7 @@ export function ImageUploadField({
 
   return (
     <FormItem className={className}>
-      <FormLabel className="text-white">{label}</FormLabel>
+      <FormLabel className="">{label}</FormLabel>
       <div className="flex items-center gap-4">
         <FormControl>
           <Input
