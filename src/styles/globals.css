@@ -145,15 +145,15 @@
 
   /* Glassmorphism Effects */
   .glass-surface {
-    @apply bg-background/60 backdrop-blur-sm border border-muted/40;
+    @apply border border-muted/40 bg-background/60 backdrop-blur-sm;
   }
 
   .glass-elevated {
-    @apply bg-background/80 backdrop-blur-md border border-muted/30 shadow-lg;
+    @apply border border-muted/30 bg-background/80 shadow-lg backdrop-blur-md;
   }
 
   .glass-popover {
-    @apply bg-popover/95 backdrop-blur-md border border-border/20 shadow-xl;
+    @apply border border-border/20 bg-popover/95 shadow-xl backdrop-blur-md;
   }
 
   /* Overlay Backgrounds */

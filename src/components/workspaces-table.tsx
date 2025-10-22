@@ -76,12 +76,14 @@ export default function WorkspaceTable({
 
   const TableHeads = () => (
     <>
-      <TableHead className="font-semibold text-white">Name</TableHead>
-      {/* <TableHead className="font-semibold text-white">Short Name</TableHead> */}
-      <TableHead className="font-semibold text-white">Description</TableHead>
-      <TableHead className="font-semibold text-white">Status</TableHead>
+      <TableHead className="font-semibold text-foreground">Name</TableHead>
+      {/* <TableHead className="font-semibold text-foreground">Short Name</TableHead> */}
+      <TableHead className="font-semibold text-foreground">
+        Description
+      </TableHead>
+      <TableHead className="font-semibold text-foreground">Status</TableHead>
       {/* <TableHead className="hidden md:table-cell">Members</TableHead> */}
-      <TableHead className="hidden font-semibold text-white md:table-cell">
+      <TableHead className="hidden font-semibold text-foreground md:table-cell">
         Created
       </TableHead>
       <TableHead>
@@ -128,9 +130,11 @@ export default function WorkspaceTable({
           <TableCell className="p-1 font-semibold">
             <Link
               href={`/workspaces/${workspace?.id}`}
-              className="inline-flex w-max items-center justify-center gap-x-2 border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              className="nav-link-base nav-link-hover [&.active]:nav-link-active inline-flex gap-x-2"
             >
-              {workspace?.isMain && <HomeIcon className="h-4 w-4 text-white" />}
+              {workspace?.isMain && (
+                <HomeIcon className="h-4 w-4 text-foreground" />
+              )}
               {workspace?.name}
             </Link>
           </TableCell>
@@ -162,7 +166,7 @@ export default function WorkspaceTable({
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuContent align="end" className="glass-popover">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={(e) => {
@@ -188,7 +192,10 @@ export default function WorkspaceTable({
 
   return (
     <>
-      <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
+      <Card
+        variant="glass"
+        className="flex h-full flex-col justify-between duration-300"
+      >
         {title && (
           <CardHeader className="pb-4">
             <CardTitle>{title}</CardTitle>
