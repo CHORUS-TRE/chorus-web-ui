@@ -124,6 +124,11 @@ export default function LoginForm() {
     (mode) => mode.type === AuthenticationModeType.INTERNAL
   )
 
+  const publicRegistration = authModes?.some(
+    (mode) =>
+      mode.type === AuthenticationModeType.INTERNAL && mode.internal?.enabled
+  )
+
   return (
     <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
       <div className="grid h-full w-full gap-2 p-8">
@@ -208,16 +213,18 @@ export default function LoginForm() {
                   </div>
                 </form>
 
-                <div className="mb-4 text-center text-sm">
-                  Don&apos;t have an account?{' '}
-                  <Link
-                    href="/register"
-                    className="text-muted underline hover:text-accent"
-                    prefetch={false}
-                  >
-                    Register
-                  </Link>
-                </div>
+                {publicRegistration && (
+                  <div className="mb-4 text-center text-sm">
+                    Don&apos;t have an account?{' '}
+                    <Link
+                      href="/register"
+                      className="text-muted underline hover:text-accent"
+                      prefetch={false}
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
               </>
             )}
 
