@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.14.0...v1.14.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* **login:** allow disabling public internal registration ([ef1aeac](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ef1aeac3f3a83a8d6393777e6f58264b25816015))
+
 # [1.14.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.13.0...v1.14.0) (2025-10-17)
 
 
