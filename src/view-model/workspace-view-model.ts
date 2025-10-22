@@ -116,7 +116,7 @@ export async function workspaceUpdate(
   }
 }
 
-export async function workspaceAddUserRole(
+export async function workspaceManageUserRole(
   prevState: Result<User>,
   formData: FormData
 ): Promise<Result<User>> {

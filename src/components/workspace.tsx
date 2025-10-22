@@ -19,6 +19,7 @@ import { Card } from '@/components/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { formatFileSize } from '@/utils/format-file-size'
 import { useFileSystem } from '~/hooks/use-file-system'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
@@ -333,8 +334,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                       className="flex items-center justify-between"
                       key={child.id}
                     >
-                      <p className="text-xs">{child.name}</p>
-                      <p className="text-xs">{child.size || 0} KB</p>
+                      <p className="text-wrap text-xs">{child.name}</p>
+                      <p className="text-wrap text-xs">
+                        {formatFileSize(child.size)}
+                      </p>
                     </div>
                   ))}
               </div>
@@ -360,8 +363,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 >
                   <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
                   <span id="sessions-card-title" className="">
-                    <span className="sr-only">Team</span>
-                    Team
+                    <span className="sr-only">Members</span>
+                    Members
                   </span>
                 </Link>
               </div>
@@ -405,38 +408,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
                 >
                   <ArrowRight className="h-4 w-4" />
-                  View Team
+                  View Members
                 </Link>
               </Button>
             }
           />
         )}
-
-        {/* {workspace && user?.workspaceId !== workspace?.id && (
-          <Card
-            title={
-              <>
-                <Book className="h-6 w-6" />
-                Wiki
-              </>
-            }
-            description="Share and view latest news"
-            content={
-              <iframe
-                name="embed_readwrite"
-                src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
-                width="100%"
-                height="100%"
-              ></iframe>
-            }
-            footer={
-              <Button disabled className="cursor-default">
-                <ArrowRight className="h-4 w-4" />
-                View Wiki
-              </Button>
-            }
-          />
-        )} */}
 
         <Card
           title={

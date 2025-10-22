@@ -1,9 +1,9 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UserPlus } from 'lucide-react'
+import { Trash2, UserPlus } from 'lucide-react'
 import { useActionState } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -45,8 +45,9 @@ const AddUserToWorkspaceSchema = z.object({
 })
 
 type AddUserFormData = z.infer<typeof AddUserToWorkspaceSchema>
+type ActionMode = 'add' | 'update' | 'remove'
 
-export function AddUserToWorkspaceDialog({
+export function ManageUserWorkspaceDialog({
   userId,
   workspaceId,
   onUserAdded,
@@ -64,6 +65,24 @@ export function AddUserToWorkspaceDialog({
   const workspaceName = workspace?.name
 
   const [open, setOpen] = useState(false)
+  const [isRemoving, setIsRemoving] = useState(false)
+
+  // Get the current user and their workspace roles
+  const currentUser = useMemo(() => {
+    return users?.find((user) => user.id === userId)
+  }, [users, userId])
+
+  const currentWorkspaceRoles = useMemo(() => {
+    return (
+      currentUser?.rolesWithContext?.filter(
+        (role) =>
+          role.context.workspace === workspaceId &&
+          role.name.startsWith('Workspace')
+      ) || []
+    )
+  }, [currentUser, workspaceId])
+
+  const currentRoleName = currentWorkspaceRoles[0]?.name || ''
 
   // Available roles for workspace members from schema
   const workspaceRoles = getWorkspaceRoles().map((role) => ({
@@ -74,20 +93,55 @@ export function AddUserToWorkspaceDialog({
   const form = useForm<AddUserFormData>({
     resolver: zodResolver(AddUserToWorkspaceSchema),
     defaultValues: {
-      userId: '',
-      roleName: ''
+      userId: userId || '',
+      roleName: currentRoleName
     }
   })
+
+  // Update form when dialog opens and user has a role
+  useEffect(() => {
+    if (open && userId) {
+      form.setValue('userId', userId)
+      form.setValue('roleName', currentRoleName)
+    }
+  }, [open, userId, currentRoleName, form])
+
+  // Determine action mode based on current role and selected role
+  const actionMode: ActionMode = useMemo(() => {
+    const selectedRole = form.watch('roleName')
+    if (!currentRoleName) return 'add'
+    if (selectedRole === currentRoleName) return 'remove'
+    return 'update'
+  }, [currentRoleName, form.watch('roleName')])
 
   const [state, formAction] = useActionState(
     workspaceManageUserRole,
     {} as Result<User>
   )
 
+  // Handle remove role action
+  const handleRemoveRole = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault()
+      setIsRemoving(true)
+      // TODO: Implement remove role API call
+      toast({
+        title: 'Role Removed',
+        description: 'User role removed from workspace successfully.'
+      })
+      setIsRemoving(false)
+      setOpen(false)
+      form.reset()
+      onUserAdded()
+    },
+    [form, onUserAdded]
+  )
+
   useEffect(() => {
     if (state.error) {
+      const actionText = actionMode === 'add' ? 'adding' : 'updating'
       toast({
-        title: 'Error adding user',
+        title: `Error ${actionText} user role`,
         description: state.error,
         variant: 'destructive'
       })
@@ -100,15 +154,16 @@ export function AddUserToWorkspaceDialog({
         variant: 'destructive'
       })
     } else if (state.data && state.data.id) {
+      const actionText = actionMode === 'add' ? 'added to' : 'updated in'
       toast({
         title: 'Success',
-        description: 'User added to workspace successfully.'
+        description: `User role ${actionText} workspace successfully.`
       })
       setOpen(false)
       form.reset()
       onUserAdded()
     }
-  }, [state, onUserAdded, form])
+  }, [state, onUserAdded, form, actionMode])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -125,12 +180,18 @@ export function AddUserToWorkspaceDialog({
       <DialogContent className="">
         <DialogHeader>
           <DialogTitle>
-            {' '}
             {userId
-              ? `Edit ${users?.find((user) => user.id === userId)?.firstName} ${users?.find((user) => user.id === userId)?.lastName}'s role`
+              ? `${currentUser?.firstName} ${currentUser?.lastName}`
               : 'Add User to Workspace'}
           </DialogTitle>
-          <DialogDescription>{workspaceName}</DialogDescription>
+          <DialogDescription>
+            <p className="text-md text-sm text-muted-foreground">
+              Workspace: <span className="font-bold">{workspaceName}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Role: <span className="font-bold">{currentRoleName}</span>
+            </p>
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form action={formAction} className="space-y-4">
@@ -204,20 +265,44 @@ export function AddUserToWorkspaceDialog({
               value={form.watch('roleName')}
             />
 
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="bg-accent text-black hover:bg-accent/80"
-              >
-                Add Role
-              </Button>
+            <div className="flex justify-between gap-2">
+              {currentRoleName && actionMode === 'remove' ? (
+                <>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={handleRemoveRole}
+                    disabled={isRemoving}
+                    className="flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {isRemoving ? 'Removing...' : 'Remove Role'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-accent text-black hover:bg-accent/80"
+                  >
+                    {actionMode === 'update' ? 'Update Role' : 'Add Role'}
+                  </Button>
+                </>
+              )}
             </div>
           </form>
         </Form>

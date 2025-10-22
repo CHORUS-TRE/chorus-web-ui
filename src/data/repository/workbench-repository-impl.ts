@@ -5,6 +5,7 @@ import {
   WorkbenchCreateType,
   WorkbenchUpdateType
 } from '~/domain/model'
+import { User } from '~/domain/model/user'
 import { WorkbenchSchema } from '~/domain/model/workbench'
 import { WorkbenchRepository } from '~/domain/repository'
 
@@ -106,6 +107,62 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       return this.get(workbench.id)
     } catch (error) {
       console.error('Error updating workbench', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async manageUserRole(
+    workbenchId: string,
+    userId: string,
+    roleName: string
+  ): Promise<Result<User>> {
+    try {
+      const response = await this.dataSource.manageUserRole(
+        workbenchId,
+        userId,
+        {
+          role: {
+            name: roleName,
+            context: {
+              workbench: workbenchId
+            }
+          }
+        }
+      )
+
+      if (response.result?.workbench !== undefined) {
+        return { error: 'Error managing user role' }
+      }
+
+      // Since the API returns workbench data not user data,
+      // we'll return a success indicator and let the UI refresh the user list
+      return {
+        data: {
+          id: userId,
+          firstName: '',
+          lastName: '',
+          username: '',
+          source: '',
+          status: '',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      }
+    } catch (error) {
+      console.error('Error managing user role in workbench', error)
+
+      // Try to extract more specific error information from the API response
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as {
+          response?: { status?: number; statusText?: string }
+        }
+        if (apiError.response?.status) {
+          return {
+            error: `API Error ${apiError.response.status}: ${apiError.response.statusText || 'Unknown error'}`
+          }
+        }
+      }
+
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }

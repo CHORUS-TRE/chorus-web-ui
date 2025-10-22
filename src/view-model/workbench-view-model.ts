@@ -12,6 +12,7 @@ import {
 import { WorkbenchDataSourceImpl } from '~/data/data-source'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import { Result } from '~/domain/model'
+import { User } from '~/domain/model/user'
 import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
 import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
 import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
@@ -161,6 +162,30 @@ export async function workbenchUpdate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workbench', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workbenchAddUserRole(
+  prevState: Result<User>,
+  formData: FormData
+): Promise<Result<User>> {
+  try {
+    const repository = await getRepository()
+
+    const workbenchId = formData.get('workbenchId') as string
+    const userId = formData.get('userId') as string
+    const roleName = formData.get('roleName') as string
+
+    if (!workbenchId || !userId || !roleName) {
+      return {
+        error: 'Missing required fields: workbenchId, userId, or roleName'
+      }
+    }
+
+    return await repository.manageUserRole(workbenchId, userId, roleName)
+  } catch (error) {
+    console.error('Error adding user role to workbench', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

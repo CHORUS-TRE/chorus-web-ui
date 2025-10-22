@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon, HomeIcon, Package } from 'lucide-react'
+import { HomeIcon, Package } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -10,20 +10,10 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
@@ -122,7 +112,7 @@ export default function WorkspacesGrid({
                 </>
               }
               description={
-                <div className="mt-1">
+                <>
                   <span className="text-xs">
                     Owner:{' '}
                     {
@@ -137,7 +127,7 @@ export default function WorkspacesGrid({
                   <span className="block text-xs">
                     Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
                   </span>
-                </div>
+                </>
               }
               content={
                 <div className="">
