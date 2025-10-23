@@ -17,23 +17,15 @@ const readFileContent = (file: File): Promise<string> => {
     const reader = new FileReader()
     reader.onload = () => {
       const result = reader.result as string
-      // For text files, return as is; for binary files, return base64
-      if (file.type.startsWith('text/') || file.type === 'application/json') {
-        resolve(result)
-      } else {
-        // Remove data URL prefix for base64 content
-        const base64 = result.split(',')[1]
-        resolve(base64)
-      }
+      // Always return base64 content for consistency
+      // Remove data URL prefix for base64 content
+      const base64 = result.split(',')[1]
+      resolve(base64)
     }
     reader.onerror = reject
 
-    // Use appropriate reading method based on file type
-    if (file.type.startsWith('text/') || file.type === 'application/json') {
-      reader.readAsText(file)
-    } else {
-      reader.readAsDataURL(file)
-    }
+    // Always use readAsDataURL to get base64 content
+    reader.readAsDataURL(file)
   })
 }
 
@@ -524,25 +516,15 @@ export function useFileSystem(workspaceId?: string) {
           const content = result.data.content
 
           if (content) {
-            if (
-              result.data.mimeType?.startsWith('text/') ||
-              result.data.mimeType === 'application/json'
-            ) {
-              // Text file - content is plain text
-              blob = new Blob([content], {
-                type: result.data.mimeType || 'text/plain'
-              })
-            } else {
-              // Binary file - content is base64 encoded
-              const binaryContent = atob(content)
-              const bytes = new Uint8Array(binaryContent.length)
-              for (let i = 0; i < binaryContent.length; i++) {
-                bytes[i] = binaryContent.charCodeAt(i)
-              }
-              blob = new Blob([bytes], {
-                type: result.data.mimeType || 'application/octet-stream'
-              })
+            // All content is now base64 encoded
+            const binaryContent = atob(content)
+            const bytes = new Uint8Array(binaryContent.length)
+            for (let i = 0; i < binaryContent.length; i++) {
+              bytes[i] = binaryContent.charCodeAt(i)
             }
+            blob = new Blob([bytes], {
+              type: result.data.mimeType || 'application/octet-stream'
+            })
 
             // Trigger download
             const url = URL.createObjectURL(blob)
