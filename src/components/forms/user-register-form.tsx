@@ -7,7 +7,7 @@ import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import { createUser } from '@/view-model/user-view-model'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
@@ -24,8 +24,9 @@ function SubmitButton() {
   return (
     <Button
       type="submit"
+      variant="accent-filled"
+      className="w-full"
       disabled={pending}
-      className="flex w-full items-center justify-center gap-1"
     >
       {pending ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -50,7 +51,7 @@ export default function UserRegisterForm() {
   }, [state])
 
   return (
-    <div className="overlay-surface flex w-full flex-col items-center justify-center p-8 md:w-1/2">
+    <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
       <div className="grid h-full w-full gap-2 p-8">
         <div className="gap-4 text-center">
           <h2>Create an account</h2>

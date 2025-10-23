@@ -111,7 +111,7 @@ export function UserCreateDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="accent-ring">Create User</Button>
+        <Button variant="accent-filled">Create User</Button>
       </DialogTrigger>
       <DialogContent className="">
         <DialogHeader>

@@ -116,7 +116,7 @@ export function AddUserToWorkspaceDialog({
         {children ? (
           children
         ) : (
-          <Button variant="accent-ring">
+          <Button variant="accent-filled">
             <UserPlus className="mr-2 h-4 w-4" />
             Add User to Workspace
           </Button>

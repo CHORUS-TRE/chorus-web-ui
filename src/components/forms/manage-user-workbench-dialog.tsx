@@ -177,7 +177,7 @@ export function ManageUserWorkbenchDialog({
         {children ? (
           children
         ) : (
-          <Button variant="accent-ring">
+          <Button variant="accent-filled">
             <UserPlus className="mr-2 h-4 w-4" />
             Manage Workbench Roles
           </Button>
