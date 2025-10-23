@@ -156,7 +156,7 @@ export function FileGrid({
             <div
               key={item.id}
               className={cn(
-                'grid cursor-pointer grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 transition-colors hover:bg-muted/50',
+                'grid cursor-pointer grid-cols-12 gap-4 border-b border-muted/40 p-4 transition-colors hover:text-accent',
                 selectedItems.includes(item.id) && 'bg-accent/10',
                 dragOverItem === item.id && 'bg-accent/20'
               )}

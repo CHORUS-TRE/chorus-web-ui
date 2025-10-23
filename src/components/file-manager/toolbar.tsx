@@ -3,7 +3,6 @@
 import { LayoutGrid, List, Plus, Search, Settings, Upload } from 'lucide-react'
 
 import { Button } from '~/components/button'
-import { Button as UIButton } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 
 interface ToolbarProps {
@@ -24,18 +23,18 @@ export function Toolbar({
   onSearch
 }: ToolbarProps) {
   return (
-    <div className="flex items-center justify-between border-muted/40 p-4">
+    <div className="flex items-center justify-between border-muted/40 pb-4">
       <div className="flex items-center gap-3">
         <Button
           onClick={onCreateFolder}
-          className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+          variant="accent-filled"
         >
           <Plus className="h-4 w-4" />
           New folder
         </Button>
         <Button
           onClick={onImport}
-          className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
+          variant="accent-filled"
         >
           <Upload className="h-4 w-4" />
           Import
@@ -57,26 +56,24 @@ export function Toolbar({
 
         <div className="grid grid-flow-col grid-rows-1 gap-4">
           <div className="flex items-center justify-end gap-0">
-            <UIButton
+            <Button
               variant="ghost"
-              size="sm"
-              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${viewMode === 'grid' ? 'border-accent' : ''}`}
+              className={`${viewMode === 'grid' ? 'border-accent border' : ''}`}
               onClick={onToggleViewMode}
               id="grid-button"
               aria-label="Switch to grid view"
             >
               <LayoutGrid />
-            </UIButton>
-            <UIButton
+            </Button>
+            <Button
               variant="ghost"
-              size="sm"
-              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${viewMode === 'list' ? 'border-accent' : ''}`}
+              className={`${viewMode === 'list' ? 'border-accent border' : ''}`}
               onClick={onToggleViewMode}
               id="list-button"
               aria-label="Switch to list view"
             >
               <List />
-            </UIButton>
+            </Button>
           </div>
         </div>
       </div>

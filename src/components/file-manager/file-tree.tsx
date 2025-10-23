@@ -151,9 +151,9 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
     <div>
       <div
         className={cn(
-          'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm transition-colors hover:bg-muted/50',
-          isSelected && 'bg-accent/10 text-accent',
-          isCurrent && 'bg-accent/20 font-medium'
+          'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium transition-colors text-muted hover:text-accent',
+          isSelected && 'text-accent',
+          isCurrent && ''
         )}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={handleClick}
