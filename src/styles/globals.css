@@ -11,6 +11,7 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
+    --contrast-background: 0 0% 99%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 98%;
@@ -51,7 +52,8 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 222 47% 11%;
+    --background: 213 15% 14%;
+    --contrast-background: 0 0% 5%;
     --foreground: 210 40% 98%;
 
     --card: 222 47% 15%;
@@ -66,8 +68,8 @@
     --secondary: 240 75% 84.3%;
     --secondary-foreground: 229 100% 54%;
 
-    --muted: 217 33% 55%;
-    --muted-foreground: 215 20% 70%;
+    --muted: 215 20% 55%; /*     --muted: 217 33% 55%; */
+    --muted-foreground: 215 20% 80%;
 
     --accent: 73.8 100% 54.3%;
     --accent-foreground: 222 47% 11%;
@@ -145,7 +147,7 @@
 
   /* Glassmorphism Effects */
   .glass-surface {
-    @apply border border-muted/40 bg-background/60 backdrop-blur-sm;
+    @apply border border-muted/40 bg-contrast-background/80 backdrop-blur-sm;
   }
 
   .glass-elevated {
@@ -162,7 +164,7 @@
   }
 
   .overlay-surface {
-    @apply bg-background/90 backdrop-blur-sm;
+    @apply bg-background/80 backdrop-blur-sm;
   }
 
   /* Navigation Link Variants */
@@ -208,21 +210,4 @@ nav li {
 .RaSidebar-docked,
 .RaSidebar-closed {
   display: none !important;
-}
-
-/* .flex {
-  border: 1px solid rgba(0, 0, 0, 0.2);
-} */
-
-/*
----break---
-*/
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
