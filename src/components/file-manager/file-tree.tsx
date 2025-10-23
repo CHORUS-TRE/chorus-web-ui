@@ -151,7 +151,7 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
     <div>
       <div
         className={cn(
-          'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium transition-colors text-muted hover:text-accent',
+          'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-accent',
           isSelected && 'text-accent',
           isCurrent && ''
         )}

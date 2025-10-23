@@ -106,7 +106,7 @@ export function ActionBar({
           </Button>
 
           {selectedItems.length === 1 && (
-          <Button variant="ghost" onClick={handleRename}>
+            <Button variant="ghost" onClick={handleRename}>
               <Edit3 className="h-4 w-4" />
             </Button>
           )}

@@ -25,17 +25,11 @@ export function Toolbar({
   return (
     <div className="flex items-center justify-between border-muted/40 pb-4">
       <div className="flex items-center gap-3">
-        <Button
-          onClick={onCreateFolder}
-          variant="accent-filled"
-        >
+        <Button onClick={onCreateFolder} variant="accent-filled">
           <Plus className="h-4 w-4" />
           New folder
         </Button>
-        <Button
-          onClick={onImport}
-          variant="accent-filled"
-        >
+        <Button onClick={onImport} variant="accent-filled">
           <Upload className="h-4 w-4" />
           Import
         </Button>
@@ -58,7 +52,7 @@ export function Toolbar({
           <div className="flex items-center justify-end gap-0">
             <Button
               variant="ghost"
-              className={`${viewMode === 'grid' ? 'border-accent border' : ''}`}
+              className={`${viewMode === 'grid' ? 'border border-accent' : ''}`}
               onClick={onToggleViewMode}
               id="grid-button"
               aria-label="Switch to grid view"
@@ -67,7 +61,7 @@ export function Toolbar({
             </Button>
             <Button
               variant="ghost"
-              className={`${viewMode === 'list' ? 'border-accent border' : ''}`}
+              className={`${viewMode === 'list' ? 'border border-accent' : ''}`}
               onClick={onToggleViewMode}
               id="list-button"
               aria-label="Switch to list view"

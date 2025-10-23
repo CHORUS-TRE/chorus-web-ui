@@ -153,7 +153,7 @@ export default function FileManagerClient({
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="card-glass flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0">
+        <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
           <div className="border-b border-muted/40 p-4">
             <div className="text-2xl font-medium text-sidebar-foreground">
               Archive
@@ -222,13 +222,12 @@ export default function FileManagerClient({
           </div>
           <DialogFooter>
             <Button
-              type="button"
+              variant="accent-filled"
               onClick={() => setShowCreateFolderDialog(false)}
-              className="focus:bg-background focus:text-accent"
             >
               Cancel
             </Button>
-            <Button onClick={handleCreateFolderSubmit} variant="accent-ring">
+            <Button onClick={handleCreateFolderSubmit} variant="accent-filled">
               <CirclePlus className="h-4 w-4" />
               Create
             </Button>
