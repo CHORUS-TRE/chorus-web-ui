@@ -24,7 +24,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '~/components/ui/breadcrumb'
-import { Button as UIButton } from '~/components/ui/button'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 
@@ -59,15 +58,12 @@ export default function WorkspacesPage() {
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+          <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <Package className="h-9 w-9" />
             Workspaces
           </h2>
           {canCreateWorkspace && (
-            <Button
-              onClick={() => setCreateOpen(true)}
-              className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-            >
+            <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
               <CirclePlus className="h-4 w-4" />
               Create Workspace
             </Button>
@@ -75,46 +71,20 @@ export default function WorkspacesPage() {
         </div>
       </div>
 
-      <div className="w-full">
-        <div className="grid grid-flow-col grid-rows-1 gap-4">
-          <div className="flex items-center justify-end gap-0">
-            <UIButton
-              variant="ghost"
-              size="sm"
-              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${!showWorkspacesTable ? 'border-accent' : ''}`}
-              onClick={toggleWorkspaceView}
-              id="grid-button"
-              disabled={!showWorkspacesTable}
-              aria-label="Switch to grid view"
-            >
-              <LayoutGrid />
-            </UIButton>
-            <UIButton
-              variant="ghost"
-              size="sm"
-              className={`border border-transparent text-muted hover:bg-inherit hover:text-accent ${showWorkspacesTable ? 'border-accent' : ''}`}
-              onClick={toggleWorkspaceView}
-              id="table-button"
-              disabled={showWorkspacesTable}
-              aria-label="Switch to table view"
-            >
-              <Rows3 />
-            </UIButton>
-          </div>
-        </div>
+      <div className="flex w-full flex-row items-start justify-start">
         <Accordion
           type="multiple"
           defaultValue={['my-workspaces']}
           className="w-full"
         >
           <AccordionItem value="my-workspaces" className="border-b-0">
-            <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+            <AccordionTrigger className="text-muted hover:text-accent hover:no-underline">
               <div className="text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Package className="h-6 w-6" />
                   <div>My Workspaces</div>
                 </div>
-                <p className="text-sm font-normal text-muted">
+                <p className="text-sm font-normal text-muted-foreground">
                   View and manage your workspaces
                 </p>
               </div>
@@ -154,13 +124,13 @@ export default function WorkspacesPage() {
           </AccordionItem>
 
           <AccordionItem value="all-workspaces" className="border-b-0">
-            <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+            <AccordionTrigger className="text-muted hover:text-accent hover:no-underline">
               <div className="text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Package className="h-6 w-6" />
                   <div>All Workspaces</div>
                 </div>
-                <p className="text-sm font-normal text-muted">
+                <p className="text-sm font-normal text-muted-foreground">
                   View all available workspaces
                 </p>
               </div>
@@ -195,6 +165,28 @@ export default function WorkspacesPage() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        <div className="flex items-center justify-end gap-0">
+          <Button
+            variant="ghost"
+            className={`${!showWorkspacesTable ? 'border border-accent' : ''}`}
+            onClick={toggleWorkspaceView}
+            id="grid-button"
+            disabled={!showWorkspacesTable}
+            aria-label="Switch to grid view"
+          >
+            <LayoutGrid />
+          </Button>
+          <Button
+            variant="ghost"
+            className={`${showWorkspacesTable ? 'border border-accent' : ''}`}
+            onClick={toggleWorkspaceView}
+            id="table-button"
+            disabled={showWorkspacesTable}
+            aria-label="Switch to table view"
+          >
+            <Rows3 />
+          </Button>
+        </div>
       </div>
 
       {createOpen && (

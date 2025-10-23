@@ -35,7 +35,7 @@ const AuthenticationContext = createContext<AuthContextType>({
   }
 })
 
-export const AuthProvider = ({
+export const AuthenticationProvider = ({
   children
 }: {
   children: ReactNode
@@ -141,7 +141,9 @@ export const AuthProvider = ({
 export function useAuthentication(): AuthContextType {
   const context = useContext(AuthenticationContext)
   if (context === undefined) {
-    throw new Error('useAuthentication must be used within an AuthProvider')
+    throw new Error(
+      'useAuthentication must be used within an AuthenticationProvider'
+    )
   }
   return context
 }

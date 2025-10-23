@@ -132,7 +132,7 @@ export default function SandboxPage() {
 
       <div className="w-full">
         <div className="mb-6">
-          <h3 className="mb-2 text-lg font-semibold">Testing Environment</h3>
+          <h3 className="mb-0 text-lg font-semibold">Testing Environment</h3>
           <p className="text-sm text-muted">
             Experimental features and development tools for the CHORUS platform
           </p>
@@ -152,7 +152,7 @@ export default function SandboxPage() {
               children: React.ReactNode
             }) =>
               !item.children ? (
-                <Link key={key} href={href} className="group">
+                <Link key={key} href={href} className="group text-muted">
                   {children}
                 </Link>
               ) : (
@@ -162,13 +162,13 @@ export default function SandboxPage() {
             return (
               <ConditionalLink key={item.title} href={item.href}>
                 <Card className="card-glass h-full transition-all hover:border-accent/50 hover:bg-background/80">
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="rounded-lg bg-accent/20 p-2">
-                          <IconComponent className="h-5 w-5 text-accent" />
+                          <IconComponent className="h-5 w-5" />
                         </div>
-                        <CardTitle className="text-white transition-colors group-hover:text-accent">
+                        <CardTitle className="text-muted transition-colors group-hover:text-accent">
                           {item.title}
                         </CardTitle>
                       </div>
@@ -181,7 +181,7 @@ export default function SandboxPage() {
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      <p className="text-muted-foreground">
+                      <p className="mb-2 text-muted-foreground">
                         {item.description}
                       </p>
 

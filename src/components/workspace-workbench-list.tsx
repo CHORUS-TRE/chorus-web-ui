@@ -103,25 +103,27 @@ export function WorkspaceWorkbenchList({
                   >
                     <div className="mb-1 flex-grow text-sm">
                       <div
-                        className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-muted hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
+                        className={`flex items-center gap-2 ${userId === user?.id ? 'cursor-pointer text-muted hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
                       >
                         {isActive && (
                           <div
-                            className="h-2 w-2 animate-pulse rounded-full bg-green-500"
+                            className="h-2 w-2 animate-pulse rounded-full bg-accent"
                             aria-hidden="true"
                           />
                         )}
 
                         {!isActive && (
                           <AppWindow
-                            className="h-4 w-4 shrink-0 text-muted"
+                            className="h-4 w-4 shrink-0"
                             aria-hidden="true"
                           />
                         )}
-                        <div className="w-full min-w-0 flex-1">{appNames}</div>
+                        <div className="w-full min-w-0 flex-1 text-xs font-semibold">
+                          {appNames}
+                        </div>
                       </div>
                     </div>
-                    <p className="cursor-default text-xs">
+                    <p className="cursor-default text-xs font-normal text-muted-foreground">
                       {userDisplayName}
                       {', '}
                       {formatDistanceToNow(createdAt || new Date())} ago

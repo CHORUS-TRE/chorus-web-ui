@@ -1,4 +1,7 @@
-import React from 'react'
+'use client'
+
+import { useTheme } from 'next-themes'
+import React, { useEffect, useState } from 'react'
 
 import { Button as UIButton } from './ui/button'
 
@@ -11,6 +14,7 @@ export interface ButtonProps
     | 'secondary'
     | 'ghost'
     | 'link'
+    | 'link-underline'
     | 'accent-ring'
     | 'accent-filled'
   asChild?: boolean
@@ -22,20 +26,72 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       disabled = false,
       type = 'button',
-      variant = 'accent-ring',
+      variant = 'accent-filled',
       className,
       ...props
     },
     ref
   ) => {
+    const { theme } = useTheme()
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+      setMounted(true)
+    }, [])
+
     // Custom accent variants
+    if (variant === 'ghost') {
+      return (
+        <UIButton
+          size="icon"
+          disabled={disabled}
+          type={type}
+          className={`h-8 w-8 bg-transparent text-muted hover:bg-transparent hover:text-accent ${className || ''}`}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </UIButton>
+      )
+    }
+
+    if (variant === 'link') {
+      return (
+        <UIButton
+          size="xs"
+          disabled={disabled}
+          type={type}
+          className={`focus-visible:no-ring h-8 rounded-none border-b-2 border-transparent bg-transparent text-muted underline-offset-4 hover:bg-transparent hover:text-accent ${className || ''}`}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </UIButton>
+      )
+    }
+
+    if (variant === 'link-underline') {
+      return (
+        <UIButton
+          size="xs"
+          disabled={disabled}
+          type={type}
+          className={`focus-visible:no-ring h-8 rounded-none border-b-2 border-transparent bg-transparent text-muted hover:bg-transparent hover:text-accent hover:underline ${className || ''}`}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </UIButton>
+      )
+    }
+
     if (variant === 'accent-ring') {
       return (
         <UIButton
           size="sm"
           disabled={disabled}
           type={type}
-          className={`flex items-center justify-center gap-1 rounded-full bg-transparent text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black focus:bg-accent-background focus:ring-2 focus:ring-accent ${className || ''}`}
+          className={`flex items-center justify-center gap-1 rounded-full bg-transparent text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black ${className || ''}`}
           ref={ref}
           {...props}
         >
@@ -45,12 +101,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     if (variant === 'accent-filled') {
+      const isLightTheme = mounted && theme === 'light'
+      const themeClasses = isLightTheme
+        ? 'bg-accent text-black hover:bg-accent-background'
+        : 'bg-transparent text-accent ring-1 ring-accent hover:bg-accent/10'
+
       return (
         <UIButton
-          size="sm"
+          size="xs"
           disabled={disabled}
           type={type}
-          className={`flex items-center justify-center gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent ${className || ''}`}
+          className={`flex items-center justify-center gap-1 rounded-full text-xs transition-[gap] duration-500 ease-in-out hover:gap-2 ${themeClasses} ${className || ''}`}
           ref={ref}
           {...props}
         >

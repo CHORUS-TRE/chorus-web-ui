@@ -10,7 +10,7 @@ import React from 'react'
 
 import { AIChatProvider } from '@/providers/ai-chat-provider'
 import { AppStateProvider } from '@/providers/app-state-provider'
-import { AuthProvider } from '@/providers/authentication-provider'
+import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { AIChatWidget } from '~/components/ai-chat/ai-chat-widget'
 import BackgroundIframe from '~/components/background-iframe'
@@ -56,7 +56,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
+          <AuthenticationProvider>
             <AuthorizationProvider>
               <AppStateProvider>
                 {/* <AIChatProvider> */}
@@ -67,7 +67,7 @@ export default async function RootLayout({
                 {/* </AIChatProvider> */}
               </AppStateProvider>
             </AuthorizationProvider>
-          </AuthProvider>
+          </AuthenticationProvider>
         </ThemeProvider>
       </body>
     </html>

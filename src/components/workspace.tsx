@@ -11,12 +11,13 @@ import {
   LaptopMinimal,
   Users
 } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Card } from '@/components/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Link } from '@/components/ui/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { formatFileSize } from '@/utils/format-file-size'
@@ -72,6 +73,7 @@ function SimpleBarChart({
 }
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
+  const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
   const {
@@ -122,29 +124,35 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     <>
       <div className="card-glass relative mb-4 flex w-full items-center justify-between gap-2 p-4">
         <div className="workspace-info mr-8 w-full">
-          <h3 className="mb-2 text-lg">{workspace?.description}</h3>
+          {workspace?.description && workspace?.description.length > 0 && (
+            <p className="mb-2 text-sm text-muted-foreground">
+              {workspace?.description}
+            </p>
+          )}
           <div className="workspace-details flex w-full items-center justify-between gap-2">
             <div className="detail-item">
-              <h4 className="label text-xs">Owner:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">Owner</h4>
+              <p className="value text-sm font-semibold">
                 {owner?.firstName} {owner?.lastName}
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-xs">Status:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">Status</h4>
+              <p className="value text-sm font-semibold">
                 {workspace?.status || 'Active'}
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-xs">Creation date:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">
+                Creation date
+              </h4>
+              <p className="value text-sm font-semibold">
                 {formatDistanceToNow(workspace?.createdAt || new Date())} ago
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-xs">Updated:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">Updated</h4>
+              <p className="value text-sm font-semibold">
                 {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
               </p>
             </div>
@@ -168,7 +176,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                   Edit
                 </DropdownMenuItem>
-                {workspace?.id !== user?.workspaceId && (
+                {workspace?.id === user?.workspaceId && (
                   <DropdownMenuItem
                     onClick={() =>
                       workspace?.id && setActiveDeleteId(workspace?.id)
@@ -205,21 +213,16 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             role="region"
             aria-labelledby="sessions-card-title"
             title={
-              <div className="flex w-full items-center justify-between text-muted">
-                <Link
-                  href={`/workspaces/${workspaceId}/sessions`}
-                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-                >
-                  <LaptopMinimal
-                    className="h-6 w-6 flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span id="sessions-card-title" className="">
-                    <span className="sr-only">Sessions</span>
-                    Sessions
-                  </span>
-                </Link>
-              </div>
+              <Link href={`/workspaces/${workspaceId}/sessions`} variant="nav">
+                <LaptopMinimal
+                  className="h-6 w-6 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Sessions</span>
+                  Sessions
+                </span>
+              </Link>
             }
             description={(() => {
               const sessionCount =
@@ -294,34 +297,26 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
         <Card
           title={
-            <div className="flex w-full items-center justify-between text-muted">
-              <Link
-                href={`/workspaces/${workspaceId}/data`}
-                className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-              >
-                <Database
-                  className="h-6 w-6 flex-shrink-0"
-                  aria-hidden="true"
-                />
-                <span id="sessions-card-title" className="">
-                  <span className="sr-only">Data</span>
-                  Data
-                </span>
-              </Link>
-            </div>
+            <Link href={`/workspaces/${workspaceId}/data`} variant="nav">
+              <Database className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+              <span id="sessions-card-title" className="">
+                <span className="sr-only">Data</span>
+                Data
+              </span>
+            </Link>
           }
           description="View and manage your data sources."
           content={
             <>
-              <div className="grid gap-2">
+              <div className="flex flex-col gap-2">
                 {rootChildren
                   .filter((child) => child.type === 'folder')
                   .map((child) => (
                     <div
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between text-muted-foreground"
                       key={child.id}
                     >
-                      <p className="text-xs">{child.name}</p>
+                      <p className="text-xs text-foreground">{child.name}</p>
                       <p className="text-xs">
                         <Folder className="h-4 w-4" />
                       </p>
@@ -331,24 +326,27 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   .filter((child) => child.type === 'file')
                   .map((child) => (
                     <div
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between text-muted-foreground"
                       key={child.id}
                     >
-                      <p className="text-wrap text-xs">{child.name}</p>
-                      <p className="text-wrap text-xs">
-                        {formatFileSize(child.size)}
+                      <p className="text-ellipsis whitespace-nowrap text-wrap text-xs text-foreground">
+                        {child.name}
                       </p>
+                      <p className="text-xs">{formatFileSize(child.size)}</p>
                     </div>
                   ))}
               </div>
             </>
           }
           footer={
-            <Button className="cursor-default" asChild>
-              <Link href={`/workspaces/${workspaceId}/data`}>
-                <ArrowRight className="h-4 w-4" />
-                View Data
-              </Link>
+            <Button
+              variant="accent-filled"
+              onClick={() => {
+                router.push(`/workspaces/${workspaceId}/data`)
+              }}
+            >
+              <ArrowRight className="h-4 w-4" />
+              View Data
             </Button>
           }
         />
@@ -356,18 +354,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         {workspace && user?.workspaceId !== workspace?.id && (
           <Card
             title={
-              <div className="flex w-full items-center justify-between text-muted">
-                <Link
-                  href={`/workspaces/${workspaceId}/users`}
-                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-                >
-                  <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-                  <span id="sessions-card-title" className="">
-                    <span className="sr-only">Members</span>
-                    Members
-                  </span>
-                </Link>
-              </div>
+              <Link href={`/workspaces/${workspaceId}/users`} variant="nav">
+                <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Members</span>
+                  Members
+                </span>
+              </Link>
             }
             description="See who's on your team and their roles."
             content={
@@ -381,19 +374,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                     )
                     .map((user) => (
                       <div
-                        className="flex items-center gap-4"
+                        className="flex items-center gap-4 text-muted-foreground"
                         key={`team-${user.id}`}
                       >
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src="/placeholder-user.jpg" />
-                          <AvatarFallback>JD</AvatarFallback>
+                          <AvatarFallback>
+                            {user.firstName[0]?.toUpperCase()}{' '}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="text-sm">
                             {user.firstName} {user.lastName}
-                          </p>
-                          <p className="text-xs text-muted">
-                            {user.roles?.join(', ')}
                           </p>
                         </div>
                       </div>
@@ -402,30 +393,29 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </ScrollArea>
             }
             footer={
-              <Button className="cursor-default" asChild>
-                <Link
-                  href={`/workspaces/${workspaceId}/users`}
-                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-                >
-                  <ArrowRight className="h-4 w-4" />
-                  View Members
-                </Link>
+              <Button
+                variant="accent-filled"
+                onClick={() => router.push(`/workspaces/${workspaceId}/users`)}
+              >
+                <ArrowRight className="h-4 w-4" />
+                View Members
               </Button>
             }
           />
         )}
 
         <Card
+          className="blur-[1px]"
           title={
-            <>
+            <Link href={'#'} variant="nav">
               <CircleGauge className="h-6 w-6" />
               Resources
-            </>
+            </Link>
           }
           description="You're using 1.2GB of your 5GB storage limit."
           content={
             <>
-              <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none">
+              <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none text-muted">
                 12.5
                 <span className="text-sm font-normal text-muted">Mo/day</span>
               </div>
@@ -448,7 +438,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             </>
           }
           footer={
-            <Button disabled className="cursor-default">
+            <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Resources
             </Button>
@@ -456,16 +446,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
 
         <Card
+          className="blur-[1px]"
           title={
-            <>
+            <Link href={'#'} variant="nav">
               <Activity className="h-6 w-6" />
               Activities
-            </>
+            </Link>
           }
           description="Events, analytics & monitoring."
           content={<LineChart className="aspect-[3/2]" />}
           footer={
-            <Button disabled className="cursor-default">
+            <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Activities
             </Button>
@@ -473,16 +464,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
 
         <Card
+          className="blur-[1px]"
           title={
-            <>
+            <Link href={'#'} variant="nav">
               <Footprints className="h-6 w-6" />
               Footprint
-            </>
+            </Link>
           }
           description=""
           content={<div className="text-sm text-muted"></div>}
           footer={
-            <Button disabled className="cursor-default">
+            <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Footprint
             </Button>

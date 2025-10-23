@@ -131,7 +131,7 @@ export default function WorkspacesGrid({
               }
               content={
                 <div className="">
-                  <div className="mb-2 border-b border-muted/40 pb-2 text-xs font-bold">
+                  <div className="mb-2 border-b border-muted/40 pb-2 text-xs font-bold text-muted-foreground">
                     {(() => {
                       const count =
                         workbenches?.filter(

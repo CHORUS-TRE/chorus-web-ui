@@ -125,7 +125,7 @@ export default function LoginForm() {
   )
 
   return (
-    <div className="overlay-surface flex w-full flex-col items-center justify-center p-8 md:w-1/2">
+    <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
       <div className="grid h-full w-full gap-2 p-8">
         {isLoading ?? (
           <div className="gap-4 text-center">
@@ -243,7 +243,8 @@ export default function LoginForm() {
                   .map((mode) => (
                     <Button
                       key={mode.openid?.id}
-                      className="w-full justify-center"
+                      variant="accent-filled"
+                      className="w-full"
                       onClick={() => handleOAuthLogin(mode)}
                     >
                       {mode.buttonText || mode.openid?.id || 'Open ID'}

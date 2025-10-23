@@ -73,7 +73,10 @@ const HomePage = () => {
               <div className="mb-4 text-muted">
                 Create a personal workspace to get started
               </div>
-              <Button onClick={() => setCreateOpen(true)} variant="accent-ring">
+              <Button
+                onClick={() => setCreateOpen(true)}
+                variant="accent-filled"
+              >
                 <CirclePlus className="h-4 w-4" />
                 Create Workspace
               </Button>

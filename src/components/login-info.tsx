@@ -2,22 +2,33 @@
 
 import { Github, Link } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+import { useTheme } from 'next-themes'
+import React, { useEffect, useState } from 'react'
 
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
+import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
 
 import packageInfo from '../../package.json'
 
 export default function LoginInfo() {
+  const { theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const logo = mounted && theme === 'light' ? logoBlack : logoWhite
+
   return (
-    <div className="hidden h-full w-1/2 flex-col items-center justify-between p-8 md:flex">
-      <div className="mt-8 flex flex-col items-center justify-center">
+    <div className="flex w-full flex-col items-center justify-center p-8 md:w-1/2">
+      <div className="mt-8 flex flex-grow flex-col items-center justify-center">
         <Image
           src={logo}
           alt="Chorus Logo"
           width={320}
           height={180}
-          className="mb-12 h-36 w-auto max-w-full flex-grow"
+          className="mb-12 h-36 w-auto max-w-full"
           priority
         />
         <div className="max-w-xs text-center">
@@ -30,7 +41,6 @@ export default function LoginInfo() {
           </p>
         </div>
       </div>
-      <div className="flex-grow"></div>
       <div className="flex w-full items-end justify-between gap-2">
         <div>
           <a

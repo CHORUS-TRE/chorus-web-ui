@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon, HomeIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -132,9 +133,7 @@ export default function WorkspaceTable({
               href={`/workspaces/${workspace?.id}`}
               className="nav-link-base nav-link-hover [&.active]:nav-link-active inline-flex gap-x-2"
             >
-              {workspace?.isMain && (
-                <HomeIcon className="h-4 w-4 text-foreground" />
-              )}
+              {workspace?.isMain && <HomeIcon className="h-4 w-4 text-muted" />}
               {workspace?.name}
             </Link>
           </TableCell>
@@ -156,7 +155,7 @@ export default function WorkspaceTable({
           </TableCell>
 
           <TableCell className="hidden p-1 md:table-cell">
-            {workspace?.createdAt.toLocaleDateString()}
+            {formatDistanceToNow(workspace?.createdAt || new Date())} ago
           </TableCell>
           <TableCell className="p-1">
             <DropdownMenu modal={false}>

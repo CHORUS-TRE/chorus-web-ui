@@ -171,7 +171,7 @@ export function WorkbenchCreateForm({
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="accent-ring" type="button" disabled={isCreating}>
+        <Button variant="accent-filled" type="button" disabled={isCreating}>
           <CirclePlus className="h-4 w-4" />
           {isCreating ? 'Creating...' : 'Start session'}
         </Button>

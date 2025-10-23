@@ -5,6 +5,7 @@ import {
   Bell,
   CircleHelp,
   Database,
+  FlaskConical,
   Home,
   LaptopMinimal,
   LogOut,
@@ -25,6 +26,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import { Button } from '@/components/button'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -34,7 +36,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -208,7 +209,7 @@ export function Header() {
                                 }
                               >
                                 <Users className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">Team</span>
+                                <span className="text-sm">Members</span>
                               </div>
 
                               <div
@@ -596,18 +597,6 @@ export function Header() {
                                         className="glass-surface flex h-full flex-col rounded-lg p-2 transition-colors duration-300 hover:border-accent hover:shadow-lg"
                                       >
                                         <div className="text-sm font-semibold">
-                                          {/* <div className="flex items-center justify-between">
-                                            <div
-                                              className={`mb-1 flex items-center gap-2 ${id === background?.sessionId ? 'text-accent' : ''}`}
-                                            >
-                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                              {shortName}
-                                            </div>
-                                            <p className="text-xs text-muted">
-                                              {formatDistanceToNow(createdAt)}{' '}
-                                              ago
-                                            </p>
-                                          </div> */}
                                           <div className="text-xs text-muted">
                                             <div className="flex items-center gap-2 text-xs">
                                               <AppWindow className="h-4 w-4 shrink-0" />
@@ -679,8 +668,6 @@ export function Header() {
           <div className="ml-1 flex items-center">
             <ThemeToggle />
             <Button
-              size="icon"
-              className="h-8 w-8 text-muted hover:bg-inherit hover:text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2"
               variant="ghost"
               onClick={toggleRightSidebar}
               aria-label="Help and support"
@@ -689,12 +676,7 @@ export function Header() {
               <span className="sr-only">Help</span>
             </Button>
             {user && (
-              <Button
-                size="icon"
-                className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                variant="ghost"
-                aria-label="Notifications"
-              >
+              <Button variant="ghost" aria-label="Notifications">
                 <Bell className="h-4 w-4" aria-hidden="true" />
                 <span className="sr-only">Notifications</span>
               </Button>
@@ -702,11 +684,7 @@ export function Header() {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    size="icon"
-                    className="h-8 w-8 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
-                    variant="ghost"
-                  >
+                  <Button variant="ghost">
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -742,6 +720,14 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
+            <Button
+              variant="ghost"
+              onClick={() => router.push(`/sandbox`)}
+              aria-label="Sandbox"
+            >
+              <FlaskConical className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Lab</span>
+            </Button>
           </div>
         </div>
 
