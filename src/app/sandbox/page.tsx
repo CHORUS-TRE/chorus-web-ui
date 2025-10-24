@@ -1,13 +1,13 @@
 'use client'
 
 import {
+  Activity,
   Code2,
   Cpu,
   FileText,
   FlaskConical,
   Layers,
-  PackageOpen,
-  Settings
+  PackageOpen
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -34,36 +34,43 @@ export default function SandboxPage() {
       description: 'View the templates of the CHORUS platform',
       href: 'sandbox/templates',
       icon: FileText,
-      status: 'Beta',
+      status: 'Development',
       children: [
         {
           title: 'CHORUS Architecture',
           description: 'View the architecture of the CHORUS platform',
           href: 'sandbox/architecture',
           icon: Layers,
-          status: 'Beta'
+          status: 'Development'
         },
         {
           title: 'CHORUS Protocol Builder',
           description: 'Build and test protocols for the CHORUS platform',
           href: 'sandbox/chorus-protocol-builder',
           icon: FlaskConical,
-          status: 'Beta'
+          status: 'Development'
         },
         {
           title: 'CHORUS Clinical Lifecycle Dashboard',
           description: 'Manage your clinical project',
           href: 'sandbox/workspace',
           icon: PackageOpen,
-          status: 'Beta'
+          status: 'Development'
         },
         {
           title: 'Clinical Studies Dashboard',
           description: 'Manage clinical studies',
           href: 'sandbox/clinical-lifecycle-ashboard',
           icon: PackageOpen,
-          status: 'Beta'
+          status: 'Development'
         }
+        // {
+        //   title: 'Patient Health Summary',
+        //   description: 'View patient health metrics and medical data',
+        //   href: 'sandbox/patient',
+        //   icon: Activity,
+        //   status: 'Development'
+        // }
       ]
     },
 
@@ -72,7 +79,7 @@ export default function SandboxPage() {
       description: 'Visualize the schema roles & permissions',
       href: 'sandbox/schema-viz',
       icon: Layers,
-      status: 'Beta'
+      status: 'Development'
     },
     {
       title: 'Component Explorer',
@@ -98,7 +105,7 @@ export default function SandboxPage() {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
       case 'Development':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'Beta':
+      case 'Completed':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'

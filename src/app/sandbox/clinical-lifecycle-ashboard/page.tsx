@@ -16,8 +16,8 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
+import { Button } from '@/components/button'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -215,25 +215,23 @@ export default function ClinicalLifecycleDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-16">
+    <div className="min-h-screen p-16">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Clinical Studies Dashboard
-            </h1>
-            <p className="text-gray-600">
+            <h1 className="text-3xl font-bold">Clinical Studies Dashboard</h1>
+            <p className="text-muted-foreground">
               Manage and monitor clinical research projects from design to
               completion
             </p>
           </div>
           <div className="flex gap-2">
-            <Button>
+            <Button variant="accent-filled">
               <Download className="mr-2 h-4 w-4" />
               Export Report
             </Button>
-            <Button>
+            <Button variant="accent-filled">
               <Upload className="mr-2 h-4 w-4" />
               New Project
             </Button>
@@ -242,7 +240,7 @@ export default function ClinicalLifecycleDashboard() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-          <Card>
+          <Card className="card-glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Active Projects
@@ -256,7 +254,7 @@ export default function ClinicalLifecycleDashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Participants
@@ -268,7 +266,7 @@ export default function ClinicalLifecycleDashboard() {
               <p className="text-xs text-muted-foreground">+180 this month</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Pending Approvals
@@ -282,7 +280,7 @@ export default function ClinicalLifecycleDashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Completion Rate
@@ -307,7 +305,7 @@ export default function ClinicalLifecycleDashboard() {
 
           {/* Lifecycle Overview */}
           <TabsContent value="lifecycle" className="space-y-6">
-            <Card>
+            <Card className="card-glass">
               <CardHeader>
                 <CardTitle>Clinical Research Lifecycle Stages</CardTitle>
                 <CardDescription>
@@ -319,7 +317,7 @@ export default function ClinicalLifecycleDashboard() {
                   {lifecycleStages.map((stage) => (
                     <Card
                       key={stage.id}
-                      className={`cursor-pointer transition-all ${activeStage === stage.id ? 'ring-2 ring-blue-500' : ''}`}
+                      className={`card-glass cursor-pointer transition-all ${activeStage === stage.id ? 'ring-2 ring-blue-500' : ''}`}
                       onClick={() => setActiveStage(stage.id)}
                     >
                       <CardHeader className="pb-3">
@@ -364,7 +362,7 @@ export default function ClinicalLifecycleDashboard() {
 
             {/* Stage Details */}
             {activeStage && (
-              <Card>
+              <Card className="card-glass">
                 <CardHeader>
                   <CardTitle>
                     {lifecycleStages.find((s) => s.id === activeStage)?.title} -
@@ -430,7 +428,7 @@ export default function ClinicalLifecycleDashboard() {
 
           {/* Active Projects */}
           <TabsContent value="projects" className="space-y-6">
-            <Card>
+            <Card className="card-glass">
               <CardHeader>
                 <CardTitle>Current Projects</CardTitle>
                 <CardDescription>
@@ -440,7 +438,7 @@ export default function ClinicalLifecycleDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {currentProjects.map((project) => (
-                    <Card key={project.id} className="p-4">
+                    <Card key={project.id} className="card-glass p-4">
                       <div className="mb-4 flex items-center justify-between">
                         <div>
                           <h3 className="text-lg font-semibold">
@@ -489,7 +487,7 @@ export default function ClinicalLifecycleDashboard() {
 
           {/* Workflow Status */}
           <TabsContent value="workflow" className="space-y-6">
-            <Card>
+            <Card className="card-glass">
               <CardHeader>
                 <CardTitle>Workflow Monitoring</CardTitle>
                 <CardDescription>
@@ -498,7 +496,7 @@ export default function ClinicalLifecycleDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <Card className="p-4">
+                  <Card className="card-glass p-4">
                     <h4 className="mb-2 font-semibold">
                       Ethics Approval Queue
                     </h4>
@@ -507,14 +505,14 @@ export default function ClinicalLifecycleDashboard() {
                       Avg processing time: 6 weeks
                     </p>
                   </Card>
-                  <Card className="p-4">
+                  <Card className="card-glass p-4">
                     <h4 className="mb-2 font-semibold">Data Access Requests</h4>
                     <div className="text-2xl font-bold text-green-600">3</div>
                     <p className="text-sm text-gray-600">
                       Avg processing time: 2 weeks
                     </p>
                   </Card>
-                  <Card className="p-4">
+                  <Card className="card-glass p-4">
                     <h4 className="mb-2 font-semibold">System Integrations</h4>
                     <div className="text-2xl font-bold text-purple-600">12</div>
                     <p className="text-sm text-gray-600">
@@ -528,7 +526,7 @@ export default function ClinicalLifecycleDashboard() {
 
           {/* System Integration */}
           <TabsContent value="systems" className="space-y-6">
-            <Card>
+            <Card className="card-glass">
               <CardHeader>
                 <CardTitle>System Integration Status</CardTitle>
                 <CardDescription>
