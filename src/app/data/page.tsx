@@ -1,8 +1,8 @@
 'use client'
 
 import { Database, Package } from 'lucide-react'
-import Link from 'next/link'
 
+import { Link } from '@/components/ui/link'
 import { useAppState } from '@/providers/app-state-provider'
 import {
   Accordion,
@@ -72,7 +72,7 @@ export default function DataPage() {
         className="w-full"
       >
         <AccordionItem value="my-workspaces-data" className="border-b-0">
-          <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+          <AccordionTrigger className="text-muted hover:text-accent hover:no-underline [&>svg]:text-muted [&>svg]:opacity-100">
             <div className="text-lg font-semibold">
               <div className="flex items-center gap-2">
                 <Package className="h-6 w-6" />
@@ -98,16 +98,13 @@ export default function DataPage() {
                   >
                     <CardHeader className="pb-2">
                       <CardTitle className="">{w.name}</CardTitle>
-                      <CardDescription className="text-muted">
+                      <CardDescription className="text-muted-foreground">
                         {users?.find((user) => user.id === w.userId)?.firstName}{' '}
                         {users?.find((user) => user.id === w.userId)?.lastName}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link
-                        href={`/workspaces/${w.id}/data`}
-                        className="text-accent underline-offset-4 hover:underline"
-                      >
+                      <Link href={`/workspaces/${w.id}/data`} variant="nav">
                         View data for this workspace
                       </Link>
                     </CardContent>
@@ -125,7 +122,7 @@ export default function DataPage() {
         </AccordionItem>
 
         <AccordionItem value="all-workspaces-data" className="border-b-0">
-          <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+          <AccordionTrigger className="text-muted hover:text-accent hover:no-underline [&>svg]:text-muted [&>svg]:opacity-100">
             <div className="text-lg font-semibold">
               <div className="flex items-center gap-2">
                 <Package className="h-6 w-6" />
@@ -147,12 +144,13 @@ export default function DataPage() {
                   >
                     <CardHeader className="pb-2">
                       <CardTitle className="">{w.name}</CardTitle>
+                      <CardDescription className="text-muted-foreground">
+                        {users?.find((user) => user.id === w.userId)?.firstName}{' '}
+                        {users?.find((user) => user.id === w.userId)?.lastName}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link
-                        href={`/workspaces/${w.id}/data`}
-                        className="text-accent underline-offset-4 hover:underline"
-                      >
+                      <Link href={`/workspaces/${w.id}/data`} variant="nav">
                         View data for this workspace
                       </Link>
                     </CardContent>
@@ -170,7 +168,7 @@ export default function DataPage() {
         </AccordionItem>
 
         <AccordionItem value="public-chuv-data" className="border-b-0">
-          <AccordionTrigger className="text-white hover:no-underline [&>svg]:text-white [&>svg]:opacity-100">
+          <AccordionTrigger className="text-muted hover:text-accent hover:no-underline [&>svg]:text-muted [&>svg]:opacity-100">
             <div className="text-lg font-semibold">
               <div className="flex items-center gap-2">
                 <Database className="h-6 w-6" />

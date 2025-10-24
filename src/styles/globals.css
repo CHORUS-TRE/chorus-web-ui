@@ -151,7 +151,7 @@
   }
 
   .glass-elevated {
-    @apply border border-muted/30 bg-background/80 shadow-lg backdrop-blur-md;
+    @apply border border-muted/30 bg-contrast-background/80 shadow-lg backdrop-blur-md;
   }
 
   .glass-popover {
@@ -186,7 +186,7 @@
   }
 
   .interactive-item {
-    @apply flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10;
+    @apply flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 backdrop-blur-sm transition-colors hover:bg-accent/10 hover:text-accent;
   }
 
   /* Card Variants */
