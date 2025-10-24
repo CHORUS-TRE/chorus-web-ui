@@ -336,10 +336,17 @@ export function Header() {
                         ) : (
                           <AppWindow className="h-4 w-4" />
                         )}
-                        {
-                          workspaces?.find((w) => w.id === user?.workspaceId)
-                            ?.name
-                        }
+
+                        <span
+                          className="max-w-36 truncate text-nowrap"
+                          title={
+                            workspaces?.find((w) => w.id === user?.workspaceId)
+                              ?.name || ''
+                          }
+                        >
+                          {workspaces?.find((w) => w.id === user?.workspaceId)
+                            ?.name || ''}
+                        </span>
                       </div>
                     </NavLink>
                   )}
@@ -671,14 +678,16 @@ export function Header() {
               <CircleHelp className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">Help</span>
             </Button>
-            <Button
-              variant="ghost"
-              onClick={() => router.push(`/sandbox`)}
-              aria-label="Sandbox"
-            >
-              <FlaskConical className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Lab</span>
-            </Button>
+            {user?.rolesWithContext?.some((role) => role.context.user) && (
+              <Button
+                variant="ghost"
+                onClick={() => router.push(`/sandbox`)}
+                aria-label="Sandbox"
+              >
+                <FlaskConical className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">Lab</span>
+              </Button>
+            )}
             {user && (
               <Button variant="ghost" aria-label="Notifications" disabled>
                 <Bell className="h-4 w-4 text-muted" aria-hidden="true" />
