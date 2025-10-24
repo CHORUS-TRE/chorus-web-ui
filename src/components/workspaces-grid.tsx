@@ -86,7 +86,7 @@ export default function WorkspacesGrid({
                 (role) => role.context.workspace === workspace.id
               ) && (
                 <DropdownMenu modal={false}>
-                  <DropdownMenuContent align="end" className="glass-popover">
+                  <DropdownMenuContent align="end" className="glass-elevated">
                     {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                     <DropdownMenuItem
                       onClick={() => setActiveUpdateId(workspace.id)}
@@ -142,7 +142,7 @@ export default function WorkspacesGrid({
               }
               content={
                 <div className="">
-                  <div className="mb-2 border-b border-muted/40 pb-2 text-xs font-bold text-muted-foreground">
+                  <div className="mb-1 text-xs font-bold text-muted-foreground">
                     {(() => {
                       const count =
                         workbenches?.filter(

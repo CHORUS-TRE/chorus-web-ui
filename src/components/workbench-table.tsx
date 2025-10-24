@@ -178,7 +178,7 @@ export default function WorkbenchTable({
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-popover">
+              <DropdownMenuContent align="end" className="glass-elevated">
                 {/* <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault()

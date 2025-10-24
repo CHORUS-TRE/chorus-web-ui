@@ -171,7 +171,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-popover">
+              <DropdownMenuContent align="end" className="glass-elevated">
                 {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                 <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                   Edit

@@ -161,7 +161,7 @@ export default function WorkspaceTable({
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-popover">
+              <DropdownMenuContent align="end" className="glass-elevated">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={(e) => {

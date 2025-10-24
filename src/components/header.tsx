@@ -762,7 +762,7 @@ export function Header() {
       </nav>
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
-        <AlertDialogContent className="glass-popover">
+        <AlertDialogContent className="glass-elevated">
           <AlertDialogHeader>
             <AlertDialogTitle>About {currentWorkbench?.name}</AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
