@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { createUser } from '@/view-model/user-view-model'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Dialog,
   DialogContent,
@@ -111,11 +111,9 @@ export function UserCreateDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background">
-          Create User
-        </Button>
+        <Button variant="accent-filled">Create User</Button>
       </DialogTrigger>
-      <DialogContent className="text-white">
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Create New User</DialogTitle>
         </DialogHeader>

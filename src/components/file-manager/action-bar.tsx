@@ -3,7 +3,7 @@
 import { Copy, Download, Edit3, Move, Share2, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Dialog,
   DialogContent,
@@ -81,15 +81,14 @@ export function ActionBar({
 
   return (
     <>
-      <div className="flex items-center gap-2 rounded-2xl border border-muted/40 bg-background/60 p-2 text-white">
+      <div className="flex items-center gap-2 rounded-2xl border border-muted/40 bg-background/60 p-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>
-            {selectedItems.length} sélectionné
+            {selectedItems.length} selected
             {selectedItems.length > 1 ? 's' : ''}
           </span>
           <Button
             variant="ghost"
-            size="sm"
             onClick={onClearSelection}
             className="h-6 w-6 p-0"
           >
@@ -100,7 +99,6 @@ export function ActionBar({
         <div className="ml-4 flex items-center gap-1">
           <Button
             variant="ghost"
-            size="sm"
             onClick={handleDelete}
             className="text-destructive hover:text-destructive"
           >
@@ -108,24 +106,24 @@ export function ActionBar({
           </Button>
 
           {selectedItems.length === 1 && (
-            <Button variant="ghost" size="sm" onClick={handleRename}>
+            <Button variant="ghost" onClick={handleRename}>
               <Edit3 className="h-4 w-4" />
             </Button>
           )}
 
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" disabled>
             <Share2 className="h-4 w-4" />
           </Button>
 
-          <Button variant="ghost" size="sm" onClick={handleDownload}>
+          <Button variant="ghost" onClick={handleDownload}>
             <Download className="h-4 w-4" />
           </Button>
 
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" disabled>
             <Copy className="h-4 w-4" />
           </Button>
 
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" disabled>
             <Move className="h-4 w-4" />
           </Button>
         </div>
@@ -134,13 +132,13 @@ export function ActionBar({
       <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Renommer</DialogTitle>
+            <DialogTitle>Rename</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <Input
               value={renameValue}
               onChange={(e) => setRenameValue(e.target.value)}
-              placeholder="Nouveau nom"
+              placeholder="New name"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleRenameSubmit()
@@ -153,9 +151,9 @@ export function ActionBar({
               variant="outline"
               onClick={() => setShowRenameDialog(false)}
             >
-              Annuler
+              Cancel
             </Button>
-            <Button onClick={handleRenameSubmit}>Renommer</Button>
+            <Button onClick={handleRenameSubmit}>Rename</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

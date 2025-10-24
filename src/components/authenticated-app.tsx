@@ -8,9 +8,9 @@ import React from 'react'
 
 import { Header } from '@/components/header'
 import { useAppState } from '@/providers/app-state-provider'
+import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import RightSidebar from '~/components/right-sidebar'
-import { Button } from '~/components/ui/button'
 import { steps } from '~/lib/tours'
 
 interface MainLayoutProps {
@@ -52,15 +52,13 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
           >
             <div
               id="content"
-              className="relative w-full rounded-2xl border border-secondary bg-black bg-opacity-85"
+              className="glass-surface relative w-full rounded-2xl border border-secondary"
             >
               <>
                 <div className="w-full p-8">{children}</div>
                 <div className="absolute right-0 top-0 z-50 p-2">
                   <Button
                     disabled={!background?.sessionId}
-                    size="icon"
-                    className={`overflow-hidden text-accent hover:bg-inherit`}
                     variant="ghost"
                     title="Show session"
                     onClick={() => {
@@ -75,7 +73,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
               </>
             </div>
             <div
-              className={`rounded-2xl border border-secondary bg-black bg-opacity-85 p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
+              className={`glass-surface rounded-2xl p-4 ${showRightSidebar ? 'visible' : 'hidden'}`}
               id="sidebar"
             >
               <RightSidebar />

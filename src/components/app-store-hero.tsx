@@ -8,7 +8,7 @@ export default function AppStoreHero() {
   const { toggleRightSidebar } = useAppState()
 
   return (
-    <section className="relative isolate overflow-hidden text-white">
+    <section className="relative isolate overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8">
         <div className="relative flex items-center">
           <div className="flex-1">

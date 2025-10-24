@@ -41,7 +41,7 @@ export default function RightSidebar() {
 
       <div className="flex h-full w-[300px] flex-col justify-between pr-8">
         <div>
-          <h2 className="mb-8 flex items-center gap-2 text-xl text-white">
+          <h2 className="mb-8 flex items-center gap-2 text-xl">
             <Icon iconNode={owl} />
             Help
           </h2>
@@ -52,7 +52,7 @@ export default function RightSidebar() {
               target="_blank"
             >
               <Card
-                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
                 id="getting-started-step1"
               >
                 <CardHeader className="pb-4">
@@ -78,7 +78,7 @@ export default function RightSidebar() {
               className="cursor"
             >
               <Card
-                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
               >
                 <CardHeader className="pb-4">
                   <CardTitle className="text-base">Documentation</CardTitle>
@@ -99,7 +99,7 @@ export default function RightSidebar() {
               </Card>
             </Link>
 
-            {/* <Card className="bg-opacity-85 bg-black text-white">
+            {/* <Card className="bg-opacity-85 bg-black">
               <CardHeader className="pb-4">
                 <CardTitle>Contact Support</CardTitle>
                 <CardDescription>
@@ -129,7 +129,7 @@ export default function RightSidebar() {
                   <Button
                     type="submit"
                     disabled
-                    className="w-full bg-primary text-white hover:bg-primary/90"
+                    className="w-full bg-primary hover:bg-primary/90"
                   >
                     Send Message
                   </Button>

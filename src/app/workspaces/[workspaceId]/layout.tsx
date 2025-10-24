@@ -71,11 +71,11 @@ export default function Layout({
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex w-full flex-grow items-center justify-start">
-        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
+        <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
           {params?.workspaceId === user?.workspaceId ? (
-            <Home className="h-9 w-9 text-white" />
+            <Home className="h-9 w-9" />
           ) : (
-            <PackageOpen className="h-9 w-9 text-white" />
+            <PackageOpen className="h-9 w-9" />
           )}
 
           {workspace ? (

@@ -22,11 +22,11 @@ const RolesPage = () => {
 
   return (
     <>
-      <div className="w-full text-white">
+      <div className="w-full">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-              <Shield className="h-9 w-9 text-white" />
+            <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+              <Shield className="h-9 w-9" />
               Role Management
             </h2>
             <div className="">
@@ -44,7 +44,7 @@ const RolesPage = () => {
         </div>
       </div>
 
-      <div className="w-full text-white">
+      <div className="w-full">
         <div className="rounded-lg bg-muted/10 p-8 text-center">
           <p className="text-lg text-muted-foreground">
             Role management is now handled through user rolesWithContext. Please

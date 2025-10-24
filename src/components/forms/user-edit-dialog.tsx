@@ -72,23 +72,6 @@ export function UserEditDialog({
   const dialogOpen = isControlled ? open : internalOpen
   const setDialogOpen = isControlled ? onOpenChange! : setInternalOpen
 
-  // useEffect(() => {
-  //   const fetchRoles = async () => {
-  //     const dataSource = new MockRoleDataSource()
-  //     const repo = new RoleRepositoryImpl(dataSource)
-  //     const useCase = new RoleListUseCase(repo)
-  //     const result = await useCase.execute()
-
-  //     console.log('roleListUseCase roles', result.data)
-
-  //     if (result.data) {
-  //       setRoles(result.data)
-  //     }
-  //   }
-
-  //   fetchRoles()
-  // }, [])
-
   type UserEditValues = {
     id: string
     firstName: string
@@ -127,7 +110,7 @@ export function UserEditDialog({
       onUserUpdated()
       setDialogOpen(false)
     }
-  }, [state, onUserUpdated])
+  }, [state, onUserUpdated, setDialogOpen])
 
   const onSubmit = (data: FormData) => {
     const formData = new FormData()
@@ -166,7 +149,7 @@ export function UserEditDialog({
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="text-white">
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>
@@ -239,7 +222,7 @@ export function UserEditDialog({
                   </FormLabel>
                   <FormControl>
                     <Table
-                      className="text-white"
+                      className=""
                       aria-label={`User roles management table with ${field?.value?.length} roles`}
                     >
                       <caption className="sr-only">

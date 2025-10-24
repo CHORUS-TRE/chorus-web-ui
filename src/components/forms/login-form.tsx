@@ -130,8 +130,8 @@ export default function LoginForm() {
   )
 
   return (
-    <div className="flex w-full flex-col items-center justify-center bg-black bg-opacity-20 p-8 md:w-1/2">
-      <div className="grid h-full w-full gap-2 p-8 text-white">
+    <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
+      <div className="grid h-full w-full gap-2 p-8">
         {isLoading ?? (
           <div className="gap-4 text-center">
             <h2>Login</h2>
@@ -171,14 +171,14 @@ export default function LoginForm() {
                 >
                   <div className="grid gap-4 py-8">
                     <div className="grid gap-2">
-                      <Label htmlFor="username">username</Label>
+                      <Label htmlFor="username">Username</Label>
                       <Input
                         id="username"
                         type="input"
-                        name="username"
+                        name="Username"
                         required
                         disabled={pending}
-                        className="border border-muted/40 bg-background text-white"
+                        className="border border-muted/40 bg-background"
                         defaultValue={searchParams.get('username') || ''}
                       />
                     </div>
@@ -200,7 +200,8 @@ export default function LoginForm() {
                     <Button
                       type="submit"
                       disabled={pending}
-                      className="flex w-full items-center justify-center gap-1 rounded-full bg-accent text-sm text-black transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background focus:bg-accent-background focus:ring-2 focus:ring-accent"
+                      variant="accent-filled"
+                      className="w-full"
                     >
                       {pending ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -213,7 +214,7 @@ export default function LoginForm() {
                 </form>
 
                 {publicRegistration && (
-                  <div className="mb-4 text-center text-sm text-white">
+                  <div className="mb-4 text-center text-sm">
                     Don&apos;t have an account?{' '}
                     <Link
                       href="/register"
@@ -249,7 +250,8 @@ export default function LoginForm() {
                   .map((mode) => (
                     <Button
                       key={mode.openid?.id}
-                      className="w-full justify-center"
+                      variant="accent-filled"
+                      className="w-full"
                       onClick={() => handleOAuthLogin(mode)}
                     >
                       {mode.buttonText || mode.openid?.id || 'Open ID'}

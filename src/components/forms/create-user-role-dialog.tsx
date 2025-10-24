@@ -126,7 +126,7 @@ export function CreateUserRoleDialog({
           <span className="sr-only">Add role</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="text-white">
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Create User Role</DialogTitle>
         </DialogHeader>

@@ -132,7 +132,7 @@ export default function RoleHierarchyPage() {
 
   return (
     <div className="">
-      <div className="py-4 text-white shadow-sm">
+      <div className="py-4 shadow-sm">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Role Hierarchy & Permissions</h1>
           <div className="flex items-center space-x-4">

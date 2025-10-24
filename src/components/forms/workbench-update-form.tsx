@@ -115,7 +115,7 @@ export function WorkbenchUpdateForm({
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-background text-white">
+      <DialogContent className="bg-background">
         <DialogHeader>
           <DialogTitle>Edit Session</DialogTitle>
           <DialogDescription>
@@ -124,7 +124,7 @@ export function WorkbenchUpdateForm({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="w-full max-w-md border-none bg-background text-white">
+            <Card className="w-full max-w-md border-none bg-background">
               <CardContent className="grid gap-4">
                 <input type="hidden" {...form.register('id')} />
                 <input type="hidden" {...form.register('tenantId')} />

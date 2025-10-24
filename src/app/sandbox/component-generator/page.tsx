@@ -35,8 +35,6 @@ export default function ComponentGeneratorPage() {
   }
 
   const handleMessageSend = async (message: string): Promise<void> => {
-    console.log('Message sent:', message)
-
     try {
       // Call the component generation API
       const response = await fetch('/api/components/generate', {
@@ -57,8 +55,6 @@ export default function ComponentGeneratorPage() {
       const result = await response.json()
 
       if (result.success) {
-        console.log('Component generated successfully:', result.componentSpec)
-
         // Store the generated component
         const newComponent: GeneratedComponent = {
           id: Date.now(),
@@ -80,7 +76,7 @@ export default function ComponentGeneratorPage() {
     }
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       <div className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-7xl">
           {/* Hero Section */}
@@ -94,7 +90,7 @@ export default function ComponentGeneratorPage() {
           {generatedComponents.length > 0 && (
             <div className="mb-16">
               <div className="mb-8 text-center">
-                <h2 className="mb-4 text-3xl font-bold text-white">
+                <h2 className="mb-4 text-3xl font-bold">
                   Your Generated Components
                 </h2>
                 <p className="text-muted-foreground">
@@ -106,7 +102,7 @@ export default function ComponentGeneratorPage() {
                 {generatedComponents.map((component) => (
                   <Card
                     key={component.id}
-                    className="border border-gray-700 bg-gray-900/50 text-white"
+                    className="border border-gray-700 bg-gray-900/50"
                   >
                     <CardContent className="p-6">
                       <div className="mb-4">
@@ -132,7 +128,7 @@ export default function ComponentGeneratorPage() {
                             dangerouslySetInnerHTML={{
                               __html: component.preview
                             }}
-                            className="text-white"
+                            className=""
                           />
                         ) : (
                           <div className="text-sm text-gray-400">
@@ -146,14 +142,14 @@ export default function ComponentGeneratorPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-gray-600 text-white"
+                          className="border-gray-600"
                         >
                           Edit
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-gray-600 text-white"
+                          className="border-gray-600"
                         >
                           Use Component
                         </Button>

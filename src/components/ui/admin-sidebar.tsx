@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Database, LayoutDashboard, Shield, Users } from 'lucide-react'
+import { LayoutDashboard, Shield, Users } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ElementType } from 'react'

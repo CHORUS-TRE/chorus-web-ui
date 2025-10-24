@@ -90,7 +90,7 @@ const ChatBotDemo = () => {
   return (
     <div className="relative mx-auto size-full h-screen max-w-4xl p-6">
       <div className="flex h-96 flex-col">
-        <Conversation className="h-full text-white">
+        <Conversation className="h-full">
           <ConversationContent>
             {messages.map((message) => (
               <div key={message.id}>
@@ -175,11 +175,11 @@ const ChatBotDemo = () => {
 
         <PromptInput
           onSubmit={handleSubmit}
-          className="mt-4 text-white"
+          className="mt-4"
           globalDrop
           multiple
         >
-          <PromptInputBody className="text-white">
+          <PromptInputBody className="">
             <PromptInputAttachments>
               {(attachment) => <PromptInputAttachment data={attachment} />}
             </PromptInputAttachments>

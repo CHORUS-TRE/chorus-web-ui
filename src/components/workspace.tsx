@@ -6,18 +6,22 @@ import {
   CircleGauge,
   Database,
   EllipsisVerticalIcon,
+  Folder,
   Footprints,
   LaptopMinimal,
   Users
 } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Card } from '@/components/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Link } from '@/components/ui/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { formatFileSize } from '@/utils/format-file-size'
+import { useFileSystem } from '~/hooks/use-file-system'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import {
@@ -69,6 +73,7 @@ function SimpleBarChart({
 }
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
+  const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
   const {
@@ -80,7 +85,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     workspaces
   } = useAppState()
   const { user, refreshUser } = useAuthentication()
+  const { getChildren } = useFileSystem(workspaceId)
 
+  const rootChildren = getChildren('root')
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const owner =
     user?.id === workspace?.userId
@@ -89,15 +96,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   useEffect(() => {
     if (!workspaceId || !workbenches || workbenches.length === 0) return
-
-    // if (user?.id !== workspaceId) {
-    //   setBackground({
-    //     sessionId: undefined,
-    //     workspaceId: workspaceId
-    //   })
-
-    //   return
-    // }
 
     const firstSessionId = workbenches.find(
       (workbench) =>
@@ -124,37 +122,43 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   return (
     <>
-      <div className="relative mb-4 flex w-full items-center justify-between gap-2 rounded-2xl border border-muted/40 bg-background/60 p-4 text-white">
+      <div className="card-glass relative mb-4 flex w-full items-center justify-between gap-2 p-4">
         <div className="workspace-info mr-8 w-full">
-          <h3 className="mb-2 text-lg">{workspace?.description}</h3>
-          <div className="workspace-details flex w-full items-center justify-between gap-2">
+          <div className="workspace-details mb-3 flex w-full items-center justify-between gap-2">
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Owner:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">Owner</h4>
+              <p className="value text-sm font-semibold">
                 {owner?.firstName} {owner?.lastName}
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Status:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">Status</h4>
+              <p className="value text-sm font-semibold">
                 {workspace?.status || 'Active'}
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Creation date:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">
+                Creation date
+              </h4>
+              <p className="value text-sm font-semibold">
                 {formatDistanceToNow(workspace?.createdAt || new Date())} ago
               </p>
             </div>
             <div className="detail-item">
-              <h4 className="label text-sm text-muted">Updated:</h4>
-              <p className="value font-semibold">
+              <h4 className="label text-xs text-muted-foreground">Updated</h4>
+              <p className="value text-sm font-semibold">
                 {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
               </p>
             </div>
           </div>
+          {workspace?.description && workspace?.description.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {workspace?.description}
+            </p>
+          )}
         </div>
-        <div className="absolute right-2 top-2 text-white">
+        <div className="absolute right-2 top-2">
           {workspace?.userId === user?.id && (
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
@@ -167,12 +171,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuContent align="end" className="glass-elevated">
                 {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
                 <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                   Edit
                 </DropdownMenuItem>
-                {workspace?.id !== user?.workspaceId && (
+                {workspace?.id === user?.workspaceId && (
                   <DropdownMenuItem
                     onClick={() =>
                       workspace?.id && setActiveDeleteId(workspace?.id)
@@ -204,170 +208,150 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       </div>
 
       <div className="my-1 grid w-full gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
-        <div key={workspace?.id} className="group relative">
-          <Card
-            role="region"
-            aria-labelledby="sessions-card-title"
-            title={
-              <div className="flex w-full items-center justify-between text-muted">
-                <Link
-                  href={`/workspaces/${workspaceId}/sessions`}
-                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-                >
-                  <LaptopMinimal
-                    className="h-6 w-6 flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span id="sessions-card-title" className="">
-                    <span className="sr-only">Sessions</span>
-                    Sessions
-                  </span>
-                </Link>
-                {/* <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      className="h-8 w-8 bg-inherit text-accent ring-0 hover:bg-inherit hover:text-accent hover:ring-1 hover:ring-accent focus:bg-inherit focus:ring-0"
-                      variant="ghost"
-                      aria-label="Session management options"
-                      aria-describedby="sessions-card-title"
-                      aria-haspopup="true"
-                    >
-                      <MoreVertical className="h-4 w-4" aria-hidden="true" />
-                      <span className="sr-only">Session options</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-black text-white"
+        <Card
+          role="region"
+          aria-labelledby="sessions-card-title"
+          title={
+            <Link href={`/workspaces/${workspaceId}/sessions`} variant="nav">
+              <LaptopMinimal
+                className="h-6 w-6 flex-shrink-0"
+                aria-hidden="true"
+              />
+              <span id="sessions-card-title" className="">
+                <span className="sr-only">Sessions</span>
+                Sessions
+              </span>
+            </Link>
+          }
+          description={(() => {
+            const sessionCount =
+              workbenches?.filter(
+                (workbench) => workbench.workspaceId === workspaceId
+              )?.length || 0
+            return (
+              <span className="w-16 truncate text-nowrap">{`${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}`}</span>
+            )
+          })()}
+          content={
+            <Suspense fallback={<div>Loading sessions...</div>}>
+              {(() => {
+                const sessionCount =
+                  workbenches?.filter(
+                    (workbench) =>
+                      workbench.workspaceId === workspaceId &&
+                      workbench.userId === user?.id
+                  )?.length || 0
+
+                // Adaptive layout based on session count
+                const getScrollAreaClass = () => {
+                  if (sessionCount === 0) return 'flex flex-col'
+                  if (sessionCount <= 2)
+                    return 'flex max-h-24 flex-col overflow-y-auto'
+                  if (sessionCount <= 4)
+                    return 'flex max-h-32 flex-col overflow-y-auto'
+                  return 'flex max-h-40 flex-col overflow-y-auto'
+                }
+
+                return (
+                  <ScrollArea
+                    className={getScrollAreaClass()}
+                    type="hover"
+                    role="region"
+                    aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
+                    aria-describedby="scroll-hint"
                   >
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(`/workspaces/${workspaceId}/sessions`)
-                      }
-                    >
-                      <TableProperties className="mr-2 h-4 w-4" />
-                      Manage Sessions
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu> */}
-              </div>
-            }
-            description={(() => {
-              const sessionCount =
-                workbenches?.filter(
-                  (workbench) =>
-                    workbench.workspaceId === workspaceId &&
-                    workbench.userId === user?.id
-                )?.length || 0
-              return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}.`
-            })()}
-            content={
-              <Suspense fallback={<div>Loading sessions...</div>}>
-                {(() => {
-                  const sessionCount =
-                    workbenches?.filter(
-                      (workbench) =>
-                        workbench.workspaceId === workspaceId &&
-                        workbench.userId === user?.id
-                    )?.length || 0
+                    <div id="scroll-hint" className="sr-only">
+                      Use arrow keys or scroll to navigate through sessions
+                    </div>
+                    <WorkspaceWorkbenchList workspaceId={workspaceId} />
+                  </ScrollArea>
+                )
+              })()}
+            </Suspense>
+          }
+          footer={
+            <div className="flex w-full flex-row items-center gap-2">
+              <WorkbenchCreateForm
+                workspaceId={workspace?.id || ''}
+                workspaceName={workspace?.name}
+              />
+            </div>
+          }
+        />
 
-                  // Adaptive layout based on session count
-                  const getScrollAreaClass = () => {
-                    if (sessionCount === 0) return 'flex flex-col'
-                    if (sessionCount <= 2)
-                      return 'flex max-h-24 flex-col overflow-y-auto'
-                    if (sessionCount <= 4)
-                      return 'flex max-h-32 flex-col overflow-y-auto'
-                    return 'flex max-h-40 flex-col overflow-y-auto'
-                  }
-
-                  return (
-                    <ScrollArea
-                      className={getScrollAreaClass()}
-                      type="hover"
-                      role="region"
-                      aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
-                      aria-describedby="scroll-hint"
-                    >
-                      <div id="scroll-hint" className="sr-only">
-                        Use arrow keys or scroll to navigate through sessions
-                      </div>
-                      <WorkspaceWorkbenchList workspaceId={workspaceId} />
-                    </ScrollArea>
-                  )
-                })()}
-              </Suspense>
-            }
-            footer={
-              <div className="flex w-full flex-row items-center gap-2">
-                <WorkbenchCreateForm
-                  workspaceId={workspace?.id || ''}
-                  workspaceName={workspace?.name}
-                />
-              </div>
-            }
+        {openEdit && (
+          <WorkspaceUpdateForm
+            workspace={workspace}
+            state={[openEdit, setOpenEdit]}
+            onSuccess={() => {
+              toast({
+                title: 'Workspace updated',
+                description: 'Workspace updated',
+                variant: 'default'
+              })
+              refreshWorkspaces()
+              refreshUser()
+            }}
           />
-
-          {openEdit && (
-            <WorkspaceUpdateForm
-              workspace={workspace}
-              state={[openEdit, setOpenEdit]}
-              onSuccess={() => {
-                toast({
-                  title: 'Workspace updated',
-                  description: 'Workspace updated',
-                  variant: 'default'
-                })
-                refreshWorkspaces()
-                refreshUser()
-              }}
-            />
-          )}
-        </div>
+        )}
 
         <Card
           title={
-            <div className="flex w-full items-center justify-between text-muted">
-              <Link
-                href={`/workspaces/${workspaceId}/data`}
-                className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-              >
-                <Database
-                  className="h-6 w-6 flex-shrink-0"
-                  aria-hidden="true"
-                />
-                <span id="sessions-card-title" className="">
-                  <span className="sr-only">Data</span>
-                  Data
-                </span>
-              </Link>
-            </div>
+            <Link href={`/workspaces/${workspaceId}/data`} variant="nav">
+              <Database className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+              <span id="sessions-card-title" className="">
+                <span className="sr-only">Data</span>
+                Data
+              </span>
+            </Link>
           }
           description="View and manage your data sources."
           content={
             <>
-              <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">Database</p>
-                  <p className="text-xs">3</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">API</p>
-                  <p className="text-xs">2</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs">Files</p>
-                  <p className="text-xs">1026</p>
-                </div>
+              <div className="flex flex-col gap-2">
+                {rootChildren && rootChildren.length === 0 && (
+                  <div className="flex items-center justify-between text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">No data</p>
+                  </div>
+                )}
+                {rootChildren
+                  .filter((child) => child.type === 'folder')
+                  .map((child) => (
+                    <div
+                      className="flex items-center justify-between text-muted-foreground"
+                      key={child.id}
+                    >
+                      <p className="text-xs text-foreground">{child.name}</p>
+                      <p className="text-xs">
+                        <Folder className="h-4 w-4" />
+                      </p>
+                    </div>
+                  ))}
+                {rootChildren
+                  .filter((child) => child.type === 'file')
+                  .map((child) => (
+                    <div
+                      className="flex items-center justify-between text-muted-foreground"
+                      key={child.id}
+                    >
+                      <p className="text-ellipsis whitespace-nowrap text-wrap text-xs text-foreground">
+                        {child.name}
+                      </p>
+                      <p className="text-xs">{formatFileSize(child.size)}</p>
+                    </div>
+                  ))}
               </div>
             </>
           }
           footer={
-            <Button className="cursor-default" asChild>
-              <Link href={`/workspaces/${workspaceId}/data`}>
-                <ArrowRight className="h-4 w-4" />
-                View Data
-              </Link>
+            <Button
+              variant="accent-filled"
+              onClick={() => {
+                router.push(`/workspaces/${workspaceId}/data`)
+              }}
+            >
+              <ArrowRight className="h-4 w-4" />
+              View Data
             </Button>
           }
         />
@@ -375,18 +359,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         {workspace && user?.workspaceId !== workspace?.id && (
           <Card
             title={
-              <div className="flex w-full items-center justify-between text-muted">
-                <Link
-                  href={`/workspaces/${workspaceId}/users`}
-                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-                >
-                  <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-                  <span id="sessions-card-title" className="">
-                    <span className="sr-only">Team</span>
-                    Team
-                  </span>
-                </Link>
-              </div>
+              <Link href={`/workspaces/${workspaceId}/users`} variant="nav">
+                <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Members</span>
+                  Members
+                </span>
+              </Link>
             }
             description="See who's on your team and their roles."
             content={
@@ -400,19 +379,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                     )
                     .map((user) => (
                       <div
-                        className="flex items-center gap-4"
+                        className="flex items-center gap-4 text-muted-foreground"
                         key={`team-${user.id}`}
                       >
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src="/placeholder-user.jpg" />
-                          <AvatarFallback>JD</AvatarFallback>
+                          <AvatarFallback>
+                            {user.firstName[0]?.toUpperCase()}{' '}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="text-sm">
                             {user.firstName} {user.lastName}
-                          </p>
-                          <p className="text-xs text-muted">
-                            {user.roles?.join(', ')}
                           </p>
                         </div>
                       </div>
@@ -421,56 +398,29 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </ScrollArea>
             }
             footer={
-              <Button className="cursor-default" asChild>
-                <Link
-                  href={`/workspaces/${workspaceId}/users`}
-                  className="flex items-center gap-2 border-b-2 border-transparent hover:border-accent"
-                >
-                  <ArrowRight className="h-4 w-4" />
-                  View Team
-                </Link>
+              <Button
+                variant="accent-filled"
+                onClick={() => router.push(`/workspaces/${workspaceId}/users`)}
+              >
+                <ArrowRight className="h-4 w-4" />
+                View Members
               </Button>
             }
           />
         )}
 
-        {/* {workspace && user?.workspaceId !== workspace?.id && (
-          <Card
-            title={
-              <>
-                <Book className="h-6 w-6 text-white" />
-                Wiki
-              </>
-            }
-            description="Share and view latest news"
-            content={
-              <iframe
-                name="embed_readwrite"
-                src="https://etherpad.wikimedia.org/p/chorus-dev-workspace?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false"
-                width="100%"
-                height="100%"
-              ></iframe>
-            }
-            footer={
-              <Button disabled className="cursor-default">
-                <ArrowRight className="h-4 w-4" />
-                View Wiki
-              </Button>
-            }
-          />
-        )} */}
-
         <Card
+          className="opacity-50 grayscale"
           title={
-            <>
-              <CircleGauge className="h-6 w-6 text-white" />
+            <Link href={'#'} variant="nav">
+              <CircleGauge className="h-6 w-6" />
               Resources
-            </>
+            </Link>
           }
           description="You're using 1.2GB of your 5GB storage limit."
           content={
             <>
-              <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none">
+              <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none text-muted">
                 12.5
                 <span className="text-sm font-normal text-muted">Mo/day</span>
               </div>
@@ -493,7 +443,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             </>
           }
           footer={
-            <Button disabled className="cursor-default">
+            <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Resources
             </Button>
@@ -501,16 +451,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
 
         <Card
+          className="opacity-50 grayscale"
           title={
-            <>
-              <Activity className="h-6 w-6 text-white" />
+            <Link href={'#'} variant="nav">
+              <Activity className="h-6 w-6" />
               Activities
-            </>
+            </Link>
           }
           description="Events, analytics & monitoring."
           content={<LineChart className="aspect-[3/2]" />}
           footer={
-            <Button disabled className="cursor-default">
+            <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Activities
             </Button>
@@ -518,23 +469,23 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
 
         <Card
+          className="opacity-50 grayscale"
           title={
-            <>
-              <Footprints className="h-6 w-6 text-white" />
+            <Link href={'#'} variant="nav">
+              <Footprints className="h-6 w-6" />
               Footprint
-            </>
+            </Link>
           }
           description=""
           content={<div className="text-sm text-muted"></div>}
           footer={
-            <Button disabled className="cursor-default">
+            <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Footprint
             </Button>
           }
         />
       </div>
-      {/* <Dashboard /> */}
     </>
   )
 }

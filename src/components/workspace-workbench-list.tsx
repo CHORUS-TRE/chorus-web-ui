@@ -99,35 +99,31 @@ export function WorkspaceWorkbenchList({
                       }
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`mb-3 flex flex-col justify-between`}
+                    className={`mb-2 flex flex-col justify-between overflow-hidden rounded-md py-1 text-muted transition-colors ${userId === user?.id ? 'cursor-pointer hover:bg-accent/10 hover:text-accent' : 'cursor-default'}`}
                   >
-                    <div className="mb-1 flex-grow text-sm">
-                      <div
-                        className={`flex items-center gap-2 text-xs font-semibold ${userId === user?.id ? 'cursor-pointer text-muted hover:text-accent hover:underline' : 'cursor-default text-muted'}`}
-                      >
-                        {isActive && (
-                          <div
-                            className="h-2 w-2 animate-pulse rounded-full bg-green-500"
-                            aria-hidden="true"
-                          />
-                        )}
+                    <div className={`ml-1 flex items-center gap-2`}>
+                      {isActive && (
+                        <div
+                          className="m-1 h-2 w-2 animate-pulse rounded-full bg-accent"
+                          aria-hidden="true"
+                        />
+                      )}
 
-                        {!isActive && (
-                          <AppWindow
-                            className="h-4 w-4 shrink-0 text-muted"
-                            aria-hidden="true"
-                          />
-                        )}
-                        <div className="w-full min-w-0 flex-1">{appNames}</div>
+                      {!isActive && (
+                        <AppWindow
+                          className="h-4 w-4 shrink-0"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <div className="w-full min-w-0 flex-1 overflow-hidden truncate text-xs font-semibold">
+                        {appNames}
                       </div>
                     </div>
-                    <p className="cursor-default text-xs text-white">
+                    <p className="pl-7 text-xs font-normal">
                       {userDisplayName}
                       {', '}
                       {formatDistanceToNow(createdAt || new Date())} ago
                     </p>
-
-                    <div className="mt-2 border-b border-dotted border-muted/40" />
                   </div>
                 )
               })}

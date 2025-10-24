@@ -451,7 +451,7 @@ export function ComponentExplorer() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 p-6 text-white">
+    <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       {/* Header */}
       <div className="space-y-4 text-center">
         <div className="mb-4 flex items-center justify-center">
@@ -507,7 +507,7 @@ export function ComponentExplorer() {
       </div>
 
       {/* Category Filter */}
-      <div className="flex flex-wrap gap-2 border-muted/40 bg-background/60 text-white">
+      <div className="flex flex-wrap gap-2 border-muted/40 bg-background/60">
         {categories.map((category) => {
           const Icon =
             category === 'all'
@@ -603,7 +603,7 @@ export function ComponentExplorer() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-2 border-muted/40 bg-background/60 text-white">
+                <div className="flex items-center gap-2 border-muted/40 bg-background/60">
                   <Button
                     size="sm"
                     variant="outline"
@@ -617,7 +617,7 @@ export function ComponentExplorer() {
                     size="sm"
                     variant="outline"
                     onClick={() => handleCopyCode(component.code)}
-                    className="border-white/20 text-white hover:bg-white/10 hover:text-white"
+                    className="border-white/20 hover:bg-white/10 hover:text-white"
                   >
                     <Copy className="mr-2 h-3 w-3" />
                     Copy Code

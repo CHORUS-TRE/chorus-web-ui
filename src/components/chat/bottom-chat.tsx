@@ -190,7 +190,7 @@ export function BottomChat({
           <Button
             onClick={onToggle}
             size="lg"
-            className="h-14 w-14 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700"
+            className="h-14 w-14 rounded-full bg-blue-600 shadow-lg hover:bg-blue-700"
           >
             <MessageCircle className="h-6 w-6" />
           </Button>
@@ -222,7 +222,7 @@ export function BottomChat({
               <Sparkles className="h-5 w-5 text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">
+              <h3 className="font-semibold">
                 AI Component Generator
               </h3>
               <p className="text-sm text-gray-400">
@@ -260,9 +260,7 @@ export function BottomChat({
           {/* Suggestions Area */}
           <div className="max-h-40 overflow-y-auto border-b border-gray-800 p-4">
             <div className="mb-3">
-              <h4 className="mb-2 text-sm font-medium text-white">
-                Try these examples:
-              </h4>
+              <h4 className="mb-2 text-sm font-medium">Try these examples:</h4>
             </div>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {activeSuggestions.slice(0, 8).map((suggestion, index) => (
@@ -298,7 +296,7 @@ export function BottomChat({
                     <div
                       className={`max-w-[80%] rounded-lg px-4 py-2 ${
                         msg.type === 'user'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-blue-600'
                           : 'bg-gray-700 text-gray-100'
                       }`}
                     >
@@ -327,7 +325,7 @@ export function BottomChat({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Describe the component you want to create..."
-                  className="b1 flex h-10 w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="b1 flex h-10 w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck="false"
@@ -347,7 +345,7 @@ export function BottomChat({
               <Button
                 type="submit"
                 disabled={!message.trim() || isGenerating}
-                className="bg-blue-600 px-6 text-white hover:bg-blue-700"
+                className="bg-blue-600 px-6 hover:bg-blue-700"
               >
                 {isGenerating ? (
                   <>

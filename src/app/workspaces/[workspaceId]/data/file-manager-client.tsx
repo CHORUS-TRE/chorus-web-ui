@@ -3,12 +3,12 @@
 import { CirclePlus } from 'lucide-react'
 import { useState } from 'react'
 
+import { Button } from '~/components/button'
 import { ActionBar } from '~/components/file-manager/action-bar'
 import { Breadcrumb } from '~/components/file-manager/breadcrumb'
 import { FileGrid } from '~/components/file-manager/file-grid'
 import { FileTree } from '~/components/file-manager/file-tree'
 import { Toolbar } from '~/components/file-manager/toolbar'
-import { Button } from '~/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -122,14 +122,14 @@ export default function FileManagerClient({
   // Show loading state
   if (loading && Object.keys(state.items).length === 0) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center text-white">
+      <div className="flex h-screen flex-col items-center justify-center">
         <div className="text-lg">Loading files...</div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen flex-col gap-2 text-white">
+    <div className="flex h-screen flex-col gap-2">
       {/* Toolbar */}
       <Toolbar
         viewMode={state.viewMode}
@@ -151,11 +151,11 @@ export default function FileManagerClient({
       />
 
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden text-white">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40 bg-background/60">
+        <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
           <div className="border-b border-muted/40 p-4">
-            <div className="text-2xl font-medium text-sidebar-foreground text-white">
+            <div className="text-2xl font-medium text-sidebar-foreground">
               Archive
             </div>
           </div>
@@ -203,16 +203,16 @@ export default function FileManagerClient({
         open={showCreateFolderDialog}
         onOpenChange={setShowCreateFolderDialog}
       >
-        <DialogContent className="bg-background text-white">
+        <DialogContent className="bg-background">
           <DialogHeader>
-            <DialogTitle className="text-white">New folder</DialogTitle>
+            <DialogTitle className="">New folder</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <Input
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder="New folder"
-              className="text-white"
+              className=""
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleCreateFolderSubmit()
@@ -222,16 +222,12 @@ export default function FileManagerClient({
           </div>
           <DialogFooter>
             <Button
-              type="button"
+              variant="accent-filled"
               onClick={() => setShowCreateFolderDialog(false)}
-              className="focus:bg-background focus:text-accent"
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleCreateFolderSubmit}
-              className="rounded-full bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background"
-            >
+            <Button onClick={handleCreateFolderSubmit} variant="accent-filled">
               <CirclePlus className="h-4 w-4" />
               Create
             </Button>

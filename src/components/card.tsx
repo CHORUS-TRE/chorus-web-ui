@@ -23,22 +23,20 @@ const Card = ({
   className?: string
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'content'>) => (
   <ShadcnCard
-    className={cn(
-      'flex h-full flex-col rounded-2xl border-muted/40 bg-background/60 text-white',
-      className
-    )}
+    variant="glass"
+    className={cn('flex h-full flex-col', className)}
     {...props}
   >
-    <CardHeader className="pb-4">
+    <CardHeader className="mb-0 h-24 w-full">
       {title && (
-        <CardTitle className="flex items-center gap-3 text-white">
-          {title}
-        </CardTitle>
+        <CardTitle className="mb-1 flex items-center gap-3">{title}</CardTitle>
       )}
-      <CardDescription className="mb-3 text-xs text-muted">
+
+      <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
         {description}
       </CardDescription>
     </CardHeader>
+    {/* <hr className="border-muted/40 pt-3" /> */}
     <CardContent>{content}</CardContent>
     <div className="flex-grow" />
     <CardFooter className="flex items-end justify-start">{footer}</CardFooter>

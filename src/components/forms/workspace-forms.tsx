@@ -79,7 +79,6 @@ export function WorkspaceCreateForm({
   }, [open, form, userId])
 
   async function onSubmit(data: WorkspaceCreateType) {
-    console.log('WorkspaceCreateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -125,13 +124,13 @@ export function WorkspaceCreateForm({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-white">Create Workspace</DialogTitle>
+          <DialogTitle>Create Workspace</DialogTitle>
           <DialogDescription>
             Fill out the form to create a new workspace.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-full border-none bg-background text-white">
+          <Card className="w-full border-none bg-background">
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
@@ -242,7 +241,6 @@ export function PrivateWorkspaceCreateForm({
   }, [open, form, userId])
 
   async function onSubmit(data: WorkspaceCreateType) {
-    console.log('PrivateWorkspaceCreateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -286,24 +284,22 @@ export function PrivateWorkspaceCreateForm({
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="text-white">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-white">
-            Create Your Private Workspace
-          </DialogTitle>
+          <DialogTitle>Create Your Private Workspace</DialogTitle>
           <DialogDescription>
             Fill out the form to create your new workspace.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-full border-none bg-background text-white">
+          <Card className="w-full border-none bg-background">
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
                   {...form.register('name')}
-                  className="bg-background text-white"
+                  className="bg-background"
                   placeholder="Enter workspace name"
                   disabled
                 />
@@ -471,7 +467,6 @@ export function WorkspaceUpdateForm({
   }, [open, workspace, form])
 
   async function onSubmit(data: WorkspaceUpdatetype) {
-    console.log('WorkspaceUpdateForm onSubmit called with:', data)
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value) formData.append(key, String(value))
@@ -515,13 +510,13 @@ export function WorkspaceUpdateForm({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-white">Update Workspace</DialogTitle>
+          <DialogTitle>Update Workspace</DialogTitle>
           <DialogDescription>Update workspace information.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="w-full max-w-md border-none bg-background text-white">
+            <Card className="w-full max-w-md border-none bg-background">
               <CardContent className="grid gap-4">
                 <input type="hidden" {...form.register('id')} />
                 <input type="hidden" {...form.register('tenantId')} />

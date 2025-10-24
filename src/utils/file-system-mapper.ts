@@ -25,8 +25,6 @@ export function mapWorkspaceFilesToFileSystem(
 
   // Process each file/folder
   for (const file of workspaceFiles) {
-    console.log('Processing file:', file.path, file.name, file.isDirectory)
-
     // Handle different path formats from API
     let normalizedPath = file.path
 
@@ -41,8 +39,6 @@ export function mapWorkspaceFilesToFileSystem(
     if (file.isDirectory && !normalizedPath.endsWith('/')) {
       normalizedPath = `${normalizedPath}/`
     }
-
-    console.log('Normalized path:', normalizedPath)
 
     const pathParts = normalizedPath.split('/').filter(Boolean)
 
@@ -78,7 +74,6 @@ export function mapWorkspaceFilesToFileSystem(
               ? getFileExtension(pathPart)
               : undefined
         }
-        console.log('Created item:', items[itemId])
       }
 
       parentId = itemId

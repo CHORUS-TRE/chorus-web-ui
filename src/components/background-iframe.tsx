@@ -99,7 +99,7 @@ export default function BackgroundIframe() {
         !isSessionPage && (
           <>
             <div
-              className="fixed bottom-3 right-3 z-30 rounded-lg bg-black/80 p-3 text-white backdrop-blur-sm"
+              className="fixed bottom-3 right-3 z-30 rounded-lg bg-black/80 p-3 backdrop-blur-sm"
               aria-label="Session HUD"
             >
               <div className="flex items-center gap-2 text-sm">

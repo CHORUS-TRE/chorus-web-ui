@@ -1,12 +1,13 @@
 'use client'
 
 import {
+  Activity,
   Code2,
   Cpu,
+  FileText,
   FlaskConical,
   Layers,
-  PackageOpen,
-  Settings
+  PackageOpen
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -29,32 +30,56 @@ import {
 export default function SandboxPage() {
   const sandboxItems = [
     {
-      title: 'CHORUS Protocol Builder',
-      description: 'Build and test protocols for the CHORUS platform',
-      href: 'sandbox/chorus-protocol-builder',
-      icon: FlaskConical,
-      status: 'Beta'
+      title: 'CHORUS Templates',
+      description: 'View the templates of the CHORUS platform',
+      href: 'sandbox/templates',
+      icon: FileText,
+      status: 'Development',
+      children: [
+        {
+          title: 'CHORUS Architecture',
+          description: 'View the architecture of the CHORUS platform',
+          href: 'sandbox/architecture',
+          icon: Layers,
+          status: 'Development'
+        },
+        {
+          title: 'CHORUS Protocol Builder',
+          description: 'Build and test protocols for the CHORUS platform',
+          href: 'sandbox/chorus-protocol-builder',
+          icon: FlaskConical,
+          status: 'Development'
+        },
+        {
+          title: 'CHORUS Clinical Lifecycle Dashboard',
+          description: 'Manage your clinical project',
+          href: 'sandbox/workspace',
+          icon: PackageOpen,
+          status: 'Development'
+        },
+        {
+          title: 'Clinical Studies Dashboard',
+          description: 'Manage clinical studies',
+          href: 'sandbox/clinical-lifecycle-ashboard',
+          icon: PackageOpen,
+          status: 'Development'
+        }
+        // {
+        //   title: 'Patient Health Summary',
+        //   description: 'View patient health metrics and medical data',
+        //   href: 'sandbox/patient',
+        //   icon: Activity,
+        //   status: 'Development'
+        // }
+      ]
     },
-    {
-      title: 'Workspace',
-      description: 'Manage your clinical project',
-      href: 'sandbox/workspace',
-      icon: PackageOpen,
-      status: 'Beta'
-    },
-    {
-      title: 'Clinical Studies Dashboard',
-      description: 'Manage clinical studies',
-      href: 'sandbox/clinical-lifecycle-ashboard',
-      icon: PackageOpen,
-      status: 'Beta'
-    },
+
     {
       title: 'Role Schema Viz',
       description: 'Visualize the schema roles & permissions',
       href: 'sandbox/schema-viz',
       icon: Layers,
-      status: 'Beta'
+      status: 'Development'
     },
     {
       title: 'Component Explorer',
@@ -80,7 +105,7 @@ export default function SandboxPage() {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
       case 'Development':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'Beta':
+      case 'Completed':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
@@ -105,8 +130,8 @@ export default function SandboxPage() {
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-white">
-            <FlaskConical className="h-9 w-9 text-white" />
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+            <FlaskConical className="h-9 w-9" />
             Development Sandbox
           </h2>
         </div>
@@ -114,9 +139,7 @@ export default function SandboxPage() {
 
       <div className="w-full">
         <div className="mb-6">
-          <h3 className="mb-2 text-lg font-semibold text-white">
-            Testing Environment
-          </h3>
+          <h3 className="mb-0 text-lg font-semibold">Testing Environment</h3>
           <p className="text-sm text-muted">
             Experimental features and development tools for the CHORUS platform
           </p>
@@ -125,16 +148,34 @@ export default function SandboxPage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
           {sandboxItems.map((item) => {
             const IconComponent = item.icon
+
+            const ConditionalLink = ({
+              key,
+              href,
+              children
+            }: {
+              key: string
+              href: string
+              children: React.ReactNode
+            }) =>
+              !item.children ? (
+                <Link key={key} href={href} className="group text-muted">
+                  {children}
+                </Link>
+              ) : (
+                <div className="flex flex-col gap-2">{children}</div>
+              )
+
             return (
-              <Link key={item.href} href={item.href} className="group">
-                <Card className="h-full border-muted/40 bg-background/60 text-white transition-all hover:border-accent/50 hover:bg-background/80">
-                  <CardHeader className="pb-3">
+              <ConditionalLink key={item.title} href={item.href}>
+                <Card className="card-glass h-full transition-all hover:border-accent/50 hover:bg-background/80">
+                  <CardHeader className="pb-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="rounded-lg bg-accent/20 p-2">
-                          <IconComponent className="h-5 w-5 text-accent" />
+                          <IconComponent className="h-5 w-5" />
                         </div>
-                        <CardTitle className="text-white transition-colors group-hover:text-accent">
+                        <CardTitle className="text-muted transition-colors group-hover:text-accent">
                           {item.title}
                         </CardTitle>
                       </div>
@@ -146,20 +187,32 @@ export default function SandboxPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-muted-foreground">
-                      {item.description}
+                    <CardDescription>
+                      <p className="mb-2 text-muted-foreground">
+                        {item.description}
+                      </p>
+
+                      {item.children && (
+                        <div className="flex flex-col gap-1">
+                          {item.children.map((child) => (
+                            <Link key={child.title} href={child.href}>
+                              {child.title}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </CardDescription>
                   </CardContent>
                 </Card>
-              </Link>
+              </ConditionalLink>
             )
           })}
         </div>
 
-        <div className="mt-8 rounded-lg border border-muted/40 bg-background/20 p-4">
+        <div className="card-glass mt-8 rounded-lg border p-4">
           <div className="mb-2 flex items-center gap-2">
             <FlaskConical className="h-4 w-4 text-accent" />
-            <h4 className="text-sm font-semibold text-white">About Sandbox</h4>
+            <h4 className="text-sm font-semibold">About Sandbox</h4>
           </div>
           <p className="text-xs text-muted-foreground">
             The sandbox environment provides access to experimental features,

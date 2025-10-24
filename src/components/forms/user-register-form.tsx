@@ -7,7 +7,7 @@ import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import { createUser } from '@/view-model/user-view-model'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Separator } from '~/components/ui/separator'
@@ -24,8 +24,9 @@ function SubmitButton() {
   return (
     <Button
       type="submit"
+      variant="accent-filled"
+      className="w-full"
       disabled={pending}
-      className="flex w-full items-center justify-center gap-1"
     >
       {pending ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -50,8 +51,8 @@ export default function UserRegisterForm() {
   }, [state])
 
   return (
-    <div className="flex w-full flex-col items-center justify-center bg-black bg-opacity-20 p-8 md:w-1/2">
-      <div className="grid h-full w-full gap-2 p-8 text-white">
+    <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
+      <div className="grid h-full w-full gap-2 p-8">
         <div className="gap-4 text-center">
           <h2>Create an account</h2>
           <h5 className="text-muted">
@@ -64,7 +65,7 @@ export default function UserRegisterForm() {
         <div className="mb-4 grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName" className="text-white">
+              <Label htmlFor="firstName" className="">
                 First name
               </Label>
               <Input
@@ -73,7 +74,7 @@ export default function UserRegisterForm() {
                 name="firstName"
                 defaultValue={state.data?.firstName}
                 required
-                className="border border-muted/40 bg-background text-white"
+                className="border border-muted/40 bg-background"
                 autoComplete="given-name"
               />
               <div className="text-xs text-red-500">
@@ -84,7 +85,7 @@ export default function UserRegisterForm() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName" className="text-white">
+              <Label htmlFor="lastName" className="">
                 Last name
               </Label>
               <Input
@@ -93,7 +94,7 @@ export default function UserRegisterForm() {
                 name="lastName"
                 required
                 defaultValue={state.data?.lastName}
-                className="border border-muted/40 bg-background text-white"
+                className="border border-muted/40 bg-background"
                 autoComplete="family-name"
               />
               <div className="text-xs text-red-500">
@@ -105,7 +106,7 @@ export default function UserRegisterForm() {
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="username" className="text-white">
+            <Label htmlFor="username" className="">
               username
             </Label>
             <Input
@@ -115,7 +116,7 @@ export default function UserRegisterForm() {
               name="username"
               defaultValue={state.data?.username}
               required
-              className="border border-muted/40 bg-background text-white"
+              className="border border-muted/40 bg-background"
               autoComplete="username"
             />
             <div className="text-xs text-red-500">
@@ -124,7 +125,7 @@ export default function UserRegisterForm() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password" className="text-white">
+              <Label htmlFor="password" className="">
                 Password
               </Label>
             </div>
@@ -134,7 +135,7 @@ export default function UserRegisterForm() {
               type="password"
               name="password"
               required
-              className="border border-muted/40 bg-background text-white"
+              className="border border-muted/40 bg-background"
               autoComplete="new-password"
             />
             <p className="text-xs text-muted">

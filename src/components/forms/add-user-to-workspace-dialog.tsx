@@ -7,12 +7,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { listUsers } from '@/view-model/user-view-model'
-import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
-import { Button } from '~/components/ui/button'
+import { workspaceManageUserRole } from '@/view-model/workspace-view-model'
+import { Button } from '~/components/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -34,6 +34,7 @@ import {
 } from '~/components/ui/select'
 import { Result } from '~/domain/model'
 import { User } from '~/domain/model/user'
+import { useAppState } from '~/providers/app-state-provider'
 import { getWorkspaceRoles } from '~/utils/schema-roles'
 
 import { toast } from '../hooks/use-toast'
@@ -46,15 +47,23 @@ const AddUserToWorkspaceSchema = z.object({
 type AddUserFormData = z.infer<typeof AddUserToWorkspaceSchema>
 
 export function AddUserToWorkspaceDialog({
+  userId,
   workspaceId,
-  onUserAdded
+  onUserAdded,
+  children
 }: {
+  userId?: string
   workspaceId: string
   onUserAdded: () => void
+  children?: React.ReactNode
 }) {
+  const { users, workspaces } = useAppState()
+  const workspace = workspaces?.find(
+    (workspace) => workspace.id === workspaceId
+  )
+  const workspaceName = workspace?.name
+
   const [open, setOpen] = useState(false)
-  const [availableUsers, setAvailableUsers] = useState<User[]>([])
-  const [isLoadingUsers, setIsLoadingUsers] = useState(false)
 
   // Available roles for workspace members from schema
   const workspaceRoles = getWorkspaceRoles().map((role) => ({
@@ -71,42 +80,9 @@ export function AddUserToWorkspaceDialog({
   })
 
   const [state, formAction] = useActionState(
-    workspaceAddUserRole,
+    workspaceManageUserRole,
     {} as Result<User>
   )
-
-  const loadUsers = useCallback(async () => {
-    if (isLoadingUsers) return // Prevent multiple concurrent requests
-
-    setIsLoadingUsers(true)
-    try {
-      const result = await listUsers()
-      if (result.data) {
-        // Filter out users who already have roles in this workspace
-        const usersNotInWorkspace = result.data.filter(
-          (user) =>
-            !user.rolesWithContext?.some(
-              (role) => role.context.workspace === workspaceId
-            )
-        )
-        setAvailableUsers(usersNotInWorkspace)
-      } else {
-        toast({
-          title: 'Error',
-          description: result.error || 'Failed to load users',
-          variant: 'destructive'
-        })
-      }
-    } finally {
-      setIsLoadingUsers(false)
-    }
-  }, [workspaceId])
-
-  useEffect(() => {
-    if (open && !isLoadingUsers) {
-      loadUsers()
-    }
-  }, [open, loadUsers])
 
   useEffect(() => {
     if (state.error) {
@@ -137,41 +113,62 @@ export function AddUserToWorkspaceDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-transparent text-accent ring-1 ring-accent hover:bg-accent-background hover:text-black focus:bg-accent-background">
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User to Workspace
-        </Button>
+        {children ? (
+          children
+        ) : (
+          <Button variant="accent-filled">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add User to Workspace
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="text-white">
+      <DialogContent className="">
         <DialogHeader>
-          <DialogTitle>Add User to Workspace</DialogTitle>
+          <DialogTitle>
+            {' '}
+            {userId
+              ? `Edit ${users?.find((user) => user.id === userId)?.firstName} ${users?.find((user) => user.id === userId)?.lastName}'s role`
+              : 'Add User to Workspace'}
+          </DialogTitle>
+          <DialogDescription>{workspaceName}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form action={formAction} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Select User</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose a user to add" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {availableUsers.map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
-                          {user.firstName} {user.lastName} ({user.username})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {userId ? (
+              <input type="hidden" name="userId" value={userId} />
+            ) : (
+              <FormField
+                control={form.control}
+                name="userId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select User</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose a user to add" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {users
+                          ?.filter(
+                            (user) =>
+                              !user.rolesWithContext?.some(
+                                (role) => role.context.workspace === workspaceId
+                              )
+                          )
+                          .map((user) => (
+                            <SelectItem key={user.id} value={user.id}>
+                              {user.firstName} {user.lastName} ({user.username})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
@@ -219,7 +216,7 @@ export function AddUserToWorkspaceDialog({
                 type="submit"
                 className="bg-accent text-black hover:bg-accent/80"
               >
-                Add User
+                Add Role
               </Button>
             </div>
           </form>

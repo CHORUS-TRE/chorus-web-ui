@@ -4,6 +4,7 @@ import {
   WorkbenchCreateType,
   WorkbenchUpdateType
 } from '../model'
+import { User } from '../model/user'
 
 export interface WorkbenchRepository {
   list: () => Promise<Result<Workbench[]>>
@@ -13,4 +14,9 @@ export interface WorkbenchRepository {
   get: (id: string) => Promise<Result<Workbench>>
   streamProbe: (id: string) => Promise<Result<boolean>>
   streamUrl: (id: string) => Promise<Result<string>>
+  manageUserRole: (
+    workbenchId: string,
+    userId: string,
+    roleName: string
+  ) => Promise<Result<User>>
 }

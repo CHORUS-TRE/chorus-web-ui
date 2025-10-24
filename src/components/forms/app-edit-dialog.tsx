@@ -91,7 +91,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
 
   useEffect(() => {
     if (formState.errors) {
-      console.log('formState.errors', formState.errors)
+      console.error('AppEditDialog formState.errors', formState.errors)
     }
   }, [formState.errors])
 
@@ -189,7 +189,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         <Input
                           {...field}
                           placeholder="Enter app name"
-                          className="bg-background text-white placeholder:text-muted"
+                          className="bg-background placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -207,7 +207,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         <Input
                           {...field}
                           placeholder="Enter description"
-                          className="bg-background text-white placeholder:text-muted"
+                          className="bg-background placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -239,7 +239,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         <Input
                           {...field}
                           placeholder="e.g., docker.io"
-                          className="bg-background text-white placeholder:text-muted"
+                          className="bg-background placeholder:text-muted"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -260,7 +260,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                           <Input
                             {...field}
                             placeholder="e.g., nginx"
-                            className="bg-background text-white placeholder:text-muted"
+                            className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -278,7 +278,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                           <Input
                             {...field}
                             placeholder="e.g., latest"
-                            className="bg-background text-white placeholder:text-muted"
+                            className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -302,7 +302,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                           <Input
                             {...field}
                             placeholder="Enter kiosk config URL"
-                            className="bg-background text-white placeholder:text-muted"
+                            className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -357,7 +357,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               }
                             }}
                           >
-                            <SelectTrigger className="bg-background text-white placeholder:text-muted">
+                            <SelectTrigger className="bg-background placeholder:text-muted">
                               <SelectValue placeholder="Select a preset" />
                             </SelectTrigger>
                             <SelectContent>
@@ -403,7 +403,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                             <Input
                               {...field}
                               placeholder="e.g., 64m"
-                              className="bg-background text-white placeholder:text-muted"
+                              className="bg-background placeholder:text-muted"
                             />
                           </FormControl>
                           <FormMessage className="text-destructive" />
@@ -424,7 +424,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -444,7 +444,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -466,7 +466,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -486,7 +486,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -508,7 +508,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -528,7 +528,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background text-white placeholder:text-muted"
+                                className="bg-background placeholder:text-muted"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -555,7 +555,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                   onOpenChange(false)
                   form.reset()
                 }}
-                className="bg-background text-white"
+                className="bg-background"
               >
                 Cancel
               </Button>

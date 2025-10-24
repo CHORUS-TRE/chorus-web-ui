@@ -82,7 +82,7 @@ export function AppInstanceCreateForm({
         <DialogHeader>
           <DialogDescription asChild>
             <form action={formAction}>
-              <Card className="w-full max-w-md border-none bg-background text-white">
+              <Card className="w-full max-w-md border-none bg-background">
                 <CardHeader className="pb-4">
                   <CardTitle>Start App</CardTitle>
                   <CardDescription>
@@ -95,7 +95,7 @@ export function AppInstanceCreateForm({
                     <select
                       name="appId"
                       id="appId"
-                      className="bg-background text-white"
+                      className="bg-background"
                       required
                     >
                       <option value="">Choose an app</option>

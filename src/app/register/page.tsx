@@ -16,7 +16,7 @@ export default function Register() {
       </header>
 
       <div
-        className="fixed left-1/2 top-1/2 z-30 m-4 flex w-3/4 max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-row items-stretch justify-between rounded-2xl bg-black bg-opacity-75"
+        className="glass-surface fixed left-1/2 top-1/2 z-30 m-4 flex w-3/4 max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-row items-stretch justify-between rounded-2xl"
         id="register-content"
       >
         <LoginInfo />

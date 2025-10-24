@@ -66,12 +66,14 @@ export default function WorkbenchTable({
       {/* <TableHead className="text-white">
         <span className="sr-only">Session</span>
       </TableHead> */}
-      <TableHead className="text-white">Session</TableHead>
-      <TableHead className="text-white">Running Apps</TableHead>
-      <TableHead className="hidden text-white md:table-cell">Created</TableHead>
-      <TableHead className="text-white">Status</TableHead>
-      <TableHead className="text-white" colSpan={2}>
-        <span className="text-white">Actions</span>
+      <TableHead className="text-foreground">Session</TableHead>
+      <TableHead className="text-foreground">Running Apps</TableHead>
+      <TableHead className="hidden text-foreground md:table-cell">
+        Created
+      </TableHead>
+      <TableHead className="text-foreground">Status</TableHead>
+      <TableHead className="text-foreground" colSpan={2}>
+        <span>Actions</span>
       </TableHead>
     </>
   )
@@ -122,7 +124,7 @@ export default function WorkbenchTable({
           <TableCell className="p-1 font-semibold">
             <Link
               href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
-              className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              className="nav-link-base nav-link-hover [&.active]:nav-link-active"
             >
               {workbench?.name}
             </Link>
@@ -176,7 +178,7 @@ export default function WorkbenchTable({
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black text-white">
+              <DropdownMenuContent align="end" className="glass-elevated">
                 {/* <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault()
@@ -208,7 +210,10 @@ export default function WorkbenchTable({
     title?: string
     description?: string
   }) => (
-    <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
+    <Card
+      variant="glass"
+      className="flex h-full flex-col justify-between duration-300"
+    >
       {title && (
         <CardHeader className="pb-4">
           <CardTitle>{title}</CardTitle>
@@ -241,18 +246,7 @@ export default function WorkbenchTable({
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
       <div className="flex items-center justify-end">
-        <WorkbenchCreateForm
-          workspaceId={workspaceId}
-          // onSuccess={(sessionId) => {
-          //   refreshWorkbenches()
-          //   toast({
-          //     title: 'Success!',
-          //     description: 'Session created successfully'
-          //   })
-          //   setBackground({ sessionId, workspaceId })
-          //   if (onUpdate) onUpdate(sessionId)
-          // }}
-        />
+        <WorkbenchCreateForm workspaceId={workspaceId} />
       </div>
       <CardContainer
         workbenches={filteredWorkbenches}

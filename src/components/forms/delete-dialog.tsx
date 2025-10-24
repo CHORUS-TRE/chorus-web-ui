@@ -34,7 +34,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
     <Dialog open={open} onOpenChange={() => onCancel()}>
       <DialogContent className="bg-background sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-white">{title}</DialogTitle>
+          <DialogTitle className="">{title}</DialogTitle>
           <DialogDescription className="text-muted">
             {description}
           </DialogDescription>

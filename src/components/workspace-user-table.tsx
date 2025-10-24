@@ -1,16 +1,16 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon, UserPlus } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
 import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
 import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
-import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
-import { UserCreateDialog } from '~/components/forms/user-create-dialog'
+import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
+import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
-import { UserEditDialog } from '~/components/forms/user-edit-dialog'
 import { toast } from '~/components/hooks/use-toast'
 import { Badge } from '~/components/ui/badge'
 import {
@@ -25,6 +25,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
@@ -49,7 +51,6 @@ export default function WorkspaceUserTable({
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
 
   const loadUsers = useCallback(async () => {
@@ -95,12 +96,17 @@ export default function WorkspaceUserTable({
 
   const TableHeads = () => (
     <>
-      <TableHead className="text-white">Name</TableHead>
-      <TableHead className="text-white">Username</TableHead>
-      <TableHead className="text-white">Roles</TableHead>
-      <TableHead className="hidden text-white md:table-cell">Status</TableHead>
-      <TableHead className="hidden text-white md:table-cell">Joined</TableHead>
-      <TableHead className="text-white">
+      <TableHead className="text-foreground">Name</TableHead>
+      <TableHead className="text-foreground">Username</TableHead>
+      <TableHead className="text-foreground">Workspace Roles</TableHead>
+      <TableHead className="text-foreground">Sessions Roles</TableHead>
+      <TableHead className="hidden text-foreground md:table-cell">
+        Status
+      </TableHead>
+      <TableHead className="hidden text-foreground md:table-cell">
+        Joined
+      </TableHead>
+      <TableHead className="text-foreground">
         <span className="sr-only">Actions</span>
       </TableHead>
     </>
@@ -115,22 +121,36 @@ export default function WorkspaceUserTable({
     }, [] as Role[])
 
     return (
-      <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+      <TableRowComponent className="card-glass transition-colors hover:bg-background/80">
         <TableCell className="p-1 font-semibold">
-          {user.firstName} {user.lastName}
+          <Link
+            href={`/users/${user.id}`}
+            className="nav-link-base nav-link-hover [&.active]:nav-link-active"
+          >
+            {user.firstName} {user.lastName}
+          </Link>
         </TableCell>
-        <TableCell className="p-1">{user.username}</TableCell>
+        <TableCell className="w-48 text-wrap p-1">{user.username}</TableCell>
         <TableCell className="p-1">
           <div className="flex flex-wrap gap-1">
-            {workspaceRoles.map((role, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {role.name}
-              </Badge>
-            ))}
-            <CreateUserRoleDialog
-              userId={user.id}
-              onCreated={handleUserChange}
-            />
+            {workspaceRoles
+              .filter((role) => role.name.startsWith('Workspace'))
+              .map((role, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {role.name}
+                </Badge>
+              ))}
+          </div>
+        </TableCell>
+        <TableCell className="p-1">
+          <div className="flex flex-wrap gap-1">
+            {workspaceRoles
+              .filter((role) => role.name.startsWith('Workbench'))
+              .map((role, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {role.name} - {role.context.workbench}
+                </Badge>
+              ))}
           </div>
         </TableCell>
         <TableCell className="hidden p-1 md:table-cell">
@@ -146,38 +166,56 @@ export default function WorkspaceUserTable({
           ago
         </TableCell>
         <TableCell className="p-1">
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-haspopup="true"
-                variant="ghost"
-                className="text-muted ring-0"
-              >
-                <EllipsisVerticalIcon className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-black text-white">
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.preventDefault()
-                  setEditingUser(user)
-                }}
-                className="cursor-pointer"
-              >
-                Edit User
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer text-red-500 focus:text-red-500"
-                onClick={(e) => {
-                  e.preventDefault()
-                  setDeletingUserId(user.id)
-                }}
-              >
-                Remove User
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <ManageUserWorkspaceDialog
+                  userId={user.id}
+                  workspaceId={workspaceId}
+                  onUserAdded={handleUserChange}
+                >
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    className="flex items-center gap-2"
+                  >
+                    <Pencil className="h-4 w-4 text-muted-foreground" />
+                    Workspace Role
+                  </DropdownMenuItem>
+                </ManageUserWorkspaceDialog>
+                <ManageUserWorkbenchDialog
+                  userId={user.id}
+                  workspaceId={workspaceId}
+                  onUserAdded={handleUserChange}
+                >
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    className="flex items-center gap-2"
+                  >
+                    <Pencil className="h-4 w-4 text-muted-foreground" />
+                    Sessions Roles
+                  </DropdownMenuItem>
+                </ManageUserWorkbenchDialog>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setDeletingUserId(user.id)
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Trash2 className="h-4 w-4 text-red-500" />
+                  Remove User
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          }
         </TableCell>
       </TableRowComponent>
     )
@@ -192,11 +230,19 @@ export default function WorkspaceUserTable({
     title?: string
     description?: string
   }) => (
-    <Card className="flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 text-white duration-300">
+    <Card className="card-glass flex h-full flex-col justify-between rounded-2xl duration-300">
       {title && (
         <CardHeader className="pb-4">
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="mb-1">{title}</CardTitle>
+              <CardDescription>{description}</CardDescription>
+            </div>
+            <AddUserToWorkspaceDialog
+              workspaceId={workspaceId}
+              onUserAdded={handleUserChange}
+            />
+          </div>
         </CardHeader>
       )}
       <CardContent>
@@ -228,7 +274,7 @@ export default function WorkspaceUserTable({
         )}
       </CardContent>
       <CardFooter>
-        <div className="text-xs text-muted">
+        <div className="text-xs">
           Showing <strong>{users.length}</strong> workspace member
           {users.length !== 1 ? 's' : ''}
         </div>
@@ -242,21 +288,6 @@ export default function WorkspaceUserTable({
 
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
-      {/* Edit User Dialog */}
-      {editingUser && (
-        <UserEditDialog
-          user={editingUser}
-          open={!!editingUser}
-          onOpenChange={(open) => {
-            if (!open) setEditingUser(null)
-          }}
-          onUserUpdated={() => {
-            handleUserChange()
-            setEditingUser(null)
-          }}
-        />
-      )}
-
       {/* Delete User Dialog */}
       {deletingUserId && (
         <UserDeleteDialog
@@ -272,13 +303,6 @@ export default function WorkspaceUserTable({
         />
       )}
 
-      <div className="flex items-center justify-end gap-2">
-        <AddUserToWorkspaceDialog
-          workspaceId={workspaceId}
-          onUserAdded={handleUserChange}
-        />
-        {/* <UserCreateDialog onUserCreated={handleUserChange} /> */}
-      </div>
       <CardContainer users={users} title={title} description={description} />
     </div>
   )

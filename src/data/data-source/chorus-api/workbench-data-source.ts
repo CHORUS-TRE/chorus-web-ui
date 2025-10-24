@@ -9,9 +9,11 @@ import {
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
   ChorusListWorkbenchsReply,
+  ChorusManageUserRoleInWorkbenchReply,
   ChorusUpdateWorkbenchReply,
   Configuration,
-  WorkbenchServiceApi
+  WorkbenchServiceApi,
+  WorkbenchServiceManageUserRoleInWorkbenchBody
 } from '~/internal/client'
 import { BaseAPI } from '~/internal/client/runtime'
 
@@ -29,6 +31,11 @@ interface WorkbenchDataSource {
   update: (
     workbench: WorkbenchUpdateType
   ) => Promise<ChorusUpdateWorkbenchReply>
+  manageUserRole: (
+    workbenchId: string,
+    userId: string,
+    body: WorkbenchServiceManageUserRoleInWorkbenchBody
+  ) => Promise<ChorusManageUserRoleInWorkbenchReply>
 }
 
 export type { WorkbenchDataSource }
@@ -87,6 +94,18 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
     const chorusWorkbench = toChorusWorkbenchUpdate(workbench)
     return this.service.workbenchServiceUpdateWorkbench({
       body: chorusWorkbench
+    })
+  }
+
+  manageUserRole(
+    workbenchId: string,
+    userId: string,
+    body: WorkbenchServiceManageUserRoleInWorkbenchBody
+  ): Promise<ChorusManageUserRoleInWorkbenchReply> {
+    return this.service.workbenchServiceManageUserRoleInWorkbench({
+      id: workbenchId,
+      userId,
+      body
     })
   }
 }
