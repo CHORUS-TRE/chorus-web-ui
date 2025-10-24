@@ -27,12 +27,12 @@ const Card = ({
     className={cn('flex h-full flex-col', className)}
     {...props}
   >
-    <CardHeader className="mb-2 h-24 w-full">
+    <CardHeader className="mb-0 h-24 w-full">
       {title && (
         <CardTitle className="mb-1 flex items-center gap-3">{title}</CardTitle>
       )}
 
-      <CardDescription className="text-xs text-muted-foreground">
+      <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
         {description}
       </CardDescription>
     </CardHeader>

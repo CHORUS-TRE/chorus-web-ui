@@ -142,20 +142,27 @@ export function Header() {
                           router.push(`/workspaces/${workspaceId}`)
                         }}
                       >
-                        <div className="flex place-items-center gap-1">
+                        <div className="flex-start flex place-items-center gap-1">
                           {workspaceId && workspaceId === user?.workspaceId ? (
                             <AppWindow className="h-4 w-4 text-muted" />
                           ) : (
                             <AppWindow className="h-4 w-4" />
                           )}
-                          {
-                            workspaces?.find(
+                          <span
+                            className="max-w-36 truncate text-nowrap"
+                            title={
+                              workspaces?.find(
+                                (w) => w.id === background?.workspaceId
+                              )?.name || ''
+                            }
+                          >
+                            {workspaces?.find(
                               (w) => w.id === background?.workspaceId
-                            )?.name
-                          }
+                            )?.name || ''}
+                          </span>
                         </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="glass-popover text-muted">
+                      <NavigationMenuContent className="glass-elevated text-muted">
                         <div className="w-[240px] p-2">
                           {/* Workspace Navigation */}
                           <div className="mb-1">
@@ -350,7 +357,7 @@ export function Header() {
                       Workspaces
                     </div>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="glass-popover text-muted">
+                  <NavigationMenuContent className="glass-elevated text-muted">
                     <div className="w-[280px] p-2">
                       <div className="space-y-1">
                         {/* All Workspaces Link */}
@@ -449,7 +456,7 @@ export function Header() {
                       <span>Open Sessions</span>
                     </div>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="glass-popover text-foreground">
+                  <NavigationMenuContent className="glass-elevated text-foreground">
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
                       <div className="p-2 text-sm">No session found</div>
                     )}
@@ -636,17 +643,6 @@ export function Header() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                {/* <NavigationMenuItem id="getting-started-step4">
-                  <NavLink
-                    href="/admin"
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  >
-                    <div className="flex place-items-center gap-1">
-                      <Settings className="h-4 w-4" />
-                      Admin
-                    </div>
-                  </NavLink>
-                </NavigationMenuItem> */}
               </NavigationMenuList>
             </NavigationMenu>
           </>
@@ -675,9 +671,17 @@ export function Header() {
               <CircleHelp className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">Help</span>
             </Button>
+            <Button
+              variant="ghost"
+              onClick={() => router.push(`/sandbox`)}
+              aria-label="Sandbox"
+            >
+              <FlaskConical className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Lab</span>
+            </Button>
             {user && (
-              <Button variant="ghost" aria-label="Notifications">
-                <Bell className="h-4 w-4" aria-hidden="true" />
+              <Button variant="ghost" aria-label="Notifications" disabled>
+                <Bell className="h-4 w-4 text-muted" aria-hidden="true" />
                 <span className="sr-only">Notifications</span>
               </Button>
             )}
@@ -689,7 +693,7 @@ export function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="glass-popover w-56"
+                  className="glass-elevated w-56"
                   align="end"
                   forceMount
                 >
@@ -720,14 +724,6 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <Button
-              variant="ghost"
-              onClick={() => router.push(`/sandbox`)}
-              aria-label="Sandbox"
-            >
-              <FlaskConical className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Lab</span>
-            </Button>
           </div>
         </div>
 

@@ -16,7 +16,7 @@ import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Card } from '@/components/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Link } from '@/components/ui/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -124,12 +124,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     <>
       <div className="card-glass relative mb-4 flex w-full items-center justify-between gap-2 p-4">
         <div className="workspace-info mr-8 w-full">
-          {workspace?.description && workspace?.description.length > 0 && (
-            <p className="mb-2 text-sm text-muted-foreground">
-              {workspace?.description}
-            </p>
-          )}
-          <div className="workspace-details flex w-full items-center justify-between gap-2">
+          <div className="workspace-details mb-3 flex w-full items-center justify-between gap-2">
             <div className="detail-item">
               <h4 className="label text-xs text-muted-foreground">Owner</h4>
               <p className="value text-sm font-semibold">
@@ -157,6 +152,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </p>
             </div>
           </div>
+          {workspace?.description && workspace?.description.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {workspace?.description}
+            </p>
+          )}
         </div>
         <div className="absolute right-2 top-2">
           {workspace?.userId === user?.id && (
@@ -208,92 +208,92 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       </div>
 
       <div className="my-1 grid w-full gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
-        <div key={workspace?.id} className="group relative">
-          <Card
-            role="region"
-            aria-labelledby="sessions-card-title"
-            title={
-              <Link href={`/workspaces/${workspaceId}/sessions`} variant="nav">
-                <LaptopMinimal
-                  className="h-6 w-6 flex-shrink-0"
-                  aria-hidden="true"
-                />
-                <span id="sessions-card-title" className="">
-                  <span className="sr-only">Sessions</span>
-                  Sessions
-                </span>
-              </Link>
-            }
-            description={(() => {
-              const sessionCount =
-                workbenches?.filter(
-                  (workbench) => workbench.workspaceId === workspaceId
-                )?.length || 0
-              return `${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}.`
-            })()}
-            content={
-              <Suspense fallback={<div>Loading sessions...</div>}>
-                {(() => {
-                  const sessionCount =
-                    workbenches?.filter(
-                      (workbench) =>
-                        workbench.workspaceId === workspaceId &&
-                        workbench.userId === user?.id
-                    )?.length || 0
+        <Card
+          role="region"
+          aria-labelledby="sessions-card-title"
+          title={
+            <Link href={`/workspaces/${workspaceId}/sessions`} variant="nav">
+              <LaptopMinimal
+                className="h-6 w-6 flex-shrink-0"
+                aria-hidden="true"
+              />
+              <span id="sessions-card-title" className="">
+                <span className="sr-only">Sessions</span>
+                Sessions
+              </span>
+            </Link>
+          }
+          description={(() => {
+            const sessionCount =
+              workbenches?.filter(
+                (workbench) => workbench.workspaceId === workspaceId
+              )?.length || 0
+            return (
+              <span className="w-16 truncate text-nowrap">{`${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}`}</span>
+            )
+          })()}
+          content={
+            <Suspense fallback={<div>Loading sessions...</div>}>
+              {(() => {
+                const sessionCount =
+                  workbenches?.filter(
+                    (workbench) =>
+                      workbench.workspaceId === workspaceId &&
+                      workbench.userId === user?.id
+                  )?.length || 0
 
-                  // Adaptive layout based on session count
-                  const getScrollAreaClass = () => {
-                    if (sessionCount === 0) return 'flex flex-col'
-                    if (sessionCount <= 2)
-                      return 'flex max-h-24 flex-col overflow-y-auto'
-                    if (sessionCount <= 4)
-                      return 'flex max-h-32 flex-col overflow-y-auto'
-                    return 'flex max-h-40 flex-col overflow-y-auto'
-                  }
+                // Adaptive layout based on session count
+                const getScrollAreaClass = () => {
+                  if (sessionCount === 0) return 'flex flex-col'
+                  if (sessionCount <= 2)
+                    return 'flex max-h-24 flex-col overflow-y-auto'
+                  if (sessionCount <= 4)
+                    return 'flex max-h-32 flex-col overflow-y-auto'
+                  return 'flex max-h-40 flex-col overflow-y-auto'
+                }
 
-                  return (
-                    <ScrollArea
-                      className={getScrollAreaClass()}
-                      type="hover"
-                      role="region"
-                      aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
-                      aria-describedby="scroll-hint"
-                    >
-                      <div id="scroll-hint" className="sr-only">
-                        Use arrow keys or scroll to navigate through sessions
-                      </div>
-                      <WorkspaceWorkbenchList workspaceId={workspaceId} />
-                    </ScrollArea>
-                  )
-                })()}
-              </Suspense>
-            }
-            footer={
-              <div className="flex w-full flex-row items-center gap-2">
-                <WorkbenchCreateForm
-                  workspaceId={workspace?.id || ''}
-                  workspaceName={workspace?.name}
-                />
-              </div>
-            }
+                return (
+                  <ScrollArea
+                    className={getScrollAreaClass()}
+                    type="hover"
+                    role="region"
+                    aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
+                    aria-describedby="scroll-hint"
+                  >
+                    <div id="scroll-hint" className="sr-only">
+                      Use arrow keys or scroll to navigate through sessions
+                    </div>
+                    <WorkspaceWorkbenchList workspaceId={workspaceId} />
+                  </ScrollArea>
+                )
+              })()}
+            </Suspense>
+          }
+          footer={
+            <div className="flex w-full flex-row items-center gap-2">
+              <WorkbenchCreateForm
+                workspaceId={workspace?.id || ''}
+                workspaceName={workspace?.name}
+              />
+            </div>
+          }
+        />
+
+        {openEdit && (
+          <WorkspaceUpdateForm
+            workspace={workspace}
+            state={[openEdit, setOpenEdit]}
+            onSuccess={() => {
+              toast({
+                title: 'Workspace updated',
+                description: 'Workspace updated',
+                variant: 'default'
+              })
+              refreshWorkspaces()
+              refreshUser()
+            }}
           />
-
-          {openEdit && (
-            <WorkspaceUpdateForm
-              workspace={workspace}
-              state={[openEdit, setOpenEdit]}
-              onSuccess={() => {
-                toast({
-                  title: 'Workspace updated',
-                  description: 'Workspace updated',
-                  variant: 'default'
-                })
-                refreshWorkspaces()
-                refreshUser()
-              }}
-            />
-          )}
-        </div>
+        )}
 
         <Card
           title={
@@ -309,6 +309,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           content={
             <>
               <div className="flex flex-col gap-2">
+                {rootChildren && rootChildren.length === 0 && (
+                  <div className="flex items-center justify-between text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">No data</p>
+                  </div>
+                )}
                 {rootChildren
                   .filter((child) => child.type === 'folder')
                   .map((child) => (
@@ -405,7 +410,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         )}
 
         <Card
-          className="blur-[1px]"
+          className="opacity-50 grayscale"
           title={
             <Link href={'#'} variant="nav">
               <CircleGauge className="h-6 w-6" />
@@ -446,7 +451,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
 
         <Card
-          className="blur-[1px]"
+          className="opacity-50 grayscale"
           title={
             <Link href={'#'} variant="nav">
               <Activity className="h-6 w-6" />
@@ -464,7 +469,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
 
         <Card
-          className="blur-[1px]"
+          className="opacity-50 grayscale"
           title={
             <Link href={'#'} variant="nav">
               <Footprints className="h-6 w-6" />
@@ -481,7 +486,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           }
         />
       </div>
-      {/* <Dashboard /> */}
     </>
   )
 }
