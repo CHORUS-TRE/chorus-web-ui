@@ -38,7 +38,7 @@ export function RoleHoverCard({
     <HoverCard>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
       <HoverCardContent
-        className="card-glass max-h-[500px] w-[600px] overflow-y-auto border p-4"
+        className="max-h-[500px] w-[600px] overflow-y-auto rounded-2xl border border-muted/30 bg-background p-4 shadow-lg"
         side="bottom"
         align="start"
         sideOffset={5}
