@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.15.0...v1.15.1) (2025-10-24)
+
+
+### Bug Fixes
+
+* **theme-provider:** update import path for ThemeProviderProps to correct module location ([6b37393](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6b373930ece88c662834c568eb16765f4c0caf2b))
+
 # [1.15.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.14.1...v1.15.0) (2025-10-24)
 
 
