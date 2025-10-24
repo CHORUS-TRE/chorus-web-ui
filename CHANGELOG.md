@@ -1,3 +1,33 @@
+# [1.15.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.14.1...v1.15.0) (2025-10-24)
+
+
+### Bug Fixes
+
+* **auth:** workspace/workbench user management dialogs ([a12a4dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a12a4dc15cd7c3f4e9dbab0b0a16581de4e71e63))
+* file-manager style +  upload document ([babe2af](https://github.com/CHORUS-TRE/chorus-web-ui/commit/babe2affa1d3692b7b86a5e9c112b628fed403da))
+* **login:** allow disabling public internal registration ([411c871](https://github.com/CHORUS-TRE/chorus-web-ui/commit/411c871a02742a15473c1ca5848c2d2a26376377))
+* **style:** dark/light theme ([504cdde](https://github.com/CHORUS-TRE/chorus-web-ui/commit/504cdde0a71195deb0cd022dbed4c99bf0f85974))
+* **styles:** add contrast background variable and update theme toggle styles for consistency ([f6fbbdd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f6fbbddc58884c6408f9c804ad3bb776a48bfb73))
+* **styles:** enhance header component styling for improved user experience and visual consistency ([c4343c8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c4343c86339a4b685fd7b823a54b052baff797a9))
+* **styles:** enhance user profile layout and styling for improved visual consistency ([73d4da1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/73d4da15a10ccfb86a8fbc5cc4dbc589e260a3f1))
+* **styles:** improve styling consistency in file manager components ([001e92c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/001e92cf9b468656879829b8339174e5542fa148))
+* **styles:** refine card and header components for layout consistency and improved styling ([580e7fd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/580e7fdf7c8429df48e3319571d408073f044509))
+* **styles:** remove unnecessary text color classes and improve styling consistency across components ([1c54ca9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1c54ca93135df1b078b950b68b3f5fd4880e4ee4))
+* **styles:** update card and workspace components for improved layout and styling consistency ([a439703](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a4397037c7a000017771dbccf7569aa76be7e3f6))
+* **styles:** update global styles and component styles for improved visual consistency and theming ([95a7f69](https://github.com/CHORUS-TRE/chorus-web-ui/commit/95a7f69abad6be5a2bc7729865e147974efa4dc6))
+* **styles:** update header and dropdown components to use elevated glass styling for improved visual consistency ([1fb8c29](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1fb8c29b8d12c72bffc04d8a24c45a9bef12ecd6))
+* **styles:** update sandbox and clinical lifecycle dashboard components for improved layout and visual consistency ([dfdec56](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dfdec56fd54ee16a1e1035bb00d67a5731c45b56))
+* **styles:** update text colors and improve styling consistency across components ([097367c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/097367c02db0f27a3e9a36ca966aa3554c5aa82a))
+* **use-file-system:** ensure consistent base64 encoding for file content by always using readAsDataURL ([650cc8f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/650cc8f4746cb558f34bed80437a470aa8cb56b9))
+
+
+### Features
+
+* **button:** add accent variants for button component ([f645bf6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f645bf60e7c83b6871661dbf176815315b28419a))
+* **sandbox:** enhance Sandbox page with CHORUS Templates and Architecture overview ([9e3bdd1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9e3bdd16e54d437f7e5028a37de9ec6b72a5d183))
+* **theme:** implement theme toggle functionality and enhance styling across components ([ce6536a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ce6536a257187793e8fb7667c9a71cc87efd9ab5))
+* **workbench:** implement user role management in workbench and workspace dialogs ([4a5eb19](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4a5eb199863458c2a156a17d0f46a208a315765b))
+
 ## [1.14.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.14.0...v1.14.1) (2025-10-22)
 
 
