@@ -5,7 +5,7 @@ import { HomeIcon, Package } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-import { Card as Card1 } from '@/components/card'
+import { Card } from '@/components/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
@@ -16,6 +16,7 @@ import {
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
+import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
@@ -33,11 +34,13 @@ interface WorkspacesGridProps {
 const SwitchLink = ({
   user,
   workspace,
-  children
+  children,
+  className
 }: {
   user: User
   workspace: Workspace
   children: React.ReactNode
+  className?: string
 }) => {
   return workspace.id ===
     user.rolesWithContext?.find(
@@ -45,12 +48,16 @@ const SwitchLink = ({
     )?.context.workspace ? (
     <Link
       href={`/workspaces/${workspace.id}`}
-      className="cursor-pointer border-b border-transparent text-muted transition-colors duration-300 hover:border-accent hover:text-accent"
+      className={cn(
+        'cursor-pointer truncate text-nowrap border-b border-transparent text-muted transition-colors duration-300 hover:border-accent hover:text-accent',
+        className
+      )}
+      title={workspace?.name}
     >
       {children}
     </Link>
   ) : (
-    <>{children}</>
+    <span className={className}>{children}</span>
   )
 }
 
@@ -97,7 +104,7 @@ export default function WorkspacesGrid({
               )}
             </div>
 
-            <Card1
+            <Card
               title={
                 <>
                   {workspace.isMain && (
@@ -106,7 +113,11 @@ export default function WorkspacesGrid({
                   {!workspace.isMain && (
                     <Package className="h-6 w-6 flex-shrink-0 text-muted" />
                   )}
-                  <SwitchLink user={user} workspace={workspace}>
+                  <SwitchLink
+                    user={user}
+                    workspace={workspace}
+                    className="min-w-0 flex-1 truncate text-nowrap"
+                  >
                     {workspace?.name}
                   </SwitchLink>
                 </>

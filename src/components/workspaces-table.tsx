@@ -128,23 +128,19 @@ export default function WorkspaceTable({
           />
         )}
         <TableRowComponent className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
-          <TableCell className="p-1 font-semibold">
+          <TableCell className="w-52 max-w-52 p-1 font-semibold">
             <Link
               href={`/workspaces/${workspace?.id}`}
               className="nav-link-base nav-link-hover [&.active]:nav-link-active inline-flex gap-x-2"
             >
               {workspace?.isMain && <HomeIcon className="h-4 w-4 text-muted" />}
-              {workspace?.name}
+              <span
+                className={`text-wrap ${workspace?.isMain ? 'w-44 max-w-44' : 'w-48 max-w-48'}`}
+              >
+                {workspace?.name}
+              </span>
             </Link>
           </TableCell>
-          {/* <TableCell className="p-1 font-normal">
-            <span className="flex items-center justify-between gap-2">
-              {workspace?.name}
-              {workspace?.isMain && (
-                <HomeIcon className="h-4 w-4 text-secondary" />
-              )}
-            </span>
-          </TableCell> */}
           <TableCell className="font-xs p-1">
             {workspace?.description}
           </TableCell>
