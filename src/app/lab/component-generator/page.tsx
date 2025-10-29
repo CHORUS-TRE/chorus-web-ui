@@ -9,11 +9,11 @@ import {
   Sparkles,
   Zap
 } from 'lucide-react'
-import Link from 'next/link'
 import React, { useState } from 'react'
 
+import { Button } from '@/components/button'
 import { BottomChat } from '@/components/chat/bottom-chat'
-import { Button } from '@/components/ui/button'
+import { Link } from '@/components/link'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface GeneratedComponent {

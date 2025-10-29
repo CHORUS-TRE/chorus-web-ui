@@ -18,9 +18,9 @@ import {
   Target,
   Users
 } from 'lucide-react'
-import Link from 'next/link'
 import React, { useState } from 'react'
 
+import { Link } from '@/components/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -259,7 +259,7 @@ const ProtocolDashboard = () => {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/sandbox">Sandbox</Link>
+                <Link href="/lab">Sandbox</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
