@@ -10,7 +10,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 95%;
     --contrast-background: 0 0% 100%;
     --foreground: 222 47% 11%;
 
@@ -127,10 +127,6 @@
     @apply text-base font-normal;
   }
 
-  .nav-link {
-    @apply bg-transparent text-sm font-semibold text-muted;
-  }
-
   .blur-soft {
     @apply bg-background bg-opacity-50 backdrop-blur-sm;
   }
@@ -168,16 +164,20 @@
   }
 
   /* Navigation Link Variants */
+  .nav-link {
+    @apply bg-transparent text-sm font-semibold text-muted;
+  }
+
   .nav-link-base {
-    @apply inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors;
+    @apply inline-flex items-center justify-center border-b-2 border-transparent bg-transparent text-muted transition-colors;
   }
 
   .nav-link-hover {
-    @apply hover:border-b-2 hover:border-accent;
+    @apply hover:border-accent hover:text-foreground;
   }
 
   .nav-link-active {
-    @apply border-b-2 border-accent text-foreground;
+    @apply border-accent text-foreground;
   }
 
   /* Interactive States */
@@ -186,7 +186,7 @@
   }
 
   .interactive-item {
-    @apply flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 backdrop-blur-sm transition-colors hover:bg-accent/10 hover:text-accent;
+    @apply flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 backdrop-blur-sm transition-colors hover:bg-accent/80 hover:text-black;
   }
 
   /* Card Variants */

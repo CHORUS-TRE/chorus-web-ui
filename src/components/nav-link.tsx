@@ -1,8 +1,42 @@
 'use client'
 
-import Link from 'next/link'
+import { cva, type VariantProps } from 'class-variance-authority'
+import NextLink from 'next/link'
+import React from 'react'
+
+import { cn } from '@/lib/utils'
+
 import { usePathname } from 'next/navigation'
 import { UrlObject } from 'url'
+
+import { linkVariants } from '@/components/link'
+
+export interface LinkProps
+  extends React.ComponentPropsWithoutRef<typeof NextLink>,
+    VariantProps<typeof linkVariants> {
+  className?: string
+}
+
+const NavKink2 = React.forwardRef<
+  HTMLAnchorElement, LinkProps>(({ className, variant, children, ...props }, ref) => {
+  const pathname = usePathname()
+  const { enabled = true, href, exact = false } = props
+  const isActive =
+    !enabled || exact ? pathname === href : pathname?.startsWith(href)
+  const newClassName = isActive ? `${className} active` : className
+
+  return (
+    <NextLink
+      className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-black data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-black ${cn(linkVariants({ variant, className }))} `}
+      ref={ref}
+      {...props}
+    >
+      {children}
+    </NextLink>
+  )
+})
+
+NavKink2.displayName = 'NavKink2'
 
 export default function NavLink({
   enabled = true,
@@ -24,12 +58,12 @@ export default function NavLink({
   const newClassName = isActive ? `${className} active` : className
 
   return (
-    <Link
+    <NextLink
       href={href as unknown as UrlObject}
-      className={newClassName}
+      className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-inherit data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-foreground ${newClassName} no-underline`}
       {...props}
     >
       {children}
-    </Link>
+    </NextLink>
   )
 }
