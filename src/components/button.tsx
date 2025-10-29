@@ -43,7 +43,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === 'ghost') {
       return (
         <UIButton
-          size="icon"
           disabled={disabled}
           type={type}
           className={`h-8 w-8 bg-transparent text-muted hover:bg-transparent hover:text-accent ${className || ''}`}

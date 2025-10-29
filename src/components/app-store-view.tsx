@@ -14,8 +14,8 @@ export function AppStoreView() {
   const { apps, refreshApps } = useAppState()
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <section className="w-full">
+    <>
+      <div className="w-full">
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <Tabs defaultValue="my-apps" className="w-full">
@@ -30,24 +30,28 @@ export function AppStoreView() {
                   <TabsTrigger
                     value="apps"
                     className="data-[state=active]:text-primary-foreground"
+                    disabled
                   >
                     Apps
                   </TabsTrigger>
                   <TabsTrigger
                     value="service"
                     className="data-[state=active]:text-primary-foreground"
+                    disabled
                   >
                     Services
                   </TabsTrigger>
                   <TabsTrigger
                     value="scripts"
                     className="data-[state=active]:text-primary-foreground"
+                    disabled
                   >
                     Scripts
                   </TabsTrigger>
                   <TabsTrigger
                     value="workflows"
                     className="data-[state=active]:text-primary-foreground"
+                    disabled
                   >
                     Workflows
                   </TabsTrigger>
@@ -60,7 +64,7 @@ export function AppStoreView() {
               </div>
 
               <TabsContent value="my-apps" className="mt-0">
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,250px))] justify-center gap-6">
+                <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
                   {apps?.map((app) => (
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
@@ -68,7 +72,7 @@ export function AppStoreView() {
               </TabsContent>
 
               <TabsContent value="apps" className="mt-0">
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,250px))] justify-center gap-6">
+                <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
                   {apps?.map((app) => (
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
@@ -91,7 +95,7 @@ export function AppStoreView() {
             </div>
           )}
         </div>
-      </section>
+      </div>
 
       {showCreateDialog && (
         <AppCreateDialog
@@ -100,6 +104,6 @@ export function AppStoreView() {
           onSuccess={refreshApps}
         />
       )}
-    </div>
+    </>
   )
 }

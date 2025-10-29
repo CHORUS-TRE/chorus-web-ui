@@ -1,11 +1,11 @@
 'use client'
 
 import { ArrowRight, Loader2 } from 'lucide-react'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
+import { Link } from '@/components/link'
 import { createUser } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'

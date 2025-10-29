@@ -14,12 +14,12 @@ import {
   User,
   XCircle
 } from 'lucide-react'
-import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
+import { Button } from '@/components/button'
+import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -158,7 +158,7 @@ export default function UserProfile() {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           {/* Profile Header */}
-          <Card className="card-glass flex h-full flex-col rounded-2xl">
+          <Card className="card-glass flex flex-col rounded-2xl">
             <CardContent className="pt-6">
               <div className="flex items-start space-x-4">
                 <Avatar className="h-20 w-20">
@@ -327,7 +327,7 @@ export default function UserProfile() {
           )}
 
           {/* Actions */}
-          <Card className="card-glass flex h-full flex-col rounded-2xl">
+          <Card className="card-glass flex flex-col rounded-2xl">
             <CardContent className="pt-6">
               <div className="flex flex-wrap gap-3">
                 <Button variant="outline" disabled>

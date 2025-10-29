@@ -3,6 +3,7 @@
 import { Trash2 } from 'lucide-react'
 
 import { deleteUser } from '@/view-model/user-view-model'
+import { Button } from '~/components/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +15,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '~/components/ui/alert-dialog'
-import { Button } from '~/components/ui/button'
 
 import { toast } from '../hooks/use-toast'
 
@@ -56,7 +56,7 @@ export function UserDeleteDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {!isControlled && (
         <AlertDialogTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Delete user">
+          <Button variant="ghost" aria-label="Delete user">
             <Trash2 className="h-4 w-4" aria-hidden="true" />
             <span className="sr-only">Delete user</span>
           </Button>

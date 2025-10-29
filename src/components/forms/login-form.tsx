@@ -2,11 +2,11 @@
 
 import { ArrowRight, Loader2 } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
 import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import { Link } from '@/components/link'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { useAuthentication } from '@/providers/authentication-provider'

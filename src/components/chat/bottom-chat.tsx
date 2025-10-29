@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 

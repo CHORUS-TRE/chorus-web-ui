@@ -31,7 +31,7 @@ import {
   useState
 } from 'react'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -106,7 +106,6 @@ export function PromptInputAttachment({
         aria-label="Remove attachment"
         className="absolute -right-1.5 -top-1.5 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100"
         onClick={() => attachments.remove(data.id)}
-        size="icon"
         type="button"
         variant="outline"
       >

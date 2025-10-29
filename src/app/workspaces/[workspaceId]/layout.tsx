@@ -1,10 +1,10 @@
 'use client'
 
 import { Home, PackageOpen } from 'lucide-react'
-import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import React from 'react'
 
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'

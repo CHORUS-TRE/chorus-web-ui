@@ -1,8 +1,9 @@
 'use client'
 
 import { ChevronDown, ChevronUp, Store } from 'lucide-react'
-import Link from 'next/link'
+import { useTheme } from 'next-themes'
 
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import AppStoreHero from '~/components/app-store-hero'
 import { AppStoreView } from '~/components/app-store-view'
@@ -18,6 +19,8 @@ import { BreadcrumbLink } from '~/components/ui/breadcrumb'
 
 export default function Page() {
   const { showAppStoreHero, toggleAppStoreHero } = useAppState()
+  const { theme } = useTheme()
+  const isLightTheme = theme === 'light'
 
   return (
     <>

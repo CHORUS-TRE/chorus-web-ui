@@ -4,7 +4,7 @@ import type { LanguageModelUsage } from 'ai'
 import { type ComponentProps, createContext, useContext } from 'react'
 import { estimateCost, type ModelId } from 'tokenlens'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   HoverCard,
   HoverCardContent,

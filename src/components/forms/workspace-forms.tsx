@@ -28,8 +28,8 @@ import {
   workspaceUpdate
 } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
+import { Card, CardContent, CardFooter } from '~/components/card'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
-import { Card, CardContent, CardFooter } from '~/components/ui/card'
 import {
   Form,
   FormControl,

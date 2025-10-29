@@ -3,12 +3,12 @@
 import { owl } from '@lucide/lab'
 import { CircleX } from 'lucide-react'
 import { Icon } from 'lucide-react'
-import Link from 'next/link'
 import { useNextStep } from 'nextstepjs'
 import { useCallback, useEffect } from 'react'
 
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
 
@@ -31,7 +31,6 @@ export default function RightSidebar() {
   return (
     <>
       <Button
-        size="icon"
         className="absolute right-2 top-2 overflow-hidden text-muted hover:bg-inherit hover:text-accent"
         variant="ghost"
         onClick={toggleRightSidebar}
@@ -50,9 +49,10 @@ export default function RightSidebar() {
               href="https://docs.chorus-tre.ch/docs/category/getting-started"
               className="cursor"
               target="_blank"
+              variant="rounded"
             >
               <Card
-                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                className={`flex h-full flex-col justify-between hover:border-accent hover:bg-background/80 hover:shadow-lg`}
                 id="getting-started-step1"
               >
                 <CardHeader className="pb-4">
@@ -76,9 +76,10 @@ export default function RightSidebar() {
               href="https://docs.chorus-tre.ch"
               target="_blank"
               className="cursor"
+              variant="rounded"
             >
               <Card
-                className={`flex h-full flex-col justify-between rounded-2xl border-muted/40 bg-background/40 transition-colors duration-300 hover:border-accent hover:bg-background/80 hover:shadow-lg`}
+                className={`flex h-full flex-col justify-between hover:border-accent hover:bg-background/80 hover:shadow-lg`}
               >
                 <CardHeader className="pb-4">
                   <CardTitle className="text-base">Documentation</CardTitle>

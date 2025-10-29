@@ -1,12 +1,12 @@
 'use client'
 
 import { X } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React from 'react'
 
 import { Header } from '@/components/header'
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'

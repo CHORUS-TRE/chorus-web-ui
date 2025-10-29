@@ -2,8 +2,15 @@
 
 import { Database, Package } from 'lucide-react'
 
-import { Link } from '@/components/ui/link'
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/card'
 import {
   Accordion,
   AccordionContent,
@@ -18,13 +25,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '~/components/ui/breadcrumb'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function DataPage() {

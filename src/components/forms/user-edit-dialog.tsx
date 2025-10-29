@@ -10,9 +10,9 @@ import { ControllerRenderProps } from 'react-hook-form'
 import { z } from 'zod'
 
 import { updateUser } from '@/view-model/user-view-model'
+import { Button } from '~/components/button'
 import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
 import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -141,7 +141,6 @@ export function UserEditDialog({
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            size="icon"
             aria-label={`Edit user ${user.firstName} ${user.lastName}`}
           >
             <Pencil className="h-4 w-4" aria-hidden="true" />
@@ -283,7 +282,6 @@ export function UserEditDialog({
                               <TableCell className="p-2">
                                 <Button
                                   variant="ghost"
-                                  size="icon"
                                   aria-label="Delete role"
                                   onClick={removeRoleWithIndex(field, i)}
                                 >

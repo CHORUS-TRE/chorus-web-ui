@@ -9,7 +9,7 @@ import {
   oneLight
 } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { cn } from '~/lib/utils'
 
 type CodeBlockContextType = {
@@ -139,7 +139,6 @@ export const CodeBlockCopyButton = ({
     <Button
       className={cn('shrink-0', className)}
       onClick={copyToClipboard}
-      size="icon"
       variant="ghost"
       {...props}
     >

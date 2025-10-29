@@ -87,8 +87,7 @@ export default function SandboxPage() {
         }
       ]
     },
-    
-    
+
     {
       title: 'Generative UI',
       description: 'Generate UI components with AI',
@@ -215,7 +214,7 @@ export default function SandboxPage() {
 
                       {item.children &&
                         item.children.map((child) => (
-                          <div>
+                          <div key={child.title}>
                             <Link
                               key={child.title}
                               href={child.href}

@@ -2,13 +2,12 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon, HomeIcon } from 'lucide-react'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
+import { Link } from '@/components/link'
 import { User, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -16,7 +15,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '~/components/card'
+import { Badge } from '~/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -156,7 +156,7 @@ export default function WorkspaceTable({
           <TableCell className="p-1">
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
-                <Button aria-haspopup="true" size="icon" variant="ghost">
+                <Button aria-haspopup="true" variant="ghost">
                   <EllipsisVerticalIcon className="h-4 w-4" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>

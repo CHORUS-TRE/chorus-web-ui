@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
+import { Button } from '@/components/button'
 import { GeneratedDataTable } from '@/components/templates/data-table-template'
 // Import our enhanced components
 import {
@@ -31,7 +32,6 @@ import {
   GeneratedTimeline
 } from '@/components/templates/enhanced-components'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -622,7 +622,7 @@ export function ComponentExplorer() {
                     <Copy className="mr-2 h-3 w-3" />
                     Copy Code
                   </Button>
-                  <Button size="sm" variant="ghost">
+                  <Button variant="ghost">
                     <ExternalLink className="h-3 w-3" />
                   </Button>
                 </div>

@@ -5,7 +5,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import type { ComponentProps, HTMLAttributes, ReactElement } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { cn } from '~/lib/utils'
 
 type BranchContextType = {
@@ -154,7 +154,6 @@ export const BranchPrevious = ({
       )}
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
-      size="icon"
       type="button"
       variant="ghost"
       {...props}
@@ -184,7 +183,6 @@ export const BranchNext = ({
       )}
       disabled={totalBranches <= 1}
       onClick={goToNext}
-      size="icon"
       type="button"
       variant="ghost"
       {...props}

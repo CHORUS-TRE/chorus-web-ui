@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Maximize, Minus, Send, Sparkles, X } from 'lucide-react'
 
 import { Message } from '@/components/ai-elements/message'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAIChat } from '@/providers/ai-chat-provider'
@@ -76,7 +76,6 @@ export function AIChatInterface() {
                 <Button
                   onClick={isMinimized ? expandChat : minimizeChat}
                   variant="ghost"
-                  size="icon"
                   className="h-8 w-8 hover:bg-white/20"
                   aria-label={isMinimized ? 'Expand chat' : 'Minimize chat'}
                 >
@@ -89,7 +88,6 @@ export function AIChatInterface() {
                 <Button
                   onClick={toggleChat}
                   variant="ghost"
-                  size="icon"
                   className="h-8 w-8 hover:bg-white/20"
                   aria-label="Close chat"
                 >

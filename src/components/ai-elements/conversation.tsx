@@ -5,7 +5,7 @@ import type { ComponentProps } from 'react'
 import { useCallback } from 'react'
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { cn } from '~/lib/utils'
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>
@@ -86,7 +86,6 @@ export const ConversationScrollButton = ({
           className
         )}
         onClick={handleScrollToBottom}
-        size="icon"
         type="button"
         variant="outline"
         {...props}

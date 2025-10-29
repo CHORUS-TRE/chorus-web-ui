@@ -10,8 +10,6 @@ import { useAuthentication } from '@/providers/authentication-provider'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
 import { appDelete } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
-import { AppEditDialog } from '~/components/forms/app-edit-dialog'
-import { DeleteDialog } from '~/components/forms/delete-dialog'
 import {
   Card,
   CardContent,
@@ -19,7 +17,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '~/components/card'
+import { AppEditDialog } from '~/components/forms/app-edit-dialog'
+import { DeleteDialog } from '~/components/forms/delete-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -151,7 +151,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
 
   return (
     <>
-      <Card className="flex h-full flex-col rounded-2xl border-muted/40 bg-background/60">
+      <Card>
         <CardHeader className="relative pb-4">
           <div className="flex items-center space-x-4">
             {app.iconURL && (
@@ -169,7 +169,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
                 <AvatarFallback>{app.name?.slice(0, 2) || ''}</AvatarFallback>
               </Avatar>
             )}
-            <CardTitle className="flex items-center gap-3 pr-2">
+            <CardTitle className="flex items-center gap-2 truncate text-ellipsis pr-2">
               {app.name || 'Unnamed App'}
             </CardTitle>
           </div>

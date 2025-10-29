@@ -2,14 +2,12 @@
 
 import { cva, type VariantProps } from 'class-variance-authority'
 import NextLink from 'next/link'
-import React from 'react'
-
-import { cn } from '@/lib/utils'
-
 import { usePathname } from 'next/navigation'
+import React from 'react'
 import { UrlObject } from 'url'
 
 import { linkVariants } from '@/components/link'
+import { cn } from '@/lib/utils'
 
 export interface LinkProps
   extends React.ComponentPropsWithoutRef<typeof NextLink>,
@@ -17,24 +15,25 @@ export interface LinkProps
   className?: string
 }
 
-const NavKink2 = React.forwardRef<
-  HTMLAnchorElement, LinkProps>(({ className, variant, children, ...props }, ref) => {
-  const pathname = usePathname()
-  const { enabled = true, href, exact = false } = props
-  const isActive =
-    !enabled || exact ? pathname === href : pathname?.startsWith(href)
-  const newClassName = isActive ? `${className} active` : className
+const NavKink2 = React.forwardRef<HTMLAnchorElement, LinkProps>(
+  ({ className, variant, children, ...props }, ref) => {
+    const pathname = usePathname()
+    const { enabled = true, href, exact = false } = props
+    const isActive =
+      !enabled || exact ? pathname === href : pathname?.startsWith(href)
+    const newClassName = isActive ? `${className} active` : className
 
-  return (
-    <NextLink
-      className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-black data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-black ${cn(linkVariants({ variant, className }))} `}
-      ref={ref}
-      {...props}
-    >
-      {children}
-    </NextLink>
-  )
-})
+    return (
+      <NextLink
+        className={`inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-black data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-black ${cn(linkVariants({ variant, className }))} `}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </NextLink>
+    )
+  }
+)
 
 NavKink2.displayName = 'NavKink2'
 

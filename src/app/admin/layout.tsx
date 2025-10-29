@@ -7,8 +7,8 @@ const AuthenticatedApp = React.lazy(() =>
   }))
 )
 import { Package } from 'lucide-react'
-import Link from 'next/link'
 
+import { Link } from '@/components/link'
 import { AdminSidebar } from '@/components/ui/admin-sidebar'
 import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
 import { SidebarProvider } from '@/components/ui/sidebar'
