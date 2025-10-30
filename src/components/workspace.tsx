@@ -12,7 +12,7 @@ import {
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useState } from 'react'
 
 import { Button } from '@/components/button'
 import {
@@ -87,8 +87,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     workbenches,
     users,
     refreshWorkspaces,
-    background,
-    setBackground,
     workspaces
   } = useAppState()
   const { user, refreshUser } = useAuthentication()
@@ -100,32 +98,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     user?.id === workspace?.userId
       ? user
       : users?.find((user) => user.id === workspace?.userId)
-
-  useEffect(() => {
-    if (!workspaceId || !workbenches || workbenches.length === 0) return
-
-    const firstSessionId = workbenches.find(
-      (workbench) =>
-        workbench.workspaceId === workspaceId && workbench.userId === user?.id
-    )?.id
-
-    if (
-      background?.workspaceId !== workspaceId ||
-      background?.sessionId !== firstSessionId
-    ) {
-      setBackground({
-        sessionId: firstSessionId,
-        workspaceId: workspaceId
-      })
-    }
-  }, [
-    workspaceId,
-    workbenches,
-    user?.id,
-    background?.sessionId,
-    background?.workspaceId,
-    setBackground
-  ])
 
   return (
     <>
@@ -220,7 +192,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           aria-labelledby="sessions-card-title"
           className="flex h-full flex-col"
         >
-          <CardHeader className="mb-0 h-24 w-full">
+          <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={`/workspaces/${workspaceId}/sessions`} variant="flex">
                 <LaptopMinimal
@@ -259,7 +231,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 const getScrollAreaClass = () => {
                   if (sessionCount === 0) return 'flex flex-col'
                   if (sessionCount <= 2)
-                    return 'flex max-h-24 flex-col overflow-y-auto'
+                    return 'flex max- flex-col overflow-y-auto'
                   if (sessionCount <= 4)
                     return 'flex max-h-32 flex-col overflow-y-auto'
                   return 'flex max-h-40 flex-col overflow-y-auto'
@@ -310,7 +282,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         )}
 
         <Card className="flex h-full flex-col">
-          <CardHeader className="mb-0 h-24 w-full">
+          <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={`/workspaces/${workspaceId}/data`} variant="flex">
                 <Database
@@ -380,7 +352,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
         {workspace && user?.workspaceId !== workspace?.id && (
           <Card className="flex h-full flex-col">
-            <CardHeader className="mb-0 h-24 w-full">
+            <CardHeader className="mb-0 w-full">
               <CardTitle className="mb-1 flex items-center gap-3">
                 <Link href={`/workspaces/${workspaceId}/users`} variant="flex">
                   <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
@@ -437,7 +409,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         )}
 
         <Card className="flex h-full flex-col opacity-50 grayscale">
-          <CardHeader className="mb-0 h-24 w-full">
+          <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={'#'} variant="flex">
                 <CircleGauge className="h-6 w-6" />
@@ -482,7 +454,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </Card>
 
         <Card className="flex h-full flex-col opacity-50 grayscale">
-          <CardHeader className="mb-0 h-24 w-full">
+          <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={'#'} variant="flex">
                 <Activity className="h-6 w-6" />
@@ -506,7 +478,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </Card>
 
         <Card className="flex h-full flex-col opacity-50 grayscale">
-          <CardHeader className="mb-0 h-24 w-full">
+          <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={'#'} variant="flex">
                 <Footprints className="h-6 w-6" />
