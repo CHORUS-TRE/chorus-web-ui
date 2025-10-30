@@ -3,15 +3,15 @@
 import { Users } from 'lucide-react'
 import { useState } from 'react'
 
-import { UserCreateDialog } from '~/components/forms/user-create-dialog'
+// import { UserCreateDialog } from '~/components/forms/user-create-dialog'
 import { UserTable } from '~/components/ui/user-table'
 
 const UserManagementPage = () => {
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [refreshKey] = useState(0)
 
-  const handleUserCreated = () => {
-    setRefreshKey((oldKey) => oldKey + 1)
-  }
+  // const handleUserCreated = () => {
+  //   setRefreshKey((oldKey) => oldKey + 1)
+  // }
 
   return (
     <>

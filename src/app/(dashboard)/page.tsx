@@ -7,7 +7,6 @@ import {
   BarChart3,
   CheckCircle,
   CirclePlus,
-  Clock,
   Database,
   Edit,
   FileText,
@@ -25,12 +24,7 @@ import { useRouter } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 
 import { Link } from '@/components/link'
-import {
-  Workbench,
-  WorkbenchCreateSchema,
-  WorkbenchCreateType,
-  WorkbenchStatus
-} from '@/domain/model'
+import { WorkbenchStatus } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { Button } from '~/components/button'
@@ -41,16 +35,15 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
-import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
+// import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage
 } from '~/components/ui/breadcrumb'
@@ -272,7 +265,7 @@ export default function CHORUSDashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card className="bg-background demo-effect">
+          <Card className="demo-effect bg-background">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Compute Usage
@@ -284,7 +277,7 @@ export default function CHORUSDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-background demo-effect">
+          <Card className="demo-effect bg-background">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Storage Usage
@@ -583,7 +576,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Data Requests Tab */}
-        <TabsContent value="data" className="space-y-4 demo-effect">
+        <TabsContent value="data" className="demo-effect space-y-4">
           <Card className="card-glass">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -635,10 +628,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Resources Tab */}
-        <TabsContent
-          value="resources"
-          className="space-y-4 demo-effect"
-        >
+        <TabsContent value="resources" className="demo-effect space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card className="card-glass">
               <CardHeader>
@@ -738,7 +728,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Team Tab */}
-        <TabsContent value="team" className="space-y-4 demo-effect">
+        <TabsContent value="team" className="demo-effect space-y-4">
           <Card className="card-glass">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

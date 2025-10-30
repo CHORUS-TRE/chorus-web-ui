@@ -3,7 +3,6 @@
 import {
   AppWindow,
   CheckCircle,
-  CirclePlus,
   Clock,
   Crown,
   Key,
@@ -22,7 +21,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useAuthentication } from '@/providers/authentication-provider'
 import { RoleHoverCard } from '~/components/role-hover-card'
 import {
   Breadcrumb,
@@ -197,7 +195,7 @@ export default function UserProfile() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" disabled>
+                  <Button variant="outline" disabled>
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </Button>

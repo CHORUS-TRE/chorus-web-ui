@@ -13,15 +13,13 @@ import {
   Package,
   PackageOpen,
   Plus,
-  Search,
   Settings,
   Store,
   Trash2,
-  User,
-  Users
+  User
 } from 'lucide-react'
 import Image from 'next/image'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 

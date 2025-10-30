@@ -1,8 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { CirclePlus, Users } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Users } from 'lucide-react'
 
 import {
   Card,
@@ -12,7 +11,7 @@ import {
   CardTitle
 } from '@/components/card'
 import { Link } from '@/components/link'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,16 +22,6 @@ import {
 } from '~/components/ui/breadcrumb'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useAppState } from '~/providers/app-state-provider'
-
-interface User {
-  id: string
-  firstName: string
-  lastName: string
-  username: string
-  avatarUrl?: string
-  createdAt: Date
-  lastLogin?: Date
-}
 
 export default function UsersPage() {
   const { users } = useAppState()

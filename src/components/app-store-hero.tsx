@@ -4,11 +4,8 @@ import { useTheme } from 'next-themes'
 
 import logoWhite from '/public/logo-chorus-primaire-black@2x.svg'
 import logoBlack from '/public/logo-chorus-primaire-white@2x.svg'
-import { Button } from '@/components/button'
-import { useAppState } from '@/providers/app-state-provider'
 
 export default function AppStoreHero() {
-  const { toggleRightSidebar } = useAppState()
   const { theme } = useTheme()
   const isLightTheme = theme === 'light'
   const logo = isLightTheme ? logoWhite : logoBlack

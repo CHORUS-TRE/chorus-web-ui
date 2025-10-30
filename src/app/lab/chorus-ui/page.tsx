@@ -18,13 +18,12 @@ import {
   Plus,
   Search,
   Settings,
-  Trash2,
-  Users
+  Trash2
 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Alert, AlertDescription } from '~/components/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -52,7 +51,7 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Textarea } from '~/components/ui/textarea'
 
 export default function ChorusClientApp() {
@@ -153,7 +152,7 @@ export default function ChorusClientApp() {
     }
   ])
 
-  const [notifications, setNotifications] = useState([
+  const [notifications] = useState([
     {
       id: '1',
       type: 'info',
@@ -177,8 +176,7 @@ export default function ChorusClientApp() {
     }
   ])
 
-  const [newWorkspaceDialog, setNewWorkspaceDialog] = useState(false)
-  const [newWorkbenchDialog, setNewWorkbenchDialog] = useState(false)
+  // removed unused dialog states
 
   // Login handler
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -799,7 +797,7 @@ function WorkbenchesView({
     >
   >
 }) {
-  const [newWorkbenchOpen, setNewWorkbenchOpen] = useState(false)
+  // removed unused newWorkbenchOpen state
 
   const toggleWorkbench = (id: string) => {
     setWorkbenches(

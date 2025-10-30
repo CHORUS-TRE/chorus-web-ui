@@ -83,12 +83,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
-  const {
-    workbenches,
-    users,
-    refreshWorkspaces,
-    workspaces
-  } = useAppState()
+  const { workbenches, users, refreshWorkspaces, workspaces } = useAppState()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 
@@ -408,7 +403,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </Card>
         )}
 
-        <Card className="flex h-full flex-col opacity-50 grayscale">
+        <Card className="demo-effect flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={'#'} variant="flex">
@@ -453,7 +448,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
 
-        <Card className="flex h-full flex-col opacity-50 grayscale">
+        <Card className="demo-effect flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={'#'} variant="flex">
@@ -477,7 +472,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
 
-        <Card className="flex h-full flex-col opacity-50 grayscale">
+        <Card className="demo-effect flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={'#'} variant="flex">

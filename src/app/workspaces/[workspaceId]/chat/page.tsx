@@ -1,7 +1,7 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { CopyIcon, GlobeIcon, RefreshCcwIcon } from 'lucide-react'
+import { CopyIcon, GlobeIcon } from 'lucide-react'
 import { Fragment } from 'react'
 import { useState } from 'react'
 

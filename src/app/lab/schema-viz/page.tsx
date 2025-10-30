@@ -2,36 +2,23 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Space } from 'react-zoomable-ui'
-import { Canvas, Edge, EdgeData, Node, NodeData, useSelection } from 'reaflow'
+import { Canvas, EdgeData, NodeData, useSelection } from 'reaflow'
 
 import { roleCategories, schemaData, serviceGroups } from './data'
 
 // Responsive container size will be measured with ResizeObserver
 
 // Define types for our schema data
-interface Permission {
-  name: string
-  description: string
-  context: string[]
-}
+// Types are defined in data; local copies removed to avoid unused warnings
 
-interface Role {
-  name: string
-  description: string
-  attributes?: Record<string, string>
-  inherits_from?: string[]
-  permissions: string[]
-}
-
-interface SchemaData {
-  permissions: Permission[]
-  roles: Role[]
-}
+// interface SchemaData {
+//   permissions: Permission[]
+//   roles: Role[]
+// }
 
 export default function RoleHierarchyPage() {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [showPermissions, setShowPermissions] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm] = useState('')
   const containerRef = useRef<HTMLDivElement | null>(null)
   const viewPortRef = useRef<HTMLDivElement | null>(null)
   const [size, setSize] = useState({ width: 1200, height: 800 })
@@ -134,19 +121,11 @@ export default function RoleHierarchyPage() {
   }, [showPermissions, searchTerm])
 
   // Selection management
-  const { selections, onCanvasClick, onClick, onKeyDown, clearSelections } =
-    useSelection({
-      nodes,
-      edges,
-      onSelection: (selectedIds) => {
-        const roleId = selectedIds.find((id) => id.startsWith('role-'))
-        if (roleId) {
-          setSelectedRole(roleId.replace('role-', ''))
-        } else {
-          setSelectedRole(null)
-        }
-      }
-    })
+  const { selections, onCanvasClick } = useSelection({
+    nodes,
+    edges,
+    onSelection: () => {}
+  })
 
   return (
     <div className="">

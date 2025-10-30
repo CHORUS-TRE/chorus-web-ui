@@ -112,8 +112,7 @@ export class ComponentTemplateRegistry {
       description: 'Search and filter interface for data',
       category: 'form',
       promptPatterns: ['search', 'filter', 'find', 'lookup', 'query'],
-      generate: (context: GenerationContext) =>
-        this.generateSearchFilter(context),
+      generate: () => this.generateSearchFilter(),
       apiBinding: {
         endpoint: '/api/workspaces/{workspaceId}/search',
         method: 'GET',
@@ -247,7 +246,7 @@ export class ComponentTemplateRegistry {
     }
   }
 
-  private generateSearchFilter(_context: GenerationContext): ComponentSpec {
+  private generateSearchFilter(): ComponentSpec {
     return {
       id: `search-filter-${Date.now()}`,
       component: 'GeneratedSearchFilter',

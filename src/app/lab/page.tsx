@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Activity,
   Code2,
   Cpu,
   FileText,

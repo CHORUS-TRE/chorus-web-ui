@@ -7,8 +7,6 @@ import {
   CheckCircle,
   Cloud,
   Container,
-  Database,
-  Eye,
   FileText,
   Layers,
   Lock,
@@ -18,7 +16,7 @@ import {
   Shield,
   Users
 } from 'lucide-react'
-import React, { useState } from 'react'
+import React from 'react'
 
 import {
   Accordion,
@@ -39,8 +37,6 @@ import { Separator } from '~/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 
 export default function ArchitectureDashboard() {
-  const [selectedLevel, setSelectedLevel] = useState('context')
-
   const architectureLevels = [
     { id: 'context', label: 'Level 1: Context', icon: Users },
     { id: 'container', label: 'Level 2: Containers', icon: Box },
@@ -409,11 +405,7 @@ export default function ArchitectureDashboard() {
         </Alert>
 
         {/* Main Navigation Tabs */}
-        <Tabs
-          defaultValue="context"
-          className="space-y-6"
-          onValueChange={setSelectedLevel}
-        >
+        <Tabs defaultValue="context" className="space-y-6">
           <TabsList className="grid h-auto w-full grid-cols-4 bg-white p-2 shadow-md">
             {architectureLevels.map((level) => {
               const Icon = level.icon

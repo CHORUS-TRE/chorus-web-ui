@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutGrid, List, Plus, Search, Settings, Upload } from 'lucide-react'
+import { LayoutGrid, List, Plus, Search, Upload } from 'lucide-react'
 
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'

@@ -1,6 +1,6 @@
 'use client'
 
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps } from 'class-variance-authority'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
@@ -17,11 +17,7 @@ export interface LinkProps
 
 const NavKink2 = React.forwardRef<HTMLAnchorElement, LinkProps>(
   ({ className, variant, children, ...props }, ref) => {
-    const pathname = usePathname()
-    const { enabled = true, href, exact = false } = props
-    const isActive =
-      !enabled || exact ? pathname === href : pathname?.startsWith(href)
-    const newClassName = isActive ? `${className} active` : className
+    // simplified: active styling handled by consumer NavLink below
 
     return (
       <NextLink
@@ -55,7 +51,6 @@ export default function NavLink({
   const isActive =
     !enabled || exact ? pathname === href : pathname?.startsWith(href)
   const newClassName = isActive ? `${className} active` : className
-
   return (
     <NextLink
       href={href as unknown as UrlObject}

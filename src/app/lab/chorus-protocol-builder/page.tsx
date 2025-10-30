@@ -10,7 +10,6 @@ import {
   FileCheck,
   FileText,
   FlaskConical,
-  Globe,
   Heart,
   Microscope,
   Settings,
@@ -44,7 +43,6 @@ import {
 
 const ProtocolDashboard = () => {
   const [completedSections, setCompletedSections] = useState(new Set())
-  const [activePhase, setActivePhase] = useState('planning')
 
   const protocolSections = [
     {
@@ -215,18 +213,14 @@ const ProtocolDashboard = () => {
   ).length
 
   const StatCard = ({
-    icon: Icon,
     title,
     value,
     subtitle,
-    color = 'text-accent',
     bgColor = 'card-glass'
   }: {
-    icon: React.ReactNode
     title: string
     value: string
     subtitle: string
-    color: string
     bgColor: string
   }) => (
     <Card

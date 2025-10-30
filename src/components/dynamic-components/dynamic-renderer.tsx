@@ -26,7 +26,6 @@ interface GeneratedMetricCardProps {
   value: number | string
   description?: string
   trend?: 'up' | 'down' | 'neutral'
-  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'destructive'
 }
 
 interface GeneratedProgressBarProps {
@@ -34,7 +33,6 @@ interface GeneratedProgressBarProps {
   total: number
   label?: string
   showPercentage?: boolean
-  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'destructive'
 }
 
 interface GeneratedSearchFilterProps {
@@ -53,8 +51,7 @@ function GeneratedMetricCard({
   title,
   value,
   description,
-  trend = 'neutral',
-  color = 'primary'
+  trend = 'neutral'
 }: GeneratedMetricCardProps) {
   const trendColors = {
     up: 'text-green-600',
@@ -97,8 +94,7 @@ function GeneratedProgressBar({
   current,
   total,
   label,
-  showPercentage = true,
-  color = 'primary'
+  showPercentage = true
 }: GeneratedProgressBarProps) {
   const percentage = Math.round((current / total) * 100)
 

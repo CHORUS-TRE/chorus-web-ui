@@ -112,7 +112,7 @@ export function ManageUserWorkspaceDialog({
     if (!currentRoleName) return 'add'
     if (selectedRole === currentRoleName) return 'remove'
     return 'update'
-  }, [currentRoleName, form.watch('roleName')])
+  }, [currentRoleName, form])
 
   const [state, formAction] = useActionState(
     workspaceManageUserRole,

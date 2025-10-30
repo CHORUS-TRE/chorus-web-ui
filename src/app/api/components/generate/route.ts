@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedRequest = GenerationRequestSchema.parse(body)
 
-    // Parse the prompt to understand user intent
-    const intent = promptParser.parsePrompt(validatedRequest.prompt)
+    // Parse the prompt (result not used directly in MVP)
+    promptParser.parsePrompt(validatedRequest.prompt)
 
     // Find matching template using enhanced registry
     const template = enhancedTemplateRegistry.findTemplateByPrompt(

@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  AlertCircle,
   BarChart3,
   Calendar,
   CheckCircle,

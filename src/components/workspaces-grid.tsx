@@ -23,7 +23,6 @@ import {
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
-import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'

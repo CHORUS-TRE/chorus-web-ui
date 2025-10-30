@@ -1,19 +1,11 @@
 // Component Generator Page - MVP Demo
 'use client'
 
-import {
-  ExternalLink,
-  Globe,
-  Layers,
-  Palette,
-  Sparkles,
-  Zap
-} from 'lucide-react'
+// Removed unused icons
 import React, { useState } from 'react'
 
 import { Button } from '@/components/button'
 import { BottomChat } from '@/components/chat/bottom-chat'
-import { Link } from '@/components/link'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface GeneratedComponent {

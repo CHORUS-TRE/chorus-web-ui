@@ -12,7 +12,7 @@ export const useAuthorizationViewModel = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const checkAuthorization = async (user: User, permission: string) => {
+    const checkAuthorization = async (user: User) => {
       try {
         // const result = await isUserAllowed(user, permission)
         const result = user.rolesWithContext?.find(
@@ -36,7 +36,7 @@ export const useAuthorizationViewModel = () => {
     }
 
     if (isInitialized && user) {
-      checkAuthorization(user, 'workspaces:create')
+      checkAuthorization(user)
     }
   }, [user, isInitialized, isUserAllowed])
 

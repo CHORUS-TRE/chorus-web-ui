@@ -11,7 +11,6 @@ import {
   FileDown,
   FileText,
   Filter,
-  Lock,
   MessageSquare,
   Play,
   Plus,
@@ -147,7 +146,8 @@ export default function CHORUSResearchDashboard() {
     }
   ]
 
-  const getStatusIcon = (status) => {
+  type LifecycleStatus = 'completed' | 'active' | 'pending'
+  const getStatusIcon = (status: LifecycleStatus): JSX.Element => {
     switch (status) {
       case 'completed':
         return <CheckCircle className="h-4 w-4 text-green-600" />

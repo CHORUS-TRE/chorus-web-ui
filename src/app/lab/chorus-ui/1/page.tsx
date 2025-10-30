@@ -6,33 +6,26 @@ import {
   Briefcase,
   ChevronRight,
   Database,
-  Download,
   Edit,
-  FileText,
   FolderOpen,
   Home,
-  Key,
   Layers,
   LogIn,
   LogOut,
   Menu,
   Play,
   Plus,
-  Save,
   Search,
   Settings,
-  Shield,
   Trash2,
   Upload,
-  User,
-  Users,
   X
 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
 import { useToast } from '~/components/hooks/use-toast'
-import { Alert, AlertDescription } from '~/components/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+// Removed unused Alert imports
+import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -60,11 +53,10 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Textarea } from '~/components/ui/textarea'
 
-// Mock API base URL - replace with actual API
-const API_BASE = 'https://api.chorus-tre.ch/api/rest/v1'
+// Mock API base URL - replace with actual API (unused in demo)
 
 export default function ChorusApp() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
