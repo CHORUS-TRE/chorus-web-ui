@@ -30,50 +30,45 @@ import {
 export default function SandboxPage() {
   const sandboxItems = [
     {
-      title: 'Templates',
-      description: 'templates of the CHORUS platform',
+      title: 'AI generated web pages',
+      description: 'AI Generated web pages for the CHORUS platform',
       icon: FileText,
-      status: 'Development',
+      status: 'Demo',
       children: [
         {
           title: 'CHORUS Architecture',
           description: 'View the architecture of the CHORUS platform',
           href: '/lab/architecture',
-          icon: Layers,
-          status: 'Development'
+          icon: Layers
         },
         {
           title: 'CHORUS Protocol Builder',
           description: 'Build and test protocols for the CHORUS platform',
           href: '/lab/chorus-protocol-builder',
-          icon: FlaskConical,
-          status: 'Development'
+          icon: FlaskConical
         },
         {
           title: 'CHORUS Clinical Lifecycle Dashboard',
           description: 'Manage your clinical project',
           href: '/lab/clinical-lifecycle-ashboard',
-          icon: PackageOpen,
-          status: 'Development'
+          icon: PackageOpen
         },
         {
           title: 'Studies Dashboard',
           description: 'Manage clinical studies',
           href: '/lab/projects-dashboard',
-          icon: PackageOpen,
-          status: 'Development'
+          icon: PackageOpen
         },
         {
           title: 'Feasibility Assessment',
           description: 'Pre-protocol Data Exploration & Cohort Analysis',
           href: '/lab/feasability',
-          icon: PackageOpen,
-          status: 'Development'
+          icon: PackageOpen
         }
       ]
     },
     {
-      title: 'Role Schema Viz',
+      title: 'Visualisations',
       description: 'Visualize the schema roles & permissions',
       icon: Layers,
       status: 'Development',
