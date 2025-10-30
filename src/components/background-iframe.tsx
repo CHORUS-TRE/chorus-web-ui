@@ -13,7 +13,7 @@ import { LoadingOverlay } from './loading-overlay'
 
 export default function BackgroundIframe() {
   const [url, setUrl] = useState<string | null>(null)
-  const [showHud, setShowHud] = useState(false)
+  const [showHud] = useState(false)
   const { user } = useAuthentication()
   const { background, workspaces, workbenches, appInstances, apps } =
     useAppState()

@@ -15,8 +15,8 @@ import {
   WorkbenchServiceApi,
   WorkbenchServiceManageUserRoleInWorkbenchBody
 } from '~/internal/client'
-import { BaseAPI } from '~/internal/client/runtime'
 
+// import { BaseAPI } from '~/internal/client/runtime'
 import { toChorusWorkbench, toChorusWorkbenchUpdate } from './workbench-mapper'
 
 interface WorkbenchDataSource {
@@ -58,12 +58,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   streamProbe(id: string): Promise<Response> {
     const computedUrl = this.streamUrl(id)
 
-    const api = new BaseAPI(
-      new Configuration({
-        basePath: computedUrl,
-        credentials: 'include'
-      })
-    )
+    // instantiate API client if needed in future for authenticated probes
     const response = fetch(computedUrl, {
       credentials: 'include'
     })

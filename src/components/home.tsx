@@ -1,7 +1,7 @@
-import Link from 'next/link'
 import React from 'react'
 
-import { Button } from '~/components/ui/button'
+import { Link } from '@/components/link'
+import { Button } from '~/components/button'
 
 export function Home() {
   return (

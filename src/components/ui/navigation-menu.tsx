@@ -41,7 +41,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 const navigationMenuTriggerStyle = cva(
-  'nav-link-base nav-link-hover data-[active]:nav-link-active data-[state=open]:nav-link-active'
+  'nav-link-base nav-link-hover hover:border-transparent data-[active]:nav-link-active data-[state=open]:nav-link-active'
 )
 
 const NavigationMenuTrigger = React.forwardRef<

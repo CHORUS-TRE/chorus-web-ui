@@ -1,9 +1,9 @@
 'use client'
 
 import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
-import Link from 'next/link'
 import { useState } from 'react'
 
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
@@ -47,7 +47,9 @@ export default function WorkspacesPage() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/">CHORUS</Link>
+                <Link href="/" variant="nav">
+                  CHORUS
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -71,7 +73,29 @@ export default function WorkspacesPage() {
         </div>
       </div>
 
-      <div className="flex w-full flex-row items-start justify-start">
+      <div className="w-full">
+        <div className="float-right flex items-center justify-end gap-0">
+          <Button
+            variant="ghost"
+            className={`${!showWorkspacesTable ? 'border border-accent' : ''}`}
+            onClick={toggleWorkspaceView}
+            id="grid-button"
+            disabled={!showWorkspacesTable}
+            aria-label="Switch to grid view"
+          >
+            <LayoutGrid />
+          </Button>
+          <Button
+            variant="ghost"
+            className={`${showWorkspacesTable ? 'border border-accent' : ''}`}
+            onClick={toggleWorkspaceView}
+            id="table-button"
+            disabled={showWorkspacesTable}
+            aria-label="Switch to table view"
+          >
+            <Rows3 />
+          </Button>
+        </div>
         <Accordion
           type="multiple"
           defaultValue={['my-workspaces']}
@@ -165,28 +189,6 @@ export default function WorkspacesPage() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-        <div className="flex items-center justify-end gap-0">
-          <Button
-            variant="ghost"
-            className={`${!showWorkspacesTable ? 'border border-accent' : ''}`}
-            onClick={toggleWorkspaceView}
-            id="grid-button"
-            disabled={!showWorkspacesTable}
-            aria-label="Switch to grid view"
-          >
-            <LayoutGrid />
-          </Button>
-          <Button
-            variant="ghost"
-            className={`${showWorkspacesTable ? 'border border-accent' : ''}`}
-            onClick={toggleWorkspaceView}
-            id="table-button"
-            disabled={showWorkspacesTable}
-            aria-label="Switch to table view"
-          >
-            <Rows3 />
-          </Button>
-        </div>
       </div>
 
       {createOpen && (

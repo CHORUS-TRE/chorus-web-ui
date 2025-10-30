@@ -7,10 +7,8 @@ import {
   CheckCircle,
   Clock,
   Database,
-  FileCheck,
   FileText,
   FlaskConical,
-  Globe,
   Heart,
   Microscope,
   Settings,
@@ -18,9 +16,9 @@ import {
   Target,
   Users
 } from 'lucide-react'
-import Link from 'next/link'
 import React, { useState } from 'react'
 
+import { Link } from '@/components/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -44,7 +42,6 @@ import {
 
 const ProtocolDashboard = () => {
   const [completedSections, setCompletedSections] = useState(new Set())
-  const [activePhase, setActivePhase] = useState('planning')
 
   const protocolSections = [
     {
@@ -215,18 +212,14 @@ const ProtocolDashboard = () => {
   ).length
 
   const StatCard = ({
-    icon: Icon,
     title,
     value,
     subtitle,
-    color = 'text-accent',
     bgColor = 'card-glass'
   }: {
-    icon: React.ReactNode
     title: string
     value: string
     subtitle: string
-    color: string
     bgColor: string
   }) => (
     <Card
@@ -253,13 +246,17 @@ const ProtocolDashboard = () => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/">CHORUS</Link>
+                <Link href="/" variant="nav">
+                  CHORUS
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/sandbox">Sandbox</Link>
+                <Link href="/lab" variant="nav">
+                  Sandbox
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -289,37 +286,29 @@ const ProtocolDashboard = () => {
         {/* Progress Overview */}
         <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard
-            icon={<FileCheck className="h-4 w-4" />}
             title="Progression globale"
             value={`${Math.round(progress)}%`}
             subtitle={`${completedSections.size}/${protocolSections.length} sections`}
-            color="text-accent"
             bgColor="card-glass"
           />
           <StatCard
-            icon={<AlertTriangle className="h-4 w-4" />}
             title="Sections obligatoires"
             value={`${completedRequired}/${requiredSections.length}`}
             subtitle="sections critiques"
-            color="text-accent"
             bgColor="card-glass"
           />
           <StatCard
-            icon={<Clock className="h-4 w-4" />}
             title="Temps estimé"
             value="2-4h"
             subtitle="pour un protocole complet"
-            color="text-accent"
             bgColor="card-glass"
           />
           <StatCard
-            icon={<Shield className="h-4 w-4" />}
             title="Conformité CER"
             value={
               completedRequired === requiredSections.length ? '✓' : 'En cours'
             }
             subtitle="validation éthique"
-            color="text-accent"
             bgColor="card-glass"
           />
         </div>

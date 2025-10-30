@@ -99,7 +99,7 @@ export function WorkspaceWorkbenchList({
                       }
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`mb-2 flex flex-col justify-between overflow-hidden rounded-md py-1 text-muted transition-colors ${userId === user?.id ? 'cursor-pointer hover:bg-accent/10 hover:text-accent' : 'cursor-default'}`}
+                    className={`mb-2 flex flex-col justify-between overflow-hidden rounded-md py-1 text-muted transition-colors ${userId === user?.id ? 'cursor-pointer hover:bg-accent/80 hover:text-black' : 'cursor-default'}`}
                   >
                     <div className={`ml-1 flex items-center gap-2`}>
                       {isActive && (

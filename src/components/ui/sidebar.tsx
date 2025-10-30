@@ -3,8 +3,8 @@ import { cva, VariantProps } from 'class-variance-authority'
 import { PanelLeft } from 'lucide-react'
 import * as React from 'react'
 
+import { Button } from '~/components/button'
 import { useIsMobile } from '~/components/hooks/use-mobile'
-import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Separator } from '~/components/ui/separator'
 import {
@@ -278,7 +278,6 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       data-sidebar="trigger"
       variant="ghost"
-      size="icon"
       className={cn('h-7 w-7', className)}
       onClick={(event) => {
         onClick?.(event)

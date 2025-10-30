@@ -8,11 +8,10 @@ import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
 
-import { AIChatProvider } from '@/providers/ai-chat-provider'
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
-import { AIChatWidget } from '~/components/ai-chat/ai-chat-widget'
+// AI chat imports not used in current layout
 import BackgroundIframe from '~/components/background-iframe'
 import { Toaster } from '~/components/ui/toaster'
 import { AuthorizationProvider } from '~/providers/authorization-provider'

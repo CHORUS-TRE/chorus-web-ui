@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Activity,
   Code2,
   Cpu,
   FileText,
@@ -9,8 +8,15 @@ import {
   Layers,
   PackageOpen
 } from 'lucide-react'
-import Link from 'next/link'
 
+import { Link } from '@/components/link'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/card'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,81 +25,98 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '~/components/ui/breadcrumb'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
 
 export default function SandboxPage() {
-  const sandboxItems = [
+  const sandboxItems: Array<{
+    title: string
+    description: string
+    icon: React.ComponentType<{ className?: string }>
+    status: string
+    href?: string
+    children?: Array<{
+      title: string
+      description: string
+      href: string
+      icon: React.ComponentType<{ className?: string }>
+      status?: string
+    }>
+  }> = [
     {
-      title: 'CHORUS Templates',
-      description: 'View the templates of the CHORUS platform',
-      href: 'sandbox/templates',
+      title: 'AI generated web pages',
+      description: 'AI Generated web pages for the CHORUS platform',
       icon: FileText,
-      status: 'Development',
+      status: 'Demo',
       children: [
         {
           title: 'CHORUS Architecture',
           description: 'View the architecture of the CHORUS platform',
-          href: 'sandbox/architecture',
-          icon: Layers,
-          status: 'Development'
+          href: '/lab/architecture',
+          icon: Layers
         },
         {
           title: 'CHORUS Protocol Builder',
           description: 'Build and test protocols for the CHORUS platform',
-          href: 'sandbox/chorus-protocol-builder',
-          icon: FlaskConical,
-          status: 'Development'
+          href: '/lab/chorus-protocol-builder',
+          icon: FlaskConical
         },
         {
           title: 'CHORUS Clinical Lifecycle Dashboard',
           description: 'Manage your clinical project',
-          href: 'sandbox/workspace',
-          icon: PackageOpen,
-          status: 'Development'
+          href: '/lab/clinical-lifecycle-ashboard',
+          icon: PackageOpen
         },
         {
-          title: 'Clinical Studies Dashboard',
+          title: 'Studies Dashboard',
           description: 'Manage clinical studies',
-          href: 'sandbox/clinical-lifecycle-ashboard',
-          icon: PackageOpen,
+          href: '/lab/projects-dashboard',
+          icon: PackageOpen
+        },
+        {
+          title: 'Feasibility Assessment',
+          description: 'Pre-protocol Data Exploration & Cohort Analysis',
+          href: '/lab/feasability',
+          icon: PackageOpen
+        }
+      ]
+    },
+    {
+      title: 'Visualisations',
+      description: 'Visualize the schema roles & permissions',
+      icon: Layers,
+      status: 'Development',
+      children: [
+        {
+          title: 'Role Schema Viz',
+          description: 'Visualize the schema roles & permissions',
+          href: '/lab/schema-viz',
+          icon: Layers,
           status: 'Development'
         }
-        // {
-        //   title: 'Patient Health Summary',
-        //   description: 'View patient health metrics and medical data',
-        //   href: 'sandbox/patient',
-        //   icon: Activity,
-        //   status: 'Development'
-        // }
       ]
     },
 
     {
-      title: 'Role Schema Viz',
-      description: 'Visualize the schema roles & permissions',
-      href: 'sandbox/schema-viz',
-      icon: Layers,
-      status: 'Development'
-    },
-    {
-      title: 'Component Explorer',
-      description: 'Browse and test dynamic component library',
-      href: 'sandbox/component-explorer',
+      title: 'Generative UI',
+      description: 'Generate UI components with AI',
       icon: Code2,
-      status: 'Development'
-    },
-    {
-      title: 'Component Generator',
-      description: 'AI-powered component generation and testing environment',
-      href: 'sandbox/component-generator',
-      icon: Cpu,
-      status: 'Development'
+      status: 'Development',
+      children: [
+        {
+          title: 'Component Explorer',
+          description: 'Browse and test dynamic component library',
+          href: '/lab/component-explorer',
+          icon: Code2,
+          status: 'Development'
+        },
+        {
+          title: 'Component Generator',
+          description:
+            'AI-powered component generation and testing environment',
+          href: '/lab/component-generator',
+          icon: Cpu,
+          status: 'Development'
+        }
+      ]
     }
   ]
 
@@ -113,13 +136,15 @@ export default function SandboxPage() {
   }
 
   return (
-    <div className="m-16">
+    <div>
       <div className="w-full">
         <Breadcrumb className="mb-4">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/">CHORUS</Link>
+                <Link href="/" variant="nav">
+                  CHORUS
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -132,14 +157,14 @@ export default function SandboxPage() {
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <FlaskConical className="h-9 w-9" />
-            Development Sandbox
+            Development Lab
           </h2>
         </div>
       </div>
 
       <div className="w-full">
         <div className="mb-6">
-          <h3 className="mb-0 text-lg font-semibold">Testing Environment</h3>
+          <h3 className="mb-0 text-lg font-semibold">Development Lab</h3>
           <p className="text-sm text-muted">
             Experimental features and development tools for the CHORUS platform
           </p>
@@ -155,11 +180,15 @@ export default function SandboxPage() {
               children
             }: {
               key: string
-              href: string
+              href?: string
               children: React.ReactNode
             }) =>
               !item.children ? (
-                <Link key={key} href={href} className="group text-muted">
+                <Link
+                  key={key}
+                  href={href as string}
+                  className="group text-muted"
+                >
                   {children}
                 </Link>
               ) : (
@@ -167,7 +196,7 @@ export default function SandboxPage() {
               )
 
             return (
-              <ConditionalLink key={item.title} href={item.href}>
+              <ConditionalLink key={item?.title} href={item?.href}>
                 <Card className="card-glass h-full transition-all hover:border-accent/50 hover:bg-background/80">
                   <CardHeader className="pb-1">
                     <div className="flex items-center justify-between">
@@ -176,7 +205,7 @@ export default function SandboxPage() {
                           <IconComponent className="h-5 w-5" />
                         </div>
                         <CardTitle className="text-muted transition-colors group-hover:text-accent">
-                          {item.title}
+                          {item?.title}
                         </CardTitle>
                       </div>
                       <span
@@ -187,20 +216,23 @@ export default function SandboxPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>
+                    <CardDescription className="justify-start">
                       <p className="mb-2 text-muted-foreground">
-                        {item.description}
+                        {item?.description}
                       </p>
 
-                      {item.children && (
-                        <div className="flex flex-col gap-1">
-                          {item.children.map((child) => (
-                            <Link key={child.title} href={child.href}>
+                      {item.children &&
+                        item.children.map((child) => (
+                          <div key={child.title}>
+                            <Link
+                              key={child.title}
+                              href={child.href}
+                              className=""
+                            >
                               {child.title}
                             </Link>
-                          ))}
-                        </div>
-                      )}
+                          </div>
+                        ))}
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -212,10 +244,10 @@ export default function SandboxPage() {
         <div className="card-glass mt-8 rounded-lg border p-4">
           <div className="mb-2 flex items-center gap-2">
             <FlaskConical className="h-4 w-4 text-accent" />
-            <h4 className="text-sm font-semibold">About Sandbox</h4>
+            <h4 className="text-sm font-semibold">About the lab</h4>
           </div>
           <p className="text-xs text-muted-foreground">
-            The sandbox environment provides access to experimental features,
+            The lab environment provides access to experimental features,
             development tools, and testing interfaces for the CHORUS platform.
             These tools are intended for development and testing purposes.
           </p>

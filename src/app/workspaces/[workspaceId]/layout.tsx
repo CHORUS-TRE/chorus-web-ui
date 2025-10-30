@@ -1,10 +1,10 @@
 'use client'
 
 import { Home, PackageOpen } from 'lucide-react'
-import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import React from 'react'
 
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
@@ -42,19 +42,23 @@ export default function Layout({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/">CHORUS</Link>
+              <Link href="/" variant="nav">
+                CHORUS
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/workspaces">Workspaces</Link>
+              <Link href="/workspaces" variant="nav">
+                Workspaces
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/workspaces/${workspace?.id}`}>
+              <Link href={`/workspaces/${workspace?.id}`} variant="nav">
                 {workspace && workspace.name}
               </Link>
             </BreadcrumbLink>

@@ -1,8 +1,11 @@
 'use client'
 
-import { ChevronDown, ChevronUp, Store } from 'lucide-react'
-import Link from 'next/link'
+import '@/app/build.css'
+import '@/styles/globals.css'
 
+import { ChevronDown, ChevronUp, Store } from 'lucide-react'
+
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import AppStoreHero from '~/components/app-store-hero'
 import { AppStoreView } from '~/components/app-store-view'
@@ -25,7 +28,9 @@ export default function Page() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/">CHORUS</Link>
+              <Link href="/" variant="nav">
+                CHORUS
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

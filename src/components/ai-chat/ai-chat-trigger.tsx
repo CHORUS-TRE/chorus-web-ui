@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { MessageCircle } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { useAIChat } from '@/providers/ai-chat-provider'
 
 export function AIChatTrigger() {
@@ -21,7 +21,6 @@ export function AIChatTrigger() {
         >
           <Button
             onClick={toggleChat}
-            size="icon"
             className="h-14 w-14 rounded-full bg-blue-600 shadow-lg transition-all duration-200 hover:bg-blue-700 hover:shadow-xl"
             aria-label="Open AI Chat"
           >

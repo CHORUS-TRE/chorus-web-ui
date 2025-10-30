@@ -1,38 +1,43 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
-import { Space } from 'react-zoomable-ui'
-import { Canvas, Edge, EdgeData, Node, NodeData, useSelection } from 'reaflow'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Space, ViewPort } from 'react-zoomable-ui'
+import { Canvas, EdgeData, NodeData, useSelection } from 'reaflow'
 
 import { roleCategories, schemaData, serviceGroups } from './data'
 
-const width = 1200
-const height = 800
+// Responsive container size will be measured with ResizeObserver
 
 // Define types for our schema data
-interface Permission {
-  name: string
-  description: string
-  context: string[]
-}
+// Types are defined in data; local copies removed to avoid unused warnings
 
-interface Role {
-  name: string
-  description: string
-  attributes?: Record<string, string>
-  inherits_from?: string[]
-  permissions: string[]
-}
-
-interface SchemaData {
-  permissions: Permission[]
-  roles: Role[]
-}
+// interface SchemaData {
+//   permissions: Permission[]
+//   roles: Role[]
+// }
 
 export default function RoleHierarchyPage() {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [showPermissions, setShowPermissions] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm] = useState('')
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const viewPortRef = useRef<ViewPort | null>(null)
+  const [size, setSize] = useState({ width: 1200, height: 800 })
+
+  // Observe container size to keep the canvas responsive
+  useEffect(() => {
+    if (!containerRef.current) return
+    const element = containerRef.current
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const cr = entry.contentRect
+        const width = Math.max(600, Math.floor(cr.width))
+        const height = Math.max(400, Math.floor(cr.height))
+        setSize({ width, height })
+      }
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
 
   // Generate nodes and edges from schema data
   const { nodes, edges } = useMemo(() => {
@@ -116,19 +121,11 @@ export default function RoleHierarchyPage() {
   }, [showPermissions, searchTerm])
 
   // Selection management
-  const { selections, onCanvasClick, onClick, onKeyDown, clearSelections } =
-    useSelection({
-      nodes,
-      edges,
-      onSelection: (selectedIds) => {
-        const roleId = selectedIds.find((id) => id.startsWith('role-'))
-        if (roleId) {
-          setSelectedRole(roleId.replace('role-', ''))
-        } else {
-          setSelectedRole(null)
-        }
-      }
-    })
+  const { selections, onCanvasClick } = useSelection({
+    nodes,
+    edges,
+    onSelection: () => {}
+  })
 
   return (
     <div className="">
@@ -145,19 +142,46 @@ export default function RoleHierarchyPage() {
               />
               Show Permissions
             </label>
+            <button
+              type="button"
+              className="rounded border px-3 py-1 text-sm"
+              onClick={() => {
+                if (!viewPortRef.current) return
+                viewPortRef.current.setBounds({
+                  x: [0, size.width],
+                  y: [0, size.height]
+                })
+                viewPortRef.current.camera.centerFitAreaIntoView({
+                  left: 0,
+                  top: 0,
+                  width: size.width,
+                  height: size.height
+                })
+              }}
+            >
+              Fit to screen
+            </button>
           </div>
         </div>
       </div>
 
-      <div style={{ width, height, position: 'relative' }}>
+      <div
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height: 'calc(100vh - 180px)',
+          position: 'relative'
+        }}
+      >
         <Space
           onCreate={(viewPort) => {
-            viewPort.setBounds({ x: [0, width], y: [0, height] })
+            viewPortRef.current = viewPort
+            viewPort.setBounds({ x: [0, size.width], y: [0, size.height] })
             viewPort.camera.centerFitAreaIntoView({
               left: 0,
               top: 0,
-              width,
-              height
+              width: size.width,
+              height: size.height
             })
           }}
         >
@@ -167,9 +191,11 @@ export default function RoleHierarchyPage() {
             selections={selections}
             onCanvasClick={onCanvasClick}
             className="border border-secondary"
-            // pannable={true}
-            // panType={'drag'}
+            pannable={true}
+            panType={'drag'}
             zoomable={true}
+            minZoom={0.05}
+            maxZoom={2}
             direction="UP"
             layoutOptions={{
               spacing: '25',
@@ -177,10 +203,10 @@ export default function RoleHierarchyPage() {
               nodeSpacing: '25',
               treeSpacing: '25'
             }}
-            width={width}
-            height={height}
-            maxWidth={2000}
-            maxHeight={2000}
+            width={size.width}
+            height={size.height}
+            maxWidth={4000}
+            maxHeight={4000}
           />
         </Space>
       </div>

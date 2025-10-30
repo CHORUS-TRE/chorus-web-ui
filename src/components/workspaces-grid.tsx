@@ -2,21 +2,27 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { HomeIcon, Package } from 'lucide-react'
-import Link from 'next/link'
 import { useState } from 'react'
 
-import { Card } from '@/components/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
+import { Link } from '@/components/link'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
-import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
@@ -48,10 +54,7 @@ const SwitchLink = ({
     )?.context.workspace ? (
     <Link
       href={`/workspaces/${workspace.id}`}
-      className={cn(
-        'cursor-pointer truncate text-nowrap border-b border-transparent text-muted transition-colors duration-300 hover:border-accent hover:text-accent',
-        className
-      )}
+      variant="flex"
       title={workspace?.name}
     >
       {children}
@@ -104,9 +107,9 @@ export default function WorkspacesGrid({
               )}
             </div>
 
-            <Card
-              title={
-                <>
+            <Card className="flex h-full flex-col">
+              <CardHeader className="mb-0 h-24 w-full">
+                <CardTitle className="mb-1 flex items-center gap-3">
                   {workspace.isMain && (
                     <HomeIcon className="h-6 w-6 flex-shrink-0 text-muted" />
                   )}
@@ -120,10 +123,8 @@ export default function WorkspacesGrid({
                   >
                     {workspace?.name}
                   </SwitchLink>
-                </>
-              }
-              description={
-                <>
+                </CardTitle>
+                <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
                   <span className="text-xs">
                     Owner:{' '}
                     {
@@ -138,9 +139,9 @@ export default function WorkspacesGrid({
                   <span className="block text-xs">
                     Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
                   </span>
-                </>
-              }
-              content={
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="">
                   <div className="mb-1 text-xs font-bold text-muted-foreground">
                     {(() => {
@@ -158,14 +159,15 @@ export default function WorkspacesGrid({
                     <WorkspaceWorkbenchList workspaceId={workspace.id} />
                   </ScrollArea>
                 </div>
-              }
-              footer={
+              </CardContent>
+              <div className="flex-grow" />
+              <CardFooter className="flex items-end justify-start">
                 <WorkbenchCreateForm
                   workspaceId={workspace?.id || ''}
                   workspaceName={workspace?.name}
                 />
-              }
-            />
+              </CardFooter>
+            </Card>
 
             {activeUpdateId === workspace.id && (
               <WorkspaceUpdateForm

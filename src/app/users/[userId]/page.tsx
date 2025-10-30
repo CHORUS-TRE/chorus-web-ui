@@ -3,7 +3,6 @@
 import {
   AppWindow,
   CheckCircle,
-  CirclePlus,
   Clock,
   Crown,
   Key,
@@ -14,15 +13,14 @@ import {
   User,
   XCircle
 } from 'lucide-react'
-import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
+import { Button } from '@/components/button'
+import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useAuthentication } from '@/providers/authentication-provider'
 import { RoleHoverCard } from '~/components/role-hover-card'
 import {
   Breadcrumb,
@@ -123,13 +121,17 @@ export default function UserProfile() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/">CHORUS</Link>
+                <Link href="/" variant="nav">
+                  CHORUS
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/users">Users</Link>
+                <Link href="/users" variant="nav">
+                  Users
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -158,7 +160,7 @@ export default function UserProfile() {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           {/* Profile Header */}
-          <Card className="card-glass flex h-full flex-col rounded-2xl">
+          <Card className="card-glass flex flex-col rounded-2xl">
             <CardContent className="pt-6">
               <div className="flex items-start space-x-4">
                 <Avatar className="h-20 w-20">
@@ -193,7 +195,7 @@ export default function UserProfile() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" disabled>
+                  <Button variant="outline" disabled>
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </Button>
@@ -327,7 +329,7 @@ export default function UserProfile() {
           )}
 
           {/* Actions */}
-          <Card className="card-glass flex h-full flex-col rounded-2xl">
+          <Card className="card-glass flex flex-col rounded-2xl">
             <CardContent className="pt-6">
               <div className="flex flex-wrap gap-3">
                 <Button variant="outline" disabled>

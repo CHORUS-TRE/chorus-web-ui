@@ -3,7 +3,6 @@
 import { Plus, Trash2, UserPlus } from 'lucide-react'
 import { startTransition, useActionState } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { z } from 'zod'
 
 import { workbenchAddUserRole } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
@@ -31,19 +30,15 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { Result } from '~/domain/model'
-import { Role, User } from '~/domain/model/user'
+import type { Role, User } from '~/domain/model/user'
 import { useAppState } from '~/providers/app-state-provider'
 import { getWorkbenchRoles } from '~/utils/schema-roles'
 
 import { toast } from '../hooks/use-toast'
 
-const AddUserToWorkbenchSchema = z.object({
-  userId: z.string().min(1, 'Please select a user'),
-  roleName: z.string().min(1, 'Please select a role'),
-  workbenchId: z.string().min(1, 'Please select a workbench')
-})
+// Removed unused AddUserToWorkbenchSchema (validation handled server-side)
 
-type AddUserFormData = z.infer<typeof AddUserToWorkbenchSchema>
+// Removed unused AddUserFormData type
 
 export function ManageUserWorkbenchDialog({
   userId,

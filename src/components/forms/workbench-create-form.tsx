@@ -23,7 +23,7 @@ import {
 } from '@/domain/model'
 import { workbenchCreate } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter } from '~/components/ui/card'
+import { Card, CardContent, CardFooter } from '~/components/card'
 import {
   Form,
   FormControl,

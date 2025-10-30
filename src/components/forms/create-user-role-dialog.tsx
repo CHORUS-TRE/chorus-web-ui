@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { createUserRole } from '@/view-model/user-view-model'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import {
   Dialog,
   DialogContent,
@@ -32,9 +32,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api/user-data-source'
-// import { RoleListUseCase } from '~/domain/usecase/role/list-role-usecase'
-import { UserRepositoryImpl } from '~/data/repository/user-repository-impl'
 import { Result } from '~/domain/model'
 import { Role, User } from '~/domain/model/user'
 import { getAllRoles } from '~/utils/schema-roles'
@@ -121,7 +118,7 @@ export function CreateUserRoleDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Add role">
+        <Button variant="ghost" aria-label="Add role">
           <Plus className="h-4 w-4" aria-hidden="true" />
           <span className="sr-only">Add role</span>
         </Button>

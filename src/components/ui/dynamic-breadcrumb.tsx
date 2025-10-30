@@ -1,8 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
+
+import { Link } from '@/components/link'
 
 import {
   Breadcrumb,
@@ -27,7 +28,9 @@ export function DynamicBreadcrumb() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/admin">Admin</Link>
+            <Link href="/admin" variant="nav">
+              Admin
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {segments.slice(1).map((segment, index) => {
@@ -43,7 +46,9 @@ export function DynamicBreadcrumb() {
                   <BreadcrumbPage>{name}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
-                    <Link href={href}>{name}</Link>
+                    <Link href={href} variant="nav">
+                      {name}
+                    </Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>

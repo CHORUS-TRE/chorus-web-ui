@@ -2,17 +2,11 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
-import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
+import { Link } from '@/components/link'
 import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
-import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
-import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
-import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
-import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
-import { toast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -20,7 +14,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '~/components/card'
+import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
+import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
+import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
+import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
+import { toast } from '~/components/hooks/use-toast'
+import { Badge } from '~/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,

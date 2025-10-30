@@ -1,10 +1,10 @@
 'use client'
 
 import { LayoutDashboard, Shield, Users } from 'lucide-react'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ElementType } from 'react'
 
+import { Link } from '@/components/link'
 import {
   Sidebar,
   SidebarContent,

@@ -1,19 +1,11 @@
 // Component Generator Page - MVP Demo
 'use client'
 
-import {
-  ExternalLink,
-  Globe,
-  Layers,
-  Palette,
-  Sparkles,
-  Zap
-} from 'lucide-react'
-import Link from 'next/link'
+// Removed unused icons
 import React, { useState } from 'react'
 
+import { Button } from '@/components/button'
 import { BottomChat } from '@/components/chat/bottom-chat'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface GeneratedComponent {
@@ -140,14 +132,12 @@ export default function ComponentGeneratorPage() {
 
                       <div className="flex gap-2">
                         <Button
-                          size="sm"
                           variant="outline"
                           className="border-gray-600"
                         >
                           Edit
                         </Button>
                         <Button
-                          size="sm"
                           variant="outline"
                           className="border-gray-600"
                         >

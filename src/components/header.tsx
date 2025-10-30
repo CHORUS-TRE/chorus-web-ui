@@ -13,20 +13,20 @@ import {
   Package,
   PackageOpen,
   Plus,
-  Search,
   Settings,
   Store,
   Trash2,
-  User,
-  Users
+  User
 } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
+import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
 import { Button } from '@/components/button'
+import { Link } from '@/components/link'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -57,9 +57,7 @@ import {
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
-import NavLink from './nav-link'
 import { ThemeToggle } from './theme-toggle'
-import { Input } from './ui/input'
 
 export function Header() {
   const router = useRouter()
@@ -75,7 +73,6 @@ export function Header() {
     users
   } = useAppState()
   const { user, logout } = useAuthentication()
-  const pathname = usePathname()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -85,6 +82,8 @@ export function Header() {
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
   )
+  const { theme } = useTheme()
+  const logo = theme === 'light' ? logoBlack : logoWhite
 
   const workspacesWithWorkbenches = useMemo(
     () =>
@@ -100,375 +99,130 @@ export function Header() {
     [workspacesWithWorkbenches, workspaceId]
   )
 
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
+  // const isSessionPage = useMemo(() => {
+  //   const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+  //   return sessionPageRegex.test(pathname)
+  // }, [pathname])
 
   return (
     <>
       <nav
-        className="overlay-dark relative flex h-11 min-w-full flex-wrap items-center justify-between gap-2 px-4 py-1 text-foreground shadow-lg md:flex-nowrap"
+        className="glass-surface flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 px-2 text-foreground shadow-lg"
         id="header"
         onMouseLeave={() => {
           setTimeout(() => {
-            document.getElementById('iframe')?.focus()
+            document.getElementById('workspace-iframe')?.focus()
           }, 1000)
         }}
       >
-        <div className="flex min-w-0 flex-shrink flex-nowrap items-center justify-start">
-          <NavLink href="/">
-            <Image
-              src={logo}
-              alt="Chorus"
-              height={32}
-              className="aspect-auto cursor-pointer"
-              id="logo"
-              priority
-            />
-          </NavLink>
-        </div>
+        <Link href="/" variant="muted">
+          <Image
+            src={logo}
+            alt="Chorus"
+            height={32}
+            className="aspect-auto cursor-pointer"
+            id="logo"
+            priority
+          />
+        </Link>
+
         {user && (
           <>
-            <NavigationMenu className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-              <NavigationMenuList className="flex items-center justify-center gap-3">
+            <NavigationMenu className="absolute left-1/2 flex -translate-x-1/2 transform items-center justify-start pt-1">
+              <NavigationMenuList className="flex items-center justify-start gap-2 text-sm font-semibold text-muted transition-colors">
                 <NavigationMenuItem>
-                  {background?.sessionId && workbenches && (
-                    <>
-                      <NavigationMenuTrigger
-                        className="inline-flex w-max cursor-pointer items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
-                        onClick={() => {
-                          // Navigate to workspace when clicked
-                          router.push(`/workspaces/${workspaceId}`)
-                        }}
-                      >
-                        <div className="flex-start flex place-items-center gap-1">
-                          {workspaceId && workspaceId === user?.workspaceId ? (
-                            <AppWindow className="h-4 w-4 text-muted" />
-                          ) : (
-                            <AppWindow className="h-4 w-4" />
-                          )}
-                          <span
-                            className="max-w-36 truncate text-nowrap"
-                            title={
-                              workspaces?.find(
-                                (w) => w.id === background?.workspaceId
-                              )?.name || ''
-                            }
-                          >
-                            {workspaces?.find(
-                              (w) => w.id === background?.workspaceId
-                            )?.name || ''}
-                          </span>
-                        </div>
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent className="glass-elevated text-muted">
-                        <div className="w-[240px] p-2">
-                          {/* Workspace Navigation */}
-                          <div className="mb-1">
-                            <div className="space-y-0.5">
-                              {isSessionPage ? (
-                                <div
-                                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-accent/10"
-                                  onClick={() =>
-                                    router.push(`/workspaces/${workspaceId}`)
-                                  }
-                                >
-                                  <Home className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                  <span className="text-sm">
-                                    Workspace Home
-                                  </span>
-                                </div>
-                              ) : (
-                                <div
-                                  className="interactive-item"
-                                  onClick={() =>
-                                    router.push(
-                                      `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
-                                    )
-                                  }
-                                >
-                                  <LaptopMinimal className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                  <span className="text-sm">
-                                    Workspace Session
-                                  </span>
-                                </div>
-                              )}
-
-                              <div
-                                className="interactive-item ml-2"
-                                onClick={() =>
-                                  router.push(
-                                    `/workspaces/${workspaceId}/sessions`
-                                  )
-                                }
-                              >
-                                <LaptopMinimal className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">Sessions</span>
-                              </div>
-
-                              <div
-                                className="interactive-item ml-2"
-                                onClick={() =>
-                                  router.push(
-                                    `/workspaces/${workspaceId}/users`
-                                  )
-                                }
-                              >
-                                <Users className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">Members</span>
-                              </div>
-
-                              <div
-                                className="interactive-item ml-2"
-                                onClick={() =>
-                                  router.push(`/workspaces/${workspaceId}/data`)
-                                }
-                              >
-                                <Database className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">Data</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="mb-1 border-t border-muted/20 pt-2">
-                            <div className="space-y-0.5">
-                              <div
-                                className="interactive-item"
-                                onClick={() => router.push(`/app-store`)}
-                              >
-                                <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">Start New App</span>
-                              </div>
-
-                              <div
-                                className="interactive-item"
-                                onClick={() => setUpdateOpen(true)}
-                              >
-                                <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">Settings</span>
-                              </div>
-
-                              <div
-                                className="interactive-item"
-                                onClick={() => {
-                                  const iframe =
-                                    document.getElementById('iframe')
-                                  if (iframe) {
-                                    iframe.requestFullscreen()
-                                  }
-                                }}
-                              >
-                                <Maximize className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                <span className="text-sm">
-                                  Toggle Fullscreen
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* About this session */}
-                          <div className="mb-1">
-                            <div
-                              className="interactive-item items-start"
-                              onClick={() => setShowAboutDialog(true)}
-                            >
-                              <AppWindow className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                              <div className="min-w-0 flex-1">
-                                <div className="text-sm">Session Info</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {(() => {
-                                    const filteredApps =
-                                      appInstances
-                                        ?.filter(
-                                          (instance) =>
-                                            instance.workbenchId ===
-                                            background?.sessionId
-                                        )
-                                        ?.map(
-                                          (instance) =>
-                                            apps?.find(
-                                              (app) => app.id === instance.appId
-                                            )?.name
-                                        )
-                                        ?.filter(Boolean) || []
-                                    return (
-                                      filteredApps.join(', ') ||
-                                      currentWorkbench?.name ||
-                                      'No apps running'
-                                    )
-                                  })()}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Danger Zone */}
-                          <div className="border-t border-muted/20 pt-1">
-                            <div
-                              className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
-                              onClick={() => setDeleteOpen(true)}
-                            >
-                              <Trash2 className="h-4 w-4 shrink-0" />
-                              <span className="text-sm">Delete Session</span>
-                            </div>
-                          </div>
-                        </div>
-                      </NavigationMenuContent>
-                    </>
-                  )}
-                  {!background?.sessionId && workspaceId && (
-                    <NavLink
-                      href={
-                        workspaces?.find((w) => w.id === user?.workspaceId)
-                          ? `/workspaces/${user?.workspaceId}`
-                          : workspaceId && workspaceId !== user?.workspaceId
-                            ? `/workspaces/${workspaceId}`
-                            : '/'
-                      }
-                      className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                      exact={user?.workspaceId === workspaceId}
-                    >
-                      <div className="flex place-items-center gap-1">
-                        {user?.workspaceId === background?.workspaceId ? (
-                          <Home className="h-4 w-4" />
-                        ) : (
-                          <AppWindow className="h-4 w-4" />
-                        )}
-
-                        <span
-                          className="max-w-36 truncate text-nowrap"
-                          title={
-                            workspaces?.find((w) => w.id === user?.workspaceId)
-                              ?.name || ''
-                          }
-                        >
-                          {workspaces?.find((w) => w.id === user?.workspaceId)
-                            ?.name || ''}
-                        </span>
-                      </div>
-                    </NavLink>
-                  )}
+                  <Link href={`/`} exact>
+                    <div className="flex place-items-center gap-1">
+                      <Home className="h-4 w-4" />
+                      <span className="hidden lg:block">Dashboard</span>
+                    </div>
+                  </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step3">
                   <NavigationMenuTrigger
-                    className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent"
-                    onClick={() => {
-                      // Navigate to workspace when clicked
-                      router.push('/workspaces/')
-                    }}
+                    onClick={() => router.push('/workspaces')}
                   >
                     <div className="flex place-items-center gap-1">
                       <Package className="h-4 w-4" />
-                      Workspaces
+                      <span className="hidden lg:block">Workspaces</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="glass-elevated text-muted">
-                    <div className="w-[280px] p-2">
-                      <div className="space-y-1">
-                        {/* All Workspaces Link */}
-                        <div
-                          className="interactive-item mb-2 border-b border-muted/20 pb-2"
-                          onClick={() => router.push('/workspaces')}
-                        >
-                          <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
-                          <span className="text-sm font-medium">
-                            All Workspaces
-                          </span>
-                        </div>
-
-                        {/* Individual Workspaces */}
-                        {workspaces
-                          ?.filter((workspace) =>
-                            user?.rolesWithContext?.some(
-                              (role) => role.context.workspace === workspace.id
-                            )
-                          )
-                          .map((workspace) => (
-                            <div
-                              key={workspace.id}
-                              className={`interactive-item ${
-                                workspace.id === workspaceId
-                                  ? 'bg-accent/10'
-                                  : ''
-                              }`}
-                              onClick={() =>
-                                router.push(`/workspaces/${workspace.id}`)
-                              }
-                            >
-                              {workspace.id === workspaceId ? (
-                                <PackageOpen className="h-4 w-4 shrink-0 text-accent" />
-                              ) : (
-                                <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
-                              )}
-                              <div className="min-w-0 flex-1">
-                                <div className="text-sm">
-                                  {workspace.name || workspace.shortName}
-                                </div>
-                                <div className="truncate text-xs text-muted-foreground">
-                                  {users?.find(
-                                    (user) => user.id === workspace?.userId
-                                  )?.firstName +
-                                    ' ' +
-                                    users?.find(
-                                      (user) => user.id === workspace?.userId
-                                    )?.lastName || '#user-' + workspace?.userId}
-                                </div>
-                              </div>
-                              {workspace.id === workspaceId && (
-                                <div className="text-xs text-accent">
-                                  Current
-                                </div>
-                              )}
-                            </div>
-                          ))}
-
-                        {(!workspaces || workspaces.length === 0) && (
-                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                            No workspaces available
-                          </div>
-                        )}
+                    <div className="w-[280px] space-y-1 p-2">
+                      {/* All Workspaces Link */}
+                      <div
+                        className="interactive-item mb-2 overflow-hidden truncate whitespace-nowrap border-b border-muted/20 pb-2"
+                        onClick={() => router.push('/workspaces')}
+                      >
+                        <Package className="h-4 w-4 shrink-0" />
+                        <span className="text-sm font-medium">
+                          All Workspaces
+                        </span>
                       </div>
+
+                      {/* Individual Workspaces */}
+                      {workspaces
+                        ?.filter((workspace) =>
+                          user?.rolesWithContext?.some(
+                            (role) => role.context.workspace === workspace.id
+                          )
+                        )
+                        .map((workspace) => (
+                          <div
+                            key={workspace.id}
+                            className={`interactive-item ${
+                              workspace.id === workspaceId ? 'bg-accent/10' : ''
+                            }`}
+                            onClick={() =>
+                              router.push(`/workspaces/${workspace.id}`)
+                            }
+                          >
+                            {workspace.id === workspaceId ? (
+                              <PackageOpen className="h-4 w-4 shrink-0" />
+                            ) : (
+                              <Package className="h-4 w-4 shrink-0" />
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm">
+                                {workspace.name || workspace.shortName}
+                              </div>
+                              <div className="truncate text-xs">
+                                {users?.find(
+                                  (user) => user.id === workspace?.userId
+                                )?.firstName +
+                                  ' ' +
+                                  users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.lastName || '#user-' + workspace?.userId}
+                              </div>
+                            </div>
+                            {workspace.id === workspaceId && (
+                              <div className="text-xs">Current</div>
+                            )}
+                          </div>
+                        ))}
+
+                      {(!workspaces || workspaces.length === 0) && (
+                        <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                          No workspaces available
+                        </div>
+                      )}
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <NavigationMenuItem id="getting-started-step4">
-                  <NavLink
-                    href={`/data`}
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  >
-                    <div className="flex place-items-center gap-1">
-                      <Database className="h-4 w-4" />
-                      Data
-                    </div>
-                  </NavLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem id="getting-started-step4">
-                  <NavLink
-                    href="/app-store"
-                    className="inline-flex w-max items-center justify-center border-b-2 border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
-                  >
-                    <div className="flex place-items-center gap-1">
-                      <Store className="h-4 w-4" />
-                      App Store
-                    </div>
-                  </NavLink>
-                </NavigationMenuItem>
-
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="inline-flex w-max items-center justify-center border-b-2 border-none border-transparent bg-transparent text-sm font-semibold text-muted transition-colors hover:border-b-2 hover:border-none hover:border-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent">
-                    <div className="flex place-items-center gap-1">
+                  <NavigationMenuTrigger>
+                    <div className="flex place-items-center gap-1 overflow-hidden truncate whitespace-nowrap">
                       <LaptopMinimal className="h-4 w-4" />
-                      <span>Open Sessions</span>
+                      <span className="hidden lg:block">Sessions</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="glass-elevated text-foreground">
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
                       <div className="p-2 text-sm">No session found</div>
                     )}
-                    <div className="flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto p-2">
-                      <div className="flex flex-1 flex-col gap-1">
+                    <div className="glass-elevated flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto p-2">
+                      <div>
                         {sortedWorkspacesWithWorkbenches
                           ?.slice(
                             0,
@@ -478,15 +232,16 @@ export function Header() {
                           )
                           .map((workspace) => (
                             <div
-                              className="mb-0 p-2"
+                              className="m-1 rounded-lg border border-muted/20 p-2"
                               key={`dock-${workspace.id}`}
                             >
                               <Link
                                 href={`/workspaces/${workspace?.id}`}
-                                className={`text-muted hover:text-accent ${workspace.id === workspaceId ? 'text-accent/80' : ''}`}
+                                className={`${workspace.id === workspaceId ? 'text-accent/80' : ''} `}
+                                variant="underline"
                               >
                                 <div
-                                  className={`mb-1 flex items-center gap-2 font-semibold`}
+                                  className={`mb-1 flex items-center gap-2 overflow-hidden truncate text-ellipsis whitespace-nowrap text-sm font-semibold text-muted hover:text-foreground`}
                                 >
                                   {workspace.id === workspaceId ? (
                                     <PackageOpen className="h-4 w-4" />
@@ -507,57 +262,37 @@ export function Header() {
                                   )
                                   .map((workbench) => (
                                     <div
-                                      className="mb-1 h-full"
+                                      className="mb-0 ml-2 h-full"
                                       key={`${workspace?.id}-${workbench.id}`}
                                     >
                                       <Link
                                         href={`/workspaces/${workspace?.id}/sessions/${workbench.id}`}
-                                        className="glass-surface flex h-full flex-col rounded-lg p-2 transition-colors duration-300 hover:border-accent hover:shadow-lg"
+                                        variant="underline"
                                       >
-                                        <div className="text-sm font-semibold">
-                                          {/* <div className="flex items-center justify-between">
-                                            <div
-                                              className={`mb-1 flex items-center gap-2 ${id === background?.sessionId ? 'text-accent' : ''}`}
-                                            >
-                                              <LaptopMinimal className="h-4 w-4 flex-shrink-0" />
-                                              {shortName}
-                                            </div>
-                                            <p className="text-xs text-muted">
-                                              {formatDistanceToNow(
-                                                createdAt ?? new Date()
-                                              )}{' '}
-                                              ago
-                                            </p>
-                                          </div> */}
-                                          <div className="text-xs text-muted">
-                                            <div className="flex items-center gap-2 text-xs">
-                                              <AppWindow className="h-4 w-4 shrink-0" />
-                                              {appInstances
-                                                ?.filter(
-                                                  (instance) =>
-                                                    workspace?.id ===
-                                                    instance.workspaceId
-                                                )
-                                                ?.filter(
-                                                  (instance) =>
-                                                    workbench.id ===
-                                                    instance.workbenchId
-                                                )
-                                                .map(
-                                                  (instance) =>
-                                                    apps?.find(
-                                                      (app) =>
-                                                        app.id ===
-                                                        instance.appId
-                                                    )?.name || ''
-                                                )
-                                                .join(', ') ||
-                                                workbench.name ||
-                                                'No apps'}
-                                            </div>
-                                          </div>
+                                        <div className="flex items-center gap-2 text-xs text-muted hover:text-foreground">
+                                          <AppWindow className="h-4 w-4 shrink-0" />
+                                          {appInstances
+                                            ?.filter(
+                                              (instance) =>
+                                                workspace?.id ===
+                                                instance.workspaceId
+                                            )
+                                            ?.filter(
+                                              (instance) =>
+                                                workbench.id ===
+                                                instance.workbenchId
+                                            )
+                                            .map(
+                                              (instance) =>
+                                                apps?.find(
+                                                  (app) =>
+                                                    app.id === instance.appId
+                                                )?.name || ''
+                                            )
+                                            .join(', ') ||
+                                            workbench.name ||
+                                            'No apps'}
                                         </div>
-                                        <div className="mt-auto"></div>
                                       </Link>
                                     </div>
                                   ))}
@@ -565,7 +300,7 @@ export function Header() {
                             </div>
                           ))}
                       </div>
-                      <div className="flex flex-1 flex-col gap-1">
+                      <div>
                         {sortedWorkspacesWithWorkbenches
                           ?.slice(
                             Math.ceil(
@@ -574,15 +309,16 @@ export function Header() {
                           )
                           .map((workspace) => (
                             <div
-                              className="mb-0 p-2"
+                              className="m-1 rounded-lg border border-muted/20 p-2"
                               key={`dock-${workspace.id}`}
                             >
                               <Link
                                 href={`/workspaces/${workspace?.id}`}
-                                className={`text-muted hover:text-accent ${workspace.id === workspaceId ? 'text-accent/80' : ''}`}
+                                className={`${workspace.id === workspaceId ? 'text-accent/80' : ''} `}
+                                variant="underline"
                               >
                                 <div
-                                  className={`mb-1 flex items-center gap-2 font-semibold`}
+                                  className={`mb-1 flex items-center gap-2 text-sm font-semibold text-muted hover:text-foreground`}
                                 >
                                   {workspace.id === workspaceId ? (
                                     <PackageOpen className="h-4 w-4" />
@@ -595,7 +331,7 @@ export function Header() {
                                   )?.username || '#user-' + workspace?.userId}
                                 </div>
                               </Link>
-                              <div className="pl-1 text-sm">
+                              <div className="text-sm">
                                 {workbenches
                                   ?.filter(
                                     (workbench) =>
@@ -603,43 +339,37 @@ export function Header() {
                                   )
                                   .map((workbench) => (
                                     <div
-                                      className="mb-1 h-full"
+                                      className="mb-0 ml-2 h-full"
                                       key={`${workspace?.id}-${workbench.id}`}
                                     >
                                       <Link
                                         href={`/workspaces/${workspace?.id}/sessions/${workbench.id}`}
-                                        className="glass-surface flex h-full flex-col rounded-lg p-2 transition-colors duration-300 hover:border-accent hover:shadow-lg"
+                                        variant="underline"
                                       >
-                                        <div className="text-sm font-semibold">
-                                          <div className="text-xs text-muted">
-                                            <div className="flex items-center gap-2 text-xs">
-                                              <AppWindow className="h-4 w-4 shrink-0" />
-                                              {appInstances
-                                                ?.filter(
-                                                  (instance) =>
-                                                    workspace?.id ===
-                                                    instance.workspaceId
-                                                )
-                                                ?.filter(
-                                                  (instance) =>
-                                                    workbench.id ===
-                                                    instance.workbenchId
-                                                )
-                                                .map(
-                                                  (instance) =>
-                                                    apps?.find(
-                                                      (app) =>
-                                                        app.id ===
-                                                        instance.appId
-                                                    )?.name || ''
-                                                )
-                                                .join(', ') ||
-                                                workbench.name ||
-                                                'No apps'}
-                                            </div>
-                                          </div>
+                                        <div className="flex items-center gap-2 text-xs text-muted hover:text-foreground">
+                                          <AppWindow className="h-4 w-4 shrink-0" />
+                                          {appInstances
+                                            ?.filter(
+                                              (instance) =>
+                                                workspace?.id ===
+                                                instance.workspaceId
+                                            )
+                                            ?.filter(
+                                              (instance) =>
+                                                workbench.id ===
+                                                instance.workbenchId
+                                            )
+                                            .map(
+                                              (instance) =>
+                                                apps?.find(
+                                                  (app) =>
+                                                    app.id === instance.appId
+                                                )?.name || ''
+                                            )
+                                            .join(', ') ||
+                                            workbench.name ||
+                                            'No apps'}
                                         </div>
-                                        <div className="mt-auto"></div>
                                       </Link>
                                     </div>
                                   ))}
@@ -650,24 +380,159 @@ export function Header() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+                <NavigationMenuItem id="getting-started-step4">
+                  <Link
+                    href={`/data`}
+                    className="overflow-hidden truncate text-ellipsis whitespace-nowrap"
+                  >
+                    <div className="flex place-items-center gap-1">
+                      <Database className="h-4 w-4" />
+                      <span className="hidden lg:block">Data</span>
+                    </div>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="/app-store"
+                    className="overflow-hidden truncate text-ellipsis whitespace-nowrap"
+                  >
+                    <div className="flex place-items-center gap-1">
+                      <Store className="h-4 w-4" />
+                      <span className="hidden lg:block">App Store</span>
+                    </div>
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  {background?.sessionId && workbenches && (
+                    <>
+                      <NavigationMenuTrigger
+                        onClick={() => {
+                          // Navigate to workspace when clicked
+                          router.push(`/workspaces/${workspaceId}`)
+                        }}
+                      >
+                        <div className="flex-start flex place-items-center gap-1 overflow-hidden truncate text-ellipsis whitespace-nowrap text-foreground">
+                          {workspaceId && workspaceId === user?.workspaceId ? (
+                            <AppWindow className="h-4 w-4" />
+                          ) : (
+                            <AppWindow className="h-4 w-4" />
+                          )}
+                          <span className="hidden lg:block">
+                            Active Session
+                          </span>
+                        </div>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="glass-elevated">
+                        <div className="w-[240px] p-2">
+                          <div className="border-b border-muted/20 p-2 text-xs">
+                            <div>
+                              Workspace:{' '}
+                              <Link
+                                href={`/workspaces/${workspaceId}`}
+                                variant="nav"
+                                className="font-semibold"
+                              >
+                                {
+                                  workspaces?.find(
+                                    (workspace) => workspace.id === workspaceId
+                                  )?.name
+                                }
+                              </Link>
+                            </div>
+                            <div>
+                              Apps:{' '}
+                              <Link
+                                href={`/workspaces/${workspaceId}/sessions/${background?.sessionId}`}
+                                variant="nav"
+                                className="font-semibold"
+                              >
+                                {(() => {
+                                  const filteredApps =
+                                    appInstances
+                                      ?.filter(
+                                        (instance) =>
+                                          instance.workbenchId ===
+                                          background?.sessionId
+                                      )
+                                      ?.map(
+                                        (instance) =>
+                                          apps?.find(
+                                            (app) => app.id === instance.appId
+                                          )?.name
+                                      )
+                                      ?.filter(Boolean) || []
+                                  return (
+                                    filteredApps.join(', ') ||
+                                    currentWorkbench?.name ||
+                                    'No apps running'
+                                  )
+                                })()}
+                              </Link>
+                            </div>{' '}
+                          </div>
+                          <div className="space-y-0.5">
+                            <div
+                              className="interactive-item"
+                              onClick={() => router.push(`/app-store`)}
+                            >
+                              <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <span className="text-sm">Start New App</span>
+                            </div>
+
+                            <div
+                              className="interactive-item"
+                              onClick={() => setUpdateOpen(true)}
+                            >
+                              <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <span className="text-sm">Settings</span>
+                            </div>
+
+                            <div
+                              className="interactive-item"
+                              onClick={() => {
+                                const iframe =
+                                  document.getElementById('workspace-iframe')
+                                if (iframe) {
+                                  iframe.requestFullscreen()
+                                }
+                              }}
+                            >
+                              <Maximize className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <span className="text-sm">Toggle Fullscreen</span>
+                            </div>
+                          </div>
+                          <div className="mb-1">
+                            <div
+                              className="interactive-item items-start"
+                              onClick={() => setShowAboutDialog(true)}
+                            >
+                              <AppWindow className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm">Session Info</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="border-t border-muted/20 pt-1">
+                            <div
+                              className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+                              onClick={() => setDeleteOpen(true)}
+                            >
+                              <Trash2 className="h-4 w-4 shrink-0" />
+                              <span className="text-sm">Delete Session</span>
+                            </div>
+                          </div>
+                        </div>
+                      </NavigationMenuContent>
+                    </>
+                  )}
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </>
         )}
 
         <div className="flex items-center justify-end">
-          {user && (
-            <div className="relative mr-2 hidden flex-1 xl:block">
-              <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-muted" />
-              <Input
-                disabled
-                type="search"
-                placeholder="Find workspaces, apps, content ..."
-                className="h-7 w-full border border-muted/40 bg-background pl-8 md:w-[240px] lg:w-[240px]"
-                id="search-input"
-              />
-            </div>
-          )}
           <div className="ml-1 flex items-center">
             <ThemeToggle />
             <Button
@@ -681,7 +546,7 @@ export function Header() {
             {user?.rolesWithContext?.some((role) => role.context.user) && (
               <Button
                 variant="ghost"
-                onClick={() => router.push(`/sandbox`)}
+                onClick={() => router.push(`/lab`)}
                 aria-label="Sandbox"
               >
                 <FlaskConical className="h-4 w-4" aria-hidden="true" />
@@ -795,6 +660,34 @@ export function Header() {
               {currentWorkbench?.description && (
                 <p className="text-sm">{currentWorkbench?.description}</p>
               )}
+              <div className="text-sm">
+                Workspace:{' '}
+                {
+                  workspaces?.find((workspace) => workspace.id === workspaceId)
+                    ?.name
+                }
+              </div>
+              <div className="text-sm">
+                Apps running:{' '}
+                {(() => {
+                  const filteredApps =
+                    appInstances
+                      ?.filter(
+                        (instance) =>
+                          instance.workbenchId === background?.sessionId
+                      )
+                      ?.map(
+                        (instance) =>
+                          apps?.find((app) => app.id === instance.appId)?.name
+                      )
+                      ?.filter(Boolean) || []
+                  return (
+                    filteredApps.join(', ') ||
+                    currentWorkbench?.name ||
+                    'No apps running'
+                  )
+                })()}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

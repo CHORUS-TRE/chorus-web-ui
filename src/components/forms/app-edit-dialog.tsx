@@ -1,11 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Link } from '@/components/link'
 import { appUpdate } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
 import { PRESETS, type Presets } from '~/components/forms/app-create-dialog'

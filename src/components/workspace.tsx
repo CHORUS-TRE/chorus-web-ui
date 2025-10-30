@@ -12,12 +12,19 @@ import {
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useState } from 'react'
 
 import { Button } from '@/components/button'
-import { Card } from '@/components/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/card'
+import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Link } from '@/components/ui/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { formatFileSize } from '@/utils/format-file-size'
@@ -76,14 +83,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
-  const {
-    workbenches,
-    users,
-    refreshWorkspaces,
-    background,
-    setBackground,
-    workspaces
-  } = useAppState()
+  const { workbenches, users, refreshWorkspaces, workspaces } = useAppState()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 
@@ -93,32 +93,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
     user?.id === workspace?.userId
       ? user
       : users?.find((user) => user.id === workspace?.userId)
-
-  useEffect(() => {
-    if (!workspaceId || !workbenches || workbenches.length === 0) return
-
-    const firstSessionId = workbenches.find(
-      (workbench) =>
-        workbench.workspaceId === workspaceId && workbench.userId === user?.id
-    )?.id
-
-    if (
-      background?.workspaceId !== workspaceId ||
-      background?.sessionId !== firstSessionId
-    ) {
-      setBackground({
-        sessionId: firstSessionId,
-        workspaceId: workspaceId
-      })
-    }
-  }, [
-    workspaceId,
-    workbenches,
-    user?.id,
-    background?.sessionId,
-    background?.workspaceId,
-    setBackground
-  ])
 
   return (
     <>
@@ -211,28 +185,34 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <Card
           role="region"
           aria-labelledby="sessions-card-title"
-          title={
-            <Link href={`/workspaces/${workspaceId}/sessions`} variant="nav">
-              <LaptopMinimal
-                className="h-6 w-6 flex-shrink-0"
-                aria-hidden="true"
-              />
-              <span id="sessions-card-title" className="">
-                <span className="sr-only">Sessions</span>
-                Sessions
-              </span>
-            </Link>
-          }
-          description={(() => {
-            const sessionCount =
-              workbenches?.filter(
-                (workbench) => workbench.workspaceId === workspaceId
-              )?.length || 0
-            return (
-              <span className="w-16 truncate text-nowrap">{`${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}`}</span>
-            )
-          })()}
-          content={
+          className="flex h-full flex-col"
+        >
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link href={`/workspaces/${workspaceId}/sessions`} variant="flex">
+                <LaptopMinimal
+                  className="h-6 w-6 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Sessions</span>
+                  Sessions
+                </span>
+              </Link>
+            </CardTitle>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
+              {(() => {
+                const sessionCount =
+                  workbenches?.filter(
+                    (workbench) => workbench.workspaceId === workspaceId
+                  )?.length || 0
+                return (
+                  <span className="w-16 truncate text-nowrap">{`${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}`}</span>
+                )
+              })()}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Suspense fallback={<div>Loading sessions...</div>}>
               {(() => {
                 const sessionCount =
@@ -246,7 +226,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 const getScrollAreaClass = () => {
                   if (sessionCount === 0) return 'flex flex-col'
                   if (sessionCount <= 2)
-                    return 'flex max-h-24 flex-col overflow-y-auto'
+                    return 'flex max- flex-col overflow-y-auto'
                   if (sessionCount <= 4)
                     return 'flex max-h-32 flex-col overflow-y-auto'
                   return 'flex max-h-40 flex-col overflow-y-auto'
@@ -268,16 +248,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 )
               })()}
             </Suspense>
-          }
-          footer={
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
             <div className="flex w-full flex-row items-center gap-2">
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}
                 workspaceName={workspace?.name}
               />
             </div>
-          }
-        />
+          </CardFooter>
+        </Card>
 
         {openEdit && (
           <WorkspaceUpdateForm
@@ -295,18 +276,25 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           />
         )}
 
-        <Card
-          title={
-            <Link href={`/workspaces/${workspaceId}/data`} variant="nav">
-              <Database className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-              <span id="sessions-card-title" className="">
-                <span className="sr-only">Data</span>
-                Data
-              </span>
-            </Link>
-          }
-          description="View and manage your data sources."
-          content={
+        <Card className="flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link href={`/workspaces/${workspaceId}/data`} variant="flex">
+                <Database
+                  className="h-6 w-6 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Data</span>
+                  Data
+                </span>
+              </Link>
+            </CardTitle>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
+              View and manage your data sources.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <>
               <div className="flex flex-col gap-2">
                 {rootChildren && rootChildren.length === 0 && (
@@ -342,8 +330,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   ))}
               </div>
             </>
-          }
-          footer={
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
             <Button
               variant="accent-filled"
               onClick={() => {
@@ -353,22 +342,26 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <ArrowRight className="h-4 w-4" />
               View Data
             </Button>
-          }
-        />
+          </CardFooter>
+        </Card>
 
         {workspace && user?.workspaceId !== workspace?.id && (
-          <Card
-            title={
-              <Link href={`/workspaces/${workspaceId}/users`} variant="nav">
-                <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-                <span id="sessions-card-title" className="">
-                  <span className="sr-only">Members</span>
-                  Members
-                </span>
-              </Link>
-            }
-            description="See who's on your team and their roles."
-            content={
+          <Card className="flex h-full flex-col">
+            <CardHeader className="mb-0 w-full">
+              <CardTitle className="mb-1 flex items-center gap-3">
+                <Link href={`/workspaces/${workspaceId}/users`} variant="flex">
+                  <Users className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                  <span id="sessions-card-title" className="">
+                    <span className="sr-only">Members</span>
+                    Members
+                  </span>
+                </Link>
+              </CardTitle>
+              <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
+                See who&apos;s on your team and their roles.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
                   {users
@@ -396,8 +389,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                     ))}
                 </div>
               </ScrollArea>
-            }
-            footer={
+            </CardContent>
+            <div className="flex-grow" />
+            <CardFooter className="flex items-end justify-start">
               <Button
                 variant="accent-filled"
                 onClick={() => router.push(`/workspaces/${workspaceId}/users`)}
@@ -405,20 +399,23 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 <ArrowRight className="h-4 w-4" />
                 View Members
               </Button>
-            }
-          />
+            </CardFooter>
+          </Card>
         )}
 
-        <Card
-          className="opacity-50 grayscale"
-          title={
-            <Link href={'#'} variant="nav">
-              <CircleGauge className="h-6 w-6" />
-              Resources
-            </Link>
-          }
-          description="You're using 1.2GB of your 5GB storage limit."
-          content={
+        <Card className="demo-effect flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link href={'#'} variant="flex">
+                <CircleGauge className="h-6 w-6" />
+                Resources
+              </Link>
+            </CardTitle>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
+              You&apos;re using 1.2GB of your 5GB storage limit.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <>
               <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none text-muted">
                 12.5
@@ -441,50 +438,61 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 />
               </ChartContainer>
             </>
-          }
-          footer={
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
             <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Resources
             </Button>
-          }
-        />
+          </CardFooter>
+        </Card>
 
-        <Card
-          className="opacity-50 grayscale"
-          title={
-            <Link href={'#'} variant="nav">
-              <Activity className="h-6 w-6" />
-              Activities
-            </Link>
-          }
-          description="Events, analytics & monitoring."
-          content={<LineChart className="aspect-[3/2]" />}
-          footer={
+        <Card className="demo-effect flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link href={'#'} variant="flex">
+                <Activity className="h-6 w-6" />
+                Activities
+              </Link>
+            </CardTitle>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
+              Events, analytics & monitoring.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LineChart className="aspect-[3/2]" />
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
             <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Activities
             </Button>
-          }
-        />
+          </CardFooter>
+        </Card>
 
-        <Card
-          className="opacity-50 grayscale"
-          title={
-            <Link href={'#'} variant="nav">
-              <Footprints className="h-6 w-6" />
-              Footprint
-            </Link>
-          }
-          description=""
-          content={<div className="text-sm text-muted"></div>}
-          footer={
+        <Card className="demo-effect flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link href={'#'} variant="flex">
+                <Footprints className="h-6 w-6" />
+                Footprint
+              </Link>
+            </CardTitle>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground"></CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted"></div>
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
             <Button disabled variant="accent-filled">
               <ArrowRight className="h-4 w-4" />
               View Footprint
             </Button>
-          }
-        />
+          </CardFooter>
+        </Card>
       </div>
     </>
   )

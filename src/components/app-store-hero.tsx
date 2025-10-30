@@ -1,11 +1,15 @@
 import { Box, Cloud, Lock, Zap } from 'lucide-react'
 import Image from 'next/image'
+import { useTheme } from 'next-themes'
 
-import { Button } from '@/components/button'
-import { useAppState } from '@/providers/app-state-provider'
+import logoWhite from '/public/logo-chorus-primaire-black@2x.svg'
+import logoBlack from '/public/logo-chorus-primaire-white@2x.svg'
 
 export default function AppStoreHero() {
-  const { toggleRightSidebar } = useAppState()
+  const { theme } = useTheme()
+  const isLightTheme = theme === 'light'
+  const logo = isLightTheme ? logoWhite : logoBlack
+  const logoAlt = isLightTheme ? 'Chorus Logo' : 'Chorus Logo (Light)'
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -15,8 +19,8 @@ export default function AppStoreHero() {
             <div className="flex items-center justify-between gap-8">
               <div className="hidden lg:block lg:w-[300px]">
                 <Image
-                  src="/logo-chorus-primaire-white@2x.svg"
-                  alt="Chorus Logo"
+                  src={logo}
+                  alt={logoAlt}
                   width={1300}
                   height={760}
                   className="h-auto w-full"
@@ -57,12 +61,6 @@ export default function AppStoreHero() {
                   description="Quick deployment and immediate access to your applications"
                 />
               </div>
-            </div>
-
-            <div className="mt-10 flex items-center gap-x-6">
-              <Button variant={'outline'} onClick={toggleRightSidebar}>
-                Learn more
-              </Button>
             </div>
           </div>
         </div>

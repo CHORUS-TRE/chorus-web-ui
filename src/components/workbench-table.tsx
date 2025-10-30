@@ -2,13 +2,12 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon } from 'lucide-react'
-import Link from 'next/link'
 import { useState } from 'react'
 import React from 'react'
 
+import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -16,7 +15,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '~/components/card'
+import { Badge } from '~/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
