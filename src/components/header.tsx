@@ -152,75 +152,71 @@ export function Header() {
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="glass-elevated text-muted">
-                    <div className="w-[280px] p-2">
-                      <div className="space-y-1">
-                        {/* All Workspaces Link */}
-                        <div
-                          className="interactive-item mb-2 border-b border-muted/20 pb-2 truncate overflow-hidden whitespace-nowrap"
-                          onClick={() => router.push('/workspaces')}
-                        >
-                          <Package className="h-4 w-4 shrink-0" />
-                          <span className="text-sm font-medium">
-                            All Workspaces
-                          </span>
-                        </div>
-
-                        {/* Individual Workspaces */}
-                        {workspaces
-                          ?.filter((workspace) =>
-                            user?.rolesWithContext?.some(
-                              (role) => role.context.workspace === workspace.id
-                            )
-                          )
-                          .map((workspace) => (
-                            <div
-                              key={workspace.id}
-                              className={`interactive-item ${
-                                workspace.id === workspaceId
-                                  ? 'bg-accent/10'
-                                  : ''
-                              }`}
-                              onClick={() =>
-                                router.push(`/workspaces/${workspace.id}`)
-                              }
-                            >
-                              {workspace.id === workspaceId ? (
-                                <PackageOpen className="h-4 w-4 shrink-0" />
-                              ) : (
-                                <Package className="h-4 w-4 shrink-0" />
-                              )}
-                              <div className="min-w-0 flex-1">
-                                <div className="text-sm">
-                                  {workspace.name || workspace.shortName}
-                                </div>
-                                <div className="truncate text-xs">
-                                  {users?.find(
-                                    (user) => user.id === workspace?.userId
-                                  )?.firstName +
-                                    ' ' +
-                                    users?.find(
-                                      (user) => user.id === workspace?.userId
-                                    )?.lastName || '#user-' + workspace?.userId}
-                                </div>
-                              </div>
-                              {workspace.id === workspaceId && (
-                                <div className="text-xs">Current</div>
-                              )}
-                            </div>
-                          ))}
-
-                        {(!workspaces || workspaces.length === 0) && (
-                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                            No workspaces available
-                          </div>
-                        )}
+                    <div className="w-[280px] space-y-1 p-2">
+                      {/* All Workspaces Link */}
+                      <div
+                        className="interactive-item mb-2 overflow-hidden truncate whitespace-nowrap border-b border-muted/20 pb-2"
+                        onClick={() => router.push('/workspaces')}
+                      >
+                        <Package className="h-4 w-4 shrink-0" />
+                        <span className="text-sm font-medium">
+                          All Workspaces
+                        </span>
                       </div>
+
+                      {/* Individual Workspaces */}
+                      {workspaces
+                        ?.filter((workspace) =>
+                          user?.rolesWithContext?.some(
+                            (role) => role.context.workspace === workspace.id
+                          )
+                        )
+                        .map((workspace) => (
+                          <div
+                            key={workspace.id}
+                            className={`interactive-item ${
+                              workspace.id === workspaceId ? 'bg-accent/10' : ''
+                            }`}
+                            onClick={() =>
+                              router.push(`/workspaces/${workspace.id}`)
+                            }
+                          >
+                            {workspace.id === workspaceId ? (
+                              <PackageOpen className="h-4 w-4 shrink-0" />
+                            ) : (
+                              <Package className="h-4 w-4 shrink-0" />
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm">
+                                {workspace.name || workspace.shortName}
+                              </div>
+                              <div className="truncate text-xs">
+                                {users?.find(
+                                  (user) => user.id === workspace?.userId
+                                )?.firstName +
+                                  ' ' +
+                                  users?.find(
+                                    (user) => user.id === workspace?.userId
+                                  )?.lastName || '#user-' + workspace?.userId}
+                              </div>
+                            </div>
+                            {workspace.id === workspaceId && (
+                              <div className="text-xs">Current</div>
+                            )}
+                          </div>
+                        ))}
+
+                      {(!workspaces || workspaces.length === 0) && (
+                        <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                          No workspaces available
+                        </div>
+                      )}
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
-                    <div className="flex place-items-center gap-1 truncate overflow-hidden whitespace-nowrap">
+                    <div className="flex place-items-center gap-1 overflow-hidden truncate whitespace-nowrap">
                       <LaptopMinimal className="h-4 w-4" />
                       <span className="hidden lg:block">Sessions</span>
                     </div>
@@ -247,10 +243,9 @@ export function Header() {
                                 href={`/workspaces/${workspace?.id}`}
                                 className={`${workspace.id === workspaceId ? 'text-accent/80' : ''} `}
                                 variant="underline"
-
                               >
                                 <div
-                                  className={`mb-1 flex items-center gap-2 text-sm font-semibold text-muted hover:text-foreground text-ellipsis truncate overflow-hidden whitespace-nowrap`}
+                                  className={`mb-1 flex items-center gap-2 overflow-hidden truncate text-ellipsis whitespace-nowrap text-sm font-semibold text-muted hover:text-foreground`}
                                 >
                                   {workspace.id === workspaceId ? (
                                     <PackageOpen className="h-4 w-4" />
@@ -390,7 +385,10 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
-                  <Link href={`/data`} className="text-ellipsis truncate overflow-hidden whitespace-nowrap">
+                  <Link
+                    href={`/data`}
+                    className="overflow-hidden truncate text-ellipsis whitespace-nowrap"
+                  >
                     <div className="flex place-items-center gap-1">
                       <Database className="h-4 w-4" />
                       <span className="hidden lg:block">Data</span>
@@ -398,7 +396,10 @@ export function Header() {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/app-store" className="text-ellipsis truncate overflow-hidden whitespace-nowrap">
+                  <Link
+                    href="/app-store"
+                    className="overflow-hidden truncate text-ellipsis whitespace-nowrap"
+                  >
                     <div className="flex place-items-center gap-1">
                       <Store className="h-4 w-4" />
                       <span className="hidden lg:block">App Store</span>
@@ -415,7 +416,7 @@ export function Header() {
                           router.push(`/workspaces/${workspaceId}`)
                         }}
                       >
-                        <div className="flex-start flex place-items-center gap-1 text-foreground text-ellipsis truncate overflow-hidden whitespace-nowrap">
+                        <div className="flex-start flex place-items-center gap-1 overflow-hidden truncate text-ellipsis whitespace-nowrap text-foreground">
                           {workspaceId && workspaceId === user?.workspaceId ? (
                             <AppWindow className="h-4 w-4" />
                           ) : (

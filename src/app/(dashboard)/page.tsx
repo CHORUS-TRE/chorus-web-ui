@@ -1,26 +1,36 @@
 'use client'
 
+import { formatDistanceToNow } from 'date-fns'
 import {
   Activity,
   AlertCircle,
   BarChart3,
-  Bell,
-  BookOpen,
   CheckCircle,
   CirclePlus,
   Clock,
   Database,
+  Edit,
   FileText,
-  Filter,
   HomeIcon,
+  LaptopMinimal,
+  MoreVertical,
   Package,
+  Pause,
+  Play,
   PlayCircle,
-  Server,
+  Trash2,
   Users
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 
 import { Link } from '@/components/link'
+import {
+  Workbench,
+  WorkbenchCreateSchema,
+  WorkbenchCreateType,
+  WorkbenchStatus
+} from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { Button } from '~/components/button'
@@ -31,6 +41,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
+import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
@@ -43,17 +54,31 @@ import {
   BreadcrumbList,
   BreadcrumbPage
 } from '~/components/ui/breadcrumb'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu'
 import { Progress } from '~/components/ui/progress'
 import { Separator } from '~/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 export default function CHORUSDashboard() {
-  const { workspaces, workbenches, users, refreshWorkspaces } = useAppState()
+  const {
+    workspaces,
+    workbenches,
+    appInstances,
+    apps,
+    users,
+    refreshWorkspaces
+  } = useAppState()
   const { canCreateWorkspace } = useAuthorizationViewModel()
   const { user } = useAuthentication()
   const [selectedTab, setSelectedTab] = useState('overview')
   const [createOpen, setCreateOpen] = useState(false)
+  const router = useRouter()
   const myWorkspaces = useMemo(
     () =>
       workspaces?.filter((workspace) =>
@@ -61,12 +86,27 @@ export default function CHORUSDashboard() {
           (role) => role.context.workspace === workspace.id
         )
       ),
-    [users, user?.id]
+    [workspaces, user?.rolesWithContext]
   )
+
   const myWorkbenches = useMemo(
     () =>
-      workbenches?.filter((workbench) => workbench.workspaceId === user?.id),
-    [workbenches, user?.id]
+      workbenches?.filter((workbench) =>
+        user?.rolesWithContext?.some(
+          (role) => role.context.workbench === workbench.id
+        )
+      ),
+    [workbenches, user?.rolesWithContext]
+  )
+
+  const myAppInstances = useMemo(
+    () =>
+      appInstances?.filter((appInstance) =>
+        myWorkbenches?.some(
+          (workbench) => workbench.id === appInstance.workbenchId
+        )
+      ),
+    [appInstances, myWorkbenches]
   )
 
   const dataRequests = [
@@ -90,36 +130,6 @@ export default function CHORUSDashboard() {
       status: 'rejected',
       requestDate: '2023-10-10',
       approver: 'Ethics Committee'
-    }
-  ]
-
-  const sessions = [
-    {
-      id: 1,
-      name: 'RStudio - Dementia Study',
-      status: 'running',
-      cpu: '4 cores',
-      ram: '16 GB',
-      storage: '100 GB',
-      type: 'RStudio'
-    },
-    {
-      id: 2,
-      name: 'Jupyter - Cardio Analysis',
-      status: 'stopped',
-      cpu: '8 cores',
-      ram: '32 GB',
-      storage: '250 GB',
-      type: 'Jupyter'
-    },
-    {
-      id: 3,
-      name: '3D Slicer - Imaging Analysis',
-      status: 'provisioning',
-      cpu: '8 cores',
-      ram: '64 GB',
-      storage: '500 GB',
-      type: '3D Slicer'
     }
   ]
 
@@ -185,7 +195,7 @@ export default function CHORUSDashboard() {
   }
 
   const getStatusText = (status: string) => {
-    return status.charAt(0).toUpperCase() + status.slice(1)
+    return status.charAt(0).toUpperCase() + status.slice(1) || 'N/A'
   }
 
   return (
@@ -200,7 +210,7 @@ export default function CHORUSDashboard() {
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
+          <h2 className="mb-3 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <HomeIcon className="h-9 w-9" />
             Dashboard
           </h2>
@@ -224,11 +234,14 @@ export default function CHORUSDashboard() {
             />
           )}
         </div>
+        <p className="text-md mb-4 font-medium italic text-muted-foreground">
+          Welcome back, {user?.firstName || ''} {user?.lastName || ''}
+        </p>
       </div>
 
       <div className="w-full">
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <Card className="bg-background">
+          <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Active Workspaces
@@ -247,16 +260,19 @@ export default function CHORUSDashboard() {
           <Card className="bg-background">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
-                Data Requests
+                Active Sessions
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">1</div>
-              <p className="mt-1 text-xs">Pending approval</p>
+              <div className="text-3xl font-bold">{myWorkbenches?.length}</div>
+              <p className="mt-1 text-xs">
+                {myAppInstances?.length && myAppInstances?.length > 0
+                  ? `${myAppInstances?.length} apps running`
+                  : 'No app running'}
+              </p>
             </CardContent>
           </Card>
-
-          <Card className="bg-background">
+          <Card className="bg-background opacity-50 grayscale">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Compute Usage
@@ -268,7 +284,7 @@ export default function CHORUSDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-background">
+          <Card className="bg-background opacity-50 grayscale">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Storage Usage
@@ -290,9 +306,15 @@ export default function CHORUSDashboard() {
         <TabsList className="">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
-          <TabsTrigger value="data">Data Requests</TabsTrigger>
-          <TabsTrigger value="resources">Resources</TabsTrigger>
-          <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsTrigger value="data" className="opacity-50 grayscale">
+            Data Requests
+          </TabsTrigger>
+          <TabsTrigger value="resources" className="opacity-50 grayscale">
+            Resources
+          </TabsTrigger>
+          <TabsTrigger value="team" className="opacity-50 grayscale">
+            Team
+          </TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -300,10 +322,10 @@ export default function CHORUSDashboard() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Workspaces */}
             <div className="lg:col-span-2">
-              <Card className="card-glass">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5" />
+                    <Package className="h-5 w-5" />
                     My Workspaces
                   </CardTitle>
                   <CardDescription>
@@ -318,10 +340,17 @@ export default function CHORUSDashboard() {
                     >
                       <div className="mb-2 flex items-start justify-between">
                         <div>
-                          <h3 className="font-semibold">{workspace.name}</h3>
-                          <p className="mt-1 text-sm">
-                            Created at:{' '}
-                            {workspace.createdAt.toLocaleDateString()} by{' '}
+                          <h4 className="font-semibold">
+                            <Link href={`/workspaces/${workspace.id}`}>
+                              {workspace.name}
+                            </Link>
+                          </h4>
+                          <p className="mt-1 text-xs">
+                            Created{' '}
+                            {formatDistanceToNow(
+                              workspace?.createdAt || new Date()
+                            )}{' '}
+                            ago by{' '}
                             {
                               users?.find(
                                 (user) => user.id === workspace.userId
@@ -342,7 +371,7 @@ export default function CHORUSDashboard() {
                             value={workspace.status === WorkspaceState.ACTIVE ? 100 : 0}
                             className="mb-2"
                           /> */}
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center justify-between text-xs">
                         <span className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
                           {
@@ -355,7 +384,30 @@ export default function CHORUSDashboard() {
                           }{' '}
                           members
                         </span>
-                        <Button variant="outline">View Details</Button>
+                        <span className="flex items-center gap-1">
+                          <FileText className="h-4 w-4" />
+                          <span>45 files</span>
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <LaptopMinimal className="h-4 w-4" />
+                          <span>
+                            {myWorkbenches?.length && myWorkbenches?.length > 0
+                              ? `${
+                                  workbenches?.filter(
+                                    (workbench) =>
+                                      workbench.workspaceId === workspace.id
+                                  )?.length || 0
+                                } sessions running`
+                              : 'No session running'}
+                          </span>
+                        </span>
+                        <Button
+                          onClick={() =>
+                            router.push(`/workspaces/${workspace.id}`)
+                          }
+                        >
+                          Open Workspace
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -405,69 +457,124 @@ export default function CHORUSDashboard() {
 
         {/* Sessions Tab */}
         <TabsContent value="sessions" className="space-y-4">
-          <Card className="card-glass">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Server className="h-5 w-5" />
-                Active Sessions
-              </CardTitle>
-              <CardDescription>
-                Manage your computational environments
-              </CardDescription>
-            </CardHeader>
+          <Card>
+            <div className="flex items-center justify-between">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <LaptopMinimal className="h-5 w-5" />
+                  Active Sessions
+                </CardTitle>
+                <CardDescription>
+                  Manage your computational environments
+                </CardDescription>
+              </CardHeader>
+              <div className="pr-6">
+                <WorkbenchCreateForm
+                  workspaceId={user?.workspaceId || ''}
+                  workspaceName={
+                    workspaces?.find(
+                      (workspace) => workspace.id === user?.workspaceId
+                    )?.name || ''
+                  }
+                />
+              </div>
+            </div>
             <CardContent>
-              <div className="space-y-4">
-                {sessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="rounded-lg border border-gray-200 p-4"
-                  >
-                    <div className="mb-3 flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold">{session.name}</h3>
-                        <p className="mt-1 text-sm">{session.type}</p>
-                      </div>
-                      <Badge className={getStatusColor(session.status)}>
-                        {getStatusText(session.status)}
-                      </Badge>
-                    </div>
-                    <div className="mb-3 grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="">CPU:</span>
-                        <span className="ml-1 font-medium">{session.cpu}</span>
-                      </div>
-                      <div>
-                        <span className="">RAM:</span>
-                        <span className="ml-1 font-medium">{session.ram}</span>
-                      </div>
-                      <div>
-                        <span className="">Storage:</span>
-                        <span className="ml-1 font-medium">
-                          {session.storage}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      {session.status === 'running' && (
-                        <>
-                          <Button className="flex-1">
-                            <PlayCircle className="mr-1 h-4 w-4" />
-                            Launch
+              <div className="space-y-3">
+                {myWorkbenches?.map((workbench) => (
+                  <Card key={workbench.id}>
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-1 items-center gap-4">
+                          <div className="rounded-lg p-3">
+                            <LaptopMinimal className="h-6 w-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold">
+                              <Link
+                                href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
+                              >
+                                {appInstances
+                                  ?.filter(
+                                    (instance) =>
+                                      workbench?.workspaceId ===
+                                      instance.workspaceId
+                                  )
+                                  ?.filter(
+                                    (instance) =>
+                                      workbench.id === instance.workbenchId
+                                  )
+                                  .map(
+                                    (instance) =>
+                                      apps?.find(
+                                        (app) => app.id === instance.appId
+                                      )?.name || ''
+                                  )
+                                  .join(', ') ||
+                                  workbench.name ||
+                                  workspaces?.find(
+                                    (workspace) =>
+                                      workspace.id === workbench.workspaceId
+                                  )?.name ||
+                                  'N/A'}
+                              </Link>
+                            </h4>
+                            <p className="text-sm text-slate-500">
+                              {workspaces?.find(
+                                (workspace) =>
+                                  workspace.id === workbench.workspaceId
+                              )?.name || 'N/A'}
+                            </p>
+                          </div>
+                          <div className="flex gap-4 text-sm">
+                            <div>
+                              <span className="text-slate-500">CPU:</span>{' '}
+                              <span className="font-medium">{'N/A'}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-500">Memory:</span>{' '}
+                              <span className="font-medium">{'N/A'}</span>
+                            </div>
+                          </div>
+                          <Badge
+                            className={
+                              workbench.status === WorkbenchStatus.ACTIVE
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-slate-100 text-slate-800'
+                            }
+                          >
+                            {workbench.status}
+                          </Badge>
+                        </div>
+                        <div className="ml-4 flex gap-2">
+                          <Button variant="outline">
+                            {workbench.status === WorkbenchStatus.ACTIVE ? (
+                              <Pause className="h-4 w-4" />
+                            ) : (
+                              <Play className="h-4 w-4" />
+                            )}
                           </Button>
-                          <Button variant="outline">Stop</Button>
-                        </>
-                      )}
-                      {session.status === 'stopped' && (
-                        <Button className="flex-1">Start Session</Button>
-                      )}
-                      {session.status === 'provisioning' && (
-                        <Button className="flex-1" disabled>
-                          <Clock className="mr-1 h-4 w-4" />
-                          Provisioning...
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Configure Session
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete Session
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </CardContent>
@@ -475,7 +582,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Data Requests Tab */}
-        <TabsContent value="data" className="space-y-4">
+        <TabsContent value="data" className="space-y-4 opacity-50 grayscale">
           <Card className="card-glass">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -500,7 +607,7 @@ export default function CHORUSDashboard() {
                   >
                     <div className="mb-2 flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="font-semibold">{request.dataset}</h3>
+                        <h4 className="font-semibold">{request.dataset}</h4>
                         <p className="mt-1 text-sm">
                           Requested: {request.requestDate}
                         </p>
@@ -527,7 +634,10 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Resources Tab */}
-        <TabsContent value="resources" className="space-y-4">
+        <TabsContent
+          value="resources"
+          className="space-y-4 opacity-50 grayscale"
+        >
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card className="card-glass">
               <CardHeader>
@@ -627,7 +737,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Team Tab */}
-        <TabsContent value="team" className="space-y-4">
+        <TabsContent value="team" className="space-y-4 opacity-50 grayscale">
           <Card className="card-glass">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
