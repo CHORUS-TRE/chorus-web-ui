@@ -60,7 +60,6 @@ import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 import { ThemeToggle } from './theme-toggle'
-import { Input } from './ui/input'
 
 export function Header() {
   const router = useRouter()
@@ -76,7 +75,6 @@ export function Header() {
     users
   } = useAppState()
   const { user, logout } = useAuthentication()
-  const pathname = usePathname()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -103,10 +101,10 @@ export function Header() {
     [workspacesWithWorkbenches, workspaceId]
   )
 
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
+  // const isSessionPage = useMemo(() => {
+  //   const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+  //   return sessionPageRegex.test(pathname)
+  // }, [pathname])
 
   return (
     <>
@@ -115,7 +113,7 @@ export function Header() {
         id="header"
         onMouseLeave={() => {
           setTimeout(() => {
-            document.getElementById('iframe')?.focus()
+            document.getElementById('workspace-iframe')?.focus()
           }, 1000)
         }}
       >
@@ -427,8 +425,54 @@ export function Header() {
                           </span>
                         </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="glass-elevated text-muted">
+                      <NavigationMenuContent className="glass-elevated">
                         <div className="w-[240px] p-2">
+                          <div className="border-b border-muted/20 p-2 text-xs">
+                            <div>
+                              Workspace:{' '}
+                              <Link
+                                href={`/workspaces/${workspaceId}`}
+                                variant="nav"
+                                className="font-semibold"
+                              >
+                                {
+                                  workspaces?.find(
+                                    (workspace) => workspace.id === workspaceId
+                                  )?.name
+                                }
+                              </Link>
+                            </div>
+                            <div>
+                              Apps:{' '}
+                              <Link
+                                href={`/workspaces/${workspaceId}/sessions/${background?.sessionId}`}
+                                variant="nav"
+                                className="font-semibold"
+                              >
+                                {(() => {
+                                  const filteredApps =
+                                    appInstances
+                                      ?.filter(
+                                        (instance) =>
+                                          instance.workbenchId ===
+                                          background?.sessionId
+                                      )
+                                      ?.map(
+                                        (instance) =>
+                                          apps?.find(
+                                            (app) => app.id === instance.appId
+                                          )?.name
+                                      )
+                                      ?.filter(Boolean) || []
+                                  return (
+                                    filteredApps.join(', ') ||
+                                    currentWorkbench?.name ||
+                                    'No apps running'
+                                  )
+                                })()}
+                              </Link>
+                            </div>{' '}
+                          </div>
                           <div className="space-y-0.5">
                             <div
                               className="interactive-item"
@@ -449,7 +493,8 @@ export function Header() {
                             <div
                               className="interactive-item"
                               onClick={() => {
-                                const iframe = document.getElementById('iframe')
+                                const iframe =
+                                  document.getElementById('workspace-iframe')
                                 if (iframe) {
                                   iframe.requestFullscreen()
                                 }
@@ -467,29 +512,6 @@ export function Header() {
                               <AppWindow className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                               <div className="min-w-0 flex-1">
                                 <div className="text-sm">Session Info</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {(() => {
-                                    const filteredApps =
-                                      appInstances
-                                        ?.filter(
-                                          (instance) =>
-                                            instance.workbenchId ===
-                                            background?.sessionId
-                                        )
-                                        ?.map(
-                                          (instance) =>
-                                            apps?.find(
-                                              (app) => app.id === instance.appId
-                                            )?.name
-                                        )
-                                        ?.filter(Boolean) || []
-                                    return (
-                                      filteredApps.join(', ') ||
-                                      currentWorkbench?.name ||
-                                      'No apps running'
-                                    )
-                                  })()}
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -640,6 +662,34 @@ export function Header() {
               {currentWorkbench?.description && (
                 <p className="text-sm">{currentWorkbench?.description}</p>
               )}
+              <div className="text-sm">
+                Workspace:{' '}
+                {
+                  workspaces?.find((workspace) => workspace.id === workspaceId)
+                    ?.name
+                }
+              </div>
+              <div className="text-sm">
+                Apps running:{' '}
+                {(() => {
+                  const filteredApps =
+                    appInstances
+                      ?.filter(
+                        (instance) =>
+                          instance.workbenchId === background?.sessionId
+                      )
+                      ?.map(
+                        (instance) =>
+                          apps?.find((app) => app.id === instance.appId)?.name
+                      )
+                      ?.filter(Boolean) || []
+                  return (
+                    filteredApps.join(', ') ||
+                    currentWorkbench?.name ||
+                    'No apps running'
+                  )
+                })()}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

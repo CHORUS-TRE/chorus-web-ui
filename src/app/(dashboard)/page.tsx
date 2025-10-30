@@ -272,7 +272,7 @@ export default function CHORUSDashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card className="bg-background opacity-50 grayscale">
+          <Card className="bg-background demo-effect">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Compute Usage
@@ -284,7 +284,7 @@ export default function CHORUSDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-background opacity-50 grayscale">
+          <Card className="bg-background demo-effect">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
                 Storage Usage
@@ -306,13 +306,13 @@ export default function CHORUSDashboard() {
         <TabsList className="">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
-          <TabsTrigger value="data" className="opacity-50 grayscale">
+          <TabsTrigger value="data" className="demo-effect">
             Data Requests
           </TabsTrigger>
-          <TabsTrigger value="resources" className="opacity-50 grayscale">
+          <TabsTrigger value="resources" className="demo-effect">
             Resources
           </TabsTrigger>
-          <TabsTrigger value="team" className="opacity-50 grayscale">
+          <TabsTrigger value="team" className="demo-effect">
             Team
           </TabsTrigger>
         </TabsList>
@@ -417,7 +417,7 @@ export default function CHORUSDashboard() {
 
             {/* Recent Activity */}
             <div>
-              <Card className="card-glass">
+              <Card className="card-glass demo-effect">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Activity className="h-5 w-5" />
@@ -583,7 +583,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Data Requests Tab */}
-        <TabsContent value="data" className="space-y-4 opacity-50 grayscale">
+        <TabsContent value="data" className="space-y-4 demo-effect">
           <Card className="card-glass">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -637,7 +637,7 @@ export default function CHORUSDashboard() {
         {/* Resources Tab */}
         <TabsContent
           value="resources"
-          className="space-y-4 opacity-50 grayscale"
+          className="space-y-4 demo-effect"
         >
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card className="card-glass">
@@ -738,7 +738,7 @@ export default function CHORUSDashboard() {
         </TabsContent>
 
         {/* Team Tab */}
-        <TabsContent value="team" className="space-y-4 opacity-50 grayscale">
+        <TabsContent value="team" className="space-y-4 demo-effect">
           <Card className="card-glass">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

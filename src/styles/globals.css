@@ -141,6 +141,11 @@
     @apply border border-l-rose-400;
   }
 
+  /* demo effects */
+  .demo-effect {
+    @apply grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300;
+  }
+
   /* Glassmorphism Effects */
   .glass-surface {
     @apply border border-muted/40 bg-contrast-background/80 backdrop-blur-sm;

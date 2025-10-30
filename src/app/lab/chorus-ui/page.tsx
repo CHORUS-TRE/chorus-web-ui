@@ -782,16 +782,22 @@ function WorkbenchesView({
     type: string
     status: string
     workspace: string
+    cpu: string
+    memory: string
   }[]
-  setWorkbenches: (
-    workbenches: {
-      id: string
-      name: string
-      type: string
-      status: string
-      workspace: string
-    }[]
-  ) => void
+  setWorkbenches: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: string
+        name: string
+        type: string
+        status: string
+        workspace: string
+        cpu: string
+        memory: string
+      }[]
+    >
+  >
 }) {
   const [newWorkbenchOpen, setNewWorkbenchOpen] = useState(false)
 
@@ -946,7 +952,7 @@ function AppsView({
 
   const toggleAppStatus = (id: string) => {
     setApps(
-      apps.map((a: { id: string; status: string }) =>
+      apps.map((a) =>
         a.id === id
           ? { ...a, status: a.status === 'active' ? 'inactive' : 'active' }
           : a
@@ -955,7 +961,7 @@ function AppsView({
   }
 
   const deleteApp = (id: string) => {
-    setApps(apps.filter((a: { id: string }) => a.id !== id))
+    setApps(apps.filter((a) => a.id !== id))
   }
 
   return (
