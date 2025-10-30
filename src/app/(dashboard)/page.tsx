@@ -336,7 +336,7 @@ export default function CHORUSDashboard() {
                   {myWorkspaces?.map((workspace) => (
                     <div
                       key={workspace.id}
-                      className="rounded-lg border border-gray-200 p-4"
+                      className="bg-glass rounded-lg border p-4 text-card-foreground shadow-sm"
                     >
                       <div className="mb-2 flex items-start justify-between">
                         <div>
@@ -386,7 +386,7 @@ export default function CHORUSDashboard() {
                         </span>
                         <span className="flex items-center gap-1">
                           <FileText className="h-4 w-4" />
-                          <span>45 files</span>
+                          <span>N/A files</span>
                         </span>
                         <span className="flex items-center gap-1">
                           <LaptopMinimal className="h-4 w-4" />
@@ -469,14 +469,15 @@ export default function CHORUSDashboard() {
                 </CardDescription>
               </CardHeader>
               <div className="pr-6">
-                <WorkbenchCreateForm
+                <Button>Start Session</Button>
+                {/* <WorkbenchCreateForm
                   workspaceId={user?.workspaceId || ''}
                   workspaceName={
                     workspaces?.find(
                       (workspace) => workspace.id === user?.workspaceId
                     )?.name || ''
                   }
-                />
+                /> */}
               </div>
             </div>
             <CardContent>
