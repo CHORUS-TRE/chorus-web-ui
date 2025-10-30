@@ -1,3 +1,25 @@
+# [1.16.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.15.1...v1.16.0) (2025-10-30)
+
+
+### Bug Fixes
+
+* **breadcrumbs:** update Link components to include variant prop for consistent styling ([ea7d88d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ea7d88df3a2dcc7271af826a2d33f0dfe894d4af))
+* **dashboard:** update workspace card styling and adjust file display text ([4e56fb5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4e56fb5573c70d68ce69b263b1a99f197ab9e7b4))
+* **header:** adjust responsive visibility and improve styling for navigation items ([3d2c4ac](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3d2c4acd0dd4760b2aa76bf4bf412995a541dd2a))
+* **ui:** demo effect added (pun intended) ([4f043df](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4f043df5f2870fae47b81c8d5ae5400a5fa4a4fc))
+* warnings & linting ([62a8b30](https://github.com/CHORUS-TRE/chorus-web-ui/commit/62a8b30306ac6ed22b4ab7ab41a596c5711d5667))
+* **workspace:** remove unused useEffect and adjust card header styling ([3307339](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3307339e165d9baabb821e3fc2afc895a82a3858))
+
+
+### Features
+
+* **dashboard:** enhance dashboard functionality ([303611c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/303611c30d17027b0420f1daece8def0d0d9649e))
+* **dashboard:** switch home to dashboard ([702ae2d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/702ae2dd0672358322e7f5fd6e41b5bb281f0287))
+* **error:** add GlobalError component and enhance NotFound page styling ([42e79ca](https://github.com/CHORUS-TRE/chorus-web-ui/commit/42e79ca7ddf8dff0e6e03e094fa20f64c7d7009c))
+* **lab:** add new pages for lab features including layout, sandbox, architecture, protocol builder, clinical lifecycle dashboard, and feasibility assessment ([06824dd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/06824ddca8dc2d40305b8d28787e23c89f410bf6))
+* **lab:** update SandboxPage ([70af214](https://github.com/CHORUS-TRE/chorus-web-ui/commit/70af21405b49274fb49ab8bfc8b39c730378c960))
+* **link:** introduce a new Link component with active state handling and refactor NavLink to utilize it ([04627d0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/04627d075f8cdf74a587ad18f4433e81077f8a00))
+
 ## [1.15.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.15.0...v1.15.1) (2025-10-24)
 
 
