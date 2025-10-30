@@ -132,14 +132,12 @@ export default function ComponentGeneratorPage() {
 
                       <div className="flex gap-2">
                         <Button
-                          size="sm"
                           variant="outline"
                           className="border-gray-600"
                         >
                           Edit
                         </Button>
                         <Button
-                          size="sm"
                           variant="outline"
                           className="border-gray-600"
                         >

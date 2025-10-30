@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Space } from 'react-zoomable-ui'
+import { Space, ViewPort } from 'react-zoomable-ui'
 import { Canvas, EdgeData, NodeData, useSelection } from 'reaflow'
 
 import { roleCategories, schemaData, serviceGroups } from './data'
@@ -20,7 +20,7 @@ export default function RoleHierarchyPage() {
   const [showPermissions, setShowPermissions] = useState(false)
   const [searchTerm] = useState('')
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const viewPortRef = useRef<HTMLDivElement | null>(null)
+  const viewPortRef = useRef<ViewPort | null>(null)
   const [size, setSize] = useState({ width: 1200, height: 800 })
 
   // Observe container size to keep the canvas responsive

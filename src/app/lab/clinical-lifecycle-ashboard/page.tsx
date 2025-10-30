@@ -50,7 +50,13 @@ export default function CHORUSResearchDashboard() {
     notifications: 4
   }
 
-  const lifecycleSteps = [
+  type LifecycleStatus = 'completed' | 'active' | 'pending'
+
+  const lifecycleSteps: Array<{
+    name: string
+    status: LifecycleStatus
+    date: string
+  }> = [
     { name: 'Project Setup', status: 'completed', date: '2024-01-15' },
     { name: 'Dataset Access', status: 'completed', date: '2024-02-01' },
     { name: 'Data De-identification', status: 'completed', date: '2024-02-15' },
@@ -146,8 +152,7 @@ export default function CHORUSResearchDashboard() {
     }
   ]
 
-  type LifecycleStatus = 'completed' | 'active' | 'pending'
-  const getStatusIcon = (status: LifecycleStatus): JSX.Element => {
+  const getStatusIcon = (status: LifecycleStatus): React.JSX.Element => {
     switch (status) {
       case 'completed':
         return <CheckCircle className="h-4 w-4 text-green-600" />

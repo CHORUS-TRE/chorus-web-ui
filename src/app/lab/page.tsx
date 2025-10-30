@@ -27,7 +27,20 @@ import {
 } from '~/components/ui/breadcrumb'
 
 export default function SandboxPage() {
-  const sandboxItems = [
+  const sandboxItems: Array<{
+    title: string
+    description: string
+    icon: React.ComponentType<{ className?: string }>
+    status: string
+    href?: string
+    children?: Array<{
+      title: string
+      description: string
+      href: string
+      icon: React.ComponentType<{ className?: string }>
+      status?: string
+    }>
+  }> = [
     {
       title: 'AI generated web pages',
       description: 'AI Generated web pages for the CHORUS platform',

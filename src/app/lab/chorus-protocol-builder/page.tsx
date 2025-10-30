@@ -7,7 +7,6 @@ import {
   CheckCircle,
   Clock,
   Database,
-  FileCheck,
   FileText,
   FlaskConical,
   Heart,
@@ -287,37 +286,29 @@ const ProtocolDashboard = () => {
         {/* Progress Overview */}
         <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard
-            icon={<FileCheck className="h-4 w-4" />}
             title="Progression globale"
             value={`${Math.round(progress)}%`}
             subtitle={`${completedSections.size}/${protocolSections.length} sections`}
-            color="text-accent"
             bgColor="card-glass"
           />
           <StatCard
-            icon={<AlertTriangle className="h-4 w-4" />}
             title="Sections obligatoires"
             value={`${completedRequired}/${requiredSections.length}`}
             subtitle="sections critiques"
-            color="text-accent"
             bgColor="card-glass"
           />
           <StatCard
-            icon={<Clock className="h-4 w-4" />}
             title="Temps estimé"
             value="2-4h"
             subtitle="pour un protocole complet"
-            color="text-accent"
             bgColor="card-glass"
           />
           <StatCard
-            icon={<Shield className="h-4 w-4" />}
             title="Conformité CER"
             value={
               completedRequired === requiredSections.length ? '✓' : 'En cours'
             }
             subtitle="validation éthique"
-            color="text-accent"
             bgColor="card-glass"
           />
         </div>

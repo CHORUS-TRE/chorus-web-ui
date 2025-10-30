@@ -17,6 +17,7 @@ export interface ButtonProps
     | 'link-underline'
     | 'accent-ring'
     | 'accent-filled'
+  size?: 'default' | 'sm' | 'lg' | 'icon' | 'xs' | null
   asChild?: boolean
 }
 
@@ -27,6 +28,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled = false,
       type = 'button',
       variant = 'accent-filled',
+      size,
       className,
       ...props
     },
@@ -45,6 +47,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <UIButton
           disabled={disabled}
           type={type}
+          size={size}
           className={`h-8 w-8 bg-transparent text-muted hover:bg-transparent hover:text-accent ${className || ''}`}
           ref={ref}
           {...props}
@@ -57,7 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === 'link') {
       return (
         <UIButton
-          size="xs"
+          size={size || 'xs'}
           disabled={disabled}
           type={type}
           className={`focus-visible:no-ring h-8 rounded-none border-b-2 border-transparent bg-transparent text-muted underline-offset-4 hover:bg-transparent hover:text-accent ${className || ''}`}
@@ -72,7 +75,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === 'link-underline') {
       return (
         <UIButton
-          size="xs"
+          size={size || 'xs'}
           disabled={disabled}
           type={type}
           className={`focus-visible:no-ring h-8 rounded-none border-b-2 border-transparent bg-transparent text-muted hover:bg-transparent hover:text-accent hover:underline ${className || ''}`}
@@ -87,7 +90,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === 'accent-ring') {
       return (
         <UIButton
-          size="sm"
+          size={size || 'sm'}
           disabled={disabled}
           type={type}
           className={`flex items-center justify-center gap-1 rounded-full bg-transparent text-sm text-accent ring-1 ring-accent transition-[gap] duration-500 ease-in-out hover:gap-2 hover:bg-accent-background hover:text-black ${className || ''}`}
@@ -107,7 +110,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
       return (
         <UIButton
-          size="xs"
+          size={size || 'xs'}
           disabled={disabled}
           type={type}
           className={`flex items-center justify-center gap-1 rounded-full text-xs transition-[gap] duration-500 ease-in-out hover:gap-2 ${themeClasses} ${className || ''}`}
@@ -122,7 +125,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Default shadcn variants
     return (
       <UIButton
-        size="sm"
+        size={size || 'sm'}
         disabled={disabled}
         variant={variant}
         type={type}
