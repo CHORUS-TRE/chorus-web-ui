@@ -42,19 +42,23 @@ export default function Layout({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/">CHORUS</Link>
+              <Link href="/" variant="nav">
+                CHORUS
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/workspaces">Workspaces</Link>
+              <Link href="/workspaces" variant="nav">
+                Workspaces
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/workspaces/${workspace?.id}`}>
+              <Link href={`/workspaces/${workspace?.id}`} variant="nav">
                 {workspace && workspace.name}
               </Link>
             </BreadcrumbLink>

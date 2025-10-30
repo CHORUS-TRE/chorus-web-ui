@@ -47,7 +47,9 @@ export default function WorkspacesPage() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/">CHORUS</Link>
+                <Link href="/" variant="nav">
+                  CHORUS
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

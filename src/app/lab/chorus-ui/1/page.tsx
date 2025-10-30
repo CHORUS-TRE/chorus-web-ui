@@ -68,15 +68,53 @@ const API_BASE = 'https://api.chorus-tre.ch/api/rest/v1'
 
 export default function ChorusApp() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(null)
+  const [user, setUser] = useState<{
+    name: string
+    email: string
+    role: string
+    id: number
+  } | null>(null)
   const [currentView, setCurrentView] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [notifications, setNotifications] = useState([])
-  const [workspaces, setWorkspaces] = useState([])
-  const [workbenches, setWorkbenches] = useState([])
-  const [apps, setApps] = useState([])
-  const [appInstances, setAppInstances] = useState([])
+  type Workspace = {
+    id: number
+    name: string
+    description: string
+    createdAt: string
+    files: number
+  }
+  type Workbench = {
+    id: number
+    name: string
+    type: string
+    status: 'running' | 'stopped'
+    workspaceId: number
+  }
+  type AppItem = {
+    id: number
+    name: string
+    category: string
+    version: string
+    instances: number
+  }
+  type AppInstance = {
+    id: number
+    appId: number
+    name: string
+    status: 'active' | 'inactive'
+    workspaceId: number
+  }
+  type NotificationItem = {
+    id: number
+    message: string
+    time: string
+    read: boolean
+  }
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+  const [workbenches, setWorkbenches] = useState<Workbench[]>([])
+  const [apps, setApps] = useState<AppItem[]>([])
+  const [appInstances, setAppInstances] = useState<AppInstance[]>([])
   const { toast } = useToast()
 
   // Mock data for demo purposes
@@ -206,7 +244,7 @@ export default function ChorusApp() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       // Mock login - in real app, call API
       setTimeout(() => {
@@ -217,7 +255,7 @@ export default function ChorusApp() {
           role: 'Researcher',
           id: 1
         })
-        setToken('mock-jwt-token')
+        // token handling removed in mock login
         toast({
           title: 'Login Successful',
           description: 'Welcome back to CHORUS!'
@@ -353,7 +391,7 @@ export default function ChorusApp() {
               onClick={() => {
                 setIsAuthenticated(false)
                 setUser(null)
-                setToken(null)
+                // token handling removed in mock logout
                 toast({ title: 'Logged out successfully' })
               }}
             >
