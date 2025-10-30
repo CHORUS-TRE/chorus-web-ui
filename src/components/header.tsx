@@ -132,13 +132,13 @@ export function Header() {
 
         {user && (
           <>
-            <NavigationMenu className="absolute left-1/2 flex -translate-x-1/2 transform items-center justify-start">
+            <NavigationMenu className="absolute left-1/2 flex -translate-x-1/2 transform items-center justify-start pt-1">
               <NavigationMenuList className="flex items-center justify-start gap-2 text-sm font-semibold text-muted transition-colors">
-                <NavigationMenuItem asChild>
+                <NavigationMenuItem>
                   <Link href={`/`} exact>
                     <div className="flex place-items-center gap-1">
                       <Home className="h-4 w-4" />
-                      <span className="hidden xl:block">Dashboard</span>
+                      <span className="hidden lg:block">Dashboard</span>
                     </div>
                   </Link>
                 </NavigationMenuItem>
@@ -148,7 +148,7 @@ export function Header() {
                   >
                     <div className="flex place-items-center gap-1">
                       <Package className="h-4 w-4" />
-                      <span className="hidden xl:block">Workspaces</span>
+                      <span className="hidden lg:block">Workspaces</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="glass-elevated text-muted">
@@ -156,7 +156,7 @@ export function Header() {
                       <div className="space-y-1">
                         {/* All Workspaces Link */}
                         <div
-                          className="interactive-item mb-2 border-b border-muted/20 pb-2"
+                          className="interactive-item mb-2 border-b border-muted/20 pb-2 truncate overflow-hidden whitespace-nowrap"
                           onClick={() => router.push('/workspaces')}
                         >
                           <Package className="h-4 w-4 shrink-0" />
@@ -220,9 +220,9 @@ export function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
-                    <div className="flex place-items-center gap-1">
+                    <div className="flex place-items-center gap-1 truncate overflow-hidden whitespace-nowrap">
                       <LaptopMinimal className="h-4 w-4" />
-                      <span className="hidden xl:block">Sessions</span>
+                      <span className="hidden lg:block">Sessions</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="glass-elevated text-foreground">
@@ -247,9 +247,10 @@ export function Header() {
                                 href={`/workspaces/${workspace?.id}`}
                                 className={`${workspace.id === workspaceId ? 'text-accent/80' : ''} `}
                                 variant="underline"
+
                               >
                                 <div
-                                  className={`mb-1 flex items-center gap-2 text-sm font-semibold text-muted hover:text-foreground`}
+                                  className={`mb-1 flex items-center gap-2 text-sm font-semibold text-muted hover:text-foreground text-ellipsis truncate overflow-hidden whitespace-nowrap`}
                                 >
                                   {workspace.id === workspaceId ? (
                                     <PackageOpen className="h-4 w-4" />
@@ -389,18 +390,18 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem id="getting-started-step4">
-                  <Link href={`/data`}>
+                  <Link href={`/data`} className="text-ellipsis truncate overflow-hidden whitespace-nowrap">
                     <div className="flex place-items-center gap-1">
                       <Database className="h-4 w-4" />
-                      <span className="hidden xl:block">Data</span>
+                      <span className="hidden lg:block">Data</span>
                     </div>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/app-store">
+                  <Link href="/app-store" className="text-ellipsis truncate overflow-hidden whitespace-nowrap">
                     <div className="flex place-items-center gap-1">
                       <Store className="h-4 w-4" />
-                      <span className="hidden xl:block">App Store</span>
+                      <span className="hidden lg:block">App Store</span>
                     </div>
                   </Link>
                 </NavigationMenuItem>
@@ -414,13 +415,13 @@ export function Header() {
                           router.push(`/workspaces/${workspaceId}`)
                         }}
                       >
-                        <div className="flex-start flex place-items-center gap-1 text-foreground">
+                        <div className="flex-start flex place-items-center gap-1 text-foreground text-ellipsis truncate overflow-hidden whitespace-nowrap">
                           {workspaceId && workspaceId === user?.workspaceId ? (
                             <AppWindow className="h-4 w-4" />
                           ) : (
                             <AppWindow className="h-4 w-4" />
                           )}
-                          <span className="hidden xl:block">
+                          <span className="hidden lg:block">
                             Active Session
                           </span>
                         </div>
