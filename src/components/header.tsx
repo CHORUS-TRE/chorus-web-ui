@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 
@@ -75,6 +76,12 @@ export function Header() {
   const { user, logout } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
+  const pathname = usePathname()
+  const isSessionPage = useMemo(() => {
+    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+    return sessionPageRegex.test(pathname)
+  }, [pathname])
+  const [sessionView, setSessionView] = useState(isSessionPage)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
@@ -98,11 +105,6 @@ export function Header() {
       workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
     [workspacesWithWorkbenches, workspaceId]
   )
-
-  // const isSessionPage = useMemo(() => {
-  //   const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-  //   return sessionPageRegex.test(pathname)
-  // }, [pathname])
 
   return (
     <>
@@ -221,7 +223,7 @@ export function Header() {
                     {sortedWorkspacesWithWorkbenches?.length === 0 && (
                       <div className="p-2 text-sm">No session found</div>
                     )}
-                    <div className="glass-elevated flex max-h-[90vh] w-[640px] gap-1 overflow-y-auto p-2">
+                    <div className="glass-elevated flex max-h-[90vh] w-[640px] items-center justify-center gap-1 overflow-y-auto p-2">
                       <div>
                         {sortedWorkspacesWithWorkbenches
                           ?.slice(
@@ -408,45 +410,58 @@ export function Header() {
                     <>
                       <NavigationMenuTrigger
                         onClick={() => {
-                          // Navigate to workspace when clicked
-                          router.push(`/workspaces/${workspaceId}`)
+                          if (!isSessionPage) {
+                            router.push(
+                              `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
+                            )
+                          } else {
+                            router.push(`/workspaces/${workspaceId}`)
+                          }
                         }}
                       >
-                        <div className="flex-start flex place-items-center gap-1 overflow-hidden truncate text-ellipsis whitespace-nowrap text-foreground">
-                          {workspaceId && workspaceId === user?.workspaceId ? (
-                            <AppWindow className="h-4 w-4" />
+                        <div className="flex-start flex place-items-center gap-1">
+                          {isSessionPage ? (
+                            <>
+                              <AppWindow className="h-4 w-4" />
+                              <span className="hidden lg:block">Session</span>
+                            </>
                           ) : (
-                            <AppWindow className="h-4 w-4" />
+                            <>
+                              <PackageOpen className="h-4 w-4" />
+                              <span className="hidden lg:block">Workspace</span>
+                            </>
                           )}
-                          <span className="hidden lg:block">
-                            Active Session
-                          </span>
                         </div>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="glass-elevated">
-                        <div className="w-[240px] p-2">
-                          <div className="border-b border-muted/20 p-2 text-xs">
-                            <div>
-                              Workspace:{' '}
-                              <Link
-                                href={`/workspaces/${workspaceId}`}
-                                variant="nav"
-                                className="font-semibold"
-                              >
+                      <NavigationMenuContent className="glass-elevated text-muted-foreground">
+                        <div className="w-[240px] space-y-1 p-2">
+                          <div className="mb-1 space-y-0.5 border-b border-muted/20 pb-2">
+                            {/* <div
+                              className={`interactive-item mb-1 overflow-hidden truncate whitespace-nowrap ${!isSessionPage ? 'bg-accent' : ''}`}
+                              onClick={() =>
+                                router.push(`/workspaces/${workspaceId}`)
+                              }
+                            >
+                              <Package className="h-4 w-4 shrink-0" />
+                              <span className="text-sm font-medium">
                                 {
                                   workspaces?.find(
                                     (workspace) => workspace.id === workspaceId
                                   )?.name
                                 }
-                              </Link>
+                                {!isSessionPage ? 'Current Workspace' : ''}
+                              </span>
                             </div>
-                            <div>
-                              Apps:{' '}
-                              <Link
-                                href={`/workspaces/${workspaceId}/sessions/${background?.sessionId}`}
-                                variant="nav"
-                                className="font-semibold"
-                              >
+                            <div
+                              className={`interactive-item mb-2 pb-3 ${isSessionPage ? 'bg-accent' : ''}`}
+                              onClick={() =>
+                                router.push(
+                                  `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
+                                )
+                              }
+                            >
+                              <LaptopMinimal className="h-4 w-4 shrink-0" />
+                              <span className="text-sm font-medium">
                                 {(() => {
                                   const filteredApps =
                                     appInstances
@@ -468,38 +483,41 @@ export function Header() {
                                     'No apps running'
                                   )
                                 })()}
-                              </Link>
-                            </div>{' '}
-                          </div>
-                          <div className="space-y-0.5">
-                            <div
-                              className="interactive-item"
-                              onClick={() => router.push(`/app-store`)}
-                            >
-                              <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
-                              <span className="text-sm">Start New App</span>
-                            </div>
+                              </span>
+                            </div> */}
 
-                            <div
-                              className="interactive-item"
-                              onClick={() => setUpdateOpen(true)}
-                            >
-                              <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
-                              <span className="text-sm">Settings</span>
-                            </div>
+                            <div className="mb-1">
+                              <div
+                                className="interactive-item"
+                                onClick={() => router.push(`/app-store`)}
+                              >
+                                <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Start New App</span>
+                              </div>
 
-                            <div
-                              className="interactive-item"
-                              onClick={() => {
-                                const iframe =
-                                  document.getElementById('workspace-iframe')
-                                if (iframe) {
-                                  iframe.requestFullscreen()
-                                }
-                              }}
-                            >
-                              <Maximize className="h-4 w-4 shrink-0 text-muted-foreground" />
-                              <span className="text-sm">Toggle Fullscreen</span>
+                              <div
+                                className="interactive-item"
+                                onClick={() => setUpdateOpen(true)}
+                              >
+                                <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">Settings</span>
+                              </div>
+
+                              <div
+                                className="interactive-item"
+                                onClick={() => {
+                                  const iframe =
+                                    document.getElementById('workspace-iframe')
+                                  if (iframe) {
+                                    iframe.requestFullscreen()
+                                  }
+                                }}
+                              >
+                                <Maximize className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="text-sm">
+                                  Toggle Fullscreen
+                                </span>
+                              </div>
                             </div>
                           </div>
                           <div className="mb-1">

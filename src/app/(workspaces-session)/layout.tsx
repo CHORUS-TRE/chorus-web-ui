@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import BackgroundIframe from '~/components/background-iframe'
+// import BackgroundIframe from '~/components/background-iframe'
 
 const UnauthenticatedApp = React.lazy(() =>
   import('@/components/unauthenticated-app').then((mod) => ({
@@ -21,7 +21,7 @@ export default function Layout({
   return user ? (
     <>
       {children}
-      <BackgroundIframe />
+      {/* <BackgroundIframe /> */}
     </>
   ) : (
     <UnauthenticatedApp />

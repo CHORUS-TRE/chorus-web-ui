@@ -291,12 +291,8 @@ export default function CHORUSDashboard() {
         </div>
       </div>
 
-      <Tabs
-        value={selectedTab}
-        onValueChange={setSelectedTab}
-        className="space-y-4"
-      >
-        <TabsList className="">
+      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="">
+        <TabsList className="mb-0">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
           <TabsTrigger value="data" className="demo-effect">
@@ -311,7 +307,7 @@ export default function CHORUSDashboard() {
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent value="overview" className="">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Workspaces */}
             <div className="lg:col-span-2">

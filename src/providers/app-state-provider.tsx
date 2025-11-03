@@ -287,11 +287,13 @@ export const AppStateProvider = ({
     }
 
     try {
-      await refreshWorkspaces()
-      await refreshWorkbenches()
-      await refreshUsers()
-      await refreshApps()
-      await refreshAppInstances()
+      await Promise.all([
+        refreshWorkspaces(),
+        refreshWorkbenches(),
+        refreshUsers(),
+        refreshApps(),
+        refreshAppInstances()
+      ])
     } catch (error) {
       toast({
         title: 'Error',

@@ -60,7 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === 'link') {
       return (
         <UIButton
-          size={size || 'xs'}
+          size={size || 'sm'}
           disabled={disabled}
           type={type}
           className={`focus-visible:no-ring h-8 rounded-none border-b-2 border-transparent bg-transparent text-muted underline-offset-4 hover:bg-transparent hover:text-accent ${className || ''}`}
@@ -75,7 +75,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === 'link-underline') {
       return (
         <UIButton
-          size={size || 'xs'}
+          size={size || 'sm'}
           disabled={disabled}
           type={type}
           className={`focus-visible:no-ring h-8 rounded-none border-b-2 border-transparent bg-transparent text-muted hover:bg-transparent hover:text-accent hover:underline ${className || ''}`}
@@ -110,7 +110,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
       return (
         <UIButton
-          size={size || 'xs'}
+          size={size || 'sm'}
           disabled={disabled}
           type={type}
           className={`flex items-center justify-center gap-1 rounded-full text-xs transition-[gap] duration-500 ease-in-out hover:gap-2 ${themeClasses} ${className || ''}`}
