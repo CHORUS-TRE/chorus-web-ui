@@ -342,7 +342,7 @@ export interface WorkspaceDashboardProps {
 // Main Component
 // ============================================================================
 
-export function WorkspaceDashboard({
+function WorkspaceDashboard({
   workspace,
   currentUser,
   onWorkspaceUpdate,

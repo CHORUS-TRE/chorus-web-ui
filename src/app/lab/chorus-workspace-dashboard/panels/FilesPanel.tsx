@@ -53,7 +53,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 
-import type { ChorusWorkspaceFile } from '../../../../../knowledge/chorus-source-code/CHORUS-TRE/chorus-web-ui/src/internal/client/models/ChorusWorkspaceFile'
+import type { ChorusWorkspaceFile } from '@/internal/client/models/ChorusWorkspaceFile'
 import type {
   EnhancedChorusWorkspace,
   FileSelectionState,
@@ -133,9 +133,8 @@ export function FilesPanel({
   // Filter files based on search
   const filteredFiles = React.useMemo(() => {
     if (!searchQuery) return files
-    return files.filter((file) =>
-      file.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    const q = searchQuery.toLowerCase()
+    return files.filter((file) => (file.name?.toLowerCase() ?? '').includes(q))
   }, [files, searchQuery])
 
   // Calculate total size of selected files

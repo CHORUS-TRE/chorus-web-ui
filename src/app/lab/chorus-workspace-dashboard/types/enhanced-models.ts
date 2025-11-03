@@ -12,10 +12,8 @@
  * - Tree-shakeable exports
  */
 
-import type {
-  ChorusWorkspace,
-  ChorusWorkspaceFile
-} from '../../../knowledge/chorus-source-code/CHORUS-TRE/chorus-web-ui/src/internal/client/models'
+import type { ChorusWorkspace } from '@/internal/client/models/ChorusWorkspace'
+import type { ChorusWorkspaceFile } from '@/internal/client/models/ChorusWorkspaceFile'
 
 // ============================================================================
 // Network Configuration Types

@@ -5,7 +5,9 @@ import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
-import logo from '/public/logo-chorus-primaire-white@2x.svg'
+import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
+import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
+
 import { Link } from '@/components/link'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
@@ -20,6 +22,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
 import { toast } from '../hooks/use-toast'
+import { useTheme } from 'next-themes'
 
 const initialState: Result<User> = {
   data: undefined,
@@ -35,6 +38,8 @@ export default function LoginForm() {
   const [authModes, setAuthModes] = useState<AuthenticationMode[]>()
   const [, startTransition] = useTransition()
   const [isLoading, setIsLoading] = useState(true)
+  const { theme } = useTheme()
+  const logo = theme === 'light' ? logoWhite : logoBlack
 
   useEffect(() => {
     const fetchAuthModes = async () => {
