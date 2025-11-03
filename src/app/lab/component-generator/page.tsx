@@ -131,16 +131,10 @@ export default function ComponentGeneratorPage() {
                       </div>
 
                       <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          className="border-gray-600"
-                        >
+                        <Button variant="outline" className="border-gray-600">
                           Edit
                         </Button>
-                        <Button
-                          variant="outline"
-                          className="border-gray-600"
-                        >
+                        <Button variant="outline" className="border-gray-600">
                           Use Component
                         </Button>
                       </div>
