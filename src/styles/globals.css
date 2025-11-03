@@ -216,3 +216,15 @@ nav li {
 .RaSidebar-closed {
   display: none !important;
 }
+
+/* Navigation Menu Viewport Positioning Fix */
+/* Ensures the viewport positions correctly under each trigger in a centered menu */
+.nav-menu-viewport-wrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  perspective: 2000px;
+}
