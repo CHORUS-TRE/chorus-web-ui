@@ -3,11 +3,11 @@
 import { ArrowRight, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
-import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
 import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
-
+import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
 import { Link } from '@/components/link'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
@@ -22,7 +22,6 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 
 import { toast } from '../hooks/use-toast'
-import { useTheme } from 'next-themes'
 
 const initialState: Result<User> = {
   data: undefined,

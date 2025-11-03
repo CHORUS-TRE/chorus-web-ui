@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { K8sWorkbenchStatus } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
-const POLLING_INTERVAL = 1000 // 3 seconds
-const TIMEOUT = 10 * 1000 // 10 seconds
+const POLLING_INTERVAL = 3000
+const TIMEOUT = 30 * 1000
 
 export function useWorkbenchStatus(workbenchId?: string) {
   const [status, setStatus] = useState<K8sWorkbenchStatus | string | null>(null)

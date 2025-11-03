@@ -52,8 +52,8 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-
 import type { ChorusWorkspaceFile } from '@/internal/client/models/ChorusWorkspaceFile'
+
 import type {
   EnhancedChorusWorkspace,
   FileSelectionState,
