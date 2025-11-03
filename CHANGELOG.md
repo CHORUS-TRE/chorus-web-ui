@@ -1,3 +1,19 @@
+# [1.17.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.16.0...v1.17.0) (2025-11-03)
+
+
+### Bug Fixes
+
+* **dashboard:** streamline Tabs component and update Button size for consistency ([3b154eb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3b154eb64823ff610926c5037eb962394d8c12f8))
+* **header:** improve session page navigation and adjust button styling ([be28b4d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/be28b4d13315b83c4ed34b04291125e4f8381039))
+* **layout:** comment out BackgroundIframe component in layout files for cleaner UI ([a4be768](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a4be76815ee9a615844c728304698117697a42dd))
+* **workbench-status:** adjust polling interval and timeout for improved performance ([f62ccc5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f62ccc5dca8cebca9adf198bda90e14d9c989f63))
+* **workspace-dashboard:** bug fixes ([31a3ca8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/31a3ca85c23f596af43684b5e5d3632e9651d732))
+
+
+### Features
+
+* **workspace-dashboard:** implement comprehensive workspace dashboard with data movement controls and resource management panels ([58535d8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/58535d82c38e2c677d4b64da9b3d1388f12df3b9))
+
 # [1.16.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.15.1...v1.16.0) (2025-10-30)
 
 
