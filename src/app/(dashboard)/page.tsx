@@ -291,11 +291,7 @@ export default function CHORUSDashboard() {
         </div>
       </div>
 
-      <Tabs
-        value={selectedTab}
-        onValueChange={setSelectedTab}
-        className=""
-      >
+      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="">
         <TabsList className="mb-0">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
