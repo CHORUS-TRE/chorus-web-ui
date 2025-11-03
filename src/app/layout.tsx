@@ -60,7 +60,7 @@ export default async function RootLayout({
               <AppStateProvider>
                 {/* <AIChatProvider> */}
                 {children}
-                <BackgroundIframe />
+                {/* <BackgroundIframe /> */}
                 <Toaster />
                 {/* <AIChatWidget /> */}
                 {/* </AIChatProvider> */}
