@@ -6,12 +6,12 @@ import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
-import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
-import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
 import { Link } from '@/components/link'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { useAuthentication } from '@/providers/authentication-provider'
+import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
+import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { storeRedirectUrl } from '@/utils/redirect-storage'
 import {
   getAuthenticationModes,

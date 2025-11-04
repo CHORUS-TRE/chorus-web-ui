@@ -5,8 +5,8 @@ import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import React, { useEffect, useState } from 'react'
 
-import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
-import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
+import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
+import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 
 import packageInfo from '../../package.json'
 

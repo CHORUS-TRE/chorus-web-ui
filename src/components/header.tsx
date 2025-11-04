@@ -24,8 +24,6 @@ import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 
-import logoBlack from '/public/logo-chorus-primaire-black@2x.svg'
-import logoWhite from '/public/logo-chorus-primaire-white@2x.svg'
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
 import {
@@ -46,6 +44,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
+import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import {
   NavigationMenu,
