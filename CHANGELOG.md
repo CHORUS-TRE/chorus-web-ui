@@ -1,3 +1,11 @@
+## [1.17.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.17.0...v1.17.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* **imports:** update import paths to use alias for assets and adjust Accordion type in WorkspacesPage ([fe6e100](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fe6e100379e5579ee5d35c403a1a7e82f92fb99e))
+* **layout:** uncomment BackgroundIframe component in layout for improved UI ([4851b51](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4851b51fd5d37a0402210dc17b5b07c97d121fd4))
+
 # [1.17.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.16.0...v1.17.0) (2025-11-03)
 
 
