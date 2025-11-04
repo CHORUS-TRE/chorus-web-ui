@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Tour } from 'nextstepjs'
 
-import logo from '/public/logo-chorus-primaire-black@2x.svg'
+import logo from '@/public/logo-chorus-primaire-black@2x.svg'
 
 export const steps: Tour[] = [
   {

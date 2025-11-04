@@ -97,8 +97,8 @@ export default function WorkspacesPage() {
           </Button>
         </div>
         <Accordion
-          type="multiple"
-          defaultValue={['my-workspaces']}
+          type="single"
+          defaultValue={'all-workspaces'}
           className="w-full"
         >
           <AccordionItem value="my-workspaces" className="border-b-0">
@@ -168,9 +168,7 @@ export default function WorkspacesPage() {
                 <>
                   {showWorkspacesTable ? (
                     <WorkspaceTable
-                      workspaces={workspaces.filter(
-                        (w) => w.userId !== user?.id && !w.isMain
-                      )}
+                      workspaces={workspaces.filter((w) => !w.isMain)}
                       user={user}
                       onUpdate={refreshWorkspaces}
                     />

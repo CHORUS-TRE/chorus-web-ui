@@ -16,9 +16,9 @@ const config = {
     })
     return config
   },
-  eslint: {
-    dirs: ['app', 'src']
-  },
+  // Turbopack configuration (Next.js 16 uses Turbopack by default)
+  // WebAssembly support is built-in with Turbopack
+  turbopack: {},
   output: 'standalone',
   logging: {
     fetches: {

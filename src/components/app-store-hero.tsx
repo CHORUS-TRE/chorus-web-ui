@@ -2,8 +2,8 @@ import { Box, Cloud, Lock, Zap } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 
-import logoWhite from '/public/logo-chorus-primaire-black@2x.svg'
-import logoBlack from '/public/logo-chorus-primaire-white@2x.svg'
+import logoWhite from '@/public/logo-chorus-primaire-black@2x.svg'
+import logoBlack from '@/public/logo-chorus-primaire-white@2x.svg'
 
 export default function AppStoreHero() {
   const { theme } = useTheme()
