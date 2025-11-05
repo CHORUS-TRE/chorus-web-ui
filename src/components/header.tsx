@@ -109,7 +109,7 @@ export function Header() {
   return (
     <>
       <nav
-        className="glass-surface flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 px-2 text-foreground shadow-lg"
+        className="bg-contrast-background/80 backdrop-blur-sm flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 px-2 text-foreground shadow-lg border-b border-muted/40"
         id="header"
         onMouseLeave={() => {
           setTimeout(() => {
