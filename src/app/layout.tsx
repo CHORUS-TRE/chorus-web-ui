@@ -11,8 +11,6 @@ import React from 'react'
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
-// AI chat imports not used in current layout
-import BackgroundIframe from '~/components/background-iframe'
 import { Toaster } from '~/components/ui/toaster'
 import { AuthorizationProvider } from '~/providers/authorization-provider'
 
@@ -58,12 +56,8 @@ export default async function RootLayout({
           <AuthenticationProvider>
             <AuthorizationProvider>
               <AppStateProvider>
-                {/* <AIChatProvider> */}
                 {children}
-                {/* <BackgroundIframe /> */}
                 <Toaster />
-                {/* <AIChatWidget /> */}
-                {/* </AIChatProvider> */}
               </AppStateProvider>
             </AuthorizationProvider>
           </AuthenticationProvider>

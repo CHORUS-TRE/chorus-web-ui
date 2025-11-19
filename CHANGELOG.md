@@ -1,3 +1,17 @@
+# [1.18.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.17.1...v1.18.0) (2025-11-19)
+
+
+### Bug Fixes
+
+* **chart:** improve tooltip color handling and update formatter parameters for better data representation ([3ddb6fd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3ddb6fdad1bd219a20849fee5cbf4004a3c5a9f6))
+* **header:** update header background styling for improved visibility ([f95f49e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f95f49ee32b0a84818f3a11ff2360c1b2d80a35d))
+
+
+### Features
+
+* **docs:** add dynamic component generation system design and MVP plan documentation (to be updated) ([c5c3135](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c5c3135fdff00f4d8761003c7875c29a0c5cdcdd))
+* **styles:** add semantic color system demo with dark mode toggle ([6d5e402](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6d5e402922809054d8b6dd5dfa2b57921e22b060))
+
 ## [1.17.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.17.0...v1.17.1) (2025-11-04)
 
 
