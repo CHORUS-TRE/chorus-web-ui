@@ -51,10 +51,6 @@ export const mockRouter = {
 export const mockPathname = '/'
 export const mockSearchParams = new URLSearchParams()
 
-export const mockUseRouter = () => mockRouter
-export const mockUsePathname = () => mockPathname
-export const mockUseSearchParams = () => mockSearchParams
-
 /**
  * Create a mock repository for domain testing
  * @param implementation Partial implementation of the repository methods
@@ -62,43 +58,4 @@ export const mockUseSearchParams = () => mockSearchParams
  */
 export function createMockRepository<T>(implementation: Partial<T> = {}): T {
   return implementation as T
-}
-
-/**
- * Helper to create a mock API response
- * @param data The data to include in the response
- * @param status HTTP status code (default: 200)
- * @returns A mock Response object
- */
-export function createMockApiResponse<T>(data: T, status = 200): Response {
-  return {
-    json: () => Promise.resolve({ result: data }),
-    status,
-    ok: status >= 200 && status < 300,
-    headers: new Headers({ 'Content-Type': 'application/json' })
-  } as Response
-}
-
-/**
- * Wait for a condition to be true
- * @param callback Function that returns a boolean
- * @param options Options for the wait
- * @returns A promise that resolves when the condition is true
- */
-export async function waitFor(
-  callback: () => boolean,
-  { timeout = 1000, interval = 50 } = {}
-): Promise<void> {
-  const startTime = Date.now()
-
-  while (Date.now() - startTime < timeout) {
-    if (callback()) {
-      return
-    }
-    await new Promise((resolve) => setTimeout(resolve, interval))
-  }
-
-  throw new Error(
-    `Timed out after ${timeout}ms waiting for condition to be true`
-  )
 }

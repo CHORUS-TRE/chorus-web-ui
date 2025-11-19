@@ -7,7 +7,7 @@
 const config = {
   reactStrictMode: false,
   // This is needed to ensure the Go WASM module can be loaded correctly
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     config.experiments = { asyncWebAssembly: true, layers: true }
     // Add rule to handle .wasm files as assets
     config.module.rules.push({

@@ -255,33 +255,6 @@ export const getRoleDescription = (roleName: string): string => {
   return role?.description || `Role: ${roleName}`
 }
 
-// Check if a role has a specific permission
-export const roleHasPermission = (
-  roleName: string,
-  permission: string
-): boolean => {
-  const permissions = getRolePermissions(roleName)
-  return permissions.includes(permission)
-}
-
-// Get roles by category
-export const getRolesByCategory = () => {
-  return {
-    platform: SCHEMA_ROLES.filter((role) =>
-      [
-        'Public',
-        'Authenticated',
-        'Healthchecker',
-        'PlateformUserManager',
-        'AppStoreAdmin',
-        'SuperAdmin'
-      ].includes(role.name)
-    ),
-    workspace: SCHEMA_ROLES.filter((role) => role.name.startsWith('Workspace')),
-    workbench: SCHEMA_ROLES.filter((role) => role.name.startsWith('Workbench'))
-  }
-}
-
 // Permission descriptions extracted from the schema
 export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   // AppInstanceService

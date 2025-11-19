@@ -81,7 +81,6 @@ export function Header() {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
     return sessionPageRegex.test(pathname)
   }, [pathname])
-  const [sessionView, setSessionView] = useState(isSessionPage)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
