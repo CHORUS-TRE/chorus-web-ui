@@ -1,9 +1,13 @@
+import { fileURLToPath } from 'node:url'
+
 import tseslint from '@typescript-eslint/eslint-plugin'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
 import nextTypescript from 'eslint-config-next/typescript'
 import prettier from 'eslint-config-prettier/flat'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+
+const tsconfigRootDir = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig([
   ...nextCoreWebVitals,
@@ -30,11 +34,29 @@ export default defineConfig([
     }
   },
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir
+      }
+    },
+    rules: {
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-argument': 'error'
+    }
+  },
+  {
     files: ['**/*.test.*', '**/*.spec.*', '**/__tests__/**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       globals: {
         jest: true
       }
+    },
+    rules: {
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off'
     }
   },
   globalIgnores([
