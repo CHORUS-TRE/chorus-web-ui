@@ -20,7 +20,8 @@
     "incremental": true,
     "baseUrl": ".",
     "types": [
-      "@testing-library/jest-dom"
+      "@testing-library/jest-dom",
+      "node"
     ],
     "paths": {
       "~/*": [
