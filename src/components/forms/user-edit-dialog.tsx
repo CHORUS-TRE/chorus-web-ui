@@ -49,7 +49,7 @@ const UserUpdateSchema = BaseUserUpdateSchema.extend({
   rolesWithContext: z.array(
     z.object({
       name: z.string(),
-      context: z.record(z.string())
+      context: z.record(z.string(), z.string())
     })
   )
 })
