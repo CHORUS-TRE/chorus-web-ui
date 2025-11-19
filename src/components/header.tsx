@@ -81,7 +81,6 @@ export function Header() {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
     return sessionPageRegex.test(pathname)
   }, [pathname])
-  const [sessionView, setSessionView] = useState(isSessionPage)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
@@ -109,7 +108,7 @@ export function Header() {
   return (
     <>
       <nav
-        className="glass-surface flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 px-2 text-foreground shadow-lg"
+        className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 border-b border-muted/40 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
         id="header"
         onMouseLeave={() => {
           setTimeout(() => {

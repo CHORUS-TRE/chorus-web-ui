@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en" class="bg-background text-foreground">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semantic Color System Demo</title>
+    <script>
+      // Simple dark mode toggle
+      function toggleTheme() {
+        document.documentElement.classList.toggle('dark')
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!--
+
+TODO: Add these to the globals.css file
+
+.chorus-light {
+  --blue-ribbon: hsla(229, 100%, 54%, 1.0)
+  --international-klein-blue: hsla(228, 93%, 42%, 1.0)
+  --perfume: hsla(243, 82%, 89%, 1.0)
+  --perano: hsla(245, 80%, 80%, 1.0)
+  --concrete: hsla(0, 0%, 95%, 1.0) // background
+  --catskill-white: hsla(214, 32%, 91%, 1.0)
+  --lime: hsla(78, 100%, 54%, 1.0) // primary
+  --gull-gray: hsla(217, 20%, 65%, 1.0) // secondary
+}
+
+.chorus-dark {
+  --blue-ribbon: hsla(229, 100%, 54%, 1.0)
+  --international-klein-blue: hsla(228, 93%, 42%, 1.0)
+  --perfume: hsla(243, 82%, 89%, 1.0)
+  --perano: hsla(245, 80%, 80%, 1.0)
+  --shark: hsla(211, 14%, 14%, 1.0)
+  --black: hsla(0, 0%, 0%, 1.0)
+  --lime: hsla(78, 100%, 54%, 1.0) // primary
+  --gull-gray: hsla(215, 20%, 65%, 1.0) // secondary
+}
+
+-->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: 'hsl(var(--background))',
+              foreground: 'hsl(var(--foreground))',
+              primary: {
+                DEFAULT: 'hsl(var(--primary))',
+                foreground: 'hsl(var(--primary-foreground))'
+              },
+              secondary: {
+                DEFAULT: 'hsl(var(--secondary))',
+                foreground: 'hsl(var(--secondary-foreground))'
+              },
+              muted: {
+                DEFAULT: 'hsl(var(--muted))',
+                foreground: 'hsl(var(--muted-foreground))'
+              },
+              accent: {
+                DEFAULT: 'hsl(var(--accent))',
+                foreground: 'hsl(var(--accent-foreground))'
+              },
+              border: 'hsl(var(--border))',
+              ring: 'hsl(var(--ring))'
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      :root {
+        --background: 0, 0%, 95%;
+        --foreground: 228 93% 11%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --border: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+      }
+
+      .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+      }
+    </style>
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <!-- Navbar -->
+    <header
+      class="flex items-center justify-between border-b border-border bg-muted p-4 text-muted-foreground"
+    >
+      <h1 class="text-xl font-semibold text-foreground">text-foreground</h1>
+      bg-muted text-muted-foreground
+      <button
+        onclick="toggleTheme()"
+        class="rounded-md bg-accent px-3 py-1 text-accent-foreground hover:bg-accent/80"
+      >
+        Toggle Theme (text-accent-foreground)
+      </button>
+    </header>
+
+    <!-- Hero -->
+    <section class="bg-primary py-16 text-center text-primary-foreground">
+      <h2 class="text-4xl font-bold">bg-primary text-primary-foreground</h2>
+      <p class="mt-4 text-primary-foreground/80">
+        bg-primary text-primary-foreground text-primary-foreground/80
+      </p>
+      <button
+        class="mt-8 rounded-md bg-secondary px-6 py-2 text-secondary-foreground hover:bg-secondary/80"
+      >
+        bg-secondary text-secondary-foreground hover:bg-secondary/80
+      </button>
+    </section>
+
+    <!-- Content -->
+    <main class="mx-auto max-w-4xl flex-1 bg-background px-4 py-12">
+      <h3 class="mb-6 text-2xl font-semibold text-foreground">
+        text-foreground bg-background
+      </h3>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <article
+          class="rounded-lg border border-border bg-muted p-6 transition hover:bg-accent/10"
+        >
+          <h4 class="text-lg font-semibold text-foreground">
+            bg-muted text-foreground hover:bg-accent/10
+          </h4>
+          <p class="mt-2 text-muted-foreground">text-muted-foreground</p>
+          <button
+            class="mt-4 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/80"
+          >
+            bg-primary text-primary-foreground hover:bg-primary/80
+          </button>
+        </article>
+
+        <article
+          class="rounded-lg border border-border bg-muted p-6 transition hover:bg-accent/10"
+        >
+          <h4 class="text-lg font-semibold text-foreground">
+            bg-muted text-foreground hover:bg-accent/10
+          </h4>
+          <p class="mt-2 text-muted-foreground">text-muted-foreground</p>
+          <button
+            class="mt-4 rounded-md bg-secondary px-4 py-2 text-secondary-foreground hover:bg-secondary/80"
+          >
+            bg-secondary text-secondary-foreground hover:bg-secondary/80
+          </button>
+        </article>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-border bg-muted py-4 text-center text-muted-foreground"
+    >
+      © 2025 MyWebsite — built with Tailwind semantic colors.
+    </footer>
+  </body>
+</html>
