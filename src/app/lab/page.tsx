@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  Code2,
-  Cpu,
-  FileText,
-  FlaskConical,
-  Layers,
-  PackageOpen
-} from 'lucide-react'
+import { FlaskConical } from 'lucide-react'
 
 import { Link } from '@/components/link'
 import {
@@ -40,85 +33,7 @@ export default function SandboxPage() {
       icon: React.ComponentType<{ className?: string }>
       status?: string
     }>
-  }> = [
-    {
-      title: 'AI generated web pages',
-      description: 'AI Generated web pages for the CHORUS platform',
-      icon: FileText,
-      status: 'Demo',
-      children: [
-        {
-          title: 'CHORUS Architecture',
-          description: 'View the architecture of the CHORUS platform',
-          href: '/lab/architecture',
-          icon: Layers
-        },
-        {
-          title: 'CHORUS Protocol Builder',
-          description: 'Build and test protocols for the CHORUS platform',
-          href: '/lab/chorus-protocol-builder',
-          icon: FlaskConical
-        },
-        {
-          title: 'CHORUS Clinical Lifecycle Dashboard',
-          description: 'Manage your clinical project',
-          href: '/lab/clinical-lifecycle-ashboard',
-          icon: PackageOpen
-        },
-        {
-          title: 'Studies Dashboard',
-          description: 'Manage clinical studies',
-          href: '/lab/projects-dashboard',
-          icon: PackageOpen
-        },
-        {
-          title: 'Feasibility Assessment',
-          description: 'Pre-protocol Data Exploration & Cohort Analysis',
-          href: '/lab/feasability',
-          icon: PackageOpen
-        }
-      ]
-    },
-    {
-      title: 'Visualisations',
-      description: 'Visualize the schema roles & permissions',
-      icon: Layers,
-      status: 'Development',
-      children: [
-        {
-          title: 'Role Schema Viz',
-          description: 'Visualize the schema roles & permissions',
-          href: '/lab/schema-viz',
-          icon: Layers,
-          status: 'Development'
-        }
-      ]
-    },
-
-    {
-      title: 'Generative UI',
-      description: 'Generate UI components with AI',
-      icon: Code2,
-      status: 'Development',
-      children: [
-        {
-          title: 'Component Explorer',
-          description: 'Browse and test dynamic component library',
-          href: '/lab/component-explorer',
-          icon: Code2,
-          status: 'Development'
-        },
-        {
-          title: 'Component Generator',
-          description:
-            'AI-powered component generation and testing environment',
-          href: '/lab/component-generator',
-          icon: Cpu,
-          status: 'Development'
-        }
-      ]
-    }
-  ]
+  }> = []
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -149,13 +64,13 @@ export default function SandboxPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Sandbox</BreadcrumbPage>
+              <BreadcrumbPage>Lab</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+          <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <FlaskConical className="h-9 w-9" />
             Development Lab
           </h2>
@@ -163,10 +78,11 @@ export default function SandboxPage() {
       </div>
 
       <div className="w-full">
-        <div className="mb-6">
-          <h3 className="mb-0 text-lg font-semibold">Development Lab</h3>
-          <p className="text-sm text-muted">
-            Experimental features and development tools for the CHORUS platform
+        <div className="mb-2">
+          <p className="text-xs text-muted-foreground">
+            The lab environment provides access to experimental features,
+            development tools, and testing interfaces for the CHORUS platform.
+            These tools are intended for development and testing purposes.
           </p>
         </div>
 
@@ -239,18 +155,6 @@ export default function SandboxPage() {
               </ConditionalLink>
             )
           })}
-        </div>
-
-        <div className="card-glass mt-8 rounded-lg border p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <FlaskConical className="h-4 w-4 text-accent" />
-            <h4 className="text-sm font-semibold">About the lab</h4>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            The lab environment provides access to experimental features,
-            development tools, and testing interfaces for the CHORUS platform.
-            These tools are intended for development and testing purposes.
-          </p>
         </div>
       </div>
     </div>
