@@ -1,8 +1,8 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
   title: CHORUS backend API
   description: CHORUS backend API documentation
-  version: "1.0"
+  version: '1.0'
   contact:
     name: CHORUS dev team
     url: https://www.chorus-tre.ch
@@ -10,11 +10,13 @@ tags:
   - name: AppInstanceService
   - name: AppService
   - name: AuthenticationService
+  - name: DevstoreService
   - name: HealthService
   - name: NotificationService
   - name: StewardService
   - name: UserService
   - name: WorkbenchService
+  - name: WorkspaceFileService
   - name: WorkspaceService
 schemes:
   - http
@@ -30,26 +32,26 @@ paths:
       description: This endpoint returns a list of app instances
       operationId: AppInstanceService_ListAppInstances
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusListAppInstancesReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -95,26 +97,26 @@ paths:
       description: This endpoint creates an app instance
       operationId: AppInstanceService_CreateAppInstance
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateAppInstanceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -134,26 +136,26 @@ paths:
       description: This endpoint updates an app instance
       operationId: AppInstanceService_UpdateAppInstance
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdateAppInstanceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -174,26 +176,26 @@ paths:
       description: This endpoint returns an app instance
       operationId: AppInstanceService_GetAppInstance
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetAppInstanceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -213,26 +215,26 @@ paths:
       description: This endpoint deletes an app instance
       operationId: AppInstanceService_DeleteAppInstance
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteAppInstanceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -253,26 +255,26 @@ paths:
       description: This endpoint returns a list of apps
       operationId: AppService_ListApps
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusListAppsReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -318,26 +320,26 @@ paths:
       description: This endpoint creates an app
       operationId: AppService_CreateApp
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateAppReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -357,26 +359,26 @@ paths:
       description: This endpoint updates an app
       operationId: AppService_UpdateApp
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdateAppReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -397,26 +399,26 @@ paths:
       description: This endpoint creates multiple apps
       operationId: AppService_BulkCreateApps
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusBulkCreateAppsReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -437,26 +439,26 @@ paths:
       description: This endpoint returns an app
       operationId: AppService_GetApp
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetAppReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -476,26 +478,26 @@ paths:
       description: This endpoint deletes an app
       operationId: AppService_DeleteApp
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteAppReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -516,26 +518,26 @@ paths:
       description: This endpoint authenticates a user
       operationId: AuthenticationService_Authenticate
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusAuthenticationReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -557,26 +559,26 @@ paths:
       description: This endpoint logs out a user
       operationId: AuthenticationService_Logout
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusLogoutReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -597,26 +599,26 @@ paths:
       description: This endpoint list all the way the backend accept authentication
       operationId: AuthenticationService_GetAuthenticationModes
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetAuthenticationModesReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -632,26 +634,26 @@ paths:
       description: This endpoint redirects a user to a configured oauth2 provider
       operationId: AuthenticationService_AuthenticateOauth
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusAuthenticateOauthReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -672,26 +674,26 @@ paths:
       description: This endpoint is called by the provider after auth for the backend to retrieve the user profile
       operationId: AuthenticationService_AuthenticateOauthRedirect
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusAuthenticateOauthRedirectReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -723,26 +725,26 @@ paths:
       description: This endpoint is called by the provider after auth for the backend to retrieve the user profile
       operationId: AuthenticationService_AuthenticateOauthRedirect2
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusAuthenticateOauthRedirectReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -768,26 +770,26 @@ paths:
       description: This endpoint refreshes a user token
       operationId: AuthenticationService_RefreshToken
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusRefreshTokenReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -802,32 +804,515 @@ paths:
             $ref: '#/definitions/chorusRefreshTokenRequest'
       tags:
         - AuthenticationService
+  /api/rest/v1/devstore/global:
+    get:
+      summary: List all key/value entries in the global store
+      description: This endpoint retrieves all key/value entries from the global store
+      operationId: DevstoreService_ListGlobalEntries
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusListEntriesReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - DevstoreService
+      security: []
+    post:
+      summary: Put a key/value entry in the dev global store
+      description: This endpoint allows to put a key/value entry in the dev global store
+      operationId: DevstoreService_PutGlobalEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusPutEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/chorusPutEntryRequest'
+      tags:
+        - DevstoreService
+      security: []
+  /api/rest/v1/devstore/global/{key}:
+    get:
+      summary: Get a key/value entry from the global store
+      description: This endpoint retrieves a key/value entry from the global store by key
+      operationId: DevstoreService_GetGlobalEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusGetEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      tags:
+        - DevstoreService
+      security: []
+    delete:
+      summary: Delete a key/value entry from the global store
+      description: This endpoint deletes a key/value entry from the global store by key
+      operationId: DevstoreService_DeleteGlobalEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusDeleteEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      tags:
+        - DevstoreService
+      security: []
+  /api/rest/v1/devstore/user:
+    get:
+      summary: List all key/value entries in the user store
+      description: This endpoint retrieves all key/value entries from the user store
+      operationId: DevstoreService_ListUserEntries
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusListEntriesReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - DevstoreService
+      security: []
+    post:
+      summary: Put a key/value entry in the dev user store
+      description: This endpoint allows to put a key/value entry in the dev user store
+      operationId: DevstoreService_PutUserEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusPutEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/chorusPutEntryRequest'
+      tags:
+        - DevstoreService
+      security: []
+  /api/rest/v1/devstore/user/{key}:
+    get:
+      summary: Get a key/value entry from the user store
+      description: This endpoint retrieves a key/value entry from the user store by key
+      operationId: DevstoreService_GetUserEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusGetEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      tags:
+        - DevstoreService
+      security: []
+    delete:
+      summary: Delete a key/value entry from the user store
+      description: This endpoint deletes a key/value entry from the user store by key
+      operationId: DevstoreService_DeleteUserEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusDeleteEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      tags:
+        - DevstoreService
+      security: []
+  /api/rest/v1/devstore/workspace/{id}:
+    get:
+      summary: List all key/value entries in the workspace store
+      description: This endpoint retrieves all key/value entries from the workspace store
+      operationId: DevstoreService_ListWorkspaceEntries
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusListEntriesReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - DevstoreService
+      security: []
+    post:
+      summary: Put a key/value entry in the dev workspace store
+      description: This endpoint allows to put a key/value entry in the dev workspace store
+      operationId: DevstoreService_PutWorkspaceEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusPutEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DevstoreServicePutWorkspaceEntryBody'
+      tags:
+        - DevstoreService
+      security: []
+  /api/rest/v1/devstore/workspace/{id}/{key}:
+    get:
+      summary: Get a key/value entry from the workspace store
+      description: This endpoint retrieves a key/value entry from the workspace store by key
+      operationId: DevstoreService_GetWorkspaceEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusGetEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: key
+          in: path
+          required: true
+          type: string
+      tags:
+        - DevstoreService
+      security: []
+    delete:
+      summary: Delete a key/value entry from the workspace store
+      description: This endpoint deletes a key/value entry from the workspace store by key
+      operationId: DevstoreService_DeleteWorkspaceEntry
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusDeleteEntryReply'
+        '400':
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        '401':
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        '403':
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        '404':
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        '500':
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        '503':
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: key
+          in: path
+          required: true
+          type: string
+      tags:
+        - DevstoreService
+      security: []
   /api/rest/v1/health:
     get:
       summary: Get health check
       description: This endpoint returns health check
       operationId: HealthService_GetHealthCheck
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetHealthCheckReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -842,7 +1327,7 @@ paths:
       description: This endpoint returns health check
       operationId: HealthService_GetHealthCheck2
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetHealthCheckReply'
@@ -859,26 +1344,26 @@ paths:
       description: This endpoint returns a list of notifications
       operationId: NotificationService_GetNotifications
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetNotificationsReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -929,26 +1414,26 @@ paths:
       description: This endpoint returns the amount of unread notifications
       operationId: NotificationService_CountUnreadNotifications
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCountUnreadNotificationsReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -963,27 +1448,27 @@ paths:
       description: This endpoint marks a notification as read
       operationId: NotificationService_MarkNotificationsAsRead
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             type: object
             properties: {}
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1004,27 +1489,27 @@ paths:
       description: This endpoint initializes a new tenant
       operationId: StewardService_InitializeTenant
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             type: object
             properties: {}
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1045,26 +1530,26 @@ paths:
       description: This endpoint returns a list of users
       operationId: UserService_ListUsers
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusListUsersReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1138,26 +1623,26 @@ paths:
       description: This endpoint creates a user
       operationId: UserService_CreateUser
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateUserReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1178,26 +1663,26 @@ paths:
       description: This endpoint updates a user
       operationId: UserService_UpdateUser
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdateUserReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1218,26 +1703,26 @@ paths:
       description: This endpoint returns the details of the authenticated user
       operationId: UserService_GetUserMe
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetUserMeReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1252,26 +1737,26 @@ paths:
       description: This endpoint updates the password of the authenticated user
       operationId: UserService_UpdatePassword
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdatePasswordReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1292,26 +1777,26 @@ paths:
       description: This endpoint enables the TOTP of the authenticated user
       operationId: UserService_EnableTotp
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusEnableTotpReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1332,26 +1817,26 @@ paths:
       description: This endpoint resets the TOTP of the authenticated user
       operationId: UserService_ResetTotp
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusResetTotpReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1372,26 +1857,26 @@ paths:
       description: This endpoint returns a user
       operationId: UserService_GetUser
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetUserReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1411,26 +1896,26 @@ paths:
       description: This endpoint deletes a user
       operationId: UserService_DeleteUser
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteUserReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1451,26 +1936,26 @@ paths:
       description: This endpoint resets a user's password
       operationId: UserService_ResetPassword
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusResetPasswordReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1496,26 +1981,26 @@ paths:
       description: This endpoint creates a user's role
       operationId: UserService_CreateUserRole
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateUserRoleReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1541,26 +2026,26 @@ paths:
       description: This endpoint deletes a user's role
       operationId: UserService_DeleteUserRole
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteUserRoleReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1586,26 +2071,26 @@ paths:
       description: This endpoint returns a list of workbenchs
       operationId: WorkbenchService_ListWorkbenchs
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusListWorkbenchsReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1659,26 +2144,26 @@ paths:
       description: This endpoint creates a workbench
       operationId: WorkbenchService_CreateWorkbench
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateWorkbenchReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1698,26 +2183,26 @@ paths:
       description: This endpoint updates a workbench
       operationId: WorkbenchService_UpdateWorkbench
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdateWorkbenchReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1738,26 +2223,26 @@ paths:
       description: This endpoint returns a workbench
       operationId: WorkbenchService_GetWorkbench
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetWorkbenchReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1777,26 +2262,26 @@ paths:
       description: This endpoint deletes a workbench
       operationId: WorkbenchService_DeleteWorkbench
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteWorkbenchReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1817,26 +2302,26 @@ paths:
       description: This endpoint removes a user from a workbench
       operationId: WorkbenchService_RemoveUserFromWorkbench
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusRemoveUserFromWorkbenchReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1862,26 +2347,26 @@ paths:
       description: This endpoint manages a user's role in a workbench
       operationId: WorkbenchService_ManageUserRoleInWorkbench
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusManageUserRoleInWorkbenchReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1912,26 +2397,26 @@ paths:
       description: This endpoint returns a list of workspaces
       operationId: WorkspaceService_ListWorkspaces
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusListWorkspacesReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -1985,26 +2470,26 @@ paths:
       description: This endpoint creates a workspace
       operationId: WorkspaceService_CreateWorkspace
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateWorkspaceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2024,26 +2509,26 @@ paths:
       description: This endpoint updates a workspace
       operationId: WorkspaceService_UpdateWorkspace
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdateWorkspaceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2064,26 +2549,26 @@ paths:
       description: This endpoint returns a workspace
       operationId: WorkspaceService_GetWorkspace
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetWorkspaceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2103,26 +2588,26 @@ paths:
       description: This endpoint deletes a workspace
       operationId: WorkspaceService_DeleteWorkspace
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteWorkspaceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2143,26 +2628,26 @@ paths:
       description: This endpoint removes a user from a workspace
       operationId: WorkspaceService_RemoveUserFromWorkspace
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusRemoveUserFromWorkspaceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2188,26 +2673,26 @@ paths:
       description: This endpoint manages a user's role in a workspace
       operationId: WorkspaceService_ManageUserRoleInWorkspace
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusManageUserRoleInWorkspaceReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2236,28 +2721,28 @@ paths:
     post:
       summary: Create a file in a workspace
       description: This endpoint creates a file in a workspace at the specified path
-      operationId: WorkspaceService_CreateWorkspaceFile
+      operationId: WorkspaceFileService_CreateWorkspaceFile
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusCreateWorkspaceFileReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2281,28 +2766,28 @@ paths:
     put:
       summary: Update a file in a workspace
       description: This endpoint updates (rename or moves) a file in a workspace at the specified path
-      operationId: WorkspaceService_UpdateWorkspaceFile
+      operationId: WorkspaceFileService_UpdateWorkspaceFile
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusUpdateWorkspaceFileReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2332,28 +2817,28 @@ paths:
     get:
       summary: Get a file in a workspace
       description: This endpoint retrieves a file at the specified path within a workspace
-      operationId: WorkspaceService_GetWorkspaceFile
+      operationId: WorkspaceFileService_GetWorkspaceFile
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusGetWorkspaceFileReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2376,28 +2861,28 @@ paths:
     delete:
       summary: Delete a file in a workspace
       description: This endpoint deletes a file in a workspace at the specified path
-      operationId: WorkspaceService_DeleteWorkspaceFile
+      operationId: WorkspaceFileService_DeleteWorkspaceFile
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusDeleteWorkspaceFileReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2421,28 +2906,28 @@ paths:
     get:
       summary: List files in a workspace at a specified path
       description: This endpoint lists all files at given path within a workspace
-      operationId: WorkspaceService_ListWorkspaceFiles
+      operationId: WorkspaceFileService_ListWorkspaceFiles
       responses:
-        "200":
+        '200':
           description: A successful response.
           schema:
             $ref: '#/definitions/chorusListWorkspaceFilesReply'
-        "400":
+        '400':
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema: {}
-        "401":
+        '401':
           description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
           schema: {}
-        "403":
+        '403':
           description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
           schema: {}
-        "404":
+        '404':
           description: 'Not Found: indicates that the server cannot find the requested resource'
           schema: {}
-        "500":
+        '500':
           description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
           schema: {}
-        "503":
+        '503':
           description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
           schema: {}
         default:
@@ -2471,6 +2956,13 @@ definitions:
       sessionState:
         type: string
       code:
+        type: string
+  DevstoreServicePutWorkspaceEntryBody:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
         type: string
   UserServiceCreateUserRoleBody:
     type: object
@@ -2740,6 +3232,13 @@ definitions:
         $ref: '#/definitions/chorusDeleteAppResult'
   chorusDeleteAppResult:
     type: object
+  chorusDeleteEntryReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusDeleteEntryResult'
+  chorusDeleteEntryResult:
+    type: object
   chorusDeleteUserReply:
     type: object
     properties:
@@ -2824,6 +3323,18 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/chorusAuthenticationMode'
+  chorusGetEntryReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusGetEntryResult'
+  chorusGetEntryResult:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
   chorusGetHealthCheckReply:
     type: object
   chorusGetNotificationsReply:
@@ -2928,6 +3439,18 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/chorusApp'
+  chorusListEntriesReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusListEntriesResult'
+  chorusListEntriesResult:
+    type: object
+    properties:
+      entries:
+        type: object
+        additionalProperties:
+          type: string
   chorusListUsersReply:
     type: object
     properties:
@@ -3083,6 +3606,25 @@ definitions:
       sort:
         $ref: '#/definitions/chorusSort'
         description: Sort order used for pagination
+  chorusPutEntryReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusPutEntryResult'
+  chorusPutEntryRequest:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  chorusPutEntryResult:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
   chorusRefreshTokenReply:
     type: object
     properties:

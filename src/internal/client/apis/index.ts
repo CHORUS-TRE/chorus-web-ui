@@ -3,6 +3,7 @@
 export * from './AppInstanceServiceApi'
 export * from './AppServiceApi'
 export * from './AuthenticationServiceApi'
+export * from './DevstoreServiceApi'
 export * from './HealthServiceApi'
 export * from './NotificationServiceApi'
 export * from './StewardServiceApi'
