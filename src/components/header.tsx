@@ -6,7 +6,7 @@ import {
   CircleHelp,
   Database,
   FlaskConical,
-  Home,
+  GaugeCircle,
   LaptopMinimal,
   LogOut,
   Maximize,
@@ -134,7 +134,7 @@ export function Header() {
                 <NavigationMenuItem>
                   <Link href={`/`} exact>
                     <div className="flex place-items-center gap-1">
-                      <Home className="h-4 w-4" />
+                      <GaugeCircle className="h-4 w-4" />
                       <span className="hidden lg:block">Dashboard</span>
                     </div>
                   </Link>
