@@ -21,7 +21,7 @@ export default function LoginInfo() {
   const logo = mounted && theme === 'light' ? logoBlack : logoWhite
 
   return (
-    <div className="flex w-full flex-col items-center justify-center p-8 md:w-1/2">
+    <div className="hidden w-full flex-col items-center justify-center p-8 md:flex md:w-1/2">
       <div className="mt-8 flex flex-grow flex-col items-center justify-center">
         <Image
           src={logo}
