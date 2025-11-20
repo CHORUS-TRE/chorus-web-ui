@@ -1,3 +1,5 @@
+## [1.18.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.18.0...v1.18.1) (2025-11-20)
+
 # [1.18.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.17.1...v1.18.0) (2025-11-19)
 
 
