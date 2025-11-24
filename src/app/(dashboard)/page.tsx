@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   Users
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 
 import { Link } from '@/components/link'
