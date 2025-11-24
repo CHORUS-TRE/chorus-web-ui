@@ -219,7 +219,7 @@ export default function CHORUSDashboard() {
           <div className="space-y-6 lg:col-span-2">
             <Card>
               <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <Package className="h-5 w-5" />
                   My Workspaces
                 </CardTitle>
@@ -309,7 +309,7 @@ export default function CHORUSDashboard() {
 
             <Card>
               <CardHeader className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-start">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <LaptopMinimal className="h-5 w-5" />
                   Active Sessions
                 </CardTitle>
@@ -407,7 +407,7 @@ export default function CHORUSDashboard() {
             <Card className="card-glass demo-effect">
               <CardHeader className="space-y-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                     {updatesTab === 'notifications' ? (
                       <BellRing className="h-5 w-5" />
                     ) : (

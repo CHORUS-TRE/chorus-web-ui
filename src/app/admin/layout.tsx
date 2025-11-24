@@ -8,21 +8,12 @@ const AuthenticatedApp = React.lazy(() =>
 )
 import { Package } from 'lucide-react'
 
-import { Link } from '@/components/link'
-import { AdminSidebar } from '@/components/ui/admin-sidebar'
-import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 import { UnauthenticatedApp } from '~/components/unauthenticated-app'
+
+import { AdminSidebar } from './admin-sidebar'
 
 export default function Layout({
   children
@@ -48,39 +39,17 @@ export default function Layout({
       <div className="w-full">
         <AuthenticatedApp>
           <>
-            <Breadcrumb className="mb-4">
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink asChild>
-                    <Link href="/" variant="nav">
-                      CHORUS
-                    </Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Settings</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-
             <div className="flex items-center justify-between gap-3">
-              <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
+              <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
                 <Package className="h-9 w-9" />
                 Settings
               </h2>
             </div>
           </>
-          <div className="flex">
+          <div className="float-start flex w-full">
             <SidebarProvider>
               <AdminSidebar />
-              <main className="w-full">
-                {/* <SidebarTrigger /> */}
-                <div className="flex-1 p-8">
-                  <DynamicBreadcrumb />
-                  {children}
-                </div>
-              </main>
+              <main className="w-full px-8">{children}</main>
             </SidebarProvider>
           </div>
         </AuthenticatedApp>

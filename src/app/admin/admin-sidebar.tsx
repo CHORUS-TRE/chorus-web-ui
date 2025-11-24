@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutDashboard, Shield, Users } from 'lucide-react'
+import { LayoutDashboard, Palette, Shield, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import type { ElementType } from 'react'
 
@@ -26,7 +26,8 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   const routes: AdminRoute[] = [
-    { href: '/admin', label: 'General', icon: LayoutDashboard },
+    { href: '/admin', label: 'Theme', icon: Palette },
+    // { href: '/admin/theme', label: 'Theme', icon: Palette },
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/roles', label: 'Roles', icon: Shield }
     // { href: '/admin/workspaces', label: 'Workspaces', icon: Box }

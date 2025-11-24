@@ -17,6 +17,7 @@ import { toast } from '@/components/hooks/use-toast'
 import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
+import { getGlobalEntry } from '@/view-model/dev-store-view-model'
 import { listUsers } from '@/view-model/user-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceList } from '@/view-model/workspace-view-model'
@@ -57,6 +58,13 @@ type AppStateContextType = {
   toggleAppStoreHero: () => void
   hasSeenGettingStartedTour: boolean
   setHasSeenGettingStartedTour: Dispatch<SetStateAction<boolean>>
+  customLogos: { light: string | null; dark: string | null }
+  refreshCustomLogos: () => Promise<void>
+  customTheme: {
+    light: { primary: string; secondary: string; accent: string }
+    dark: { primary: string; secondary: string; accent: string }
+  }
+  refreshCustomTheme: () => Promise<void>
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -79,7 +87,14 @@ const AppStateContext = createContext<AppStateContextType>({
   showAppStoreHero: true,
   toggleAppStoreHero: () => {},
   hasSeenGettingStartedTour: false,
-  setHasSeenGettingStartedTour: () => {}
+  setHasSeenGettingStartedTour: () => {},
+  customLogos: { light: null, dark: null },
+  refreshCustomLogos: async () => {},
+  customTheme: {
+    light: { primary: '', secondary: '', accent: '' },
+    dark: { primary: '', secondary: '', accent: '' }
+  },
+  refreshCustomTheme: async () => {}
 })
 
 export const AppStateProvider = ({
@@ -113,6 +128,34 @@ export const AppStateProvider = ({
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
   )
+  const [customLogos, setCustomLogos] = useState<{
+    light: string | null
+    dark: string | null
+  }>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('customLogos')
+      return saved !== null ? JSON.parse(saved) : { light: null, dark: null }
+    }
+    return { light: null, dark: null }
+  })
+  const [customTheme, setCustomTheme] = useState<{
+    light: { primary: string; secondary: string; accent: string }
+    dark: { primary: string; secondary: string; accent: string }
+  }>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('customTheme')
+      return saved
+        ? JSON.parse(saved)
+        : {
+            light: { primary: '', secondary: '', accent: '' },
+            dark: { primary: '', secondary: '', accent: '' }
+          }
+    }
+    return {
+      light: { primary: '', secondary: '', accent: '' },
+      dark: { primary: '', secondary: '', accent: '' }
+    }
+  })
   const [showAppStoreHero, setShowAppStoreHero] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('showAppStoreHero')
@@ -120,6 +163,61 @@ export const AppStateProvider = ({
     }
     return true
   })
+
+  const refreshCustomLogos = useCallback(async () => {
+    try {
+      const lightLogoResult = await getGlobalEntry('custom_logo_light')
+      const darkLogoResult = await getGlobalEntry('custom_logo_dark')
+
+      const logos = {
+        light: lightLogoResult.data?.value || null,
+        dark: darkLogoResult.data?.value || null
+      }
+
+      setCustomLogos(logos)
+      localStorage.setItem('customLogos', JSON.stringify(logos))
+    } catch (error) {
+      toast({
+        title: 'Error fetching custom logos',
+        variant: 'destructive'
+      })
+    }
+  }, [])
+
+  const refreshCustomTheme = useCallback(async () => {
+    try {
+      const keys = [
+        'theme_light_primary',
+        'theme_light_secondary',
+        'theme_light_accent',
+        'theme_dark_primary',
+        'theme_dark_secondary',
+        'theme_dark_accent'
+      ]
+      const results = await Promise.all(keys.map((key) => getGlobalEntry(key)))
+
+      const newTheme = {
+        light: {
+          primary: results[0].data?.value || '',
+          secondary: results[1].data?.value || '',
+          accent: results[2].data?.value || ''
+        },
+        dark: {
+          primary: results[3].data?.value || '',
+          secondary: results[4].data?.value || '',
+          accent: results[5].data?.value || ''
+        }
+      }
+
+      setCustomTheme(newTheme)
+      localStorage.setItem('customTheme', JSON.stringify(newTheme))
+    } catch (error) {
+      toast({
+        title: 'Error fetching custom theme',
+        variant: 'destructive'
+      })
+    }
+  }, [])
 
   const toggleAppStoreHero = useCallback(() => {
     setShowAppStoreHero((prev) => !prev)
@@ -281,6 +379,14 @@ export const AppStateProvider = ({
     )
   }, [hasSeenGettingStartedTour])
 
+  useEffect(() => {
+    localStorage.setItem('customLogos', JSON.stringify(customLogos))
+  }, [customLogos])
+
+  useEffect(() => {
+    localStorage.setItem('customTheme', JSON.stringify(customTheme))
+  }, [customTheme])
+
   const initializeState = useCallback(async () => {
     if (!user) {
       return
@@ -292,7 +398,9 @@ export const AppStateProvider = ({
         refreshWorkbenches(),
         refreshUsers(),
         refreshApps(),
-        refreshAppInstances()
+        refreshAppInstances(),
+        refreshCustomLogos(),
+        refreshCustomTheme()
       ])
     } catch (error) {
       toast({
@@ -308,7 +416,9 @@ export const AppStateProvider = ({
     refreshWorkbenches,
     refreshUsers,
     refreshApps,
-    refreshAppInstances
+    refreshAppInstances,
+    refreshCustomLogos,
+    refreshCustomTheme
   ])
 
   useEffect(() => {
@@ -336,7 +446,11 @@ export const AppStateProvider = ({
       showAppStoreHero,
       toggleAppStoreHero,
       hasSeenGettingStartedTour,
-      setHasSeenGettingStartedTour
+      setHasSeenGettingStartedTour,
+      customLogos,
+      refreshCustomLogos,
+      customTheme,
+      refreshCustomTheme
     }),
     [
       showRightSidebar,
@@ -358,7 +472,11 @@ export const AppStateProvider = ({
       showAppStoreHero,
       toggleAppStoreHero,
       hasSeenGettingStartedTour,
-      setHasSeenGettingStartedTour
+      setHasSeenGettingStartedTour,
+      customLogos,
+      refreshCustomLogos,
+      customTheme,
+      refreshCustomTheme
     ]
   )
 
