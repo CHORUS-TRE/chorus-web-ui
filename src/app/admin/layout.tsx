@@ -11,7 +11,7 @@ import { Package } from 'lucide-react'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { UnauthenticatedApp } from '~/components/unauthenticated-app'
+import { Login } from '~/components/login'
 
 import { AdminSidebar } from './admin-sidebar'
 
@@ -32,7 +32,7 @@ export default function Layout({
     })
   }, [setBackground])
 
-  if (!user) return <UnauthenticatedApp />
+  if (!user) return <Login />
 
   return (
     <>

@@ -38,7 +38,7 @@ export default function LoginForm() {
   const [, startTransition] = useTransition()
   const [isLoading, setIsLoading] = useState(true)
   const { theme } = useTheme()
-  const logo = theme === 'light' ? logoWhite : logoBlack
+  const logo = theme === 'light' ? logoBlack : logoWhite
 
   useEffect(() => {
     const fetchAuthModes = async () => {
@@ -136,12 +136,6 @@ export default function LoginForm() {
   return (
     <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
       <div className="grid h-full w-full gap-2 p-8">
-        {isLoading ?? (
-          <div className="gap-4 text-center">
-            <h2>Login</h2>
-          </div>
-        )}
-
         {isLoading ? (
           <div className="flex h-full animate-pulse content-center justify-center gap-4 bg-transparent">
             <Image
