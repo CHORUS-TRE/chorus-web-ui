@@ -24,6 +24,7 @@
   - **Authorization Functions:** Exposed `isUserAllowed` and `getUserPermissions` functions from WASM
   - **TypeScript Integration:** Complete type safety with proper interfaces for WASM service
   - **Context Provider:** Authorization context provides real WASM-based authorization throughout the app
+- **✅ Sidebar Navigation UX (2025-11-19):** Left sidebar now uses independent chevron toggles so group labels always navigate while disclosure controls solely expand/collapse. Workspace counts are surfaced via shadcn `Badge`, improving information scent without extra clicks.
 - **✅ Client-Side Authentication:** Authentication flow successfully refactored to client-side with background iframe integration.
   - **OAuth Redirect Handler:** The `/oauthredirect` route is now a fully client-side component (`page.tsx`). It directly calls the `handleOAuthRedirect` action, consolidating logic and removing the need for a separate server-side API handler for the callback. This pattern was chosen to simplify the flow.
   - **✅ Deep Link Preservation:** Implemented client-side mechanism to preserve redirect URLs during OAuth flow
@@ -112,6 +113,7 @@
   - **Redirect Handler Update:** Enhanced `/oauthredirect/page.tsx` to retrieve and use stored URLs
   - **Error Handling:** Added automatic cleanup of stored URLs on authentication failures
   - **User Experience:** Users can now visit any protected URL and be redirected back after successful OAuth authentication
+- **Sidebar Navigation Improvements (2025-11-19):** Refined `AppSidebar` with collapsible groups controlled by `SidebarGroupToggle`, ensured labels remain pure links, added workspace count badge, and standardized nav header spacing/logo sizing for clarity.
 
 ## 6. Upcoming Implementation
 

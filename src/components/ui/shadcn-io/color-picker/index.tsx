@@ -54,7 +54,10 @@ export const useColorPicker = () => {
   return context
 }
 
-export type ColorPickerProps = Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> & {
+export type ColorPickerProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> & {
   value?: Parameters<typeof Color>[0]
   defaultValue?: Parameters<typeof Color>[0]
   onChange?: (value: number[]) => void

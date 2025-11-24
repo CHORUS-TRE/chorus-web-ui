@@ -58,6 +58,7 @@ graph TD
 - **Zod for Validation:** Zod schemas in `domain/model` are the single source of truth for validation. They are used in server actions and repository implementations to ensure data integrity.
 - **Generated API Client:** Using OpenAPI generator to create a strongly-typed API client, ensuring type safety when communicating with the backend.
 - **API Response Structure Evolution:** The API has evolved from flat responses to nested structures. Current pattern expects responses like `{ result: { users: [...] }, pagination: {...} }` instead of `{ result: [...] }`. Data sources handle potential mismatches between OpenAPI spec and actual backend responses.
+- **Sidebar Navigation Pattern (2025-11):** `SidebarGroup` remains responsible for structure, but navigation links now sit inside the label while disclosure is handled exclusively by `SidebarGroupToggle`. This keeps clicks deterministic (label navigates, chevron toggles) and supports contextual badges (e.g., workspace counts) without interfering with routing.
 
 ## 3. Proven Patterns
 
