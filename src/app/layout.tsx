@@ -11,6 +11,7 @@ import React from 'react'
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
+import { DynamicThemeApplicator } from '~/components/dynamic-theme-applicator'
 import { Toaster } from '~/components/ui/toaster'
 import { AuthorizationProvider } from '~/providers/authorization-provider'
 
@@ -53,11 +54,12 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster />
           <AuthenticationProvider>
             <AuthorizationProvider>
               <AppStateProvider>
+                <DynamicThemeApplicator />
                 {children}
-                <Toaster />
               </AppStateProvider>
             </AuthorizationProvider>
           </AuthenticationProvider>

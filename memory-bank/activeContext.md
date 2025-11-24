@@ -2,23 +2,24 @@
 
 ## 1. Current Work Focus
 
-**Recent Task Completed: Client-Side OAuth Redirect Implementation**
+**Recent Task Completed: Sidebar Navigation Improvements**
 
-**Latest Achievement:** Successfully implemented a client-side mechanism to handle OAuth redirect URLs after Keycloak authentication.
+**Latest Achievement:** Delivered a refined left sidebar experience with independent chevron toggles and contextual indicators so navigation and disclosure no longer conflict.
 
 **Key Changes Implemented:**
 
-**OAuth Redirect Enhancement:**
-- Created `src/utils/redirect-storage.ts` utility for secure sessionStorage-based URL preservation
-- Updated login form to capture current page URL before OAuth redirect
-- Modified OAuth redirect handler to use stored URL for post-authentication navigation
-- Added comprehensive URL validation to prevent security vulnerabilities
-- Implemented automatic cleanup of stored URLs on errors or completion
+**Sidebar UX Refresh (2025-11-19):**
+- Added collapsible `SidebarGroup` logic with dedicated `SidebarGroupToggle` chevron controls
+- Ensured clicking a group label navigates immediately while chevrons solely expand/collapse sub-links
+- Introduced workspace count badges next to the Workspaces label for instant awareness of accessible workspaces
+- Standardized nav data to include dedicated sections like “Data” and renamed “App Store”
+- Polished header spacing and logo sizing (taller header, 40px logo) for better visual balance
 
-**Previous Major Achievements:**
+**Previous Major Achievements (Contextual Reference):**
 
-1. **WASM Authorization Integration:** Successfully integrated the `chorus-gatekeeper` WASM module for real-time authorization checks.
-2. **Test Suite Infrastructure:** Completely fixed the failing test suite, resolving phantom dependencies and API structure mismatches.
+1. **Client-Side OAuth Redirect Implementation:** Session-preserving OAuth flow with secure redirect storage utility.
+2. **WASM Authorization Integration:** Integrated `chorus-gatekeeper` WASM module for real-time authorization checks.
+3. **Test Suite Infrastructure:** Resolved failing tests by aligning mocks and dependencies with the latest API structures.
 
 **Key Changes Implemented:**
 
@@ -37,15 +38,16 @@
 - Added `ts-node` for proper Jest TypeScript configuration
 
 **Current Status:**
+- ✅ Sidebar navigation now separates navigation vs. disclosure actions
+- ✅ Workspace badge indicator reflects the user’s accessible workspace count
 - ✅ OAuth redirect mechanism is fully functional and handles deep links properly
-- ✅ WASM authorization system is fully functional and integrated
-- ✅ All tests are passing consistently (61 tests pass, 10 skipped, 11 test suites)
-- ✅ Authorization context provides real WASM-based authorization throughout the app
+- ✅ WASM authorization system remains fully integrated
+- ✅ All tests continue to pass consistently (61 tests pass, 10 skipped, 11 suites)
 - ✅ Application builds successfully with no TypeScript errors
 
-**Next Focus: Authorization UI Integration**
+**Next Focus: Authorization UI Integration + Sidebar Enhancements Follow-up**
 
-With the OAuth redirect mechanism and WASM integration complete, focus shifts to connecting the authorization system to UI components for dynamic permission-based rendering.
+While navigation polish is complete, the broader focus remains on wiring authorization data into UI components, using the improved sidebar as the first target for conditional rendering.
 
 ## 2. Recent Changes
 
@@ -85,7 +87,7 @@ With the OAuth redirect mechanism and WASM integration complete, focus shifts to
 
 ### Phase 1: Authorization UI Integration
 
-1. **TODO** - Connect authorization context to UI components for permission-based rendering
+1. **TODO** - Connect authorization context to UI components for permission-based rendering (starting with sidebar groups)
 2. **TODO** - Implement conditional UI elements based on `isUserAllowed` checks
 3. **TODO** - Add permission-based navigation and route protection
 4. **TODO** - Update admin interfaces to use real authorization data

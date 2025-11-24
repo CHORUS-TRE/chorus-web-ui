@@ -111,3 +111,10 @@
 - **Mock Implementations:** When integrating with external services (like WASM), provide mock implementations to maintain compilation
 - **Interface Compliance:** Ensure all interface implementations provide all required methods, even if temporarily mocked
 - **Global Type Issues:** Avoid direct `global` object access in TypeScript; prefer explicit implementations within providers
+
+### Sidebar Navigation UX Learnings (2025-11-19)
+
+- **Separate Actions:** Users preferred group labels to remain pure navigation links while chevrons manage expand/collapse. Combining both behaviors in one click target caused confusion.
+- **Dedicated Toggle Component:** Introducing `SidebarGroupToggle` formalized the split and keeps disclosure state co-located with the group context so other components can rely on predictable behavior.
+- **Information Scent:** Displaying contextual counts (e.g., number of accessible workspaces) next to labels via shadcn `Badge` improves discoverability without forcing users to open dropdowns.
+- **Visual Balance:** Slightly taller headers and larger logo sizes noticeably improve the perceived polish of the navigation shell without significant code changes.

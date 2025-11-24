@@ -7,9 +7,9 @@ const AuthenticatedApp = React.lazy(() =>
     default: mod.AuthenticatedApp
   }))
 )
-const UnauthenticatedApp = React.lazy(() =>
-  import('@/components/unauthenticated-app').then((mod) => ({
-    default: mod.UnauthenticatedApp
+const Login = React.lazy(() =>
+  import('@/components/login').then((mod) => ({
+    default: mod.Login
   }))
 )
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -21,9 +21,5 @@ export default function Layout({
 }>) {
   const { user } = useAuthentication()
 
-  return user ? (
-    <AuthenticatedApp>{children}</AuthenticatedApp>
-  ) : (
-    <UnauthenticatedApp />
-  )
+  return user ? <AuthenticatedApp>{children}</AuthenticatedApp> : <Login />
 }

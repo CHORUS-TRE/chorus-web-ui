@@ -1,5 +1,6 @@
 export * from './app-instance-repository-impl'
 export * from './authentication-repository-impl'
+export * from './dev-store-repository-impl'
 export * from './user-repository-impl'
 export * from './workbench-repository-impl'
 export * from './workspace-file-repository-impl'

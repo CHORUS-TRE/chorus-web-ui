@@ -4,9 +4,9 @@ import React from 'react'
 
 import BackgroundIframe from '~/components/background-iframe'
 
-const UnauthenticatedApp = React.lazy(() =>
-  import('@/components/unauthenticated-app').then((mod) => ({
-    default: mod.UnauthenticatedApp
+const Login = React.lazy(() =>
+  import('@/components/login').then((mod) => ({
+    default: mod.Login
   }))
 )
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -24,6 +24,6 @@ export default function Layout({
       <BackgroundIframe />
     </>
   ) : (
-    <UnauthenticatedApp />
+    <Login />
   )
 }

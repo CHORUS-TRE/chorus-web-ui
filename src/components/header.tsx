@@ -22,7 +22,7 @@ import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -71,7 +71,8 @@ export function Header() {
     setBackground,
     refreshWorkbenches,
     toggleRightSidebar,
-    users
+    users,
+    customLogos
   } = useAppState()
   const { user, logout } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
@@ -89,7 +90,8 @@ export function Header() {
     (w) => w.id === background?.sessionId
   )
   const { theme } = useTheme()
-  const logo = theme === 'light' ? logoBlack : logoWhite
+  const defaultLogo = theme === 'light' ? logoBlack : logoWhite
+  const logo = theme === 'light' ? customLogos.light : customLogos.dark
 
   const workspacesWithWorkbenches = useMemo(
     () =>
@@ -118,13 +120,25 @@ export function Header() {
       >
         <Link href="/" variant="muted">
           <Image
-            src={logo}
+            src={defaultLogo}
             alt="Chorus"
             height={32}
+            width={54}
             className="aspect-auto cursor-pointer"
             id="logo"
             priority
           />
+          {logo && (
+            <Image
+              src={logo}
+              alt="Chorus"
+              height={32}
+              width={54}
+              className="ml-4 aspect-auto cursor-pointer"
+              id="logo"
+              priority
+            />
+          )}
         </Link>
 
         {user && (
