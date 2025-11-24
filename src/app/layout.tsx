@@ -55,14 +55,14 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
-          <AppStateProvider>
+          <AuthenticationProvider>
             <AuthorizationProvider>
-              <AuthenticationProvider>
+              <AppStateProvider>
                 <DynamicThemeApplicator />
                 {children}
-              </AuthenticationProvider>
+              </AppStateProvider>
             </AuthorizationProvider>
-          </AppStateProvider>
+          </AuthenticationProvider>
         </ThemeProvider>
       </body>
     </html>
