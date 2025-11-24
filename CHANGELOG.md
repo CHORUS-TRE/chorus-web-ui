@@ -1,3 +1,17 @@
+# [1.19.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.18.1...v1.19.0) (2025-11-24)
+
+
+### Bug Fixes
+
+* build errors ([e7f0c7f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e7f0c7fc18873a581a8a99183c20cabf7325ec5e))
+* reorder providers ([9373dda](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9373dda9b865ee5888416544d6e7fa3a451e90ee))
+
+
+### Features
+
+* fix: built errors ([8940240](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8940240f57f482f22c9748c8b494d2f46203c7fb))
+* Implement dynamic theme customization with custom logo uploads, refine sidebar navigation, and add AI-assisted workflow documentation. ([9104c39](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9104c3963a04333e10643a177b1d370625970338))
+
 ## [1.18.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.18.0...v1.18.1) (2025-11-20)
 
 # [1.18.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.17.1...v1.18.0) (2025-11-19)
