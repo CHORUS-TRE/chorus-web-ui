@@ -346,47 +346,45 @@ describe('WorkspaceDataSourceImpl', () => {
   describe('update', () => {
     it('should successfully update a workspace', async () => {
       // Setup mock for update request, get request, and DevStore requests
-      global.fetch = jest
-        .fn()
-        .mockImplementation((url, options) => {
-          // Update request
-          if (options?.method === 'PUT') {
-            return Promise.resolve({
-              json: () =>
-                Promise.resolve({
-                  result: { success: true }
-                }),
-              status: 200,
-              ok: true
-            })
-          }
-
-          // DevStore requests for metadata
-          if (url.toString().includes('/devstore')) {
-            return Promise.resolve({
-              json: () => Promise.resolve({ result: { key: '', value: '' } }),
-              status: 200,
-              ok: true
-            })
-          }
-
-          // Get updated workspace request
+      global.fetch = jest.fn().mockImplementation((url, options) => {
+        // Update request
+        if (options?.method === 'PUT') {
           return Promise.resolve({
             json: () =>
               Promise.resolve({
-                result: {
-                  workspace: {
-                    ...MOCK_API_RESPONSE,
-                    name: 'Updated Study 101',
-                    shortName: '101-updated',
-                    description: 'Updated description for Study 101'
-                  }
-                }
+                result: { success: true }
               }),
             status: 200,
             ok: true
           })
-        }) as jest.Mock
+        }
+
+        // DevStore requests for metadata
+        if (url.toString().includes('/devstore')) {
+          return Promise.resolve({
+            json: () => Promise.resolve({ result: { key: '', value: '' } }),
+            status: 200,
+            ok: true
+          })
+        }
+
+        // Get updated workspace request
+        return Promise.resolve({
+          json: () =>
+            Promise.resolve({
+              result: {
+                workspace: {
+                  ...MOCK_API_RESPONSE,
+                  name: 'Updated Study 101',
+                  shortName: '101-updated',
+                  description: 'Updated description for Study 101'
+                }
+              }
+            }),
+          status: 200,
+          ok: true
+        })
+      }) as jest.Mock
 
       const dataSource = new WorkspaceDataSourceImpl(session)
       const repository = new WorkspaceRepositoryImpl(dataSource)
