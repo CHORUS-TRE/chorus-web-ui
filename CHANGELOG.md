@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.19.0...v1.20.0) (2025-11-25)
+
+
+### Features
+
+* add workspace tag for center and project, add workspace image. ([dcac2ad](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dcac2adff3a38bf55af7bcebdde81e5f3d2b60b0))
+
 # [1.19.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.18.1...v1.19.0) (2025-11-24)
 
 
