@@ -2,8 +2,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import Image from 'next/image'
 import { startTransition, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { toast } from '@/components/hooks/use-toast'
 import {
@@ -15,6 +17,13 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import {
   Workspace,
   WorkspaceCreateSchema,
   WorkspaceCreateType,
@@ -22,6 +31,10 @@ import {
   WorkspaceUpdateSchema,
   WorkspaceUpdatetype
 } from '@/domain/model/workspace'
+import {
+  setWorkspaceImage,
+  setWorkspaceTag
+} from '@/view-model/dev-store-view-model'
 import {
   workspaceCreate,
   workspaceDelete,
@@ -53,15 +66,21 @@ export function WorkspaceCreateForm({
   children?: React.ReactNode
   onSuccess?: (workspace: Workspace) => void
 }) {
-  const form = useForm<WorkspaceCreateType>({
-    resolver: zodResolver(WorkspaceCreateSchema),
+  const FormSchema = WorkspaceCreateSchema.extend({
+    tag: z.enum(['center', 'project']).optional(),
+    image: z.any().optional()
+  })
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
-      shortName: 'wks',
+      shortName: '',
       description: '',
       tenantId: '1',
       userId: userId || '',
-      isMain: false
+      isMain: false,
+      tag: 'project'
     }
   })
 
@@ -69,7 +88,7 @@ export function WorkspaceCreateForm({
     if (!open) {
       form.reset({
         name: '',
-        shortName: 'wks',
+        shortName: '',
         description: '',
         tenantId: '1',
         userId: userId || '',
@@ -78,10 +97,12 @@ export function WorkspaceCreateForm({
     }
   }, [open, form, userId])
 
-  async function onSubmit(data: WorkspaceCreateType) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      if (value) formData.append(key, String(value))
+      if (key !== 'tag' && key !== 'image' && value) {
+        formData.append(key, String(value))
+      }
     })
     formData.append('status', WorkspaceState.ACTIVE)
 
@@ -108,6 +129,39 @@ export function WorkspaceCreateForm({
       }
 
       if (result.data) {
+        // Save tag and image to DevStore
+        if (result.data.id) {
+          let imageBase64: string | undefined
+          if (
+            data.image &&
+            Array.isArray(data.image) &&
+            data.image.length > 0
+          ) {
+            const file = data.image[0] as File
+            await new Promise<void>((resolve) => {
+              const reader = new FileReader()
+              reader.onloadend = async () => {
+                imageBase64 = reader.result as string
+                await setWorkspaceImage(result.data!.id, imageBase64)
+                resolve()
+              }
+              reader.readAsDataURL(file as Blob)
+            })
+          }
+
+          if (data.tag) {
+            await setWorkspaceTag(result.data.id, data.tag)
+          }
+
+          // Update local cache immediately
+          const cacheKey = `workspace_meta_${result.data.id}`
+          const meta = {
+            image: imageBase64,
+            tag: data.tag
+          }
+          localStorage.setItem(cacheKey, JSON.stringify(meta))
+        }
+
         toast({
           title: 'Success',
           description: 'Workspace created successfully'
@@ -129,24 +183,25 @@ export function WorkspaceCreateForm({
             Fill out the form to create a new workspace.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-full border-none bg-background">
-            <CardContent className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  {...form.register('name')}
-                  className="bg-background text-neutral-400"
-                  placeholder="Enter workspace name"
-                />
-                {form.formState.errors.name && (
-                  <div className="text-xs text-red-500">
-                    {form.formState.errors.name.message}
-                  </div>
-                )}
-              </div>
-              {/* <div className="grid gap-2">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="w-full border-none bg-background">
+              <CardContent className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    {...form.register('name')}
+                    className="bg-background text-neutral-400"
+                    placeholder="Enter workspace name"
+                  />
+                  {form.formState.errors.name && (
+                    <div className="text-xs text-red-500">
+                      {form.formState.errors.name.message}
+                    </div>
+                  )}
+                </div>
+                {/* <div className="grid gap-2">
                 <Label htmlFor="shortName">Short Name</Label>
                 <Input
                   id="shortName"
@@ -160,45 +215,84 @@ export function WorkspaceCreateForm({
                   </div>
                 )}
               </div> */}
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  {...form.register('description')}
-                  placeholder="Enter description"
-                  className="min-h-[100px] bg-background text-neutral-400"
-                />
-                {form.formState.errors.description && (
-                  <div className="text-xs text-red-500">
-                    {form.formState.errors.description.message}
-                  </div>
-                )}
-              </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    {...form.register('description')}
+                    placeholder="Enter description"
+                    className="min-h-[100px] bg-background text-neutral-400"
+                  />
+                  {form.formState.errors.description && (
+                    <div className="text-xs text-red-500">
+                      {form.formState.errors.description.message}
+                    </div>
+                  )}
+                </div>
 
-              <input type="hidden" {...form.register('tenantId')} />
-              <input type="hidden" {...form.register('userId')} />
-              <input type="hidden" {...form.register('shortName')} />
-            </CardContent>
-            <CardFooter className="flex justify-end gap-4">
-              <Button
-                type="button"
-                onClick={() => {
-                  setOpen(false)
-                  form.reset()
-                }}
-                className="text-muted ring-muted focus:bg-background focus:text-accent"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Create
-              </Button>
-            </CardFooter>
-          </Card>
-        </form>
+                <div className="grid gap-2">
+                  <Label htmlFor="tag">Tag</Label>
+                  <FormField
+                    control={form.control}
+                    name="tag"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="bg-background text-neutral-400">
+                              <SelectValue placeholder="Select a tag" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="center">Center</SelectItem>
+                            <SelectItem value="project">Project</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="image">Image</Label>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    {...form.register('image')}
+                    className="bg-background text-neutral-400"
+                  />
+                </div>
+
+                <input type="hidden" {...form.register('tenantId')} />
+                <input type="hidden" {...form.register('userId')} />
+                <input type="hidden" {...form.register('shortName')} />
+              </CardContent>
+              <CardFooter className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false)
+                    form.reset()
+                  }}
+                  className="text-muted ring-muted focus:bg-background focus:text-accent"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Create
+                </Button>
+              </CardFooter>
+            </Card>
+          </form>
+        </Form>
       </DialogContent>
     </DialogContainer>
   )
@@ -265,8 +359,13 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onSuccess?: (workspace: Workspace) => void
 }) {
-  const form = useForm<WorkspaceUpdatetype>({
-    resolver: zodResolver(WorkspaceUpdateSchema),
+  const FormSchema = WorkspaceUpdateSchema.extend({
+    tag: z.enum(['center', 'project']).optional(),
+    image: z.any().optional()
+  })
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       id: workspace?.id || '',
       name: workspace?.name || '',
@@ -274,7 +373,9 @@ export function WorkspaceUpdateForm({
       description: workspace?.description || '',
       isMain: workspace?.isMain || false,
       tenantId: '1',
-      userId: workspace?.userId || ''
+      userId: workspace?.userId || '',
+      tag: workspace?.tag
+      // image: workspace?.image // We can't set file input value
     }
   })
 
@@ -287,15 +388,18 @@ export function WorkspaceUpdateForm({
         description: workspace?.description || '',
         isMain: workspace?.isMain || false,
         tenantId: '1',
-        userId: workspace?.userId || ''
+        userId: workspace?.userId || '',
+        tag: workspace?.tag
       })
     }
   }, [open, workspace, form])
 
-  async function onSubmit(data: WorkspaceUpdatetype) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-      if (value) formData.append(key, String(value))
+      if (key !== 'tag' && key !== 'image' && value) {
+        formData.append(key, String(value))
+      }
     })
 
     startTransition(async () => {
@@ -321,6 +425,39 @@ export function WorkspaceUpdateForm({
       }
 
       if (result.data) {
+        // Save tag and image to DevStore
+        if (result.data.id) {
+          let imageBase64: string | undefined
+          if (
+            data.image &&
+            Array.isArray(data.image) &&
+            data.image.length > 0
+          ) {
+            const file = data.image[0] as File
+            await new Promise<void>((resolve) => {
+              const reader = new FileReader()
+              reader.onloadend = async () => {
+                imageBase64 = reader.result as string
+                await setWorkspaceImage(result.data!.id, imageBase64)
+                resolve()
+              }
+              reader.readAsDataURL(file as Blob)
+            })
+          }
+
+          if (data.tag) {
+            await setWorkspaceTag(result.data.id, data.tag)
+          }
+
+          // Update local cache immediately
+          const cacheKey = `workspace_meta_${result.data.id}`
+          const meta = {
+            image: imageBase64 || result.data.image,
+            tag: data.tag || result.data.tag
+          }
+          localStorage.setItem(cacheKey, JSON.stringify(meta))
+        }
+
         toast({
           title: 'Success',
           description: 'Workspace updated successfully'
@@ -406,6 +543,54 @@ export function WorkspaceUpdateForm({
                     {form.formState.errors.name.message}
                   </p>
                 )}
+
+                <div className="grid gap-2">
+                  <Label htmlFor="tag">Tag</Label>
+                  <FormField
+                    control={form.control}
+                    name="tag"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="bg-background text-neutral-400">
+                              <SelectValue placeholder="Select a tag" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="center">Center</SelectItem>
+                            <SelectItem value="project">Project</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="image">Image</Label>
+                  {workspace?.image && (
+                    <div className="relative mb-2 h-32 w-full overflow-hidden rounded-md bg-muted/20">
+                      <Image
+                        src={workspace.image}
+                        alt="Current workspace image"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    {...form.register('image')}
+                    className="bg-background text-neutral-400"
+                  />
+                </div>
               </CardContent>
               <CardFooter>
                 <Button

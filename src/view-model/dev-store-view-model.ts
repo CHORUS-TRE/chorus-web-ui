@@ -166,3 +166,17 @@ export async function deleteWorkspaceEntry(
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }
+
+export async function setWorkspaceImage(
+  workspaceId: string,
+  image: string
+): Promise<Result<DevStoreEntry>> {
+  return putWorkspaceEntry(workspaceId, { key: 'image', value: image })
+}
+
+export async function setWorkspaceTag(
+  workspaceId: string,
+  tag: 'center' | 'project'
+): Promise<Result<DevStoreEntry>> {
+  return putWorkspaceEntry(workspaceId, { key: 'tag', value: tag })
+}

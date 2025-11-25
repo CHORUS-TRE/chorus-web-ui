@@ -1,10 +1,11 @@
 'use client'
 
-import { formatDistanceToNow } from 'date-fns'
 import { EllipsisVerticalIcon, HomeIcon } from 'lucide-react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
-import { Link } from '@/components/link'
 import { User, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
@@ -32,6 +33,7 @@ import {
   TableHeader,
   TableRow as TableRowComponent
 } from '~/components/ui/table'
+import { getGradient } from '~/domain/utils/gradient'
 
 import {
   WorkspaceDeleteForm,
@@ -77,16 +79,25 @@ export default function WorkspaceTable({
 
   const TableHeads = () => (
     <>
-      <TableHead className="font-semibold text-foreground">Name</TableHead>
-      {/* <TableHead className="font-semibold text-foreground">Short Name</TableHead> */}
-      <TableHead className="font-semibold text-foreground">
-        Description
+      <TableHead className="w-[50px]"></TableHead>
+      <TableHead className="font-semibold text-foreground">Workspace</TableHead>
+      <TableHead className="text-center font-semibold text-foreground">
+        PI
       </TableHead>
-      <TableHead className="font-semibold text-foreground">Status</TableHead>
-      {/* <TableHead className="hidden md:table-cell">Members</TableHead> */}
-      <TableHead className="hidden font-semibold text-foreground md:table-cell">
-        Created
+      <TableHead className="text-center font-semibold text-foreground">
+        Status
       </TableHead>
+      <TableHead className="text-center font-semibold text-foreground">
+        Tag
+      </TableHead>
+      <TableHead className="text-center font-semibold text-foreground">
+        Members
+      </TableHead>
+      <TableHead className="text-center font-semibold text-foreground">
+        Sessions
+      </TableHead>
+      {/* <TableHead className="font-semibold text-foreground">Files</TableHead> */}
+      <TableHead className="font-semibold text-foreground">Created</TableHead>
       <TableHead>
         <span className="sr-only">Actions</span>
       </TableHead>
@@ -96,6 +107,19 @@ export default function WorkspaceTable({
   const TableRow = ({ workspace }: { workspace?: Workspace }) => {
     const [open, setOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
+    const router = useRouter()
+    const { resolvedTheme } = useTheme()
+    const { customTheme } = useAppState()
+
+    const getCardGradient = (name: string) => {
+      const currentTheme =
+        resolvedTheme === 'dark' ? customTheme.dark : customTheme.light
+      const primary = currentTheme.primary || 'hsl(var(--primary))'
+      const secondary = currentTheme.secondary || 'hsl(var(--secondary))'
+
+      return getGradient(name, primary, secondary)
+    }
+
     return (
       <>
         {open && (
@@ -127,33 +151,69 @@ export default function WorkspaceTable({
             }}
           />
         )}
-        <TableRowComponent className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
-          <TableCell className="w-52 max-w-52 p-1 font-semibold">
-            <Link
-              href={`/workspaces/${workspace?.id}`}
-              className="nav-link-base nav-link-hover [&.active]:nav-link-active inline-flex gap-x-2"
+        <TableRowComponent
+          className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+          onClick={() => router.push(`/workspaces/${workspace?.id}`)}
+        >
+          <TableCell className="p-1">
+            <div
+              className="relative h-8 w-8 overflow-hidden rounded-md"
+              style={{ background: getCardGradient(workspace?.name || '') }}
             >
+              {workspace?.image && (
+                <Image
+                  src={workspace.image}
+                  alt={workspace?.name || ''}
+                  fill
+                  className="object-cover"
+                />
+              )}
+            </div>
+          </TableCell>
+          <TableCell className="w-52 max-w-52 p-1 font-semibold">
+            <div className="inline-flex gap-x-2">
               {workspace?.isMain && <HomeIcon className="h-4 w-4 text-muted" />}
               <span
                 className={`text-wrap ${workspace?.isMain ? 'w-44 max-w-44' : 'w-48 max-w-48'}`}
               >
                 {workspace?.name}
               </span>
-            </Link>
+            </div>
           </TableCell>
-          <TableCell className="font-xs p-1">
-            {workspace?.description}
+          <TableCell className="p-1 text-center">
+            {workspace?.PI || '-'}
           </TableCell>
-          <TableCell className="p-1">
+          <TableCell className="p-1 text-center">
             {workspace?.status && (
-              <Badge variant="outline">{workspace?.status}</Badge>
+              <Badge variant="outline">{workspace?.status || 'active'}</Badge>
             )}
           </TableCell>
-
-          <TableCell className="hidden p-1 md:table-cell">
-            {formatDistanceToNow(workspace?.createdAt || new Date())} ago
+          <TableCell className="p-1 text-center">
+            {workspace?.tag && (
+              <Badge variant="secondary" className="capitalize">
+                {workspace?.tag}
+              </Badge>
+            )}
           </TableCell>
+          <TableCell className="p-1 text-center">
+            {workspace?.memberCount || 0}
+          </TableCell>
+          <TableCell className="p-1 text-center">
+            {workspace?.workbenchCount || 0}
+          </TableCell>
+          {/* <TableCell className="p-1">
+            {workspace?.files || 0}
+          </TableCell> */}
           <TableCell className="p-1">
+            {workspace?.createdAt
+              ? new Date(workspace.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })
+              : '-'}
+          </TableCell>
+          <TableCell className="p-1" onClick={(e) => e.stopPropagation()}>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button aria-haspopup="true" variant="ghost">

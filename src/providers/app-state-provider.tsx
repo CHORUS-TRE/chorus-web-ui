@@ -241,7 +241,23 @@ export const AppStateProvider = ({
       if (response?.error)
         toast({ title: response.error, variant: 'destructive' })
       if (response?.data) {
-        setWorkspaces(response.data)
+        setWorkspaces(
+          response.data.map((workspace) => ({
+            ...workspace,
+            PI: users?.find((user) => user.id === workspace.userId)?.username,
+            memberCount:
+              users?.filter((user) =>
+                user.rolesWithContext?.some(
+                  (role) => role.context.workspace === workspace.id
+                )
+              ).length || 0,
+            workbenchCount:
+              workbenches?.filter(
+                (workbench) => workbench.workspaceId === workspace.id
+              ).length || 0,
+            files: workspace.files || 0
+          }))
+        )
       }
     } catch (error) {
       toast({
