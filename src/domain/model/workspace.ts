@@ -7,14 +7,23 @@ export enum WorkspaceState {
   UNKNOWN = ''
 }
 
-export const WorkspaceSchema = z.object({
+// future fields, implemented in dev store
+export const WorkspaceMetaSchema = z.object({
+  image: z.string().optional(),
+  tag: z.enum(['center', 'project']).optional(),
+  PI: z.string().optional(),
+  memberCount: z.number().optional(),
+  workbenchCount: z.number().optional(),
+  files: z.number().optional()
+})
+
+export const WorkspaceSchema = WorkspaceMetaSchema.extend({
   id: z.string(),
   tenantId: z.string(),
   userId: z.string(),
   name: z.string(),
   shortName: z.string(),
   description: z.string().optional(),
-  image: z.string().optional(),
   status: z.nativeEnum(WorkspaceState),
   isMain: z.boolean().optional(),
   appInsanceIds: z.array(z.string()).optional(),

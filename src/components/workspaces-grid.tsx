@@ -1,7 +1,8 @@
 'use client'
-
 import { formatDistanceToNow } from 'date-fns'
 import { HomeIcon, Package } from 'lucide-react'
+import Image from 'next/image'
+import { useTheme } from 'next-themes'
 import { useState } from 'react'
 
 import {
@@ -24,6 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { User, Workbench, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
+import { Badge } from '~/components/ui/badge'
+import { getGradient } from '~/domain/utils/gradient'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { toast } from './hooks/use-toast'
@@ -72,7 +75,18 @@ export default function WorkspacesGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { refreshWorkspaces, users, workbenches } = useAppState()
+  const { refreshWorkspaces, workbenches, customTheme } = useAppState()
+  const { resolvedTheme } = useTheme()
+
+  const getCardGradient = (name: string) => {
+    const currentTheme =
+      resolvedTheme === 'dark' ? customTheme.dark : customTheme.light
+    const primary = currentTheme.primary || 'hsl(var(--primary))'
+    const secondary = currentTheme.secondary || 'hsl(var(--secondary))'
+
+    return getGradient(name, primary, secondary)
+  }
+
   return (
     <div
       className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]"
@@ -107,7 +121,26 @@ export default function WorkspacesGrid({
               )}
             </div>
 
-            <Card className="flex h-full flex-col">
+            <Card className="flex h-full flex-col overflow-hidden">
+              <Link
+                href={`/workspaces/${workspace.id}`}
+                variant="flex"
+                title={workspace?.name}
+              >
+                <div
+                  className="relative h-32 w-full bg-muted/20"
+                  style={{ background: getCardGradient(workspace.name) }}
+                >
+                  {workspace.image && (
+                    <Image
+                      src={workspace.image}
+                      alt={workspace.name}
+                      fill
+                      className="object-cover"
+                    />
+                  )}
+                </div>
+              </Link>
               <CardHeader className="mb-0 h-24 w-full">
                 <CardTitle className="mb-1 flex items-center gap-3">
                   {workspace.isMain && (
@@ -116,26 +149,22 @@ export default function WorkspacesGrid({
                   {!workspace.isMain && (
                     <Package className="h-6 w-6 flex-shrink-0 text-muted" />
                   )}
-                  <SwitchLink
-                    user={user}
-                    workspace={workspace}
+                  <Link
+                    href={`/workspaces/${workspace.id}`}
+                    variant="flex"
+                    title={workspace?.name}
                     className="min-w-0 flex-1 truncate text-nowrap"
                   >
                     {workspace?.name}
-                  </SwitchLink>
+                  </Link>
+                  {workspace.tag && (
+                    <Badge variant="secondary" className="ml-2 text-xs">
+                      {workspace.tag}
+                    </Badge>
+                  )}
                 </CardTitle>
                 <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
-                  <span className="text-xs">
-                    Owner:{' '}
-                    {
-                      users?.find((user) => user.id === workspace?.userId)
-                        ?.firstName
-                    }{' '}
-                    {
-                      users?.find((user) => user.id === workspace?.userId)
-                        ?.lastName
-                    }
-                  </span>
+                  <span className="text-xs">PI: {workspace?.PI || '-'}</span>
                   <span className="block text-xs">
                     Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
                   </span>
@@ -153,7 +182,7 @@ export default function WorkspacesGrid({
                     })()}
                   </div>
                   <ScrollArea
-                    className="flex max-h-40 flex-col overflow-y-auto"
+                    className="flex max-h-16 flex-col overflow-y-scroll"
                     type="hover"
                   >
                     <WorkspaceWorkbenchList workspaceId={workspace.id} />

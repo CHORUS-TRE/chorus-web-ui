@@ -12,7 +12,7 @@ const linkVariants = cva('nav-link-base no-underline', {
       nav: 'nav-link-hover active:text-foreground hover:no-border',
       muted: 'hover:no-underline hover:no-border nav-link-hover',
       flex: 'nav-link-hover flex gap-2 items-center justify-start',
-      rounded: 'rounded-full',
+      rounded: 'hover:border-accent',
       underline:
         'text-accent hover:text-accent hover:underline hover:no-border underline-offset-4'
     }
