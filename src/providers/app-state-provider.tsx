@@ -166,12 +166,20 @@ export const AppStateProvider = ({
 
   const refreshCustomLogos = useCallback(async () => {
     try {
-      const lightLogoResult = await getGlobalEntry('custom_logo_light')
-      const darkLogoResult = await getGlobalEntry('custom_logo_dark')
+      const result = await getGlobalEntry('custom_logos')
 
-      const logos = {
-        light: lightLogoResult.data?.value || null,
-        dark: darkLogoResult.data?.value || null
+      let logos = { light: null, dark: null }
+      if (result.data?.value) {
+        try {
+          logos = JSON.parse(result.data.value)
+        } catch (e) {
+          console.error('Failed to parse custom_logos', e)
+          toast({
+            title: 'Error parsing custom logos',
+            description: 'The saved logos data is invalid.',
+            variant: 'destructive'
+          })
+        }
       }
 
       setCustomLogos(logos)
@@ -186,26 +194,23 @@ export const AppStateProvider = ({
 
   const refreshCustomTheme = useCallback(async () => {
     try {
-      const keys = [
-        'theme_light_primary',
-        'theme_light_secondary',
-        'theme_light_accent',
-        'theme_dark_primary',
-        'theme_dark_secondary',
-        'theme_dark_accent'
-      ]
-      const results = await Promise.all(keys.map((key) => getGlobalEntry(key)))
+      const result = await getGlobalEntry('custom_theme')
 
-      const newTheme = {
-        light: {
-          primary: results[0].data?.value || '',
-          secondary: results[1].data?.value || '',
-          accent: results[2].data?.value || ''
-        },
-        dark: {
-          primary: results[3].data?.value || '',
-          secondary: results[4].data?.value || '',
-          accent: results[5].data?.value || ''
+      let newTheme = {
+        light: { primary: '', secondary: '', accent: '' },
+        dark: { primary: '', secondary: '', accent: '' }
+      }
+
+      if (result.data?.value) {
+        try {
+          newTheme = JSON.parse(result.data.value)
+        } catch (e) {
+          console.error('Failed to parse custom_theme', e)
+          toast({
+            title: 'Error parsing custom theme',
+            description: 'The saved theme data is invalid.',
+            variant: 'destructive'
+          })
         }
       }
 
@@ -409,15 +414,30 @@ export const AppStateProvider = ({
     }
 
     try {
-      await Promise.all([
+      const promises = [
         refreshWorkspaces(),
         refreshWorkbenches(),
         refreshUsers(),
         refreshApps(),
-        refreshAppInstances(),
-        refreshCustomLogos(),
-        refreshCustomTheme()
-      ])
+        refreshAppInstances()
+      ]
+
+      if (!customLogos.light && !customLogos.dark) {
+        promises.push(refreshCustomLogos())
+      }
+
+      if (
+        !customTheme.light.primary &&
+        !customTheme.light.secondary &&
+        !customTheme.light.accent &&
+        !customTheme.dark.primary &&
+        !customTheme.dark.secondary &&
+        !customTheme.dark.accent
+      ) {
+        promises.push(refreshCustomTheme())
+      }
+
+      await Promise.all(promises)
     } catch (error) {
       toast({
         title: 'Error',
