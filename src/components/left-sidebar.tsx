@@ -3,6 +3,7 @@
 import {
   Database,
   GaugeCircle,
+  HelpCircle,
   Home,
   LaptopMinimal,
   Package,
@@ -14,6 +15,7 @@ import React from 'react'
 
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
+import { useAppState } from '~/providers/app-state-provider'
 
 interface LeftSidebarProps {
   isOpen: boolean
@@ -64,6 +66,12 @@ export const navItems = [
     label: 'Session 234',
     icon: Settings,
     href: '/workspaces/195/sessions/234'
+  },
+  {
+    label: 'Help',
+    icon: HelpCircle,
+    href: '#',
+    onClick: () => toggleRightSidebar()
   }
 ]
 
@@ -75,7 +83,7 @@ export function LeftSidebar({
   onHoverEnd
 }: LeftSidebarProps) {
   const pathname = usePathname()
-
+  const { showRightSidebar, toggleRightSidebar } = useAppState()
   return (
     <>
       {/* Floating sidebar when hovering and closed */}
@@ -95,7 +103,8 @@ export function LeftSidebar({
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={item.onClick ? '#' : item.href}
+                    onClick={item.onClick ? () => item.onClick?.() : undefined}
                     variant="underline"
                     className={cn(
                       'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
@@ -103,11 +112,6 @@ export function LeftSidebar({
                         ? 'bg-accent/20 text-accent'
                         : 'text-muted-foreground'
                     )}
-                    onClick={() => {
-                      if (!isOpen && isHovered) {
-                        onHoverEnd()
-                      }
-                    }}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
@@ -135,7 +139,8 @@ export function LeftSidebar({
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={item.onClick ? '#' : item.href}
+                onClick={item.onClick ? () => item.onClick?.() : undefined}
                 variant="underline"
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
