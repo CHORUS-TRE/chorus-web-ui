@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.20.0...v1.21.0) (2025-11-27)
+
+
+### Features
+
+* implement left sidebar with persistent state and keyboard shortcuts ([970c333](https://github.com/CHORUS-TRE/chorus-web-ui/commit/970c333173765a8e0ef119d74070ba0a073b171b))
+
 # [1.20.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.19.0...v1.20.0) (2025-11-25)
 
 
