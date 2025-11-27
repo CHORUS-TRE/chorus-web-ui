@@ -1,3 +1,12 @@
+## [1.21.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.21.0...v1.21.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* format datasource file ([39574a6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/39574a6dc62469c8f6a8c6a7190bf6cc104cc3b6))
+* use latest swagger annotations file ([0e50ea8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0e50ea8d10e508e5b731ad3a7adcae3638bcecca))
+* use workspace file service in data source ([5fcf194](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5fcf194cba49db30bc6521b257f710704f6e4663))
+
 # [1.21.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.20.0...v1.21.0) (2025-11-27)
 
 
