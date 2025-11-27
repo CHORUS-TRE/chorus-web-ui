@@ -9,8 +9,7 @@ import {
   ChorusListWorkspaceFilesReply,
   ChorusUpdateWorkspaceFileReply,
   Configuration,
-  WorkspaceServiceApi
-} from '~/internal/client'
+  WorkspaceFileServiceApi} from '~/internal/client'
 
 import { toChorusWorkspaceFile } from './workspace-file-mapper'
 
@@ -41,14 +40,14 @@ interface WorkspaceFileDataSource {
 export type { WorkspaceFileDataSource }
 
 class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
-  private service: WorkspaceServiceApi
+  private service: WorkspaceFileServiceApi
 
   constructor(basePath: string) {
     const configuration = new Configuration({
       basePath,
       credentials: 'include'
     })
-    this.service = new WorkspaceServiceApi(configuration)
+    this.service = new WorkspaceFileServiceApi(configuration)
   }
 
   create(
@@ -56,14 +55,14 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     file: WorkspaceFileCreateType
   ): Promise<ChorusCreateWorkspaceFileReply> {
     const chorusFile = toChorusWorkspaceFile(file)
-    return this.service.workspaceServiceCreateWorkspaceFile({
+    return this.service.workspaceFileServiceCreateWorkspaceFile({
       workspaceId,
       file: chorusFile
     })
   }
 
   get(workspaceId: string, path: string): Promise<ChorusGetWorkspaceFileReply> {
-    return this.service.workspaceServiceGetWorkspaceFile({
+    return this.service.workspaceFileServiceGetWorkspaceFile({
       workspaceId,
       path
     })
@@ -73,7 +72,7 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     workspaceId: string,
     path: string
   ): Promise<ChorusListWorkspaceFilesReply> {
-    return this.service.workspaceServiceListWorkspaceFiles({
+    return this.service.workspaceFileServiceListWorkspaceFiles({
       workspaceId,
       path
     })
@@ -85,7 +84,7 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     file: WorkspaceFileUpdateType
   ): Promise<ChorusUpdateWorkspaceFileReply> {
     const chorusFile = toChorusWorkspaceFile(file)
-    return this.service.workspaceServiceUpdateWorkspaceFile({
+    return this.service.workspaceFileServiceUpdateWorkspaceFile({
       workspaceId,
       oldPath,
       file: chorusFile
@@ -96,7 +95,7 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     workspaceId: string,
     path: string
   ): Promise<ChorusDeleteWorkspaceFileReply> {
-    return this.service.workspaceServiceDeleteWorkspaceFile({
+    return this.service.workspaceFileServiceDeleteWorkspaceFile({
       workspaceId,
       path
     })
