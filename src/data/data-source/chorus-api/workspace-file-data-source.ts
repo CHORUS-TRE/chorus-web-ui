@@ -9,7 +9,8 @@ import {
   ChorusListWorkspaceFilesReply,
   ChorusUpdateWorkspaceFileReply,
   Configuration,
-  WorkspaceFileServiceApi} from '~/internal/client'
+  WorkspaceFileServiceApi
+} from '~/internal/client'
 
 import { toChorusWorkspaceFile } from './workspace-file-mapper'
 
