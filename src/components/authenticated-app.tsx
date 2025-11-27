@@ -207,8 +207,8 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                   {/* Left Sidebar - in flex flow */}
                   <div
                     className={cn(
-                      'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out',
-                      leftSidebarOpen ? 'block' : 'hidden'
+                      'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] flex-shrink-0 overflow-hidden',
+                      leftSidebarOpen ? 'block' : 'hidden' // TODO: delay the sidebar hiding
                     )}
                   >
                     <LeftSidebar
@@ -223,7 +223,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                   {/* Content container */}
                   <div
                     className={cn(
-                      'flex h-full items-start gap-4',
+                      'flex h-full items-start gap-2',
                       // Mobile: content takes full width
                       'w-full',
                       // Desktop (>= xl): logic based on sidebar state
@@ -236,12 +236,12 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                     <div
                       id="content"
                       className={cn(
-                        'glass-surface relative flex h-full flex-col overflow-hidden rounded-2xl',
+                        'glass-surface relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
                         // Adjust width when right sidebar is visible
                         showRightSidebar ? 'min-w-0 flex-1' : 'w-full'
                       )}
                     >
-                      <div className="glass-surface sticky top-0 z-[100] flex items-center gap-4 rounded-t-2xl border-b border-muted/50 p-2">
+                      <div className="glass-surface sticky top-0 z-[100] flex items-center gap-4 border-b border-muted/50 p-2">
                         <div
                           className="relative"
                           onMouseEnter={handleHoverStart}
@@ -261,7 +261,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                           {!leftSidebarOpen && leftSidebarHovered && (
                             <div className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[240px]">
                               <div
-                                className="glass-surface flex max-h-[calc(100vh-12rem)] flex-col gap-2 overflow-hidden rounded-2xl border border-secondary p-4 shadow-2xl"
+                                className="glass-surface flex max-h-[calc(100vh-12rem)] flex-col gap-2 overflow-hidden rounded-2xl border border-muted/40 p-4 shadow-2xl"
                                 onMouseEnter={handleHoverStart}
                                 onMouseLeave={handleHoverEnd}
                               >
@@ -310,8 +310,8 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                     {/* Right Sidebar */}
                     <div
                       className={cn(
-                        'glass-surface h-full overflow-hidden rounded-2xl p-4 transition-all duration-300 ease-in-out',
-                        showRightSidebar ? 'w-[300px] flex-shrink-0' : 'hidden'
+                        'glass-surface h-full overflow-hidden rounded-2xl border border-muted/40 p-4 transition-all duration-300 ease-in-out',
+                        showRightSidebar ? 'w-[240px] flex-shrink-0' : 'hidden'
                       )}
                       id="right-sidebar"
                     >

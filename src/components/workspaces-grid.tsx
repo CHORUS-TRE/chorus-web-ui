@@ -127,16 +127,13 @@ export default function WorkspacesGrid({
                 variant="flex"
                 title={workspace?.name}
               >
-                <div
-                  className="relative h-32 w-full bg-muted/20"
-                  style={{ background: getCardGradient(workspace.name) }}
-                >
+                <div className="relative h-32 w-full bg-muted/20">
                   {workspace.image && (
                     <Image
                       src={workspace.image}
                       alt={workspace.name}
                       fill
-                      className="object-cover"
+                      className="object-contain p-2"
                     />
                   )}
                 </div>

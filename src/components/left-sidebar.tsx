@@ -93,7 +93,7 @@ export function LeftSidebar({
           onMouseEnter={onHoverStart}
           onMouseLeave={onHoverEnd}
         >
-          <div className="glass-surface flex h-full flex-col gap-2 rounded-r-2xl border border-secondary p-4 shadow-2xl">
+          <div className="glass-surface flex h-full flex-col gap-2 rounded-r-2xl border border-muted/40 p-4 shadow-2xl">
             <nav className="flex flex-col gap-1">
               {navItems.map((item) => {
                 const isActive = item.exact
@@ -126,7 +126,7 @@ export function LeftSidebar({
       {/* Regular sidebar when open - slides in/out */}
       <div
         className={cn(
-          'glass-surface flex h-full flex-col gap-2 rounded-2xl border border-secondary p-4 transition-transform duration-300 ease-in-out',
+          'glass-surface flex h-full flex-col gap-2 rounded-2xl border border-muted/40 p-4 transition-transform duration-300 ease-in-out',
           !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
         )}
       >

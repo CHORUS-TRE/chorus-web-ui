@@ -5,14 +5,16 @@ import React from 'react'
 
 import { cn } from '~/lib/utils'
 
-const linkVariants = cva('nav-link-base no-underline', {
+const linkVariants = cva('nav-link-base', {
   variants: {
     variant: {
       default: 'nav-link-hover [&.active]:nav-link-active',
       nav: 'nav-link-hover active:text-foreground hover:no-border',
-      muted: 'hover:no-underline hover:no-border nav-link-hover',
+      muted:
+        'text-muted font-semibold nav-link-hover underline decoration-[0.14rem] underline-offset-[0.3rem] bg-background/30 ',
       flex: 'nav-link-hover flex gap-2 items-center justify-start',
-      rounded: 'hover:border-accent',
+      rounded:
+        'border border-muted/40 rounded-2xl  hover:border-accent animate-all duration-300',
       underline:
         'text-accent hover:text-accent hover:underline hover:no-border underline-offset-4'
     }
