@@ -10,14 +10,6 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 
 export default function SandboxPage() {
   const sandboxItems: Array<{
@@ -53,22 +45,6 @@ export default function SandboxPage() {
   return (
     <div>
       <div className="w-full">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" variant="nav">
-                  CHORUS
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Lab</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <FlaskConical className="h-9 w-9" />

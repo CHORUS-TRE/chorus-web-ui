@@ -12,14 +12,6 @@ import {
 } from '@/components/card'
 import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useAppState } from '~/providers/app-state-provider'
 
@@ -32,22 +24,6 @@ export default function UsersPage() {
 
   return (
     <>
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/" variant="nav">
-                CHORUS
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Users</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">

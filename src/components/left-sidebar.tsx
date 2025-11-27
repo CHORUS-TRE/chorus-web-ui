@@ -70,8 +70,7 @@ export const navItems = [
   {
     label: 'Help',
     icon: HelpCircle,
-    href: '#',
-    onClick: () => toggleRightSidebar()
+    href: '#'
   }
 ]
 
@@ -103,8 +102,7 @@ export function LeftSidebar({
                 return (
                   <Link
                     key={item.href}
-                    href={item.onClick ? '#' : item.href}
-                    onClick={item.onClick ? () => item.onClick?.() : undefined}
+                    href={item.href}
                     variant="underline"
                     className={cn(
                       'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
@@ -139,8 +137,7 @@ export function LeftSidebar({
             return (
               <Link
                 key={item.href}
-                href={item.onClick ? '#' : item.href}
-                onClick={item.onClick ? () => item.onClick?.() : undefined}
+                href={item.href}
                 variant="underline"
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',

@@ -7,11 +7,6 @@ import React from 'react'
 import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { Breadcrumb, BreadcrumbList } from '~/components/ui/breadcrumb'
-import { BreadcrumbItem } from '~/components/ui/breadcrumb'
-import { BreadcrumbLink } from '~/components/ui/breadcrumb'
-import { BreadcrumbSeparator } from '~/components/ui/breadcrumb'
-import { BreadcrumbPage } from '~/components/ui/breadcrumb'
 
 export default function Layout({
   children
@@ -38,42 +33,6 @@ export default function Layout({
     : null
   return (
     <>
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/" variant="nav">
-                CHORUS
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/workspaces" variant="nav">
-                Workspaces
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href={`/workspaces/${workspace?.id}`} variant="nav">
-                {workspace && workspace.name}
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-
-          {subRouteLabel && (
-            <>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{subRouteLabel}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </>
-          )}
-        </BreadcrumbList>
-      </Breadcrumb>
       <div className="flex w-full flex-grow items-center justify-start">
         <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
           {params?.workspaceId === user?.workspaceId ? (
