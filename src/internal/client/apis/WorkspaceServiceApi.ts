@@ -14,52 +14,34 @@
 
 import * as runtime from '../runtime'
 import type {
-  ChorusCreateWorkspaceFileReply,
   ChorusCreateWorkspaceReply,
-  ChorusDeleteWorkspaceFileReply,
   ChorusDeleteWorkspaceReply,
-  ChorusGetWorkspaceFileReply,
   ChorusGetWorkspaceReply,
-  ChorusListWorkspaceFilesReply,
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
-  ChorusUpdateWorkspaceFileReply,
   ChorusUpdateWorkspaceReply,
   ChorusWorkspace,
-  ChorusWorkspaceFile,
   RpcStatus,
   WorkspaceServiceManageUserRoleInWorkspaceBody
 } from '../models/index'
 import {
-  ChorusCreateWorkspaceFileReplyFromJSON,
-  ChorusCreateWorkspaceFileReplyToJSON,
   ChorusCreateWorkspaceReplyFromJSON,
   ChorusCreateWorkspaceReplyToJSON,
-  ChorusDeleteWorkspaceFileReplyFromJSON,
-  ChorusDeleteWorkspaceFileReplyToJSON,
   ChorusDeleteWorkspaceReplyFromJSON,
   ChorusDeleteWorkspaceReplyToJSON,
-  ChorusGetWorkspaceFileReplyFromJSON,
-  ChorusGetWorkspaceFileReplyToJSON,
   ChorusGetWorkspaceReplyFromJSON,
   ChorusGetWorkspaceReplyToJSON,
-  ChorusListWorkspaceFilesReplyFromJSON,
-  ChorusListWorkspaceFilesReplyToJSON,
   ChorusListWorkspacesReplyFromJSON,
   ChorusListWorkspacesReplyToJSON,
   ChorusManageUserRoleInWorkspaceReplyFromJSON,
   ChorusManageUserRoleInWorkspaceReplyToJSON,
   ChorusRemoveUserFromWorkspaceReplyFromJSON,
   ChorusRemoveUserFromWorkspaceReplyToJSON,
-  ChorusUpdateWorkspaceFileReplyFromJSON,
-  ChorusUpdateWorkspaceFileReplyToJSON,
   ChorusUpdateWorkspaceReplyFromJSON,
   ChorusUpdateWorkspaceReplyToJSON,
   ChorusWorkspaceFromJSON,
   ChorusWorkspaceToJSON,
-  ChorusWorkspaceFileFromJSON,
-  ChorusWorkspaceFileToJSON,
   RpcStatusFromJSON,
   RpcStatusToJSON,
   WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSON,
@@ -70,32 +52,12 @@ export interface WorkspaceServiceCreateWorkspaceRequest {
   body: ChorusWorkspace
 }
 
-export interface WorkspaceServiceCreateWorkspaceFileRequest {
-  workspaceId: string
-  file: ChorusWorkspaceFile
-}
-
 export interface WorkspaceServiceDeleteWorkspaceRequest {
   id: string
 }
 
-export interface WorkspaceServiceDeleteWorkspaceFileRequest {
-  workspaceId: string
-  path: string
-}
-
 export interface WorkspaceServiceGetWorkspaceRequest {
   id: string
-}
-
-export interface WorkspaceServiceGetWorkspaceFileRequest {
-  workspaceId: string
-  path: string
-}
-
-export interface WorkspaceServiceListWorkspaceFilesRequest {
-  workspaceId: string
-  path: string
 }
 
 export interface WorkspaceServiceListWorkspacesRequest {
@@ -120,12 +82,6 @@ export interface WorkspaceServiceRemoveUserFromWorkspaceRequest {
 
 export interface WorkspaceServiceUpdateWorkspaceRequest {
   body: ChorusWorkspace
-}
-
-export interface WorkspaceServiceUpdateWorkspaceFileRequest {
-  workspaceId: string
-  oldPath: string
-  file: ChorusWorkspaceFile
 }
 
 /**
@@ -193,79 +149,6 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint creates a file in a workspace at the specified path
-   * Create a file in a workspace
-   */
-  async workspaceServiceCreateWorkspaceFileRaw(
-    requestParameters: WorkspaceServiceCreateWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusCreateWorkspaceFileReply>> {
-    if (
-      requestParameters.workspaceId === null ||
-      requestParameters.workspaceId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'workspaceId',
-        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceServiceCreateWorkspaceFile.'
-      )
-    }
-
-    if (
-      requestParameters.file === null ||
-      requestParameters.file === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'file',
-        'Required parameter requestParameters.file was null or undefined when calling workspaceServiceCreateWorkspaceFile.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    headerParameters['Content-Type'] = 'application/json'
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workspaces/{workspaceId}/file`.replace(
-          `{${'workspaceId'}}`,
-          encodeURIComponent(String(requestParameters.workspaceId))
-        ),
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: ChorusWorkspaceFileToJSON(requestParameters.file)
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusCreateWorkspaceFileReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint creates a file in a workspace at the specified path
-   * Create a file in a workspace
-   */
-  async workspaceServiceCreateWorkspaceFile(
-    requestParameters: WorkspaceServiceCreateWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusCreateWorkspaceFileReply> {
-    const response = await this.workspaceServiceCreateWorkspaceFileRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
    * This endpoint deletes a workspace
    * Delete a workspace
    */
@@ -323,81 +206,6 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint deletes a file in a workspace at the specified path
-   * Delete a file in a workspace
-   */
-  async workspaceServiceDeleteWorkspaceFileRaw(
-    requestParameters: WorkspaceServiceDeleteWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusDeleteWorkspaceFileReply>> {
-    if (
-      requestParameters.workspaceId === null ||
-      requestParameters.workspaceId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'workspaceId',
-        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceServiceDeleteWorkspaceFile.'
-      )
-    }
-
-    if (
-      requestParameters.path === null ||
-      requestParameters.path === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'path',
-        'Required parameter requestParameters.path was null or undefined when calling workspaceServiceDeleteWorkspaceFile.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}`
-          .replace(
-            `{${'workspaceId'}}`,
-            encodeURIComponent(String(requestParameters.workspaceId))
-          )
-          .replace(
-            `{${'path'}}`,
-            encodeURIComponent(String(requestParameters.path))
-          ),
-        method: 'DELETE',
-        headers: headerParameters,
-        query: queryParameters
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusDeleteWorkspaceFileReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint deletes a file in a workspace at the specified path
-   * Delete a file in a workspace
-   */
-  async workspaceServiceDeleteWorkspaceFile(
-    requestParameters: WorkspaceServiceDeleteWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusDeleteWorkspaceFileReply> {
-    const response = await this.workspaceServiceDeleteWorkspaceFileRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
    * This endpoint returns a workspace
    * Get a workspace
    */
@@ -448,156 +256,6 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetWorkspaceReply> {
     const response = await this.workspaceServiceGetWorkspaceRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint retrieves a file at the specified path within a workspace
-   * Get a file in a workspace
-   */
-  async workspaceServiceGetWorkspaceFileRaw(
-    requestParameters: WorkspaceServiceGetWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusGetWorkspaceFileReply>> {
-    if (
-      requestParameters.workspaceId === null ||
-      requestParameters.workspaceId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'workspaceId',
-        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceServiceGetWorkspaceFile.'
-      )
-    }
-
-    if (
-      requestParameters.path === null ||
-      requestParameters.path === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'path',
-        'Required parameter requestParameters.path was null or undefined when calling workspaceServiceGetWorkspaceFile.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}`
-          .replace(
-            `{${'workspaceId'}}`,
-            encodeURIComponent(String(requestParameters.workspaceId))
-          )
-          .replace(
-            `{${'path'}}`,
-            encodeURIComponent(String(requestParameters.path))
-          ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusGetWorkspaceFileReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint retrieves a file at the specified path within a workspace
-   * Get a file in a workspace
-   */
-  async workspaceServiceGetWorkspaceFile(
-    requestParameters: WorkspaceServiceGetWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusGetWorkspaceFileReply> {
-    const response = await this.workspaceServiceGetWorkspaceFileRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint lists all files at given path within a workspace
-   * List files in a workspace at a specified path
-   */
-  async workspaceServiceListWorkspaceFilesRaw(
-    requestParameters: WorkspaceServiceListWorkspaceFilesRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusListWorkspaceFilesReply>> {
-    if (
-      requestParameters.workspaceId === null ||
-      requestParameters.workspaceId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'workspaceId',
-        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceServiceListWorkspaceFiles.'
-      )
-    }
-
-    if (
-      requestParameters.path === null ||
-      requestParameters.path === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'path',
-        'Required parameter requestParameters.path was null or undefined when calling workspaceServiceListWorkspaceFiles.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workspaces/{workspaceId}/files/{path}`
-          .replace(
-            `{${'workspaceId'}}`,
-            encodeURIComponent(String(requestParameters.workspaceId))
-          )
-          .replace(
-            `{${'path'}}`,
-            encodeURIComponent(String(requestParameters.path))
-          ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusListWorkspaceFilesReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint lists all files at given path within a workspace
-   * List files in a workspace at a specified path
-   */
-  async workspaceServiceListWorkspaceFiles(
-    requestParameters: WorkspaceServiceListWorkspaceFilesRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusListWorkspaceFilesReply> {
-    const response = await this.workspaceServiceListWorkspaceFilesRaw(
       requestParameters,
       initOverrides
     )
@@ -891,94 +549,6 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusUpdateWorkspaceReply> {
     const response = await this.workspaceServiceUpdateWorkspaceRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint updates (rename or moves) a file in a workspace at the specified path
-   * Update a file in a workspace
-   */
-  async workspaceServiceUpdateWorkspaceFileRaw(
-    requestParameters: WorkspaceServiceUpdateWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusUpdateWorkspaceFileReply>> {
-    if (
-      requestParameters.workspaceId === null ||
-      requestParameters.workspaceId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'workspaceId',
-        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceServiceUpdateWorkspaceFile.'
-      )
-    }
-
-    if (
-      requestParameters.oldPath === null ||
-      requestParameters.oldPath === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'oldPath',
-        'Required parameter requestParameters.oldPath was null or undefined when calling workspaceServiceUpdateWorkspaceFile.'
-      )
-    }
-
-    if (
-      requestParameters.file === null ||
-      requestParameters.file === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'file',
-        'Required parameter requestParameters.file was null or undefined when calling workspaceServiceUpdateWorkspaceFile.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    headerParameters['Content-Type'] = 'application/json'
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workspaces/{workspaceId}/file/{oldPath}`
-          .replace(
-            `{${'workspaceId'}}`,
-            encodeURIComponent(String(requestParameters.workspaceId))
-          )
-          .replace(
-            `{${'oldPath'}}`,
-            encodeURIComponent(String(requestParameters.oldPath))
-          ),
-        method: 'PUT',
-        headers: headerParameters,
-        query: queryParameters,
-        body: ChorusWorkspaceFileToJSON(requestParameters.file)
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusUpdateWorkspaceFileReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint updates (rename or moves) a file in a workspace at the specified path
-   * Update a file in a workspace
-   */
-  async workspaceServiceUpdateWorkspaceFile(
-    requestParameters: WorkspaceServiceUpdateWorkspaceFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusUpdateWorkspaceFileReply> {
-    const response = await this.workspaceServiceUpdateWorkspaceFileRaw(
       requestParameters,
       initOverrides
     )

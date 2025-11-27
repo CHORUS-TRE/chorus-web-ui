@@ -7,6 +7,7 @@ apis/NotificationServiceApi.ts
 apis/StewardServiceApi.ts
 apis/UserServiceApi.ts
 apis/WorkbenchServiceApi.ts
+apis/WorkspaceFileServiceApi.ts
 apis/WorkspaceServiceApi.ts
 apis/index.ts
 index.ts
