@@ -16,6 +16,7 @@ import { Label } from '~/components/ui/label'
 import { useAppState } from '~/providers/app-state-provider'
 import {
   deleteGlobalEntry,
+  getGlobalEntry,
   putGlobalEntry
 } from '~/view-model/dev-store-view-model'
 
@@ -45,12 +46,33 @@ const LogoUploadForm = () => {
 
   const handleSubmit = async () => {
     try {
+      // Fetch latest logos to ensure we don't overwrite with stale state
+      const result = await getGlobalEntry('custom_logos')
+      let currentLogos: { light: string | null; dark: string | null } = {
+        light: null,
+        dark: null
+      }
+      if (result.data?.value) {
+        try {
+          currentLogos = JSON.parse(result.data.value)
+        } catch (e) {
+          console.error('Failed to parse current custom_logos', e)
+        }
+      }
+
+      const newLogos = { ...currentLogos }
       if (lightLogo) {
-        await putGlobalEntry({ key: 'custom_logo_light', value: lightLogo })
+        newLogos.light = lightLogo
       }
       if (darkLogo) {
-        await putGlobalEntry({ key: 'custom_logo_dark', value: darkLogo })
+        newLogos.dark = darkLogo
       }
+
+      await putGlobalEntry({
+        key: 'custom_logos',
+        value: JSON.stringify(newLogos)
+      })
+
       toast({
         title: 'Success!',
         description: 'Logos have been updated.',
@@ -68,8 +90,7 @@ const LogoUploadForm = () => {
 
   const handleReset = async () => {
     try {
-      await deleteGlobalEntry('custom_logo_light')
-      await deleteGlobalEntry('custom_logo_dark')
+      await deleteGlobalEntry('custom_logos')
       await refreshCustomLogos()
       toast({
         title: 'Success!',

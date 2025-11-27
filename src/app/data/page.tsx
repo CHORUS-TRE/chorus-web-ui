@@ -17,14 +17,6 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '~/components/ui/accordion'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function DataPage() {
@@ -44,22 +36,6 @@ export default function DataPage() {
   return (
     <>
       <div className="w-full">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" variant="nav">
-                  CHORUS
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <Database className="h-9 w-9" />

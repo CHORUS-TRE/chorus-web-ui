@@ -5,15 +5,20 @@ import type { LucideIcon } from 'lucide-react'
 import {
   Activity,
   AlertCircle,
+  ArrowRight,
   BellRing,
   CircleGauge,
-  CirclePlus,
+  Clock,
+  Cpu,
+  DatabaseZap,
   FileText,
+  Folders,
   LaptopMinimal,
   Package,
   ShieldCheck,
   Users
 } from 'lucide-react'
+import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
 
 import { Link } from '@/components/link'
@@ -24,7 +29,6 @@ import {
 } from '@/mock-data/dashboard-feed'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { Button } from '~/components/button'
 import {
   Card,
   CardContent,
@@ -32,17 +36,10 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
-import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import { toast } from '~/components/hooks/use-toast'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage
-} from '~/components/ui/breadcrumb'
-import { Progress } from '~/components/ui/progress'
+import { Badge } from '~/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { WorkbenchStatus } from '~/domain/model'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 export default function CHORUSDashboard() {
@@ -56,7 +53,6 @@ export default function CHORUSDashboard() {
   } = useAppState()
   const { canCreateWorkspace } = useAuthorizationViewModel()
   const { user } = useAuthentication()
-  const [createOpen, setCreateOpen] = useState(false)
   const [updatesTab, setUpdatesTab] = useState<'notifications' | 'activity'>(
     'notifications'
   )
@@ -89,210 +85,176 @@ export default function CHORUSDashboard() {
     [workbenches, user?.rolesWithContext]
   )
 
-  const centers = useMemo(
-    () => workspaces?.filter((workspace) => workspace.tag === 'center'),
-    [workspaces]
-  )
-
-  const myAppInstances = useMemo(
-    () =>
-      appInstances?.filter((appInstance) =>
-        myWorkbenches?.some(
-          (workbench) => workbench.id === appInstance.workbenchId
-        )
-      ),
-    [appInstances, myWorkbenches]
-  )
-
   return (
     <>
       <div className="w-ful">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>CHORUS</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-3 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <CircleGauge className="h-9 w-9" />
-            Dashboard
-          </h2>
-          {createOpen && (
-            <WorkspaceCreateForm
-              state={[createOpen, setCreateOpen]}
-              userId={user?.id}
-              onSuccess={async () => {
-                await refreshWorkspaces()
-                toast({
-                  title: 'Success!',
-                  description: 'Workspace created'
-                })
-              }}
-            />
-          )}
-        </div>
-        <p className="text-md mb-4 font-medium italic text-muted-foreground">
-          Welcome back, {user?.firstName || ''} {user?.lastName || ''}
-        </p>
+        <h3 className="mb-8 mt-4 italic text-muted-foreground">
+          Welcome, {user?.firstName || ''} {user?.lastName || ''}
+        </h3>
       </div>
 
-      <div className="w-full">
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-5">
-          <Card className="bg-background/10">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                My Active Workspaces
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{myWorkspaces?.length}</div>
-              <p className="mt-1 text-xs">
-                {myWorkbenches?.length && myWorkbenches?.length > 0
-                  ? `${myWorkbenches?.length} sessions running`
-                  : 'No sessions running'}
-              </p>
-            </CardContent>
-          </Card>
+      <div className="w-full space-y-6">
+        <section>
+          <h3 className="mb-3 font-semibold">Activity Overview</h3>
+          <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">
+                  Total Projects
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-blue-600">
+                    {myWorkspaces?.length}
+                  </span>
+                  <Folders className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                My Active Sessions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{myWorkbenches?.length}</div>
-              <p className="mt-1 text-xs">
-                {myAppInstances?.length && myAppInstances?.length > 0
-                  ? `${myAppInstances?.length} apps running`
-                  : 'No app running'}
-              </p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">
+                  Active Sessions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-green-600">
+                    {myWorkbenches?.length}
+                  </span>
+                  <LaptopMinimal className="h-8 w-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Centers</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{centers?.length}</div>
-              <p className="mt-1 text-xs">
-                {centers?.length && centers?.length > 0
-                  ? `${centers?.length} centers`
-                  : 'No centers'}
-              </p>
-            </CardContent>
-          </Card>
+            <Card className="demo-effect">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">
+                  Pending Approval
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-yellow-600">
+                    {1}
+                  </span>
+                  <Clock className="h-8 w-8 text-yellow-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card className="demo-effect">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                Compute Usage
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">73%</div>
-              <Progress value={73} className="mt-2" />
-            </CardContent>
-          </Card>
+            <Card className="demo-effect">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">
+                  Compute Usage
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-purple-600">
+                    {'73%'}
+                  </span>
+                  <Cpu className="h-8 w-8 text-purple-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card className="demo-effect">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                Storage Usage
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">85%</div>
-              <Progress value={85} className="mt-2" />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            <Card className="demo-effect">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">
+                  Storage Usage
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-gray-600">
+                    {'85%'}
+                  </span>
+                  <DatabaseZap className="h-8 w-8 text-gray-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
-      <section className="space-y-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-6">
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div className="md:col-span-2">
-                <Card>
-                  <CardHeader className="flex flex-col gap-2">
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <Package className="h-5 w-5" />
-                      My Workspaces
-                    </CardTitle>
-                    <CardDescription>Latest active workspaces</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {myWorkspaces
-                      ?.sort(
-                        (a, b) =>
-                          (b.createdAt?.getTime() ?? 0) -
-                          (a.createdAt?.getTime() ?? 0)
-                      )
-                      .slice(0, 3)
-                      .map((workspace) => {
-                        // Generate gradient based on workspace name
-                        let hash = 0
-                        for (let i = 0; i < workspace.name.length; i++) {
-                          hash =
-                            workspace.name.charCodeAt(i) + ((hash << 5) - hash)
-                        }
-                        const angle = Math.abs(hash % 360)
-                        const gradient = `linear-gradient(${angle}deg, hsl(var(--primary)), hsl(var(--secondary)))`
-
-                        return (
-                          <Link
-                            key={workspace.id}
-                            href={`/workspaces/${workspace.id}`}
-                            className="block w-full rounded-xl border border-transparent"
-                            variant="rounded"
-                          >
-                            <div className="w-full rounded-xl border border-muted/30 bg-background/30 p-4 text-card-foreground transition-all">
-                              <div className="mb-2 flex items-start justify-between gap-4">
-                                <div className="min-w-0 flex-1">
-                                  <h4 className="font-semibold">
-                                    {workspace.name}
-                                  </h4>
-                                  <p className="mt-1 text-xs">
-                                    Created{' '}
-                                    {formatDistanceToNow(
-                                      workspace?.createdAt || new Date()
-                                    )}{' '}
-                                    ago by{' '}
-                                    {
-                                      users?.find(
-                                        (currUser) =>
-                                          currUser.id === workspace.userId
-                                      )?.firstName
-                                    }{' '}
-                                    {
-                                      users?.find(
-                                        (currUser) =>
-                                          currUser.id === workspace.userId
-                                      )?.lastName
-                                    }
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                  {workspace.image ? (
-                                    <img
-                                      src={workspace.image}
-                                      alt={workspace.name}
-                                      className="aspect-auto h-12 w-12 flex-shrink-0 rounded-md"
-                                    />
-                                  ) : (
-                                    <div
-                                      className="h-12 w-12 flex-shrink-0 rounded-md"
-                                      style={{ background: gradient }}
-                                    />
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <h3 className="mb-3 font-semibold">My Workspaces & Sessions</h3>
+            <Card className="mb-6">
+              <CardHeader className="flex flex-col gap-2">
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-base sm:text-lg">
+                    <Package className="h-5 w-5" />
+                    My Workspaces
+                  </div>
+                  <Link
+                    href="/workspaces"
+                    className="flex items-center gap-1 text-sm"
+                    variant="muted"
+                  >
+                    View all workspaces
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </CardTitle>
+                <CardDescription>Latest active workspaces</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {myWorkspaces
+                  ?.sort(
+                    (a, b) =>
+                      (b.createdAt?.getTime() ?? 0) -
+                      (a.createdAt?.getTime() ?? 0)
+                  )
+                  .slice(0, 3)
+                  .map((workspace) => {
+                    return (
+                      <Link
+                        key={workspace.id}
+                        href={`/workspaces/${workspace.id}`}
+                        className="block w-full"
+                        variant="rounded"
+                      >
+                        <div className="w-full bg-background/30 p-4 text-card-foreground transition-all">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              {workspace.image ? (
+                                <Image
+                                  src={workspace.image}
+                                  alt={workspace.name}
+                                  width={12}
+                                  height={12}
+                                  className="aspect-auto h-12 w-12 flex-shrink-0 rounded-md"
+                                />
+                              ) : (
+                                <Package className="h-12 w-12 flex-shrink-0 rounded-md text-muted" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-semibold">
+                                {workspace.name}
+                              </h4>
+                              <p className="mt-1 text-xs">
+                                Created{' '}
+                                {formatDistanceToNow(
+                                  workspace?.createdAt || new Date()
+                                )}{' '}
+                                ago by{' '}
+                                {
+                                  users?.find(
+                                    (currUser) =>
+                                      currUser.id === workspace.userId
+                                  )?.firstName
+                                }{' '}
+                                {
+                                  users?.find(
+                                    (currUser) =>
+                                      currUser.id === workspace.userId
+                                  )?.lastName
+                                }
+                              </p>
+                              <div className="mt-2 flex flex-wrap items-center justify-between gap-3 text-xs">
                                 <span className="flex items-center gap-1">
                                   <Users className="h-4 w-4" />
                                   {
@@ -327,103 +289,121 @@ export default function CHORUSDashboard() {
                                 </span>
                               </div>
                             </div>
-                          </Link>
-                        )
-                      })}
-                    <div className="flex items-center justify-between gap-2 pt-2">
-                      {canCreateWorkspace && (
-                        <Button
-                          onClick={() => setCreateOpen(true)}
-                          variant="accent-filled"
-                          size="sm"
-                        >
-                          <CirclePlus className="mr-2 h-4 w-4" />
-                          Create Workspace
-                        </Button>
-                      )}
-                      <Link
-                        href="/workspaces"
-                        className="flex items-center gap-1 text-sm text-primary hover:underline"
-                      >
-                        View all workspaces
-                        <span>→</span>
+                          </div>
+                        </div>
                       </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    )
+                  })}
+              </CardContent>
+            </Card>
 
-              <div className="md:col-span-1">
-                <Card>
-                  <CardHeader className="flex flex-col gap-2">
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <LaptopMinimal className="h-5 w-5" />
-                      My Sessions
-                    </CardTitle>
-                    <CardDescription>
-                      My latest and shared sessions
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {myWorkbenches?.map((workbench) => (
-                        <Link
-                          key={workbench.id}
-                          href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
-                          className="block w-full rounded-xl border border-muted/30"
-                          variant="rounded"
-                        >
-                          <div className="w-full rounded-xl border border-muted/30 bg-background/30 p-4 text-card-foreground transition-all">
-                            <div className="flex items-center gap-3">
-                              <div className="flex-shrink-0 rounded-lg bg-background/60 p-2">
-                                <LaptopMinimal className="h-6 w-6 text-muted-foreground" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <h4 className="text-sm font-semibold">
-                                  {appInstances
-                                    ?.filter(
-                                      (instance) =>
-                                        workbench?.workspaceId ===
-                                        instance.workspaceId
-                                    )
-                                    ?.filter(
-                                      (instance) =>
-                                        workbench.id === instance.workbenchId
-                                    )
-                                    .map(
-                                      (instance) =>
-                                        apps?.find(
-                                          (app) => app.id === instance.appId
-                                        )?.name || ''
-                                    )
-                                    .join(', ') ||
-                                    workbench.name ||
-                                    workspaces?.find(
-                                      (workspace) =>
-                                        workspace.id === workbench.workspaceId
-                                    )?.name ||
-                                    'N/A'}
-                                </h4>
-                                <p className="text-xs text-muted-foreground">
-                                  {workspaces?.find(
+            <Card>
+              <CardHeader className="flex flex-col gap-2">
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-base sm:text-lg">
+                    <LaptopMinimal className="h-5 w-5" />
+                    My Sessions
+                  </div>
+                  <Link
+                    href="/sessions"
+                    className="flex items-center gap-1 text-sm"
+                    variant="muted"
+                  >
+                    View all sessions
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </CardTitle>
+                <CardDescription>My latest and shared sessions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {myWorkbenches?.map((workbench) => (
+                    <Link
+                      key={workbench.id}
+                      href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
+                      className="block w-full"
+                      variant="rounded"
+                    >
+                      <div className="w-full bg-background/30 p-4 text-card-foreground">
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                          <div className="flex flex-1 flex-wrap items-center gap-4">
+                            <div className="rounded-lg bg-background/60">
+                              <LaptopMinimal className="h-6 w-6 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-[200px] flex-1">
+                              <h4 className="font-semibold">
+                                {appInstances
+                                  ?.filter(
+                                    (instance) =>
+                                      workbench?.workspaceId ===
+                                      instance.workspaceId
+                                  )
+                                  ?.filter(
+                                    (instance) =>
+                                      workbench.id === instance.workbenchId
+                                  )
+                                  .map(
+                                    (instance) =>
+                                      apps?.find(
+                                        (app) => app.id === instance.appId
+                                      )?.name || ''
+                                  )
+                                  .join(', ') ||
+                                  workbench.name ||
+                                  workspaces?.find(
                                     (workspace) =>
                                       workspace.id === workbench.workspaceId
-                                  )?.name || 'N/A'}
-                                </p>
+                                  )?.name ||
+                                  'N/A'}
+                              </h4>
+                              <p className="text-sm text-slate-500">
+                                {workspaces?.find(
+                                  (workspace) =>
+                                    workspace.id === workbench.workspaceId
+                                )?.name || 'N/A'}
+                              </p>
+                            </div>
+                            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                              <div>
+                                <span>CPU:</span>{' '}
+                                <span className="font-semibold text-foreground">
+                                  {'N/A'}
+                                </span>
+                              </div>
+                              <div>
+                                <span>Memory:</span>{' '}
+                                <span className="font-semibold text-foreground">
+                                  {'N/A'}
+                                </span>
                               </div>
                             </div>
+                            <Badge
+                              className={`pointer-events-none ${
+                                workbench.status === WorkbenchStatus.ACTIVE
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-slate-100 text-slate-800'
+                              }`}
+                            >
+                              {workbench.status}
+                            </Badge>
                           </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+                          <p className="text-sm font-medium text-muted-foreground">
+                            {workbench.status === WorkbenchStatus.ACTIVE
+                              ? 'Running'
+                              : 'Stopped'}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="space-y-6 lg:col-span-2">
-            <Card className="card-glass demo-effect">
+          <div className="lg:col-span-1">
+            <h3 className="mb-3 font-semibold">Notifications</h3>
+            <Card className="card-glass demo-effect mb-6">
               <CardHeader className="space-y-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
@@ -491,7 +471,7 @@ export default function CHORUSDashboard() {
             </Alert>
           </div>
         </div>
-      </section>
+      </div>
     </>
   )
 }

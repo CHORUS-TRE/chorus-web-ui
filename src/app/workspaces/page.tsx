@@ -10,14 +10,6 @@ import { useAuthorizationViewModel } from '@/view-model/authorization-view-model
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Label } from '~/components/ui/label'
 import { Switch } from '~/components/ui/switch'
@@ -75,22 +67,6 @@ export default function WorkspacesPage() {
   return (
     <>
       <div className="w-full">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" variant="nav">
-                  CHORUS
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Workspaces</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <Package className="h-9 w-9" />

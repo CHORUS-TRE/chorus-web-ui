@@ -22,14 +22,6 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { RoleHoverCard } from '~/components/role-hover-card'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 import { useAppState } from '~/providers/app-state-provider'
 
 export default function UserProfile() {
@@ -117,32 +109,6 @@ export default function UserProfile() {
   return (
     <>
       <div className="w-full">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" variant="nav">
-                  CHORUS
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/users" variant="nav">
-                  Users
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>
-                {profileUser.firstName} {profileUser.lastName}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <Package className="h-9 w-9" />

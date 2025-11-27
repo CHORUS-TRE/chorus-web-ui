@@ -78,12 +78,7 @@ export function ThemeEditorForm() {
 
   async function handleReset() {
     try {
-      await deleteGlobalEntry('theme_light_primary')
-      await deleteGlobalEntry('theme_light_secondary')
-      await deleteGlobalEntry('theme_light_accent')
-      await deleteGlobalEntry('theme_dark_primary')
-      await deleteGlobalEntry('theme_dark_secondary')
-      await deleteGlobalEntry('theme_dark_accent')
+      await deleteGlobalEntry('custom_theme')
 
       await refreshCustomTheme()
 
@@ -101,29 +96,22 @@ export function ThemeEditorForm() {
 
   async function onSubmit(data: ThemeFormValues) {
     try {
+      const newTheme = {
+        light: {
+          primary: data.light_primary,
+          secondary: data.light_secondary,
+          accent: data.light_accent
+        },
+        dark: {
+          primary: data.dark_primary,
+          secondary: data.dark_secondary,
+          accent: data.dark_accent
+        }
+      }
+
       await putGlobalEntry({
-        key: 'theme_light_primary',
-        value: data.light_primary
-      })
-      await putGlobalEntry({
-        key: 'theme_light_secondary',
-        value: data.light_secondary
-      })
-      await putGlobalEntry({
-        key: 'theme_light_accent',
-        value: data.light_accent
-      })
-      await putGlobalEntry({
-        key: 'theme_dark_primary',
-        value: data.dark_primary
-      })
-      await putGlobalEntry({
-        key: 'theme_dark_secondary',
-        value: data.dark_secondary
-      })
-      await putGlobalEntry({
-        key: 'theme_dark_accent',
-        value: data.dark_accent
+        key: 'custom_theme',
+        value: JSON.stringify(newTheme)
       })
 
       await refreshCustomTheme()
