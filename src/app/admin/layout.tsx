@@ -9,8 +9,8 @@ const AuthenticatedApp = React.lazy(() =>
 import { Package } from 'lucide-react'
 
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { Login } from '~/components/login'
 
 import { AdminSidebar } from './admin-sidebar'
@@ -20,17 +20,13 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { setBackground } = useAppState()
+  const { setActiveIframe } = useIframeCache()
   const { user } = useAuthentication()
 
+  // Clear active iframe when navigating to admin pages
   useEffect(() => {
-    setBackground((prev) => {
-      if (prev?.workspaceId) {
-        return { sessionId: undefined, workspaceId: prev.workspaceId }
-      }
-      return prev
-    })
-  }, [setBackground])
+    setActiveIframe(null)
+  }, [setActiveIframe])
 
   if (!user) return <Login />
 

@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
@@ -58,13 +59,12 @@ export function Header() {
     workspaces,
     apps,
     appInstances,
-    background,
-    setBackground,
     refreshWorkbenches,
     toggleRightSidebar,
     users,
     customLogos
   } = useAppState()
+  const { background, setActiveIframe } = useIframeCache()
   const { user, logout } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
@@ -381,7 +381,7 @@ export function Header() {
 
             setTimeout(() => {
               refreshWorkbenches()
-              setBackground(undefined)
+              setActiveIframe(null)
               router.replace(`/workspaces/${workspaceId}`)
             }, 2000)
           }}

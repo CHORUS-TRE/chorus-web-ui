@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
 import { appDelete } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
@@ -45,8 +46,8 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const { background, refreshWorkbenches, refreshWorkspaces, setBackground } =
-    useAppState()
+  const { refreshWorkbenches, refreshWorkspaces } = useAppState()
+  const { background, openSession } = useIframeCache()
   const { user } = useAuthentication()
   const router = useRouter()
 
@@ -93,9 +94,12 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
     }
   }
 
-  const handleStartApp = async () => {
-    const sessionId = background?.sessionId
-    const workspaceId = background?.workspaceId
+  const handleStartApp = async (
+    targetSessionId?: string,
+    targetWorkspaceId?: string
+  ) => {
+    const sessionId = targetSessionId ?? background?.sessionId
+    const workspaceId = targetWorkspaceId ?? background?.workspaceId
     if (!sessionId || !workspaceId) {
       return
     }
@@ -136,6 +140,8 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
         description: `${app.name} launched successfully`
       })
 
+      // Open the session in the iframe cache and navigate
+      openSession(sessionId, workspaceId)
       router.push(`/workspaces/${workspaceId}/sessions/${sessionId}`)
 
       refreshWorkbenches()
@@ -245,12 +251,8 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
           <WorkspaceWorkbenchList
             workspaceId={background?.workspaceId}
             action={({ id, workspaceId }) => {
-              setBackground({
-                sessionId: id,
-                workspaceId: workspaceId
-              })
               setShowStartSessionDialog(false)
-              handleStartApp()
+              handleStartApp(id, workspaceId)
             }}
           />
         </DialogContent>

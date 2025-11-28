@@ -10,8 +10,12 @@ import React from 'react'
 
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
+import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { DynamicThemeApplicator } from '~/components/dynamic-theme-applicator'
+import IframeCacheRenderer from '~/components/iframe-cache-renderer'
+import { IframeCleanupDialog } from '~/components/iframe-cleanup-dialog'
+import { IframeDebugPanel } from '~/components/iframe-debug-panel'
 import { Toaster } from '~/components/ui/toaster'
 import { AuthorizationProvider } from '~/providers/authorization-provider'
 
@@ -58,8 +62,13 @@ export default async function RootLayout({
           <AuthenticationProvider>
             <AuthorizationProvider>
               <AppStateProvider>
-                <DynamicThemeApplicator />
-                {children}
+                <IframeCacheProvider>
+                  <DynamicThemeApplicator />
+                  {children}
+                  <IframeCacheRenderer />
+                  <IframeCleanupDialog />
+                  <IframeDebugPanel />
+                </IframeCacheProvider>
               </AppStateProvider>
             </AuthorizationProvider>
           </AuthenticationProvider>

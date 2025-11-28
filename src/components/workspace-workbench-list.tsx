@@ -5,6 +5,7 @@ import React, { useMemo } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 
 export function WorkspaceWorkbenchList({
   workspaceId,
@@ -15,8 +16,8 @@ export function WorkspaceWorkbenchList({
 }) {
   const router = useRouter()
 
-  const { workbenches, users, appInstances, apps, background, workspaces } =
-    useAppState()
+  const { workbenches, users, appInstances, apps, workspaces } = useAppState()
+  const { background } = useIframeCache()
   const { user } = useAuthentication()
 
   const workbenchList = useMemo(() => {

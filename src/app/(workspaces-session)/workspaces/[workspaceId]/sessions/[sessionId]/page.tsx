@@ -3,20 +3,24 @@
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
-import { useAppState } from '@/providers/app-state-provider'
-import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 
+/**
+ * Page for displaying a workbench session in a cached iframe.
+ * The actual iframe rendering is handled by IframeCacheRenderer in the layout.
+ */
 export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; sessionId: string }>()
-  const { setBackground } = useAppState()
-  const { user } = useAuthentication()
+  const { openSession, setActiveIframe } = useIframeCache()
 
   useEffect(() => {
-    setBackground({
-      sessionId: params.sessionId,
-      workspaceId: params.workspaceId
-    })
-  }, [user, params.sessionId, params.workspaceId, setBackground])
+    if (params.sessionId && params.workspaceId) {
+      openSession(params.sessionId, params.workspaceId)
+      setActiveIframe(params.sessionId)
+    }
+  }, [params.sessionId, params.workspaceId, openSession, setActiveIframe])
 
+  // The iframe is rendered by IframeCacheRenderer in the layout
+  // This page just needs to set the active iframe
   return null
 }

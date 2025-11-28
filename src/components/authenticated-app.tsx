@@ -9,6 +9,7 @@ import { Header } from '@/components/header'
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar, navItems } from '~/components/left-sidebar'
@@ -20,7 +21,8 @@ interface MainLayoutProps {
 }
 
 export function AuthenticatedApp({ children }: MainLayoutProps) {
-  const { background, showRightSidebar } = useAppState()
+  const { showRightSidebar } = useAppState()
+  const { background } = useIframeCache()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -41,9 +43,10 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
     localStorage.setItem('leftSidebarOpen', JSON.stringify(leftSidebarOpen))
   }, [leftSidebarOpen])
 
-  const isSessionPage = useMemo(() => {
+  const isIFramePage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
+    const webappPageRegex = /^\/webapps\/[^/]+$/
+    return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
   }, [pathname])
 
   const handleHoverStart = () => {
@@ -98,7 +101,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
             <Header />
           </div>
 
-          {background?.sessionId && (
+          {/* {background?.sessionId && (
             <Link
               href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
               passHref
@@ -108,10 +111,10 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                 id="iframe-overlay "
               />
             </Link>
-          )}
+          )} */}
 
           {/* Session page layout - full screen with sidebar overlay */}
-          {background?.sessionId && isSessionPage ? (
+          {isIFramePage ? (
             <>
               {/* Content takes full screen */}
               <div className="fixed inset-0 top-11 z-20">{children}</div>

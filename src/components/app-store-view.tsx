@@ -1,24 +1,34 @@
 'use client'
 
-import { CirclePlus } from 'lucide-react'
+import { CirclePlus, Globe, Settings } from 'lucide-react'
 import { useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { AppCard } from '~/components/app-card'
 import { Button } from '~/components/button'
 import { AppCreateDialog } from '~/components/forms/app-create-dialog'
+import { WebAppCreateDialog } from '~/components/forms/webapp-create-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { WebAppCard } from '~/components/webapp-card'
 
 export function AppStoreView() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [showWebAppDialog, setShowWebAppDialog] = useState(false)
+  const [activeTab, setActiveTab] = useState('my-apps')
   const { apps, refreshApps } = useAppState()
+  const { externalWebApps } = useIframeCache()
 
   return (
     <>
       <div className="w-full">
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
-            <Tabs defaultValue="my-apps" className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
               <div className="mb-8 flex items-center justify-between">
                 <TabsList className="bg-background">
                   <TabsTrigger
@@ -26,6 +36,18 @@ export function AppStoreView() {
                     className="data-[state=active]:text-primary-foreground"
                   >
                     My Apps
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="webapps"
+                    className="data-[state=active]:text-primary-foreground"
+                  >
+                    <Globe className="mr-1 h-3 w-3" />
+                    Web Apps
+                    {externalWebApps.length > 0 && (
+                      <span className="ml-1 rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px]">
+                        {externalWebApps.length}
+                      </span>
+                    )}
                   </TabsTrigger>
                   <TabsTrigger
                     value="apps"
@@ -57,10 +79,17 @@ export function AppStoreView() {
                   </TabsTrigger>
                 </TabsList>
 
-                <Button onClick={() => setShowCreateDialog(true)}>
-                  <CirclePlus className="mr-2 h-4 w-4" />
-                  Add New App
-                </Button>
+                {activeTab === 'webapps' ? (
+                  <Button onClick={() => setShowWebAppDialog(true)}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Manage Web Apps
+                  </Button>
+                ) : (
+                  <Button onClick={() => setShowCreateDialog(true)}>
+                    <CirclePlus className="mr-2 h-4 w-4" />
+                    Add New App
+                  </Button>
+                )}
               </div>
 
               <TabsContent value="my-apps" className="mt-0">
@@ -69,6 +98,34 @@ export function AppStoreView() {
                     <AppCard key={app.id} app={app} onUpdate={refreshApps} />
                   ))}
                 </div>
+              </TabsContent>
+
+              <TabsContent value="webapps" className="mt-0">
+                {externalWebApps.length > 0 ? (
+                  <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
+                    {externalWebApps.map((webapp) => (
+                      <WebAppCard key={webapp.id} webapp={webapp} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-8 text-center">
+                    <Globe className="mb-4 h-12 w-12 text-muted" />
+                    <p className="text-lg text-muted">
+                      No web apps configured.
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Add external web applications to access them from here.
+                    </p>
+                    <Button
+                      onClick={() => setShowWebAppDialog(true)}
+                      variant="outline"
+                      className="mt-4"
+                    >
+                      <CirclePlus className="mr-2 h-4 w-4" />
+                      Add your first web app
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="apps" className="mt-0">
@@ -104,6 +161,11 @@ export function AppStoreView() {
           onSuccess={refreshApps}
         />
       )}
+
+      <WebAppCreateDialog
+        open={showWebAppDialog}
+        onOpenChange={setShowWebAppDialog}
+      />
     </>
   )
 }

@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import BackgroundIframe from '~/components/background-iframe'
-
 const AuthenticatedApp = React.lazy(() =>
   import('@/components/authenticated-app').then((mod) => ({
     default: mod.AuthenticatedApp
@@ -23,12 +21,5 @@ export default function Layout({
 }>) {
   const { user } = useAuthentication()
 
-  return user ? (
-    <AuthenticatedApp>
-      {children}
-      <BackgroundIframe />
-    </AuthenticatedApp>
-  ) : (
-    <Login />
-  )
+  return user ? <AuthenticatedApp>{children}</AuthenticatedApp> : <Login />
 }

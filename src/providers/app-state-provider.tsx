@@ -29,21 +29,6 @@ type AppStateContextType = {
   toggleRightSidebar: () => void
   showWorkspacesTable: boolean
   toggleWorkspaceView: () => void
-  background:
-    | {
-        sessionId?: string
-        workspaceId: string
-      }
-    | undefined
-  setBackground: Dispatch<
-    SetStateAction<
-      | {
-          sessionId?: string
-          workspaceId: string
-        }
-      | undefined
-    >
-  >
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
   users: User[] | undefined
@@ -72,8 +57,6 @@ const AppStateContext = createContext<AppStateContextType>({
   toggleRightSidebar: () => {},
   showWorkspacesTable: true,
   toggleWorkspaceView: () => {},
-  background: undefined,
-  setBackground: () => {},
   workspaces: undefined,
   workbenches: undefined,
   users: undefined,
@@ -113,10 +96,6 @@ export const AppStateProvider = ({
   })
 
   const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
-  const [background, setBackground] = useState<{
-    sessionId?: string
-    workspaceId: string
-  }>()
   const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>(
     undefined
   )
@@ -379,7 +358,6 @@ export const AppStateProvider = ({
     setWorkspaces(undefined)
     setWorkbenches(undefined)
     setUsers(undefined)
-    setBackground(undefined)
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
@@ -467,8 +445,6 @@ export const AppStateProvider = ({
       toggleRightSidebar,
       showWorkspacesTable,
       toggleWorkspaceView,
-      background,
-      setBackground,
       workspaces,
       workbenches,
       users,
@@ -493,8 +469,6 @@ export const AppStateProvider = ({
       toggleRightSidebar,
       showWorkspacesTable,
       toggleWorkspaceView,
-      background,
-      setBackground,
       workspaces,
       workbenches,
       users,
