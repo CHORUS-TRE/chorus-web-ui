@@ -34,3 +34,11 @@ export const WorkspaceFileEditFormSchema = WorkspaceFileCreateSchema
 export type WorkspaceFile = z.infer<typeof WorkspaceFileSchema>
 export type WorkspaceFileCreateType = z.infer<typeof WorkspaceFileCreateSchema>
 export type WorkspaceFileUpdateType = z.infer<typeof WorkspaceFileUpdateSchema>
+
+export const WorkspaceFilePartSchema = z.object({
+  partNumber: z.string().min(1, 'Part number is required'),
+  etag: z.string().min(1, 'ETag is required'),
+  data: z.string().optional()
+})
+
+export type WorkspaceFilePart = z.infer<typeof WorkspaceFilePartSchema>
