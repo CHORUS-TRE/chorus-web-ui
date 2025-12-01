@@ -258,11 +258,6 @@ function ServicesSection({ pathname }: NavSectionProps) {
         >
           <Globe className="h-4 w-4" />
           Services
-          {externalWebApps.length > 0 && (
-            <span className="text-xs text-muted-foreground/70">
-              ({externalWebApps.length})
-            </span>
-          )}
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
