@@ -233,7 +233,7 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
             disabled={false}
           >
             <Plus className="mr-2 h-4 w-4" />
-            {background?.sessionId ? 'Start App' : 'Start App...'}
+            {background?.sessionId ? 'Start' : 'Start...'}
           </Button>
         </CardFooter>
       </Card>
