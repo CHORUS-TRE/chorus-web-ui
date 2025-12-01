@@ -205,7 +205,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && userWorkspaces && userWorkspaces.length > 0 && (
-        <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-muted/30 pl-2">
+        <div className="ml-4 mt-0.5 flex flex-col gap-0 border-l border-muted/30 pl-1.5">
           {userWorkspaces.map((workspace) => {
             // Only active on exact workspace page, not on sub-pages (sessions, etc.)
             const isActive = pathname === `/workspaces/${workspace.id}`
@@ -216,7 +216,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                 href={`/workspaces/${workspace.id}`}
                 variant="underline"
                 className={cn(
-                  'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                  'flex items-center gap-1.5 rounded px-1.5 py-1 text-xs transition-colors',
                   isActive
                     ? 'bg-accent/20 text-accent'
                     : 'text-muted-foreground hover:bg-accent/10 hover:text-accent'
@@ -244,9 +244,25 @@ function SessionsSection({ pathname }: NavSectionProps) {
     return true
   })
 
-  const { workbenches, workspaces } = useAppState()
+  const { workbenches, workspaces, apps, appInstances } = useAppState()
   const { user } = useAuthentication()
   const { cachedIframes, activeIframeId, closeIframe } = useIframeCache()
+
+  // Get display name for a session (app names if running, otherwise session name)
+  const getSessionDisplayName = (sessionId: string, sessionName?: string) => {
+    const sessionAppInstances = appInstances?.filter(
+      (instance) => instance.workbenchId === sessionId
+    )
+    if (sessionAppInstances && sessionAppInstances.length > 0) {
+      const appNames = sessionAppInstances
+        .map((instance) => apps?.find((a) => a.id === instance.appId)?.name)
+        .filter(Boolean)
+      if (appNames.length > 0) {
+        return appNames.join(', ')
+      }
+    }
+    return sessionName || `Session ${sessionId?.slice(0, 8)}`
+  }
 
   // Persist expanded state
   React.useEffect(() => {
@@ -307,7 +323,7 @@ function SessionsSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && userSessions && userSessions.length > 0 && (
-        <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-muted/30 pl-2">
+        <div className="ml-4 mt-0.5 flex flex-col gap-0 border-l border-muted/30 pl-1.5">
           {userSessions.map((session) => {
             const sessionPath = `/workspaces/${session.workspaceId}/sessions/${session.id}`
             const isActive = pathname === sessionPath
@@ -321,7 +337,7 @@ function SessionsSection({ pathname }: NavSectionProps) {
               <div
                 key={session.id}
                 className={cn(
-                  'group flex items-start gap-2 rounded-md pr-1 transition-colors',
+                  'group flex items-start gap-1 rounded pr-0.5 transition-colors',
                   isActive ? 'bg-accent/20' : 'hover:bg-accent/10'
                 )}
               >
@@ -329,16 +345,16 @@ function SessionsSection({ pathname }: NavSectionProps) {
                   href={sessionPath}
                   variant="underline"
                   className={cn(
-                    'flex flex-1 items-start gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                    'flex flex-1 items-start gap-1.5 rounded px-1.5 py-1 text-xs transition-colors',
                     isActive
                       ? 'text-accent'
                       : 'text-muted-foreground hover:text-accent'
                   )}
                 >
                   <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5">
                       <span className="truncate">
-                        {session.name || `Session ${session.id?.slice(0, 8)}`}
+                        {getSessionDisplayName(session.id!, session.name)}
                       </span>
                       {isLoaded && (
                         <StatusDot
@@ -348,7 +364,7 @@ function SessionsSection({ pathname }: NavSectionProps) {
                       )}
                     </span>
                     {workspace && (
-                      <span className="truncate text-xs text-muted-foreground/60">
+                      <span className="truncate text-[10px] text-muted-foreground/60">
                         {workspace.name}
                       </span>
                     )}
@@ -358,7 +374,7 @@ function SessionsSection({ pathname }: NavSectionProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="mt-1.5 h-5 w-5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                    className="mt-0.5 h-4 w-4 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
@@ -368,7 +384,7 @@ function SessionsSection({ pathname }: NavSectionProps) {
                     }}
                     title="Close window"
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+                    <X className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
                   </Button>
                 )}
               </div>
@@ -377,170 +393,6 @@ function SessionsSection({ pathname }: NavSectionProps) {
         </div>
       )}
     </div>
-  )
-}
-
-/**
- * Active Session Menu - shown at bottom when on a session page
- */
-function ActiveSessionMenu({ pathname }: NavSectionProps) {
-  const router = useRouter()
-  const [updateOpen, setUpdateOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
-
-  const { workbenches, apps, appInstances, refreshWorkbenches } = useAppState()
-  const { cachedIframes } = useIframeCache()
-
-  // Check if we're on a session page and get the session
-  const sessionMatch = pathname.match(
-    /\/workspaces\/([^/]+)\/sessions\/([^/]+)/
-  )
-  const workspaceId = sessionMatch?.[1]
-  const sessionId = sessionMatch?.[2]
-
-  const activeSession = workbenches?.find((wb) => wb.id === sessionId)
-  const isLoaded = sessionId ? cachedIframes.has(sessionId) : false
-
-  // Get app instances for this session
-  const sessionAppInstances =
-    appInstances?.filter((instance) => instance.workbenchId === sessionId) ?? []
-
-  // Toggle fullscreen for active iframe
-  const toggleFullscreen = () => {
-    const iframe = document.getElementById('workspace-iframe')
-    if (iframe) {
-      iframe.requestFullscreen()
-    }
-  }
-
-  // Don't render if not on a session page
-  if (!activeSession) return null
-
-  return (
-    <>
-      {/* Separator */}
-      <div className="my-2 border-t border-muted/30" />
-
-      {/* Session name */}
-      <div className="px-3 py-2">
-        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-          <LaptopMinimal className="h-4 w-4" />
-          <span className="truncate">
-            {activeSession.name || `Session ${sessionId?.slice(0, 8)}`}
-          </span>
-        </div>
-      </div>
-
-      {/* Running app instances */}
-      {sessionAppInstances.length > 0 && (
-        <div className="flex flex-col gap-0.5 px-3">
-          {sessionAppInstances.map((instance) => {
-            const app = apps?.find((a) => a.id === instance.appId)
-            return (
-              <div
-                key={instance.id}
-                className="flex items-center gap-2 rounded px-3 py-1 text-xs text-muted-foreground"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                <span className="truncate">{app?.name || 'Unknown App'}</span>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Action buttons */}
-      <div className="flex flex-col gap-0.5 px-3 py-1">
-        <button
-          onClick={() =>
-            router.push(
-              `/app-store?workspaceId=${workspaceId}&sessionId=${sessionId}`
-            )
-          }
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Start New App</span>
-        </button>
-
-        <button
-          onClick={() =>
-            router.push(
-              `/workspaces/${workspaceId}/sessions/${sessionId}/members`
-            )
-          }
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-        >
-          <UserPlus className="h-4 w-4" />
-          <span>Add Member</span>
-        </button>
-
-        <button
-          onClick={() => setUpdateOpen(true)}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-        >
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
-        </button>
-
-        {isLoaded && (
-          <button
-            onClick={toggleFullscreen}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-          >
-            <Maximize className="h-4 w-4" />
-            <span>Toggle Fullscreen</span>
-          </button>
-        )}
-
-        <button
-          onClick={() => router.push(pathname)}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-        >
-          <Info className="h-4 w-4" />
-          <span>Session Info</span>
-        </button>
-
-        <button
-          onClick={() => setDeleteOpen(true)}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
-        >
-          <Trash2 className="h-4 w-4" />
-          <span>Delete Session</span>
-        </button>
-      </div>
-
-      {/* Update dialog */}
-      {updateOpen && activeSession && (
-        <WorkbenchUpdateForm
-          workbench={activeSession}
-          state={[updateOpen, setUpdateOpen]}
-          onSuccess={() => {
-            refreshWorkbenches()
-            toast({
-              title: 'Success!',
-              description: 'Session updated'
-            })
-          }}
-        />
-      )}
-
-      {/* Delete dialog */}
-      {deleteOpen && activeSession && (
-        <WorkbenchDeleteForm
-          id={activeSession.id}
-          state={[deleteOpen, setDeleteOpen]}
-          onSuccess={() => {
-            refreshWorkbenches()
-            router.push('/sessions')
-            toast({
-              title: 'Success!',
-              description: `Session ${activeSession.name} deleted`
-            })
-          }}
-        />
-      )}
-    </>
   )
 }
 
@@ -602,7 +454,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && (
-        <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-muted/30 pl-2">
+        <div className="ml-4 mt-0.5 flex flex-col gap-0 border-l border-muted/30 pl-1.5">
           {externalWebApps.map((webapp) => {
             const isActive = pathname === `/webapps/${webapp.id}`
             const isCurrentlyViewing = activeIframeId === webapp.id
@@ -612,7 +464,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
               <div
                 key={webapp.id}
                 className={cn(
-                  'group flex items-center gap-2 rounded-md pr-1 transition-colors',
+                  'group flex items-center gap-1 rounded pr-0.5 transition-colors',
                   isActive ? 'bg-accent/20' : 'hover:bg-accent/10'
                 )}
               >
@@ -620,7 +472,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
                   href={`/webapps/${webapp.id}`}
                   variant="underline"
                   className={cn(
-                    'flex flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                    'flex flex-1 items-center gap-1.5 rounded px-1.5 py-1 text-xs transition-colors',
                     isActive
                       ? 'text-accent'
                       : 'text-muted-foreground hover:text-accent'
@@ -638,7 +490,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                    className="h-4 w-4 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
@@ -646,7 +498,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
                     }}
                     title="Close service"
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+                    <X className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
                   </Button>
                 )}
               </div>
@@ -809,9 +661,6 @@ function SidebarContent({
 
         {/* Help */}
         <HelpButton />
-
-        {/* Active Session Menu - shown when on session page */}
-        <ActiveSessionMenu pathname={pathname} />
       </nav>
     </>
   )
