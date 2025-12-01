@@ -15,8 +15,7 @@ import {
   Folders,
   LaptopMinimal,
   Package,
-  ShieldCheck,
-  Users
+  ShieldCheck
 } from 'lucide-react'
 import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
@@ -231,7 +230,9 @@ export default function CHORUSDashboard() {
                               )}
                             </div>
                             <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold">{workspace.name}</h4>
+                              <h4 className="font-semibold">
+                                {workspace.name}
+                              </h4>
                               <p className="mt-1 text-xs text-muted-foreground">
                                 Created{' '}
                                 {formatDistanceToNow(
@@ -289,7 +290,8 @@ export default function CHORUSDashboard() {
                                   </div>
                                   <Badge
                                     className={`pointer-events-none text-xs ${
-                                      workbench.status === WorkbenchStatus.ACTIVE
+                                      workbench.status ===
+                                      WorkbenchStatus.ACTIVE
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-slate-100 text-slate-800'
                                     }`}
