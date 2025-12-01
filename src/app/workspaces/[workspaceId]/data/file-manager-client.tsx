@@ -56,12 +56,11 @@ export default function FileManagerClient({
     folderId: string | null
   ): { id: string; name: string }[] => {
     if (!folderId || folderId === 'root') {
-      return [{ id: 'root', name: 'workspace-archive' }]
+      return [{ id: 'root', name: '/' }]
     }
 
     const item = state.items[folderId]
-    if (!item) return [{ id: 'root', name: 'workspace-archive' }]
-
+    if (!item) return [{ id: 'root', name: '/' }]
     const parentPath = buildPath(item.parentId)
     return [...parentPath, { id: item.id, name: item.name }]
   }
@@ -156,7 +155,7 @@ export default function FileManagerClient({
         <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
           <div className="border-b border-muted/40 p-4">
             <div className="text-2xl font-medium text-sidebar-foreground">
-              Archive
+              Data
             </div>
           </div>
           <div className="flex-1 overflow-auto">
