@@ -172,7 +172,7 @@ export default function LoginForm() {
                       <Label htmlFor="username">Username</Label>
                       <Input
                         id="username"
-                        type="input"
+                        type="text"
                         name="Username"
                         required
                         disabled={pending}
