@@ -1,7 +1,6 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
-  Bell,
   FlaskConical,
   Globe,
   Info,
@@ -170,11 +169,11 @@ export function Header() {
                 <HoverCard key={session.id} openDelay={200} closeDelay={100}>
                   <HoverCardTrigger asChild>
                     <button
-                          onClick={() => {
+                      onClick={() => {
                         if (sessionWorkbench) {
-                              router.push(
+                          router.push(
                             `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
-                              )
+                          )
                         }
                       }}
                       className={cn(
@@ -183,7 +182,7 @@ export function Header() {
                           ? 'border-accent/50 bg-accent/20 text-accent'
                           : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
                       )}
-                        >
+                    >
                       <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
                       <span className="max-w-32 truncate">
                         {getSessionDisplayName(session.id)}
@@ -258,11 +257,11 @@ export function Header() {
 
                         {/* Actions */}
                         <button
-                              onClick={() =>
+                          onClick={() =>
                             router.push(
                               `/app-store?workspaceId=${sessionWorkbench.workspaceId}&sessionId=${session.id}`
                             )
-                              }
+                          }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
                         >
                           <Plus className="h-3.5 w-3.5" />
@@ -270,11 +269,11 @@ export function Header() {
                         </button>
 
                         <button
-                              onClick={() =>
-                                router.push(
+                          onClick={() =>
+                            router.push(
                               `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}/members`
-                                )
-                              }
+                            )
+                          }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
                         >
                           <UserPlus className="h-3.5 w-3.5" />
@@ -302,7 +301,7 @@ export function Header() {
                             router.push(
                               `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
                             )
-                                    }
+                          }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
                         >
                           <Info className="h-3.5 w-3.5" />
@@ -318,7 +317,7 @@ export function Header() {
                           <Trash2 className="h-3.5 w-3.5" />
                           <span>Delete Session</span>
                         </button>
-                                </div>
+                      </div>
                     </HoverCardContent>
                   )}
                 </HoverCard>
@@ -435,10 +434,7 @@ export function Header() {
         {deleteSessionId && (
           <WorkbenchDeleteForm
             id={deleteSessionId}
-            state={[
-              !!deleteSessionId,
-              () => setDeleteSessionId(null)
-            ]}
+            state={[!!deleteSessionId, () => setDeleteSessionId(null)]}
             onSuccess={() => {
               const session = workbenches?.find(
                 (wb) => wb.id === deleteSessionId
@@ -484,8 +480,8 @@ export function Header() {
                   description: 'Session updated'
                 })
               }}
-          />
-        )}
+            />
+          )}
       </nav>
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
