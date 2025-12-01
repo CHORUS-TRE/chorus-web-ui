@@ -173,7 +173,7 @@ export default function LoginForm() {
                       <Input
                         id="username"
                         type="input"
-                        name="Username"
+                        name="username"
                         required
                         disabled={pending}
                         className="border border-muted/40 bg-background"

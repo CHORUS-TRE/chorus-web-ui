@@ -35,54 +35,25 @@ export function AppStoreView() {
                     value="my-apps"
                     className="data-[state=active]:text-primary-foreground"
                   >
-                    My Apps
+                    Apps
                   </TabsTrigger>
                   <TabsTrigger
                     value="webapps"
                     className="data-[state=active]:text-primary-foreground"
                   >
-                    <Globe className="mr-1 h-3 w-3" />
-                    Web Apps
+                    Services
                     {externalWebApps.length > 0 && (
-                      <span className="ml-1 rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px]">
-                        {externalWebApps.length}
+                      <span className="ml-1 rounded-full text-[10px]">
+                        ({externalWebApps.length})
                       </span>
                     )}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="apps"
-                    className="data-[state=active]:text-primary-foreground"
-                    disabled
-                  >
-                    Apps
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="service"
-                    className="data-[state=active]:text-primary-foreground"
-                    disabled
-                  >
-                    Services
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="scripts"
-                    className="data-[state=active]:text-primary-foreground"
-                    disabled
-                  >
-                    Scripts
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="workflows"
-                    className="data-[state=active]:text-primary-foreground"
-                    disabled
-                  >
-                    Workflows
                   </TabsTrigger>
                 </TabsList>
 
                 {activeTab === 'webapps' ? (
                   <Button onClick={() => setShowWebAppDialog(true)}>
                     <Settings className="mr-2 h-4 w-4" />
-                    Manage Web Apps
+                    Manage Services
                   </Button>
                 ) : (
                   <Button onClick={() => setShowCreateDialog(true)}>
@@ -111,7 +82,7 @@ export function AppStoreView() {
                   <div className="flex flex-col items-center justify-center p-8 text-center">
                     <Globe className="mb-4 h-12 w-12 text-muted" />
                     <p className="text-lg text-muted">
-                      No web apps configured.
+                      No services configured.
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">
                       Add external web applications to access them from here.

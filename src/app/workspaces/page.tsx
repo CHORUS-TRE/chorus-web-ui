@@ -3,7 +3,6 @@
 import { CirclePlus, LayoutGrid, Package, Rows3 } from 'lucide-react'
 import { useState } from 'react'
 
-import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
@@ -12,7 +11,6 @@ import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Label } from '~/components/ui/label'
-import { Switch } from '~/components/ui/switch'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 
@@ -21,48 +19,40 @@ export default function WorkspacesPage() {
     showWorkspacesTable,
     toggleWorkspaceView,
     workspaces,
-    workbenches,
     refreshWorkspaces
   } = useAppState()
   const { user } = useAuthentication()
   const { canCreateWorkspace } = useAuthorizationViewModel()
 
   // Filters
-  const [showMyWorkspaces, setShowMyWorkspaces] = useState(true)
+  const [showMyWorkspaces, setShowMyWorkspaces] = useState(false)
   const [showCenter, setShowCenter] = useState(false)
   const [showProject, setShowProject] = useState(true)
 
   const [createOpen, setCreateOpen] = useState(false)
 
-  const filteredWorkspaces = workspaces
-    ?.filter((workspace) => {
-      // Filter by View (My Workspaces)
-      if (showMyWorkspaces) {
-        const isMine = user?.rolesWithContext?.some(
-          (role) => role.context.workspace === workspace.id
-        )
-        if (!isMine) return false
-      } else {
-        if (workspace.isMain) return false
-      }
+  const filteredWorkspaces = workspaces?.filter((workspace) => {
+    // Filter by View (My Workspaces)
+    if (showMyWorkspaces) {
+      const isMine = user?.rolesWithContext?.some(
+        (role) => role.context.workspace === workspace.id
+      )
+      if (!isMine) return false
+    }
 
-      // If both unchecked -> Show all
-      const centerChecked = showCenter
-      const projectChecked = showProject
+    if (!showMyWorkspaces && !showCenter && !showProject) {
+      return false
+    }
 
-      if (centerChecked || projectChecked) {
-        const matchesCenter = centerChecked && workspace.tag === 'center'
-        const matchesProject = projectChecked && workspace.tag === 'project'
+    if (showCenter || showProject) {
+      const matchesCenter = showCenter && workspace.tag === 'center'
+      const matchesProject = showProject && workspace.tag === 'project'
 
-        if (!matchesCenter && !matchesProject) return false
-      }
+      if (!matchesCenter && !matchesProject) return false
+    }
 
-      return true
-    })
-    .sort((a, b) => {
-      // Sort by creation date, newest first
-      return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
-    })
+    return true
+  })
 
   return (
     <>
@@ -82,15 +72,17 @@ export default function WorkspacesPage() {
       </div>
 
       <div className="w-full space-y-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Switch
+        <div className="flex flex-col gap-4 text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox
                 id="my-workspaces"
                 checked={showMyWorkspaces}
-                onCheckedChange={setShowMyWorkspaces}
+                onCheckedChange={(checked) =>
+                  setShowMyWorkspaces(checked as boolean)
+                }
               />
-              <Label htmlFor="my-workspaces">My workspaces</Label>
+              <Label htmlFor="my-workspaces">Show Only My Workspaces</Label>
             </div>
 
             <div className="flex items-center gap-4">
@@ -145,6 +137,14 @@ export default function WorkspacesPage() {
           <span className="animate-pulse text-muted">
             Loading workspaces...
           </span>
+        ) : filteredWorkspaces?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <Package className="mb-4 h-12 w-12 opacity-50" />
+            <p className="text-lg font-medium">No workspace found</p>
+            <p className="text-sm">
+              Select at least one filter (Center or Project) to see workspaces
+            </p>
+          </div>
         ) : (
           <>
             {showWorkspacesTable ? (
@@ -156,7 +156,6 @@ export default function WorkspacesPage() {
             ) : (
               <WorkspacesGrid
                 workspaces={filteredWorkspaces || []}
-                workbenches={workbenches}
                 user={user}
                 onUpdate={refreshWorkspaces}
               />
@@ -170,6 +169,7 @@ export default function WorkspacesPage() {
           state={[createOpen, setCreateOpen]}
           userId={user?.id}
           onSuccess={async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000))
             await refreshWorkspaces()
             toast({
               title: 'Success!',

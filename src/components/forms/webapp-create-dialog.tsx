@@ -179,7 +179,7 @@ export function WebAppCreateDialog({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Manage Web Apps
+              Manage Services
             </DialogTitle>
             <DialogDescription>
               Add external web applications that can be loaded in iframes.
@@ -294,15 +294,15 @@ export function WebAppCreateDialog({
               </Form>
             </div>
 
-            {/* List of existing web apps */}
+            {/* List of existing services */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">
-                Existing Web Apps ({externalWebApps.length})
+                Existing Services ({externalWebApps.length})
               </h3>
 
               {externalWebApps.length === 0 ? (
                 <div className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-                  No web apps configured yet
+                  No services configured yet
                 </div>
               ) : (
                 <ScrollArea className="h-[300px] pr-4">
