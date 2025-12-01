@@ -37,7 +37,7 @@ TODO: Add these to the globals.css file
     --contrast-background: 0 0% 100%;
     --foreground: 228 93% 11%; /* dark international-klein-blue */
 
-    --card: 0 0% 98%;
+    --card: 0 0% 90%;
     --card-foreground: 228 93% 11%; /* dark international-klein-blue */
 
     --popover: 0 0% 100%;
@@ -79,7 +79,7 @@ TODO: Add these to the globals.css file
     --contrast-background: 0 0% 3%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 15%;
+    --card: 222 47% 5%;
     --card-foreground: 210 40% 98%;
 
     --popover: 222 47% 16%;
@@ -92,7 +92,7 @@ TODO: Add these to the globals.css file
     --secondary-foreground: 229 100% 54%;
 
     --muted: 215 20% 65%;
-    --muted-foreground: 215 20% 80%;
+    --muted-foreground: 215 20% 60%;
 
     --accent: 215 19% 45%; /* light regent-gray */
     --accent-foreground: 78, 100%, 54%; /* lime */
@@ -134,10 +134,10 @@ TODO: Add these to the globals.css file
     @apply border-b border-dotted border-muted pb-2 text-4xl font-medium leading-10;
   }
 
-  /* h3 {
-    @apply text-2xl font-medium tracking-tight;
+  h3 {
+    @apply text-xl font-medium tracking-tight text-muted-foreground;
   }
-
+  /*
   h4 {
     @apply text-base font-medium tracking-tight;
   }
@@ -166,7 +166,7 @@ TODO: Add these to the globals.css file
 
   /* demo effects */
   .demo-effect {
-    @apply opacity-40 grayscale transition-all duration-300 hover:opacity-100 hover:blur-[0.8px] hover:grayscale-[0.5];
+    @apply opacity-40 grayscale transition-all duration-300 hover:grayscale;
   }
 
   /* Glassmorphism Effects */
@@ -197,7 +197,7 @@ TODO: Add these to the globals.css file
   }
 
   .nav-link-base {
-    @apply inline-flex items-center bg-transparent font-semibold;
+    @apply inline-flex bg-transparent font-semibold;
   }
 
   .nav-link-hover {

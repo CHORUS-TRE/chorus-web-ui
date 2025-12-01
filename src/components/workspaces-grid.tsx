@@ -1,18 +1,10 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
-import { HomeIcon, Package } from 'lucide-react'
+import { HomeIcon, MoreVertical, Package } from 'lucide-react'
 import Image from 'next/image'
-import { useTheme } from 'next-themes'
 import { useState } from 'react'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/card'
+import { Card, CardDescription, CardTitle } from '@/components/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
@@ -21,50 +13,20 @@ import { Link } from '@/components/link'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { User, Workbench, Workspace } from '@/domain/model'
+import { User, Workspace } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
+import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
-import { getGradient } from '~/domain/utils/gradient'
 
-import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { toast } from './hooks/use-toast'
-import { ScrollArea } from './ui/scroll-area'
-import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
 interface WorkspacesGridProps {
   workspaces: Workspace[] | undefined
-  workbenches: Workbench[] | undefined
   user: User | undefined
   onUpdate?: () => void
-}
-
-const SwitchLink = ({
-  user,
-  workspace,
-  children,
-  className
-}: {
-  user: User
-  workspace: Workspace
-  children: React.ReactNode
-  className?: string
-}) => {
-  return workspace.id ===
-    user.rolesWithContext?.find(
-      (role) => role.context.workspace === workspace.id
-    )?.context.workspace ? (
-    <Link
-      href={`/workspaces/${workspace.id}`}
-      variant="flex"
-      title={workspace?.name}
-    >
-      {children}
-    </Link>
-  ) : (
-    <span className={className}>{children}</span>
-  )
 }
 
 export default function WorkspacesGrid({
@@ -75,22 +37,12 @@ export default function WorkspacesGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { refreshWorkspaces, workbenches, customTheme } = useAppState()
-  const { resolvedTheme } = useTheme()
-
-  const getCardGradient = (name: string) => {
-    const currentTheme =
-      resolvedTheme === 'dark' ? customTheme.dark : customTheme.light
-    const primary = currentTheme.primary || 'hsl(var(--primary))'
-    const secondary = currentTheme.secondary || 'hsl(var(--secondary))'
-
-    return getGradient(name, primary, secondary)
-  }
+  const { refreshWorkspaces } = useAppState()
 
   return (
     <div
-      className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]"
-      id="grid"
+      className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,280px))]"
+      id="workspaces-grid"
     >
       {user &&
         workspaces?.map((workspace) => (
@@ -98,101 +50,98 @@ export default function WorkspacesGrid({
             key={`workspace-grid-${workspace.id}`}
             className="group relative"
           >
-            <div className="absolute right-0 top-0 z-10">
-              {user?.rolesWithContext?.some(
-                (role) => role.context.workspace === workspace.id
-              ) && (
-                <DropdownMenu modal={false}>
-                  <DropdownMenuContent align="end" className="glass-elevated">
-                    {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                    <DropdownMenuItem
-                      onClick={() => setActiveUpdateId(workspace.id)}
-                    >
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setActiveDeleteId(workspace.id)}
-                      className="text-red-500 focus:text-red-500"
-                    >
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
+            <Card className="group/card relative flex h-40 flex-col overflow-hidden border-none">
+              {/* Background image */}
+              <div className="absolute inset-0 bg-muted/20">
+                {workspace.image && (
+                  <Image
+                    src={workspace.image}
+                    alt={workspace.name}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
 
-            <Card className="flex h-full flex-col overflow-hidden">
+              {/* Glass overlay - fades out on hover to reveal image */}
+              <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm transition-opacity duration-300 group-hover/card:opacity-0" />
+
+              {/* Content layer */}
               <Link
                 href={`/workspaces/${workspace.id}`}
-                variant="flex"
-                title={workspace?.name}
+                variant="rounded"
+                className={`relative flex h-full w-full flex-col items-start justify-between p-4 ${workspace.image ? 'group-hover/card:opacity-0' : ''}`}
               >
-                <div className="relative h-32 w-full bg-muted/20">
-                  {workspace.image && (
-                    <Image
-                      src={workspace.image}
-                      alt={workspace.name}
-                      fill
-                      className="object-contain p-2"
-                    />
-                  )}
+                {/* Title - top left, can wrap */}
+                <div className="pr-10">
+                  <CardTitle className="flex items-start gap-2 text-foreground">
+                    {workspace.isMain ? (
+                      <HomeIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                    ) : (
+                      <Package className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                    )}
+                    <span className="text-lg font-semibold leading-tight">
+                      {workspace?.name}
+                    </span>
+                  </CardTitle>
                 </div>
-              </Link>
-              <CardHeader className="mb-0 h-24 w-full">
-                <CardTitle className="mb-1 flex items-center gap-3">
-                  {workspace.isMain && (
-                    <HomeIcon className="h-6 w-6 flex-shrink-0 text-muted" />
-                  )}
-                  {!workspace.isMain && (
-                    <Package className="h-6 w-6 flex-shrink-0 text-muted" />
-                  )}
-                  <Link
-                    href={`/workspaces/${workspace.id}`}
-                    variant="flex"
-                    title={workspace?.name}
-                    className="min-w-0 flex-1 truncate text-nowrap"
-                  >
-                    {workspace?.name}
-                  </Link>
+
+                {/* Spacer to push bottom content down */}
+                <div className="flex-1" />
+
+                {/* Bottom info - PI, date, badge */}
+                <CardDescription className="flex w-full items-end justify-between text-xs text-muted-foreground">
+                  <span className="block">
+                    <span className="block">PI: {workspace?.PI || '-'}</span>
+                    <span className="block">
+                      {workspace?.memberCount || 0}{' '}
+                      {workspace?.memberCount === 1 ? 'member' : 'members'} |{' '}
+                      {workspace?.workbenchCount || 0}{' '}
+                      {workspace?.workbenchCount === 1 ? 'session' : 'sessions'}
+                    </span>
+                    <span className="block">
+                      Created {formatDistanceToNow(workspace.createdAt)} ago
+                    </span>
+                  </span>
                   {workspace.tag && (
                     <Badge variant="secondary" className="ml-2 text-xs">
                       {workspace.tag}
                     </Badge>
                   )}
-                </CardTitle>
-                <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
-                  <span className="text-xs">PI: {workspace?.PI || '-'}</span>
-                  <span className="block text-xs">
-                    Created {formatDistanceToNow(workspace.createdAt)} ago{' '}
-                  </span>
                 </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="">
-                  <div className="mb-1 text-xs font-bold text-muted-foreground">
-                    {(() => {
-                      const count =
-                        workbenches?.filter(
-                          (w) => w.workspaceId === workspace.id
-                        ).length || 0
-                      return `${count} active session${count !== 1 ? 's' : ''}`
-                    })()}
-                  </div>
-                  <ScrollArea
-                    className="flex max-h-16 flex-col overflow-y-scroll"
-                    type="hover"
-                  >
-                    <WorkspaceWorkbenchList workspaceId={workspace.id} />
-                  </ScrollArea>
+              </Link>
+
+              {/* Dropdown menu - top right */}
+              {user?.rolesWithContext?.some(
+                (role) => role.context.workspace === workspace.id
+              ) && (
+                <div className="absolute right-2 top-2 z-10">
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="glass-elevated">
+                      <DropdownMenuItem
+                        onClick={() => setActiveUpdateId(workspace.id)}
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setActiveDeleteId(workspace.id)}
+                        className="text-red-500 focus:text-red-500"
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              </CardContent>
-              <div className="flex-grow" />
-              <CardFooter className="flex items-end justify-start">
-                <WorkbenchCreateForm
-                  workspaceId={workspace?.id || ''}
-                  workspaceName={workspace?.name}
-                />
-              </CardFooter>
+              )}
             </Card>
 
             {activeUpdateId === workspace.id && (

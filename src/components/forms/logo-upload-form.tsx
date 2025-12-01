@@ -79,7 +79,7 @@ const LogoUploadForm = () => {
         variant: 'default'
       })
       await refreshCustomLogos()
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error!',
         description: 'Could not save logos.',
@@ -97,7 +97,7 @@ const LogoUploadForm = () => {
         description: 'Logos have been reset to default.',
         variant: 'default'
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error!',
         description: 'Could not reset logos.',

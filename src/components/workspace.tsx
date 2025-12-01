@@ -1,14 +1,20 @@
 import { ResponsiveLine } from '@nivo/line'
-import { formatDistanceToNow } from 'date-fns'
 import {
   Activity,
+  AlertCircle,
   ArrowRight,
+  BarChart3,
+  Bell,
+  CheckCircle,
   CircleGauge,
   Database,
-  EllipsisVerticalIcon,
+  FileDown,
+  FileText,
   Folder,
   Footprints,
   LaptopMinimal,
+  MessageSquare,
+  Plus,
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -25,6 +31,8 @@ import {
 } from '@/components/card'
 import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { mockRecentActivity } from '@/data/data-source/chorus-api/mock-data/activity'
+import { mockNotifications } from '@/data/data-source/chorus-api/mock-data/notifications'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { formatFileSize } from '@/utils/format-file-size'
@@ -43,6 +51,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
+import { Progress } from './ui/progress'
 import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
@@ -89,99 +98,89 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
 
   const rootChildren = getChildren('root')
   const workspace = workspaces?.find((w) => w.id === workspaceId)
-  const owner =
-    user?.id === workspace?.userId
-      ? user
-      : users?.find((user) => user.id === workspace?.userId)
 
   return (
     <>
-      <div className="card-glass relative mb-4 flex w-full items-center justify-between gap-2 p-4">
-        <div className="workspace-info mr-8 w-full">
-          <div className="workspace-details mb-3 flex w-full items-center justify-between gap-2">
-            <div className="detail-item">
-              <h4 className="label text-xs text-muted-foreground">Owner</h4>
-              <p className="value text-sm font-semibold">
-                {owner?.firstName} {owner?.lastName}
-              </p>
-            </div>
-            <div className="detail-item">
-              <h4 className="label text-xs text-muted-foreground">Status</h4>
-              <p className="value text-sm font-semibold">
-                {workspace?.status || 'Active'}
-              </p>
-            </div>
-            <div className="detail-item">
-              <h4 className="label text-xs text-muted-foreground">
-                Creation date
-              </h4>
-              <p className="value text-sm font-semibold">
-                {formatDistanceToNow(workspace?.createdAt || new Date())} ago
-              </p>
-            </div>
-            <div className="detail-item">
-              <h4 className="label text-xs text-muted-foreground">Updated</h4>
-              <p className="value text-sm font-semibold">
-                {formatDistanceToNow(workspace?.updatedAt || new Date())} ago
-              </p>
-            </div>
-          </div>
-          {workspace?.description && workspace?.description.length > 0 && (
-            <p className="text-sm text-muted-foreground">
-              {workspace?.description}
-            </p>
-          )}
-        </div>
-        <div className="absolute right-2 top-2">
-          {workspace?.userId === user?.id && (
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  aria-haspopup="true"
-                  variant="ghost"
-                  className="text-muted ring-0 hover:bg-background/20 hover:text-accent"
-                >
-                  <EllipsisVerticalIcon className="h-4 w-4 text-accent" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-elevated">
-                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                <DropdownMenuItem onClick={() => setOpenEdit(true)}>
-                  Edit
-                </DropdownMenuItem>
-                {workspace?.id === user?.workspaceId && (
-                  <DropdownMenuItem
-                    onClick={() =>
-                      workspace?.id && setActiveDeleteId(workspace?.id)
-                    }
-                    className="text-red-500 focus:text-red-500"
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
-        <WorkspaceDeleteForm
-          id={workspace?.id}
-          state={[
-            activeDeleteId === workspace?.id,
-            () => setActiveDeleteId(null)
-          ]}
+      {openEdit && (
+        <WorkspaceUpdateForm
+          workspace={workspace}
+          state={[openEdit, setOpenEdit]}
           onSuccess={() => {
-            refreshWorkspaces()
-
             toast({
-              title: 'Success!',
-              description: `Workspace ${workspace?.name} deleted`
+              title: 'Workspace updated',
+              description: 'Workspace updated',
+              variant: 'default'
             })
+            refreshWorkspaces()
+            refreshUser()
           }}
         />
-      </div>
+      )}
 
-      <div className="my-1 grid w-full gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+      {/* Quick Stats */}
+      {/* <div className="mb-4 grid grid-cols-4 gap-4">
+        <Card className="bg-primary/40">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-primary-foreground/80">
+                  Project Progress
+                </p>
+                <p className="text-2xl font-bold text-primary-foreground">
+                  65%
+                </p>
+              </div>
+              <BarChart3 className="h-8 w-8 text-secondary" />
+            </div>
+            <Progress value={65} className="mt-2" />
+          </CardContent>
+        </Card>
+
+        <Card className="bg-primary/40">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-primary-foreground/80">
+                  Team Members
+                </p>
+                <p className="text-2xl font-bold text-primary-foreground">5</p>
+              </div>
+              <Users className="h-8 w-8 text-secondary" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-primary/40">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-primary-foreground/80">Datasets</p>
+                <p className="text-2xl font-bold text-primary-foreground">3</p>
+              </div>
+              <Database className="h-8 w-8 text-secondary" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-primary/40">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-primary-foreground/80">
+                  Current Phase
+                </p>
+                <p className="text-lg font-bold text-primary-foreground">
+                  Data Analysis
+                </p>
+              </div>
+              <FileText className="h-8 w-8 text-secondary" />
+            </div>
+          </CardContent>
+        </Card>
+      </div> */}
+
+      <div className="my-1 grid w-full gap-4 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
+        {/* Sessions Card */}
         <Card
           role="region"
           aria-labelledby="sessions-card-title"
@@ -260,22 +259,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
 
-        {openEdit && (
-          <WorkspaceUpdateForm
-            workspace={workspace}
-            state={[openEdit, setOpenEdit]}
-            onSuccess={() => {
-              toast({
-                title: 'Workspace updated',
-                description: 'Workspace updated',
-                variant: 'default'
-              })
-              refreshWorkspaces()
-              refreshUser()
-            }}
-          />
-        )}
-
+        {/* Data Card */}
         <Card className="flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
@@ -345,6 +329,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
 
+        {/* Members Card */}
         {workspace && user?.workspaceId !== workspace?.id && (
           <Card className="flex h-full flex-col">
             <CardHeader className="mb-0 w-full">
@@ -403,6 +388,119 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </Card>
         )}
 
+        {/* Quick Actions */}
+        <Card className="glass-surface demo-effect">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button className="w-full gap-2" variant="outline">
+              <Plus className="h-4 w-4" />
+              Request Dataset Access
+            </Button>
+            <Button className="w-full gap-2" variant="outline">
+              <Users className="h-4 w-4" />
+              Add Team Member
+            </Button>
+            <Button className="w-full gap-2" variant="outline">
+              <FileDown className="h-4 w-4" />
+              Export Results
+            </Button>
+            <Button className="w-full gap-2" variant="outline">
+              <MessageSquare className="h-4 w-4" />
+              Contact Support
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="demo-effect flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link href={'#'} variant="flex">
+                <Activity className="h-6 w-6" />
+                Recent Activity
+              </Link>
+            </CardTitle>
+            <CardDescription>
+              Latest actions in your project workspace
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {mockRecentActivity.map((activity, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 border-b pb-3 last:border-0"
+                >
+                  <div className="mt-2 h-2 w-2 rounded-full bg-primary"></div>
+                  <div className="flex-1">
+                    <p className="text-xs text-foreground">{activity.action}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {activity.user} • {activity.time}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/*  Notifications Card */}
+        <Card className="demo-effect flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <Link
+                href={`/workspaces/${workspaceId}/notifications`}
+                variant="flex"
+              >
+                <Bell className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                <span id="sessions-card-title" className="">
+                  <span className="sr-only">Notifications</span>
+                  Notifications
+                </span>
+              </Link>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 text-muted-foreground">
+              {mockNotifications.map((notif, index) => (
+                <div key={index} className="rounded-lg p-1">
+                  <div className="flex items-start gap-2">
+                    {notif.type === 'warning' && (
+                      <AlertCircle className="mt-0.5 h-4 w-4 text-orange-600" />
+                    )}
+                    {notif.type === 'success' && (
+                      <CheckCircle className="mt-0.5 h-4 w-4 text-green-600" />
+                    )}
+                    {notif.type === 'info' && (
+                      <Bell className="mt-0.5 h-4 w-4 text-blue-600" />
+                    )}
+                    <div className="flex-1">
+                      <p className="text-xs text-foreground">{notif.message}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {notif.time}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
+            <Button
+              variant="accent-filled"
+              onClick={() =>
+                router.push(`/workspaces/${workspaceId}/notifications`)
+              }
+            >
+              <ArrowRight className="h-4 w-4" />
+              View All
+            </Button>
+          </CardFooter>
+        </Card>
+
+        {/* Resources Card */}
         <Card className="demo-effect flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
@@ -448,30 +546,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
 
-        <Card className="demo-effect flex h-full flex-col">
-          <CardHeader className="mb-0 w-full">
-            <CardTitle className="mb-1 flex items-center gap-3">
-              <Link href={'#'} variant="flex">
-                <Activity className="h-6 w-6" />
-                Activities
-              </Link>
-            </CardTitle>
-            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
-              Events, analytics & monitoring.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LineChart className="aspect-[3/2]" />
-          </CardContent>
-          <div className="flex-grow" />
-          <CardFooter className="flex items-end justify-start">
-            <Button disabled variant="accent-filled">
-              <ArrowRight className="h-4 w-4" />
-              View Activities
-            </Button>
-          </CardFooter>
-        </Card>
-
+        {/* Footprint Card */}
         <Card className="demo-effect flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">

@@ -1,8 +1,6 @@
 'use client'
 
-import { owl } from '@lucide/lab'
-import { CircleX } from 'lucide-react'
-import { Icon } from 'lucide-react'
+import { CircleHelp, CircleX } from 'lucide-react'
 import { useNextStep } from 'nextstepjs'
 import { useCallback, useEffect } from 'react'
 
@@ -39,11 +37,13 @@ export default function RightSidebar() {
 
       <div className="flex h-full w-full flex-col justify-between">
         <div>
-          <h2 className="mb-8 flex items-center gap-2 text-xl">
-            <Icon iconNode={owl} />
-            Help
-          </h2>
-          <div className="flex w-full flex-col gap-4">
+          <div className="glass-surface sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/50 p-2">
+            <h1 className="ml-2 flex items-center gap-2 text-lg font-semibold">
+              <CircleHelp className="h-4 w-4" />
+              Help
+            </h1>
+          </div>
+          <div className="flex w-full flex-col gap-4 p-4">
             <Link
               href="https://docs.chorus-tre.ch/docs/category/getting-started"
               className="cursor"

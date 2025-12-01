@@ -75,7 +75,7 @@ export function WorkspaceCreateForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
-      shortName: '',
+      shortName: 'wks',
       description: '',
       tenantId: '1',
       userId: userId || '',
@@ -88,11 +88,12 @@ export function WorkspaceCreateForm({
     if (!open) {
       form.reset({
         name: '',
-        shortName: '',
+        shortName: 'wks',
         description: '',
         tenantId: '1',
         userId: userId || '',
-        isMain: false
+        isMain: false,
+        tag: 'project'
       })
     }
   }, [open, form, userId])
@@ -452,8 +453,8 @@ export function WorkspaceUpdateForm({
           // Update local cache immediately
           const cacheKey = `workspace_meta_${result.data.id}`
           const meta = {
-            image: imageBase64 || result.data.image,
-            tag: data.tag || result.data.tag
+            image: imageBase64 || workspace?.image,
+            tag: data.tag || workspace?.tag
           }
           localStorage.setItem(cacheKey, JSON.stringify(meta))
         }

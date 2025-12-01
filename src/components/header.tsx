@@ -1,21 +1,23 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
-  Bell,
-  CircleHelp,
   FlaskConical,
+  Globe,
+  Info,
+  LaptopMinimal,
   LogOut,
-  Search,
+  Maximize,
+  Plus,
   Settings,
-  User
+  Trash2,
+  User,
+  UserPlus,
+  X
 } from 'lucide-react'
-import { AppWindow } from 'lucide-react'
-import { Maximize, PackageOpen, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -35,21 +37,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from '@/components/ui/hover-card'
+import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { Input } from '~/components/ui/input'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 import { ThemeToggle } from './theme-toggle'
-import { NavigationMenu, NavigationMenuList } from './ui/navigation-menu'
-import { NavigationMenuItem } from './ui/navigation-menu'
-import { NavigationMenuTrigger } from './ui/navigation-menu'
-import { NavigationMenuContent } from './ui/navigation-menu'
 
 export function Header() {
   const router = useRouter()
@@ -58,24 +62,25 @@ export function Header() {
     workspaces,
     apps,
     appInstances,
-    background,
-    setBackground,
     refreshWorkbenches,
-    toggleRightSidebar,
     users,
     customLogos
   } = useAppState()
+  const {
+    background,
+    setActiveIframe,
+    cachedIframes,
+    activeIframeId,
+    closeIframe
+  } = useIframeCache()
   const { user, logout } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
-  const pathname = usePathname()
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
+  const [updateSessionId, setUpdateSessionId] = useState<string | null>(null)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
@@ -84,19 +89,37 @@ export function Header() {
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? customLogos.light : customLogos.dark
 
-  const workspacesWithWorkbenches = useMemo(
-    () =>
-      workspaces?.filter((workspace) =>
-        workbenches?.some((workbench) => workbench.workspaceId === workspace.id)
-      ),
-    [workspaces, workbenches]
-  )
+  // Get loaded sessions and webapps from cache
+  const loadedItems = Array.from(cachedIframes.values())
+  const loadedSessions = loadedItems.filter((item) => item.type === 'session')
+  const loadedWebApps = loadedItems.filter((item) => item.type === 'webapp')
 
-  const sortedWorkspacesWithWorkbenches = useMemo(
-    () =>
-      workspacesWithWorkbenches?.sort((a) => (a.id === workspaceId ? 1 : 0)),
-    [workspacesWithWorkbenches, workspaceId]
-  )
+  // Get display name for a session (app names if running, otherwise session name)
+  const getSessionDisplayName = (sessionId: string) => {
+    const sessionAppInstances = appInstances?.filter(
+      (instance) => instance.workbenchId === sessionId
+    )
+    if (sessionAppInstances && sessionAppInstances.length > 0) {
+      const appNames = sessionAppInstances
+        .map((instance) => apps?.find((a) => a.id === instance.appId)?.name)
+        .filter(Boolean)
+      if (appNames.length > 0) {
+        return appNames.join(', ')
+      }
+    }
+    const session = workbenches?.find((wb) => wb.id === sessionId)
+    return session?.name || `Session ${sessionId?.slice(0, 8)}`
+  }
+
+  // Toggle fullscreen for active iframe
+  const toggleFullscreen = () => {
+    if (activeIframeId) {
+      const iframe = document.getElementById(`iframe-${activeIframeId}`)
+      if (iframe) {
+        iframe.requestFullscreen()
+      }
+    }
+  }
 
   return (
     <>
@@ -109,7 +132,7 @@ export function Header() {
           }, 1000)
         }}
       >
-        <Link href="/" variant="muted">
+        <Link href="/" variant="muted" className="shrink-0">
           <Image
             src={defaultLogo}
             alt="Chorus"
@@ -132,185 +155,216 @@ export function Header() {
           )}
         </Link>
 
-        {user && (
-          <div className="flex flex-1 items-center justify-between px-4">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <span>Chorus</span>
-              <span className="mx-2">/</span>
-              <span className="font-medium text-foreground">Dashboard</span>
-            </div>
+        {/* Center: Loaded sessions and web apps */}
+        {user && (loadedSessions.length > 0 || loadedWebApps.length > 0) && (
+          <div className="flex flex-1 items-center justify-center gap-1 overflow-x-auto px-4">
+            {/* Loaded Sessions */}
+            {loadedSessions.map((session) => {
+              const isActive = activeIframeId === session.id
+              const sessionWorkbench = workbenches?.find(
+                (wb) => wb.id === session.id
+              )
 
-            {false && (
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    {background?.sessionId && workbenches && (
-                      <>
-                        <NavigationMenuTrigger
-                          onClick={() => {
-                            if (!isSessionPage) {
-                              router.push(
-                                `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
-                              )
-                            } else {
-                              router.push(`/workspaces/${workspaceId}`)
-                            }
-                          }}
-                        >
-                          <div className="flex-start flex place-items-center gap-1">
-                            {isSessionPage ? (
-                              <>
-                                <AppWindow className="h-4 w-4" />
-                                <span className="hidden lg:block">Session</span>
-                              </>
-                            ) : (
-                              <>
-                                <PackageOpen className="h-4 w-4" />
-                                <span className="hidden lg:block">
-                                  Workspace
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        </NavigationMenuTrigger>
-                        <NavigationMenuContent className="glass-elevated text-muted-foreground">
-                          <div className="w-[240px] space-y-1 p-2">
-                            <div className="mb-1 space-y-0.5 border-b border-muted/20 pb-2">
-                              {/* <div
-                              className={`interactive-item mb-1 overflow-hidden truncate whitespace-nowrap ${!isSessionPage ? 'bg-accent' : ''}`}
-                              onClick={() =>
-                                router.push(`/workspaces/${workspaceId}`)
-                              }
-                            >
-                              <Package className="h-4 w-4 shrink-0" />
-                              <span className="text-sm font-medium">
-                                {
-                                  workspaces?.find(
-                                    (workspace) => workspace.id === workspaceId
-                                  )?.name
-                                }
-                                {!isSessionPage ? 'Current Workspace' : ''}
-                              </span>
-                            </div>
-                            <div
-                              className={`interactive-item mb-2 pb-3 ${isSessionPage ? 'bg-accent' : ''}`}
+              return (
+                <HoverCard key={session.id} openDelay={200} closeDelay={100}>
+                  <HoverCardTrigger asChild>
+                    <button
+                      onClick={() => {
+                        if (sessionWorkbench) {
+                          router.push(
+                            `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
+                          )
+                        }
+                      }}
+                      className={cn(
+                        'group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors',
+                        isActive
+                          ? 'border-accent/50 bg-accent/20 text-accent'
+                          : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
+                      )}
+                    >
+                      <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
+                      <span className="max-w-32 truncate">
+                        {getSessionDisplayName(session.id)}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          closeIframe(session.id)
+                        }}
+                        className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </button>
+                  </HoverCardTrigger>
+                  {isActive && sessionWorkbench && (
+                    <HoverCardContent
+                      className="glass-elevated w-52 p-2"
+                      align="center"
+                    >
+                      <div className="flex flex-col gap-0.5 text-sm">
+                        {/* Workspace name - clickable */}
+                        {workspaces?.find(
+                          (w) => w.id === sessionWorkbench.workspaceId
+                        ) && (
+                          <>
+                            <button
                               onClick={() =>
                                 router.push(
-                                  `/workspaces/${workspaceId}/sessions/${background?.sessionId}`
+                                  `/workspaces/${sessionWorkbench.workspaceId}`
                                 )
                               }
+                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
                             >
-                              <LaptopMinimal className="h-4 w-4 shrink-0" />
-                              <span className="text-sm font-medium">
-                                {(() => {
-                                  const filteredApps =
-                                    appInstances
-                                      ?.filter(
-                                        (instance) =>
-                                          instance.workbenchId ===
-                                          background?.sessionId
-                                      )
-                                      ?.map(
-                                        (instance) =>
-                                          apps?.find(
-                                            (app) => app.id === instance.appId
-                                          )?.name
-                                      )
-                                      ?.filter(Boolean) || []
-                                  return (
-                                    filteredApps.join(', ') ||
-                                    currentWorkbench?.name ||
-                                    'No apps running'
-                                  )
-                                })()}
+                              <span className="truncate">
+                                {
+                                  workspaces.find(
+                                    (w) => w.id === sessionWorkbench.workspaceId
+                                  )?.name
+                                }
                               </span>
-                            </div> */}
+                            </button>
+                            <div className="my-1 border-t border-muted/20" />
+                          </>
+                        )}
 
-                              <div className="mb-1">
-                                <div
-                                  className="interactive-item"
-                                  onClick={() => router.push(`/app-store`)}
-                                >
-                                  <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                  <span className="text-sm">Start New App</span>
-                                </div>
-
-                                <div
-                                  className="interactive-item"
-                                  onClick={() => setUpdateOpen(true)}
-                                >
-                                  <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                  <span className="text-sm">Settings</span>
-                                </div>
-
-                                <div
-                                  className="interactive-item"
-                                  onClick={() => {
-                                    const iframe =
-                                      document.getElementById(
-                                        'workspace-iframe'
-                                      )
-                                    if (iframe) {
-                                      iframe.requestFullscreen()
-                                    }
-                                  }}
-                                >
-                                  <Maximize className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                  <span className="text-sm">
-                                    Toggle Fullscreen
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="mb-1">
+                        {/* Running apps */}
+                        {appInstances
+                          ?.filter(
+                            (instance) => instance.workbenchId === session.id
+                          )
+                          .map((instance) => {
+                            const app = apps?.find(
+                              (a) => a.id === instance.appId
+                            )
+                            return (
                               <div
-                                className="interactive-item items-start"
-                                onClick={() => setShowAboutDialog(true)}
+                                key={instance.id}
+                                className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground"
                               >
-                                <AppWindow className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                                <div className="min-w-0 flex-1">
-                                  <div className="text-sm">Session Info</div>
-                                </div>
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                <span className="truncate">
+                                  {app?.name || 'Unknown App'}
+                                </span>
                               </div>
-                            </div>
-                            <div className="border-t border-muted/20 pt-1">
-                              <div
-                                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
-                                onClick={() => setDeleteOpen(true)}
-                              >
-                                <Trash2 className="h-4 w-4 shrink-0" />
-                                <span className="text-sm">Delete Session</span>
-                              </div>
-                            </div>
-                          </div>
-                        </NavigationMenuContent>
-                      </>
-                    )}
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+                            )
+                          })}
+
+                        {appInstances?.some(
+                          (i) => i.workbenchId === session.id
+                        ) && <div className="my-1 border-t border-muted/20" />}
+
+                        {/* Actions */}
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/app-store?workspaceId=${sessionWorkbench.workspaceId}&sessionId=${session.id}`
+                            )
+                          }
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          <span>Start New App</span>
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}/members`
+                            )
+                          }
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <UserPlus className="h-3.5 w-3.5" />
+                          <span>Add Member</span>
+                        </button>
+
+                        <button
+                          onClick={() => setUpdateSessionId(session.id)}
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Settings className="h-3.5 w-3.5" />
+                          <span>Settings</span>
+                        </button>
+
+                        <button
+                          onClick={toggleFullscreen}
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Maximize className="h-3.5 w-3.5" />
+                          <span>Fullscreen</span>
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
+                            )
+                          }
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Info className="h-3.5 w-3.5" />
+                          <span>Session Info</span>
+                        </button>
+
+                        <div className="my-1 border-t border-muted/20" />
+
+                        <button
+                          onClick={() => setDeleteSessionId(session.id)}
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Delete Session</span>
+                        </button>
+                      </div>
+                    </HoverCardContent>
+                  )}
+                </HoverCard>
+              )
+            })}
+
+            {/* Separator if both sessions and webapps */}
+            {loadedSessions.length > 0 && loadedWebApps.length > 0 && (
+              <div className="mx-1 h-4 w-px bg-muted/30" />
             )}
-            <div className="relative w-96">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                className="bg-background/50 pl-8"
-              />
-            </div>
+
+            {/* Loaded Web Apps */}
+            {loadedWebApps.map((webapp) => {
+              const isActive = activeIframeId === webapp.id
+
+              return (
+                <button
+                  key={webapp.id}
+                  onClick={() => router.push(`/webapps/${webapp.id}`)}
+                  className={cn(
+                    'group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors',
+                    isActive
+                      ? 'border-accent/50 bg-accent/20 text-accent'
+                      : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
+                  )}
+                >
+                  <Globe className="h-3.5 w-3.5 shrink-0" />
+                  <span className="max-w-32 truncate">{webapp.name}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      closeIframe(webapp.id)
+                    }}
+                    className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </button>
+              )
+            })}
           </div>
         )}
 
-        <div className="flex items-center justify-end">
+        <div className="flex shrink-0 items-center justify-end">
           <div className="ml-1 flex items-center">
             <ThemeToggle />
-            <Button
-              variant="ghost"
-              onClick={toggleRightSidebar}
-              aria-label="Help and support"
-            >
-              <CircleHelp className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Help</span>
-            </Button>
+
             {user?.rolesWithContext?.some((role) => role.context.user) && (
               <Button
                 variant="ghost"
@@ -321,12 +375,7 @@ export function Header() {
                 <span className="sr-only">Lab</span>
               </Button>
             )}
-            {user && (
-              <Button variant="ghost" aria-label="Notifications" disabled>
-                <Bell className="h-4 w-4 text-muted" aria-hidden="true" />
-                <span className="sr-only">Notifications</span>
-              </Button>
-            )}
+
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -346,12 +395,6 @@ export function Header() {
                     >
                       <User className="h-4 w-4" />
                       {user?.firstName} {user?.lastName} profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => router.push('/admin')}
-                      className="flex cursor-pointer items-center gap-2"
-                    >
-                      <Settings className="h-4 w-4" /> Settings
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator className="bg-slate-500" />
@@ -381,11 +424,32 @@ export function Header() {
 
             setTimeout(() => {
               refreshWorkbenches()
-              setBackground(undefined)
+              setActiveIframe(null)
               router.replace(`/workspaces/${workspaceId}`)
             }, 2000)
           }}
         />
+
+        {/* Delete dialog for header tabs */}
+        {deleteSessionId && (
+          <WorkbenchDeleteForm
+            id={deleteSessionId}
+            state={[!!deleteSessionId, () => setDeleteSessionId(null)]}
+            onSuccess={() => {
+              const session = workbenches?.find(
+                (wb) => wb.id === deleteSessionId
+              )
+              refreshWorkbenches()
+              closeIframe(deleteSessionId)
+              setDeleteSessionId(null)
+              router.push('/sessions')
+              toast({
+                title: 'Success!',
+                description: `Session ${session?.name || ''} deleted`
+              })
+            }}
+          />
+        )}
 
         <AppInstanceCreateForm
           state={[createOpen, setCreateOpen]}
@@ -401,6 +465,23 @@ export function Header() {
             onSuccess={() => {}}
           />
         )}
+
+        {/* Update dialog for header tabs */}
+        {updateSessionId &&
+          workbenches?.find((wb) => wb.id === updateSessionId) && (
+            <WorkbenchUpdateForm
+              state={[!!updateSessionId, () => setUpdateSessionId(null)]}
+              workbench={workbenches.find((wb) => wb.id === updateSessionId)!}
+              onSuccess={() => {
+                refreshWorkbenches()
+                setUpdateSessionId(null)
+                toast({
+                  title: 'Success!',
+                  description: 'Session updated'
+                })
+              }}
+            />
+          )}
       </nav>
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import WorkbenchTable from '~/components/workbench-table'
@@ -9,7 +9,7 @@ import WorkbenchTable from '~/components/workbench-table'
 export default function SessionPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
-  const { refreshWorkbenches } = useAppState()
+  const { refreshWorkbenches, workbenches } = useAppState()
 
   useEffect(() => {
     if (workspaceId) {
@@ -17,17 +17,15 @@ export default function SessionPage() {
     }
   }, [workspaceId, refreshWorkbenches])
 
+  // Filter workbenches for this workspace
+  const workspaceWorkbenches = useMemo(
+    () => workbenches?.filter((wb) => wb.workspaceId === workspaceId),
+    [workbenches, workspaceId]
+  )
+
   if (!workspaceId) {
     return null
   }
 
-  return (
-    <div className="flex flex-col">
-      <WorkbenchTable
-        workspaceId={workspaceId}
-        title="Sessions"
-        description="Manage your sessions in this workspace"
-      />
-    </div>
-  )
+  return <WorkbenchTable workbenches={workspaceWorkbenches} />
 }
