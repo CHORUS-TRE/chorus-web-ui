@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
 import { CachedIframe } from '@/domain/model'
+import { useAppState } from '@/providers/app-state-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
@@ -16,10 +17,12 @@ import { LoadingOverlay } from './loading-overlay'
  */
 function CachedIframeRenderer({
   iframe,
-  isActive
+  isActive,
+  isBackground
 }: {
   iframe: CachedIframe
   isActive: boolean
+  isBackground: boolean
 }) {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
 
@@ -79,18 +82,20 @@ function CachedIframeRenderer({
         style={{
           width: '100vw',
           height: 'calc(100vh - 44px)',
-          visibility: isActive ? 'visible' : 'hidden',
+          visibility: isActive || isBackground ? 'visible' : 'hidden',
           pointerEvents: isActive ? 'auto' : 'none',
           position: 'fixed',
           left: 0,
           top: 44, // Header height
-          zIndex: isActive ? 20 : -1
+          zIndex: isActive ? 20 : isBackground ? 5 : -1,
+          opacity: isBackground && !isActive ? 0.15 : 1,
+          filter: isBackground && !isActive ? 'blur(2px)' : 'none'
         }}
         className="bg-background"
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
-        aria-hidden={!isActive}
+        aria-hidden={!isActive && !isBackground}
         onLoad={handleLoad}
         tabIndex={isActive ? 0 : -1}
       />
@@ -102,20 +107,61 @@ function CachedIframeRenderer({
  * Renders all cached iframes, showing only the active one.
  * Iframes that are not active remain in the DOM but are hidden,
  * preserving their state (login, form data, etc.).
+ *
+ * Background mode: Shows iframe in background when in workspace context
+ * or on app-store page.
  */
 export default function IframeCacheRenderer() {
   const { cachedIframes, activeIframeId } = useIframeCache()
+  const { workbenches } = useAppState()
   const pathname = usePathname()
   const [iframeEntries, setIframeEntries] = useState<[string, CachedIframe][]>(
     []
   )
 
-  // Check if we're on a session or webapp page
+  // Check if we're on a session or webapp page (full active mode)
   const isIframePage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
     const webappPageRegex = /^\/webapps\/[^/]+$/
     return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
   }, [pathname])
+
+  // Extract workspace ID from current path
+  const currentWorkspaceId = useMemo(() => {
+    const match = pathname.match(/^\/workspaces\/([^/]+)/)
+    return match ? match[1] : null
+  }, [pathname])
+
+  // Check if we're on app-store page
+  const isAppStorePage = pathname === '/app-store'
+
+  // Determine which iframe should be shown in background
+  const backgroundIframeId = useMemo(() => {
+    // If we're on an iframe page, no background needed (it's active)
+    if (isIframePage) return null
+
+    // If we're in a workspace or on app-store
+    if (currentWorkspaceId || isAppStorePage) {
+      // Find a loaded session from the current workspace (or any if on app-store)
+      for (const [id, iframe] of cachedIframes.entries()) {
+        if (iframe.type === 'session') {
+          const workbench = workbenches?.find((wb) => wb.id === id)
+          if (workbench) {
+            // If on app-store, show any active session
+            if (isAppStorePage && activeIframeId === id) {
+              return id
+            }
+            // If in workspace, show session from this workspace
+            if (currentWorkspaceId && workbench.workspaceId === currentWorkspaceId) {
+              return id
+            }
+          }
+        }
+      }
+    }
+
+    return null
+  }, [isIframePage, currentWorkspaceId, isAppStorePage, cachedIframes, workbenches, activeIframeId])
 
   // Update iframe entries when cache changes
   useEffect(() => {
@@ -134,6 +180,7 @@ export default function IframeCacheRenderer() {
           key={id}
           iframe={iframe}
           isActive={isIframePage && activeIframeId === id}
+          isBackground={backgroundIframeId === id}
         />
       ))}
     </>
