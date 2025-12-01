@@ -8,12 +8,11 @@ const AuthenticatedApp = React.lazy(() =>
 )
 import { Package } from 'lucide-react'
 
-import { SidebarProvider } from '@/components/ui/sidebar'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { Login } from '~/components/login'
 
-import { AdminSidebar } from './admin-sidebar'
+import { AdminTabs } from './admin-tabs'
 
 export default function Layout({
   children
@@ -41,12 +40,10 @@ export default function Layout({
                 Settings
               </h2>
             </div>
+            <AdminTabs />
           </>
           <div className="float-start flex w-full">
-            <SidebarProvider>
-              <AdminSidebar />
-              <main className="w-full px-8">{children}</main>
-            </SidebarProvider>
+            <main className="w-full px-8">{children}</main>
           </div>
         </AuthenticatedApp>
       </div>

@@ -8,7 +8,7 @@ import { cn } from '~/lib/utils'
 const linkVariants = cva('nav-link-base', {
   variants: {
     variant: {
-      default: 'nav-link-hover [&.active]:nav-link-active',
+      default: 'items-center nav-link-hover [&.active]:nav-link-active',
       nav: 'nav-link-hover active:text-foreground hover:no-border',
       muted:
         'text-muted font-semibold nav-link-hover underline decoration-[0.14rem] underline-offset-[0.3rem] bg-background/30 ',
