@@ -1,11 +1,24 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
-import { Bell, FlaskConical, LogOut, User } from 'lucide-react'
+import {
+  Bell,
+  FlaskConical,
+  Globe,
+  Info,
+  LaptopMinimal,
+  LogOut,
+  Maximize,
+  Plus,
+  Settings,
+  Trash2,
+  User,
+  UserPlus,
+  X
+} from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -25,6 +38,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from '@/components/ui/hover-card'
+import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
@@ -48,13 +67,21 @@ export function Header() {
     users,
     customLogos
   } = useAppState()
-  const { background, setActiveIframe } = useIframeCache()
+  const {
+    background,
+    setActiveIframe,
+    cachedIframes,
+    activeIframeId,
+    closeIframe
+  } = useIframeCache()
   const { user, logout } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
+  const [updateSessionId, setUpdateSessionId] = useState<string | null>(null)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
@@ -62,6 +89,38 @@ export function Header() {
   const { theme } = useTheme()
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? customLogos.light : customLogos.dark
+
+  // Get loaded sessions and webapps from cache
+  const loadedItems = Array.from(cachedIframes.values())
+  const loadedSessions = loadedItems.filter((item) => item.type === 'session')
+  const loadedWebApps = loadedItems.filter((item) => item.type === 'webapp')
+
+  // Get display name for a session (app names if running, otherwise session name)
+  const getSessionDisplayName = (sessionId: string) => {
+    const sessionAppInstances = appInstances?.filter(
+      (instance) => instance.workbenchId === sessionId
+    )
+    if (sessionAppInstances && sessionAppInstances.length > 0) {
+      const appNames = sessionAppInstances
+        .map((instance) => apps?.find((a) => a.id === instance.appId)?.name)
+        .filter(Boolean)
+      if (appNames.length > 0) {
+        return appNames.join(', ')
+      }
+    }
+    const session = workbenches?.find((wb) => wb.id === sessionId)
+    return session?.name || `Session ${sessionId?.slice(0, 8)}`
+  }
+
+  // Toggle fullscreen for active iframe
+  const toggleFullscreen = () => {
+    if (activeIframeId) {
+      const iframe = document.getElementById(`iframe-${activeIframeId}`)
+      if (iframe) {
+        iframe.requestFullscreen()
+      }
+    }
+  }
 
   return (
     <>
@@ -74,7 +133,7 @@ export function Header() {
           }, 1000)
         }}
       >
-        <Link href="/" variant="muted">
+        <Link href="/" variant="muted" className="shrink-0">
           <Image
             src={defaultLogo}
             alt="Chorus"
@@ -97,7 +156,213 @@ export function Header() {
           )}
         </Link>
 
-        <div className="flex items-center justify-end">
+        {/* Center: Loaded sessions and web apps */}
+        {user && (loadedSessions.length > 0 || loadedWebApps.length > 0) && (
+          <div className="flex flex-1 items-center justify-center gap-1 overflow-x-auto px-4">
+            {/* Loaded Sessions */}
+            {loadedSessions.map((session) => {
+              const isActive = activeIframeId === session.id
+              const sessionWorkbench = workbenches?.find(
+                (wb) => wb.id === session.id
+              )
+
+              return (
+                <HoverCard key={session.id} openDelay={200} closeDelay={100}>
+                  <HoverCardTrigger asChild>
+                    <button
+                          onClick={() => {
+                        if (sessionWorkbench) {
+                              router.push(
+                            `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
+                              )
+                        }
+                      }}
+                      className={cn(
+                        'group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors',
+                        isActive
+                          ? 'border-accent/50 bg-accent/20 text-accent'
+                          : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
+                      )}
+                        >
+                      <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
+                      <span className="max-w-32 truncate">
+                        {getSessionDisplayName(session.id)}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          closeIframe(session.id)
+                        }}
+                        className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </button>
+                  </HoverCardTrigger>
+                  {isActive && sessionWorkbench && (
+                    <HoverCardContent
+                      className="glass-elevated w-52 p-2"
+                      align="center"
+                    >
+                      <div className="flex flex-col gap-0.5 text-sm">
+                        {/* Workspace name - clickable */}
+                        {workspaces?.find(
+                          (w) => w.id === sessionWorkbench.workspaceId
+                        ) && (
+                          <>
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/workspaces/${sessionWorkbench.workspaceId}`
+                                )
+                              }
+                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                            >
+                              <span className="truncate">
+                                {
+                                  workspaces.find(
+                                    (w) => w.id === sessionWorkbench.workspaceId
+                                  )?.name
+                                }
+                              </span>
+                            </button>
+                            <div className="my-1 border-t border-muted/20" />
+                          </>
+                        )}
+
+                        {/* Running apps */}
+                        {appInstances
+                          ?.filter(
+                            (instance) => instance.workbenchId === session.id
+                          )
+                          .map((instance) => {
+                            const app = apps?.find(
+                              (a) => a.id === instance.appId
+                            )
+                            return (
+                              <div
+                                key={instance.id}
+                                className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground"
+                              >
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                <span className="truncate">
+                                  {app?.name || 'Unknown App'}
+                                </span>
+                              </div>
+                            )
+                          })}
+
+                        {appInstances?.some(
+                          (i) => i.workbenchId === session.id
+                        ) && <div className="my-1 border-t border-muted/20" />}
+
+                        {/* Actions */}
+                        <button
+                              onClick={() =>
+                            router.push(
+                              `/app-store?workspaceId=${sessionWorkbench.workspaceId}&sessionId=${session.id}`
+                            )
+                              }
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          <span>Start New App</span>
+                        </button>
+
+                        <button
+                              onClick={() =>
+                                router.push(
+                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}/members`
+                                )
+                              }
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <UserPlus className="h-3.5 w-3.5" />
+                          <span>Add Member</span>
+                        </button>
+
+                        <button
+                          onClick={() => setUpdateSessionId(session.id)}
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Settings className="h-3.5 w-3.5" />
+                          <span>Settings</span>
+                        </button>
+
+                        <button
+                          onClick={toggleFullscreen}
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Maximize className="h-3.5 w-3.5" />
+                          <span>Fullscreen</span>
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
+                            )
+                                    }
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                        >
+                          <Info className="h-3.5 w-3.5" />
+                          <span>Session Info</span>
+                        </button>
+
+                        <div className="my-1 border-t border-muted/20" />
+
+                        <button
+                          onClick={() => setDeleteSessionId(session.id)}
+                          className="flex items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Delete Session</span>
+                        </button>
+                                </div>
+                    </HoverCardContent>
+                  )}
+                </HoverCard>
+              )
+            })}
+
+            {/* Separator if both sessions and webapps */}
+            {loadedSessions.length > 0 && loadedWebApps.length > 0 && (
+              <div className="mx-1 h-4 w-px bg-muted/30" />
+            )}
+
+            {/* Loaded Web Apps */}
+            {loadedWebApps.map((webapp) => {
+              const isActive = activeIframeId === webapp.id
+
+              return (
+                <button
+                  key={webapp.id}
+                  onClick={() => router.push(`/webapps/${webapp.id}`)}
+                  className={cn(
+                    'group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors',
+                    isActive
+                      ? 'border-accent/50 bg-accent/20 text-accent'
+                      : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
+                  )}
+                >
+                  <Globe className="h-3.5 w-3.5 shrink-0" />
+                  <span className="max-w-32 truncate">{webapp.name}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      closeIframe(webapp.id)
+                    }}
+                    className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        <div className="flex shrink-0 items-center justify-end">
           <div className="ml-1 flex items-center">
             <ThemeToggle />
 
@@ -111,12 +376,7 @@ export function Header() {
                 <span className="sr-only">Lab</span>
               </Button>
             )}
-            {user && (
-              <Button variant="ghost" aria-label="Notifications" disabled>
-                <Bell className="h-4 w-4 text-muted" aria-hidden="true" />
-                <span className="sr-only">Notifications</span>
-              </Button>
-            )}
+
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -171,6 +431,30 @@ export function Header() {
           }}
         />
 
+        {/* Delete dialog for header tabs */}
+        {deleteSessionId && (
+          <WorkbenchDeleteForm
+            id={deleteSessionId}
+            state={[
+              !!deleteSessionId,
+              () => setDeleteSessionId(null)
+            ]}
+            onSuccess={() => {
+              const session = workbenches?.find(
+                (wb) => wb.id === deleteSessionId
+              )
+              refreshWorkbenches()
+              closeIframe(deleteSessionId)
+              setDeleteSessionId(null)
+              router.push('/sessions')
+              toast({
+                title: 'Success!',
+                description: `Session ${session?.name || ''} deleted`
+              })
+            }}
+          />
+        )}
+
         <AppInstanceCreateForm
           state={[createOpen, setCreateOpen]}
           sessionId={params.sessionId}
@@ -183,6 +467,23 @@ export function Header() {
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
             onSuccess={() => {}}
+          />
+        )}
+
+        {/* Update dialog for header tabs */}
+        {updateSessionId &&
+          workbenches?.find((wb) => wb.id === updateSessionId) && (
+            <WorkbenchUpdateForm
+              state={[!!updateSessionId, () => setUpdateSessionId(null)]}
+              workbench={workbenches.find((wb) => wb.id === updateSessionId)!}
+              onSuccess={() => {
+                refreshWorkbenches()
+                setUpdateSessionId(null)
+                toast({
+                  title: 'Success!',
+                  description: 'Session updated'
+                })
+              }}
           />
         )}
       </nav>
