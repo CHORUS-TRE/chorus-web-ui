@@ -123,7 +123,7 @@ export async function workspaceFileDelete(
 export async function workspaceFileInitUpload(
   workspaceId: string,
   path: string,
-  file: WorkspaceFile
+  file: WorkspaceFileCreateType
 ): Promise<Result<{ uploadId: string; partSize: number; totalParts: number }>> {
   try {
     if (!workspaceId) throw new Error('Invalid workspace id')
