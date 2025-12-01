@@ -17,18 +17,36 @@ import { toast } from '@/components/hooks/use-toast'
 import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
-import { getGlobalEntry } from '@/view-model/dev-store-view-model'
+import {
+  getGlobalEntry,
+  getWorkspaceEntry
+} from '@/view-model/dev-store-view-model'
 import { listUsers } from '@/view-model/user-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceList } from '@/view-model/workspace-view-model'
 
 import { useAuthentication } from './authentication-provider'
 
+const defaultTheme = {
+  light: {
+    primary: '#1340FF',
+    secondary: '#CDCBFA',
+    accent: '#B7FF13'
+  },
+  dark: {
+    primary: '#1340FF',
+    secondary: '#CDCBFA',
+    accent: '#B7FF13'
+  }
+}
+
 type AppStateContextType = {
   showRightSidebar: boolean
   toggleRightSidebar: () => void
   showWorkspacesTable: boolean
   toggleWorkspaceView: () => void
+  sessionsViewMode: 'grid' | 'table'
+  setSessionsViewMode: (mode: 'grid' | 'table') => void
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
   users: User[] | undefined
@@ -57,6 +75,8 @@ const AppStateContext = createContext<AppStateContextType>({
   toggleRightSidebar: () => {},
   showWorkspacesTable: true,
   toggleWorkspaceView: () => {},
+  sessionsViewMode: 'grid',
+  setSessionsViewMode: () => {},
   workspaces: undefined,
   workbenches: undefined,
   users: undefined,
@@ -73,10 +93,7 @@ const AppStateContext = createContext<AppStateContextType>({
   setHasSeenGettingStartedTour: () => {},
   customLogos: { light: null, dark: null },
   refreshCustomLogos: async () => {},
-  customTheme: {
-    light: { primary: '', secondary: '', accent: '' },
-    dark: { primary: '', secondary: '', accent: '' }
-  },
+  customTheme: defaultTheme,
   refreshCustomTheme: async () => {}
 })
 
@@ -123,17 +140,9 @@ export const AppStateProvider = ({
   }>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('customTheme')
-      return saved
-        ? JSON.parse(saved)
-        : {
-            light: { primary: '', secondary: '', accent: '' },
-            dark: { primary: '', secondary: '', accent: '' }
-          }
+      return saved ? JSON.parse(saved) : defaultTheme
     }
-    return {
-      light: { primary: '', secondary: '', accent: '' },
-      dark: { primary: '', secondary: '', accent: '' }
-    }
+    return defaultTheme
   })
   const [showAppStoreHero, setShowAppStoreHero] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
@@ -142,6 +151,16 @@ export const AppStateProvider = ({
     }
     return true
   })
+
+  const [sessionsViewMode, setSessionsViewMode] = useState<'grid' | 'table'>(
+    () => {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('sessionsViewMode')
+        return saved !== null ? (saved as 'grid' | 'table') : 'grid'
+      }
+      return 'grid'
+    }
+  )
 
   const refreshCustomLogos = useCallback(async () => {
     try {
@@ -175,10 +194,7 @@ export const AppStateProvider = ({
     try {
       const result = await getGlobalEntry('custom_theme')
 
-      let newTheme = {
-        light: { primary: '', secondary: '', accent: '' },
-        dark: { primary: '', secondary: '', accent: '' }
-      }
+      let newTheme = defaultTheme
 
       if (result.data?.value) {
         try {
@@ -225,23 +241,52 @@ export const AppStateProvider = ({
       if (response?.error)
         toast({ title: response.error, variant: 'destructive' })
       if (response?.data) {
-        setWorkspaces(
-          response.data.map((workspace) => ({
-            ...workspace,
-            PI: users?.find((user) => user.id === workspace.userId)?.username,
-            memberCount:
-              users?.filter((user) =>
-                user.rolesWithContext?.some(
-                  (role) => role.context.workspace === workspace.id
-                )
-              ).length || 0,
-            workbenchCount:
-              workbenches?.filter(
-                (workbench) => workbench.workspaceId === workspace.id
-              ).length || 0,
-            files: workspace.files || 0
-          }))
+        const sortedWorkspaces = response.data.sort(
+          (a, b) =>
+            (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
         )
+        const enrichedWorkspaces = await Promise.all(
+          sortedWorkspaces.map(async (workspace) => {
+            let image: string | undefined
+            let tag: 'center' | 'project' | undefined
+            try {
+              const imageResult = await getWorkspaceEntry(workspace.id, 'image')
+              if (imageResult.data) {
+                image = imageResult.data.value
+              }
+              const tagResult = await getWorkspaceEntry(workspace.id, 'tag')
+              if (tagResult.data) {
+                tag = tagResult.data.value as 'center' | 'project' | undefined
+              } else {
+                tag = 'project'
+              }
+            } catch (error) {
+              console.error(
+                `Failed to fetch metadata for workspace ${workspace.id}`,
+                error
+              )
+            }
+
+            return {
+              ...workspace,
+              image,
+              tag,
+              PI: users?.find((user) => user.id === workspace.userId)?.username,
+              memberCount:
+                users?.filter((user) =>
+                  user.rolesWithContext?.some(
+                    (role) => role.context.workspace === workspace.id
+                  )
+                ).length || 0,
+              workbenchCount:
+                workbenches?.filter(
+                  (workbench) => workbench.workspaceId === workspace.id
+                ).length || 0,
+              files: workspace.files || 0
+            }
+          })
+        )
+        setWorkspaces(enrichedWorkspaces)
       }
     } catch (error) {
       toast({
@@ -386,6 +431,10 @@ export const AppStateProvider = ({
     localStorage.setItem('customTheme', JSON.stringify(customTheme))
   }, [customTheme])
 
+  useEffect(() => {
+    localStorage.setItem('sessionsViewMode', sessionsViewMode)
+  }, [sessionsViewMode])
+
   const initializeState = useCallback(async () => {
     if (!user) {
       return
@@ -445,6 +494,8 @@ export const AppStateProvider = ({
       toggleRightSidebar,
       showWorkspacesTable,
       toggleWorkspaceView,
+      sessionsViewMode,
+      setSessionsViewMode,
       workspaces,
       workbenches,
       users,
@@ -469,6 +520,8 @@ export const AppStateProvider = ({
       toggleRightSidebar,
       showWorkspacesTable,
       toggleWorkspaceView,
+      sessionsViewMode,
+      setSessionsViewMode,
       workspaces,
       workbenches,
       users,

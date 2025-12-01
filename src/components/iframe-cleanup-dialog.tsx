@@ -92,7 +92,7 @@ export function IframeCleanupDialog() {
 
         {iframeList.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
-            No sessions or web apps open.
+            No sessions or services open.
           </div>
         ) : (
           <>

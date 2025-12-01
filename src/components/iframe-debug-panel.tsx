@@ -112,7 +112,7 @@ export function IframeDebugPanel() {
                 {externalWebApps.length}
               </div>
               <div className="text-[10px] uppercase tracking-wider text-gray-500">
-                Web Apps
+                Services
               </div>
             </div>
           </div>

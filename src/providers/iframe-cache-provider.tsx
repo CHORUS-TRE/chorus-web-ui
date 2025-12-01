@@ -72,7 +72,7 @@ type IframeCacheContextType = {
   showCleanupDialog: boolean
   setShowCleanupDialog: (show: boolean) => void
 
-  // Web apps config (from DevStore)
+  // services config (from DevStore)
   externalWebApps: ExternalWebApp[]
   refreshExternalWebApps: () => Promise<void>
   addExternalWebApp: (webapp: ExternalWebApp) => Promise<boolean>
@@ -191,7 +191,7 @@ export const IframeCacheProvider = ({
     setCacheVersion((v) => v + 1)
   }, [])
 
-  // Load external web apps from DevStore
+  // Load external services from DevStore
   const refreshExternalWebApps = useCallback(async () => {
     try {
       const result = await getGlobalEntry(DEVSTORE_KEY_EXTERNAL_WEBAPPS)
@@ -223,12 +223,12 @@ export const IframeCacheProvider = ({
     }
   }, [])
 
-  // Load external web apps on mount
+  // Load external services on mount
   useEffect(() => {
     refreshExternalWebApps()
   }, [refreshExternalWebApps])
 
-  // Save external web apps to DevStore
+  // Save external services to DevStore
   const saveExternalWebApps = useCallback(
     async (webapps: ExternalWebApp[]): Promise<boolean> => {
       try {
@@ -239,7 +239,7 @@ export const IframeCacheProvider = ({
 
         if (result.error) {
           toast({
-            title: 'Error saving web apps',
+            title: 'Error saving services',
             description: result.error,
             variant: 'destructive'
           })
@@ -250,7 +250,7 @@ export const IframeCacheProvider = ({
         return true
       } catch (error) {
         toast({
-          title: 'Error saving web apps',
+          title: 'Error saving services',
           description: error instanceof Error ? error.message : String(error),
           variant: 'destructive'
         })
