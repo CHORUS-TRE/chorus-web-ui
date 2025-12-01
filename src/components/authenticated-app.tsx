@@ -1,19 +1,18 @@
 'use client'
 
 import { CircleGauge, PanelLeftOpen } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React, { useMemo } from 'react'
 
 import { Header } from '@/components/header'
-import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
-import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar, navItems } from '~/components/left-sidebar'
 import RightSidebar from '~/components/right-sidebar'
+import { Kbd, KbdGroup } from '~/components/ui/kbd'
 import { steps } from '~/lib/tours'
 
 interface MainLayoutProps {
@@ -22,8 +21,6 @@ interface MainLayoutProps {
 
 export function AuthenticatedApp({ children }: MainLayoutProps) {
   const { showRightSidebar } = useAppState()
-  const { background } = useIframeCache()
-  const router = useRouter()
   const pathname = usePathname()
 
   // Persist sidebar state in localStorage
@@ -101,6 +98,16 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
             <Header />
           </div>
 
+          {/* Invisible hover zone on left edge to reveal sidebar */}
+          {!leftSidebarOpen && (
+            <div
+              className="fixed left-0 top-11 z-50 h-[calc(100vh-2.75rem)] w-4 cursor-pointer"
+              onMouseEnter={handleHoverStart}
+              onMouseLeave={handleHoverEnd}
+              aria-hidden="true"
+            />
+          )}
+
           {/* {background?.sessionId && (
             <Link
               href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
@@ -135,63 +142,42 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                 />
               </div>
 
-              {/* Sidebar toggle button - fixed position */}
-              <div className="fixed left-4 top-14 z-50">
+              {/* Sidebar toggle button - fixed position, only visible when sidebar is closed */}
+              {!leftSidebarOpen && (
+                <div className="fixed left-4 top-14 z-50">
+                  <div
+                    className="relative"
+                    onMouseEnter={handleHoverStart}
+                    onMouseLeave={handleHoverEnd}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setLeftSidebarOpen(true)}
+                      className="h-8 w-8 bg-background/80 text-accent backdrop-blur-sm hover:text-accent/80"
+                    >
+                      <PanelLeftOpen className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Hover sidebar overlay - appears when sidebar is closed and hovered (same position as regular sidebar) */}
+              {!leftSidebarOpen && leftSidebarHovered && (
                 <div
-                  className="relative"
+                  className="fixed left-4 top-24 z-50 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] duration-200 animate-in slide-in-from-left"
                   onMouseEnter={handleHoverStart}
                   onMouseLeave={handleHoverEnd}
                 >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-                    className="h-8 w-8 bg-background/80 backdrop-blur-sm"
-                  >
-                    <PanelLeftOpen
-                      className={`h-4 w-4 transition-transform duration-300 ${leftSidebarOpen ? 'rotate-180' : ''}`}
-                    />
-                  </Button>
-                  {/* Hover sidebar overlay - appears when sidebar is closed and button is hovered */}
-                  {!leftSidebarOpen && leftSidebarHovered && (
-                    <div className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[240px]">
-                      <div
-                        className="glass-surface flex max-h-[calc(100vh-12rem)] flex-col gap-2 overflow-hidden rounded-2xl border border-secondary p-4 shadow-2xl"
-                        onMouseEnter={handleHoverStart}
-                        onMouseLeave={handleHoverEnd}
-                      >
-                        <nav className="flex flex-col gap-1">
-                          {navItems.map((item) => {
-                            const isActive = item.exact
-                              ? pathname === item.href
-                              : pathname.startsWith(item.href)
-
-                            return (
-                              <Link
-                                key={item.href}
-                                href={item.href}
-                                variant="underline"
-                                className={cn(
-                                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                                  isActive
-                                    ? 'bg-accent/20 text-accent'
-                                    : 'text-muted-foreground'
-                                )}
-                                onClick={() => {
-                                  setLeftSidebarHovered(false)
-                                }}
-                              >
-                                <item.icon className="h-4 w-4" />
-                                {item.label}
-                              </Link>
-                            )
-                          })}
-                        </nav>
-                      </div>
-                    </div>
-                  )}
+                  <LeftSidebar
+                    isOpen={false}
+                    setIsOpen={() => {}}
+                    isHovered={true}
+                    onHoverStart={handleHoverStart}
+                    onHoverEnd={handleHoverEnd}
+                  />
                 </div>
-              </div>
+              )}
             </>
           ) : (
             <>
@@ -244,65 +230,44 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                         showRightSidebar ? 'min-w-0 flex-1' : 'w-full'
                       )}
                     >
-                      <div className="glass-surface sticky top-0 z-[100] flex items-center gap-4 border-b border-muted/50 p-2">
-                        <div
-                          className="relative"
-                          onMouseEnter={handleHoverStart}
-                          onMouseLeave={handleHoverEnd}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-                            className="h-8 w-8"
+                      <div className="glass-surface sticky top-0 z-[100] flex h-11 items-center gap-4 border-b border-muted/50 p-2">
+                        {/* Toggle button only visible when sidebar is closed */}
+                        {!leftSidebarOpen && (
+                          <div
+                            className="relative"
+                            onMouseEnter={handleHoverStart}
+                            onMouseLeave={handleHoverEnd}
                           >
-                            <PanelLeftOpen
-                              className={`h-4 w-4 transition-transform duration-300 ${leftSidebarOpen ? 'rotate-180' : ''}`}
-                            />
-                          </Button>
-                          {/* Hover sidebar overlay - appears when sidebar is closed and button is hovered */}
-                          {!leftSidebarOpen && leftSidebarHovered && (
-                            <div className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[240px]">
-                              <div
-                                className="glass-surface flex max-h-[calc(100vh-12rem)] flex-col gap-2 overflow-hidden rounded-2xl border border-muted/40 p-4 shadow-2xl"
-                                onMouseEnter={handleHoverStart}
-                                onMouseLeave={handleHoverEnd}
-                              >
-                                <nav className="flex flex-col gap-1">
-                                  {navItems.map((item) => {
-                                    const isActive = item.exact
-                                      ? pathname === item.href
-                                      : pathname.startsWith(item.href)
-
-                                    return (
-                                      <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        variant="underline"
-                                        className={cn(
-                                          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                                          isActive
-                                            ? 'bg-accent/20 text-accent'
-                                            : 'text-muted-foreground'
-                                        )}
-                                        onClick={() => {
-                                          setLeftSidebarHovered(false)
-                                        }}
-                                      >
-                                        <item.icon className="h-4 w-4" />
-                                        {item.label}
-                                      </Link>
-                                    )
-                                  })}
-                                </nav>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <h1 className="flex items-center gap-2 text-lg font-semibold">
-                          <CircleGauge className="h-4 w-4" />
-                          {pageTitle}
-                        </h1>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setLeftSidebarOpen(true)}
+                              className="h-8 w-8 text-accent hover:text-accent/80"
+                            >
+                              <PanelLeftOpen className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                        {!leftSidebarOpen && leftSidebarHovered ? (
+                          <div className="relative">
+                            <KbdGroup>
+                              <Kbd>⌘</Kbd>
+                              <span>+</span>
+                              <Kbd>B</Kbd>
+                            </KbdGroup>
+                            <span className="text-xs text-muted-foreground">
+                              {' '}
+                              - to open the sidebar
+                            </span>
+                          </div>
+                        ) : (
+                          <h1
+                            className={`flex items-center gap-2 text-lg font-semibold ${leftSidebarOpen ? 'ml-2' : 'ml-0'}`}
+                          >
+                            <CircleGauge className="h-4 w-4" />
+                            {pageTitle}
+                          </h1>
+                        )}
                       </div>
 
                       <div className="flex-1 overflow-auto px-8 py-4">
@@ -313,7 +278,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                     {/* Right Sidebar */}
                     <div
                       className={cn(
-                        'glass-surface h-full overflow-hidden rounded-2xl border border-muted/40 p-4 transition-all duration-300 ease-in-out',
+                        'glass-surface h-full overflow-hidden rounded-2xl border border-muted/40 transition-all duration-300 ease-in-out',
                         showRightSidebar ? 'w-[240px] flex-shrink-0' : 'hidden'
                       )}
                       id="right-sidebar"
@@ -323,6 +288,23 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                   </div>
                 </div>
               </div>
+
+              {/* Hover sidebar overlay - appears when sidebar is closed and hovered (same position as regular sidebar) */}
+              {!leftSidebarOpen && leftSidebarHovered && (
+                <div
+                  className="fixed left-4 top-28 z-50 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] duration-200 animate-in slide-in-from-left"
+                  onMouseEnter={handleHoverStart}
+                  onMouseLeave={handleHoverEnd}
+                >
+                  <LeftSidebar
+                    isOpen={false}
+                    setIsOpen={() => {}}
+                    isHovered={true}
+                    onHoverStart={handleHoverStart}
+                    onHoverEnd={handleHoverEnd}
+                  />
+                </div>
+              )}
             </>
           )}
         </NextStep>
