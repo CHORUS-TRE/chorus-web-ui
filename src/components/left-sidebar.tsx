@@ -8,23 +8,15 @@ import {
   Globe,
   HelpCircle,
   Home,
-  Info,
   LaptopMinimal,
-  Maximize,
   Package,
   PanelLeftClose,
-  Plus,
   Settings,
-  Store,
-  Trash2,
-  UserPlus,
-  X
+  Store
 } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import React, { useState } from 'react'
 
-import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
-import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
 import { useAppState } from '~/providers/app-state-provider'
@@ -32,7 +24,6 @@ import { useAuthentication } from '~/providers/authentication-provider'
 import { useIframeCache } from '~/providers/iframe-cache-provider'
 
 import { Button } from './button'
-import { toast } from './hooks/use-toast'
 
 interface LeftSidebarProps {
   isOpen: boolean
@@ -93,63 +84,13 @@ interface NavSectionProps {
 }
 
 /**
- * Status indicator dot for sessions/webapps
- * - Green pulse: currently visible (active)
- * - Green solid: loaded in DOM but not visible
- * - Orange: not loaded in DOM (persisted from history)
- */
-function StatusDot({
-  isActive,
-  isLoaded
-}: {
-  isActive: boolean
-  isLoaded: boolean
-}) {
-  if (isActive) {
-    return (
-      <span
-        className="ml-auto h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-green-500"
-        title="Currently viewing"
-      />
-    )
-  }
-  if (isLoaded) {
-    return (
-      <span
-        className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-green-500"
-        title="Loaded in memory"
-      />
-    )
-  }
-  return (
-    <span
-      className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500"
-      title="Not loaded (click to load)"
-    />
-  )
-}
-
-/**
- * Expandable Workspaces section
+ * Workspaces section with sessions nested under each workspace
+ * Always expanded, no toggle button
  */
 function WorkspacesSection({ pathname }: NavSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebar_workspaces_expanded')
-      return saved !== null ? JSON.parse(saved) : true
-    }
-    return true
-  })
-  const { workspaces } = useAppState()
+  const { workspaces, workbenches, apps, appInstances } = useAppState()
   const { user } = useAuthentication()
-
-  // Persist expanded state
-  React.useEffect(() => {
-    localStorage.setItem(
-      'sidebar_workspaces_expanded',
-      JSON.stringify(isExpanded)
-    )
-  }, [isExpanded])
+  const { cachedIframes } = useIframeCache()
 
   // Filter to show workspaces where user is a member (has roles) or is owner
   const userWorkspaces = workspaces
@@ -165,88 +106,17 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
       (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
     )
 
-  // Only highlight "Workspaces" if we're on the workspaces list page exactly
-  const isGroupActive = pathname === '/workspaces'
-
-  return (
-    <div>
-      <div
-        className={cn(
-          'flex items-center rounded-lg transition-colors',
-          isGroupActive && !isExpanded ? 'bg-accent/20' : ''
-        )}
-      >
-        <Link
-          href="/workspaces"
-          variant="underline"
-          className={cn(
-            'flex flex-1 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-accent',
-            isGroupActive ? 'text-accent' : 'text-muted-foreground'
-          )}
-        >
-          <Package className="h-4 w-4" />
-          Workspaces
-          {userWorkspaces && userWorkspaces.length > 0 && (
-            <span className="text-xs text-muted-foreground/70">
-              ({userWorkspaces.length})
-            </span>
-          )}
-        </Link>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center p-2 text-muted-foreground/70 hover:text-muted-foreground"
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-3 w-3" />
-          ) : (
-            <ChevronRight className="h-3 w-3" />
-          )}
-        </button>
-      </div>
-
-      {isExpanded && userWorkspaces && userWorkspaces.length > 0 && (
-        <div className="ml-4 mt-0.5 flex flex-col gap-0 border-l border-muted/30 pl-1.5">
-          {userWorkspaces.map((workspace) => {
-            // Only active on exact workspace page, not on sub-pages (sessions, etc.)
-            const isActive = pathname === `/workspaces/${workspace.id}`
-
-            return (
-              <Link
-                key={workspace.id}
-                href={`/workspaces/${workspace.id}`}
-                variant="underline"
-                className={cn(
-                  'flex items-center gap-1.5 rounded px-1.5 py-1 text-xs transition-colors',
-                  isActive
-                    ? 'bg-accent/20 text-accent'
-                    : 'text-muted-foreground hover:bg-accent/10 hover:text-accent'
-                )}
-              >
-                <span className="truncate">{workspace.name}</span>
-              </Link>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
-/**
- * Expandable Sessions section
- */
-function SessionsSection({ pathname }: NavSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebar_sessions_expanded')
-      return saved !== null ? JSON.parse(saved) : true
-    }
-    return true
-  })
-
-  const { workbenches, workspaces, apps, appInstances } = useAppState()
-  const { user } = useAuthentication()
-  const { cachedIframes, activeIframeId, closeIframe } = useIframeCache()
+  // Get sessions for a workspace
+  const getWorkspaceSessions = (workspaceId: string) => {
+    return workbenches
+      ?.filter((wb) => wb.workspaceId === workspaceId)
+      .filter((wb) =>
+        user?.rolesWithContext?.some((role) => role.context.workbench === wb.id)
+      )
+      .sort(
+        (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
+      )
+  }
 
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string, sessionName?: string) => {
@@ -264,128 +134,82 @@ function SessionsSection({ pathname }: NavSectionProps) {
     return sessionName || `Session ${sessionId?.slice(0, 8)}`
   }
 
-  // Persist expanded state
-  React.useEffect(() => {
-    localStorage.setItem(
-      'sidebar_sessions_expanded',
-      JSON.stringify(isExpanded)
-    )
-  }, [isExpanded])
-
-  // Filter to show only user's sessions
-  const userSessions = workbenches
-    ?.filter((workbench) =>
-      user?.rolesWithContext?.some(
-        (role) => role.context.workbench === workbench.id
-      )
-    )
-    .sort(
-      (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
-    )
-
-  // Only highlight "Sessions" if we're on the sessions list page exactly
-  const isGroupActive = pathname === '/sessions'
+  // Only highlight "Workspaces" if we're on the workspaces list page exactly
+  const isGroupActive = pathname === '/workspaces'
 
   return (
     <div>
-      <div
+      {/* Workspaces header - no expand button */}
+      <Link
+        href="/workspaces"
+        variant="underline"
         className={cn(
-          'flex items-center rounded-lg transition-colors',
-          isGroupActive && !isExpanded ? 'bg-accent/20' : ''
+          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-accent',
+          isGroupActive ? 'bg-accent/20 text-accent' : 'text-muted-foreground'
         )}
       >
-        <Link
-          href="/sessions"
-          variant="underline"
-          className={cn(
-            'flex flex-1 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-accent',
-            isGroupActive ? 'text-accent' : 'text-muted-foreground'
-          )}
-        >
-          <LaptopMinimal className="h-4 w-4" />
-          Sessions
-          {userSessions && userSessions.length > 0 && (
-            <span className="text-xs text-muted-foreground/70">
-              ({userSessions.length})
-            </span>
-          )}
-        </Link>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center p-2 text-muted-foreground/70 hover:text-muted-foreground"
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-3 w-3" />
-          ) : (
-            <ChevronRight className="h-3 w-3" />
-          )}
-        </button>
-      </div>
+        <Package className="h-4 w-4" />
+        Workspaces
+      </Link>
 
-      {isExpanded && userSessions && userSessions.length > 0 && (
-        <div className="ml-4 mt-0.5 flex flex-col gap-0 border-l border-muted/30 pl-1.5">
-          {userSessions.map((session) => {
-            const sessionPath = `/workspaces/${session.workspaceId}/sessions/${session.id}`
-            const isActive = pathname === sessionPath
-            const isCurrentlyViewing = activeIframeId === session.id
-            const isLoaded = cachedIframes.has(session.id!)
-            const workspace = workspaces?.find(
-              (w) => w.id === session.workspaceId
-            )
+      {/* Workspaces list - always visible */}
+      {userWorkspaces && userWorkspaces.length > 0 && (
+        <div className="ml-4 mt-1 flex flex-col gap-3 border-l border-muted/30 pl-2">
+          {userWorkspaces.map((workspace) => {
+            const isWorkspaceActive =
+              pathname === `/workspaces/${workspace.id}` ||
+              pathname.startsWith(`/workspaces/${workspace.id}/`)
+            const workspaceSessions = getWorkspaceSessions(workspace.id!)
 
             return (
-              <div
-                key={session.id}
-                className={cn(
-                  'group flex items-start gap-1 rounded pr-0.5 transition-colors',
-                  isActive ? 'bg-accent/20' : 'hover:bg-accent/10'
-                )}
-              >
+              <div key={workspace.id} className="flex flex-col gap-1">
+                {/* Workspace link */}
                 <Link
-                  href={sessionPath}
+                  href={`/workspaces/${workspace.id}`}
                   variant="underline"
                   className={cn(
-                    'flex flex-1 items-start gap-1.5 rounded px-1.5 py-1 text-xs transition-colors',
-                    isActive
+                    'flex items-center gap-2 rounded px-2 py-1.5 text-sm font-medium transition-colors',
+                    isWorkspaceActive
                       ? 'text-accent'
                       : 'text-muted-foreground hover:text-accent'
                   )}
                 >
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="flex items-center gap-1.5">
-                      <span className="truncate">
-                        {getSessionDisplayName(session.id!, session.name)}
-                      </span>
-                      {isLoaded && (
-                        <StatusDot
-                          isActive={isCurrentlyViewing}
-                          isLoaded={isLoaded}
-                        />
-                      )}
-                    </span>
-                    {workspace && (
-                      <span className="truncate text-[10px] text-muted-foreground/60">
-                        {workspace.name}
-                      </span>
-                    )}
-                  </div>
+                  <span className="truncate">{workspace.name}</span>
                 </Link>
-                {isLoaded && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="mt-0.5 h-4 w-4 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      if (session.id) {
-                        closeIframe(session.id)
-                      }
-                    }}
-                    title="Close window"
-                  >
-                    <X className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
-                  </Button>
+
+                {/* Sessions under this workspace */}
+                {workspaceSessions && workspaceSessions.length > 0 && (
+                  <div className="ml-2 flex flex-col gap-1">
+                    {workspaceSessions.map((session) => {
+                      const sessionPath = `/workspaces/${workspace.id}/sessions/${session.id}`
+                      const isActive = pathname === sessionPath
+                      const isLoaded = cachedIframes.has(session.id!)
+
+                      return (
+                        <Link
+                          key={session.id}
+                          href={sessionPath}
+                          variant="underline"
+                          className={cn(
+                            'flex items-start gap-2 rounded px-2 py-1.5 text-xs transition-colors',
+                            isActive
+                              ? 'bg-accent/20 text-accent'
+                              : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
+                          )}
+                        >
+                          <LaptopMinimal
+                            className={cn(
+                              'mt-0.5 h-3.5 w-3.5 shrink-0',
+                              isLoaded && 'text-green-500'
+                            )}
+                          />
+                          <span className="flex-1 leading-relaxed">
+                            {getSessionDisplayName(session.id!, session.name)}
+                          </span>
+                        </Link>
+                      )
+                    })}
+                  </div>
                 )}
               </div>
             )
@@ -404,8 +228,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
     }
     return true
   })
-  const { cachedIframes, externalWebApps, activeIframeId, closeIframe } =
-    useIframeCache()
+  const { cachedIframes, externalWebApps } = useIframeCache()
 
   // Persist expanded state
   React.useEffect(() => {
@@ -454,54 +277,31 @@ function ServicesSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && (
-        <div className="ml-4 mt-0.5 flex flex-col gap-0 border-l border-muted/30 pl-1.5">
+        <div className="ml-4 mt-1 flex flex-col gap-1 pl-2">
           {externalWebApps.map((webapp) => {
             const isActive = pathname === `/webapps/${webapp.id}`
-            const isCurrentlyViewing = activeIframeId === webapp.id
             const isLoaded = cachedIframes.has(webapp.id)
 
             return (
-              <div
+              <Link
                 key={webapp.id}
+                href={`/webapps/${webapp.id}`}
+                variant="underline"
                 className={cn(
-                  'group flex items-center gap-1 rounded pr-0.5 transition-colors',
-                  isActive ? 'bg-accent/20' : 'hover:bg-accent/10'
+                  'flex items-center gap-2 rounded px-2 py-1.5 text-xs transition-colors',
+                  isActive
+                    ? 'bg-accent/20 text-accent'
+                    : 'text-muted-foreground hover:bg-accent/10 hover:text-accent'
                 )}
               >
-                <Link
-                  href={`/webapps/${webapp.id}`}
-                  variant="underline"
+                <Globe
                   className={cn(
-                    'flex flex-1 items-center gap-1.5 rounded px-1.5 py-1 text-xs transition-colors',
-                    isActive
-                      ? 'text-accent'
-                      : 'text-muted-foreground hover:text-accent'
+                    'h-3.5 w-3.5 shrink-0',
+                    isLoaded && 'text-green-500'
                   )}
-                >
-                  <span className="truncate">{webapp.name}</span>
-                  {isLoaded && (
-                    <StatusDot
-                      isActive={isCurrentlyViewing}
-                      isLoaded={isLoaded}
-                    />
-                  )}
-                </Link>
-                {isLoaded && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-4 w-4 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      closeIframe(webapp.id)
-                    }}
-                    title="Close service"
-                  >
-                    <X className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
-                  </Button>
-                )}
-              </div>
+                />
+                <span className="truncate">{webapp.name}</span>
+              </Link>
             )
           })}
         </div>
@@ -605,11 +405,8 @@ function SidebarContent({
           My Workspace
         </Link> */}
 
-        {/* Workspaces (expandable) */}
+        {/* Workspaces with nested sessions */}
         <WorkspacesSection pathname={pathname} />
-
-        {/* Sessions (expandable) */}
-        <SessionsSection pathname={pathname} />
 
         {/* Data */}
         <Link
