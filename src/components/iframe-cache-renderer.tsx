@@ -152,7 +152,10 @@ export default function IframeCacheRenderer() {
               return id
             }
             // If in workspace, show session from this workspace
-            if (currentWorkspaceId && workbench.workspaceId === currentWorkspaceId) {
+            if (
+              currentWorkspaceId &&
+              workbench.workspaceId === currentWorkspaceId
+            ) {
               return id
             }
           }
@@ -161,7 +164,14 @@ export default function IframeCacheRenderer() {
     }
 
     return null
-  }, [isIframePage, currentWorkspaceId, isAppStorePage, cachedIframes, workbenches, activeIframeId])
+  }, [
+    isIframePage,
+    currentWorkspaceId,
+    isAppStorePage,
+    cachedIframes,
+    workbenches,
+    activeIframeId
+  ])
 
   // Update iframe entries when cache changes
   useEffect(() => {
