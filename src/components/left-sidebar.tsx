@@ -139,22 +139,21 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
 
   return (
     <div>
-      {/* Workspaces header - no expand button */}
+      {/* Workspaces header - no icon, no expand button */}
       <Link
         href="/workspaces"
         variant="underline"
         className={cn(
-          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-accent',
+          'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
           isGroupActive ? 'bg-accent/20 text-accent' : 'text-muted-foreground'
         )}
       >
-        <Package className="h-4 w-4" />
         Workspaces
       </Link>
 
       {/* Workspaces list - always visible */}
       {userWorkspaces && userWorkspaces.length > 0 && (
-        <div className="ml-4 mt-1 flex flex-col gap-3 border-l border-muted/30 pl-2">
+        <div className="mt-0.5 flex flex-col gap-1">
           {userWorkspaces.map((workspace) => {
             const isWorkspaceActive =
               pathname === `/workspaces/${workspace.id}` ||
@@ -162,24 +161,25 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
             const workspaceSessions = getWorkspaceSessions(workspace.id!)
 
             return (
-              <div key={workspace.id} className="flex flex-col gap-1">
-                {/* Workspace link */}
+              <div key={workspace.id} className="flex flex-col gap-0.5">
+                {/* Workspace link with icon */}
                 <Link
                   href={`/workspaces/${workspace.id}`}
                   variant="underline"
                   className={cn(
-                    'flex items-center gap-2 rounded px-2 py-1.5 text-sm font-medium transition-colors',
+                    'flex items-center gap-2 rounded-lg px-3 py-1 text-xs font-medium transition-colors',
                     isWorkspaceActive
                       ? 'text-accent'
                       : 'text-muted-foreground hover:text-accent'
                   )}
                 >
+                  <Package className="h-3.5 w-3.5 shrink-0" />
                   <span className="truncate">{workspace.name}</span>
                 </Link>
 
                 {/* Sessions under this workspace */}
                 {workspaceSessions && workspaceSessions.length > 0 && (
-                  <div className="ml-2 flex flex-col gap-1">
+                  <div className="ml-7 flex flex-col gap-0.5 pl-2">
                     {workspaceSessions.map((session) => {
                       const sessionPath = `/workspaces/${workspace.id}/sessions/${session.id}`
                       const isActive = pathname === sessionPath
@@ -191,7 +191,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                           href={sessionPath}
                           variant="underline"
                           className={cn(
-                            'flex items-start gap-2 rounded px-2 py-1.5 text-xs transition-colors',
+                            'flex items-start gap-2 rounded px-2 py-1 text-xs transition-colors',
                             isActive
                               ? 'bg-accent/20 text-accent'
                               : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
@@ -203,7 +203,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                               isLoaded && 'text-green-500'
                             )}
                           />
-                          <span className="flex-1 leading-relaxed">
+                          <span className="flex-1 leading-snug">
                             {getSessionDisplayName(session.id!, session.name)}
                           </span>
                         </Link>
@@ -252,16 +252,15 @@ function ServicesSection({ pathname }: NavSectionProps) {
       >
         <div
           className={cn(
-            'flex flex-1 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            'flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
             isGroupActive ? 'text-accent' : 'text-muted-foreground'
           )}
         >
-          <Globe className="h-4 w-4" />
           Services
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center p-2 text-muted-foreground/70 hover:text-muted-foreground"
+          className="flex items-center p-1.5 text-muted-foreground/70 hover:text-muted-foreground"
         >
           {isExpanded ? (
             <ChevronDown className="h-3 w-3" />
@@ -272,7 +271,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && (
-        <div className="ml-4 mt-1 flex flex-col gap-1 pl-2">
+        <div className="ml-7 mt-0.5 flex flex-col gap-0.5 border-l border-muted/30 pl-3">
           {externalWebApps.map((webapp) => {
             const isActive = pathname === `/webapps/${webapp.id}`
             const isLoaded = cachedIframes.has(webapp.id)
@@ -283,7 +282,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
                 href={`/webapps/${webapp.id}`}
                 variant="underline"
                 className={cn(
-                  'flex items-center gap-2 rounded px-2 py-1.5 text-xs transition-colors',
+                  'flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors',
                   isActive
                     ? 'bg-accent/20 text-accent'
                     : 'text-muted-foreground hover:bg-accent/10 hover:text-accent'
@@ -343,9 +342,8 @@ function HelpButton() {
   return (
     <button
       onClick={toggleRightSidebar}
-      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+      className="rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
     >
-      <HelpCircle className="h-4 w-4" />
       Help
     </button>
   )
@@ -369,36 +367,20 @@ function SidebarContent({
       <SidebarHeader onClose={onClose} showCloseButton={showCloseButton} />
 
       {/* Main navigation */}
-      <nav className="flex flex-1 flex-col gap-1 px-4 py-2">
+      <nav className="flex flex-1 flex-col gap-0.5 px-4 py-2">
         {/* Dashboard */}
         <Link
           href="/"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname === '/'
               ? 'bg-accent/20 text-accent'
               : 'text-muted-foreground'
           )}
         >
-          <GaugeCircle className="h-4 w-4" />
           Dashboard
         </Link>
-
-        {/* My Workspace */}
-        {/* <Link
-          href={'#'}
-          variant="underline"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent demo-effect',
-            isMyWorkspaceActive
-              ? 'bg-accent/20 text-accent'
-              : 'text-muted-foreground'
-          )}
-        >
-          <Home className="h-4 w-4 demo-effect" />
-          My Workspace
-        </Link> */}
 
         {/* Workspaces with nested sessions */}
         <WorkspacesSection pathname={pathname} />
@@ -408,13 +390,12 @@ function SidebarContent({
           href="/data"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/data')
               ? 'bg-accent/20 text-accent'
               : 'text-muted-foreground'
           )}
         >
-          <Database className="h-4 w-4" />
           Data
         </Link>
 
@@ -423,13 +404,12 @@ function SidebarContent({
           href="/app-store"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/app-store')
               ? 'bg-accent/20 text-accent'
               : 'text-muted-foreground'
           )}
         >
-          <Store className="h-4 w-4" />
           App Store
         </Link>
 
@@ -441,13 +421,12 @@ function SidebarContent({
           href="/admin"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/admin')
               ? 'bg-accent/20 text-accent'
               : 'text-muted-foreground'
           )}
         >
-          <Settings className="h-4 w-4" />
           Settings
         </Link>
 

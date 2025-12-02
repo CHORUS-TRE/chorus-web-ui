@@ -92,7 +92,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
-  const { workbenches, users, refreshWorkspaces, workspaces } = useAppState()
+  const { workbenches, users, refreshWorkspaces, workspaces, refreshWorkbenches } = useAppState()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 
@@ -254,6 +254,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}
                 workspaceName={workspace?.name}
+                onSuccess={() => {
+                  refreshWorkbenches()
+                  toast({
+                    title: 'Success',
+                    description: 'Session created'
+                  })
+                }}
+
               />
             </div>
           </CardFooter>
