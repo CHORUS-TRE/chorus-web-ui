@@ -10,9 +10,9 @@ export function AdminTabs() {
   const router = useRouter()
 
   const routes = [
-    { href: '/admin', label: 'Theme', icon: Palette },
-    { href: '/admin/users', label: 'Users', icon: Users },
-    { href: '/admin/workspaces', label: 'Workspaces', icon: Box }
+    { href: '/admin', label: 'Theme' },
+    { href: '/admin/users', label: 'Users' },
+    { href: '/admin/workspaces', label: 'Workspaces', disabled: true }
   ]
 
   const handleTabChange = (value: string) => {
@@ -23,8 +23,11 @@ export function AdminTabs() {
     <Tabs value={pathname} onValueChange={handleTabChange} className="mb-4">
       <TabsList>
         {routes.map((route) => (
-          <TabsTrigger key={route.href} value={route.href}>
-            <route.icon className="mr-2 h-4 w-4" />
+          <TabsTrigger
+            key={route.href}
+            value={route.href}
+            disabled={route.disabled === true}
+          >
             {route.label}
           </TabsTrigger>
         ))}

@@ -1,12 +1,9 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Pencil } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
-import { useActionState } from 'react'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { ControllerRenderProps } from 'react-hook-form'
+import { Pencil, Trash2 } from 'lucide-react'
+import { startTransition, useActionState, useEffect, useState } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { updateUser } from '@/view-model/user-view-model'
@@ -38,105 +35,95 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { Result } from '~/domain/model'
-import {
-  User,
-  UserUpdateSchema as BaseUserUpdateSchema
-} from '~/domain/model/user'
+import { User, UserUpdateSchema } from '~/domain/model/user'
 
 import { toast } from '../hooks/use-toast'
-
-const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  rolesWithContext: z.array(
-    z.object({
-      name: z.string(),
-      context: z.record(z.string(), z.string())
-    })
-  )
-})
 
 type FormData = z.infer<typeof UserUpdateSchema>
 
 export function UserEditDialog({
   user,
   onUserUpdated,
-  open,
-  onOpenChange
+  isControlled = false
 }: {
   user: User
   onUserUpdated: () => void
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  isControlled?: boolean
 }) {
-  const [internalOpen, setInternalOpen] = useState(false)
-  const isControlled = open !== undefined
-  const dialogOpen = isControlled ? open : internalOpen
-  const setDialogOpen = isControlled ? onOpenChange! : setInternalOpen
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [internalUser, setInternalUser] = useState(user)
+  const [hasBeenModified, setHasBeenModified] = useState(false)
 
-  type UserEditValues = {
-    id: string
-    firstName: string
-    lastName: string
-    username: string
-    password: string
-    rolesWithContext: { name: string; context: Record<string, string> }[]
-  }
+  useEffect(() => {
+    if (dialogOpen) {
+      setInternalUser(user)
+      setHasBeenModified(false)
+    }
+  }, [dialogOpen, user])
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserUpdateSchema),
     defaultValues: {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user.username,
-      password: '',
-      rolesWithContext: user.rolesWithContext || []
+      id: internalUser.id,
+      firstName: internalUser.firstName,
+      lastName: internalUser.lastName,
+      username: internalUser.username,
+      password: ''
     }
+  })
+
+  useEffect(() => {
+    form.reset({
+      id: internalUser.id,
+      firstName: internalUser.firstName,
+      lastName: internalUser.lastName,
+      username: internalUser.username,
+      password: ''
+    })
+  }, [internalUser, form])
+
+  const { fields, remove } = useFieldArray({
+    control: form.control,
+    name: 'rolesWithContext'
   })
 
   const [state, formAction] = useActionState(updateUser, {} as Result<User>)
 
   useEffect(() => {
-    if (state.error) {
+    if (state?.error) {
       toast({
         title: 'Error updating user',
         description: state.error,
         variant: 'destructive'
       })
-    } else if (state.data) {
-      toast({
-        title: 'Success',
-        description: 'User updated successfully.'
-      })
-      onUserUpdated()
+    } else if (state?.data) {
       setDialogOpen(false)
     }
-  }, [state, onUserUpdated, setDialogOpen])
+  }, [state])
 
-  const onSubmit = (data: FormData) => {
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((v) => formData.append(key, JSON.stringify(v)))
-      } else {
-        formData.append(key, String(value || ''))
-      }
-    })
-    formAction(formData)
+  const handleRoleAdded = (updatedUser: User) => {
+    setInternalUser(updatedUser)
+    setHasBeenModified(true)
   }
 
-  const removeRoleWithIndex = (
-    field: ControllerRenderProps<UserEditValues, 'rolesWithContext'>,
-    index: number
-  ) => {
-    return () => {
-      const newRoles = field.value ? [...field.value] : []
-      newRoles.splice(index, 1)
-      field.onChange(newRoles)
+  const handleOpenChange = (isOpen: boolean) => {
+    setDialogOpen(isOpen)
+    if (!isOpen && hasBeenModified) {
+      onUserUpdated()
     }
+  }
+
+  const onSubmit = (data: z.infer<typeof UserUpdateSchema>) => {
+    const formData = new FormData()
+    formData.append('id', data.id)
+
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       {!isControlled && (
         <DialogTrigger asChild>
           <Button
@@ -214,21 +201,25 @@ export function UserEditDialog({
             <FormField
               control={form.control}
               name="rolesWithContext"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
-                  <FormLabel>
-                    Roles <CreateUserRoleDialog userId={user.id} />
+                  <FormLabel className="flex items-center gap-2">
+                    Roles{' '}
+                    <CreateUserRoleDialog
+                      userId={internalUser.id}
+                      onRoleAdded={handleRoleAdded}
+                    />
                   </FormLabel>
                   <FormControl>
-                    <Table
-                      className=""
-                      aria-label={`User roles management table with ${field?.value?.length} roles`}
-                    >
-                      <caption className="sr-only">
-                        User roles management table showing roles and available
-                        actions. Use arrow keys to navigate.
-                      </caption>
-                      <div className="max-h-60 overflow-auto">
+                    <div className="max-h-60 overflow-auto">
+                      <Table
+                        className=""
+                        aria-label={`User roles management table with ${fields.length} roles`}
+                      >
+                        <caption className="sr-only">
+                          User roles management table showing roles and
+                          available actions. Use arrow keys to navigate.
+                        </caption>
                         <TableHeader>
                           <TableRow>
                             <TableHead scope="col">Role</TableHead>
@@ -239,11 +230,8 @@ export function UserEditDialog({
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {field.value?.map((r, i) => (
-                            <TableRow
-                              key={`role-row-${r.name}-${i}`}
-                              className="border-muted/50"
-                            >
+                          {fields.map((r, i) => (
+                            <TableRow key={r.id} className="border-muted/50">
                               <TableCell className="p-2">
                                 <Badge key={`role-badge-${r.name}-${i}`}>
                                   {r.name}
@@ -283,20 +271,19 @@ export function UserEditDialog({
                                 <Button
                                   variant="ghost"
                                   aria-label="Delete role"
-                                  onClick={removeRoleWithIndex(field, i)}
+                                  onClick={() => remove(i)}
                                 >
                                   <Trash2
                                     className="h-4 w-4"
                                     aria-hidden="true"
                                   />
-                                  <span className="sr-only">Delete role</span>
                                 </Button>
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
-                      </div>
-                    </Table>
+                      </Table>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

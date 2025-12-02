@@ -92,7 +92,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
-  const { workbenches, users, refreshWorkspaces, workspaces } = useAppState()
+  const {
+    workbenches,
+    users,
+    refreshWorkspaces,
+    workspaces,
+    refreshWorkbenches
+  } = useAppState()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 
@@ -242,7 +248,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                     <div id="scroll-hint" className="sr-only">
                       Use arrow keys or scroll to navigate through sessions
                     </div>
-                    <WorkspaceWorkbenchList workspaceId={workspaceId} />
+                    <WorkspaceWorkbenchList
+                      workspaceId={workspaceId}
+                      size="small"
+                    />
                   </ScrollArea>
                 )
               })()}
@@ -254,6 +263,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <WorkbenchCreateForm
                 workspaceId={workspace?.id || ''}
                 workspaceName={workspace?.name}
+                onSuccess={() => {
+                  refreshWorkbenches()
+                  toast({
+                    title: 'Success',
+                    description: 'Session created'
+                  })
+                }}
               />
             </div>
           </CardFooter>
@@ -355,23 +371,40 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                         (role) => role.context.workspace === workspaceId
                       )
                     )
-                    .map((user) => (
-                      <div
-                        className="flex items-center gap-4 text-muted-foreground"
-                        key={`team-${user.id}`}
-                      >
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback>
-                            {user.firstName[0]?.toUpperCase()}{' '}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm">
-                            {user.firstName} {user.lastName}
-                          </p>
+                    .map((user) => {
+                      const roleInWorkspace = user.rolesWithContext?.find(
+                        (role) => role.context.workspace === workspaceId
+                      )
+                      let roleName = roleInWorkspace?.name
+                      if (roleName?.startsWith('Workspace')) {
+                        roleName = roleName.replace('Workspace', '').trim()
+                      }
+
+                      return (
+                        <div
+                          className="flex items-center justify-between gap-4 text-muted-foreground"
+                          key={`team-${user.id}`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback>
+                                {user.firstName[0]?.toUpperCase()}{' '}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm">
+                                {user.firstName} {user.lastName}
+                              </p>
+                            </div>
+                          </div>
+                          {roleName && (
+                            <p className="text-xs text-muted-foreground">
+                              {roleName}
+                            </p>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                 </div>
               </ScrollArea>
             </CardContent>
@@ -382,7 +415,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 onClick={() => router.push(`/workspaces/${workspaceId}/users`)}
               >
                 <ArrowRight className="h-4 w-4" />
-                View Members
+                Manage Members
               </Button>
             </CardFooter>
           </Card>

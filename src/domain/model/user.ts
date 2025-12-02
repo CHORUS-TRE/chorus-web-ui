@@ -35,7 +35,8 @@ export const UserCreateSchema = z.object({
 
 export const UserRoleCreateSchema = z.object({
   userId: z.string(),
-  role: RoleSchema
+  name: z.string(),
+  context: z.record(z.string(), z.string())
 })
 
 export const UserUpdateSchema = UserCreateSchema.extend({

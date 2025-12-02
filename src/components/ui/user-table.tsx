@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { listUsers } from '@/view-model/user-view-model'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
@@ -23,9 +23,9 @@ export function UserTable() {
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
-  const handleUserChange = () => {
+  const handleUserChange = useCallback(() => {
     setRefreshKey((oldKey) => oldKey + 1)
-  }
+  }, [])
 
   const toggleUserCollapse = (index: number) => {
     const newCollapsed = users.map(() => true)
@@ -82,7 +82,7 @@ export function UserTable() {
           <TableHead scope="col">Actions</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="text-foreground">
         {users.map((user, userIndex) =>
           userCollapsed[userIndex] ? (
             <TableRow key={user.id}>
