@@ -186,7 +186,7 @@ export default function WorkspaceUserTable({
                     className="flex items-center gap-2"
                   >
                     <Pencil className="h-4 w-4 text-muted-foreground" />
-                    Workspace Role
+                    Manage Workspace Role
                   </DropdownMenuItem>
                 </ManageUserWorkspaceDialog>
                 <ManageUserWorkbenchDialog
@@ -199,7 +199,7 @@ export default function WorkspaceUserTable({
                     className="flex items-center gap-2"
                   >
                     <Pencil className="h-4 w-4 text-muted-foreground" />
-                    Sessions Roles
+                    Manage Sessions Role
                   </DropdownMenuItem>
                 </ManageUserWorkbenchDialog>
                 <DropdownMenuSeparator />
