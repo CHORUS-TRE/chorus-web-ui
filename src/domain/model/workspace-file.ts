@@ -37,7 +37,7 @@ export type WorkspaceFileUpdateType = z.infer<typeof WorkspaceFileUpdateSchema>
 
 export const WorkspaceFilePartSchema = z.object({
   partNumber: z.string().min(1, 'Part number is required'),
-  etag: z.string().min(1, 'ETag is required'),
+  etag: z.string().optional(),
   data: z.string().optional()
 })
 
