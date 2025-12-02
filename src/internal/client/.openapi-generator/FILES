@@ -12,6 +12,7 @@ apis/WorkspaceServiceApi.ts
 apis/index.ts
 index.ts
 models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
+models/ChorusAbortWorkspaceFileUploadReply.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
 models/ChorusAuthenticateOauthRedirectReply.ts
@@ -23,6 +24,8 @@ models/ChorusAuthenticationReply.ts
 models/ChorusAuthenticationResult.ts
 models/ChorusBulkCreateAppsReply.ts
 models/ChorusBulkCreateAppsRequest.ts
+models/ChorusCompleteWorkspaceFileUploadReply.ts
+models/ChorusCompleteWorkspaceFileUploadResult.ts
 models/ChorusCountUnreadNotificationsReply.ts
 models/ChorusCreateAppInstanceReply.ts
 models/ChorusCreateAppInstanceResult.ts
@@ -70,6 +73,8 @@ models/ChorusGetWorkspaceFileResult.ts
 models/ChorusGetWorkspaceReply.ts
 models/ChorusGetWorkspaceResult.ts
 models/ChorusInitializeTenantRequest.ts
+models/ChorusInitiateWorkspaceFileUploadReply.ts
+models/ChorusInitiateWorkspaceFileUploadResult.ts
 models/ChorusInternal.ts
 models/ChorusListAppInstancesReply.ts
 models/ChorusListAppInstancesResult.ts
@@ -124,12 +129,15 @@ models/ChorusUpdateWorkspaceFileReply.ts
 models/ChorusUpdateWorkspaceFileResult.ts
 models/ChorusUpdateWorkspaceReply.ts
 models/ChorusUpdateWorkspaceResult.ts
+models/ChorusUploadWorkspaceFilePartReply.ts
+models/ChorusUploadWorkspaceFilePartResult.ts
 models/ChorusUser.ts
 models/ChorusUserFilter.ts
 models/ChorusWorkbench.ts
 models/ChorusWorkbenchFilter.ts
 models/ChorusWorkspace.ts
 models/ChorusWorkspaceFile.ts
+models/ChorusWorkspaceFilePart.ts
 models/ChorusWorkspaceFilter.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
 models/ProtobufAny.ts

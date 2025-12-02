@@ -8,13 +8,18 @@ import { Result } from '~/domain/model'
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
+  WorkspaceFilePart,
   WorkspaceFileUpdateType
 } from '~/domain/model/workspace-file'
+import { WorkspaceFileAbortUpload } from '~/domain/use-cases/workspace-file/workspace-file-abort-upload'
+import { WorkspaceFileCompleteUpload } from '~/domain/use-cases/workspace-file/workspace-file-complete-upload'
 import { WorkspaceFileCreate } from '~/domain/use-cases/workspace-file/workspace-file-create'
 import { WorkspaceFileDelete } from '~/domain/use-cases/workspace-file/workspace-file-delete'
 import { WorkspaceFileGet } from '~/domain/use-cases/workspace-file/workspace-file-get'
+import { WorkspaceFileInitUpload } from '~/domain/use-cases/workspace-file/workspace-file-init-upload'
 import { WorkspaceFileList } from '~/domain/use-cases/workspace-file/workspace-file-list'
 import { WorkspaceFileUpdate } from '~/domain/use-cases/workspace-file/workspace-file-update'
+import { WorkspaceFileUploadPart } from '~/domain/use-cases/workspace-file/workspace-file-upload-part'
 import { FetchError, ResponseError } from '~/internal/client/runtime'
 
 const getRepository = async () => {
@@ -111,6 +116,79 @@ export async function workspaceFileDelete(
     return await useCase.execute(workspaceId, path)
   } catch (error) {
     console.error('Error deleting workspace file', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceFileInitUpload(
+  workspaceId: string,
+  path: string,
+  file: WorkspaceFileCreateType
+): Promise<Result<{ uploadId: string; partSize: number; totalParts: number }>> {
+  try {
+    if (!workspaceId) throw new Error('Invalid workspace id')
+    if (!path) throw new Error('Invalid file path')
+    const repository = await getRepository()
+    const useCase = new WorkspaceFileInitUpload(repository)
+    return await useCase.execute(workspaceId, path, file)
+  } catch (error) {
+    console.error('Error initializing workspace file upload', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceFileUploadPart(
+  workspaceId: string,
+  path: string,
+  uploadId: string,
+  part: WorkspaceFilePart
+): Promise<Result<WorkspaceFilePart>> {
+  try {
+    if (!workspaceId) throw new Error('Invalid workspace id')
+    if (!path) throw new Error('Invalid file path')
+    if (!uploadId) throw new Error('Invalid upload id')
+    const repository = await getRepository()
+    const useCase = new WorkspaceFileUploadPart(repository)
+    return await useCase.execute(workspaceId, path, uploadId, part)
+  } catch (error) {
+    console.error('Error uploading workspace file part', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceFileCompleteUpload(
+  workspaceId: string,
+  path: string,
+  uploadId: string,
+  parts: WorkspaceFilePart[]
+): Promise<Result<WorkspaceFile>> {
+  try {
+    if (!workspaceId) throw new Error('Invalid workspace id')
+    if (!path) throw new Error('Invalid file path')
+    if (!uploadId) throw new Error('Invalid upload id')
+    const repository = await getRepository()
+    const useCase = new WorkspaceFileCompleteUpload(repository)
+    return await useCase.execute(workspaceId, path, uploadId, parts)
+  } catch (error) {
+    console.error('Error completing workspace file upload', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceFileAbortUpload(
+  workspaceId: string,
+  path: string,
+  uploadId: string
+): Promise<Result<string>> {
+  try {
+    if (!workspaceId) throw new Error('Invalid workspace id')
+    if (!path) throw new Error('Invalid file path')
+    if (!uploadId) throw new Error('Invalid upload id')
+    const repository = await getRepository()
+    const useCase = new WorkspaceFileAbortUpload(repository)
+    return await useCase.execute(workspaceId, path, uploadId)
+  } catch (error) {
+    console.error('Error aborting workspace file upload', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

@@ -1,9 +1,10 @@
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
+  WorkspaceFilePart,
   WorkspaceFileUpdateType
 } from '~/domain/model/workspace-file'
-import { ChorusWorkspaceFile } from '~/internal/client'
+import { ChorusWorkspaceFile, ChorusWorkspaceFilePart } from '~/internal/client'
 
 /**
  * Maps domain workspace file types to API types
@@ -38,5 +39,25 @@ export const fromChorusWorkspaceFile = (
     createdAt: file.updatedAt ? new Date(file.updatedAt) : new Date(),
     updatedAt: file.updatedAt ? new Date(file.updatedAt) : new Date(),
     content: file.content
+  }
+}
+
+export const toChorusWorkspaceFilePart = (
+  part: WorkspaceFilePart
+): ChorusWorkspaceFilePart => {
+  return {
+    partNumber: part.partNumber,
+    etag: part.etag,
+    data: part.data || ''
+  }
+}
+
+export const fromChorusWorkspaceFilePart = (
+  part: ChorusWorkspaceFilePart
+): WorkspaceFilePart => {
+  return {
+    partNumber: part.partNumber || '',
+    etag: part.etag || '',
+    data: part.data
   }
 }
