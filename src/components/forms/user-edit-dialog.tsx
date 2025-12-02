@@ -35,18 +35,9 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { Result } from '~/domain/model'
-import {
-  Role,
-  RoleSchema,
-  User,
-  UserUpdateSchema as BaseUserUpdateSchema
-} from '~/domain/model/user'
+import { User, UserUpdateSchema } from '~/domain/model/user'
 
 import { toast } from '../hooks/use-toast'
-
-const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  rolesWithContext: z.array(RoleSchema).optional()
-})
 
 type FormData = z.infer<typeof UserUpdateSchema>
 
@@ -77,8 +68,7 @@ export function UserEditDialog({
       firstName: internalUser.firstName,
       lastName: internalUser.lastName,
       username: internalUser.username,
-      password: '',
-      rolesWithContext: internalUser.rolesWithContext || []
+      password: ''
     }
   })
 
@@ -88,12 +78,11 @@ export function UserEditDialog({
       firstName: internalUser.firstName,
       lastName: internalUser.lastName,
       username: internalUser.username,
-      password: '',
-      rolesWithContext: internalUser.rolesWithContext || []
+      password: ''
     })
   }, [internalUser, form])
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control: form.control,
     name: 'rolesWithContext'
   })
@@ -101,7 +90,13 @@ export function UserEditDialog({
   const [state, formAction] = useActionState(updateUser, {} as Result<User>)
 
   useEffect(() => {
-    if (state.data) {
+    if (state?.error) {
+      toast({
+        title: 'Error updating user',
+        description: state.error,
+        variant: 'destructive'
+      })
+    } else if (state?.data) {
       setDialogOpen(false)
     }
   }, [state])
@@ -121,17 +116,7 @@ export function UserEditDialog({
   const onSubmit = (data: z.infer<typeof UserUpdateSchema>) => {
     const formData = new FormData()
     formData.append('id', data.id)
-    Object.entries(data).forEach(([key, value]) => {
-      if (key !== 'rolesWithContext') {
-        formData.append(key, String(value || ''))
-      }
-    })
 
-    if (data.rolesWithContext) {
-      data.rolesWithContext.forEach((role) => {
-        formData.append('rolesWithContext', JSON.stringify(role))
-      })
-    }
     startTransition(() => {
       formAction(formData)
     })
