@@ -11,8 +11,20 @@ export interface FileSystemItem {
   children?: FileSystemItem[]
 }
 
+export interface FileSystemUploadItem {
+  id: string
+  filePath: string
+  fileName: string
+  fileSize: number
+  partSize: number
+  totalParts: number
+  uploadedParts: number
+  aborted: boolean
+}
+
 export interface FileSystemState {
   items: Record<string, FileSystemItem>
+  uploads: Record<string, FileSystemUploadItem>
   selectedItems: string[]
   currentFolderId: string | null
   viewMode: 'list' | 'grid'
