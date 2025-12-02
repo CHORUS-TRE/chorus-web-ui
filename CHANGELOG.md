@@ -1,3 +1,22 @@
+# [1.23.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.22.0...v1.23.0) (2025-12-02)
+
+
+### Bug Fixes
+
+* make etag optional in workspace file part ([5114d38](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5114d3838747d157c49ce8f99c1d86b0ac3e32f6))
+* remove unused export ([603ef03](https://github.com/CHORUS-TRE/chorus-web-ui/commit/603ef03233eec372f6b1086abf19522f60795241))
+* remove unused import ([8babb99](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8babb99f738bd10680eb4550fe506fea0998ec9e))
+* rename fs root and data section ([dbe4d53](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dbe4d5301ba1fb57065e59f1233efc3fe1bde3cc))
+* use correct file type for multipart upload init ([9a41b96](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9a41b96f8a3baf175e7b19e160dfea1554924d18))
+* use correct file type for multipart upload init ([2646708](https://github.com/CHORUS-TRE/chorus-web-ui/commit/26467087a3c686e1307bb19360adbc2286f64e73))
+
+
+### Features
+
+* add upload progress display and abort functionality in FileManagerClient ([e9a43e4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e9a43e4ee51917bf7f37e9c900f6cab5ac56ba5f))
+* add uploads property to FileSystemState for multipart file tracking ([c88769b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c88769b174c267e26f14daecdaa6c578ef952347))
+* implement multipart file upload functionality with retry logic ([c4140e9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c4140e9a3c50f9c51fd91d7c2d782eee93f6d263))
+
 # [1.22.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.21.1...v1.22.0) (2025-12-01)
 
 
