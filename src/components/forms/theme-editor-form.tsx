@@ -1,6 +1,8 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import Color from 'color'
+import { Paintbrush } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -13,23 +15,19 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
+import { Form, FormField, FormLabel } from '~/components/ui/form'
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '~/components/ui/form'
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '~/components/ui/popover'
 import {
   ColorPicker,
   ColorPickerAlpha,
   ColorPickerEyeDropper,
   ColorPickerFormat,
   ColorPickerHue,
-  ColorPickerOutput,
-  ColorPickerSelection
+  ColorPickerOutput
 } from '~/components/ui/shadcn-io/color-picker'
 import { useAppState } from '~/providers/app-state-provider'
 import {
@@ -56,23 +54,23 @@ export function ThemeEditorForm() {
   const form = useForm<ThemeFormValues>({
     resolver: zodResolver(themeFormSchema),
     defaultValues: {
-      light_primary: customTheme.light.primary || '#1340FF',
-      light_secondary: customTheme.light.secondary || '#ABA5F5',
-      light_accent: customTheme.light.accent || '#B6FF12',
-      dark_primary: customTheme.dark.primary || '#1340FF',
-      dark_secondary: customTheme.dark.secondary || '#ABA5F5',
-      dark_accent: customTheme.dark.accent || '#B6FF12'
+      light_primary: customTheme.light.primary,
+      light_secondary: customTheme.light.secondary,
+      light_accent: customTheme.light.accent,
+      dark_primary: customTheme.dark.primary,
+      dark_secondary: customTheme.dark.secondary,
+      dark_accent: customTheme.dark.accent
     }
   })
 
   useEffect(() => {
     form.reset({
-      light_primary: customTheme.light.primary || '#1340FF',
-      light_secondary: customTheme.light.secondary || '#ABA5F5',
-      light_accent: customTheme.light.accent || '#B6FF12',
-      dark_primary: customTheme.dark.primary || '#1340FF',
-      dark_secondary: customTheme.dark.secondary || '#ABA5F5',
-      dark_accent: customTheme.dark.accent || '#B6FF12'
+      light_primary: customTheme.light.primary,
+      light_secondary: customTheme.light.secondary,
+      light_accent: customTheme.light.accent,
+      dark_primary: customTheme.dark.primary,
+      dark_secondary: customTheme.dark.secondary,
+      dark_accent: customTheme.dark.accent
     })
   }, [customTheme, form])
 
@@ -85,7 +83,7 @@ export function ThemeEditorForm() {
       toast({
         title: 'Theme reset successfully!'
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'An error occurred.',
         description: 'Please try again.',
@@ -119,7 +117,7 @@ export function ThemeEditorForm() {
       toast({
         title: 'Theme updated successfully!'
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'An error occurred.',
         description: 'Please try again.',
@@ -128,39 +126,62 @@ export function ThemeEditorForm() {
     }
   }
 
-  const renderColorPicker = (name: keyof ThemeFormValues, label: string) => (
+  const renderColorRow = (name: keyof ThemeFormValues, label: string) => (
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <ColorPicker
-              className="max-w-sm rounded-md border bg-background p-4 shadow-sm"
-              defaultValue={field.value}
-              onChange={(color) => {
-                const hexColor = `rgba(${color.join(', ')})`
-                field.onChange(hexColor)
-              }}
-            >
-              <ColorPickerSelection />
-              <div className="flex items-center gap-4">
-                <ColorPickerEyeDropper />
-                <div className="grid w-full gap-1">
-                  <ColorPickerHue />
-                  <ColorPickerAlpha />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <ColorPickerOutput />
-                <ColorPickerFormat />
-              </div>
-            </ColorPicker>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        const colorValue = field.value
+        let hslValue = ''
+        try {
+          hslValue = Color(colorValue).hsl().round().string()
+        } catch {
+          hslValue = 'Invalid Color'
+        }
+
+        return (
+          <div className="grid grid-cols-[1fr_auto_auto_1fr_1fr] items-center gap-4">
+            <FormLabel>{label}</FormLabel>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button type="button" variant="ghost" size="icon">
+                  <Paintbrush className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <ColorPicker
+                  className="max-w-sm rounded-md border bg-background p-4 shadow-sm"
+                  defaultValue={colorValue}
+                  onChange={(color) => {
+                    const c = Color.rgb(color[0], color[1], color[2]).alpha(
+                      color[3]
+                    )
+                    field.onChange(c.alpha() < 1 ? c.hexa() : c.hex())
+                  }}
+                >
+                  <div className="flex items-center gap-4">
+                    <ColorPickerEyeDropper />
+                    <div className="grid w-full gap-1">
+                      <ColorPickerHue />
+                      <ColorPickerAlpha />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ColorPickerOutput />
+                    <ColorPickerFormat />
+                  </div>
+                </ColorPicker>
+              </PopoverContent>
+            </Popover>
+            <div
+              className="h-6 w-6 rounded-full border"
+              style={{ backgroundColor: colorValue }}
+            />
+            <code className="text-sm">{hslValue}</code>
+            <code className="text-sm">{colorValue}</code>
+          </div>
+        )
+      }}
     />
   )
 
@@ -176,18 +197,18 @@ export function ThemeEditorForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8">
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Light Theme</h3>
-                {renderColorPicker('light_primary', 'Primary Color')}
-                {renderColorPicker('light_secondary', 'Secondary Color')}
-                {renderColorPicker('light_accent', 'Accent Color')}
+                {renderColorRow('light_primary', 'Primary Color')}
+                {renderColorRow('light_secondary', 'Secondary Color')}
+                {renderColorRow('light_accent', 'Accent Color')}
               </div>
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Dark Theme</h3>
-                {renderColorPicker('dark_primary', 'Primary Color')}
-                {renderColorPicker('dark_secondary', 'Secondary Color')}
-                {renderColorPicker('dark_accent', 'Accent Color')}
+                {renderColorRow('dark_primary', 'Primary Color')}
+                {renderColorRow('dark_secondary', 'Secondary Color')}
+                {renderColorRow('dark_accent', 'Accent Color')}
               </div>
             </div>
             <div className="flex gap-2">

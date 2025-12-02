@@ -173,13 +173,13 @@ export function WorkbenchCreateForm({
       <DialogTrigger asChild>
         <Button variant="accent-filled" type="button" disabled={isCreating}>
           <CirclePlus className="h-4 w-4" />
-          {isCreating ? 'Creating...' : 'Start session'}
+          {isCreating ? 'Creating...' : 'Create session'}
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-background">
         <DialogHeader>
-          <DialogTitle>Start Session</DialogTitle>
-          <DialogDescription>Start a new session.</DialogDescription>
+          <DialogTitle>Create Session</DialogTitle>
+          <DialogDescription>Create a new session.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

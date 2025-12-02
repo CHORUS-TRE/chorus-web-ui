@@ -20,12 +20,13 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
     try {
       const response = await this.dataSource.getGlobalEntry(key)
       if (!response.result) {
-        return { error: 'Not found' }
+        return { data: undefined } // Return undefined if not found
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      // Don't treat not found as an error
+      return { data: undefined }
     }
   }
   async listGlobalEntries(): Promise<Result<DevStoreEntries>> {
@@ -66,12 +67,13 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
     try {
       const response = await this.dataSource.getUserEntry(key)
       if (!response.result) {
-        return { error: 'Not found' }
+        return { data: undefined } // Return undefined if not found
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      // Don't treat not found as an error
+      return { data: undefined }
     }
   }
   async listUserEntries(): Promise<Result<DevStoreEntries>> {
@@ -115,12 +117,13 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
     try {
       const response = await this.dataSource.getWorkspaceEntry(workspaceId, key)
       if (!response.result) {
-        return { error: 'Not found' }
+        return { data: undefined } // Return undefined if not found
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      // Don't treat not found as an error
+      return { data: undefined }
     }
   }
   async listWorkspaceEntries(

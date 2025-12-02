@@ -6,6 +6,14 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**'
+      }
+    ]
+  },
   // This is needed to ensure the Go WASM module can be loaded correctly
   webpack: (config) => {
     config.experiments = { asyncWebAssembly: true, layers: true }

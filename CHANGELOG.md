@@ -1,3 +1,17 @@
+# [1.22.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.21.1...v1.22.0) (2025-12-01)
+
+
+### Features
+
+* add background iframe rendering mode ([c8563a9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c8563a907c88760c08b0bbd1fbebffd77d69e222))
+* add sessions, notifications pages and workspace layout updates ([f6031bb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f6031bbc74067aca84b11a6e86449fd6eac524de))
+* enhance header with iframe management and fullscreen support ([8cb6b9c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8cb6b9c1ec7e933b29151d5b106db0ef3e060703))
+* enhance workbench components and workspace display ([9db8611](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9db86110a4a4a38b7f01324bfcce1ff428937230))
+* improve left sidebar navigation and dashboard integration ([f198eeb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f198eeb92a7559d85df407a6638a5cb851c10505))
+* improve sidebar session display with app names ([b7227b6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b7227b60e4b2b9408f5bb2271a9eb657d9caea79))
+* improve theme editor and logo upload functionality ([616fe34](https://github.com/CHORUS-TRE/chorus-web-ui/commit/616fe3410033c6edb9e1bfffd1db2c6b44c26bf5))
+* integrate iframe caching system with new components and cleanup dialogs ([6871c74](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6871c74bc76cd5c59ddf8f4e081127946db5477c))
+
 ## [1.21.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.21.0...v1.21.1) (2025-11-27)
 
 

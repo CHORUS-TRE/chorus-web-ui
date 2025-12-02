@@ -22,18 +22,18 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { RoleHoverCard } from '~/components/role-hover-card'
-import { useAppState } from '~/providers/app-state-provider'
+import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserProfile() {
-  // const { user } = useAuthentication()
+  const { user } = useAuthentication()
 
   const params = useParams<{ userId: string }>()
   const userId = params?.userId
 
-  const { users: userList } = useAppState()
-  const profileUser = userList?.find((u) => u.id === userId)
+  // const { users: userList } = useAppState()
+  // const profileUser = userList?.find((u) => u.id === userId)
 
-  if (!profileUser) {
+  if (user?.id !== userId) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
@@ -42,6 +42,8 @@ export default function UserProfile() {
       </div>
     )
   }
+
+  const profileUser = user
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
