@@ -1,3 +1,21 @@
+# [1.24.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.23.0...v1.24.0) (2025-12-02)
+
+
+### Bug Fixes
+
+* add delay for backend cache update after session creation ([2d5d944](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2d5d9442b44bc5faf850c32f90c690170e6d4d9d))
+* code lint ([769d5e5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/769d5e514df3864d51412b091e1f5a9e13074170))
+* Ensure user update responses are parsed correctly in UserRepository ([2547d42](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2547d4273da8308cd8b62f0ef5c1753e2d02bd11))
+* error throw for unimplemented functionality in the update method ([b5a03ce](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b5a03cef8093399b096ffacec9373cd77d0b81be))
+
+
+### Features
+
+* enhance create user role dialog UX ([113f5e6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/113f5e65f4b44e343318461a172ee42156448bd2))
+* enhance user profile page with accordion layout ([34e91d7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/34e91d72da4a43bf34f0fd80be2c3bcf850b137a))
+* improve user role creation API integration ([4a87fa2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4a87fa244eb5d831e9094791f50e111d7eb51300))
+* **workspace:** enhance dashboard and session list UI ([92bf6ea](https://github.com/CHORUS-TRE/chorus-web-ui/commit/92bf6ea0f57c6f656299214b9370d8a78eafe35a))
+
 # [1.23.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.22.0...v1.23.0) (2025-12-02)
 
 
