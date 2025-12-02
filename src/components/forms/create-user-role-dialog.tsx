@@ -2,12 +2,16 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus } from 'lucide-react'
-import { useActionState } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { createUserRole } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
 import {
   Dialog,
@@ -35,11 +39,9 @@ import {
 import { Result } from '~/domain/model'
 import { Role, User } from '~/domain/model/user'
 import { getAllRoles } from '~/utils/schema-roles'
-
-import { toast } from '../hooks/use-toast'
+import { createUserRole } from '~/view-model/user-view-model'
 
 const CreateUserRoleSchema = z.object({
-  userId: z.string().min(1),
   roleName: z.string().min(1, 'Select a role'),
   workspace: z.string().optional(),
   workbench: z.string().optional(),
@@ -50,17 +52,16 @@ type FormData = z.infer<typeof CreateUserRoleSchema>
 
 export function CreateUserRoleDialog({
   userId,
-  onCreated
+  onRoleAdded
 }: {
   userId: string
-  onCreated?: () => void
+  onRoleAdded: (user: User) => void
 }) {
   const [open, setOpen] = useState(false)
   const [roles, setRoles] = useState<Role[]>([])
   const form = useForm<FormData>({
     resolver: zodResolver(CreateUserRoleSchema),
     defaultValues: {
-      userId,
       roleName: '',
       workspace: '',
       workbench: '',
@@ -77,28 +78,15 @@ export function CreateUserRoleDialog({
   }, [])
 
   useEffect(() => {
-    if (state.error) {
-      toast({
-        title: 'Error creating role',
-        description: state.error,
-        variant: 'destructive'
-      })
-    } else if (state.data !== undefined) {
-      toast({
-        title: 'Role added',
-        description: 'User role created successfully.'
-      })
-      onCreated?.()
+    if (state.data) {
+      onRoleAdded(state.data)
       setOpen(false)
-      form.reset({
-        userId,
-        roleName: '',
-        workspace: '',
-        workbench: '',
-        user: ''
-      })
+      form.reset()
+    } else if (state.error) {
+      console.error('Failed to create role:', state.error)
+      // TODO: show toast notification
     }
-  }, [state, onCreated, form, userId])
+  }, [state, onRoleAdded, form, setOpen])
 
   const roleOptions = useMemo(
     () => roles.map((r) => ({ id: r.id ?? r.name, label: r.name })),
@@ -106,21 +94,27 @@ export function CreateUserRoleDialog({
   )
 
   const onSubmit = (data: FormData) => {
-    const fd = new FormData()
-    fd.append('userId', data.userId)
-    fd.append('roleName', data.roleName)
-    fd.append('workspace', data.workspace || '')
-    fd.append('workbench', data.workbench || '')
-    fd.append('user', data.user || '')
-    formAction(fd)
+    const formData = new FormData()
+    formData.append('userId', userId)
+    formData.append('roleName', data.roleName)
+    if (data.workspace) {
+      formData.append('workspace', data.workspace)
+    }
+    if (data.workbench) {
+      formData.append('workbench', data.workbench)
+    }
+    // NOTE: user context is not sent as it's not part of the create schema
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" aria-label="Add role">
+      <DialogTrigger asChild className="w-32 justify-start">
+        <Button type="button" variant="accent-filled" aria-label="Add role">
           <Plus className="h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Add role</span>
+          <span className="">Add role</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="">
@@ -128,8 +122,13 @@ export function CreateUserRoleDialog({
           <DialogTitle>Create User Role</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <input type="hidden" {...form.register('userId')} />
+          <form
+            onSubmit={(e) => {
+              e.stopPropagation()
+              form.handleSubmit(onSubmit)(e)
+            }}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="roleName"
@@ -203,7 +202,7 @@ export function CreateUserRoleDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit">Add Role</Button>
             </div>
           </form>
         </Form>

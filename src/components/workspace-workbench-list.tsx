@@ -9,14 +9,16 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 
 export function WorkspaceWorkbenchList({
   workspaceId,
-  action
+  action,
+  size = 'default'
 }: {
   workspaceId?: string
   action?: ({ id, workspaceId }: { id: string; workspaceId: string }) => void
+  size?: 'default' | 'small'
 }) {
   const router = useRouter()
 
-  const { workbenches, users, appInstances, apps } = useAppState()
+  const { workbenches, users, appInstances, apps, workspaces } = useAppState()
   const { background } = useIframeCache()
   const { user } = useAuthentication()
 
@@ -43,12 +45,22 @@ export function WorkspaceWorkbenchList({
 
   return (
     <div
-      className="grid w-full gap-4 [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))]"
+      className={`grid w-full gap-4 ${
+        size === 'small'
+          ? 'grid-cols-2'
+          : '[grid-template-columns:repeat(auto-fill,minmax(200px,1fr))]'
+      }`}
       role="list"
       aria-label="Sessions"
     >
       {workbenchList?.map(
-        ({ id, createdAt, userId, name: sessionName, workspaceId }) => {
+        ({
+          id,
+          createdAt,
+          userId,
+          name: sessionName,
+          workspaceId: workbenchWorkspaceId
+        }) => {
           const userName =
             user?.id === userId
               ? user
@@ -62,15 +74,21 @@ export function WorkspaceWorkbenchList({
           const appNames = app?.name || sessionName || 'Session'
           const isActive = background?.sessionId === id
           const isUserSession = userId === user?.id
+          const workspace = workspaces?.find(
+            (w) => w.id === workbenchWorkspaceId
+          )
+          const workspaceName = workspace?.name
 
           const handleKeyDown = (e: React.KeyboardEvent) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
               if (!action) {
-                router.push(`/workspaces/${workspaceId}/sessions/${id}`)
+                router.push(
+                  `/workspaces/${workbenchWorkspaceId}/sessions/${id}`
+                )
               } else {
-                if (id && workspaceId) {
-                  action({ id, workspaceId: workspaceId })
+                if (id && workbenchWorkspaceId) {
+                  action({ id, workspaceId: workbenchWorkspaceId })
                 }
               }
             }
@@ -81,21 +99,31 @@ export function WorkspaceWorkbenchList({
               key={`workspace-sessions-${id}`}
               role="listitem"
               tabIndex={isUserSession ? 0 : -1}
-              aria-label={`Session with ${appNames}, created by ${userDisplayName} ${formatDistanceToNow(createdAt || new Date())} ago${isActive ? ', currently active' : ''}`}
+              aria-label={`Session with ${appNames} in workspace ${workspaceName}, created by ${userDisplayName} ${formatDistanceToNow(
+                createdAt || new Date()
+              )} ago${isActive ? ', currently active' : ''}`}
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
 
                 if (!action) {
-                  router.push(`/workspaces/${workspaceId}/sessions/${id}`)
+                  router.push(
+                    `/workspaces/${workbenchWorkspaceId}/sessions/${id}`
+                  )
                 } else {
-                  if (id && workspaceId) {
-                    action({ id, workspaceId: workspaceId })
+                  if (id && workbenchWorkspaceId) {
+                    action({ id, workspaceId: workbenchWorkspaceId })
                   }
                 }
               }}
               onKeyDown={handleKeyDown}
-              className={`group relative flex h-32 flex-col justify-between overflow-hidden rounded-md text-muted transition-colors ${userId === user?.id ? 'cursor-pointer hover:bg-accent/80 hover:text-black' : 'cursor-default'}`}
+              className={`group relative flex ${
+                size === 'small' ? 'h-24' : 'h-32'
+              } flex-col justify-between overflow-hidden rounded-md text-muted transition-colors ${
+                userId === user?.id
+                  ? 'cursor-pointer hover:bg-accent/80 hover:text-black'
+                  : 'cursor-default'
+              }`}
             >
               <div className="absolute inset-0">
                 {app?.iconURL && (
@@ -117,9 +145,18 @@ export function WorkspaceWorkbenchList({
                 )}
               </div>
               <div className="relative z-10 p-2 text-white">
-                <div className="w-full min-w-0 flex-1 overflow-hidden truncate text-sm font-semibold">
+                <div
+                  className={`w-full min-w-0 flex-1 overflow-hidden truncate font-semibold ${
+                    size === 'small' ? 'text-xs' : 'text-sm'
+                  }`}
+                >
                   {appNames}
                 </div>
+                {workspaceName && !workspaceId && (
+                  <p className="truncate text-xs font-light text-gray-300">
+                    {workspaceName}
+                  </p>
+                )}
                 <p className="text-xs font-normal">
                   {userDisplayName},{' '}
                   {formatDistanceToNow(createdAt || new Date())} ago

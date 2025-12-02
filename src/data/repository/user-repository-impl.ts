@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
-import { Result } from '@/domain/model'
 import {
+  Role,
+  RoleSchema,
   User,
   UserCreateType,
   UserRoleCreateType,
@@ -10,6 +11,7 @@ import {
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
 import { workspaceList } from '@/view-model/workspace-view-model'
+import { Result } from '~/domain/model'
 
 import { UserDataSource } from '../data-source'
 
@@ -46,17 +48,22 @@ export class UserRepositoryImpl implements UserRepository {
 
   async createRole(userRole: UserRoleCreateType): Promise<Result<User>> {
     try {
-      const response = await this.dataSource.createRole(userRole)
-      const userResult = UserSchema.safeParse(response?.result?.user)
+      const roleData = {
+        userId: userRole.userId,
+        name: userRole.name,
+        context: userRole.context
+      }
+      const response = await this.dataSource.createRole(roleData)
+      const roleResult = UserSchema.safeParse(response.result)
 
-      if (!userResult.success) {
+      if (!roleResult.success) {
         return {
           error: 'API response validation failed',
-          issues: userResult.error.issues
+          issues: roleResult.error.issues
         }
       }
 
-      return { data: userResult.data }
+      return { data: roleResult.data ?? undefined }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
@@ -173,13 +180,14 @@ export class UserRepositoryImpl implements UserRepository {
 
   async update(user: UserUpdateType): Promise<Result<User>> {
     try {
+      throw new Error('Not implemented')
       const response = await this.dataSource.update(user)
-      const userResult = UserSchema.safeParse(response.result)
+      const userResult = UserSchema.safeParse(response.result?.user)
 
       if (!userResult.success) {
         return {
           error: 'API response validation failed',
-          issues: userResult.error.issues
+          issues: userResult.error?.issues
         }
       }
       return { data: userResult.data }

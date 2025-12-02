@@ -17,16 +17,23 @@ import { useParams } from 'next/navigation'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { RoleHoverCard } from '~/components/role-hover-card'
+import { useAppState } from '~/providers/app-state-provider'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserProfile() {
   const { user } = useAuthentication()
-
+  const { workspaces } = useAppState()
   const params = useParams<{ userId: string }>()
   const userId = params?.userId
 
@@ -327,182 +334,172 @@ export default function UserProfile() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {profileUser.rolesWithContext &&
-              profileUser.rolesWithContext.length > 0 ? (
-                <div className="space-y-6">
-                  {Object.entries(groupRolesByWorkspace())
-                    .sort(([a], [b]) =>
-                      a.match(/^\*/s) ? -1 : b.match(/^undefined/) ? 1 : 0
-                    )
-                    .map(([workspaceId, roles]) => (
-                      <div key={workspaceId} className="space-y-4">
+              {(() => {
+                const groupedRoles = groupRolesByWorkspace()
+                const globalRoles = groupedRoles['undefined']
+                const workspaceRoleEntries = Object.entries(
+                  groupedRoles
+                ).filter(([wsId]) => wsId !== 'undefined')
+
+                if (!globalRoles && workspaceRoleEntries.length === 0) {
+                  return (
+                    <p className="text-muted-foreground">No roles assigned</p>
+                  )
+                }
+
+                return (
+                  <div className="space-y-6">
+                    {globalRoles && (
+                      <div>
                         <div className="flex items-center gap-2">
-                          {workspaceId === 'global' ? (
-                            <Crown className="h-5 w-5" />
-                          ) : (
-                            <AppWindow className="h-5 w-5 text-muted-foreground" />
-                          )}
-                          <h5 className="text-lg font-semibold">
-                            {workspaceId === 'undefined'
-                              ? 'CHORUS Global Roles'
-                              : `Workspace ${workspaceId}`}
+                          <Crown className="h-5 w-5 text-purple-400" />
+                          <h5 className="text-base font-semibold">
+                            Global Roles
                           </h5>
                         </div>
-                        <div className="space-y-3 pl-6">
-                          {Object.entries(roles)
-                            .sort(([a], [b]) => {
-                              // Put WorkspaceAdmin before WorkbenchAdmin
-                              if (
-                                a.includes('Workbench') &&
-                                b.includes('Workspace')
-                              )
-                                return 1
-                              if (
-                                a.includes('Workspace') &&
-                                b.includes('Workbench')
-                              )
-                                return -1
-                              return a.localeCompare(b)
-                            })
-                            .map(([roleName, roleInstances]) => (
-                              <div
-                                key={`${workspaceId}-${roleName}`}
-                                className="space-y-3"
+                        <div className="mt-3 space-y-3 pl-7">
+                          {Object.entries(globalRoles).map(
+                            ([roleName, roleInstances]) => (
+                              <RoleHoverCard key={roleName} roleName={roleName}>
+                                <div className="flex cursor-help items-center gap-2">
+                                  <Shield className="h-4 w-4" />
+                                  <h6 className="text-sm font-medium">
+                                    {roleName}
+                                  </h6>
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {roleInstances.length}
+                                  </Badge>
+                                </div>
+                              </RoleHoverCard>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {workspaceRoleEntries.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <AppWindow className="h-5 w-5 text-muted-foreground" />
+                          <h5 className="text-base font-semibold">
+                            Workspace Roles
+                          </h5>
+                        </div>
+                        <Accordion
+                          type="multiple"
+                          className="mt-2 w-full"
+                          defaultValue={
+                            workspaceRoleEntries.length === 1
+                              ? [workspaceRoleEntries[0][0]]
+                              : []
+                          }
+                        >
+                          {workspaceRoleEntries.map(([workspaceId, roles]) => {
+                            const workspace = workspaces?.find(
+                              (w) => w.id === workspaceId
+                            )
+                            const totalRoles =
+                              Object.values(roles).flat().length
+
+                            return (
+                              <AccordionItem
+                                key={workspaceId}
+                                value={workspaceId}
                               >
-                                <RoleHoverCard roleName={roleName}>
-                                  <div className="flex cursor-help items-center gap-2 border-l-2 border-accent/50 pl-3">
-                                    {roleName.includes('Workspace') ? (
-                                      <AppWindow className="h-4 w-4" />
-                                    ) : roleName.includes('Workbench') ? (
-                                      <LaptopMinimal className="h-4 w-4" />
-                                    ) : (
-                                      <Shield className="h-4 w-4" />
-                                    )}
-                                    <h6 className="text-sm font-semibold">
-                                      {roleName}
-                                    </h6>
+                                <AccordionTrigger>
+                                  <div className="flex flex-1 items-center justify-between pr-4">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-medium">
+                                        {workspace?.name || 'Workspace'}
+                                      </span>
+                                      <span className="font-mono text-xs text-muted-foreground">
+                                        {workspaceId}
+                                      </span>
+                                    </div>
                                     <Badge
                                       variant="outline"
                                       className="text-xs"
                                     >
-                                      {roleInstances.length}
+                                      {totalRoles}{' '}
+                                      {totalRoles > 1 ? 'roles' : 'role'}
                                     </Badge>
                                   </div>
-                                </RoleHoverCard>
-
-                                <div className="ml-6 space-y-2">
-                                  {/* Group by workspace/workbench type */}
-                                  {roleName.includes('Workspace') && (
-                                    <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-4">
-                                      {roleInstances.map((role, index) => (
-                                        <Link
-                                          key={index}
-                                          href={`/workspaces/${role.context.workspace || workspaceId}`}
-                                          className="group"
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="space-y-4 pl-2">
+                                    {Object.entries(roles).map(
+                                      ([roleName, roleInstances]) => (
+                                        <div
+                                          key={roleName}
+                                          className="space-y-2"
                                         >
-                                          <div className="rounded-lg border border-muted/40 bg-gradient-to-br from-muted/10 to-muted/5 p-3 transition-all hover:border-accent/50 hover:bg-gradient-to-br hover:from-accent/10 hover:to-accent/5">
-                                            <div className="flex items-center gap-2">
-                                              <AppWindow className="h-4 w-4 text-muted group-hover:text-accent" />
-                                              <span className="text-xs font-medium text-muted">
-                                                Workspace{' '}
-                                                {role.context.workspace ||
-                                                  workspaceId}
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </Link>
-                                      ))}
-                                    </div>
-                                  )}
-
-                                  {roleName.includes('Workbench') && (
-                                    <div className="space-y-1">
-                                      {/* Group workbench sessions under each workspace */}
-                                      {Object.entries(
-                                        roleInstances.reduce(
-                                          (acc, role) => {
-                                            const ws =
-                                              role.context.workspace ||
-                                              'undefined'
-                                            if (!acc[ws]) acc[ws] = []
-                                            acc[ws].push(role)
-                                            return acc
-                                          },
-                                          {} as Record<
-                                            string,
-                                            typeof roleInstances
-                                          >
-                                        )
-                                      ).map(([wsId, wsRoles]) => (
-                                        <div key={wsId} className="space-y-2">
-                                          <div className="ml-4 grid grid-cols-1 gap-2 md:grid-cols-4 lg:grid-cols-6">
-                                            {wsRoles.map((role, index) => (
-                                              <Link
-                                                key={index}
-                                                href={`/workspaces/${role.context.workspace}/sessions/${role.context.workbench}`}
-                                                className="group"
+                                          <RoleHoverCard roleName={roleName}>
+                                            <div className="flex cursor-help items-center gap-2">
+                                              {roleName.includes(
+                                                'Workspace'
+                                              ) ? (
+                                                <AppWindow className="h-4 w-4 text-muted-foreground" />
+                                              ) : (
+                                                <LaptopMinimal className="h-4 w-4 text-muted-foreground" />
+                                              )}
+                                              <h6 className="text-sm font-medium">
+                                                {roleName}
+                                              </h6>
+                                              <Badge
+                                                variant="outline"
+                                                className="text-xs"
                                               >
-                                                <div className="rounded-lg border border-muted/40 bg-muted/10 p-2 transition-all hover:border-accent/50 hover:bg-muted/20">
-                                                  <div className="flex items-center gap-2">
-                                                    <LaptopMinimal className="h-3 w-3 text-muted" />
-                                                    <span className="text-xs font-medium text-muted">
-                                                      {role.context.workbench}
-                                                    </span>
-                                                  </div>
-                                                </div>
-                                              </Link>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-
-                                  {/* Global roles */}
-                                  {!roleName.includes('Workspace') &&
-                                    !roleName.includes('Workbench') && (
-                                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-                                        {roleInstances.map((role, index) => (
-                                          <div
-                                            key={index}
-                                            className="rounded-lg border border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-3"
-                                          >
-                                            <div className="flex items-center gap-2">
-                                              <Crown className="h-4 w-4 text-purple-400" />
-                                              <span className="text-sm font-medium">
-                                                Global Access
-                                              </span>
+                                                {roleInstances.length}
+                                              </Badge>
                                             </div>
-                                            <div className="mt-1 text-xs text-muted-foreground">
-                                              {formatContextDisplay(
-                                                role.context
+                                          </RoleHoverCard>
+
+                                          {roleName.includes('Workbench') ? (
+                                            <div className="ml-6 grid grid-cols-2 gap-2 pt-1 md:grid-cols-3 lg:grid-cols-4">
+                                              {roleInstances.map(
+                                                (role, index) => (
+                                                  <Link
+                                                    key={index}
+                                                    href={`/workspaces/${role.context.workspace}/sessions/${role.context.workbench}`}
+                                                    className="group"
+                                                  >
+                                                    <div className="truncate rounded-md border p-2 transition-colors hover:border-accent hover:bg-accent/10">
+                                                      <div className="flex items-center gap-2">
+                                                        <LaptopMinimal className="h-3 w-3 flex-shrink-0" />
+                                                        <span className="truncate text-xs">
+                                                          {
+                                                            role.context
+                                                              .workbench
+                                                          }
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                  </Link>
+                                                )
                                               )}
                                             </div>
-                                          </div>
-                                        ))}
-                                      </div>
+                                          ) : (
+                                            <div className="ml-6 text-xs text-muted-foreground">
+                                              Applies to the entire workspace.
+                                            </div>
+                                          )}
+                                        </div>
+                                      )
                                     )}
-                                </div>
-                              </div>
-                            ))}
-                        </div>
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            )
+                          })}
+                        </Accordion>
                       </div>
-                    ))}
-                </div>
-              ) : profileUser.roles && profileUser.roles.length > 0 ? (
-                <div className="space-y-4">
-                  <h4 className="font-medium">Basic Roles</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {profileUser.roles.map((role, index) => (
-                      <Badge key={index} variant="secondary">
-                        {role}
-                      </Badge>
-                    ))}
+                    )}
                   </div>
-                </div>
-              ) : (
-                <p className="text-muted-foreground">No roles assigned</p>
-              )}
+                )
+              })()}
             </CardContent>
           </Card>
         </div>

@@ -3,7 +3,7 @@ import { User } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
 
 export interface UserRoleCreateUseCase {
-  execute(user: UserRoleCreateType): Promise<Result<User>>
+  execute(userRole: UserRoleCreateType): Promise<Result<User>>
 }
 
 export class UserRoleCreate implements UserRoleCreateUseCase {
