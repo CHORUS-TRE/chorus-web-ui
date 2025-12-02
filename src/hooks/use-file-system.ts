@@ -833,7 +833,6 @@ export function useFileSystem(workspaceId?: string) {
     renameItem,
     createFolder,
     importFile,
-    importFileMultipart,
     abortMultipartUpload,
     downloadFile,
     setSearch,
