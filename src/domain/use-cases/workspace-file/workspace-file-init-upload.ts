@@ -1,11 +1,11 @@
-import { Result, WorkspaceFile } from '~/domain/model'
+import { Result, WorkspaceFileCreateType } from '~/domain/model'
 import { WorkspaceFileRepository } from '~/domain/repository/workspace-file-repository'
 
 export interface WorkspaceFileInitUploadUseCase {
   execute(
     workspaceId: string,
     path: string,
-    file: WorkspaceFile
+    file: WorkspaceFileCreateType
   ): Promise<Result<{ uploadId: string; partSize: number; totalParts: number }>>
 }
 
@@ -19,7 +19,7 @@ export class WorkspaceFileInitUpload implements WorkspaceFileInitUploadUseCase {
   async execute(
     workspaceId: string,
     path: string,
-    file: WorkspaceFile
+    file: WorkspaceFileCreateType
   ): Promise<
     Result<{ uploadId: string; partSize: number; totalParts: number }>
   > {
