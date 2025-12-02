@@ -5,6 +5,7 @@ import {
 } from '@/domain/model/user'
 import {
   ChorusCreateUserReply,
+  ChorusCreateUserRoleReply,
   ChorusDeleteUserReply,
   ChorusGetUserMeReply,
   ChorusGetUserReply,
@@ -19,7 +20,9 @@ import { toChorusUser, toChorusUserUpdate } from './user-mapper'
 interface UserDataSource {
   me: () => Promise<ChorusGetUserMeReply>
   create: (user: UserCreateType) => Promise<ChorusCreateUserReply>
-  createRole: (userRole: UserRoleCreateType) => Promise<ChorusCreateUserReply>
+  createRole: (
+    userRole: UserRoleCreateType
+  ) => Promise<ChorusCreateUserRoleReply>
   deleteRole: (userId: string, roleId: string) => Promise<ChorusCreateUserReply>
   get: (id: string) => Promise<ChorusGetUserReply>
   delete: (id: string) => Promise<ChorusDeleteUserReply>
@@ -50,11 +53,16 @@ class UserApiDataSourceImpl implements UserDataSource {
     })
   }
 
-  createRole(userRole: UserRoleCreateType): Promise<ChorusCreateUserReply> {
+  async createRole(
+    userRole: UserRoleCreateType
+  ): Promise<ChorusCreateUserRoleReply> {
     return this.service.userServiceCreateUserRole({
       userId: userRole.userId,
       body: {
-        role: userRole.role
+        role: {
+          name: userRole.name,
+          context: userRole.context
+        }
       }
     })
   }
