@@ -1,6 +1,6 @@
 'use client'
 
-import { CirclePlus } from 'lucide-react'
+import { CirclePlus, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '~/components/button'
@@ -38,6 +38,7 @@ export default function FileManagerClient({
     renameItem,
     createFolder,
     importFile,
+    abortMultipartUpload,
     downloadFile,
     setSearch,
     toggleViewMode,
@@ -148,6 +149,42 @@ export default function FileManagerClient({
         onClearSelection={clearSelection}
         getItemName={getItemName}
       />
+
+      {/* Uploads progress */}
+      <div className="px-4">
+        {Object.values(state.uploads).map((upload) => (
+          <div key={upload.id} className="pb-4">
+            <div className="pb-1 text-sm font-medium text-muted-foreground">
+              {upload.fileName}
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-full overflow-hidden rounded-full border border-accent bg-muted/20">
+                <div
+                  className="h-3 rounded-full bg-accent transition-all duration-500"
+                  style={{
+                    width: `${(upload.uploadedParts / upload.totalParts) * 100}%`
+                  }}
+                ></div>
+              </div>
+              {!upload.aborted && upload.uploadedParts < upload.totalParts && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => {
+                    abortMultipartUpload(upload.id)
+                  }}
+                >
+                  <X className="text-destructive" />
+                </Button>
+              )}
+            </div>
+
+            <div className="mt-1 text-xs text-muted-foreground">
+              {upload.uploadedParts} / {upload.totalParts} parts uploaded
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
