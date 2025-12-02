@@ -163,6 +163,7 @@ export function WorkbenchCreateForm({
         router.push(
           `/workspaces/${workspaceId}/sessions/${result.data.id as string}`
         )
+        await new Promise((resolve) => setTimeout(resolve, 2000)) // Wait for the backend cache to be updated
         if (onSuccess) onSuccess(result.data)
       }
     })
