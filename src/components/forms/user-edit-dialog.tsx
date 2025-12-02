@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pencil } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
-import { useActionState } from 'react'
+import { startTransition, useActionState } from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ControllerRenderProps } from 'react-hook-form'
@@ -97,6 +97,7 @@ export function UserEditDialog({
 
   useEffect(() => {
     if (state.error) {
+      console.error('state', state.error)
       toast({
         title: 'Error updating user',
         description: state.error,
@@ -121,7 +122,9 @@ export function UserEditDialog({
         formData.append(key, String(value || ''))
       }
     })
-    formAction(formData)
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   const removeRoleWithIndex = (
@@ -220,15 +223,15 @@ export function UserEditDialog({
                     Roles <CreateUserRoleDialog userId={user.id} />
                   </FormLabel>
                   <FormControl>
-                    <Table
-                      className=""
-                      aria-label={`User roles management table with ${field?.value?.length} roles`}
-                    >
-                      <caption className="sr-only">
-                        User roles management table showing roles and available
-                        actions. Use arrow keys to navigate.
-                      </caption>
-                      <div className="max-h-60 overflow-auto">
+                    <div className="max-h-60 overflow-auto">
+                      <Table
+                        className=""
+                        aria-label={`User roles management table with ${field?.value?.length} roles`}
+                      >
+                        <caption className="sr-only">
+                          User roles management table showing roles and
+                          available actions. Use arrow keys to navigate.
+                        </caption>
                         <TableHeader>
                           <TableRow>
                             <TableHead scope="col">Role</TableHead>
@@ -295,8 +298,8 @@ export function UserEditDialog({
                             </TableRow>
                           ))}
                         </TableBody>
-                      </div>
-                    </Table>
+                      </Table>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

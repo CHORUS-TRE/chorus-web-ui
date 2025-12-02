@@ -174,7 +174,7 @@ export class UserRepositoryImpl implements UserRepository {
   async update(user: UserUpdateType): Promise<Result<User>> {
     try {
       const response = await this.dataSource.update(user)
-      const userResult = UserSchema.safeParse(response.result)
+      const userResult = UserSchema.safeParse(response.result?.user)
 
       if (!userResult.success) {
         return {

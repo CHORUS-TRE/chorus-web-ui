@@ -45,7 +45,6 @@ class UserApiDataSourceImpl implements UserDataSource {
     return this.service.userServiceCreateUser({
       body: {
         ...chorusUser,
-        roles: ['admin'],
         status: 'active'
       }
     })
@@ -86,7 +85,10 @@ class UserApiDataSourceImpl implements UserDataSource {
   update(user: UserUpdateType): Promise<ChorusUpdateUserReply> {
     const chorusUser = toChorusUserUpdate(user)
     return this.service.userServiceUpdateUser({
-      body: chorusUser
+      body: {
+        ...chorusUser,
+        status: 'active'
+      }
     })
   }
 }
