@@ -480,8 +480,8 @@ export function Header() {
                   description: 'Session updated'
                 })
               }}
-          />
-        )}
+            />
+          )}
       </nav>
 
       <AlertDialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>

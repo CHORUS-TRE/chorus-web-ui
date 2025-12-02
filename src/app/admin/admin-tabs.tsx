@@ -23,7 +23,11 @@ export function AdminTabs() {
     <Tabs value={pathname} onValueChange={handleTabChange} className="mb-4">
       <TabsList>
         {routes.map((route) => (
-          <TabsTrigger key={route.href} value={route.href} disabled={route.disabled === true}>
+          <TabsTrigger
+            key={route.href}
+            value={route.href}
+            disabled={route.disabled === true}
+          >
             {route.label}
           </TabsTrigger>
         ))}

@@ -58,12 +58,12 @@ export default function CHORUSDashboard() {
     () =>
       workspaces
         ?.filter(
-        (workspace) =>
-          user?.rolesWithContext?.some(
-            (role) => role.context.workspace === workspace.id
-          ) && workspace.tag !== 'center'
-      )
-      .slice(0, 3),
+          (workspace) =>
+            user?.rolesWithContext?.some(
+              (role) => role.context.workspace === workspace.id
+            ) && workspace.tag !== 'center'
+        )
+        .slice(0, 3),
     [workspaces, user?.rolesWithContext]
   )
 
@@ -71,11 +71,11 @@ export default function CHORUSDashboard() {
     () =>
       workbenches
         ?.filter((workbench) =>
-        user?.rolesWithContext?.some(
-          (role) => role.context.workbench === workbench.id
+          user?.rolesWithContext?.some(
+            (role) => role.context.workbench === workbench.id
+          )
         )
-      )
-      .slice(0, 3),
+        .slice(0, 3),
     [workbenches, user?.rolesWithContext]
   )
 
@@ -206,7 +206,7 @@ export default function CHORUSDashboard() {
                       )
                   )
 
-                    return (
+                  return (
                     <div key={workspace.id} className="space-y-3">
                       {/* Workspace header */}
                       <Link
@@ -263,12 +263,12 @@ export default function CHORUSDashboard() {
                               .join(', ')
 
                             return (
-                    <Link
-                      key={workbench.id}
-                      href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
-                      className="block w-full"
-                      variant="rounded"
-                    >
+                              <Link
+                                key={workbench.id}
+                                href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
+                                className="block w-full"
+                                variant="rounded"
+                              >
                                 <div className="flex items-center gap-3 rounded-xl bg-card/50 p-3 transition-all hover:bg-accent/10">
                                   <LaptopMinimal className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
                                   <div className="min-w-0 flex-1">
@@ -286,25 +286,25 @@ export default function CHORUSDashboard() {
                                         workbench.createdAt || new Date()
                                       )}{' '}
                                       ago
-                              </p>
-                            </div>
-                            <Badge
+                                    </p>
+                                  </div>
+                                  <Badge
                                     className={`pointer-events-none text-xs ${
                                       workbench.status ===
                                       WorkbenchStatus.ACTIVE
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-slate-100 text-slate-800'
-                              }`}
-                            >
-                              {workbench.status}
-                            </Badge>
-                          </div>
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-slate-100 text-slate-800'
+                                    }`}
+                                  >
+                                    {workbench.status}
+                                  </Badge>
+                                </div>
                               </Link>
                             )
                           })}
                         </div>
                       )}
-                      </div>
+                    </div>
                   )
                 })}
               </CardContent>

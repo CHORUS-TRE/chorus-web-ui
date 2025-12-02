@@ -92,7 +92,13 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
-  const { workbenches, users, refreshWorkspaces, workspaces, refreshWorkbenches } = useAppState()
+  const {
+    workbenches,
+    users,
+    refreshWorkspaces,
+    workspaces,
+    refreshWorkbenches
+  } = useAppState()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 
@@ -261,7 +267,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                     description: 'Session created'
                   })
                 }}
-
               />
             </div>
           </CardFooter>
