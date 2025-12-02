@@ -9,6 +9,7 @@ import { Breadcrumb } from '~/components/file-manager/breadcrumb'
 import { FileGrid } from '~/components/file-manager/file-grid'
 import { FileTree } from '~/components/file-manager/file-tree'
 import { Toolbar } from '~/components/file-manager/toolbar'
+import { UploadProgress } from '~/components/file-manager/upload-progress'
 import {
   Dialog,
   DialogContent,
@@ -140,6 +141,16 @@ export default function FileManagerClient({
         onSearch={setSearch}
       />
 
+      <div className="w-64">
+        {Object.values(state.uploads).map((upload) => (
+          <UploadProgress
+            key={upload.id}
+            upload={upload}
+            onUploadCancel={abortMultipartUpload}
+          />
+        ))}
+      </div>
+
       {/* Action Bar */}
       <ActionBar
         selectedItems={state.selectedItems}
@@ -150,44 +161,8 @@ export default function FileManagerClient({
         getItemName={getItemName}
       />
 
-      {/* Uploads progress */}
-      <div className="px-4">
-        {Object.values(state.uploads).map((upload) => (
-          <div key={upload.id} className="pb-4">
-            <div className="pb-1 text-sm font-medium text-muted-foreground">
-              {upload.fileName}
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-full overflow-hidden rounded-full border border-accent bg-muted/20">
-                <div
-                  className="h-3 rounded-full bg-accent transition-all duration-500"
-                  style={{
-                    width: `${(upload.uploadedParts / upload.totalParts) * 100}%`
-                  }}
-                ></div>
-              </div>
-              {!upload.aborted && upload.uploadedParts < upload.totalParts && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => {
-                    abortMultipartUpload(upload.id)
-                  }}
-                >
-                  <X className="text-destructive" />
-                </Button>
-              )}
-            </div>
-
-            <div className="mt-1 text-xs text-muted-foreground">
-              {upload.uploadedParts} / {upload.totalParts} parts uploaded
-            </div>
-          </div>
-        ))}
-      </div>
-
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="card-glass flex flex-1 overflow-hidden bg-card">
         {/* Sidebar */}
         <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
           <div className="border-b border-muted/40 p-4">
