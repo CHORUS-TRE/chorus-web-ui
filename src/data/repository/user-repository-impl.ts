@@ -180,13 +180,14 @@ export class UserRepositoryImpl implements UserRepository {
 
   async update(user: UserUpdateType): Promise<Result<User>> {
     try {
+      throw new Error('Not implemented')
       const response = await this.dataSource.update(user)
       const userResult = UserSchema.safeParse(response.result?.user)
 
       if (!userResult.success) {
         return {
           error: 'API response validation failed',
-          issues: userResult.error.issues
+          issues: userResult.error?.issues
         }
       }
       return { data: userResult.data }
