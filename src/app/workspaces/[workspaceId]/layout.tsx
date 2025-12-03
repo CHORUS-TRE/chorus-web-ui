@@ -23,27 +23,10 @@ export default function Layout({
   const pathname = usePathname()
   const params = useParams<{ workspaceId: string }>()
   const { user } = useAuthentication()
-  const { users } = useAppState()
-
-  const [workspaceResult, setWorkspaceResult] = useState<
-    Result<Workspace> | undefined
-  >(undefined)
-
-  useEffect(() => {
-    const fetchWorkspace = async () => {
-      const result = await workspaceGet(params?.workspaceId)
-      setWorkspaceResult(result)
-
-      if (result.error) {
-        toast({
-          title: 'Error',
-          description: result.error,
-          variant: 'destructive'
-        })
-      }
-    }
-    fetchWorkspace()
-  }, [params?.workspaceId])
+  const { workspaces } = useAppState()
+  const workspace = workspaces?.find(
+    (workspace) => workspace.id === params?.workspaceId
+  )
 
   // Extract the path segment after workspaceId
   const pathSegments = pathname.split('/').filter(Boolean)
@@ -75,10 +58,8 @@ export default function Layout({
             <PackageOpen className="h-9 w-9" />
           )}
 
-          {workspaceResult?.data &&
-          workspaceResult.data.name &&
-          !workspaceResult.error ? (
-            <span className="text-foreground">{workspaceResult.data.name}</span>
+          {workspace ? (
+            <span className="text-foreground">{workspace.name}</span>
           ) : (
             <span className="animate-pulse text-foreground">
               Loading workspace...
@@ -97,21 +78,8 @@ export default function Layout({
         </div>
       </div>
       <p className="text-md mb-4 text-xs italic text-muted-foreground">
-        Project ID: {workspaceResult?.data?.id} | Project PI:{' '}
-        {
-          users?.find((user) => user.id === workspaceResult?.data?.userId)
-            ?.firstName
-        }{' '}
-        {
-          users?.find((user) => user.id === workspaceResult?.data?.userId)
-            ?.lastName
-        }
+        Project ID: {workspace?.id} | Project owner: {workspace?.owner || '-'}
       </p>
-      {workspaceResult?.error && (
-        <Alert variant="destructive" className="w-1/4">
-          <p className="text-destructive">{workspaceResult.error}</p>
-        </Alert>
-      )}
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
