@@ -37,7 +37,7 @@ export default function RightSidebar() {
 
       <div className="flex h-full w-full flex-col justify-between">
         <div>
-          <div className="glass-surface sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/50 p-2">
+          <div className="sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/50 bg-contrast-background/50 p-2 backdrop-blur-md">
             <h1 className="ml-2 flex items-center gap-2 text-lg font-semibold">
               <CircleHelp className="h-4 w-4" />
               Help

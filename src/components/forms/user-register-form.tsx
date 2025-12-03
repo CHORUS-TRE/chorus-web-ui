@@ -51,7 +51,7 @@ export default function UserRegisterForm() {
   }, [state])
 
   return (
-    <div className="overlay-surface flex w-full flex-col items-center justify-center rounded-r-2xl p-8 md:w-1/2">
+    <div className="flex w-full flex-col items-center justify-center rounded-r-2xl bg-contrast-background/50 p-8 backdrop-blur-md md:w-1/2">
       <div className="grid h-full w-full gap-2 p-8">
         <div className="gap-4 text-center">
           <h2>Create an account</h2>

@@ -318,7 +318,7 @@ function SidebarHeader({
   showCloseButton?: boolean
 }) {
   return (
-    <div className="glass-surface sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/50 p-2">
+    <div className="sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
       <h1 className="ml-2 text-lg font-semibold text-foreground">CHORUS</h1>
       {showCloseButton && onClose && (
         <Button
@@ -456,7 +456,7 @@ export function LeftSidebar({
     <>
       <div
         className={cn(
-          'glass-surface flex h-full flex-col gap-2 overflow-y-auto rounded-2xl border border-muted/40 transition-transform duration-300 ease-in-out',
+          'flex h-full flex-col gap-2 overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md transition-transform duration-300 ease-in-out',
           !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
         )}
       >
