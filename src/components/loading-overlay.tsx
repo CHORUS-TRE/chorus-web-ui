@@ -40,7 +40,7 @@ export function LoadingOverlay({
 
   return (
     <div
-      className="z-29 fixed inset-0 top-11 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 top-11 z-[30] flex items-center justify-center bg-background"
       role="status"
       aria-label="Loading"
     >
