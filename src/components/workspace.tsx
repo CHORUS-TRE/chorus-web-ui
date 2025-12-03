@@ -45,12 +45,6 @@ import {
 } from './forms/workspace-forms'
 import { toast } from './hooks/use-toast'
 import { ChartContainer } from './ui/chart'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from './ui/dropdown-menu'
 import { Progress } from './ui/progress'
 import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
@@ -92,13 +86,8 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
-  const {
-    workbenches,
-    users,
-    refreshWorkspaces,
-    workspaces,
-    refreshWorkbenches
-  } = useAppState()
+  const { workbenches, refreshWorkspaces, workspaces, refreshWorkbenches } =
+    useAppState()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 
@@ -365,7 +354,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardContent>
               <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
-                  {users
+                  {workspace?.members
                     ?.filter((user) =>
                       user.rolesWithContext?.some(
                         (role) => role.context.workspace === workspaceId
@@ -386,7 +375,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                           key={`team-${user.id}`}
                         >
                           <div className="flex items-center gap-4">
-                            <Avatar className="h-6 w-6">
+                            <Avatar className="h-6 w-6 text-foreground">
                               <AvatarFallback>
                                 {user.firstName[0]?.toUpperCase()}{' '}
                               </AvatarFallback>

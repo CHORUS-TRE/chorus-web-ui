@@ -41,7 +41,7 @@ import {
 import { WorkbenchStatus } from '~/domain/model'
 
 export default function CHORUSDashboard() {
-  const { workspaces, workbenches, appInstances, apps, users } = useAppState()
+  const { workspaces, workbenches, appInstances, apps } = useAppState()
   const { user } = useAuthentication()
   const [updatesTab, setUpdatesTab] = useState<'notifications' | 'activity'>(
     'notifications'
@@ -269,7 +269,7 @@ export default function CHORUSDashboard() {
                                 className="block w-full"
                                 variant="rounded"
                               >
-                                <div className="flex items-center gap-3 rounded-xl bg-card/50 p-3 transition-all hover:bg-accent/10">
+                                <div className="flex w-full items-center gap-3 rounded-xl bg-card/50 p-3 transition-all hover:bg-accent/10">
                                   <LaptopMinimal className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
                                   <div className="min-w-0 flex-1">
                                     <p className="text-sm font-medium">
@@ -277,11 +277,11 @@ export default function CHORUSDashboard() {
                                     </p>
                                     <p className="text-xs text-muted-foreground">
                                       {
-                                        users?.find(
-                                          (u) => u.id === workbench.userId
-                                        )?.firstName
+                                        // users?.find(
+                                        //   (u) => u.id === workbench.userId
+                                        // )?.firstName
                                       }{' '}
-                                      ·{' '}
+                                      Created{' '}
                                       {formatDistanceToNow(
                                         workbench.createdAt || new Date()
                                       )}{' '}

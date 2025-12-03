@@ -2,6 +2,7 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { Users } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import {
   Card,
@@ -13,10 +14,27 @@ import {
 import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { User } from '~/domain/model/user'
 import { useAppState } from '~/providers/app-state-provider'
+import { listUsers } from '~/view-model/user-view-model'
 
 export default function UsersPage() {
-  const { users } = useAppState()
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function loadUsers() {
+      const result = await listUsers()
+      if (result.data) {
+        setUsers(result.data)
+        setError(null)
+      } else {
+        setError(result.error || 'Failed to load users')
+      }
+    }
+    loadUsers()
+  }, [])
 
   if (!users) {
     return <div className="flex justify-center p-8">Loading users...</div>

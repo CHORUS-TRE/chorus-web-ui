@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { workspaceManageUserRole } from '@/view-model/workspace-view-model'
+import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import {
   Dialog,
@@ -36,6 +36,7 @@ import { Result } from '~/domain/model'
 import { User } from '~/domain/model/user'
 import { useAppState } from '~/providers/app-state-provider'
 import { getWorkspaceRoles } from '~/utils/schema-roles'
+import { listUsers } from '~/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'
 
@@ -58,7 +59,7 @@ export function ManageUserWorkspaceDialog({
   onUserAdded: () => void
   children?: React.ReactNode
 }) {
-  const { users, workspaces } = useAppState()
+  const { workspaces } = useAppState()
   const workspace = workspaces?.find(
     (workspace) => workspace.id === workspaceId
   )
@@ -66,6 +67,32 @@ export function ManageUserWorkspaceDialog({
 
   const [open, setOpen] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const loadUsers = useCallback(async () => {
+    setLoading(true)
+    const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
+    if (result.data) {
+      setUsers(result.data)
+      setError(null)
+    } else {
+      setError(result.error || 'Failed to load workspace members')
+      toast({
+        title: 'Error',
+        description: result.error || 'Failed to load workspace members',
+        variant: 'destructive'
+      })
+    }
+    setLoading(false)
+  }, [workspaceId])
+
+  useEffect(() => {
+    if (workspaceId) {
+      loadUsers()
+    }
+  }, [workspaceId, loadUsers])
 
   // Get the current user and their workspace roles
   const currentUser = useMemo(() => {
@@ -115,7 +142,7 @@ export function ManageUserWorkspaceDialog({
   }, [currentRoleName, form])
 
   const [state, formAction] = useActionState(
-    workspaceManageUserRole,
+    workspaceAddUserRole,
     {} as Result<User>
   )
 

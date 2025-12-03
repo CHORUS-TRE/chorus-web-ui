@@ -1,11 +1,15 @@
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { User } from '~/domain/model/user'
+import { listUsers } from '~/view-model/user-view-model'
+
+import { toast } from './hooks/use-toast'
 
 export function WorkspaceWorkbenchList({
   workspaceId,
@@ -18,9 +22,38 @@ export function WorkspaceWorkbenchList({
 }) {
   const router = useRouter()
 
-  const { workbenches, users, appInstances, apps, workspaces } = useAppState()
+  const { workbenches, appInstances, apps, workspaces } = useAppState()
   const { background } = useIframeCache()
   const { user } = useAuthentication()
+
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const loadUsers = useCallback(async () => {
+    setLoading(true)
+    if (!workspaceId) return
+
+    const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
+    if (result.data) {
+      setUsers(result.data)
+      setError(null)
+    } else {
+      setError(result.error || 'Failed to load workspace members')
+      toast({
+        title: 'Error',
+        description: result.error || 'Failed to load workspace members',
+        variant: 'destructive'
+      })
+    }
+    setLoading(false)
+  }, [workspaceId])
+
+  useEffect(() => {
+    if (workspaceId) {
+      loadUsers()
+    }
+  }, [workspaceId, loadUsers])
 
   const workbenchList = useMemo(() => {
     return workbenches

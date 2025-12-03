@@ -25,6 +25,7 @@ function CachedIframeRenderer({
   isBackground: boolean
 }) {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false)
 
   // Only probe for sessions, not webapps
   const { isLoading, error } =
@@ -40,7 +41,60 @@ function CachedIframeRenderer({
     useWorkbenchStatus(iframe.id)
   }
 
+  // Determine the URL to load
+  const iframeSrc = useMemo(() => {
+    if (iframe.type === 'session') {
+      // For sessions, wait until URL probing is complete
+      return isLoading ? 'about:blank' : iframe.url || 'about:blank'
+    }
+    // For webapps, load directly
+    return iframe.url
+  }, [iframe.type, iframe.url, isLoading])
+
+  // Reset loaded state when URL changes to a new URL
+  useEffect(() => {
+    if (iframe.url && iframe.url !== 'about:blank') {
+      // Check if this is a new URL (iframe was not already showing this URL)
+      if (iFrameRef.current?.src !== iframe.url) {
+        setIsIframeLoaded(false)
+      }
+    } else {
+      setIsIframeLoaded(false)
+    }
+  }, [iframe.url])
+
+  // When iframe becomes active, check if it's already loaded (already showing the correct URL)
+  useEffect(() => {
+    if (
+      isActive &&
+      iFrameRef.current &&
+      iframe.url &&
+      iframe.url !== 'about:blank'
+    ) {
+      const currentSrc = iFrameRef.current.src
+      // If iframe is already showing the correct URL, mark it as loaded
+      // This handles the case where we switch to an already-loaded iframe
+      if (
+        currentSrc &&
+        currentSrc !== 'about:blank' &&
+        currentSrc === iframe.url
+      ) {
+        setIsIframeLoaded(true)
+      }
+      // Don't set to false here - let the URL change effect handle that
+      // This way, new loads will show the loading overlay
+    }
+  }, [isActive, iframe.url])
+
   const handleLoad = useCallback(() => {
+    // Only mark as loaded if the iframe is actually showing content (not about:blank)
+    if (
+      iFrameRef.current?.src &&
+      !iFrameRef.current.src.includes('about:blank')
+    ) {
+      setIsIframeLoaded(true)
+    }
+
     const handleMouseOver = (e: MouseEvent) => {
       iFrameRef.current?.focus()
       e.preventDefault()
@@ -51,22 +105,23 @@ function CachedIframeRenderer({
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
-  // Determine the URL to load
-  const iframeSrc = useMemo(() => {
-    if (iframe.type === 'session') {
-      // For sessions, wait until loading is complete
-      return isLoading ? 'about:blank' : iframe.url || 'about:blank'
-    }
-    // For webapps, load directly
-    return iframe.url
-  }, [iframe.type, iframe.url, isLoading])
+  // Show loading overlay if:
+  // 1. Iframe is active
+  // 2. Not already loaded
+  // 3. Either showing about:blank OR still probing (for sessions) OR has a URL to load
+  const isShowingAboutBlank = iframeSrc === 'about:blank' || !iframeSrc
+  const hasUrlToLoad = iframe.url && iframe.url !== 'about:blank'
+  const showLoadingOverlay =
+    isActive &&
+    !isIframeLoaded &&
+    (isShowingAboutBlank ||
+      (iframe.type === 'session' && isLoading) ||
+      (hasUrlToLoad && !isIframeLoaded))
 
   return (
     <>
-      {/* Loading overlay for active session iframes */}
-      {isActive && iframe.type === 'session' && isLoading && (
-        <LoadingOverlay isLoading={isLoading} />
-      )}
+      {/* Loading overlay for active iframes until they're fully loaded */}
+      {showLoadingOverlay && <LoadingOverlay isLoading={true} />}
 
       {/* Error message */}
       {isActive && error && (
@@ -82,22 +137,30 @@ function CachedIframeRenderer({
         style={{
           width: '100vw',
           height: 'calc(100vh - 44px)',
-          visibility: isActive || isBackground ? 'visible' : 'hidden',
-          pointerEvents: isActive ? 'auto' : 'none',
+          visibility: showLoadingOverlay
+            ? 'hidden'
+            : isActive || isBackground
+              ? 'visible'
+              : 'hidden',
+          pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
           position: 'fixed',
           left: 0,
           top: 44, // Header height
           zIndex: isActive ? 20 : isBackground ? 5 : -1,
-          opacity: isBackground && !isActive ? 0.15 : 1,
+          opacity: showLoadingOverlay
+            ? 0
+            : isBackground && !isActive
+              ? 0.15
+              : 1,
           filter: isBackground && !isActive ? 'blur(2px)' : 'none'
         }}
         className="bg-background"
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
-        aria-hidden={!isActive && !isBackground}
+        aria-hidden={showLoadingOverlay || (!isActive && !isBackground)}
         onLoad={handleLoad}
-        tabIndex={isActive ? 0 : -1}
+        tabIndex={isActive && !showLoadingOverlay ? 0 : -1}
       />
     </>
   )

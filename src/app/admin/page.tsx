@@ -1,37 +1,26 @@
 'use client'
 
-import { Palette } from 'lucide-react'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
-import LogoUploadForm from '~/components/forms/logo-upload-form'
-import { ThemeEditorForm } from '~/components/forms/theme-editor-form'
+import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 const AdminPage = () => {
+  const router = useRouter()
+  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+
+  useEffect(() => {
+    // Redirect to first authorized tab
+    if (canManageSettings) {
+      router.replace('/admin/theme')
+    } else if (canManageUsers) {
+      router.replace('/admin/users')
+    }
+  }, [router, canManageUsers, canManageSettings])
+
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Palette className="h-9 w-9" />
-            Branding & Theme
-          </h2>
-          <div className="">
-            <p className="text-sm text-muted-foreground">
-              Customize the look and feel of the application.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8">
-        <h3 className="mb-4 text-lg font-semibold">Logo</h3>
-        <LogoUploadForm />
-      </div>
-
-      <div className="mt-8">
-        <h3 className="mb-4 text-lg font-semibold">Theme</h3>
-        <ThemeEditorForm />
-      </div>
+    <div className="flex h-full w-full items-center justify-center">
+      Select a section to manage
     </div>
   )
 }

@@ -34,8 +34,7 @@ export default function WorkbenchGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { refreshWorkbenches, apps, workspaces, appInstances, users } =
-    useAppState()
+  const { refreshWorkbenches, apps, workspaces, appInstances } = useAppState()
   const { user } = useAuthentication()
   const { cachedIframes } = useIframeCache()
 
@@ -98,7 +97,7 @@ export default function WorkbenchGrid({
                   {/* Spacer to push bottom content down */}
                   <div className="flex-1" />
 
-                  {/* Bottom info - PI, date, badge */}
+                  {/* Bottom info - owner, date, badge */}
                   <CardDescription className="flex w-full items-end justify-between text-xs text-muted-foreground">
                     <span className="block w-full">
                       <span className="block">
@@ -106,10 +105,10 @@ export default function WorkbenchGrid({
                           ?.name || '-'}
                       </span>
                       <span className="block">
-                        {users?.find((u) => u.id === workbench.userId)
+                        {/* {users?.find((u) => u.id === workbench.userId)
                           ?.firstName || '-'}{' '}
                         {users?.find((u) => u.id === workbench.userId)
-                          ?.lastName || '-'}
+                          ?.lastName || '-'} */}
                       </span>
                       <span className="block">
                         Created{' '}

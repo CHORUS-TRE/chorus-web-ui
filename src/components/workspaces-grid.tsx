@@ -89,10 +89,12 @@ export default function WorkspacesGrid({
                 {/* Spacer to push bottom content down */}
                 <div className="flex-1" />
 
-                {/* Bottom info - PI, date, badge */}
+                {/* Bottom info - owner, date, badge */}
                 <CardDescription className="flex w-full items-end justify-between text-xs text-muted-foreground">
                   <span className="block">
-                    <span className="block">PI: {workspace?.PI || '-'}</span>
+                    <span className="text-md block font-semibold text-foreground">
+                      Owner: {workspace?.owner || '-'}
+                    </span>
                     <span className="block">
                       {workspace?.memberCount || 0}{' '}
                       {workspace?.memberCount === 1 ? 'member' : 'members'} |{' '}

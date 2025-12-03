@@ -12,7 +12,8 @@ import {
   ChorusListUsersReply,
   ChorusUpdateUserReply,
   Configuration,
-  UserServiceApi
+  UserServiceApi,
+  UserServiceListUsersRequest
 } from '~/internal/client'
 
 import { toChorusUser, toChorusUserUpdate } from './user-mapper'
@@ -26,7 +27,7 @@ interface UserDataSource {
   deleteRole: (userId: string, roleId: string) => Promise<ChorusCreateUserReply>
   get: (id: string) => Promise<ChorusGetUserReply>
   delete: (id: string) => Promise<ChorusDeleteUserReply>
-  list: () => Promise<ChorusListUsersReply>
+  list: (filters: UserServiceListUsersRequest) => Promise<ChorusListUsersReply>
   update: (user: UserUpdateType) => Promise<ChorusUpdateUserReply>
 }
 
@@ -60,8 +61,9 @@ class UserApiDataSourceImpl implements UserDataSource {
       userId: userRole.userId,
       body: {
         role: {
-          name: userRole.name,
-          context: userRole.context
+          id: userRole.role.id,
+          name: userRole.role.name,
+          context: userRole.role.context
         }
       }
     })
@@ -86,12 +88,13 @@ class UserApiDataSourceImpl implements UserDataSource {
     return this.service.userServiceDeleteUser({ id })
   }
 
-  list(): Promise<ChorusListUsersReply> {
-    return this.service.userServiceListUsers()
+  list(filters: UserServiceListUsersRequest): Promise<ChorusListUsersReply> {
+    return this.service.userServiceListUsers(filters)
   }
 
   update(user: UserUpdateType): Promise<ChorusUpdateUserReply> {
     const chorusUser = toChorusUserUpdate(user)
+    throw new Error('Not yet implemented')
     return this.service.userServiceUpdateUser({
       body: {
         ...chorusUser,

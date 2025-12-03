@@ -49,7 +49,7 @@ type AppStateContextType = {
   setSessionsViewMode: (mode: 'grid' | 'table') => void
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
-  users: User[] | undefined
+  // users: User[] | undefined
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   clearState: () => void
@@ -79,7 +79,7 @@ const AppStateContext = createContext<AppStateContextType>({
   setSessionsViewMode: () => {},
   workspaces: undefined,
   workbenches: undefined,
-  users: undefined,
+  // users: undefined,
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
   clearState: () => {},
@@ -119,7 +119,7 @@ export const AppStateProvider = ({
   const [workbenches, setWorkbenches] = useState<Workbench[] | undefined>(
     undefined
   )
-  const [users, setUsers] = useState<User[] | undefined>(undefined)
+  // const [users, setUsers] = useState<User[] | undefined>(undefined)
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
@@ -267,17 +267,27 @@ export const AppStateProvider = ({
               )
             }
 
+            const result = await listUsers({
+              filterWorkspaceIDs: [workspace.id]
+            })
+
+            let users: User[] | undefined = []
+            if (result.data) {
+              users = result.data
+            }
+
+            let owner: User | undefined = undefined
+            if (users) {
+              owner = users.find((user) => user.id === workspace.userId)
+            }
+
             return {
               ...workspace,
               image,
               tag,
-              PI: users?.find((user) => user.id === workspace.userId)?.username,
-              memberCount:
-                users?.filter((user) =>
-                  user.rolesWithContext?.some(
-                    (role) => role.context.workspace === workspace.id
-                  )
-                ).length || 0,
+              owner: owner ? `${owner.firstName} ${owner.lastName}` : undefined,
+              memberCount: users?.length || 0,
+              members: users,
               workbenchCount:
                 workbenches?.filter(
                   (workbench) => workbench.workspaceId === workspace.id
@@ -320,27 +330,27 @@ export const AppStateProvider = ({
     }
   }, [user])
 
-  const refreshUsers = useCallback(async () => {
-    if (!user) {
-      return
-    }
-    try {
-      const response = await listUsers()
+  // const refreshUsers = useCallback(async () => {
+  //   if (!user) {
+  //     return
+  //   }
+  //   try {
+  //     const response = await listUsers()
 
-      if (response?.error) {
-        // toast({ title: response.error, variant: 'destructive' })
-      }
+  //     if (response?.error) {
+  //       // toast({ title: response.error, variant: 'destructive' })
+  //     }
 
-      if (response?.data) {
-        setUsers(response.data)
-      }
-    } catch (error) {
-      toast({
-        title: error instanceof Error ? error.message : String(error),
-        variant: 'destructive'
-      })
-    }
-  }, [user])
+  //     if (response?.data) {
+  //       setUsers(response.data)
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       title: error instanceof Error ? error.message : String(error),
+  //       variant: 'destructive'
+  //     })
+  //   }
+  // }, [user])
 
   const refreshApps = useCallback(async () => {
     if (!user) {
@@ -402,7 +412,7 @@ export const AppStateProvider = ({
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
-    setUsers(undefined)
+    // setUsers(undefined)
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
@@ -444,7 +454,7 @@ export const AppStateProvider = ({
       const promises = [
         refreshWorkspaces(),
         refreshWorkbenches(),
-        refreshUsers(),
+        // refreshUsers(),
         refreshApps(),
         refreshAppInstances()
       ]
@@ -477,7 +487,7 @@ export const AppStateProvider = ({
     user,
     refreshWorkspaces,
     refreshWorkbenches,
-    refreshUsers,
+    // refreshUsers,
     refreshApps,
     refreshAppInstances,
     refreshCustomLogos,
@@ -498,7 +508,7 @@ export const AppStateProvider = ({
       setSessionsViewMode,
       workspaces,
       workbenches,
-      users,
+      // users,
       refreshWorkspaces,
       refreshWorkbenches,
       clearState,
@@ -524,7 +534,7 @@ export const AppStateProvider = ({
       setSessionsViewMode,
       workspaces,
       workbenches,
-      users,
+      // users,
       refreshWorkspaces,
       refreshWorkbenches,
       clearState,

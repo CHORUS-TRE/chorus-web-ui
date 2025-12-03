@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils'
 import { useAppState } from '~/providers/app-state-provider'
 import { useAuthentication } from '~/providers/authentication-provider'
 import { useIframeCache } from '~/providers/iframe-cache-provider'
+import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
 
@@ -145,7 +146,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
         variant="underline"
         className={cn(
           'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
-          isGroupActive ? 'bg-accent/20 text-accent' : 'text-muted-foreground'
+          isGroupActive ? 'bg-primary/20 text-primary' : 'text-muted-foreground'
         )}
       >
         Workspaces
@@ -169,8 +170,8 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                   className={cn(
                     'flex items-center gap-2 rounded-lg px-3 py-1 text-xs font-medium transition-colors',
                     isWorkspaceActive
-                      ? 'text-accent'
-                      : 'text-muted-foreground hover:text-accent'
+                      ? 'text-primary'
+                      : 'text-muted-foreground/80 hover:text-accent'
                   )}
                 >
                   <Package className="h-3.5 w-3.5 shrink-0" />
@@ -179,7 +180,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
 
                 {/* Sessions under this workspace */}
                 {workspaceSessions && workspaceSessions.length > 0 && (
-                  <div className="ml-7 flex flex-col gap-0.5 pl-2">
+                  <div className="ml-5 flex flex-col gap-0.5 pl-1">
                     {workspaceSessions.map((session) => {
                       const sessionPath = `/workspaces/${workspace.id}/sessions/${session.id}`
                       const isActive = pathname === sessionPath
@@ -193,14 +194,15 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                           className={cn(
                             'flex items-start gap-2 rounded px-2 py-1 text-xs transition-colors',
                             isActive
-                              ? 'bg-accent/20 text-accent'
+                              ? 'bg-primary/20 text-primary'
                               : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
                           )}
                         >
                           <LaptopMinimal
                             className={cn(
                               'mt-0.5 h-3.5 w-3.5 shrink-0',
-                              isLoaded && 'text-green-500'
+                              isLoaded && 'text-green-500',
+                              isActive && 'text-primary'
                             )}
                           />
                           <span className="flex-1 leading-snug">
@@ -253,7 +255,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
         <div
           className={cn(
             'flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-            isGroupActive ? 'text-accent' : 'text-muted-foreground'
+            isGroupActive ? 'text-primary' : 'text-muted-foreground'
           )}
         >
           Services
@@ -271,7 +273,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && (
-        <div className="ml-7 mt-0.5 flex flex-col gap-0.5 border-l border-muted/30 pl-3">
+        <div className="ml-5 mt-0.5 flex flex-col gap-0.5 pl-1">
           {externalWebApps.map((webapp) => {
             const isActive = pathname === `/webapps/${webapp.id}`
             const isLoaded = cachedIframes.has(webapp.id)
@@ -284,14 +286,15 @@ function ServicesSection({ pathname }: NavSectionProps) {
                 className={cn(
                   'flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors',
                   isActive
-                    ? 'bg-accent/20 text-accent'
-                    : 'text-muted-foreground hover:bg-accent/10 hover:text-accent'
+                    ? 'bg-primary/20 text-primary'
+                    : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
                 )}
               >
                 <Globe
                   className={cn(
                     'h-3.5 w-3.5 shrink-0',
-                    isLoaded && 'text-green-500'
+                    isLoaded && 'text-green-500',
+                    isActive && 'text-primary'
                   )}
                 />
                 <span className="truncate">{webapp.name}</span>
@@ -316,7 +319,7 @@ function SidebarHeader({
   showCloseButton?: boolean
 }) {
   return (
-    <div className="glass-surface sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/50 p-2">
+    <div className="sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
       <h1 className="ml-2 text-lg font-semibold text-foreground">CHORUS</h1>
       {showCloseButton && onClose && (
         <Button
@@ -361,6 +364,8 @@ function SidebarContent({
   onClose?: () => void
   showCloseButton?: boolean
 }) {
+  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+
   return (
     <>
       {/* Header with title and close button */}
@@ -375,7 +380,7 @@ function SidebarContent({
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname === '/'
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
@@ -386,18 +391,18 @@ function SidebarContent({
         <WorkspacesSection pathname={pathname} />
 
         {/* Data */}
-        <Link
+        {/* <Link
           href="/data"
           variant="underline"
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/data')
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
           Data
-        </Link>
+        </Link> */}
 
         {/* App Store */}
         <Link
@@ -406,7 +411,7 @@ function SidebarContent({
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/app-store')
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
@@ -414,16 +419,19 @@ function SidebarContent({
         </Link>
 
         {/* Services section (after App Store) */}
-        <ServicesSection pathname={pathname} />
+        {(canManageUsers || canManageSettings) && (
+          <ServicesSection pathname={pathname} />
+        )}
 
         {/* Settings */}
+
         <Link
           href="/admin"
           variant="underline"
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/admin')
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
@@ -454,7 +462,7 @@ export function LeftSidebar({
     <>
       <div
         className={cn(
-          'glass-surface flex h-full flex-col gap-2 overflow-y-auto rounded-2xl border border-muted/40 transition-transform duration-300 ease-in-out',
+          'flex h-full flex-col gap-2 overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md transition-transform duration-300 ease-in-out',
           !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
         )}
       >

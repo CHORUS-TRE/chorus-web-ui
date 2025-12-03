@@ -82,7 +82,7 @@ export default function WorkspaceTable({
       <TableHead className="w-[50px]"></TableHead>
       <TableHead className="font-semibold text-foreground">Workspace</TableHead>
       <TableHead className="text-center font-semibold text-foreground">
-        PI
+        Owner
       </TableHead>
       <TableHead className="text-center font-semibold text-foreground">
         Status
@@ -181,7 +181,7 @@ export default function WorkspaceTable({
             </div>
           </TableCell>
           <TableCell className="p-1 text-center">
-            {workspace?.PI || '-'}
+            {workspace?.owner || '-'}
           </TableCell>
           <TableCell className="p-1 text-center">
             {workspace?.status && (

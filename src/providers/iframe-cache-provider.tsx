@@ -383,37 +383,69 @@ export const IframeCacheProvider = ({
   }, [])
 
   // Add a session to recent list
+  // Maintains order by first load time (doesn't move existing sessions to front)
   const addToRecentSessions = useCallback(
     (sessionId: string, workspaceId: string, sessionName: string) => {
       setRecentSessions((prev) => {
-        const filtered = prev.filter((s) => s.id !== sessionId)
-        const newRecent: RecentSession = {
-          id: sessionId,
-          workspaceId,
-          name: sessionName,
-          lastAccessed: new Date().toISOString()
+        // Check if session already exists in the list
+        const existingIndex = prev.findIndex((s) => s.id === sessionId)
+
+        if (existingIndex !== -1) {
+          // Session already exists - update lastAccessed but keep original position
+          const updated = [...prev]
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            name: sessionName, // Update name in case it changed
+            lastAccessed: new Date().toISOString()
+          }
+          saveRecentSessions(updated)
+          return updated
+        } else {
+          // New session - add to the end (maintains chronological order)
+          const newRecent: RecentSession = {
+            id: sessionId,
+            workspaceId,
+            name: sessionName,
+            lastAccessed: new Date().toISOString()
+          }
+          const updated = [...prev, newRecent].slice(-MAX_RECENT_ITEMS)
+          saveRecentSessions(updated)
+          return updated
         }
-        const updated = [newRecent, ...filtered].slice(0, MAX_RECENT_ITEMS)
-        saveRecentSessions(updated)
-        return updated
       })
     },
     []
   )
 
   // Add a webapp to recent list
+  // Maintains order by first load time (doesn't move existing webapps to front)
   const addToRecentWebApps = useCallback(
     (webappId: string, webappName: string) => {
       setRecentWebApps((prev) => {
-        const filtered = prev.filter((w) => w.id !== webappId)
-        const newRecent: RecentWebApp = {
-          id: webappId,
-          name: webappName,
-          lastAccessed: new Date().toISOString()
+        // Check if webapp already exists in the list
+        const existingIndex = prev.findIndex((w) => w.id === webappId)
+
+        if (existingIndex !== -1) {
+          // Webapp already exists - update lastAccessed but keep original position
+          const updated = [...prev]
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            name: webappName, // Update name in case it changed
+            lastAccessed: new Date().toISOString()
+          }
+          saveRecentWebApps(updated)
+          return updated
+        } else {
+          // New webapp - add to the end (maintains chronological order)
+          const newRecent: RecentWebApp = {
+            id: webappId,
+            name: webappName,
+            lastAccessed: new Date().toISOString()
+          }
+          const updated = [...prev, newRecent].slice(-MAX_RECENT_ITEMS)
+          saveRecentWebApps(updated)
+          return updated
         }
-        const updated = [newRecent, ...filtered].slice(0, MAX_RECENT_ITEMS)
-        saveRecentWebApps(updated)
-        return updated
       })
     },
     []

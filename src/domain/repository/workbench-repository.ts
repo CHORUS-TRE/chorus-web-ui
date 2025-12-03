@@ -14,7 +14,7 @@ export interface WorkbenchRepository {
   get: (id: string) => Promise<Result<Workbench>>
   streamProbe: (id: string) => Promise<Result<boolean>>
   streamUrl: (id: string) => Promise<Result<string>>
-  manageUserRole: (
+  addUserRole: (
     workbenchId: string,
     userId: string,
     roleName: string

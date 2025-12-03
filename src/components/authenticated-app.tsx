@@ -124,7 +124,9 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
           {isIFramePage ? (
             <>
               {/* Content takes full screen */}
-              <div className="fixed inset-0 top-11 z-20">{children}</div>
+              <div className="fixed inset-0 top-11 z-20 bg-black/50">
+                {children}
+              </div>
 
               {/* Left Sidebar - overlay on top */}
               <div
@@ -225,12 +227,12 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                     <div
                       id="content"
                       className={cn(
-                        'glass-surface relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
+                        'relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md',
                         // Adjust width when right sidebar is visible
                         showRightSidebar ? 'min-w-0 flex-1' : 'w-full'
                       )}
                     >
-                      <div className="glass-surface sticky top-0 z-[100] flex h-11 items-center gap-4 border-b border-muted/50 p-2">
+                      <div className="sticky top-0 z-[100] flex h-11 items-center gap-4 border-b border-muted/50 bg-contrast-background/50 p-2 backdrop-blur-md">
                         {/* Toggle button only visible when sidebar is closed */}
                         {!leftSidebarOpen && (
                           <div
@@ -278,7 +280,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
                     {/* Right Sidebar */}
                     <div
                       className={cn(
-                        'glass-surface h-full overflow-hidden rounded-2xl border border-muted/40 transition-all duration-300 ease-in-out',
+                        'h-full overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
                         showRightSidebar ? 'w-[240px] flex-shrink-0' : 'hidden'
                       )}
                       id="right-sidebar"
