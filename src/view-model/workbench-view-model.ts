@@ -183,7 +183,30 @@ export async function workbenchAddUserRole(
       }
     }
 
-    return await repository.manageUserRole(workbenchId, userId, roleName)
+    return await repository.addUserRole(workbenchId, userId, roleName)
+  } catch (error) {
+    console.error('Error adding user role to workbench', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workbenchRemoveUserRole(
+  prevState: Result<User>,
+  formData: FormData
+): Promise<Result<User>> {
+  try {
+    const repository = await getRepository()
+
+    const workbenchId = formData.get('workbenchId') as string
+    const userId = formData.get('userId') as string
+
+    if (!workbenchId || !userId) {
+      return {
+        error: 'Missing required fields: workbenchId, userId'
+      }
+    }
+
+    return await repository.removeUserFromWorkbench(workbenchId, userId)
   } catch (error) {
     console.error('Error adding user role to workbench', error)
     return { error: error instanceof Error ? error.message : String(error) }
