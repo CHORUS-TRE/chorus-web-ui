@@ -19,6 +19,7 @@ import { UserList } from '~/domain/use-cases/user/user-list'
 import { UserMe } from '~/domain/use-cases/user/user-me'
 import { UserRoleCreate } from '~/domain/use-cases/user/user-role-create'
 import { UserUpdate } from '~/domain/use-cases/user/user-update'
+import { UserServiceListUsersRequest } from '~/internal/client'
 
 const getRepository = async () => {
   const dataSource = new UserApiDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')
@@ -92,10 +93,10 @@ export async function getUser(id: string) {
   return await useCase.execute(id)
 }
 
-export async function listUsers() {
+export async function listUsers(filters: UserServiceListUsersRequest = {}) {
   const userRepository = await getRepository()
   const useCase = new UserList(userRepository)
-  return await useCase.execute()
+  return await useCase.execute(filters)
 }
 
 export async function deleteUser(id: string) {
@@ -139,25 +140,23 @@ export async function createUserRole(
   const userRepository = await getRepository()
   const useCase = new UserRoleCreate(userRepository)
 
+  // Build context object conditionally, only including keys that exist in FormData
+  const context: Record<string, string> = {}
+  const user = formData.get('user') as string
+  const workspace = formData.get('workspace') as string
+  const workbench = formData.get('workbench') as string
+
+  if (user) context.user = user
+  if (workspace) context.workspace = workspace
+  if (workbench) context.workbench = workbench
+
   const raw: UserRoleCreateType = {
     userId: formData.get('userId') as string,
-    name: formData.get('roleName') as string,
-    context: {
-      workspace: formData.get('workspace') as string,
-      workbench: formData.get('workbench') as string,
-      user: formData.get('user') as string
+    role: {
+      name: formData.get('roleName') as string,
+      context
     }
-  }
-
-  // clean empty context keys
-  Object.keys(raw.context).forEach((key) => {
-    if (
-      !raw.context[key as keyof typeof raw.context] ||
-      raw.context[key as keyof typeof raw.context] === ''
-    ) {
-      delete raw.context[key as keyof typeof raw.context]
-    }
-  })
+  } as UserRoleCreateType
 
   const validation = UserRoleCreateSchema.safeParse(raw)
 
@@ -169,4 +168,12 @@ export async function createUserRole(
   }
 
   return await useCase.execute(validation.data)
+}
+
+export async function deleteUserRole(
+  userId: string,
+  roleId: string
+): Promise<Result<User>> {
+  const userRepository = await getRepository()
+  return await userRepository.deleteRole(userId, roleId)
 }

@@ -12,6 +12,7 @@ import {
 import { UserRepository } from '@/domain/repository'
 import { workspaceList } from '@/view-model/workspace-view-model'
 import { Result } from '~/domain/model'
+import { UserServiceListUsersRequest } from '~/internal/client'
 
 import { UserDataSource } from '../data-source'
 
@@ -48,13 +49,8 @@ export class UserRepositoryImpl implements UserRepository {
 
   async createRole(userRole: UserRoleCreateType): Promise<Result<User>> {
     try {
-      const roleData = {
-        userId: userRole.userId,
-        name: userRole.name,
-        context: userRole.context
-      }
-      const response = await this.dataSource.createRole(roleData)
-      const roleResult = UserSchema.safeParse(response.result)
+      const response = await this.dataSource.createRole(userRole)
+      const roleResult = UserSchema.safeParse(response?.result?.user)
 
       if (!roleResult.success) {
         return {
@@ -158,9 +154,11 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  async list(): Promise<Result<User[]>> {
+  async list(
+    filters: UserServiceListUsersRequest = {}
+  ): Promise<Result<User[]>> {
     try {
-      const response = await this.dataSource.list()
+      const response = await this.dataSource.list(filters)
       const usersResult = z.array(UserSchema).safeParse(response.result?.users)
 
       if (!usersResult.success) {
