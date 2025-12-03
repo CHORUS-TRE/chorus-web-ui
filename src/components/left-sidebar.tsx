@@ -145,7 +145,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
         variant="underline"
         className={cn(
           'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
-          isGroupActive ? 'bg-accent/20 text-accent' : 'text-muted-foreground'
+          isGroupActive ? 'bg-primary/20 text-primary' : 'text-muted-foreground'
         )}
       >
         Workspaces
@@ -169,7 +169,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                   className={cn(
                     'flex items-center gap-2 rounded-lg px-3 py-1 text-xs font-medium transition-colors',
                     isWorkspaceActive
-                      ? 'text-accent'
+                      ? 'text-primary'
                       : 'text-muted-foreground/80 hover:text-accent'
                   )}
                 >
@@ -193,14 +193,15 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                           className={cn(
                             'flex items-start gap-2 rounded px-2 py-1 text-xs transition-colors',
                             isActive
-                              ? 'bg-accent/20 text-accent'
+                              ? 'bg-primary/20 text-primary'
                               : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
                           )}
                         >
                           <LaptopMinimal
                             className={cn(
                               'mt-0.5 h-3.5 w-3.5 shrink-0',
-                              isLoaded && 'text-green-500'
+                              isLoaded && 'text-green-500',
+                              isActive && 'text-primary'
                             )}
                           />
                           <span className="flex-1 leading-snug">
@@ -253,7 +254,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
         <div
           className={cn(
             'flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-            isGroupActive ? 'text-accent' : 'text-muted-foreground'
+            isGroupActive ? 'text-primary' : 'text-muted-foreground'
           )}
         >
           Services
@@ -284,14 +285,15 @@ function ServicesSection({ pathname }: NavSectionProps) {
                 className={cn(
                   'flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors',
                   isActive
-                    ? 'bg-accent/20 text-accent'
+                    ? 'bg-primary/20 text-primary'
                     : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
                 )}
               >
                 <Globe
                   className={cn(
                     'h-3.5 w-3.5 shrink-0',
-                    isLoaded && 'text-green-500'
+                    isLoaded && 'text-green-500',
+                    isActive && 'text-primary'
                   )}
                 />
                 <span className="truncate">{webapp.name}</span>
@@ -375,7 +377,7 @@ function SidebarContent({
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname === '/'
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
@@ -392,7 +394,7 @@ function SidebarContent({
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/data')
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
@@ -406,7 +408,7 @@ function SidebarContent({
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/app-store')
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
@@ -423,7 +425,7 @@ function SidebarContent({
           className={cn(
             'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             pathname.startsWith('/admin')
-              ? 'bg-accent/20 text-accent'
+              ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
