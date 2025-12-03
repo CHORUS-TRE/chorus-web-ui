@@ -169,7 +169,8 @@ export function UserEditDialog({
     if (!roleIdentifier) {
       toast({
         title: 'Error deleting role',
-        description: 'Could not find numeric role ID. The role may not be persisted yet.',
+        description:
+          'Could not find numeric role ID. The role may not be persisted yet.',
         variant: 'destructive'
       })
       return
@@ -177,7 +178,10 @@ export function UserEditDialog({
 
     setIsDeletingRole(role.id || role.name || '')
     try {
-      const result: Result<User> = await deleteUserRole(internalUser.id, roleIdentifier)
+      const result: Result<User> = await deleteUserRole(
+        internalUser.id,
+        roleIdentifier
+      )
 
       if (result && 'error' in result && result.error) {
         toast({
@@ -307,7 +311,7 @@ export function UserEditDialog({
               name="rolesWithContext"
               render={() => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 justify-between">
+                  <FormLabel className="flex items-center justify-between gap-2">
                     Roles ({fields.length}){' '}
                     <CreateUserRoleDialog
                       userId={internalUser.id}
