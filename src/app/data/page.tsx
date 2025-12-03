@@ -20,7 +20,7 @@ import {
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function DataPage() {
-  const { workspaces, users } = useAppState()
+  const { workspaces } = useAppState()
   const { user } = useAuthentication()
 
   const publicChuvData = [
@@ -77,8 +77,8 @@ export default function DataPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="">{w.name}</CardTitle>
                       <CardDescription className="text-muted-foreground">
-                        {users?.find((user) => user.id === w.userId)?.firstName}{' '}
-                        {users?.find((user) => user.id === w.userId)?.lastName}
+                        {/* {users?.find((user) => user.id === w.userId)?.firstName}{' '}
+                        {users?.find((user) => user.id === w.userId)?.lastName} */}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -123,8 +123,8 @@ export default function DataPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="">{w.name}</CardTitle>
                       <CardDescription className="text-muted-foreground">
-                        {users?.find((user) => user.id === w.userId)?.firstName}{' '}
-                        {users?.find((user) => user.id === w.userId)?.lastName}
+                        {/* {users?.find((user) => user.id === w.userId)?.firstName}{' '}
+                        {users?.find((user) => user.id === w.userId)?.lastName} */}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

@@ -49,6 +49,7 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
+import { listUsers } from '~/view-model/user-view-model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -63,7 +64,6 @@ export function Header() {
     apps,
     appInstances,
     refreshWorkbenches,
-    users,
     customLogos
   } = useAppState()
   const {
@@ -292,7 +292,7 @@ export function Header() {
                         <button
                           onClick={() =>
                             router.push(
-                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${recentSession.id}/members`
+                              `/workspaces/${sessionWorkbench.workspaceId}/users`
                             )
                           }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
@@ -523,7 +523,7 @@ export function Header() {
             <AlertDialogDescription className="space-y-4">
               <div className="flex items-center gap-4">
                 <p className="cursor-default text-muted">
-                  Created by{' '}
+                  {/* Created by{' '}
                   {
                     users?.find((user) => user.id === currentWorkbench?.userId)
                       ?.firstName
@@ -531,7 +531,7 @@ export function Header() {
                   {
                     users?.find((user) => user.id === currentWorkbench?.userId)
                       ?.lastName
-                  }{' '}
+                  }{' '} */}
                   {formatDistanceToNow(
                     currentWorkbench?.createdAt || new Date()
                   )}{' '}

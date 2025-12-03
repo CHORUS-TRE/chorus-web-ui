@@ -72,6 +72,7 @@ export function UserTable() {
       <TableHeader>
         <TableRow>
           <TableHead scope="col"></TableHead>
+          <TableHead scope="col">ID</TableHead>
           <TableHead scope="col">Name</TableHead>
           <TableHead scope="col">Username</TableHead>
           <TableHead scope="col">Roles</TableHead>
@@ -94,6 +95,7 @@ export function UserTable() {
               >
                 {userCollapsed[userIndex] ? '▸' : '▾'}
               </TableCell>
+              <TableCell>{user.id}</TableCell>
               <TableCell>
                 {user.firstName} {user.lastName}
               </TableCell>
@@ -132,6 +134,7 @@ export function UserTable() {
                 >
                   {userCollapsed[userIndex] ? '▸' : '▾'}
                 </TableCell>
+                <TableCell>{user.id}</TableCell>
                 <TableCell>
                   {user.firstName} {user.lastName}
                 </TableCell>
@@ -169,6 +172,7 @@ export function UserTable() {
                       : ''
                   }
                 >
+                  <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>

@@ -416,7 +416,7 @@ export default function UserProfile() {
                                         {workspace?.name || 'Workspace'}
                                       </span>
                                       <span className="font-mono text-xs text-muted-foreground">
-                                        {workspaceId}
+                                        (id: {workspaceId})
                                       </span>
                                     </div>
                                     <Badge

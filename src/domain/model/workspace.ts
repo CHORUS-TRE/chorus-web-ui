@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { UserSchema } from './user'
+
 export enum WorkspaceState {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
@@ -11,8 +13,9 @@ export enum WorkspaceState {
 export const WorkspaceMetaSchema = z.object({
   image: z.string().optional(),
   tag: z.enum(['center', 'project']).optional(),
-  PI: z.string().optional(),
+  owner: z.string().optional(),
   memberCount: z.number().optional(),
+  members: z.array(UserSchema).optional(),
   workbenchCount: z.number().optional(),
   files: z.number().optional()
 })
