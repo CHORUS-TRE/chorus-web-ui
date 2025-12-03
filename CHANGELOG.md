@@ -1,3 +1,11 @@
+# [1.25.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.24.0...v1.25.0) (2025-12-03)
+
+
+### Features
+
+* add file upload stats fields and logic ([ef65612](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ef656126f43b74313f1586b6f597d4e6cf6bd764))
+* implement upload progress component and integrate into file manager ([e9a394e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e9a394e4ab75f047e5637f89d4da037eac6d854f))
+
 # [1.24.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.23.0...v1.24.0) (2025-12-02)
 
 
