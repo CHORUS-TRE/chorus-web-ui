@@ -18,7 +18,7 @@ import {
 import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
 import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
 import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
-import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
+import { WorkspaceUserDeleteDialog } from '~/components/forms/workspace-user-delete-dialog'
 import { toast } from '~/components/hooks/use-toast'
 import { Badge } from '~/components/ui/badge'
 import {
@@ -55,15 +55,9 @@ export default function WorkspaceUserTable({
 
   const loadUsers = useCallback(async () => {
     setLoading(true)
-    const result = await listUsers()
+    const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
     if (result.data) {
-      // Filter users who have roles in this workspace
-      const workspaceUsers = result.data.filter((user) =>
-        user.rolesWithContext?.some(
-          (role) => role.context.workspace === workspaceId
-        )
-      )
-      setUsers(workspaceUsers)
+      setUsers(result.data)
       setError(null)
     } else {
       setError(result.error || 'Failed to load workspace members')
@@ -290,8 +284,9 @@ export default function WorkspaceUserTable({
     <div className="mb-4 grid flex-1 items-start gap-4">
       {/* Delete User Dialog */}
       {deletingUserId && (
-        <UserDeleteDialog
+        <WorkspaceUserDeleteDialog
           userId={deletingUserId}
+          workspaceId={workspaceId}
           open={!!deletingUserId}
           onOpenChange={(open) => {
             if (!open) setDeletingUserId(null)

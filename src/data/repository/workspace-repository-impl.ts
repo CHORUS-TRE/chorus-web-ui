@@ -162,25 +162,21 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
-  async manageUserRole(
+  async addUserRole(
     workspaceId: string,
     userId: string,
     roleName: string
   ): Promise<Result<User>> {
     try {
-      const response = await this.dataSource.manageUserRole(
-        workspaceId,
-        userId,
-        {
-          role: {
-            id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(),
-            name: roleName,
-            context: {
-              workspace: workspaceId
-            }
+      const response = await this.dataSource.addUserRole(workspaceId, userId, {
+        role: {
+          id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(),
+          name: roleName,
+          context: {
+            workspace: workspaceId
           }
         }
-      )
+      })
 
       if (!response.result?.workspace) {
         return { error: 'Error managing user role' }
@@ -215,6 +211,37 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
         }
       }
 
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async removeUserFromWorkspace(
+    workspaceId: string,
+    userId: string
+  ): Promise<Result<User>> {
+    try {
+      const response = await this.dataSource.removeUserFromWorkspace(
+        workspaceId,
+        userId
+      )
+      if (!response.result?.workspace) {
+        return { error: 'Error removing user from workspace' }
+      }
+
+      return {
+        data: {
+          id: userId,
+          firstName: '',
+          lastName: '',
+          username: '',
+          source: '',
+          status: '',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      }
+    } catch (error) {
+      console.error('Error removing user from workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }

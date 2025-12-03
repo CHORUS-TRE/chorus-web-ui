@@ -116,7 +116,7 @@ export async function workspaceUpdate(
   }
 }
 
-export async function workspaceManageUserRole(
+export async function workspaceAddUserRole(
   prevState: Result<User>,
   formData: FormData
 ): Promise<Result<User>> {
@@ -133,9 +133,32 @@ export async function workspaceManageUserRole(
       }
     }
 
-    return await repository.manageUserRole(workspaceId, userId, roleName)
+    return await repository.addUserRole(workspaceId, userId, roleName)
   } catch (error) {
     console.error('Error adding user role to workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceRemoveUserFromWorkspace(
+  prevState: Result<User>,
+  formData: FormData
+): Promise<Result<User>> {
+  try {
+    const repository = await getRepository()
+
+    const workspaceId = formData.get('workspaceId') as string
+    const userId = formData.get('userId') as string
+
+    if (!workspaceId || !userId) {
+      return {
+        error: 'Missing required fields: workspaceId, userId'
+      }
+    }
+
+    return await repository.removeUserFromWorkspace(workspaceId, userId)
+  } catch (error) {
+    console.error('Error removing user from workspace', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }
