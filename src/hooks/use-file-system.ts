@@ -558,6 +558,7 @@ export function useFileSystem(workspaceId?: string) {
         const uploadId = initResult.data.uploadId
         const chunkSize = initResult.data.partSize
         const totalChunks = initResult.data.totalParts
+        const startTime = Date.now()
 
         // Update local state
         setState((prev) => ({
@@ -572,6 +573,10 @@ export function useFileSystem(workspaceId?: string) {
               partSize: chunkSize,
               totalParts: totalChunks,
               uploadedParts: 0,
+              uploadedBytes: 0,
+              startTime: startTime,
+              lastUpdateTime: startTime,
+              speeds: [],
               aborted: false
             }
           }
@@ -593,6 +598,9 @@ export function useFileSystem(workspaceId?: string) {
 
           const start = chunkIndex * chunkSize
           const end = Math.min(start + chunkSize, file.size)
+          const actualChunkSize = end - start
+          const partStartTime = Date.now()
+
           const chunkContent = await readFileChunk(file, start, end)
 
           const partResult = await retryWithBackoff(() =>
@@ -619,17 +627,30 @@ export function useFileSystem(workspaceId?: string) {
             etag: partResult.data.etag
           })
 
+          // Calculate upload speed
+          const partEndTime = Date.now()
+          const partDuration = (partEndTime - partStartTime) / 1000
+          const partSpeed = actualChunkSize / partDuration // bytes per second
+
           // Update local state
-          setState((prev) => ({
-            ...prev,
-            uploads: {
-              ...prev.uploads,
-              [uploadId]: {
-                ...prev.uploads[uploadId],
-                uploadedParts: chunkIndex + 1
+          setState((prev) => {
+            const existingUpload = prev.uploads[uploadId]
+            const newSpeeds = [...existingUpload.speeds, partSpeed].slice(-5) // Keep last 5 speeds
+
+            return {
+              ...prev,
+              uploads: {
+                ...prev.uploads,
+                [uploadId]: {
+                  ...existingUpload,
+                  uploadedParts: existingUpload.uploadedParts + 1,
+                  uploadedBytes: existingUpload.uploadedBytes + actualChunkSize,
+                  lastUpdateTime: partEndTime,
+                  speeds: newSpeeds
+                }
               }
             }
-          }))
+          })
         }
 
         // Check for abort before completing upload

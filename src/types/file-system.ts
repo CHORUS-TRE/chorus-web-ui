@@ -19,6 +19,10 @@ export interface FileSystemUploadItem {
   partSize: number
   totalParts: number
   uploadedParts: number
+  uploadedBytes: number
+  startTime: number
+  lastUpdateTime: number
+  speeds: number[]
   aborted: boolean
 }
 
