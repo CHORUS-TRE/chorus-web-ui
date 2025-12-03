@@ -170,7 +170,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
                     'flex items-center gap-2 rounded-lg px-3 py-1 text-xs font-medium transition-colors',
                     isWorkspaceActive
                       ? 'text-accent'
-                      : 'text-muted-foreground hover:text-accent'
+                      : 'text-muted-foreground/80 hover:text-accent'
                   )}
                 >
                   <Package className="h-3.5 w-3.5 shrink-0" />
@@ -179,7 +179,7 @@ function WorkspacesSection({ pathname }: NavSectionProps) {
 
                 {/* Sessions under this workspace */}
                 {workspaceSessions && workspaceSessions.length > 0 && (
-                  <div className="ml-7 flex flex-col gap-0.5 pl-2">
+                  <div className="ml-5 flex flex-col gap-0.5 pl-1">
                     {workspaceSessions.map((session) => {
                       const sessionPath = `/workspaces/${workspace.id}/sessions/${session.id}`
                       const isActive = pathname === sessionPath
@@ -271,7 +271,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
       </div>
 
       {isExpanded && (
-        <div className="ml-7 mt-0.5 flex flex-col gap-0.5 border-l border-muted/30 pl-3">
+        <div className="ml-5 mt-0.5 flex flex-col gap-0.5 pl-1">
           {externalWebApps.map((webapp) => {
             const isActive = pathname === `/webapps/${webapp.id}`
             const isLoaded = cachedIframes.has(webapp.id)
@@ -285,7 +285,7 @@ function ServicesSection({ pathname }: NavSectionProps) {
                   'flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors',
                   isActive
                     ? 'bg-accent/20 text-accent'
-                    : 'text-muted-foreground hover:bg-accent/10 hover:text-accent'
+                    : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
                 )}
               >
                 <Globe
