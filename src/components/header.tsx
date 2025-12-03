@@ -71,7 +71,12 @@ export function Header() {
     setActiveIframe,
     cachedIframes,
     activeIframeId,
-    closeIframe
+    closeIframe,
+    recentSessions,
+    recentWebApps,
+    openSession,
+    openWebApp,
+    removeFromRecent
   } = useIframeCache()
   const { user, logout } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
@@ -89,10 +94,8 @@ export function Header() {
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? customLogos.light : customLogos.dark
 
-  // Get loaded sessions and webapps from cache
-  const loadedItems = Array.from(cachedIframes.values())
-  const loadedSessions = loadedItems.filter((item) => item.type === 'session')
-  const loadedWebApps = loadedItems.filter((item) => item.type === 'webapp')
+  // Recent sessions and webapps are persisted across logout/login
+  // Use cachedIframes.has() to check if a session/webapp is currently loaded
 
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
@@ -155,42 +158,59 @@ export function Header() {
           )}
         </Link>
 
-        {/* Center: Loaded sessions and web apps */}
-        {user && (loadedSessions.length > 0 || loadedWebApps.length > 0) && (
+        {/* Center: Recent sessions and web apps */}
+        {user && (recentSessions.length > 0 || recentWebApps.length > 0) && (
           <div className="flex flex-1 items-center justify-center gap-1 overflow-x-auto px-4">
-            {/* Loaded Sessions */}
-            {loadedSessions.map((session) => {
-              const isActive = activeIframeId === session.id
+            {/* Recent Sessions - displayed in order added (most recent first) */}
+            {recentSessions.map((recentSession) => {
+              const isActive = activeIframeId === recentSession.id
               const sessionWorkbench = workbenches?.find(
-                (wb) => wb.id === session.id
+                (wb) => wb.id === recentSession.id
               )
+              const isLoaded = cachedIframes.has(recentSession.id)
 
               return (
-                <HoverCard key={session.id} openDelay={200} closeDelay={100}>
+                <HoverCard
+                  key={recentSession.id}
+                  openDelay={200}
+                  closeDelay={100}
+                >
                   <HoverCardTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         if (sessionWorkbench) {
+                          // If session is not loaded, load it first
+                          if (!isLoaded) {
+                            await openSession(
+                              recentSession.id,
+                              recentSession.workspaceId,
+                              recentSession.name
+                            )
+                          }
                           router.push(
-                            `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
+                            `/workspaces/${recentSession.workspaceId}/sessions/${recentSession.id}`
                           )
                         }
                       }}
                       className={cn(
-                        'group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors',
+                        'group flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all',
                         isActive
-                          ? 'border-accent/50 bg-accent/20 text-accent'
-                          : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
+                          ? 'border-primary/50 bg-primary/10 text-primary'
+                          : 'border-muted/50 hover:bg-accent/10'
                       )}
                     >
                       <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
                       <span className="max-w-32 truncate">
-                        {getSessionDisplayName(session.id)}
+                        {getSessionDisplayName(recentSession.id)}
                       </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          closeIframe(session.id)
+                          removeFromRecent(recentSession.id, 'session')
+                          // Also close iframe if it's loaded
+                          if (isLoaded) {
+                            closeIframe(recentSession.id)
+                          }
                         }}
                         className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
                       >
@@ -232,7 +252,8 @@ export function Header() {
                         {/* Running apps */}
                         {appInstances
                           ?.filter(
-                            (instance) => instance.workbenchId === session.id
+                            (instance) =>
+                              instance.workbenchId === recentSession.id
                           )
                           .map((instance) => {
                             const app = apps?.find(
@@ -252,14 +273,14 @@ export function Header() {
                           })}
 
                         {appInstances?.some(
-                          (i) => i.workbenchId === session.id
+                          (i) => i.workbenchId === recentSession.id
                         ) && <div className="my-1 border-t border-muted/20" />}
 
                         {/* Actions */}
                         <button
                           onClick={() =>
                             router.push(
-                              `/app-store?workspaceId=${sessionWorkbench.workspaceId}&sessionId=${session.id}`
+                              `/app-store?workspaceId=${sessionWorkbench.workspaceId}&sessionId=${recentSession.id}`
                             )
                           }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
@@ -271,7 +292,7 @@ export function Header() {
                         <button
                           onClick={() =>
                             router.push(
-                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}/members`
+                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${recentSession.id}/members`
                             )
                           }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
@@ -281,7 +302,7 @@ export function Header() {
                         </button>
 
                         <button
-                          onClick={() => setUpdateSessionId(session.id)}
+                          onClick={() => setUpdateSessionId(recentSession.id)}
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
                         >
                           <Settings className="h-3.5 w-3.5" />
@@ -299,7 +320,7 @@ export function Header() {
                         <button
                           onClick={() =>
                             router.push(
-                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${session.id}`
+                              `/workspaces/${sessionWorkbench.workspaceId}/sessions/${recentSession.id}`
                             )
                           }
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
@@ -311,7 +332,7 @@ export function Header() {
                         <div className="my-1 border-t border-muted/20" />
 
                         <button
-                          onClick={() => setDeleteSessionId(session.id)}
+                          onClick={() => setDeleteSessionId(recentSession.id)}
                           className="flex items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -325,31 +346,42 @@ export function Header() {
             })}
 
             {/* Separator if both sessions and webapps */}
-            {loadedSessions.length > 0 && loadedWebApps.length > 0 && (
+            {recentSessions.length > 0 && recentWebApps.length > 0 && (
               <div className="mx-1 h-4 w-px bg-muted/30" />
             )}
 
-            {/* Loaded Web Apps */}
-            {loadedWebApps.map((webapp) => {
-              const isActive = activeIframeId === webapp.id
+            {/* Recent Web Apps */}
+            {recentWebApps.map((recentWebApp) => {
+              const isActive = activeIframeId === recentWebApp.id
+              const isLoaded = cachedIframes.has(recentWebApp.id)
 
               return (
                 <button
-                  key={webapp.id}
-                  onClick={() => router.push(`/webapps/${webapp.id}`)}
+                  key={recentWebApp.id}
+                  onClick={() => {
+                    // If webapp is not loaded, load it first
+                    if (!isLoaded) {
+                      openWebApp(recentWebApp.id)
+                    }
+                    router.push(`/webapps/${recentWebApp.id}`)
+                  }}
                   className={cn(
-                    'group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors',
+                    'group flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all',
                     isActive
-                      ? 'border-accent/50 bg-accent/20 text-accent'
-                      : 'border-muted/50 bg-muted/50 text-foreground/80 hover:bg-muted hover:text-foreground'
+                      ? 'border-primary/50 bg-primary/10 text-primary'
+                      : 'border-muted/50 hover:bg-accent/10'
                   )}
                 >
                   <Globe className="h-3.5 w-3.5 shrink-0" />
-                  <span className="max-w-32 truncate">{webapp.name}</span>
+                  <span className="max-w-32 truncate">{recentWebApp.name}</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      closeIframe(webapp.id)
+                      removeFromRecent(recentWebApp.id, 'webapp')
+                      // Also close iframe if it's loaded
+                      if (isLoaded) {
+                        closeIframe(recentWebApp.id)
+                      }
                     }}
                     className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
                   >
