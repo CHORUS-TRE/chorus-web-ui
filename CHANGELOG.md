@@ -1,3 +1,18 @@
+# [1.26.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.25.0...v1.26.0) (2025-12-03)
+
+
+### Features
+
+* add file upload stats fields and logic ([12d2fee](https://github.com/CHORUS-TRE/chorus-web-ui/commit/12d2feeb3dcb3b812b4e58f70722dc3487c186e4))
+* implement upload progress component and integrate into file manager ([53f9cc2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/53f9cc23909d03a9a2ea6baf2a0465a7d9f0ce01))
+* **ui:** improve form validation error display ([4b36048](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4b36048bd2222e009fec8d9c8e05914f1185186f))
+* **ui:** improve iframe loading state management ([e754fbf](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e754fbfe777b135ae8ab579766a9154b3bfd7061))
+* **user:** add filtering support to listUsers function ([10c9999](https://github.com/CHORUS-TRE/chorus-web-ui/commit/10c999937eb3ad969a90e70720cc8b7c18d7e39c))
+* **user:** add user role deletion functionality ([85103a0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/85103a054a199ac4900a3c4bd2a422f205b89d3c))
+* **user:** improve user role creation with conditional context ([075c0af](https://github.com/CHORUS-TRE/chorus-web-ui/commit/075c0af2338a11d6af7ebbf52573d9f2276beb6f))
+* **workbench:** add user removal from workbench functionality ([28c2514](https://github.com/CHORUS-TRE/chorus-web-ui/commit/28c2514cf56c92605ecafb4eb4938da1a1277a18))
+* **workspace:** add user removal from workspace functionality ([876c8e8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/876c8e847069cc666ff2537c6ce7a29603c45065))
+
 # [1.25.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.24.0...v1.25.0) (2025-12-03)
 
 
