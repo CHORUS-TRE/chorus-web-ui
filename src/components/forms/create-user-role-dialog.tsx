@@ -41,6 +41,8 @@ import { Role, User } from '~/domain/model/user'
 import { getAllRoles } from '~/utils/schema-roles'
 import { createUserRole } from '~/view-model/user-view-model'
 
+import { toast } from '../hooks/use-toast'
+
 const CreateUserRoleSchema = z.object({
   roleName: z.string().min(1, 'Select a role'),
   workspace: z.string().optional(),
@@ -82,9 +84,28 @@ export function CreateUserRoleDialog({
       onRoleAdded(state.data)
       setOpen(false)
       form.reset()
-    } else if (state.error) {
-      console.error('Failed to create role:', state.error)
-      // TODO: show toast notification
+    } else if (state.error || state.issues) {
+      // Display validation errors in toast
+      if (state.issues && state.issues.length > 0) {
+        const errorMessages = state.issues
+          .map((issue) => {
+            const path = issue.path.join('.')
+            return path ? `${path}: ${issue.message}` : issue.message
+          })
+          .join('\n')
+
+        toast({
+          title: 'Validation Error',
+          description: errorMessages,
+          variant: 'destructive'
+        })
+      } else if (state.error) {
+        toast({
+          title: 'Failed to create role',
+          description: state.error,
+          variant: 'destructive'
+        })
+      }
     }
   }, [state, onRoleAdded, form, setOpen])
 
@@ -102,6 +123,9 @@ export function CreateUserRoleDialog({
     }
     if (data.workbench) {
       formData.append('workbench', data.workbench)
+    }
+    if (data.user) {
+      formData.append('user', data.user)
     }
     // NOTE: user context is not sent as it's not part of the create schema
     startTransition(() => {
