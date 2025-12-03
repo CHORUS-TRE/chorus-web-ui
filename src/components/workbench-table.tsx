@@ -222,16 +222,15 @@ export default function WorkbenchTable({
 }: {
   workbenches: Workbench[] | undefined
 }) {
-  const { apps, workspaces, users, refreshWorkbenches, appInstances } =
-    useAppState()
+  const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
 
   const [sorting, setSorting] = useState<SortingState>([])
 
   const data = workbenches
 
   const tableColumns = React.useMemo(
-    () => columns(apps, users, workspaces, refreshWorkbenches, appInstances),
-    [apps, users, workspaces, refreshWorkbenches, appInstances]
+    () => columns(apps, [], workspaces, refreshWorkbenches, appInstances),
+    [apps, workspaces, refreshWorkbenches, appInstances]
   )
 
   const table = useReactTable({

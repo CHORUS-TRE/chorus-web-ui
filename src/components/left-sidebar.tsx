@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils'
 import { useAppState } from '~/providers/app-state-provider'
 import { useAuthentication } from '~/providers/authentication-provider'
 import { useIframeCache } from '~/providers/iframe-cache-provider'
+import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
 
@@ -363,6 +364,8 @@ function SidebarContent({
   onClose?: () => void
   showCloseButton?: boolean
 }) {
+  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+
   return (
     <>
       {/* Header with title and close button */}
@@ -388,7 +391,7 @@ function SidebarContent({
         <WorkspacesSection pathname={pathname} />
 
         {/* Data */}
-        <Link
+        {/* <Link
           href="/data"
           variant="underline"
           className={cn(
@@ -399,7 +402,7 @@ function SidebarContent({
           )}
         >
           Data
-        </Link>
+        </Link> */}
 
         {/* App Store */}
         <Link
@@ -416,9 +419,12 @@ function SidebarContent({
         </Link>
 
         {/* Services section (after App Store) */}
-        <ServicesSection pathname={pathname} />
+        {(canManageUsers || canManageSettings) && (
+          <ServicesSection pathname={pathname} />
+        )}
 
         {/* Settings */}
+
         <Link
           href="/admin"
           variant="underline"
