@@ -19,7 +19,8 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
       'authenticate',
       'getListOfPossibleWayToAuthenticate',
       'authenticateUsingAuth2.0',
-      'authenticateRedirectUsingAuth2.0'
+      'authenticateRedirectUsingAuth2.0',
+      'getPlatformSettings'
     ]
   },
   {
@@ -66,7 +67,7 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
     context: {},
     inheritsFrom: ['WorkspaceGuest'],
     attributes: { workspace: 'x' },
-    permissions: ['createWorkbench']
+    permissions: ['createWorkbench', 'listFilesInWorkspace']
   },
   {
     id: 'WorkspaceMaintainer',
@@ -169,6 +170,15 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
     permissions: ['getHealthCheck']
   },
   {
+    id: 'PlatformSettingsManager',
+    name: 'PlatformSettingsManager',
+    description:
+      'This role allows a user to manage the platform settings and configuration',
+    context: {},
+    inheritsFrom: ['Authenticated'],
+    permissions: ['setPlatformSettings']
+  },
+  {
     id: 'PlateformUserManager',
     name: 'PlateformUserManager',
     description:
@@ -182,7 +192,8 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
       'updateUser',
       'getUser',
       'deleteUser',
-      'resetPassword'
+      'resetPassword',
+      'manageUserRoles'
     ]
   },
   {
@@ -200,6 +211,7 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
     context: {},
     inheritsFrom: [
       'Authenticated',
+      'PlatformSettingsManager',
       'PlateformUserManager',
       'AppStoreAdmin',
       'WorkspaceAdmin',
@@ -280,6 +292,7 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   getWorkspace: 'View workspace details',
   deleteWorkspace: 'Remove workspaces',
   manageUsersInWorkspace: 'Add/remove users from workspaces',
+  listFilesInWorkspace: 'View files in workspaces',
   uploadFilesToWorkspace: 'Upload files to workspaces',
   downloadFilesFromWorkspace: 'Download files from workspaces',
   modifyFilesInWorkspace: 'Edit files in workspaces',
@@ -321,7 +334,12 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   resetTotp: 'Reset two-factor authentication',
   getUser: 'View user profiles',
   deleteUser: 'Remove user accounts',
-  resetPassword: 'Reset user passwords'
+  resetPassword: 'Reset user passwords',
+  manageUserRoles: 'Manage user roles',
+
+  // AdminService
+  getPlatformSettings: 'View platform settings',
+  setPlatformSettings: 'Modify platform settings'
 }
 
 // Get human-readable description for a permission
