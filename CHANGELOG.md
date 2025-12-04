@@ -1,3 +1,10 @@
+## [1.26.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.0...v1.26.1) (2025-12-04)
+
+
+### Bug Fixes
+
+* adapt roles to new gatekeeper permission/role schema ([#154](https://github.com/CHORUS-TRE/chorus-web-ui/issues/154)) ([3cfd42c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3cfd42c47be12a9c72947a4c5064f2aeee784026))
+
 # [1.26.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.25.0...v1.26.0) (2025-12-03)
 
 
