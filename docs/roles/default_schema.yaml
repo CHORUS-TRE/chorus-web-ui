@@ -79,6 +79,10 @@ permissions:
     description: This endpoint allows managing users in a workspace
     context:
       - workspace
+  - name: listFilesInWorkspace
+    description: This endpoint allows listing files in a workspace
+    context:
+      - workspace
   - name: uploadFilesToWorkspace
     description: This endpoint allows uploading files to a workspace
     context:
@@ -200,6 +204,18 @@ permissions:
     description: This endpoint resets a user's password
     context:
       - user
+  - name: manageUserRoles
+    description: This endpoint manages a user's roles
+    context:
+      - user
+
+  # AdminService
+  - name: getPlatformSettings
+    description: This endpoint gets platform settings
+    context: []
+  - name: setPlatformSettings
+    description: This endpoint sets platform settings
+    context: []
 
 # -------------------------------------------------------
 
@@ -211,6 +227,7 @@ roles:
     - getListOfPossibleWayToAuthenticate
     - authenticateUsingAuth2.0
     - authenticateRedirectUsingAuth2.0
+    - getPlatformSettings
 
   - name: Authenticated
     description: This role is given to all authenticated users
@@ -255,6 +272,7 @@ roles:
     - WorkspaceGuest
     permissions:
     - createWorkbench
+    - listFilesInWorkspace
   - name: WorkspaceMaintainer
     description: This role allows a user to manage a workspace
     attributes:
@@ -341,6 +359,13 @@ roles:
     permissions:
     - getHealthCheck
 
+  - name: PlatformSettingsManager
+    description: This role allows a user to manage platform settings
+    inherits_from:
+    - Authenticated
+    permissions:
+    - setPlatformSettings
+
   - name: PlateformUserManager
     description: This role allows a user a full control over ther user in at the platform level
     attributes:
@@ -351,6 +376,7 @@ roles:
     - listUsers
     - createUser
     - updateUser
+    - manageUserRoles
     - getUser
     - deleteUser
     - resetPassword
@@ -374,6 +400,7 @@ roles:
     - workbench: "*"
     inherits_from:
     - Authenticated
+    - PlatformSettingsManager
     - PlateformUserManager
     - AppStoreAdmin
     - WorkspaceAdmin
@@ -381,6 +408,3 @@ roles:
     - Healthchecker
     permissions:
     - initializeTenant
-    
-
-
