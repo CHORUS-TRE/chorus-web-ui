@@ -39,7 +39,8 @@ export const useAuthorizationViewModel = () => {
         )
         setCanManageAppStore(
           user.rolesWithContext?.find(
-            (role) => role.name === 'AppStoreAdmin' || role.name === 'SuperAdmin'
+            (role) =>
+              role.name === 'AppStoreAdmin' || role.name === 'SuperAdmin'
           ) !== undefined
         )
       } catch (err) {

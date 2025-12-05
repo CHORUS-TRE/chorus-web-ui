@@ -5,9 +5,9 @@ import {
   Globe,
   Info,
   LaptopMinimal,
-  LogOut,
   Maximize,
   Plus,
+  Search,
   Settings,
   Trash2,
   User,
@@ -31,13 +31,6 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger
@@ -49,7 +42,7 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { listUsers } from '~/view-model/user-view-model'
+import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -78,7 +71,7 @@ export function Header() {
     openWebApp,
     removeFromRecent
   } = useIframeCache()
-  const { user, logout } = useAuthentication()
+  const { user } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -94,6 +87,7 @@ export function Header() {
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? customLogos.light : customLogos.dark
 
+  const { canManageUsers } = useAuthorizationViewModel()
   // Recent sessions and webapps are persisted across logout/login
   // Use cachedIframes.has() to check if a session/webapp is currently loaded
 
@@ -368,8 +362,10 @@ export function Header() {
               const isLoaded = cachedIframes.has(recentWebApp.id)
 
               return (
-                <button
+                <div
                   key={recentWebApp.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => {
                     // If webapp is not loaded, load it first
                     if (!isLoaded) {
@@ -377,8 +373,17 @@ export function Header() {
                     }
                     router.push(`/webapps/${recentWebApp.id}`)
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      if (!isLoaded) {
+                        openWebApp(recentWebApp.id)
+                      }
+                      router.push(`/webapps/${recentWebApp.id}`)
+                    }
+                  }}
                   className={cn(
-                    'group flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all',
+                    'group flex cursor-pointer items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
                     isActive
                       ? 'border-primary/50 bg-primary/10 text-primary'
                       : 'border-muted/50 hover:bg-accent/10'
@@ -399,61 +404,36 @@ export function Header() {
                   >
                     <X className="h-3 w-3" />
                   </button>
-                </button>
+                </div>
               )
             })}
           </div>
         )}
 
-        <div className="flex shrink-0 items-center justify-end">
-          <div className="ml-1 flex items-center">
-            <ThemeToggle />
-
-            {user?.rolesWithContext?.some((role) => role.context.user) && (
-              <Button
-                variant="ghost"
-                onClick={() => router.push(`/lab`)}
-                aria-label="Sandbox"
-              >
-                <FlaskConical className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">Lab</span>
-              </Button>
-            )}
-
-            {user && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost">
-                    <User className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="glass-elevated w-56"
-                  align="end"
-                  forceMount
-                >
-                  <>
-                    <DropdownMenuItem
-                      className="flex cursor-pointer items-center gap-2"
-                      onClick={() => router.push(`/users/${user?.id}`)}
-                    >
-                      <User className="h-4 w-4" />
-                      {user?.firstName} {user?.lastName} profile
-                    </DropdownMenuItem>
-
-                    <DropdownMenuSeparator className="bg-slate-500" />
-                    <DropdownMenuItem
-                      onClick={logout}
-                      className="flex cursor-pointer items-center gap-2"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Logout
-                    </DropdownMenuItem>
-                  </>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+        <div className="flex shrink-0 items-center justify-end gap-2">
+          {/* Search bar (disabled) */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
+            <input
+              type="text"
+              placeholder="Search..."
+              disabled
+              className="h-8 w-40 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
+            />
           </div>
+
+          <ThemeToggle />
+
+          {canManageUsers && (
+            <Button
+              variant="ghost"
+              onClick={() => router.push(`/lab`)}
+              aria-label="Sandbox"
+            >
+              <FlaskConical className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Lab</span>
+            </Button>
+          )}
         </div>
 
         <WorkbenchDeleteForm

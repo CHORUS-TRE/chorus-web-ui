@@ -163,13 +163,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
   },
 
   setWorkspace: async (workspaceId: string, key: string, value: string) => {
-    console.log('[DevStoreCache] setWorkspace called:', {
-      workspaceId,
-      key,
-      valueLength: value?.length
-    })
     const result = await putWorkspaceEntry(workspaceId, { key, value })
-    console.log('[DevStoreCache] putWorkspaceEntry result:', result)
     if (!result.error) {
       set((state) => {
         const newWorkspaces = new Map(state.workspaces)
@@ -179,7 +173,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       })
       return true
     }
-    console.error('[DevStoreCache] setWorkspace failed:', result.error)
     return false
   },
 

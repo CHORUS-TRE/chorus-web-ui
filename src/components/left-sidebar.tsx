@@ -1,27 +1,25 @@
 'use client'
 
 import {
-  ChevronDown,
-  ChevronRight,
-  Database,
+  ChevronUp,
   GaugeCircle,
   Globe,
   HelpCircle,
-  Home,
   LaptopMinimal,
+  LogOut,
   Package,
   PanelLeftClose,
   Settings,
-  Store
+  Store,
+  User
 } from 'lucide-react'
-import { usePathname } from 'next/navigation'
-import React, { useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
 
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
 import { useAppState } from '~/providers/app-state-provider'
 import { useAuthentication } from '~/providers/authentication-provider'
-import { useIframeCache } from '~/providers/iframe-cache-provider'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
@@ -43,12 +41,6 @@ export const navItems = [
     exact: true
   },
   {
-    label: 'My Workspace',
-    icon: Home,
-    href: '/workspaces',
-    className: 'demo-effect'
-  },
-  {
     label: 'Workspaces',
     icon: Package,
     href: '/workspaces'
@@ -59,257 +51,24 @@ export const navItems = [
     href: '/sessions'
   },
   {
-    label: 'Data',
-    icon: Database,
-    href: '/data'
-  },
-  {
     label: 'App Store',
     icon: Store,
     href: '/app-store'
   },
   {
+    label: 'Services',
+    icon: Globe,
+    href: '/app-store?tab=webapps'
+  },
+  {
     label: 'Settings',
     icon: Settings,
     href: '/admin'
-  },
-  {
-    label: 'Help',
-    icon: HelpCircle,
-    href: 'void(0)'
   }
 ]
 
-interface NavSectionProps {
-  pathname: string
-}
-
-/**
- * Workspaces section with sessions nested under each workspace
- * Always expanded, no toggle button
- */
-function WorkspacesSection({ pathname }: NavSectionProps) {
-  const { workspaces, workbenches, apps, appInstances } = useAppState()
-  const { user } = useAuthentication()
-  const { cachedIframes } = useIframeCache()
-
-  // Filter to show workspaces where user is a member (has roles) or is owner
-  const userWorkspaces = workspaces
-    ?.filter(
-      (workspace) =>
-        workspace.tag === 'project' &&
-        (workspace.userId === user?.id ||
-          user?.rolesWithContext?.some(
-            (role) => role.context.workspace === workspace.id
-          ))
-    )
-    .sort(
-      (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
-    )
-
-  // Get sessions for a workspace
-  const getWorkspaceSessions = (workspaceId: string) => {
-    return workbenches
-      ?.filter((wb) => wb.workspaceId === workspaceId)
-      .filter((wb) =>
-        user?.rolesWithContext?.some((role) => role.context.workbench === wb.id)
-      )
-      .sort(
-        (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
-      )
-  }
-
-  // Get display name for a session (app names if running, otherwise session name)
-  const getSessionDisplayName = (sessionId: string, sessionName?: string) => {
-    const sessionAppInstances = appInstances?.filter(
-      (instance) => instance.workbenchId === sessionId
-    )
-    if (sessionAppInstances && sessionAppInstances.length > 0) {
-      const appNames = sessionAppInstances
-        .map((instance) => apps?.find((a) => a.id === instance.appId)?.name)
-        .filter(Boolean)
-      if (appNames.length > 0) {
-        return appNames.join(', ')
-      }
-    }
-    return sessionName || `Session ${sessionId?.slice(0, 8)}`
-  }
-
-  // Only highlight "Workspaces" if we're on the workspaces list page exactly
-  const isGroupActive = pathname === '/workspaces'
-
-  return (
-    <div>
-      {/* Workspaces header - no icon, no expand button */}
-      <Link
-        href="/workspaces"
-        variant="underline"
-        className={cn(
-          'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
-          isGroupActive ? 'bg-primary/20 text-primary' : 'text-muted-foreground'
-        )}
-      >
-        Workspaces
-      </Link>
-
-      {/* Workspaces list - always visible */}
-      {userWorkspaces && userWorkspaces.length > 0 && (
-        <div className="mt-0.5 flex flex-col gap-1">
-          {userWorkspaces.map((workspace) => {
-            const isWorkspaceActive =
-              pathname === `/workspaces/${workspace.id}` ||
-              pathname.startsWith(`/workspaces/${workspace.id}/`)
-            const workspaceSessions = getWorkspaceSessions(workspace.id!)
-
-            return (
-              <div key={workspace.id} className="flex flex-col gap-0.5">
-                {/* Workspace link with icon */}
-                <Link
-                  href={`/workspaces/${workspace.id}`}
-                  variant="underline"
-                  className={cn(
-                    'flex items-center gap-2 rounded-lg px-3 py-1 text-xs font-medium transition-colors',
-                    isWorkspaceActive
-                      ? 'text-primary'
-                      : 'text-muted-foreground/80 hover:text-accent'
-                  )}
-                >
-                  <Package className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{workspace.name}</span>
-                </Link>
-
-                {/* Sessions under this workspace */}
-                {workspaceSessions && workspaceSessions.length > 0 && (
-                  <div className="ml-5 flex flex-col gap-0.5 pl-1">
-                    {workspaceSessions.map((session) => {
-                      const sessionPath = `/workspaces/${workspace.id}/sessions/${session.id}`
-                      const isActive = pathname === sessionPath
-                      const isLoaded = cachedIframes.has(session.id!)
-
-                      return (
-                        <Link
-                          key={session.id}
-                          href={sessionPath}
-                          variant="underline"
-                          className={cn(
-                            'flex items-start gap-2 rounded px-2 py-1 text-xs transition-colors',
-                            isActive
-                              ? 'bg-primary/20 text-primary'
-                              : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
-                          )}
-                        >
-                          <LaptopMinimal
-                            className={cn(
-                              'mt-0.5 h-3.5 w-3.5 shrink-0',
-                              isLoaded && 'text-green-500',
-                              isActive && 'text-primary'
-                            )}
-                          />
-                          <span className="flex-1 leading-snug">
-                            {getSessionDisplayName(session.id!, session.name)}
-                          </span>
-                        </Link>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function ServicesSection({ pathname }: NavSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebar_services_expanded')
-      return saved !== null ? JSON.parse(saved) : true
-    }
-    return true
-  })
-  const { cachedIframes, externalWebApps } = useIframeCache()
-
-  // Persist expanded state
-  React.useEffect(() => {
-    localStorage.setItem(
-      'sidebar_services_expanded',
-      JSON.stringify(isExpanded)
-    )
-  }, [isExpanded])
-
-  if (externalWebApps.length === 0) return null
-
-  const isGroupActive = pathname.startsWith('/webapps')
-
-  return (
-    <div>
-      <div
-        className={cn(
-          'flex items-center rounded-lg transition-colors',
-          isGroupActive && !isExpanded ? 'bg-accent/20' : ''
-        )}
-      >
-        <div
-          className={cn(
-            'flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-            isGroupActive ? 'text-primary' : 'text-muted-foreground'
-          )}
-        >
-          Services
-        </div>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center p-1.5 text-muted-foreground/70 hover:text-muted-foreground"
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-3 w-3" />
-          ) : (
-            <ChevronRight className="h-3 w-3" />
-          )}
-        </button>
-      </div>
-
-      {isExpanded && (
-        <div className="ml-5 mt-0.5 flex flex-col gap-0.5 pl-1">
-          {externalWebApps.map((webapp) => {
-            const isActive = pathname === `/webapps/${webapp.id}`
-            const isLoaded = cachedIframes.has(webapp.id)
-
-            return (
-              <Link
-                key={webapp.id}
-                href={`/webapps/${webapp.id}`}
-                variant="underline"
-                className={cn(
-                  'flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors',
-                  isActive
-                    ? 'bg-primary/20 text-primary'
-                    : 'text-muted-foreground/80 hover:bg-accent/10 hover:text-accent'
-                )}
-              >
-                <Globe
-                  className={cn(
-                    'h-3.5 w-3.5 shrink-0',
-                    isLoaded && 'text-green-500',
-                    isActive && 'text-primary'
-                  )}
-                />
-                <span className="truncate">{webapp.name}</span>
-              </Link>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
 /**
  * Sidebar header with title and close button
- * Uses negative margins to extend to container edges (compensating for p-4)
  */
 function SidebarHeader({
   onClose,
@@ -319,7 +78,7 @@ function SidebarHeader({
   showCloseButton?: boolean
 }) {
   return (
-    <div className="sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
+    <div className="sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md mb-4">
       <h1 className="ml-2 text-lg font-semibold text-foreground">CHORUS</h1>
       {showCloseButton && onClose && (
         <Button
@@ -337,6 +96,108 @@ function SidebarHeader({
 }
 
 /**
+ * User profile section at the bottom of sidebar
+ */
+function UserProfileSection() {
+  const { user, logout } = useAuthentication()
+  const router = useRouter()
+  const [menuOpen, setMenuOpen] = React.useState(false)
+
+  if (!user) return null
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/')
+  }
+
+  // Get initials for avatar
+  const initials =
+    `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase()
+
+  // Get platform/global roles (exclude Workspace* and Workbench* roles)
+  const globalRoles = user.rolesWithContext
+    ?.filter(
+      (role) =>
+        !role.name.startsWith('Workspace') && !role.name.startsWith('Workbench')
+    )
+    .map((role) => role.name)
+    .filter((name, index, arr) => arr.indexOf(name) === index) // unique
+    .sort((a, b) => a.localeCompare(b)) // alphabetical order
+
+  return (
+    <div className="border-t border-muted/60 p-2">
+      <div className="relative">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-muted/30"
+        >
+          {/* Avatar */}
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium text-foreground">
+            {initials || <User className="h-4 w-4" />}
+          </div>
+          {/* Name & Username */}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-foreground">
+              {user.firstName} {user.lastName}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {user.username}
+            </p>
+          </div>
+          {/* Chevron */}
+          <ChevronUp
+            className={cn(
+              'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
+              menuOpen && 'rotate-180'
+            )}
+          />
+        </button>
+
+        {/* Dropdown menu */}
+        {menuOpen && (
+          <div className="absolute bottom-full left-0 right-0 mb-1 max-h-64 overflow-y-auto rounded-lg border border-muted/60 bg-contrast-background p-1 shadow-lg">
+            {/* Roles section */}
+            {globalRoles && globalRoles.length > 0 && (
+              <div className="border-b border-muted/40 px-2 py-2">
+                <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Roles
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {globalRoles.map((role) => (
+                    <span
+                      key={role}
+                      className="rounded bg-muted/50 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <Link
+              href={`/users/${user.id}`}
+              variant="underline"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted/30"
+              onClick={() => setMenuOpen(false)}
+            >
+              <User className="h-4 w-4" />
+              Profile
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted/30"
+            >
+              <LogOut className="h-4 w-4" />
+              Log out
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/**
  * Help button - toggles right sidebar
  */
 function HelpButton() {
@@ -345,8 +206,9 @@ function HelpButton() {
   return (
     <button
       onClick={toggleRightSidebar}
-      className="rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+      className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
     >
+      <HelpCircle className="h-4 w-4" />
       Help
     </button>
   )
@@ -357,14 +219,26 @@ function HelpButton() {
  */
 function SidebarContent({
   pathname,
+  searchParams,
   onClose,
   showCloseButton
 }: {
   pathname: string
+  searchParams: URLSearchParams
   onClose?: () => void
   showCloseButton?: boolean
 }) {
   const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+  const currentTab = searchParams.get('tab')
+
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href
+    if (href.includes('?')) {
+      const basePath = href.split('?')[0]
+      return pathname === basePath || pathname.startsWith(basePath + '/')
+    }
+    return pathname === href || pathname.startsWith(href + '/')
+  }
 
   return (
     <>
@@ -378,49 +252,76 @@ function SidebarContent({
           href="/"
           variant="underline"
           className={cn(
-            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            pathname === '/'
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/', true)
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
+          <GaugeCircle className="h-4 w-4" />
           Dashboard
         </Link>
 
-        {/* Workspaces with nested sessions */}
-        <WorkspacesSection pathname={pathname} />
-
-        {/* Data */}
-        {/* <Link
-          href="/data"
+        {/* Workspaces */}
+        <Link
+          href="/workspaces"
           variant="underline"
           className={cn(
-            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            pathname.startsWith('/data')
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/workspaces')
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
-          Data
-        </Link> */}
+          <Package className="h-4 w-4" />
+          Workspaces
+        </Link>
+
+        {/* Sessions */}
+        <Link
+          href="/sessions"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/sessions')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <LaptopMinimal className="h-4 w-4" />
+          Sessions
+        </Link>
 
         {/* App Store */}
         <Link
           href="/app-store"
           variant="underline"
           className={cn(
-            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            pathname.startsWith('/app-store')
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/app-store') && currentTab !== 'webapps'
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
+          <Store className="h-4 w-4" />
           App Store
         </Link>
 
-        {/* Services section (after App Store) */}
-
-        <ServicesSection pathname={pathname} />
+        {/* Services */}
+        <Link
+          href="/app-store?tab=webapps"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            pathname.includes('/webapps') ||
+              (isActive('/app-store') && currentTab === 'webapps')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Globe className="h-4 w-4" />
+          Services
+        </Link>
 
         {/* Settings */}
         {(canManageUsers || canManageSettings) && (
@@ -428,12 +329,13 @@ function SidebarContent({
             href="/admin"
             variant="underline"
             className={cn(
-              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-              pathname.startsWith('/admin')
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+              isActive('/admin')
                 ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground'
             )}
           >
+            <Settings className="h-4 w-4" />
             Settings
           </Link>
         )}
@@ -441,6 +343,9 @@ function SidebarContent({
         {/* Help */}
         <HelpButton />
       </nav>
+
+      {/* User profile section at bottom */}
+      <UserProfileSection />
     </>
   )
 }
@@ -453,6 +358,7 @@ export function LeftSidebar({
   onHoverEnd: _onHoverEnd
 }: LeftSidebarProps) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const handleClose = () => {
     setIsOpen(false)
@@ -462,12 +368,13 @@ export function LeftSidebar({
     <>
       <div
         className={cn(
-          'flex h-full flex-col gap-2 overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md transition-transform duration-300 ease-in-out',
+          'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md transition-transform duration-300 ease-in-out',
           !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
         )}
       >
         <SidebarContent
           pathname={pathname}
+          searchParams={searchParams}
           onClose={handleClose}
           showCloseButton={isOpen}
         />

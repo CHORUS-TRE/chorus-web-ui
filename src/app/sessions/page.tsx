@@ -33,12 +33,6 @@ export default function SessionPage() {
             <LaptopMinimal className="h-9 w-9" />
             Sessions
           </h2>
-          {/* {canCreateWorkspace && (
-            <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
-              <CirclePlus className="h-4 w-4" />
-              Create Workspace
-            </Button>
-          )} */}
         </div>
       </div>
 

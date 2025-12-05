@@ -98,7 +98,7 @@ export default function WorkbenchGrid({
                   <div className="flex-1" />
 
                   {/* Bottom info - owner, date, badge */}
-                  <CardDescription className="flex w-full items-end justify-between text-xs text-muted-foreground">
+                  <CardDescription className="flex w-full items-end justify-between text-sm text-muted-foreground">
                     <span className="block w-full">
                       <span className="block">
                         {workspaces?.find((w) => w.id === workbench.workspaceId)
@@ -110,23 +110,19 @@ export default function WorkbenchGrid({
                         {users?.find((u) => u.id === workbench.userId)
                           ?.lastName || '-'} */}
                       </span>
-                      <span className="block">
+                      <span className="block text-xs text-muted">
                         Created{' '}
                         {formatDistanceToNow(workbench.createdAt || new Date())}{' '}
                         ago
                       </span>
                     </span>
-                    {workbench.status && (
-                      <Badge variant="secondary" className="ml-2 text-xs">
-                        {workbench.status}
-                      </Badge>
-                    )}
+
                     {isLoaded && (
                       <Badge
                         variant="default"
                         className="ml-2 bg-green-500/80 text-xs"
                       >
-                        Live
+                        Loaded
                       </Badge>
                     )}
                   </CardDescription>

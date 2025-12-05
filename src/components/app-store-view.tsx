@@ -1,7 +1,8 @@
 'use client'
 
 import { CirclePlus, Globe, Settings } from 'lucide-react'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
@@ -14,12 +15,36 @@ import { WebAppCard } from '~/components/webapp-card'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 export function AppStoreView() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const tabFromUrl = searchParams.get('tab')
+
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showWebAppDialog, setShowWebAppDialog] = useState(false)
-  const [activeTab, setActiveTab] = useState('my-apps')
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl === 'webapps' ? 'webapps' : 'my-apps'
+  )
   const { apps, refreshApps } = useAppState()
   const { externalWebApps } = useIframeCache()
   const { canManageSettings, canManageAppStore } = useAuthorizationViewModel()
+
+  // Sync tab state with URL when URL changes
+  useEffect(() => {
+    const newTab = tabFromUrl === 'webapps' ? 'webapps' : 'my-apps'
+    if (newTab !== activeTab) {
+      setActiveTab(newTab)
+    }
+  }, [tabFromUrl, activeTab])
+
+  // Update URL when tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    if (value === 'webapps') {
+      router.push('/app-store?tab=webapps')
+    } else {
+      router.push('/app-store')
+    }
+  }
 
   return (
     <>
@@ -28,7 +53,7 @@ export function AppStoreView() {
           <div className="flex items-center justify-between">
             <Tabs
               value={activeTab}
-              onValueChange={setActiveTab}
+              onValueChange={handleTabChange}
               className="w-full"
             >
               <div className="mb-8 flex items-center justify-between">
@@ -37,7 +62,10 @@ export function AppStoreView() {
                     value="my-apps"
                     className="data-[state=active]:text-primary-foreground"
                   >
-                    Apps
+                    Applications
+                    {apps && apps.length > 0 && (
+                      <span className="ml-1 rounded-full">({apps.length})</span>
+                    )}
                   </TabsTrigger>
                   <TabsTrigger
                     value="webapps"
@@ -45,7 +73,7 @@ export function AppStoreView() {
                   >
                     Services
                     {externalWebApps.length > 0 && (
-                      <span className="ml-1 rounded-full text-[10px]">
+                      <span className="ml-1 rounded-full">
                         ({externalWebApps.length})
                       </span>
                     )}

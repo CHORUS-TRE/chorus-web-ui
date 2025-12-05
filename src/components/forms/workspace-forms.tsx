@@ -417,37 +417,14 @@ export function WorkspaceUpdateForm({
         const { setWorkspace } = useDevStoreCache.getState()
 
         if (result.data.id) {
-          console.log(
-            '[WorkspaceUpdateForm] Processing image/tag for workspace:',
-            result.data.id
-          )
-          console.log('[WorkspaceUpdateForm] data.image:', data.image)
-
           const imageFiles = data.image as FileList | undefined
           if (imageFiles && imageFiles.length > 0) {
             const file = imageFiles[0]
-            console.log(
-              '[WorkspaceUpdateForm] Image file found:',
-              file.name,
-              file.size
-            )
             await new Promise<void>((resolve) => {
               const reader = new FileReader()
               reader.onloadend = async () => {
                 const imageBase64 = reader.result as string
-                console.log(
-                  '[WorkspaceUpdateForm] Image base64 length:',
-                  imageBase64?.length
-                )
-                const success = await setWorkspace(
-                  result.data!.id,
-                  'image',
-                  imageBase64
-                )
-                console.log(
-                  '[WorkspaceUpdateForm] setWorkspace image result:',
-                  success
-                )
+                await setWorkspace(result.data!.id, 'image', imageBase64)
                 resolve()
               }
               reader.readAsDataURL(file)
@@ -455,7 +432,6 @@ export function WorkspaceUpdateForm({
           }
 
           if (data.tag) {
-            console.log('[WorkspaceUpdateForm] Setting tag:', data.tag)
             await setWorkspace(result.data.id, 'tag', data.tag)
           }
         }

@@ -15,11 +15,13 @@ import {
   Folders,
   LaptopMinimal,
   Package,
+  Plus,
   ShieldCheck
 } from 'lucide-react'
 import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
 
+import { Button } from '@/components/button'
 import { Link } from '@/components/link'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -56,26 +58,22 @@ export default function CHORUSDashboard() {
 
   const myWorkspaces = useMemo(
     () =>
-      workspaces
-        ?.filter(
-          (workspace) =>
-            user?.rolesWithContext?.some(
-              (role) => role.context.workspace === workspace.id
-            ) && workspace.tag !== 'center'
-        )
-        .slice(0, 3),
+      workspaces?.filter(
+        (workspace) =>
+          user?.rolesWithContext?.some(
+            (role) => role.context.workspace === workspace.id
+          ) && workspace.tag !== 'center'
+      ),
     [workspaces, user?.rolesWithContext]
   )
 
   const myWorkbenches = useMemo(
     () =>
-      workbenches
-        ?.filter((workbench) =>
-          user?.rolesWithContext?.some(
-            (role) => role.context.workbench === workbench.id
-          )
+      workbenches?.filter((workbench) =>
+        user?.rolesWithContext?.some(
+          (role) => role.context.workbench === workbench.id
         )
-        .slice(0, 3),
+      ),
     [workbenches, user?.rolesWithContext]
   )
 
@@ -197,6 +195,20 @@ export default function CHORUSDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {(!myWorkspaces || myWorkspaces.length === 0) && (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Package className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                    <p className="mb-4 text-sm text-muted-foreground">
+                      You don&apos;t have any workspaces yet
+                    </p>
+                    <Link href="/workspaces">
+                      <Button>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Workspace
+                      </Button>
+                    </Link>
+                  </div>
+                )}
                 {myWorkspaces?.map((workspace) => {
                   const workspaceSessions = workbenches?.filter(
                     (wb) =>
@@ -247,7 +259,7 @@ export default function CHORUSDashboard() {
 
                       {/* Sessions under this workspace */}
                       {workspaceSessions && workspaceSessions.length > 0 && (
-                        <div className="ml-6 space-y-2 border-l border-muted/30 pl-4">
+                        <div className="ml-6 space-y-2 border-l-2 border-primary/20 pl-4">
                           {workspaceSessions.map((workbench) => {
                             const sessionAppNames = appInstances
                               ?.filter(
@@ -269,18 +281,13 @@ export default function CHORUSDashboard() {
                                 className="block w-full"
                                 variant="rounded"
                               >
-                                <div className="flex w-full items-center gap-3 rounded-xl bg-card/50 p-3 transition-all hover:bg-accent/10">
-                                  <LaptopMinimal className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+                                <div className="flex w-full items-center gap-3 rounded-xl border border-primary/10 bg-primary/5 p-3 transition-all hover:border-primary/30 hover:bg-primary/10">
+                                  <LaptopMinimal className="h-5 w-5 flex-shrink-0 text-primary" />
                                   <div className="min-w-0 flex-1">
                                     <p className="text-sm font-medium">
                                       {sessionAppNames || workbench.name}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
-                                      {
-                                        // users?.find(
-                                        //   (u) => u.id === workbench.userId
-                                        // )?.firstName
-                                      }{' '}
                                       Created{' '}
                                       {formatDistanceToNow(
                                         workbench.createdAt || new Date()
@@ -292,8 +299,8 @@ export default function CHORUSDashboard() {
                                     className={`pointer-events-none text-xs ${
                                       workbench.status ===
                                       WorkbenchStatus.ACTIVE
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-slate-100 text-slate-800'
+                                        ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                        : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
                                     }`}
                                   >
                                     {workbench.status}
