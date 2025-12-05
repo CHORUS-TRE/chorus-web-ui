@@ -1,15 +1,14 @@
 'use client'
 
 import { Bell, Home, PackageOpen, Settings } from 'lucide-react'
+import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import { Result, Workspace } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { workspaceGet } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
+import { WorkspaceUpdateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
-import { Alert } from '~/components/ui/alert'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { mockNotifications } from '~/data/data-source/mock-data/notifications'
 import { useAppState } from '~/providers/app-state-provider'
@@ -23,7 +22,8 @@ export default function Layout({
   const pathname = usePathname()
   const params = useParams<{ workspaceId: string }>()
   const { user } = useAuthentication()
-  const { workspaces } = useAppState()
+  const { workspaces, refreshWorkspaces } = useAppState()
+  const [openEdit, setOpenEdit] = useState(false)
   const workspace = workspaces?.find(
     (workspace) => workspace.id === params?.workspaceId
   )
@@ -49,10 +49,33 @@ export default function Layout({
   }
   return (
     <>
+      {openEdit && (
+        <WorkspaceUpdateForm
+          workspace={workspace}
+          state={[openEdit, setOpenEdit]}
+          onSuccess={() => {
+            toast({
+              title: 'Workspace updated',
+              description: 'Workspace settings have been saved.',
+              variant: 'default'
+            })
+            refreshWorkspaces()
+          }}
+        />
+      )}
+
       {/* Workspace name */}
       <div className="flex w-full flex-grow items-center justify-start">
         <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
-          {params?.workspaceId === user?.workspaceId ? (
+          {workspace?.image ? (
+            <Image
+              src={workspace.image}
+              alt={workspace.name || 'Workspace'}
+              width={36}
+              height={36}
+              className="h-9 w-9 rounded-lg object-cover"
+            />
+          ) : params?.workspaceId === user?.workspaceId ? (
             <Home className="h-9 w-9" />
           ) : (
             <PackageOpen className="h-9 w-9" />
@@ -71,7 +94,11 @@ export default function Layout({
             <Bell className="h-4 w-4" />
             {mockNotifications.length}
           </Button>
-          <Button variant="accent-filled" disabled className="gap-2">
+          <Button
+            variant="accent-filled"
+            className="gap-2"
+            onClick={() => setOpenEdit(true)}
+          >
             <Settings className="h-4 w-4" />
             Settings
           </Button>
