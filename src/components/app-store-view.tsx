@@ -52,21 +52,19 @@ export function AppStoreView() {
                   </TabsTrigger>
                 </TabsList>
 
-                {activeTab === 'webapps' ? (
-                  canManageSettings && (
-                    <Button onClick={() => setShowWebAppDialog(true)}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      Manage Services
-                    </Button>
-                  )
-                ) : (
-                  canManageAppStore && (
-                  <Button onClick={() => setShowCreateDialog(true)}>
-                    <CirclePlus className="mr-2 h-4 w-4" />
-                      Add New App
-                    </Button>
-                  )
-                )}
+                {activeTab === 'webapps'
+                  ? canManageSettings && (
+                      <Button onClick={() => setShowWebAppDialog(true)}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        Manage Services
+                      </Button>
+                    )
+                  : canManageAppStore && (
+                      <Button onClick={() => setShowCreateDialog(true)}>
+                        <CirclePlus className="mr-2 h-4 w-4" />
+                        Add New App
+                      </Button>
+                    )}
               </div>
 
               <TabsContent value="my-apps" className="mt-0">

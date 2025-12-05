@@ -420,23 +420,23 @@ function SidebarContent({
 
         {/* Services section (after App Store) */}
 
-          <ServicesSection pathname={pathname} />
+        <ServicesSection pathname={pathname} />
 
         {/* Settings */}
         {(canManageUsers || canManageSettings) && (
-        <Link
-          href="/admin"
-          variant="underline"
-          className={cn(
-            'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            pathname.startsWith('/admin')
-              ? 'bg-primary/20 text-primary'
-              : 'text-muted-foreground'
-          )}
-        >
-          Settings
-        </Link>
-         )}
+          <Link
+            href="/admin"
+            variant="underline"
+            className={cn(
+              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+              pathname.startsWith('/admin')
+                ? 'bg-primary/20 text-primary'
+                : 'text-muted-foreground'
+            )}
+          >
+            Settings
+          </Link>
+        )}
 
         {/* Help */}
         <HelpButton />

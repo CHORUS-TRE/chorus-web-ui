@@ -25,10 +25,7 @@ export function AdminTabs() {
         {routes.map(
           (route) =>
             route.authorized && (
-              <TabsTrigger
-                key={route.href}
-                value={route.href}
-              >
+              <TabsTrigger key={route.href} value={route.href}>
                 {route.label}
               </TabsTrigger>
             )
