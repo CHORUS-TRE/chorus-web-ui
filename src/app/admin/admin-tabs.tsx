@@ -12,13 +12,7 @@ export function AdminTabs() {
 
   const routes = [
     { href: '/admin/theme', label: 'Theme', authorized: canManageSettings },
-    { href: '/admin/users', label: 'Users', authorized: canManageUsers },
-    {
-      href: '/admin/workspaces',
-      label: 'Workspaces',
-      disabled: true,
-      authorized: true
-    }
+    { href: '/admin/users', label: 'Users', authorized: canManageUsers }
   ]
 
   const handleTabChange = (value: string) => {
@@ -34,7 +28,6 @@ export function AdminTabs() {
               <TabsTrigger
                 key={route.href}
                 value={route.href}
-                disabled={route.disabled === true}
               >
                 {route.label}
               </TabsTrigger>

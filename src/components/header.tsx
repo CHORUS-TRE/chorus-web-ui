@@ -150,7 +150,7 @@ export function Header() {
               src={logo}
               alt="Chorus"
               height={32}
-              width={54}
+              width={75}
               className="ml-4 aspect-auto cursor-pointer"
               id="logo"
               priority
@@ -203,7 +203,9 @@ export function Header() {
                       <span className="max-w-32 truncate">
                         {getSessionDisplayName(recentSession.id)}
                       </span>
-                      <button
+                      <span
+                        role="button"
+                        tabIndex={0}
                         onClick={(e) => {
                           e.stopPropagation()
                           removeFromRecent(recentSession.id, 'session')
@@ -212,10 +214,20 @@ export function Header() {
                             closeIframe(recentSession.id)
                           }
                         }}
-                        className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            removeFromRecent(recentSession.id, 'session')
+                            if (isLoaded) {
+                              closeIframe(recentSession.id)
+                            }
+                          }
+                        }}
+                        className="ml-1 cursor-pointer rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
                       >
                         <X className="h-3 w-3" />
-                      </button>
+                      </span>
                     </button>
                   </HoverCardTrigger>
                   {isActive && sessionWorkbench && (

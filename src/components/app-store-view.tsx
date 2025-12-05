@@ -11,6 +11,7 @@ import { AppCreateDialog } from '~/components/forms/app-create-dialog'
 import { WebAppCreateDialog } from '~/components/forms/webapp-create-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { WebAppCard } from '~/components/webapp-card'
+import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 export function AppStoreView() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
@@ -18,6 +19,7 @@ export function AppStoreView() {
   const [activeTab, setActiveTab] = useState('my-apps')
   const { apps, refreshApps } = useAppState()
   const { externalWebApps } = useIframeCache()
+  const { canManageSettings, canManageAppStore } = useAuthorizationViewModel()
 
   return (
     <>
@@ -51,15 +53,19 @@ export function AppStoreView() {
                 </TabsList>
 
                 {activeTab === 'webapps' ? (
-                  <Button onClick={() => setShowWebAppDialog(true)}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Manage Services
-                  </Button>
+                  canManageSettings && (
+                    <Button onClick={() => setShowWebAppDialog(true)}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Manage Services
+                    </Button>
+                  )
                 ) : (
+                  canManageAppStore && (
                   <Button onClick={() => setShowCreateDialog(true)}>
                     <CirclePlus className="mr-2 h-4 w-4" />
-                    Add New App
-                  </Button>
+                      Add New App
+                    </Button>
+                  )
                 )}
               </div>
 

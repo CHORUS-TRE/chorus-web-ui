@@ -11,8 +11,9 @@ export const useAuthorizationViewModel = () => {
   const { user } = useAuthentication()
 
   const [canCreateWorkspace, setCanCreateWorkspace] = useState(false)
-  const [canManageUsers, setCanManageUsers] = useState(false) // PlateformUserManager
-  const [canManageSettings, setCanManageSettings] = useState(false) // PlatformSettingsManager
+  const [canManageUsers, setCanManageUsers] = useState(false)
+  const [canManageSettings, setCanManageSettings] = useState(false)
+  const [canManageAppStore, setCanManageAppStore] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -36,6 +37,11 @@ export const useAuthorizationViewModel = () => {
               role.name === 'SuperAdmin'
           ) !== undefined
         )
+        setCanManageAppStore(
+          user.rolesWithContext?.find(
+            (role) => role.name === 'AppStoreAdmin' || role.name === 'SuperAdmin'
+          ) !== undefined
+        )
       } catch (err) {
         console.error('Error checking user permissions:', err)
         setError('Failed to check permissions. Please try again later.')
@@ -46,6 +52,7 @@ export const useAuthorizationViewModel = () => {
       setCanCreateWorkspace(false)
       setCanManageUsers(false)
       setCanManageSettings(false)
+      setCanManageAppStore(false)
       return
     }
 
@@ -58,6 +65,7 @@ export const useAuthorizationViewModel = () => {
     canCreateWorkspace,
     canManageUsers,
     canManageSettings,
+    canManageAppStore,
     error
   }
 }

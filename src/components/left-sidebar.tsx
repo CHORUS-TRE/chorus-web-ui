@@ -419,12 +419,11 @@ function SidebarContent({
         </Link>
 
         {/* Services section (after App Store) */}
-        {(canManageUsers || canManageSettings) && (
+
           <ServicesSection pathname={pathname} />
-        )}
 
         {/* Settings */}
-
+        {(canManageUsers || canManageSettings) && (
         <Link
           href="/admin"
           variant="underline"
@@ -437,6 +436,7 @@ function SidebarContent({
         >
           Settings
         </Link>
+         )}
 
         {/* Help */}
         <HelpButton />
