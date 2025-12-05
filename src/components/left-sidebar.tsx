@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Building2,
   ChevronUp,
   GaugeCircle,
   Globe,
@@ -125,29 +126,29 @@ function UserProfileSection() {
     .sort((a, b) => a.localeCompare(b)) // alphabetical order
 
   return (
-    <div className="border-t border-muted/60 p-2">
+    <div className="border-t border-muted/60 p-2 text-muted">
       <div className="relative">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-muted/30"
         >
           {/* Avatar */}
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium text-foreground">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium">
             {initials || <User className="h-4 w-4" />}
           </div>
           {/* Name & Username */}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-foreground">
+            <p className="truncate text-sm font-medium">
               {user.firstName} {user.lastName}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="truncate text-xs">
               {user.username}
             </p>
           </div>
           {/* Chevron */}
           <ChevronUp
             className={cn(
-              'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
+              'h-4 w-4 shrink-0 text-muted transition-transform',
               menuOpen && 'rotate-180'
             )}
           />
@@ -228,8 +229,49 @@ function SidebarContent({
   onClose?: () => void
   showCloseButton?: boolean
 }) {
+  const router = useRouter()
   const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+  const { workspaceFilters, setWorkspaceFilter } = useUserPreferences()
   const currentTab = searchParams.get('tab')
+
+  // Check if All Workspaces (both center and project) is active
+  const isAllWorkspacesActive =
+    pathname === '/workspaces' &&
+    workspaceFilters.showCenter &&
+    workspaceFilters.showProject
+
+  // Check if Projects filter is active (only projects, not centers)
+  const isProjectsActive =
+    pathname === '/workspaces' &&
+    !workspaceFilters.showCenter &&
+    workspaceFilters.showProject
+
+  // Check if Centers filter is active (only centers, not projects)
+  const isCentersActive =
+    pathname === '/workspaces' &&
+    workspaceFilters.showCenter &&
+    !workspaceFilters.showProject
+
+  const handleWorkspacesClick = () => {
+    // Set filters for All Workspaces view (both centers and projects)
+    setWorkspaceFilter('showCenter', true)
+    setWorkspaceFilter('showProject', true)
+    router.push('/workspaces')
+  }
+
+  const handleProjectsClick = () => {
+    // Set filters for Projects view
+    setWorkspaceFilter('showCenter', false)
+    setWorkspaceFilter('showProject', true)
+    router.push('/workspaces')
+  }
+
+  const handleCentersClick = () => {
+    // Set filters for Centers view
+    setWorkspaceFilter('showCenter', true)
+    setWorkspaceFilter('showProject', false)
+    router.push('/workspaces')
+  }
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -263,19 +305,46 @@ function SidebarContent({
         </Link>
 
         {/* Workspaces */}
-        <Link
-          href="/workspaces"
-          variant="underline"
+        <button
+          onClick={handleWorkspacesClick}
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isActive('/workspaces')
+            isAllWorkspacesActive
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
           <Package className="h-4 w-4" />
           Workspaces
-        </Link>
+        </button>
+
+        {/* Projects */}
+        <button
+          onClick={handleProjectsClick}
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 pl-7 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isProjectsActive
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Package className="h-3.5 w-3.5" />
+          Projects
+        </button>
+
+        {/* Centers */}
+        <button
+          onClick={handleCentersClick}
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 pl-7 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isCentersActive
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Building2 className="h-4 w-4" />
+          Centers
+        </button>
 
         {/* Sessions */}
         <Link

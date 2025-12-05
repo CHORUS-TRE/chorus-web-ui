@@ -17,6 +17,16 @@ interface UserPreferencesState {
     value: WorkspaceFilters[K]
   ) => void
 
+  // Search queries
+  workspaceSearchQuery: string
+  setWorkspaceSearchQuery: (query: string) => void
+  sessionSearchQuery: string
+  setSessionSearchQuery: (query: string) => void
+
+  // Session filters
+  showMySessions: boolean
+  setShowMySessions: (value: boolean) => void
+
   // View preferences
   showWorkspacesTable: boolean
   toggleWorkspaceView: () => void
@@ -47,6 +57,9 @@ const defaultPreferences = {
     showCenter: false,
     showProject: true
   },
+  workspaceSearchQuery: '',
+  sessionSearchQuery: '',
+  showMySessions: false,
   showWorkspacesTable: false,
   showRightSidebar: true,
   sessionsViewMode: 'grid' as const,
@@ -63,6 +76,16 @@ export const useUserPreferences = create<UserPreferencesState>()(
         set((state) => ({
           workspaceFilters: { ...state.workspaceFilters, [key]: value }
         })),
+
+      // Search queries
+      workspaceSearchQuery: defaultPreferences.workspaceSearchQuery,
+      setWorkspaceSearchQuery: (query) => set({ workspaceSearchQuery: query }),
+      sessionSearchQuery: defaultPreferences.sessionSearchQuery,
+      setSessionSearchQuery: (query) => set({ sessionSearchQuery: query }),
+
+      // Session filters
+      showMySessions: defaultPreferences.showMySessions,
+      setShowMySessions: (value) => set({ showMySessions: value }),
 
       // View preferences
       showWorkspacesTable: defaultPreferences.showWorkspacesTable,
