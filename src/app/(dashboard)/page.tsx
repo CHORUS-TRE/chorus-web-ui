@@ -233,19 +233,19 @@ export default function CHORUSDashboard() {
                                 <Image
                                   src={workspace.image}
                                   alt={workspace.name}
-                                  width={48}
-                                  height={48}
-                                  className="aspect-square h-12 w-12 flex-shrink-0 rounded-md object-cover"
+                                  width={32}
+                                  height={32}
+                                  className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
                                 />
                               ) : (
                                 <Package className="h-10 w-10 flex-shrink-0 text-muted" />
                               )}
                             </div>
                             <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold">
+                              <h4 className="font-semibold text-muted">
                                 {workspace.name}
                               </h4>
-                              <p className="mt-1 text-xs text-muted-foreground">
+                              <p className="mt-1 text-xs text-muted">
                                 Created{' '}
                                 {formatDistanceToNow(
                                   workspace?.createdAt || new Date()
@@ -282,7 +282,7 @@ export default function CHORUSDashboard() {
                                 variant="rounded"
                               >
                                 <div className="flex w-full items-center gap-3 rounded-xl border border-primary/10 bg-primary/5 p-3 transition-all hover:border-primary/30 hover:bg-primary/10">
-                                  <LaptopMinimal className="h-5 w-5 flex-shrink-0 text-primary" />
+                                  <LaptopMinimal className="h-10 w-10 flex-shrink-0 text-primary" />
                                   <div className="min-w-0 flex-1">
                                     <p className="text-sm font-medium">
                                       {sessionAppNames || workbench.name}

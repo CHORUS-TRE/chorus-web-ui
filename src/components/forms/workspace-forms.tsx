@@ -40,6 +40,7 @@ import {
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/card'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
+import { Checkbox } from '~/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -347,6 +348,8 @@ export function WorkspaceUpdateForm({
   workspace?: Workspace
   onSuccess?: (workspace: Workspace) => void
 }) {
+  const [removeImage, setRemoveImage] = useState(false)
+
   const FormSchema = WorkspaceUpdateSchema.extend({
     tag: z.enum(['center', 'project']).optional(),
     image: z.any().optional()
@@ -379,6 +382,7 @@ export function WorkspaceUpdateForm({
         userId: workspace?.userId || '',
         tag: workspace?.tag
       })
+      setRemoveImage(false)
     }
   }, [open, workspace, form])
 
@@ -414,21 +418,26 @@ export function WorkspaceUpdateForm({
 
       if (result.data) {
         // Save tag and image to DevStore cache (updates backend + cache)
-        const { setWorkspace } = useDevStoreCache.getState()
+        const { setWorkspace, deleteWorkspace } = useDevStoreCache.getState()
 
         if (result.data.id) {
-          const imageFiles = data.image as FileList | undefined
-          if (imageFiles && imageFiles.length > 0) {
-            const file = imageFiles[0]
-            await new Promise<void>((resolve) => {
-              const reader = new FileReader()
-              reader.onloadend = async () => {
-                const imageBase64 = reader.result as string
-                await setWorkspace(result.data!.id, 'image', imageBase64)
-                resolve()
-              }
-              reader.readAsDataURL(file)
-            })
+          // Handle image removal or update
+          if (removeImage) {
+            await deleteWorkspace(result.data.id, 'image')
+          } else {
+            const imageFiles = data.image as FileList | undefined
+            if (imageFiles && imageFiles.length > 0) {
+              const file = imageFiles[0]
+              await new Promise<void>((resolve) => {
+                const reader = new FileReader()
+                reader.onloadend = async () => {
+                  const imageBase64 = reader.result as string
+                  await setWorkspace(result.data!.id, 'image', imageBase64)
+                  resolve()
+                }
+                reader.readAsDataURL(file)
+              })
+            }
           }
 
           if (data.tag) {
@@ -551,7 +560,7 @@ export function WorkspaceUpdateForm({
 
                 <div className="grid gap-2">
                   <Label htmlFor="image">Image</Label>
-                  {workspace?.image && (
+                  {workspace?.image && !removeImage && (
                     <div className="relative mb-2 h-32 w-full overflow-hidden rounded-md bg-muted/20">
                       <Image
                         src={workspace.image}
@@ -561,13 +570,32 @@ export function WorkspaceUpdateForm({
                       />
                     </div>
                   )}
-                  <Input
-                    id="image"
-                    type="file"
-                    accept="image/*"
-                    {...form.register('image')}
-                    className="bg-background text-neutral-400"
-                  />
+                  {workspace?.image && (
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="remove-image"
+                        checked={removeImage}
+                        onCheckedChange={(checked) =>
+                          setRemoveImage(checked as boolean)
+                        }
+                      />
+                      <Label
+                        htmlFor="remove-image"
+                        className="text-sm text-muted-foreground"
+                      >
+                        Remove current image
+                      </Label>
+                    </div>
+                  )}
+                  {!removeImage && (
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      {...form.register('image')}
+                      className="bg-background text-neutral-400"
+                    />
+                  )}
                 </div>
               </CardContent>
               <CardFooter>

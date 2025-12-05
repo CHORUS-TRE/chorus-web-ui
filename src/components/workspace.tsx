@@ -358,7 +358,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   {workspace?.members
                     ?.filter((user) =>
                       user.rolesWithContext?.some(
-                        (role) => role.context.workspace === workspaceId && role.name.startsWith('Workspace')
+                        (role) =>
+                          role.context.workspace === workspaceId &&
+                          role.name.startsWith('Workspace')
                       )
                     )
                     .map((user) => {

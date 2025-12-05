@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  CirclePlus,
-  LayoutGrid,
-  Package,
-  Rows3,
-  Search,
-  X
-} from 'lucide-react'
+import { CirclePlus, LayoutGrid, Package, Rows3, Search, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
@@ -71,12 +64,23 @@ export default function WorkspacesPage() {
     // Apply search filter
     if (searchQuery && searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      result = result?.filter(
-        (workspace) =>
+      result = result?.filter((workspace) => {
+        // Search by name, owner, tag
+        const matchesBasic =
           workspace.name?.toLowerCase().includes(query) ||
           workspace.owner?.toLowerCase().includes(query) ||
           workspace.tag?.toLowerCase().includes(query)
-      )
+
+        // Search by members firstName, lastName, username
+        const matchesMember = workspace.members?.some(
+          (member) =>
+            member.firstName?.toLowerCase().includes(query) ||
+            member.lastName?.toLowerCase().includes(query) ||
+            member.username?.toLowerCase().includes(query)
+        )
+
+        return matchesBasic || matchesMember
+      })
     }
 
     return result
@@ -112,7 +116,7 @@ export default function WorkspacesPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search workspaces by name, owner, or tag..."
+            placeholder="Search by name, owner, tag, or member..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 pr-10"

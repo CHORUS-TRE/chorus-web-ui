@@ -1,8 +1,8 @@
 'use client'
 
-import { CirclePlus, Globe, Settings } from 'lucide-react'
+import { CirclePlus, Globe, Search, Settings, X } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
@@ -10,6 +10,7 @@ import { AppCard } from '~/components/app-card'
 import { Button } from '~/components/button'
 import { AppCreateDialog } from '~/components/forms/app-create-dialog'
 import { WebAppCreateDialog } from '~/components/forms/webapp-create-dialog'
+import { Input } from '~/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { WebAppCard } from '~/components/webapp-card'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
@@ -24,9 +25,33 @@ export function AppStoreView() {
   const [activeTab, setActiveTab] = useState(
     tabFromUrl === 'webapps' ? 'webapps' : 'my-apps'
   )
+  const [searchQuery, setSearchQuery] = useState('')
   const { apps, refreshApps } = useAppState()
   const { externalWebApps } = useIframeCache()
   const { canManageSettings, canManageAppStore } = useAuthorizationViewModel()
+
+  // Filter apps based on search query
+  const filteredApps = useMemo(() => {
+    if (!searchQuery.trim()) return apps
+    const query = searchQuery.toLowerCase()
+    return apps?.filter(
+      (app) =>
+        app.name?.toLowerCase().includes(query) ||
+        app.description?.toLowerCase().includes(query)
+    )
+  }, [apps, searchQuery])
+
+  // Filter webapps based on search query
+  const filteredWebApps = useMemo(() => {
+    if (!searchQuery.trim()) return externalWebApps
+    const query = searchQuery.toLowerCase()
+    return externalWebApps.filter(
+      (webapp) =>
+        webapp.name?.toLowerCase().includes(query) ||
+        webapp.description?.toLowerCase().includes(query) ||
+        webapp.url?.toLowerCase().includes(query)
+    )
+  }, [externalWebApps, searchQuery])
 
   // Sync tab state with URL when URL changes
   useEffect(() => {
@@ -49,7 +74,27 @@ export function AppStoreView() {
   return (
     <>
       <div className="w-full">
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6">
+          {/* Search bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search applications and services..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
           <div className="flex items-center justify-between">
             <Tabs
               value={activeTab}
@@ -63,8 +108,10 @@ export function AppStoreView() {
                     className="data-[state=active]:text-primary-foreground"
                   >
                     Applications
-                    {apps && apps.length > 0 && (
-                      <span className="ml-1 rounded-full">({apps.length})</span>
+                    {filteredApps && filteredApps.length > 0 && (
+                      <span className="ml-1 rounded-full">
+                        ({filteredApps.length})
+                      </span>
                     )}
                   </TabsTrigger>
                   <TabsTrigger
@@ -72,9 +119,9 @@ export function AppStoreView() {
                     className="data-[state=active]:text-primary-foreground"
                   >
                     Services
-                    {externalWebApps.length > 0 && (
+                    {filteredWebApps.length > 0 && (
                       <span className="ml-1 rounded-full">
-                        ({externalWebApps.length})
+                        ({filteredWebApps.length})
                       </span>
                     )}
                   </TabsTrigger>
@@ -96,19 +143,63 @@ export function AppStoreView() {
               </div>
 
               <TabsContent value="my-apps" className="mt-0">
-                <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
-                  {apps?.map((app) => (
-                    <AppCard key={app.id} app={app} onUpdate={refreshApps} />
-                  ))}
-                </div>
+                {filteredApps && filteredApps.length > 0 ? (
+                  <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
+                    {filteredApps.map((app) => (
+                      <AppCard key={app.id} app={app} onUpdate={refreshApps} />
+                    ))}
+                  </div>
+                ) : searchQuery ? (
+                  <div className="flex flex-col items-center justify-center p-8 text-center">
+                    <Search className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                    <p className="text-lg text-muted">
+                      No applications match &quot;{searchQuery}&quot;
+                    </p>
+                    <Button
+                      onClick={() => setSearchQuery('')}
+                      variant="outline"
+                      className="mt-4"
+                    >
+                      Clear search
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-8 text-center">
+                    <p className="text-lg text-muted">No app available.</p>
+                    {canManageAppStore && (
+                      <Button
+                        onClick={() => setShowCreateDialog(true)}
+                        variant="outline"
+                        className="mt-4"
+                      >
+                        <CirclePlus className="mr-2 h-4 w-4" />
+                        Add your first app
+                      </Button>
+                    )}
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="webapps" className="mt-0">
-                {externalWebApps.length > 0 ? (
+                {filteredWebApps.length > 0 ? (
                   <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
-                    {externalWebApps.map((webapp) => (
+                    {filteredWebApps.map((webapp) => (
                       <WebAppCard key={webapp.id} webapp={webapp} />
                     ))}
+                  </div>
+                ) : searchQuery ? (
+                  <div className="flex flex-col items-center justify-center p-8 text-center">
+                    <Search className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                    <p className="text-lg text-muted">
+                      No services match &quot;{searchQuery}&quot;
+                    </p>
+                    <Button
+                      onClick={() => setSearchQuery('')}
+                      variant="outline"
+                      className="mt-4"
+                    >
+                      Clear search
+                    </Button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
@@ -132,32 +223,8 @@ export function AppStoreView() {
                   </div>
                 )}
               </TabsContent>
-
-              <TabsContent value="apps" className="mt-0">
-                <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
-                  {apps?.map((app) => (
-                    <AppCard key={app.id} app={app} onUpdate={refreshApps} />
-                  ))}
-                </div>
-              </TabsContent>
             </Tabs>
           </div>
-
-          {apps?.length === 0 && (
-            <div className="flex flex-col items-center justify-center p-8 text-center">
-              <p className="text-lg text-muted">No app available.</p>
-              {canManageAppStore && (
-                <Button
-                  onClick={() => setShowCreateDialog(true)}
-                  variant="outline"
-                  className="mt-4"
-                >
-                  <CirclePlus className="mr-2 h-4 w-4" />
-                  Add your first app
-                </Button>
-              )}
-            </div>
-          )}
         </div>
       </div>
 

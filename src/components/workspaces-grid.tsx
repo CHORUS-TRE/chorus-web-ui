@@ -1,6 +1,12 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
-import { HomeIcon, MoreVertical, Package } from 'lucide-react'
+import {
+  HomeIcon,
+  LaptopMinimal,
+  MoreVertical,
+  Package,
+  Users
+} from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
@@ -99,22 +105,41 @@ export default function WorkspacesGrid({
                 {/* Spacer to push bottom content down */}
                 <div className="flex-1" />
 
-                {/* Bottom info - owner, date, badge */}
+                {/* Bottom info - members, date, sessions */}
                 <CardDescription className="flex w-full items-end justify-between text-xs">
-                  <span className="block">
-                    <span className="block text-sm">
-                      {workspace?.workbenchCount || 0}{' '}
-                      {workspace?.workbenchCount === 1 ? 'session' : 'sessions'}
+                  <div className="flex flex-col gap-1">
+                    <span className="flex items-center gap-1.5 text-xs text-muted">
+                      <Users className="h-3 w-3 shrink-0" />
+                      {(() => {
+                        const owner = workspace?.members?.find(
+                          (m) => m.id === workspace.userId
+                        )
+                        const others = workspace?.members?.filter(
+                          (m) => m.id !== workspace.userId
+                        )
+                        return (
+                          <span className="truncate">
+                            {owner && (
+                              <span className="font-semibold text-foreground">
+                                {owner.firstName} {owner.lastName}
+                              </span>
+                            )}
+                            {owner && others && others.length > 0 && ', '}
+                            {others
+                              ?.map((m) => `${m.firstName} ${m.lastName}`)
+                              .join(', ')}
+                          </span>
+                        )
+                      })()}
                     </span>
-                    <span className="block text-xs text-muted">
-                      Owner: {workspace?.owner || '-'} |{' '}
-                      {workspace?.memberCount || 0}{' '}
-                      {workspace?.memberCount === 1 ? 'member' : 'members'}
-                    </span>
-                    <span className="block text-xs text-muted">
+                    <span className="text-xs text-muted">
                       Created {formatDistanceToNow(workspace.createdAt)} ago
                     </span>
-                  </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <LaptopMinimal className="h-4 w-4" />
+                    <span>{workspace?.workbenchCount || 0}</span>
+                  </div>
                 </CardDescription>
               </Link>
 

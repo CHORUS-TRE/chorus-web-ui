@@ -141,9 +141,7 @@ function UserProfileSection() {
             <p className="truncate text-sm font-medium">
               {user.firstName} {user.lastName}
             </p>
-            <p className="truncate text-xs">
-              {user.username}
-            </p>
+            <p className="truncate text-xs">{user.username}</p>
           </div>
           {/* Chevron */}
           <ChevronUp
