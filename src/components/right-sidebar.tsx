@@ -6,13 +6,13 @@ import { useCallback, useEffect } from 'react'
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/card'
 import { Link } from '@/components/link'
-import { useAppState } from '@/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 
 export default function RightSidebar() {
   const { startNextStep } = useNextStep()
   const { toggleRightSidebar, showRightSidebar, hasSeenGettingStartedTour } =
-    useAppState()
+    useUserPreferences()
 
   const handleStartTour = useCallback(() => {
     startNextStep('gettingStartedTour')

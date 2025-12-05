@@ -2,10 +2,8 @@
 
 import {
   createContext,
-  Dispatch,
   ReactElement,
   ReactNode,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -38,15 +36,8 @@ const defaultTheme = {
 }
 
 type AppStateContextType = {
-  showRightSidebar: boolean
-  toggleRightSidebar: () => void
-  showWorkspacesTable: boolean
-  toggleWorkspaceView: () => void
-  sessionsViewMode: 'grid' | 'table'
-  setSessionsViewMode: (mode: 'grid' | 'table') => void
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
-  // users: User[] | undefined
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   clearState: () => void
@@ -54,10 +45,6 @@ type AppStateContextType = {
   refreshApps: () => Promise<void>
   appInstances: AppInstance[] | undefined
   refreshAppInstances: () => Promise<void>
-  showAppStoreHero: boolean
-  toggleAppStoreHero: () => void
-  hasSeenGettingStartedTour: boolean
-  setHasSeenGettingStartedTour: Dispatch<SetStateAction<boolean>>
   customLogos: { light: string | null; dark: string | null }
   refreshCustomLogos: () => void
   customTheme: {
@@ -68,15 +55,8 @@ type AppStateContextType = {
 }
 
 const AppStateContext = createContext<AppStateContextType>({
-  showRightSidebar: false,
-  toggleRightSidebar: () => {},
-  showWorkspacesTable: true,
-  toggleWorkspaceView: () => {},
-  sessionsViewMode: 'grid',
-  setSessionsViewMode: () => {},
   workspaces: undefined,
   workbenches: undefined,
-  // users: undefined,
   refreshWorkspaces: async () => {},
   refreshWorkbenches: async () => {},
   clearState: () => {},
@@ -84,10 +64,6 @@ const AppStateContext = createContext<AppStateContextType>({
   refreshApps: async () => {},
   appInstances: undefined,
   refreshAppInstances: async () => {},
-  showAppStoreHero: true,
-  toggleAppStoreHero: () => {},
-  hasSeenGettingStartedTour: false,
-  setHasSeenGettingStartedTour: () => {},
   customLogos: { light: null, dark: null },
   refreshCustomLogos: () => {},
   customTheme: defaultTheme,
@@ -100,23 +76,12 @@ export const AppStateProvider = ({
   children: ReactNode
 }): ReactElement => {
   const { user } = useAuthentication()
-  const [showRightSidebar, setShowRightSidebar] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('showRightSidebar')
-
-      return saved !== null ? JSON.parse(saved) : true
-    }
-    return true
-  })
-
-  const [showWorkspacesTable, setShowWorkspacesTable] = useState(false)
   const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>(
     undefined
   )
   const [workbenches, setWorkbenches] = useState<Workbench[] | undefined>(
     undefined
   )
-  // const [users, setUsers] = useState<User[] | undefined>(undefined)
   const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
@@ -141,23 +106,6 @@ export const AppStateProvider = ({
     }
     return defaultTheme
   })
-  const [showAppStoreHero, setShowAppStoreHero] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('showAppStoreHero')
-      return saved !== null ? JSON.parse(saved) : true
-    }
-    return true
-  })
-
-  const [sessionsViewMode, setSessionsViewMode] = useState<'grid' | 'table'>(
-    () => {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem('sessionsViewMode')
-        return saved !== null ? (saved as 'grid' | 'table') : 'grid'
-      }
-      return 'grid'
-    }
-  )
 
   const refreshCustomLogos = useCallback(() => {
     const { getGlobal, isGlobalLoaded } = useDevStoreCache.getState()
@@ -210,32 +158,29 @@ export const AppStateProvider = ({
     localStorage.setItem('customTheme', JSON.stringify(newTheme))
   }, [])
 
-  const toggleAppStoreHero = useCallback(() => {
-    setShowAppStoreHero((prev) => !prev)
-  }, [])
-
-  const toggleRightSidebar = useCallback(() => {
-    setShowRightSidebar((prev) => !prev)
-  }, [])
-
-  const toggleWorkspaceView = useCallback(() => {
-    setShowWorkspacesTable((prev) => !prev)
-  }, [])
-
   const refreshWorkspaces = useCallback(async () => {
     if (!user) {
       return
     }
 
     try {
-      const response = await workspaceList()
-      if (response?.error)
-        toast({ title: response.error, variant: 'destructive' })
-      if (response?.data) {
-        const sortedWorkspaces = response.data.sort(
+      // Fetch workspaces and workbenches in parallel to avoid race condition
+      const [workspaceResponse, workbenchResponse] = await Promise.all([
+        workspaceList(),
+        workbenchList()
+      ])
+
+      if (workspaceResponse?.error)
+        toast({ title: workspaceResponse.error, variant: 'destructive' })
+
+      if (workspaceResponse?.data) {
+        const sortedWorkspaces = workspaceResponse.data.sort(
           (a, b) =>
             (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
         )
+
+        // Use fetched workbenches for count calculation (not stale state)
+        const fetchedWorkbenches = workbenchResponse?.data || []
 
         // Batch load all workspace entries (fixes N+1 problem)
         const { loadWorkspaces, getWorkspace } = useDevStoreCache.getState()
@@ -270,10 +215,9 @@ export const AppStateProvider = ({
               owner: owner ? `${owner.firstName} ${owner.lastName}` : undefined,
               memberCount: users?.length || 0,
               members: users,
-              workbenchCount:
-                workbenches?.filter(
-                  (workbench) => workbench.workspaceId === workspace.id
-                ).length || 0,
+              workbenchCount: fetchedWorkbenches.filter(
+                (workbench) => workbench.workspaceId === workspace.id
+              ).length,
               files: workspace.files || 0
             }
           })
@@ -379,45 +323,16 @@ export const AppStateProvider = ({
     }
   }, [user])
 
-  const [hasSeenGettingStartedTour, setHasSeenGettingStartedTour] =
-    useState<boolean>(() => {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem('hasSeenGettingStartedTour')
-        const state = saved !== null ? JSON.parse(saved) : false
-
-        return state
-      }
-
-      return false
-    })
-
   const clearState = useCallback(() => {
     setWorkspaces(undefined)
     setWorkbenches(undefined)
-    // setUsers(undefined)
     setApps(undefined)
     setAppInstances(undefined)
-    setShowAppStoreHero(true)
 
     // Clear user-specific data from dev store cache
     const { clearUserData } = useDevStoreCache.getState()
     clearUserData()
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem('showAppStoreHero', JSON.stringify(showAppStoreHero))
-  }, [showAppStoreHero])
-
-  useEffect(() => {
-    localStorage.setItem('showRightSidebar', JSON.stringify(showRightSidebar))
-  }, [showRightSidebar])
-
-  useEffect(() => {
-    localStorage.setItem(
-      'hasSeenGettingStartedTour',
-      JSON.stringify(hasSeenGettingStartedTour)
-    )
-  }, [hasSeenGettingStartedTour])
 
   useEffect(() => {
     localStorage.setItem('customLogos', JSON.stringify(customLogos))
@@ -426,10 +341,6 @@ export const AppStateProvider = ({
   useEffect(() => {
     localStorage.setItem('customTheme', JSON.stringify(customTheme))
   }, [customTheme])
-
-  useEffect(() => {
-    localStorage.setItem('sessionsViewMode', sessionsViewMode)
-  }, [sessionsViewMode])
 
   const initializeState = useCallback(async () => {
     if (!user) {
@@ -479,15 +390,8 @@ export const AppStateProvider = ({
 
   const contextValue = useMemo(
     () => ({
-      showRightSidebar,
-      toggleRightSidebar,
-      showWorkspacesTable,
-      toggleWorkspaceView,
-      sessionsViewMode,
-      setSessionsViewMode,
       workspaces,
       workbenches,
-      // users,
       refreshWorkspaces,
       refreshWorkbenches,
       clearState,
@@ -495,25 +399,14 @@ export const AppStateProvider = ({
       refreshApps,
       appInstances,
       refreshAppInstances,
-      showAppStoreHero,
-      toggleAppStoreHero,
-      hasSeenGettingStartedTour,
-      setHasSeenGettingStartedTour,
       customLogos,
       refreshCustomLogos,
       customTheme,
       refreshCustomTheme
     }),
     [
-      showRightSidebar,
-      toggleRightSidebar,
-      showWorkspacesTable,
-      toggleWorkspaceView,
-      sessionsViewMode,
-      setSessionsViewMode,
       workspaces,
       workbenches,
-      // users,
       refreshWorkspaces,
       refreshWorkbenches,
       clearState,
@@ -521,10 +414,6 @@ export const AppStateProvider = ({
       refreshApps,
       appInstances,
       refreshAppInstances,
-      showAppStoreHero,
-      toggleAppStoreHero,
-      hasSeenGettingStartedTour,
-      setHasSeenGettingStartedTour,
       customLogos,
       refreshCustomLogos,
       customTheme,

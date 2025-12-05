@@ -464,9 +464,12 @@ export function Header() {
                 (wb) => wb.id === deleteSessionId
               )
               refreshWorkbenches()
+
+              // Remove from recent sessions bar and close iframe
+              removeFromRecent(deleteSessionId, 'session')
               closeIframe(deleteSessionId)
               setDeleteSessionId(null)
-              router.push('/sessions')
+              router.push(`/workspaces/${workspaceId}`)
               toast({
                 title: 'Success!',
                 description: `Session ${session?.name || ''} deleted`

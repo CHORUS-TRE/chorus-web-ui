@@ -7,7 +7,7 @@ import React, { useMemo } from 'react'
 
 import { Header } from '@/components/header'
 import { cn } from '@/lib/utils'
-import { useAppState } from '@/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar, navItems } from '~/components/left-sidebar'
@@ -20,7 +20,7 @@ interface MainLayoutProps {
 }
 
 export function AuthenticatedApp({ children }: MainLayoutProps) {
-  const { showRightSidebar } = useAppState()
+  const { showRightSidebar } = useUserPreferences()
   const pathname = usePathname()
 
   // Persist sidebar state in localStorage

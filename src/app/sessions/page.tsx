@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 import WorkbenchGrid from '~/components/workbench-grid'
 import WorkbenchTable from '~/components/workbench-table'
@@ -12,12 +13,8 @@ import WorkbenchTable from '~/components/workbench-table'
 export default function SessionPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
-  const {
-    refreshWorkbenches,
-    workbenches,
-    sessionsViewMode,
-    setSessionsViewMode
-  } = useAppState()
+  const { refreshWorkbenches, workbenches } = useAppState()
+  const { sessionsViewMode, setSessionsViewMode } = useUserPreferences()
 
   useEffect(() => {
     if (workspaceId) {

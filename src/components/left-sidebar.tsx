@@ -18,7 +18,7 @@ import React from 'react'
 
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
-import { useAppState } from '~/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useAuthentication } from '~/providers/authentication-provider'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
@@ -78,7 +78,7 @@ function SidebarHeader({
   showCloseButton?: boolean
 }) {
   return (
-    <div className="sticky top-0 z-[100] flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md mb-4">
+    <div className="sticky top-0 z-[100] mb-4 flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
       <h1 className="ml-2 text-lg font-semibold text-foreground">CHORUS</h1>
       {showCloseButton && onClose && (
         <Button
@@ -201,7 +201,7 @@ function UserProfileSection() {
  * Help button - toggles right sidebar
  */
 function HelpButton() {
-  const { toggleRightSidebar } = useAppState()
+  const { toggleRightSidebar } = useUserPreferences()
 
   return (
     <button

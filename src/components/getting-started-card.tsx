@@ -3,7 +3,7 @@
 import { CardComponentProps } from 'node_modules/nextstepjs/src/types'
 import React from 'react'
 
-import { useAppState } from '@/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 
 import { Button } from './button'
 
@@ -15,7 +15,7 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
   prevStep,
   skipTour
 }) => {
-  const { setHasSeenGettingStartedTour } = useAppState()
+  const { setHasSeenGettingStartedTour } = useUserPreferences()
 
   return (
     <div

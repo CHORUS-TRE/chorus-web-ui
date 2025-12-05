@@ -74,15 +74,25 @@ export default function WorkspacesGrid({
               >
                 {/* Title - top left, can wrap */}
                 <div className="pr-10">
-                  <CardTitle className="flex items-start gap-2 text-foreground">
-                    {workspace.isMain ? (
-                      <HomeIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                    ) : (
-                      <Package className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                  <CardTitle className="text-foreground">
+                    <div className="mb-2 flex items-center gap-2">
+                      {workspace.isMain ? (
+                        <HomeIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                      ) : (
+                        <Package className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                      )}
+                      <span className="text-lg font-semibold leading-tight">
+                        {workspace?.name}
+                      </span>
+                    </div>
+                    {workspace.tag && (
+                      <Badge
+                        variant="outline"
+                        className="bg-secondary/10 text-xs text-secondary-foreground"
+                      >
+                        {workspace.tag}
+                      </Badge>
                     )}
-                    <span className="text-lg font-semibold leading-tight">
-                      {workspace?.name}
-                    </span>
                   </CardTitle>
                 </div>
 
@@ -90,26 +100,21 @@ export default function WorkspacesGrid({
                 <div className="flex-1" />
 
                 {/* Bottom info - owner, date, badge */}
-                <CardDescription className="flex w-full items-end justify-between text-xs text-muted-foreground">
+                <CardDescription className="flex w-full items-end justify-between text-xs">
                   <span className="block">
-                    <span className="text-md block font-semibold text-foreground">
-                      Owner: {workspace?.owner || '-'}
-                    </span>
-                    <span className="block">
-                      {workspace?.memberCount || 0}{' '}
-                      {workspace?.memberCount === 1 ? 'member' : 'members'} |{' '}
+                    <span className="block text-sm">
                       {workspace?.workbenchCount || 0}{' '}
                       {workspace?.workbenchCount === 1 ? 'session' : 'sessions'}
                     </span>
-                    <span className="block">
+                    <span className="block text-xs text-muted">
+                      Owner: {workspace?.owner || '-'} |{' '}
+                      {workspace?.memberCount || 0}{' '}
+                      {workspace?.memberCount === 1 ? 'member' : 'members'}
+                    </span>
+                    <span className="block text-xs text-muted">
                       Created {formatDistanceToNow(workspace.createdAt)} ago
                     </span>
                   </span>
-                  {workspace.tag && (
-                    <Badge variant="secondary" className="ml-2 text-xs">
-                      {workspace.tag}
-                    </Badge>
-                  )}
                 </CardDescription>
               </Link>
 

@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
@@ -15,19 +16,18 @@ import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 
 export default function WorkspacesPage() {
-  const {
-    showWorkspacesTable,
-    toggleWorkspaceView,
-    workspaces,
-    refreshWorkspaces
-  } = useAppState()
+  const { workspaces, refreshWorkspaces } = useAppState()
   const { user } = useAuthentication()
   const { canCreateWorkspace } = useAuthorizationViewModel()
 
-  // Filters
-  const [showMyWorkspaces, setShowMyWorkspaces] = useState(false)
-  const [showCenter, setShowCenter] = useState(false)
-  const [showProject, setShowProject] = useState(true)
+  const {
+    workspaceFilters,
+    setWorkspaceFilter,
+    showWorkspacesTable,
+    toggleWorkspaceView
+  } = useUserPreferences()
+
+  const { showMyWorkspaces, showCenter, showProject } = workspaceFilters
 
   const [createOpen, setCreateOpen] = useState(false)
 
@@ -79,7 +79,7 @@ export default function WorkspacesPage() {
                 id="my-workspaces"
                 checked={showMyWorkspaces}
                 onCheckedChange={(checked) =>
-                  setShowMyWorkspaces(checked as boolean)
+                  setWorkspaceFilter('showMyWorkspaces', checked as boolean)
                 }
               />
               <Label htmlFor="my-workspaces">Show Only My Workspaces</Label>
@@ -91,7 +91,7 @@ export default function WorkspacesPage() {
                   id="center"
                   checked={showCenter}
                   onCheckedChange={(checked) =>
-                    setShowCenter(checked as boolean)
+                    setWorkspaceFilter('showCenter', checked as boolean)
                   }
                 />
                 <Label htmlFor="center">Center</Label>
@@ -101,7 +101,7 @@ export default function WorkspacesPage() {
                   id="project"
                   checked={showProject}
                   onCheckedChange={(checked) =>
-                    setShowProject(checked as boolean)
+                    setWorkspaceFilter('showProject', checked as boolean)
                   }
                 />
                 <Label htmlFor="project">Project</Label>
@@ -141,9 +141,14 @@ export default function WorkspacesPage() {
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <Package className="mb-4 h-12 w-12 opacity-50" />
             <p className="text-lg font-medium">No workspace found</p>
-            <p className="text-sm">
+            <p className="mb-4 text-sm">
               Select at least one filter (Center or Project) to see workspaces
+              or create a new workspace
             </p>
+            <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
+              <CirclePlus className="h-4 w-4" />
+              Create Workspace
+            </Button>
           </div>
         ) : (
           <>

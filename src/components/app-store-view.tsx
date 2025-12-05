@@ -119,14 +119,16 @@ export function AppStoreView() {
                     <p className="mt-2 text-sm text-muted-foreground">
                       Add external web applications to access them from here.
                     </p>
-                    <Button
-                      onClick={() => setShowWebAppDialog(true)}
-                      variant="outline"
-                      className="mt-4"
-                    >
-                      <CirclePlus className="mr-2 h-4 w-4" />
-                      Add your first web app
-                    </Button>
+                    {canManageSettings && (
+                      <Button
+                        onClick={() => setShowWebAppDialog(true)}
+                        variant="outline"
+                        className="mt-4"
+                      >
+                        <CirclePlus className="mr-2 h-4 w-4" />
+                        Add your first web app
+                      </Button>
+                    )}
                   </div>
                 )}
               </TabsContent>
@@ -144,14 +146,16 @@ export function AppStoreView() {
           {apps?.length === 0 && (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <p className="text-lg text-muted">No app available.</p>
-              <Button
-                onClick={() => setShowCreateDialog(true)}
-                variant="outline"
-                className="mt-4"
-              >
-                <CirclePlus className="mr-2 h-4 w-4" />
-                Add your first app
-              </Button>
+              {canManageAppStore && (
+                <Button
+                  onClick={() => setShowCreateDialog(true)}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  <CirclePlus className="mr-2 h-4 w-4" />
+                  Add your first app
+                </Button>
+              )}
             </div>
           )}
         </div>
