@@ -30,10 +30,7 @@ import {
   ColorPickerOutput
 } from '~/components/ui/shadcn-io/color-picker'
 import { useAppState } from '~/providers/app-state-provider'
-import {
-  deleteGlobalEntry,
-  putGlobalEntry
-} from '~/view-model/dev-store-view-model'
+import { useDevStoreCache } from '~/stores/dev-store-cache'
 
 import { toast } from '../hooks/use-toast'
 
@@ -76,13 +73,21 @@ export function ThemeEditorForm() {
 
   async function handleReset() {
     try {
-      await deleteGlobalEntry('custom_theme')
+      const { deleteGlobal } = useDevStoreCache.getState()
+      const success = await deleteGlobal('custom_theme')
 
-      await refreshCustomTheme()
-
-      toast({
-        title: 'Theme reset successfully!'
-      })
+      if (success) {
+        refreshCustomTheme()
+        toast({
+          title: 'Theme reset successfully!'
+        })
+      } else {
+        toast({
+          title: 'An error occurred.',
+          description: 'Please try again.',
+          variant: 'destructive'
+        })
+      }
     } catch {
       toast({
         title: 'An error occurred.',
@@ -107,16 +112,21 @@ export function ThemeEditorForm() {
         }
       }
 
-      await putGlobalEntry({
-        key: 'custom_theme',
-        value: JSON.stringify(newTheme)
-      })
+      const { setGlobal } = useDevStoreCache.getState()
+      const success = await setGlobal('custom_theme', JSON.stringify(newTheme))
 
-      await refreshCustomTheme()
-
-      toast({
-        title: 'Theme updated successfully!'
-      })
+      if (success) {
+        refreshCustomTheme()
+        toast({
+          title: 'Theme updated successfully!'
+        })
+      } else {
+        toast({
+          title: 'An error occurred.',
+          description: 'Please try again.',
+          variant: 'destructive'
+        })
+      }
     } catch {
       toast({
         title: 'An error occurred.',

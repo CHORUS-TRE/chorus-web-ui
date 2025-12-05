@@ -15,12 +15,9 @@ import {
 
 import { toast } from '@/components/hooks/use-toast'
 import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
-import {
-  getGlobalEntry,
-  getWorkspaceEntry
-} from '@/view-model/dev-store-view-model'
 import { listUsers } from '@/view-model/user-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceList } from '@/view-model/workspace-view-model'
@@ -62,12 +59,12 @@ type AppStateContextType = {
   hasSeenGettingStartedTour: boolean
   setHasSeenGettingStartedTour: Dispatch<SetStateAction<boolean>>
   customLogos: { light: string | null; dark: string | null }
-  refreshCustomLogos: () => Promise<void>
+  refreshCustomLogos: () => void
   customTheme: {
     light: { primary: string; secondary: string; accent: string }
     dark: { primary: string; secondary: string; accent: string }
   }
-  refreshCustomTheme: () => Promise<void>
+  refreshCustomTheme: () => void
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -92,9 +89,9 @@ const AppStateContext = createContext<AppStateContextType>({
   hasSeenGettingStartedTour: false,
   setHasSeenGettingStartedTour: () => {},
   customLogos: { light: null, dark: null },
-  refreshCustomLogos: async () => {},
+  refreshCustomLogos: () => {},
   customTheme: defaultTheme,
-  refreshCustomTheme: async () => {}
+  refreshCustomTheme: () => {}
 })
 
 export const AppStateProvider = ({
@@ -162,61 +159,55 @@ export const AppStateProvider = ({
     }
   )
 
-  const refreshCustomLogos = useCallback(async () => {
-    try {
-      const result = await getGlobalEntry('custom_logos')
+  const refreshCustomLogos = useCallback(() => {
+    const { getGlobal, isGlobalLoaded } = useDevStoreCache.getState()
 
-      let logos = { light: null, dark: null }
-      if (result.data?.value) {
-        try {
-          logos = JSON.parse(result.data.value)
-        } catch (e) {
-          console.error('Failed to parse custom_logos', e)
-          toast({
-            title: 'Error parsing custom logos',
-            description: 'The saved logos data is invalid.',
-            variant: 'destructive'
-          })
-        }
-      }
+    if (!isGlobalLoaded) return
 
-      setCustomLogos(logos)
-      localStorage.setItem('customLogos', JSON.stringify(logos))
-    } catch (error) {
-      toast({
-        title: 'Error fetching custom logos',
-        variant: 'destructive'
-      })
+    let logos: { light: string | null; dark: string | null } = {
+      light: null,
+      dark: null
     }
+    const logosJson = getGlobal('custom_logos')
+    if (logosJson) {
+      try {
+        logos = JSON.parse(logosJson)
+      } catch (e) {
+        console.error('Failed to parse custom_logos', e)
+        toast({
+          title: 'Error parsing custom logos',
+          description: 'The saved logos data is invalid.',
+          variant: 'destructive'
+        })
+      }
+    }
+
+    setCustomLogos(logos)
+    localStorage.setItem('customLogos', JSON.stringify(logos))
   }, [])
 
-  const refreshCustomTheme = useCallback(async () => {
-    try {
-      const result = await getGlobalEntry('custom_theme')
+  const refreshCustomTheme = useCallback(() => {
+    const { getGlobal, isGlobalLoaded } = useDevStoreCache.getState()
 
-      let newTheme = defaultTheme
+    if (!isGlobalLoaded) return
 
-      if (result.data?.value) {
-        try {
-          newTheme = JSON.parse(result.data.value)
-        } catch (e) {
-          console.error('Failed to parse custom_theme', e)
-          toast({
-            title: 'Error parsing custom theme',
-            description: 'The saved theme data is invalid.',
-            variant: 'destructive'
-          })
-        }
+    let newTheme = defaultTheme
+    const themeJson = getGlobal('custom_theme')
+    if (themeJson) {
+      try {
+        newTheme = JSON.parse(themeJson)
+      } catch (e) {
+        console.error('Failed to parse custom_theme', e)
+        toast({
+          title: 'Error parsing custom theme',
+          description: 'The saved theme data is invalid.',
+          variant: 'destructive'
+        })
       }
-
-      setCustomTheme(newTheme)
-      localStorage.setItem('customTheme', JSON.stringify(newTheme))
-    } catch (error) {
-      toast({
-        title: 'Error fetching custom theme',
-        variant: 'destructive'
-      })
     }
+
+    setCustomTheme(newTheme)
+    localStorage.setItem('customTheme', JSON.stringify(newTheme))
   }, [])
 
   const toggleAppStoreHero = useCallback(() => {
@@ -245,27 +236,18 @@ export const AppStateProvider = ({
           (a, b) =>
             (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
         )
+
+        // Batch load all workspace entries (fixes N+1 problem)
+        const { loadWorkspaces, getWorkspace } = useDevStoreCache.getState()
+        await loadWorkspaces(sortedWorkspaces.map((ws) => ws.id))
+
         const enrichedWorkspaces = await Promise.all(
           sortedWorkspaces.map(async (workspace) => {
-            let image: string | undefined
-            let tag: 'center' | 'project' | undefined
-            try {
-              const imageResult = await getWorkspaceEntry(workspace.id, 'image')
-              if (imageResult.data) {
-                image = imageResult.data.value
-              }
-              const tagResult = await getWorkspaceEntry(workspace.id, 'tag')
-              if (tagResult.data) {
-                tag = tagResult.data.value as 'center' | 'project' | undefined
-              } else {
-                tag = 'project'
-              }
-            } catch (error) {
-              console.error(
-                `Failed to fetch metadata for workspace ${workspace.id}`,
-                error
-              )
-            }
+            // Sync lookup from cache (no API calls)
+            const image = getWorkspace(workspace.id, 'image')
+            const tagValue = getWorkspace(workspace.id, 'tag')
+            const tag: 'center' | 'project' =
+              (tagValue as 'center' | 'project') || 'project'
 
             const result = await listUsers({
               filterWorkspaceIDs: [workspace.id]
@@ -416,6 +398,10 @@ export const AppStateProvider = ({
     setApps(undefined)
     setAppInstances(undefined)
     setShowAppStoreHero(true)
+
+    // Clear user-specific data from dev store cache
+    const { clearUserData } = useDevStoreCache.getState()
+    clearUserData()
   }, [])
 
   useEffect(() => {
@@ -451,30 +437,23 @@ export const AppStateProvider = ({
     }
 
     try {
-      const promises = [
+      // Initialize dev store caches first
+      const { initGlobal, initUser } = useDevStoreCache.getState()
+      await initGlobal()
+      await initUser()
+
+      // Refresh logos and theme from cache (now sync since cache is loaded)
+      refreshCustomLogos()
+      refreshCustomTheme()
+
+      // Then load other data in parallel
+      await Promise.all([
         refreshWorkspaces(),
         refreshWorkbenches(),
         // refreshUsers(),
         refreshApps(),
         refreshAppInstances()
-      ]
-
-      if (!customLogos.light && !customLogos.dark) {
-        promises.push(refreshCustomLogos())
-      }
-
-      if (
-        !customTheme.light.primary &&
-        !customTheme.light.secondary &&
-        !customTheme.light.accent &&
-        !customTheme.dark.primary &&
-        !customTheme.dark.secondary &&
-        !customTheme.dark.accent
-      ) {
-        promises.push(refreshCustomTheme())
-      }
-
-      await Promise.all(promises)
+      ])
     } catch (error) {
       toast({
         title: 'Error',

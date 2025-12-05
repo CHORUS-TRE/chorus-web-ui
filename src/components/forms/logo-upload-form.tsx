@@ -14,11 +14,7 @@ import { toast } from '~/components/hooks/use-toast'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { useAppState } from '~/providers/app-state-provider'
-import {
-  deleteGlobalEntry,
-  getGlobalEntry,
-  putGlobalEntry
-} from '~/view-model/dev-store-view-model'
+import { useDevStoreCache } from '~/stores/dev-store-cache'
 
 const LogoUploadForm = () => {
   const { customLogos, refreshCustomLogos } = useAppState()
@@ -46,15 +42,17 @@ const LogoUploadForm = () => {
 
   const handleSubmit = async () => {
     try {
-      // Fetch latest logos to ensure we don't overwrite with stale state
-      const result = await getGlobalEntry('custom_logos')
+      const { getGlobal, setGlobal } = useDevStoreCache.getState()
+
+      // Read current logos from cache
       let currentLogos: { light: string | null; dark: string | null } = {
         light: null,
         dark: null
       }
-      if (result.data?.value) {
+      const cachedValue = getGlobal('custom_logos')
+      if (cachedValue) {
         try {
-          currentLogos = JSON.parse(result.data.value)
+          currentLogos = JSON.parse(cachedValue)
         } catch (e) {
           console.error('Failed to parse current custom_logos', e)
         }
@@ -68,17 +66,22 @@ const LogoUploadForm = () => {
         newLogos.dark = darkLogo
       }
 
-      await putGlobalEntry({
-        key: 'custom_logos',
-        value: JSON.stringify(newLogos)
-      })
+      const success = await setGlobal('custom_logos', JSON.stringify(newLogos))
 
-      toast({
-        title: 'Success!',
-        description: 'Logos have been updated.',
-        variant: 'default'
-      })
-      await refreshCustomLogos()
+      if (success) {
+        toast({
+          title: 'Success!',
+          description: 'Logos have been updated.',
+          variant: 'default'
+        })
+        refreshCustomLogos()
+      } else {
+        toast({
+          title: 'Error!',
+          description: 'Could not save logos.',
+          variant: 'destructive'
+        })
+      }
     } catch {
       toast({
         title: 'Error!',
@@ -90,13 +93,23 @@ const LogoUploadForm = () => {
 
   const handleReset = async () => {
     try {
-      await deleteGlobalEntry('custom_logos')
-      await refreshCustomLogos()
-      toast({
-        title: 'Success!',
-        description: 'Logos have been reset to default.',
-        variant: 'default'
-      })
+      const { deleteGlobal } = useDevStoreCache.getState()
+      const success = await deleteGlobal('custom_logos')
+
+      if (success) {
+        refreshCustomLogos()
+        toast({
+          title: 'Success!',
+          description: 'Logos have been reset to default.',
+          variant: 'default'
+        })
+      } else {
+        toast({
+          title: 'Error!',
+          description: 'Could not reset logos.',
+          variant: 'destructive'
+        })
+      }
     } catch {
       toast({
         title: 'Error!',

@@ -18,10 +18,7 @@ import {
   ExternalWebApp,
   ExternalWebAppsArraySchema
 } from '@/domain/model'
-import {
-  getGlobalEntry,
-  putGlobalEntry
-} from '@/view-model/dev-store-view-model'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { workbenchStreamUrl } from '@/view-model/workbench-view-model'
 
 import { useAuthentication } from './authentication-provider'
@@ -74,7 +71,7 @@ type IframeCacheContextType = {
 
   // services config (from DevStore)
   externalWebApps: ExternalWebApp[]
-  refreshExternalWebApps: () => Promise<void>
+  refreshExternalWebApps: () => void
   addExternalWebApp: (webapp: ExternalWebApp) => Promise<boolean>
   updateExternalWebApp: (webapp: ExternalWebApp) => Promise<boolean>
   removeExternalWebApp: (webappId: string) => Promise<boolean>
@@ -103,7 +100,7 @@ const IframeCacheContext = createContext<IframeCacheContextType>({
   showCleanupDialog: false,
   setShowCleanupDialog: () => {},
   externalWebApps: [],
-  refreshExternalWebApps: async () => {},
+  refreshExternalWebApps: () => {},
   addExternalWebApp: async () => false,
   updateExternalWebApp: async () => false,
   removeExternalWebApp: async () => false,
@@ -171,6 +168,9 @@ export const IframeCacheProvider = ({
   const [cacheVersion, setCacheVersion] = useState(0)
   const [activeIframeId, setActiveIframeIdState] = useState<string | null>(null)
   const [externalWebApps, setExternalWebApps] = useState<ExternalWebApp[]>([])
+  // Track loading state and pending requests to handle race conditions
+  const [externalWebAppsLoaded, setExternalWebAppsLoaded] = useState(false)
+  const pendingWebAppOpenRef = useRef<string[]>([])
 
   // Recent sessions and webapps (persisted to localStorage)
   const [recentSessions, setRecentSessions] = useState<RecentSession[]>([])
@@ -191,56 +191,127 @@ export const IframeCacheProvider = ({
     setCacheVersion((v) => v + 1)
   }, [])
 
-  // Load external services from DevStore
-  const refreshExternalWebApps = useCallback(async () => {
-    try {
-      const result = await getGlobalEntry(DEVSTORE_KEY_EXTERNAL_WEBAPPS)
+  // Load external services from DevStore cache
+  const refreshExternalWebApps = useCallback(() => {
+    const { getGlobal, isGlobalLoaded } = useDevStoreCache.getState()
 
-      if (result.error) {
-        console.error('Error loading external webapps:', result.error)
-        return
-      }
-
-      if (result.data?.value) {
-        try {
-          const parsed = JSON.parse(result.data.value)
-          const validated = ExternalWebAppsArraySchema.safeParse(parsed)
-
-          if (validated.success) {
-            setExternalWebApps(validated.data)
-          } else {
-            console.error(
-              'Invalid external webapps data:',
-              validated.error.issues
-            )
-          }
-        } catch (e) {
-          console.error('Failed to parse external webapps JSON:', e)
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching external webapps:', error)
+    if (!isGlobalLoaded) {
+      // Cache not yet loaded, will be called again when ready
+      return
     }
+
+    const value = getGlobal(DEVSTORE_KEY_EXTERNAL_WEBAPPS)
+    if (value) {
+      try {
+        const parsed = JSON.parse(value)
+        const validated = ExternalWebAppsArraySchema.safeParse(parsed)
+
+        if (validated.success) {
+          setExternalWebApps(validated.data)
+        } else {
+          console.error(
+            'Invalid external webapps data:',
+            validated.error.issues
+          )
+        }
+      } catch (e) {
+        console.error('Failed to parse external webapps JSON:', e)
+      }
+    }
+    setExternalWebAppsLoaded(true)
   }, [])
 
-  // Load external services on mount
-  useEffect(() => {
-    refreshExternalWebApps()
-  }, [refreshExternalWebApps])
+  // Subscribe to global cache loaded state and refresh when ready
+  const isGlobalLoaded = useDevStoreCache((state) => state.isGlobalLoaded)
 
-  // Save external services to DevStore
+  useEffect(() => {
+    if (isGlobalLoaded) {
+      refreshExternalWebApps()
+    }
+  }, [isGlobalLoaded, refreshExternalWebApps])
+
+  // Add a webapp to recent list
+  // Maintains order by first load time (doesn't move existing webapps to front)
+  const addToRecentWebApps = useCallback(
+    (webappId: string, webappName: string) => {
+      setRecentWebApps((prev) => {
+        // Check if webapp already exists in the list
+        const existingIndex = prev.findIndex((w) => w.id === webappId)
+
+        if (existingIndex !== -1) {
+          // Webapp already exists - update lastAccessed but keep original position
+          const updated = [...prev]
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            name: webappName, // Update name in case it changed
+            lastAccessed: new Date().toISOString()
+          }
+          saveRecentWebApps(updated)
+          return updated
+        } else {
+          // New webapp - add to the end (maintains chronological order)
+          const newRecent: RecentWebApp = {
+            id: webappId,
+            name: webappName,
+            lastAccessed: new Date().toISOString()
+          }
+          const updated = [...prev, newRecent].slice(-MAX_RECENT_ITEMS)
+          saveRecentWebApps(updated)
+          return updated
+        }
+      })
+    },
+    []
+  )
+
+  // Process any pending webapp open requests after externalWebApps are loaded
+  useEffect(() => {
+    if (externalWebAppsLoaded && pendingWebAppOpenRef.current.length > 0) {
+      const pendingIds = [...pendingWebAppOpenRef.current]
+      pendingWebAppOpenRef.current = []
+
+      // Process each pending webapp open request
+      pendingIds.forEach((webappId) => {
+        const webapp = externalWebApps.find((app) => app.id === webappId)
+        if (webapp) {
+          // Add to cache
+          const newIframe: CachedIframe = {
+            id: webappId,
+            type: 'webapp',
+            url: webapp.url,
+            name: webapp.name,
+            lastAccessed: new Date()
+          }
+          cacheRef.current.set(webappId, newIframe)
+          setActiveIframeIdState(webappId)
+          setCacheVersion((v) => v + 1)
+          // Add to recent webapps (handles both new and existing)
+          addToRecentWebApps(webappId, webapp.name)
+        } else {
+          toast({
+            title: 'Error opening web app',
+            description: 'Web app not found',
+            variant: 'destructive'
+          })
+        }
+      })
+    }
+  }, [externalWebAppsLoaded, externalWebApps, addToRecentWebApps])
+
+  // Save external services to DevStore cache
   const saveExternalWebApps = useCallback(
     async (webapps: ExternalWebApp[]): Promise<boolean> => {
       try {
-        const result = await putGlobalEntry({
-          key: DEVSTORE_KEY_EXTERNAL_WEBAPPS,
-          value: JSON.stringify(webapps)
-        })
+        const { setGlobal } = useDevStoreCache.getState()
+        const success = await setGlobal(
+          DEVSTORE_KEY_EXTERNAL_WEBAPPS,
+          JSON.stringify(webapps)
+        )
 
-        if (result.error) {
+        if (!success) {
           toast({
             title: 'Error saving services',
-            description: result.error,
+            description: 'Failed to save to backend',
             variant: 'destructive'
           })
           return false
@@ -417,40 +488,6 @@ export const IframeCacheProvider = ({
     []
   )
 
-  // Add a webapp to recent list
-  // Maintains order by first load time (doesn't move existing webapps to front)
-  const addToRecentWebApps = useCallback(
-    (webappId: string, webappName: string) => {
-      setRecentWebApps((prev) => {
-        // Check if webapp already exists in the list
-        const existingIndex = prev.findIndex((w) => w.id === webappId)
-
-        if (existingIndex !== -1) {
-          // Webapp already exists - update lastAccessed but keep original position
-          const updated = [...prev]
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            name: webappName, // Update name in case it changed
-            lastAccessed: new Date().toISOString()
-          }
-          saveRecentWebApps(updated)
-          return updated
-        } else {
-          // New webapp - add to the end (maintains chronological order)
-          const newRecent: RecentWebApp = {
-            id: webappId,
-            name: webappName,
-            lastAccessed: new Date().toISOString()
-          }
-          const updated = [...prev, newRecent].slice(-MAX_RECENT_ITEMS)
-          saveRecentWebApps(updated)
-          return updated
-        }
-      })
-    },
-    []
-  )
-
   // Remove from recent list
   const removeFromRecent = useCallback(
     (id: string, type: 'session' | 'webapp') => {
@@ -542,6 +579,14 @@ export const IframeCacheProvider = ({
         return
       }
 
+      // If external webapps haven't loaded yet, queue the request
+      if (!externalWebAppsLoaded) {
+        if (!pendingWebAppOpenRef.current.includes(webappId)) {
+          pendingWebAppOpenRef.current.push(webappId)
+        }
+        return
+      }
+
       // Find the webapp config
       const webapp = externalWebApps.find((app) => app.id === webappId)
       if (!webapp) {
@@ -570,7 +615,13 @@ export const IframeCacheProvider = ({
       // Add to recent list
       addToRecentWebApps(webappId, webapp.name)
     },
-    [externalWebApps, updateCache, checkCacheSize, addToRecentWebApps]
+    [
+      externalWebApps,
+      externalWebAppsLoaded,
+      updateCache,
+      checkCacheSize,
+      addToRecentWebApps
+    ]
   )
 
   // Close an iframe
