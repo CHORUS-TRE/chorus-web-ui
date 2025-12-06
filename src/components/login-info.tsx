@@ -1,6 +1,6 @@
 'use client'
 
-import { Github, ExternalLink } from 'lucide-react'
+import { ExternalLink, Github } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import React, { useEffect, useState } from 'react'
@@ -48,7 +48,7 @@ export default function LoginInfo() {
             alt={`${instanceConfig.name} Logo`}
             width={320}
             height={180}
-            className="mb-12 h-24 w-auto max-w-full aspect-[80/33]"
+            className="mb-12 aspect-[80/33] h-24 w-auto max-w-full"
             priority
           />
         )}
@@ -60,7 +60,7 @@ export default function LoginInfo() {
       </div>
       <div className="flex w-full items-end justify-between gap-2">
         <div>
-        <a
+          <a
             href="https://www.chorus-tre.ch/en/"
             className="mb-1 flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
             target="_blank"

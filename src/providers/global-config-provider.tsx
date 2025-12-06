@@ -42,4 +42,3 @@ export const InstanceConfigInitializer = ({
 
   return <>{children}</>
 }
-

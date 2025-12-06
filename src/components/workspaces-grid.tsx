@@ -100,7 +100,11 @@ export default function WorkspacesGrid({
                       <span className="flex items-center gap-3 text-muted">
                         <span className="flex items-center gap-1">
                           <Users className="h-3 w-3 shrink-0" />
-                          <span>{workspace?.memberCount || workspace?.members?.length || 0}</span>
+                          <span>
+                            {workspace?.memberCount ||
+                              workspace?.members?.length ||
+                              0}
+                          </span>
                         </span>
                         <span className="flex items-center gap-1">
                           <LaptopMinimal className="h-3 w-3 shrink-0" />

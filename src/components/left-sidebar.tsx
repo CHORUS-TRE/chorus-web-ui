@@ -20,11 +20,11 @@ import React from 'react'
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
 import { useUserPreferences } from '@/stores/user-preferences-store'
+import { useInstanceConfig } from '~/hooks/use-instance-config'
 import { useAuthentication } from '~/providers/authentication-provider'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
-import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 interface LeftSidebarProps {
   isOpen: boolean
@@ -328,7 +328,8 @@ function SidebarContent({
             )}
           >
             <Building2 className="h-4 w-4" />
-            {instanceConfig.tags.find((tag) => tag.id === 'center')?.label || 'Centers'}
+            {instanceConfig.tags.find((tag) => tag.id === 'center')?.label ||
+              'Centers'}
           </button>
         )}
 
@@ -343,7 +344,8 @@ function SidebarContent({
           )}
         >
           <Package className="h-3.5 w-3.5" />
-          {instanceConfig.tags.find((tag) => tag.id === 'project')?.label || 'Workspaces'}
+          {instanceConfig.tags.find((tag) => tag.id === 'project')?.label ||
+            'Workspaces'}
         </button>
 
         {/* Sessions */}

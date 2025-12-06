@@ -262,9 +262,7 @@ export function InstanceConfigForm() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    append({ id: '', label: '', display: true })
-                  }
+                  onClick={() => append({ id: '', label: '', display: true })}
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Add Tag
@@ -359,4 +357,3 @@ export function InstanceConfigForm() {
     </Card>
   )
 }
-

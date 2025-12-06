@@ -113,8 +113,8 @@ const LogoUploadForm = () => {
       <CardHeader>
         <CardTitle>Application Logo</CardTitle>
         <CardDescription>
-          Upload new logos for the light and dark themes. The new logo will
-          be appended to the default Chorus logo in the application header.
+          Upload new logos for the light and dark themes. The new logo will be
+          appended to the default Chorus logo in the application header.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
