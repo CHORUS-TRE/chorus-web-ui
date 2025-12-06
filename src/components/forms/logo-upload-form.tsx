@@ -1,12 +1,8 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import {
-  INSTANCE_CONFIG_KEYS,
-  InstanceLogo,
-  InstanceLogoSchema
-} from '@/domain/model/instance-config'
+import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -21,25 +17,7 @@ import { Label } from '~/components/ui/label'
 import { useDevStoreCache } from '~/stores/dev-store-cache'
 
 const LogoUploadForm = () => {
-  // Subscribe to the raw logo string to avoid infinite loop from getInstanceLogo()
-  const instanceLogoRaw = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.LOGO]
-  )
-
-  // Memoize the parsed logo to avoid re-parsing on every render
-  const instanceLogo = useMemo((): InstanceLogo | null => {
-    if (!instanceLogoRaw) return null
-    try {
-      const parsed = JSON.parse(instanceLogoRaw)
-      const validated = InstanceLogoSchema.safeParse(parsed)
-      if (validated.success) {
-        return validated.data
-      }
-      return null
-    } catch {
-      return null
-    }
-  }, [instanceLogoRaw])
+  const instanceLogo = useInstanceLogo()
   const [lightLogo, setLightLogo] = useState<string | null>(null)
   const [darkLogo, setDarkLogo] = useState<string | null>(null)
 
@@ -136,12 +114,12 @@ const LogoUploadForm = () => {
         <CardTitle>Application Logo</CardTitle>
         <CardDescription>
           Upload new logos for the light and dark themes. The new logo will
-          replace the default Chorus logo in the application header.
+          be appended to the default Chorus logo in the application header.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="light-logo-input">Light Theme Logo</Label>
+          <Label htmlFor="light-logo-input">Light Theme Logo (800*330)</Label>
           <Input
             id="light-logo-input"
             type="file"
@@ -149,6 +127,7 @@ const LogoUploadForm = () => {
             onChange={(e) => handleFileChange(e, setLightLogo)}
           />
           {lightLogo && (
+            // eslint-disable-next-line @next/next/no-img-element -- base64 data URL preview
             <img
               src={lightLogo}
               alt="Light logo preview"
@@ -157,7 +136,7 @@ const LogoUploadForm = () => {
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="dark-logo-input">Dark Theme Logo</Label>
+          <Label htmlFor="dark-logo-input">Dark Theme Logo (800*330)</Label>
           <Input
             id="dark-logo-input"
             type="file"
@@ -165,6 +144,7 @@ const LogoUploadForm = () => {
             onChange={(e) => handleFileChange(e, setDarkLogo)}
           />
           {darkLogo && (
+            // eslint-disable-next-line @next/next/no-img-element -- base64 data URL preview
             <img
               src={darkLogo}
               alt="Dark logo preview"

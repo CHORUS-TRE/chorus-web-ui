@@ -41,10 +41,12 @@ import {
   dashboardNotifications
 } from '~/data/data-source/mock-data/dashboard-feed'
 import { WorkbenchStatus } from '~/domain/model'
+import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 export default function CHORUSDashboard() {
   const { workspaces, workbenches, appInstances, apps } = useAppState()
   const { user } = useAuthentication()
+  const instanceConfig = useInstanceConfig()
   const [updatesTab, setUpdatesTab] = useState<'notifications' | 'activity'>(
     'notifications'
   )
@@ -92,7 +94,7 @@ export default function CHORUSDashboard() {
             <Card variant="default">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-foreground">
-                  Total Projects
+                  Total {instanceConfig.tags.find((tag) => tag.id === 'project')?.label || 'Workspaces'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -173,13 +175,13 @@ export default function CHORUSDashboard() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <h3 className="mb-3 font-semibold">My Workspaces & Sessions</h3>
+            <h3 className="mb-3 font-semibold">My {instanceConfig.tags.find((tag) => tag.id === 'project')?.label || 'Workspaces'} & Sessions</h3>
             <Card variant="glass">
               <CardHeader className="flex flex-col gap-2">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-base sm:text-lg">
                     <Package className="h-5 w-5" />
-                    Workspaces
+                    {instanceConfig.tags.find((tag) => tag.id === 'project')?.label || 'Workspaces'}
                   </div>
                   <Link
                     href="/workspaces"
@@ -190,9 +192,7 @@ export default function CHORUSDashboard() {
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </CardTitle>
-                <CardDescription>
-                  Your workspaces and their sessions
-                </CardDescription>
+
               </CardHeader>
               <CardContent className="space-y-6">
                 {(!myWorkspaces || myWorkspaces.length === 0) && (

@@ -24,6 +24,7 @@ import { useAuthentication } from '~/providers/authentication-provider'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
+import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 interface LeftSidebarProps {
   isOpen: boolean
@@ -34,6 +35,7 @@ interface LeftSidebarProps {
 }
 
 // All navigation items (for external use like mobile nav, page titles)
+// TODO: make it dynamic based on the instance config
 export const navItems = [
   {
     label: 'Dashboard',
@@ -44,6 +46,11 @@ export const navItems = [
   {
     label: 'Workspaces',
     icon: Package,
+    href: '/workspaces'
+  },
+  {
+    label: 'Centers',
+    icon: Building2,
     href: '/workspaces'
   },
   {
@@ -78,9 +85,13 @@ function SidebarHeader({
   onClose?: () => void
   showCloseButton?: boolean
 }) {
+  const instanceConfig = useInstanceConfig()
+
   return (
     <div className="sticky top-0 z-[100] mb-4 flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
-      <h1 className="ml-2 text-lg font-semibold text-foreground">CHORUS</h1>
+      <h1 className="ml-2 text-lg font-semibold text-foreground">
+        {instanceConfig.name}
+      </h1>
       {showCloseButton && onClose && (
         <Button
           variant="ghost"
@@ -231,6 +242,7 @@ function SidebarContent({
   const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
   const { workspaceFilters, setWorkspaceFilter } = useUserPreferences()
   const currentTab = searchParams.get('tab')
+  const instanceConfig = useInstanceConfig()
 
   // Check if Projects filter is active (only projects, not centers)
   const isProjectsActive =
@@ -305,18 +317,20 @@ function SidebarContent({
         </button> */}
 
         {/* Centers */}
-        <button
-          onClick={handleCentersClick}
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isCentersActive
-              ? 'bg-primary/20 text-primary'
-              : 'text-muted-foreground'
-          )}
-        >
-          <Building2 className="h-4 w-4" />
-          Centers
-        </button>
+        {instanceConfig.tags.find((tag) => tag.id === 'center')?.display && (
+          <button
+            onClick={handleCentersClick}
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+              isCentersActive
+                ? 'bg-primary/20 text-primary'
+                : 'text-muted-foreground'
+            )}
+          >
+            <Building2 className="h-4 w-4" />
+            {instanceConfig.tags.find((tag) => tag.id === 'center')?.label || 'Centers'}
+          </button>
+        )}
 
         {/* Projects */}
         <button
@@ -329,7 +343,7 @@ function SidebarContent({
           )}
         >
           <Package className="h-3.5 w-3.5" />
-          Workspaces
+          {instanceConfig.tags.find((tag) => tag.id === 'project')?.label || 'Workspaces'}
         </button>
 
         {/* Sessions */}

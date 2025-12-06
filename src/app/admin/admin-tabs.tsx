@@ -12,8 +12,8 @@ export function AdminTabs() {
 
   const routes = [
     {
-      href: '/admin/workspaces',
-      label: 'Configurations',
+      href: '/admin/configuration',
+      label: 'Configuration',
       authorized: canManageSettings
     },
     { href: '/admin/theme', label: 'Theme', authorized: canManageSettings },

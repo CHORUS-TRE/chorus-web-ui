@@ -121,7 +121,7 @@ export const AppStateProvider = ({
               memberCount: users?.length || 0,
               members: users,
               workbenchCount: fetchedWorkbenches.filter(
-                (workbench) => workbench.workspaceId === workspace.id
+                  (workbench) => workbench.workspaceId === workspace.id
               ).length,
               files: workspace.files || 0
             }

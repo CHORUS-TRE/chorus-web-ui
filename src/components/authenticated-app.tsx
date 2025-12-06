@@ -68,7 +68,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
     const item = navItems.find((item) =>
       item.exact ? pathname === item.href : pathname.startsWith(item.href)
     )
-    return item?.label || 'Dashboard'
+    return item?.label || ''
   }, [pathname])
 
   // Keyboard shortcut: Ctrl+B to toggle sidebar
