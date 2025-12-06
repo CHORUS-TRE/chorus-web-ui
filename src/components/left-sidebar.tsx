@@ -232,12 +232,6 @@ function SidebarContent({
   const { workspaceFilters, setWorkspaceFilter } = useUserPreferences()
   const currentTab = searchParams.get('tab')
 
-  // Check if All Workspaces (both center and project) is active
-  const isAllWorkspacesActive =
-    pathname === '/workspaces' &&
-    workspaceFilters.showCenter &&
-    workspaceFilters.showProject
-
   // Check if Projects filter is active (only projects, not centers)
   const isProjectsActive =
     pathname === '/workspaces' &&
@@ -250,22 +244,16 @@ function SidebarContent({
     workspaceFilters.showCenter &&
     !workspaceFilters.showProject
 
-  const handleWorkspacesClick = () => {
-    // Set filters for All Workspaces view (both centers and projects)
-    setWorkspaceFilter('showCenter', true)
-    setWorkspaceFilter('showProject', true)
-    router.push('/workspaces')
-  }
-
   const handleProjectsClick = () => {
-    // Set filters for Projects view
+    // Set filters for Projects view - preserve showMyWorkspaces preference
     setWorkspaceFilter('showCenter', false)
     setWorkspaceFilter('showProject', true)
     router.push('/workspaces')
   }
 
   const handleCentersClick = () => {
-    // Set filters for Centers view
+    // Set filters for Centers view - always show all centers (not just mine)
+    setWorkspaceFilter('showMyWorkspaces', false)
     setWorkspaceFilter('showCenter', true)
     setWorkspaceFilter('showProject', false)
     router.push('/workspaces')
@@ -303,7 +291,7 @@ function SidebarContent({
         </Link>
 
         {/* Workspaces */}
-        <button
+        {/* <button
           onClick={handleWorkspacesClick}
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
@@ -314,27 +302,13 @@ function SidebarContent({
         >
           <Package className="h-4 w-4" />
           Workspaces
-        </button>
-
-        {/* Projects */}
-        <button
-          onClick={handleProjectsClick}
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 pl-7 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isProjectsActive
-              ? 'bg-primary/20 text-primary'
-              : 'text-muted-foreground'
-          )}
-        >
-          <Package className="h-3.5 w-3.5" />
-          Projects
-        </button>
+        </button> */}
 
         {/* Centers */}
         <button
           onClick={handleCentersClick}
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 pl-7 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
             isCentersActive
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
@@ -342,6 +316,20 @@ function SidebarContent({
         >
           <Building2 className="h-4 w-4" />
           Centers
+        </button>
+
+        {/* Projects */}
+        <button
+          onClick={handleProjectsClick}
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isProjectsActive
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Package className="h-3.5 w-3.5" />
+          Workspaces
         </button>
 
         {/* Sessions */}

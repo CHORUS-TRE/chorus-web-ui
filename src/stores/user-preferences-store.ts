@@ -53,7 +53,7 @@ interface UserPreferencesState {
 
 const defaultPreferences = {
   workspaceFilters: {
-    showMyWorkspaces: false,
+    showMyWorkspaces: true,
     showCenter: false,
     showProject: true
   },

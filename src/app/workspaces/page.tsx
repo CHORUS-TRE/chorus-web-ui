@@ -1,6 +1,14 @@
 'use client'
 
-import { CirclePlus, LayoutGrid, Package, Rows3, Search, X } from 'lucide-react'
+import {
+  Building2,
+  CirclePlus,
+  LayoutGrid,
+  Package,
+  Rows3,
+  Search,
+  X
+} from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { useAppState } from '@/providers/app-state-provider'
@@ -98,8 +106,17 @@ export default function WorkspacesPage() {
       <div className="w-full">
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Package className="h-9 w-9" />
-            Workspaces
+            {showCenter && !showProject ? (
+              <>
+                <Building2 className="h-9 w-9" />
+                Centers
+              </>
+            ) : (
+              <>
+                <Package className="h-9 w-9" />
+                Workspaces
+              </>
+            )}
           </h2>
           {canCreateWorkspace && (
             <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
@@ -111,64 +128,28 @@ export default function WorkspacesPage() {
       </div>
 
       <div className="w-full space-y-4">
-        {/* Search bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search by name, owner, tag, or member..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-4 text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="my-workspaces"
-                checked={showMyWorkspaces}
-                onCheckedChange={(checked) =>
-                  setWorkspaceFilter('showMyWorkspaces', checked as boolean)
-                }
-              />
-              <Label htmlFor="my-workspaces">Show Only My Workspaces</Label>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="center"
-                  checked={showCenter}
-                  onCheckedChange={(checked) =>
-                    setWorkspaceFilter('showCenter', checked as boolean)
-                  }
-                />
-                <Label htmlFor="center">Center</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="project"
-                  checked={showProject}
-                  onCheckedChange={(checked) =>
-                    setWorkspaceFilter('showProject', checked as boolean)
-                  }
-                />
-                <Label htmlFor="project">Project</Label>
-              </div>
-            </div>
+        {/* Search bar with view toggle */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search by name or users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
-          <div className="flex items-center justify-end gap-0">
+          <div className="flex items-center gap-0">
             <Button
               variant="ghost"
               className={`${!showWorkspacesTable ? 'bg-primary text-primary-foreground' : ''}`}
@@ -191,6 +172,22 @@ export default function WorkspacesPage() {
             </Button>
           </div>
         </div>
+
+        {/* Filters */}
+        {!(showCenter && !showProject) && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="my-workspaces"
+                checked={showMyWorkspaces}
+                onCheckedChange={(checked) =>
+                  setWorkspaceFilter('showMyWorkspaces', checked as boolean)
+                }
+              />
+              <Label htmlFor="my-workspaces">Show Only My Workspaces</Label>
+            </div>
+          </div>
+        )}
 
         {!workspaces ? (
           <span className="animate-pulse text-muted">

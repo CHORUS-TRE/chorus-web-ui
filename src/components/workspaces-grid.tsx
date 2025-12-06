@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import { Card, CardDescription, CardTitle } from '@/components/card'
 import {
@@ -22,7 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { User, Workspace } from '@/domain/model'
+import { User, Workspace, WorkspaceConfig } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
@@ -100,6 +101,18 @@ export default function WorkspacesGrid({
                       </Badge>
                     )}
                   </CardTitle>
+                  {/* Show description for centers */}
+                  {workspace.tag === 'center' &&
+                    (() => {
+                      const desc = (
+                        workspace.config as WorkspaceConfig | undefined
+                      )?.descriptionMarkdown
+                      return desc ? (
+                        <div className="prose prose-xs prose-muted dark:prose-invert mt-2 line-clamp-2 max-w-none text-xs text-muted-foreground">
+                          <ReactMarkdown>{desc}</ReactMarkdown>
+                        </div>
+                      ) : null
+                    })()}
                 </div>
 
                 {/* Spacer to push bottom content down */}
@@ -127,7 +140,7 @@ export default function WorkspacesGrid({
                             {owner && others && others.length > 0 && ', '}
                             {others
                               ?.map((m) => `${m.firstName} ${m.lastName}`)
-                              .join(', ')}
+                              ?.join(', ')}
                           </span>
                         )
                       })()}

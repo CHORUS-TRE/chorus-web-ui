@@ -198,7 +198,7 @@ export default function WorkspaceTable({
           <TableCell className="p-1 text-center">
             {workspace?.members
               ?.map((member) => `${member.firstName} ${member.lastName}`)
-              .join(', ')}
+              ?.join(', ')}
           </TableCell>
           <TableCell className="p-1 text-center">
             {workspace?.workbenchCount || 0}

@@ -1,7 +1,6 @@
 import { env } from 'next-runtime-env'
 
-import { WorkspaceDataSource } from '~/data/data-source'
-import { DevStoreDataSourceImpl } from '~/data/data-source'
+import { DevStoreDataSourceImpl, WorkspaceDataSource } from '~/data/data-source'
 import { DevStoreRepositoryImpl } from '~/data/repository'
 import {
   Result,
@@ -11,8 +10,14 @@ import {
 } from '~/domain/model'
 import { User } from '~/domain/model/user'
 import { WorkspaceSchema } from '~/domain/model/workspace'
+import {
+  WorkspaceConfig,
+  WorkspaceConfigSchema
+} from '~/domain/model/workspace-config'
 import { WorkspaceRepository } from '~/domain/repository'
 import { DevStoreGetWorkspaceEntry } from '~/domain/use-cases/dev-store/dev-store-get-workspace-entry'
+
+const WORKSPACE_CONFIG_KEY = 'config'
 
 export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   private dataSource: WorkspaceDataSource
@@ -33,6 +38,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
         const meta = JSON.parse(cached) as {
           tag?: 'center' | 'project'
           image?: string
+          config?: WorkspaceConfig
         }
         // Ensure default tag is 'project' if missing
         if (!meta.tag) {
@@ -52,9 +58,10 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       const repository = new DevStoreRepositoryImpl(dataSource)
       const getEntry = new DevStoreGetWorkspaceEntry(repository)
 
-      const [imageResult, tagResult] = await Promise.all([
+      const [imageResult, tagResult, configResult] = await Promise.all([
         getEntry.execute(workspace.id, 'image'),
-        getEntry.execute(workspace.id, 'tag')
+        getEntry.execute(workspace.id, 'tag'),
+        getEntry.execute(workspace.id, WORKSPACE_CONFIG_KEY)
       ])
 
       const image = imageResult.data?.value
@@ -65,7 +72,21 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
           ? (tagValue as 'center' | 'project')
           : 'project'
 
-      const meta = { image, tag }
+      // Parse config if present
+      let config: WorkspaceConfig | undefined
+      if (configResult.data?.value) {
+        try {
+          const parsed = JSON.parse(configResult.data.value)
+          const validated = WorkspaceConfigSchema.safeParse(parsed)
+          if (validated.success) {
+            config = validated.data
+          }
+        } catch (e) {
+          console.error('Error parsing workspace config', e)
+        }
+      }
+
+      const meta = { image, tag, config }
       localStorage.setItem(cacheKey, JSON.stringify(meta))
 
       return {
