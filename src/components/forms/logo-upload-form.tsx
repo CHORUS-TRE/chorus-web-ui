@@ -42,21 +42,10 @@ const LogoUploadForm = () => {
 
   const handleSubmit = async () => {
     try {
-      const { getGlobal, setGlobal } = useDevStoreCache.getState()
+      const { getInstanceLogo, setInstanceLogo } = useDevStoreCache.getState()
 
       // Read current logos from cache
-      let currentLogos: { light: string | null; dark: string | null } = {
-        light: null,
-        dark: null
-      }
-      const cachedValue = getGlobal('custom_logos')
-      if (cachedValue) {
-        try {
-          currentLogos = JSON.parse(cachedValue)
-        } catch (e) {
-          console.error('Failed to parse current custom_logos', e)
-        }
-      }
+      const currentLogos = getInstanceLogo() || { light: null, dark: null }
 
       const newLogos = { ...currentLogos }
       if (lightLogo) {
@@ -66,7 +55,7 @@ const LogoUploadForm = () => {
         newLogos.dark = darkLogo
       }
 
-      const success = await setGlobal('custom_logos', JSON.stringify(newLogos))
+      const success = await setInstanceLogo(newLogos)
 
       if (success) {
         toast({
@@ -93,8 +82,8 @@ const LogoUploadForm = () => {
 
   const handleReset = async () => {
     try {
-      const { deleteGlobal } = useDevStoreCache.getState()
-      const success = await deleteGlobal('custom_logos')
+      const { setInstanceLogo } = useDevStoreCache.getState()
+      const success = await setInstanceLogo(null)
 
       if (success) {
         refreshCustomLogos()

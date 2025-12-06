@@ -108,51 +108,23 @@ export const AppStateProvider = ({
   })
 
   const refreshCustomLogos = useCallback(() => {
-    const { getGlobal, isGlobalLoaded } = useDevStoreCache.getState()
+    const { getInstanceLogo, isGlobalLoaded } = useDevStoreCache.getState()
 
     if (!isGlobalLoaded) return
 
-    let logos: { light: string | null; dark: string | null } = {
-      light: null,
-      dark: null
-    }
-    const logosJson = getGlobal('custom_logos')
-    if (logosJson) {
-      try {
-        logos = JSON.parse(logosJson)
-      } catch (e) {
-        console.error('Failed to parse custom_logos', e)
-        toast({
-          title: 'Error parsing custom logos',
-          description: 'The saved logos data is invalid.',
-          variant: 'destructive'
-        })
-      }
-    }
+    const logos = getInstanceLogo() || { light: null, dark: null }
 
     setCustomLogos(logos)
     localStorage.setItem('customLogos', JSON.stringify(logos))
   }, [])
 
   const refreshCustomTheme = useCallback(() => {
-    const { getGlobal, isGlobalLoaded } = useDevStoreCache.getState()
+    const { getInstanceTheme, isGlobalLoaded } = useDevStoreCache.getState()
 
     if (!isGlobalLoaded) return
 
-    let newTheme = defaultTheme
-    const themeJson = getGlobal('custom_theme')
-    if (themeJson) {
-      try {
-        newTheme = JSON.parse(themeJson)
-      } catch (e) {
-        console.error('Failed to parse custom_theme', e)
-        toast({
-          title: 'Error parsing custom theme',
-          description: 'The saved theme data is invalid.',
-          variant: 'destructive'
-        })
-      }
-    }
+    const instanceTheme = getInstanceTheme()
+    const newTheme = instanceTheme || defaultTheme
 
     setCustomTheme(newTheme)
     localStorage.setItem('customTheme', JSON.stringify(newTheme))

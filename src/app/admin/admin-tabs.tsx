@@ -11,6 +11,11 @@ export function AdminTabs() {
   const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
 
   const routes = [
+    {
+      href: '/admin/workspaces',
+      label: 'Configurations',
+      authorized: canManageSettings
+    },
     { href: '/admin/theme', label: 'Theme', authorized: canManageSettings },
     { href: '/admin/users', label: 'Users', authorized: canManageUsers }
   ]

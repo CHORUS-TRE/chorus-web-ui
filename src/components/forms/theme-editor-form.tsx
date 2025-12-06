@@ -73,8 +73,8 @@ export function ThemeEditorForm() {
 
   async function handleReset() {
     try {
-      const { deleteGlobal } = useDevStoreCache.getState()
-      const success = await deleteGlobal('custom_theme')
+      const { setInstanceTheme } = useDevStoreCache.getState()
+      const success = await setInstanceTheme(null)
 
       if (success) {
         refreshCustomTheme()
@@ -112,8 +112,8 @@ export function ThemeEditorForm() {
         }
       }
 
-      const { setGlobal } = useDevStoreCache.getState()
-      const success = await setGlobal('custom_theme', JSON.stringify(newTheme))
+      const { setInstanceTheme } = useDevStoreCache.getState()
+      const success = await setInstanceTheme(newTheme)
 
       if (success) {
         refreshCustomTheme()
