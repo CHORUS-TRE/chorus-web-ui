@@ -17,7 +17,7 @@ import {
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -35,12 +35,18 @@ import {
   HoverCardContent,
   HoverCardTrigger
 } from '@/components/ui/hover-card'
+import {
+  INSTANCE_CONFIG_KEYS,
+  InstanceLogo,
+  InstanceLogoSchema
+} from '@/domain/model/instance-config'
 import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
@@ -51,14 +57,28 @@ import { ThemeToggle } from './theme-toggle'
 
 export function Header() {
   const router = useRouter()
-  const {
-    workbenches,
-    workspaces,
-    apps,
-    appInstances,
-    refreshWorkbenches,
-    customLogos
-  } = useAppState()
+  const { workbenches, workspaces, apps, appInstances, refreshWorkbenches } =
+    useAppState()
+
+  // Subscribe to the raw logo string to avoid infinite loop from getInstanceLogo()
+  const instanceLogoRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.LOGO]
+  )
+
+  // Memoize the parsed logo to avoid re-parsing on every render
+  const instanceLogo = useMemo((): InstanceLogo | null => {
+    if (!instanceLogoRaw) return null
+    try {
+      const parsed = JSON.parse(instanceLogoRaw)
+      const validated = InstanceLogoSchema.safeParse(parsed)
+      if (validated.success) {
+        return validated.data
+      }
+      return null
+    } catch {
+      return null
+    }
+  }, [instanceLogoRaw])
   const {
     background,
     setActiveIframe,
@@ -85,7 +105,7 @@ export function Header() {
   )
   const { theme } = useTheme()
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
-  const logo = theme === 'light' ? customLogos.light : customLogos.dark
+  const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
 
   const { canManageUsers } = useAuthorizationViewModel()
   // Recent sessions and webapps are persisted across logout/login

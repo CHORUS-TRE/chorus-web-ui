@@ -4,16 +4,16 @@ import Color from 'color'
 import { useTheme } from 'next-themes'
 import { useEffect } from 'react'
 
-import { useAppState } from '~/providers/app-state-provider'
+import { useInstanceTheme } from '@/hooks/use-instance-theme'
 
 export const DynamicThemeApplicator = () => {
-  const { customTheme } = useAppState()
+  const instanceTheme = useInstanceTheme()
   const { resolvedTheme } = useTheme()
 
   useEffect(() => {
     const applyTheme = (theme: 'light' | 'dark') => {
       const root = document.documentElement
-      const themeColors = customTheme[theme]
+      const themeColors = instanceTheme[theme]
 
       if (themeColors.primary) {
         const primaryHsl = Color(themeColors.primary).hsl().array()
@@ -41,7 +41,7 @@ export const DynamicThemeApplicator = () => {
     if (resolvedTheme === 'dark' || resolvedTheme === 'light') {
       applyTheme(resolvedTheme)
     }
-  }, [customTheme, resolvedTheme])
+  }, [instanceTheme, resolvedTheme])
 
   return null
 }

@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 import { User, Workspace } from '@/domain/model'
+import { useInstanceTheme } from '@/hooks/use-instance-theme'
 import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
 import {
@@ -109,11 +110,11 @@ export default function WorkspaceTable({
     const [deleteOpen, setDeleteOpen] = useState(false)
     const router = useRouter()
     const { resolvedTheme } = useTheme()
-    const { customTheme } = useAppState()
+    const instanceTheme = useInstanceTheme()
 
     const getCardGradient = (name: string) => {
       const currentTheme =
-        resolvedTheme === 'dark' ? customTheme.dark : customTheme.light
+        resolvedTheme === 'dark' ? instanceTheme.dark : instanceTheme.light
       const primary = currentTheme.primary || 'hsl(var(--primary))'
       const secondary = currentTheme.secondary || 'hsl(var(--secondary))'
 

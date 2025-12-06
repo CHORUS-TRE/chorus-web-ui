@@ -1,7 +1,12 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
+import {
+  INSTANCE_CONFIG_KEYS,
+  InstanceLogo,
+  InstanceLogoSchema
+} from '@/domain/model/instance-config'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -13,18 +18,35 @@ import {
 import { toast } from '~/components/hooks/use-toast'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { useAppState } from '~/providers/app-state-provider'
 import { useDevStoreCache } from '~/stores/dev-store-cache'
 
 const LogoUploadForm = () => {
-  const { customLogos, refreshCustomLogos } = useAppState()
+  // Subscribe to the raw logo string to avoid infinite loop from getInstanceLogo()
+  const instanceLogoRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.LOGO]
+  )
+
+  // Memoize the parsed logo to avoid re-parsing on every render
+  const instanceLogo = useMemo((): InstanceLogo | null => {
+    if (!instanceLogoRaw) return null
+    try {
+      const parsed = JSON.parse(instanceLogoRaw)
+      const validated = InstanceLogoSchema.safeParse(parsed)
+      if (validated.success) {
+        return validated.data
+      }
+      return null
+    } catch {
+      return null
+    }
+  }, [instanceLogoRaw])
   const [lightLogo, setLightLogo] = useState<string | null>(null)
   const [darkLogo, setDarkLogo] = useState<string | null>(null)
 
   useEffect(() => {
-    setLightLogo(customLogos.light)
-    setDarkLogo(customLogos.dark)
-  }, [customLogos])
+    setLightLogo(instanceLogo?.light || null)
+    setDarkLogo(instanceLogo?.dark || null)
+  }, [instanceLogo])
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -63,7 +85,6 @@ const LogoUploadForm = () => {
           description: 'Logos have been updated.',
           variant: 'default'
         })
-        refreshCustomLogos()
       } else {
         toast({
           title: 'Error!',
@@ -86,7 +107,8 @@ const LogoUploadForm = () => {
       const success = await setInstanceLogo(null)
 
       if (success) {
-        refreshCustomLogos()
+        setLightLogo(null)
+        setDarkLogo(null)
         toast({
           title: 'Success!',
           description: 'Logos have been reset to default.',

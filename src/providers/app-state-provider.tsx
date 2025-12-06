@@ -22,19 +22,6 @@ import { workspaceList } from '@/view-model/workspace-view-model'
 
 import { useAuthentication } from './authentication-provider'
 
-const defaultTheme = {
-  light: {
-    primary: '#1340FF',
-    secondary: '#CDCBFA',
-    accent: '#B7FF13'
-  },
-  dark: {
-    primary: '#1340FF',
-    secondary: '#CDCBFA',
-    accent: '#B7FF13'
-  }
-}
-
 type AppStateContextType = {
   workspaces: Workspace[] | undefined
   workbenches: Workbench[] | undefined
@@ -45,13 +32,6 @@ type AppStateContextType = {
   refreshApps: () => Promise<void>
   appInstances: AppInstance[] | undefined
   refreshAppInstances: () => Promise<void>
-  customLogos: { light: string | null; dark: string | null }
-  refreshCustomLogos: () => void
-  customTheme: {
-    light: { primary: string; secondary: string; accent: string }
-    dark: { primary: string; secondary: string; accent: string }
-  }
-  refreshCustomTheme: () => void
 }
 
 const AppStateContext = createContext<AppStateContextType>({
@@ -63,11 +43,7 @@ const AppStateContext = createContext<AppStateContextType>({
   apps: undefined,
   refreshApps: async () => {},
   appInstances: undefined,
-  refreshAppInstances: async () => {},
-  customLogos: { light: null, dark: null },
-  refreshCustomLogos: () => {},
-  customTheme: defaultTheme,
-  refreshCustomTheme: () => {}
+  refreshAppInstances: async () => {}
 })
 
 export const AppStateProvider = ({
@@ -86,49 +62,6 @@ export const AppStateProvider = ({
   const [appInstances, setAppInstances] = useState<AppInstance[] | undefined>(
     undefined
   )
-  const [customLogos, setCustomLogos] = useState<{
-    light: string | null
-    dark: string | null
-  }>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('customLogos')
-      return saved !== null ? JSON.parse(saved) : { light: null, dark: null }
-    }
-    return { light: null, dark: null }
-  })
-  const [customTheme, setCustomTheme] = useState<{
-    light: { primary: string; secondary: string; accent: string }
-    dark: { primary: string; secondary: string; accent: string }
-  }>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('customTheme')
-      return saved ? JSON.parse(saved) : defaultTheme
-    }
-    return defaultTheme
-  })
-
-  const refreshCustomLogos = useCallback(() => {
-    const { getInstanceLogo, isGlobalLoaded } = useDevStoreCache.getState()
-
-    if (!isGlobalLoaded) return
-
-    const logos = getInstanceLogo() || { light: null, dark: null }
-
-    setCustomLogos(logos)
-    localStorage.setItem('customLogos', JSON.stringify(logos))
-  }, [])
-
-  const refreshCustomTheme = useCallback(() => {
-    const { getInstanceTheme, isGlobalLoaded } = useDevStoreCache.getState()
-
-    if (!isGlobalLoaded) return
-
-    const instanceTheme = getInstanceTheme()
-    const newTheme = instanceTheme || defaultTheme
-
-    setCustomTheme(newTheme)
-    localStorage.setItem('customTheme', JSON.stringify(newTheme))
-  }, [])
 
   const refreshWorkspaces = useCallback(async () => {
     if (!user) {
@@ -306,14 +239,6 @@ export const AppStateProvider = ({
     clearUserData()
   }, [])
 
-  useEffect(() => {
-    localStorage.setItem('customLogos', JSON.stringify(customLogos))
-  }, [customLogos])
-
-  useEffect(() => {
-    localStorage.setItem('customTheme', JSON.stringify(customTheme))
-  }, [customTheme])
-
   const initializeState = useCallback(async () => {
     if (!user) {
       return
@@ -324,10 +249,6 @@ export const AppStateProvider = ({
       const { initGlobal, initUser } = useDevStoreCache.getState()
       await initGlobal()
       await initUser()
-
-      // Refresh logos and theme from cache (now sync since cache is loaded)
-      refreshCustomLogos()
-      refreshCustomTheme()
 
       // Then load other data in parallel
       await Promise.all([
@@ -351,9 +272,7 @@ export const AppStateProvider = ({
     refreshWorkbenches,
     // refreshUsers,
     refreshApps,
-    refreshAppInstances,
-    refreshCustomLogos,
-    refreshCustomTheme
+    refreshAppInstances
   ])
 
   useEffect(() => {
@@ -370,11 +289,7 @@ export const AppStateProvider = ({
       apps,
       refreshApps,
       appInstances,
-      refreshAppInstances,
-      customLogos,
-      refreshCustomLogos,
-      customTheme,
-      refreshCustomTheme
+      refreshAppInstances
     }),
     [
       workspaces,
@@ -385,11 +300,7 @@ export const AppStateProvider = ({
       apps,
       refreshApps,
       appInstances,
-      refreshAppInstances,
-      customLogos,
-      refreshCustomLogos,
-      customTheme,
-      refreshCustomTheme
+      refreshAppInstances
     ]
   )
 
