@@ -1,3 +1,11 @@
+## [1.26.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.1...v1.26.2) (2025-12-07)
+
+
+### Bug Fixes
+
+* enhance workspace layout with image support and update form integration ([d53bf97](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d53bf974e521c0a7c63273f0836542814a591953))
+* update session deletion flow to redirect to workspace and enhance recent sessions management ([1a68d3c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1a68d3c1f22d8e52768686316a558c9b16897991))
+
 ## [1.26.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.0...v1.26.1) (2025-12-04)
 
 
