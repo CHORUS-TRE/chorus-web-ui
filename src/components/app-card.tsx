@@ -184,14 +184,14 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="justifiy-center m-0 h-8 w-8 p-0 text-accent ring-0 hover:bg-accent hover:text-black"
+                  className="justifiy-center m-0 h-8 w-8 p-0 text-accent ring-0 hover:bg-accent hover:text-accent-foreground"
                   disabled={isDeleting}
                 >
                   <span className="sr-only">Open menu</span>
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black">
+              <DropdownMenuContent align="end" className="bg-popover">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() => setShowEditDialog(true)}
@@ -211,12 +211,12 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <CardDescription className="mb-3 text-xs text-muted">
+          <CardDescription className="mb-3 text-xs text-muted-foreground">
             {app.dockerImageName}:{app.dockerImageTag}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-sm text-muted">
+          <div className="text-sm text-muted-foreground">
             {app.description || 'No description available'}
           </div>
         </CardContent>

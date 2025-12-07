@@ -130,7 +130,7 @@ export default function FileManagerClient({
   }
 
   return (
-    <div className="flex h-screen flex-col gap-2">
+    <div className="mt-2 flex h-screen flex-col gap-2">
       {/* Toolbar */}
       <Toolbar
         viewMode={state.viewMode}

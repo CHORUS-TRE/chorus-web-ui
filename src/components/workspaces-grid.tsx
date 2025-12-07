@@ -1,10 +1,18 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
-import { HomeIcon, MoreVertical, Package } from 'lucide-react'
+import {
+  Building2,
+  HomeIcon,
+  LaptopMinimal,
+  MoreVertical,
+  Package,
+  Users
+} from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
-import { Card, CardDescription, CardTitle } from '@/components/card'
+import { Card, CardTitle } from '@/components/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
@@ -16,10 +24,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { User, Workspace } from '@/domain/model'
+import { User, Workspace, WorkspaceConfig } from '@/domain/model'
 import { useAppState } from '@/providers/app-state-provider'
 import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
 
 import { toast } from './hooks/use-toast'
 
@@ -39,6 +46,8 @@ export default function WorkspacesGrid({
 
   const { refreshWorkspaces } = useAppState()
 
+  const isCenter = (workspace: Workspace) => workspace.tag === 'center'
+
   return (
     <div
       className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,280px))]"
@@ -50,80 +59,92 @@ export default function WorkspacesGrid({
             key={`workspace-grid-${workspace.id}`}
             className="group relative"
           >
-            <Card className="group/card relative flex h-40 flex-col overflow-hidden border-none">
-              {/* Background image */}
-              <div className="absolute inset-0 bg-muted/20">
-                {workspace.image && (
-                  <Image
-                    src={workspace.image}
-                    alt={workspace.name}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-              </div>
-
-              {/* Glass overlay - fades out on hover to reveal image */}
-              <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm transition-opacity duration-300 group-hover/card:opacity-0" />
-
+            <Card className="relative flex h-48 flex-col overflow-hidden border-none bg-contrast-background/70 backdrop-blur-sm">
               {/* Content layer */}
               <Link
                 href={`/workspaces/${workspace.id}`}
                 variant="rounded"
-                className={`relative flex h-full w-full flex-col items-start justify-between p-4 ${workspace.image ? 'group-hover/card:opacity-0' : ''}`}
+                className="relative flex h-full w-full flex-col p-4"
               >
-                {/* Title - top left, can wrap */}
-                <div className="pr-10">
-                  <CardTitle className="flex items-start gap-2 text-foreground">
-                    {workspace.isMain ? (
-                      <HomeIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                {/* Top row: Image/Icon + Title + Users + Created */}
+                <div className="flex items-start gap-3">
+                  {/* Left: Image or Icon (64px) */}
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted/30">
+                    {workspace.image ? (
+                      <Image
+                        src={workspace.image}
+                        alt={workspace.name}
+                        width={64}
+                        height={64}
+                        className="h-16 w-16 object-cover"
+                      />
+                    ) : isCenter(workspace) ? (
+                      <Building2 className="h-8 w-8 text-muted-foreground" />
+                    ) : workspace.isMain ? (
+                      <HomeIcon className="h-8 w-8 text-muted-foreground" />
                     ) : (
-                      <Package className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                      <Package className="h-8 w-8 text-muted-foreground" />
                     )}
-                    <span className="text-lg font-semibold leading-tight">
-                      {workspace?.name}
-                    </span>
-                  </CardTitle>
+                  </div>
+
+                  {/* Title + Users + Created */}
+                  <div className="min-w-0 flex-1">
+                    <CardTitle className="text-foreground">
+                      <span className="line-clamp-2 text-base font-semibold leading-tight">
+                        {workspace?.name}
+                      </span>
+                    </CardTitle>
+
+                    {/* Users, Sessions and Created - below title */}
+                    <div className="mt-3 flex flex-col gap-0.5 text-xs">
+                      <span className="flex items-center gap-3 text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Users className="h-3 w-3 shrink-0" />
+                          <span>
+                            {workspace?.memberCount ||
+                              workspace?.members?.length ||
+                              0}
+                          </span>
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <LaptopMinimal className="h-3 w-3 shrink-0" />
+                          <span>{workspace?.workbenchCount || 0}</span>
+                        </span>
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Created {formatDistanceToNow(workspace.createdAt)} ago
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Spacer to push bottom content down */}
-                <div className="flex-1" />
+                {/* Description - full width below title */}
+                {(() => {
+                  const desc = (workspace.config as WorkspaceConfig | undefined)
+                    ?.descriptionMarkdown
+                  return desc ? (
+                    <div className="prose prose-sm prose-muted dark:prose-invert mt-3 line-clamp-6 max-w-none text-xs text-muted-foreground">
+                      <ReactMarkdown>{desc}</ReactMarkdown>
+                    </div>
+                  ) : null
+                })()}
 
-                {/* Bottom info - owner, date, badge */}
-                <CardDescription className="flex w-full items-end justify-between text-xs text-muted-foreground">
-                  <span className="block">
-                    <span className="text-md block font-semibold text-foreground">
-                      Owner: {workspace?.owner || '-'}
-                    </span>
-                    <span className="block">
-                      {workspace?.memberCount || 0}{' '}
-                      {workspace?.memberCount === 1 ? 'member' : 'members'} |{' '}
-                      {workspace?.workbenchCount || 0}{' '}
-                      {workspace?.workbenchCount === 1 ? 'session' : 'sessions'}
-                    </span>
-                    <span className="block">
-                      Created {formatDistanceToNow(workspace.createdAt)} ago
-                    </span>
-                  </span>
-                  {workspace.tag && (
-                    <Badge variant="secondary" className="ml-2 text-xs">
-                      {workspace.tag}
-                    </Badge>
-                  )}
-                </CardDescription>
+                {/* Spacer */}
+                <div className="flex-1" />
               </Link>
 
-              {/* Dropdown menu - top right */}
-              {user?.rolesWithContext?.some(
-                (role) => role.context.workspace === workspace.id
-              ) && (
-                <div className="absolute right-2 top-2 z-10">
+              {/* Dropdown menu + Sessions - top right */}
+              <div className="absolute right-2 top-2 z-10 flex flex-col items-end gap-2">
+                {/* Dropdown menu */}
+                {user?.rolesWithContext?.some(
+                  (role) => role.context.workspace === workspace.id
+                ) && (
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+                        className="h-8 w-8 hover:bg-muted/50"
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
@@ -142,8 +163,8 @@ export default function WorkspacesGrid({
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </div>
-              )}
+                )}
+              </div>
             </Card>
 
             {activeUpdateId === workspace.id && (

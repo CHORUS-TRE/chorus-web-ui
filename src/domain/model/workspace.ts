@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { UserSchema } from './user'
+import { WorkspaceConfigSchema } from './workspace-config'
 
 export enum WorkspaceState {
   ACTIVE = 'active',
@@ -17,7 +18,9 @@ export const WorkspaceMetaSchema = z.object({
   memberCount: z.number().optional(),
   members: z.array(UserSchema).optional(),
   workbenchCount: z.number().optional(),
-  files: z.number().optional()
+  files: z.number().optional(),
+  // Workspace configuration (stored in DevStore)
+  config: WorkspaceConfigSchema.optional()
 })
 
 export const WorkspaceSchema = WorkspaceMetaSchema.extend({

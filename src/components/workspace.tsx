@@ -15,6 +15,7 @@ import {
   LaptopMinimal,
   MessageSquare,
   Plus,
+  Settings,
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -265,7 +266,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </Card>
 
         {/* Data Card */}
-        <Card className="flex h-full flex-col">
+        <Card className="flex h-full flex-col bg-contrast-background/70 backdrop-blur-sm">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={`/workspaces/${workspaceId}/data`} variant="flex">
@@ -357,7 +358,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                   {workspace?.members
                     ?.filter((user) =>
                       user.rolesWithContext?.some(
-                        (role) => role.context.workspace === workspaceId
+                        (role) =>
+                          role.context.workspace === workspaceId &&
+                          role.name.startsWith('Workspace')
                       )
                     )
                     .map((user) => {
@@ -416,6 +419,14 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
+            <Button
+              className="w-full gap-2"
+              variant="outline"
+              onClick={() => setOpenEdit(true)}
+            >
+              <Settings className="h-4 w-4" />
+              Workspace Settings
+            </Button>
             <Button className="w-full gap-2" variant="outline">
               <Plus className="h-4 w-4" />
               Request Dataset Access

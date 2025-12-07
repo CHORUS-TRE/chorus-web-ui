@@ -11,14 +11,13 @@ export function AdminTabs() {
   const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
 
   const routes = [
-    { href: '/admin/theme', label: 'Theme', authorized: canManageSettings },
-    { href: '/admin/users', label: 'Users', authorized: canManageUsers },
     {
-      href: '/admin/workspaces',
-      label: 'Workspaces',
-      disabled: true,
-      authorized: true
-    }
+      href: '/admin/configuration',
+      label: 'Configuration',
+      authorized: canManageSettings
+    },
+    { href: '/admin/theme', label: 'Theme', authorized: canManageSettings },
+    { href: '/admin/users', label: 'Users', authorized: canManageUsers }
   ]
 
   const handleTabChange = (value: string) => {
@@ -34,7 +33,7 @@ export function AdminTabs() {
               <TabsTrigger
                 key={route.href}
                 value={route.href}
-                disabled={route.disabled === true}
+                className="text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
               >
                 {route.label}
               </TabsTrigger>

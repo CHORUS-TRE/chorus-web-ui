@@ -3,14 +3,14 @@ import { formatDistanceToNow } from 'date-fns'
 import {
   FlaskConical,
   Globe,
+  HelpCircle,
   Info,
   LaptopMinimal,
-  LogOut,
   Maximize,
   Plus,
+  Search,
   Settings,
   Trash2,
-  User,
   UserPlus,
   X
 } from 'lucide-react'
@@ -31,25 +31,20 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger
 } from '@/components/ui/hover-card'
+import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { listUsers } from '~/view-model/user-view-model'
+import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -58,14 +53,9 @@ import { ThemeToggle } from './theme-toggle'
 
 export function Header() {
   const router = useRouter()
-  const {
-    workbenches,
-    workspaces,
-    apps,
-    appInstances,
-    refreshWorkbenches,
-    customLogos
-  } = useAppState()
+  const { workbenches, workspaces, apps, appInstances, refreshWorkbenches } =
+    useAppState()
+  const instanceLogo = useInstanceLogo()
   const {
     background,
     setActiveIframe,
@@ -78,7 +68,7 @@ export function Header() {
     openWebApp,
     removeFromRecent
   } = useIframeCache()
-  const { user, logout } = useAuthentication()
+  const { user } = useAuthentication()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -92,8 +82,9 @@ export function Header() {
   )
   const { theme } = useTheme()
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
-  const logo = theme === 'light' ? customLogos.light : customLogos.dark
+  const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
 
+  const { canManageUsers } = useAuthorizationViewModel()
   // Recent sessions and webapps are persisted across logout/login
   // Use cachedIframes.has() to check if a session/webapp is currently loaded
 
@@ -124,6 +115,22 @@ export function Header() {
     }
   }
 
+  /**
+   * Help button - toggles right sidebar
+   */
+  function HelpButton() {
+    const { toggleRightSidebar } = useUserPreferences()
+
+    return (
+      <button
+        onClick={toggleRightSidebar}
+        className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+      >
+        <HelpCircle className="h-4 w-4" />
+      </button>
+    )
+  }
+
   return (
     <>
       <nav
@@ -150,8 +157,8 @@ export function Header() {
               src={logo}
               alt="Chorus"
               height={32}
-              width={54}
-              className="ml-4 aspect-auto cursor-pointer"
+              width={75}
+              className="ml-4 aspect-[80/33] cursor-pointer"
               id="logo"
               priority
             />
@@ -203,7 +210,9 @@ export function Header() {
                       <span className="max-w-32 truncate">
                         {getSessionDisplayName(recentSession.id)}
                       </span>
-                      <button
+                      <span
+                        role="button"
+                        tabIndex={0}
                         onClick={(e) => {
                           e.stopPropagation()
                           removeFromRecent(recentSession.id, 'session')
@@ -212,10 +221,20 @@ export function Header() {
                             closeIframe(recentSession.id)
                           }
                         }}
-                        className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            removeFromRecent(recentSession.id, 'session')
+                            if (isLoaded) {
+                              closeIframe(recentSession.id)
+                            }
+                          }
+                        }}
+                        className="ml-1 cursor-pointer rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
                       >
                         <X className="h-3 w-3" />
-                      </button>
+                      </span>
                     </button>
                   </HoverCardTrigger>
                   {isActive && sessionWorkbench && (
@@ -356,8 +375,10 @@ export function Header() {
               const isLoaded = cachedIframes.has(recentWebApp.id)
 
               return (
-                <button
+                <div
                   key={recentWebApp.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => {
                     // If webapp is not loaded, load it first
                     if (!isLoaded) {
@@ -365,8 +386,17 @@ export function Header() {
                     }
                     router.push(`/webapps/${recentWebApp.id}`)
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      if (!isLoaded) {
+                        openWebApp(recentWebApp.id)
+                      }
+                      router.push(`/webapps/${recentWebApp.id}`)
+                    }
+                  }}
                   className={cn(
-                    'group flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all',
+                    'group flex cursor-pointer items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
                     isActive
                       ? 'border-primary/50 bg-primary/10 text-primary'
                       : 'border-muted/50 hover:bg-accent/10'
@@ -387,61 +417,39 @@ export function Header() {
                   >
                     <X className="h-3 w-3" />
                   </button>
-                </button>
+                </div>
               )
             })}
           </div>
         )}
 
-        <div className="flex shrink-0 items-center justify-end">
-          <div className="ml-1 flex items-center">
-            <ThemeToggle />
+        <div className="flex shrink-0 items-center justify-end gap-2">
+          {/* Search bar (disabled) */}
+          {user && (
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
+              <input
+                type="text"
+                placeholder="Search..."
+                disabled
+                className="h-8 w-40 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
+              />
+            </div>
+          )}
 
-            {user?.rolesWithContext?.some((role) => role.context.user) && (
-              <Button
-                variant="ghost"
-                onClick={() => router.push(`/lab`)}
-                aria-label="Sandbox"
-              >
-                <FlaskConical className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">Lab</span>
-              </Button>
-            )}
-
-            {user && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost">
-                    <User className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="glass-elevated w-56"
-                  align="end"
-                  forceMount
-                >
-                  <>
-                    <DropdownMenuItem
-                      className="flex cursor-pointer items-center gap-2"
-                      onClick={() => router.push(`/users/${user?.id}`)}
-                    >
-                      <User className="h-4 w-4" />
-                      {user?.firstName} {user?.lastName} profile
-                    </DropdownMenuItem>
-
-                    <DropdownMenuSeparator className="bg-slate-500" />
-                    <DropdownMenuItem
-                      onClick={logout}
-                      className="flex cursor-pointer items-center gap-2"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Logout
-                    </DropdownMenuItem>
-                  </>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
+          <ThemeToggle />
+          {canManageUsers && (
+            <Button
+              variant="ghost"
+              onClick={() => router.push(`/lab`)}
+              aria-label="Sandbox"
+              className="text-muted-foreground"
+            >
+              <FlaskConical className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Lab</span>
+            </Button>
+          )}
+          <HelpButton />
         </div>
 
         <WorkbenchDeleteForm
@@ -472,9 +480,12 @@ export function Header() {
                 (wb) => wb.id === deleteSessionId
               )
               refreshWorkbenches()
+
+              // Remove from recent sessions bar and close iframe
+              removeFromRecent(deleteSessionId, 'session')
               closeIframe(deleteSessionId)
               setDeleteSessionId(null)
-              router.push('/sessions')
+              router.push(`/workspaces/${workspaceId}`)
               toast({
                 title: 'Success!',
                 description: `Session ${session?.name || ''} deleted`

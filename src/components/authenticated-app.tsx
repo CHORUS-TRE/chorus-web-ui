@@ -7,7 +7,7 @@ import React, { useMemo } from 'react'
 
 import { Header } from '@/components/header'
 import { cn } from '@/lib/utils'
-import { useAppState } from '@/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar, navItems } from '~/components/left-sidebar'
@@ -20,7 +20,7 @@ interface MainLayoutProps {
 }
 
 export function AuthenticatedApp({ children }: MainLayoutProps) {
-  const { showRightSidebar } = useAppState()
+  const { showRightSidebar } = useUserPreferences()
   const pathname = usePathname()
 
   // Persist sidebar state in localStorage
@@ -68,7 +68,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
     const item = navItems.find((item) =>
       item.exact ? pathname === item.href : pathname.startsWith(item.href)
     )
-    return item?.label || 'Dashboard'
+    return item?.label || ''
   }, [pathname])
 
   // Keyboard shortcut: Ctrl+B to toggle sidebar
@@ -124,7 +124,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
           {isIFramePage ? (
             <>
               {/* Content takes full screen */}
-              <div className="fixed inset-0 top-11 z-20 bg-black/50">
+              <div className="fixed inset-0 top-11 z-20 bg-background/50 backdrop-blur-sm">
                 {children}
               </div>
 

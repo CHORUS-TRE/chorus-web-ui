@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { useInstanceTheme } from '@/hooks/use-instance-theme'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -29,11 +30,7 @@ import {
   ColorPickerHue,
   ColorPickerOutput
 } from '~/components/ui/shadcn-io/color-picker'
-import { useAppState } from '~/providers/app-state-provider'
-import {
-  deleteGlobalEntry,
-  putGlobalEntry
-} from '~/view-model/dev-store-view-model'
+import { useDevStoreCache } from '~/stores/dev-store-cache'
 
 import { toast } from '../hooks/use-toast'
 
@@ -49,40 +46,47 @@ const themeFormSchema = z.object({
 type ThemeFormValues = z.infer<typeof themeFormSchema>
 
 export function ThemeEditorForm() {
-  const { customTheme, refreshCustomTheme } = useAppState()
+  const instanceTheme = useInstanceTheme()
 
   const form = useForm<ThemeFormValues>({
     resolver: zodResolver(themeFormSchema),
     defaultValues: {
-      light_primary: customTheme.light.primary,
-      light_secondary: customTheme.light.secondary,
-      light_accent: customTheme.light.accent,
-      dark_primary: customTheme.dark.primary,
-      dark_secondary: customTheme.dark.secondary,
-      dark_accent: customTheme.dark.accent
+      light_primary: instanceTheme.light.primary,
+      light_secondary: instanceTheme.light.secondary,
+      light_accent: instanceTheme.light.accent,
+      dark_primary: instanceTheme.dark.primary,
+      dark_secondary: instanceTheme.dark.secondary,
+      dark_accent: instanceTheme.dark.accent
     }
   })
 
   useEffect(() => {
     form.reset({
-      light_primary: customTheme.light.primary,
-      light_secondary: customTheme.light.secondary,
-      light_accent: customTheme.light.accent,
-      dark_primary: customTheme.dark.primary,
-      dark_secondary: customTheme.dark.secondary,
-      dark_accent: customTheme.dark.accent
+      light_primary: instanceTheme.light.primary,
+      light_secondary: instanceTheme.light.secondary,
+      light_accent: instanceTheme.light.accent,
+      dark_primary: instanceTheme.dark.primary,
+      dark_secondary: instanceTheme.dark.secondary,
+      dark_accent: instanceTheme.dark.accent
     })
-  }, [customTheme, form])
+  }, [instanceTheme, form])
 
   async function handleReset() {
     try {
-      await deleteGlobalEntry('custom_theme')
+      const { setInstanceTheme } = useDevStoreCache.getState()
+      const success = await setInstanceTheme(null)
 
-      await refreshCustomTheme()
-
-      toast({
-        title: 'Theme reset successfully!'
-      })
+      if (success) {
+        toast({
+          title: 'Theme reset successfully!'
+        })
+      } else {
+        toast({
+          title: 'An error occurred.',
+          description: 'Please try again.',
+          variant: 'destructive'
+        })
+      }
     } catch {
       toast({
         title: 'An error occurred.',
@@ -107,16 +111,20 @@ export function ThemeEditorForm() {
         }
       }
 
-      await putGlobalEntry({
-        key: 'custom_theme',
-        value: JSON.stringify(newTheme)
-      })
+      const { setInstanceTheme } = useDevStoreCache.getState()
+      const success = await setInstanceTheme(newTheme)
 
-      await refreshCustomTheme()
-
-      toast({
-        title: 'Theme updated successfully!'
-      })
+      if (success) {
+        toast({
+          title: 'Theme updated successfully!'
+        })
+      } else {
+        toast({
+          title: 'An error occurred.',
+          description: 'Please try again.',
+          variant: 'destructive'
+        })
+      }
     } catch {
       toast({
         title: 'An error occurred.',

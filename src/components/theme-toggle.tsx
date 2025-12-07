@@ -25,7 +25,7 @@ export function ThemeToggle() {
 
   return (
     <Button
-      className="h-8 w-8 text-muted hover:bg-inherit hover:text-accent"
+      className="h-8 w-8 text-muted-foreground hover:bg-inherit hover:text-accent"
       variant="ghost"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       aria-label="Toggle theme"

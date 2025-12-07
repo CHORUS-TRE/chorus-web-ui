@@ -10,6 +10,7 @@ import React from 'react'
 
 import { AppStateProvider } from '@/providers/app-state-provider'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
+import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { DynamicThemeApplicator } from '~/components/dynamic-theme-applicator'
@@ -59,19 +60,21 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
-          <AuthenticationProvider>
-            <AuthorizationProvider>
-              <AppStateProvider>
-                <IframeCacheProvider>
-                  <DynamicThemeApplicator />
-                  {children}
-                  <IframeCacheRenderer />
-                  <IframeCleanupDialog />
-                  <IframeDebugPanel />
-                </IframeCacheProvider>
-              </AppStateProvider>
-            </AuthorizationProvider>
-          </AuthenticationProvider>
+          <InstanceConfigInitializer>
+            <DynamicThemeApplicator />
+            <AuthenticationProvider>
+              <AuthorizationProvider>
+                <AppStateProvider>
+                  <IframeCacheProvider>
+                    {children}
+                    <IframeCacheRenderer />
+                    <IframeCleanupDialog />
+                    <IframeDebugPanel />
+                  </IframeCacheProvider>
+                </AppStateProvider>
+              </AuthorizationProvider>
+            </AuthenticationProvider>
+          </InstanceConfigInitializer>
         </ThemeProvider>
       </body>
     </html>

@@ -5,13 +5,13 @@ import '@/styles/globals.css'
 
 import { ChevronDown, ChevronUp, Store } from 'lucide-react'
 
-import { useAppState } from '@/providers/app-state-provider'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import AppStoreHero from '~/components/app-store-hero'
 import { AppStoreView } from '~/components/app-store-view'
 import { Button } from '~/components/button'
 
 export default function Page() {
-  const { showAppStoreHero, toggleAppStoreHero } = useAppState()
+  const { showAppStoreHero, toggleAppStoreHero } = useUserPreferences()
 
   return (
     <>

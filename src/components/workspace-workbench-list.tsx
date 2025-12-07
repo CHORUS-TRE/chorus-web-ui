@@ -154,7 +154,7 @@ export function WorkspaceWorkbenchList({
                 size === 'small' ? 'h-24' : 'h-32'
               } flex-col justify-between overflow-hidden rounded-md text-muted transition-colors ${
                 userId === user?.id
-                  ? 'cursor-pointer hover:bg-accent/80 hover:text-black'
+                  ? 'cursor-pointer hover:bg-accent/80 hover:text-accent-foreground'
                   : 'cursor-default'
               }`}
             >
@@ -168,7 +168,7 @@ export function WorkspaceWorkbenchList({
                   />
                 )}
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent" />
               <div className="relative z-10 flex items-start justify-between p-2">
                 {isActive && (
                   <div
@@ -177,7 +177,7 @@ export function WorkspaceWorkbenchList({
                   />
                 )}
               </div>
-              <div className="relative z-10 p-2 text-white">
+              <div className="relative z-10 p-2 text-foreground">
                 <div
                   className={`w-full min-w-0 flex-1 overflow-hidden truncate font-semibold ${
                     size === 'small' ? 'text-xs' : 'text-sm'
@@ -186,7 +186,7 @@ export function WorkspaceWorkbenchList({
                   {appNames}
                 </div>
                 {workspaceName && !workspaceId && (
-                  <p className="truncate text-xs font-light text-gray-300">
+                  <p className="truncate text-xs font-light text-muted-foreground">
                     {workspaceName}
                   </p>
                 )}
