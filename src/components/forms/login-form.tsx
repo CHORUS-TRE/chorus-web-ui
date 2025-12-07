@@ -153,7 +153,7 @@ export default function LoginForm() {
             {internalLogin && (
               <>
                 <div className="grid gap-4 text-center">
-                  <p className="text-muted">
+                  <p className="text-muted-foreground">
                     Enter your username below to login to your account
                   </p>
                 </div>
@@ -234,7 +234,7 @@ export default function LoginForm() {
                     <span className="w-full border-t" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted">
+                    <span className="bg-background px-2 text-muted-foreground">
                       {internalLogin
                         ? 'Or choose an account'
                         : 'Choose an account'}

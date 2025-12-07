@@ -57,16 +57,16 @@ export function WebAppCard({ webapp }: WebAppCardProps) {
               </AvatarFallback>
             </Avatar>
           )}
-          <CardTitle className="flex items-center gap-2 truncate text-ellipsis pr-2">
+          <CardTitle className="flex items-center gap-2 truncate text-ellipsis pr-2 text-muted-foreground">
             {webapp.name}
           </CardTitle>
         </div>
-        <CardDescription className="mb-3 truncate text-xs text-muted">
+        <CardDescription className="mb-3 truncate text-xs text-muted-foreground">
           {new URL(webapp.url).hostname}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="text-sm text-muted">
+        <div className="text-sm text-muted-foreground">
           {webapp.description || 'External web application'}
         </div>
       </CardContent>

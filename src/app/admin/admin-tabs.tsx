@@ -30,7 +30,11 @@ export function AdminTabs() {
         {routes.map(
           (route) =>
             route.authorized && (
-              <TabsTrigger key={route.href} value={route.href}>
+              <TabsTrigger
+                key={route.href}
+                value={route.href}
+                className="text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
+              >
                 {route.label}
               </TabsTrigger>
             )

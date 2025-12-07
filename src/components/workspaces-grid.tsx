@@ -97,7 +97,7 @@ export default function WorkspacesGrid({
 
                     {/* Users, Sessions and Created - below title */}
                     <div className="mt-3 flex flex-col gap-0.5 text-xs">
-                      <span className="flex items-center gap-3 text-muted">
+                      <span className="flex items-center gap-3 text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Users className="h-3 w-3 shrink-0" />
                           <span>
@@ -111,7 +111,7 @@ export default function WorkspacesGrid({
                           <span>{workspace?.workbenchCount || 0}</span>
                         </span>
                       </span>
-                      <span className="text-xs text-muted">
+                      <span className="text-xs text-muted-foreground">
                         Created {formatDistanceToNow(workspace.createdAt)} ago
                       </span>
                     </div>

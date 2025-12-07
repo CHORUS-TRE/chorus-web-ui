@@ -5,7 +5,6 @@ import {
   ChevronUp,
   GaugeCircle,
   Globe,
-  HelpCircle,
   LaptopMinimal,
   LogOut,
   Package,
@@ -137,7 +136,7 @@ function UserProfileSection() {
     .sort((a, b) => a.localeCompare(b)) // alphabetical order
 
   return (
-    <div className="border-t border-muted/60 p-2 text-muted">
+    <div className="border-t border-muted/60 p-2 text-muted-foreground">
       <div className="relative">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -157,7 +156,7 @@ function UserProfileSection() {
           {/* Chevron */}
           <ChevronUp
             className={cn(
-              'h-4 w-4 shrink-0 text-muted transition-transform',
+              'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
               menuOpen && 'rotate-180'
             )}
           />
@@ -204,23 +203,6 @@ function UserProfileSection() {
         )}
       </div>
     </div>
-  )
-}
-
-/**
- * Help button - toggles right sidebar
- */
-function HelpButton() {
-  const { toggleRightSidebar } = useUserPreferences()
-
-  return (
-    <button
-      onClick={toggleRightSidebar}
-      className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-    >
-      <HelpCircle className="h-4 w-4" />
-      Help
-    </button>
   )
 }
 
@@ -410,9 +392,6 @@ function SidebarContent({
             Settings
           </Link>
         )}
-
-        {/* Help */}
-        <HelpButton />
       </nav>
 
       {/* User profile section at bottom */}

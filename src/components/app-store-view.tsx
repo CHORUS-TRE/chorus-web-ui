@@ -105,22 +105,22 @@ export function AppStoreView() {
                 <TabsList className="bg-background">
                   <TabsTrigger
                     value="my-apps"
-                    className="data-[state=active]:text-primary-foreground"
+                    className="text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
                   >
                     Applications
                     {filteredApps && filteredApps.length > 0 && (
-                      <span className="ml-1 rounded-full">
+                      <span className="ml-1 rounded-full text-muted-foreground">
                         ({filteredApps.length})
                       </span>
                     )}
                   </TabsTrigger>
                   <TabsTrigger
                     value="webapps"
-                    className="data-[state=active]:text-primary-foreground"
+                    className="text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
                   >
                     Services
                     {filteredWebApps.length > 0 && (
-                      <span className="ml-1 rounded-full">
+                      <span className="ml-1 rounded-full text-muted-foreground">
                         ({filteredWebApps.length})
                       </span>
                     )}
@@ -152,7 +152,7 @@ export function AppStoreView() {
                 ) : searchQuery ? (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
                     <Search className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                    <p className="text-lg text-muted">
+                    <p className="text-lg text-muted-foreground">
                       No applications match &quot;{searchQuery}&quot;
                     </p>
                     <Button
@@ -165,7 +165,9 @@ export function AppStoreView() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
-                    <p className="text-lg text-muted">No app available.</p>
+                    <p className="text-lg text-muted-foreground">
+                      No app available.
+                    </p>
                     {canManageAppStore && (
                       <Button
                         onClick={() => setShowCreateDialog(true)}
@@ -203,8 +205,8 @@ export function AppStoreView() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
-                    <Globe className="mb-4 h-12 w-12 text-muted" />
-                    <p className="text-lg text-muted">
+                    <Globe className="mb-4 h-12 w-12 text-muted-foreground" />
+                    <p className="text-lg text-muted-foreground">
                       No services configured.
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">

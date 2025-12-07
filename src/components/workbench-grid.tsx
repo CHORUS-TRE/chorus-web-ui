@@ -110,7 +110,7 @@ export default function WorkbenchGrid({
                         {users?.find((u) => u.id === workbench.userId)
                           ?.lastName || '-'} */}
                       </span>
-                      <span className="block text-xs text-muted">
+                      <span className="block text-xs text-muted-foreground">
                         Created{' '}
                         {formatDistanceToNow(workbench.createdAt || new Date())}{' '}
                         ago

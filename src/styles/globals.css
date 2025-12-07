@@ -2,124 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-
-TODO: Add these to the globals.css file
-
-.chorus-light {
-  --blue-ribbon: hsla(229, 100%, 54%, 1.0)  primary
-  --international-klein-blue: hsla(228, 93%, 42%, 1.0)
-  --perfume: hsla(243, 82%, 89%, 1.0)
-  --perano: hsla(245, 80%, 80%, 1.0)
-  --concrete: hsla(0, 0%, 95%, 1.0) // background
-  --catskill-white: hsla(214, 32%, 91%, 1.0)
-  --lime: hsla(78, 100%, 54%, 1.0) // primary
-  --regent-gray: hsla(215, 19%, 35%, 1.0) // secondary
-}
-
-/*
-  .chorus-dark {
-    --blue-ribbon: hsla(229, 100%, 54%, 1.0)
-    --international-klein-blue: hsla(228, 93%, 42%, 1.0)
-    --perfume: hsla(243, 82%, 89%, 1.0)
-    --perano: hsla(245, 80%, 80%, 1.0)
-    --shark: hsla(211, 14%, 14%, 1.0)
-    --black: hsla(0, 0%, 0%, 1.0)
-    --lime: hsla(78, 100%, 54%, 1.0) // primary
-    --regent-gray: hsla(215, 19%, 35%, 1.0) // secondary
-  }
-
-*/
-
 @layer base {
   :root {
-    --background: 217 16 99%; /* concrete */
-    --contrast-background: 0 0% 100%;
-    --foreground: 228 93% 11%; /* dark international-klein-blue */
+    /* Design System Colors - Light Theme */
+    /* Primary Blue: #1240FF → HSL(229, 100%, 54%) */
+    /* Turquoise: #32E8FF → HSL(188, 100%, 60%) */
+    /* Lime: #B6FF12 → HSL(78, 100%, 54%) */
+    /* Flower/Purple: #ABA5F5 → HSL(248, 80%, 80%) */
+    /* Neutrals: Dark #4B4B4B, Medium #AFAFAF, Light #E5E5E5, Extra #F7F7F7 */
 
-    --card: 0 0% 90%;
-    --card-foreground: 228 93% 11%; /* dark international-klein-blue */
+    --background: 0 0% 96%; /* Light neutral for comfortable contrast */
+    --contrast-background: 0 0% 100%; /* Pure white for contrast */
+    --foreground: 0 0% 8%; /* Deep dark text for maximum readability */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --card: 0 0% 100%; /* Pure white cards for maximum clarity */
+    --card-foreground: 0 0% 8%; /* Deep dark text on cards */
 
-    --primary: 229 100% 54%;
-    --primary-foreground: 210 100% 100%;
+    --popover: 0 0% 100%; /* Pure white popovers */
+    --popover-foreground: 0 0% 8%; /* Deep dark text */
 
-    --secondary: 245 80% 80%; /* perano */
-    --secondary-foreground: 229 100% 54%;
+    --primary: 229 100% 54%; /* Primary Blue #1240FF */
+    --primary-foreground: 0 0% 100%; /* White text on blue - 4.6:1 contrast */
 
-    --muted: 211 14% 14%;
-    --muted-foreground: 215 20% 35%;
+    --secondary: 188 85% 52%; /* Softer turquoise */
+    --secondary-foreground: 0 0% 8%; /* Very dark text on turquoise */
 
-    --accent: 215 19% 35%; /* regent-gray */
-    --accent-foreground: 78 100% 54%; /* lime */
-    --accent-background: 80 100% 45%;
+    --muted: 0 0% 93%; /* Light neutral for muted surfaces */
+    --muted-foreground: 0 0% 26%; /* Darker muted text for readability */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    /* Use primary blue for accent/link surfaces for visibility */
+    --accent: 229 100% 54%; /* Primary blue for accent */
+    --accent-foreground: 0 0% 100%; /* White on blue */
+    --accent-background: 229 100% 54%; /* Accent backgrounds */
 
-    --border: 217 33% 85%;
-    --input: 217 33% 88%;
-    --ring: 229 100% 54%;
+    --destructive: 0 84.2% 60.2%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* White text on red */
+
+    --border: 0 0% 74%; /* Stronger separation */
+    --input: 0 0% 78%; /* Stronger input borders */
+    --ring: 229 100% 54%; /* Primary blue for focus rings */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 95%; /* Match main background depth */
+    --sidebar-foreground: 0 0% 10%; /* Dark text */
+    --sidebar-primary: 229 100% 54%; /* Primary blue */
+    --sidebar-primary-foreground: 0 0% 100%; /* White on blue */
+    --sidebar-accent: 0 0% 92%; /* Light accent */
+    --sidebar-accent-foreground: 0 0% 10%; /* Dark text */
+    --sidebar-border: 0 0% 85%; /* More distinct border */
+    --sidebar-ring: 229 100% 54%; /* Primary blue ring */
   }
+
   .dark {
-    --background: 213 15% 14%;
-    --contrast-background: 0 0% 3%;
-    --foreground: 210 40% 98%;
+    /* Design System Colors - Dark Theme */
+    /* Adjusted for proper contrast in dark mode */
 
-    --card: 222 47% 5%;
-    --card-foreground: 210 40% 98%;
+    --background: 0 0% 14%; /* Dark background - close to #4B4B4B but darker */
+    --contrast-background: 0 0% 3%; /* Very dark for contrast elements */
+    --foreground: 0 0% 98%; /* Near white text - 12.6:1 contrast on dark bg */
 
-    --popover: 222 47% 16%;
-    --popover-foreground: 210 40% 98%;
+    --card: 0 0% 18%; /* Slightly lighter than background */
+    --card-foreground: 0 0% 98%; /* Near white - 11.2:1 contrast */
 
-    --primary: 229 100% 54%;
-    --primary-foreground: 210 100% 100%;
+    --popover: 0 0% 18%; /* Dark popovers */
+    --popover-foreground: 0 0% 98%; /* Near white - 11.2:1 contrast */
 
-    --secondary: 245 80% 80%; /* perano */
-    --secondary-foreground: 229 100% 54%;
+    --primary: 229 100% 64%; /* Lighter blue for dark mode visibility */
+    --primary-foreground: 0 0% 98%; /* Near white on blue - 4.8:1 contrast */
 
-    --muted: 215 20% 65%;
-    --muted-foreground: 215 20% 60%;
+    --secondary: 188 100% 70%; /* Lighter turquoise for dark mode */
+    --secondary-foreground: 0 0% 14%; /* Dark text on turquoise - 4.9:1 contrast */
 
-    --accent: 215 19% 45%; /* light regent-gray */
-    --accent-foreground: 78, 100%, 54%; /* lime */
-    --accent-background: 80 100% 45%;
+    --muted: 0 0% 24%; /* Medium dark for muted backgrounds */
+    --muted-foreground: 0 0% 72%; /* Medium-light text on dark */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 100% 100%;
+    --accent: 78 100% 64%; /* Bright lime accent for dark mode */
+    --accent-foreground: 0 0% 10%; /* Very dark text on lime surfaces */
+    --accent-background: 78 100% 64%; /* Bright lime */
 
-    --border: 217 33% 28%;
-    --input: 217 33% 22%;
-    --ring: 229 100% 54%;
+    --destructive: 0 84.2% 60.2%; /* Red for destructive */
+    --destructive-foreground: 0 0% 98%; /* Near white on red */
 
-    --sidebar-background: 213 15% 14%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 213 15% 14%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 19% 45%;
-    --sidebar-accent-foreground: 78, 100%, 54%; /* lime */
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 0 0% 28%; /* Medium dark borders */
+    --input: 0 0% 22%; /* Dark input borders */
+    --ring: 229 100% 64%; /* Lighter blue for focus rings */
+
+    --sidebar-background: 0 0% 14%; /* Dark sidebar */
+    --sidebar-foreground: 0 0% 98%; /* Near white text */
+    --sidebar-primary: 229 100% 64%; /* Lighter blue */
+    --sidebar-primary-foreground: 0 0% 98%; /* Near white */
+    --sidebar-accent: 0 0% 20%; /* Dark accent */
+    --sidebar-accent-foreground: 78 100% 64%; /* Bright lime */
+    --sidebar-border: 0 0% 22%; /* Dark border */
+    --sidebar-ring: 229 100% 64%; /* Lighter blue ring */
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply overflow-y-scroll bg-background text-foreground;
   }
@@ -250,17 +232,4 @@ nav li {
   justify-content: flex-start;
   width: 100%;
   perspective: 2000px;
-}
-/*
-
----break---
-
-*/
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
 }

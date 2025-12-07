@@ -3,6 +3,7 @@ import { formatDistanceToNow } from 'date-fns'
 import {
   FlaskConical,
   Globe,
+  HelpCircle,
   Info,
   LaptopMinimal,
   Maximize,
@@ -41,6 +42,7 @@ import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
 import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
@@ -111,6 +113,22 @@ export function Header() {
         iframe.requestFullscreen()
       }
     }
+  }
+
+  /**
+   * Help button - toggles right sidebar
+   */
+  function HelpButton() {
+    const { toggleRightSidebar } = useUserPreferences()
+
+    return (
+      <button
+        onClick={toggleRightSidebar}
+        className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+      >
+        <HelpCircle className="h-4 w-4" />
+      </button>
+    )
   }
 
   return (
@@ -420,17 +438,18 @@ export function Header() {
           )}
 
           <ThemeToggle />
-
           {canManageUsers && (
             <Button
               variant="ghost"
               onClick={() => router.push(`/lab`)}
               aria-label="Sandbox"
+              className="text-muted-foreground"
             >
               <FlaskConical className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">Lab</span>
             </Button>
           )}
+          <HelpButton />
         </div>
 
         <WorkbenchDeleteForm

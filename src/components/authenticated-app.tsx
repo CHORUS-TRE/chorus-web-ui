@@ -124,7 +124,7 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
           {isIFramePage ? (
             <>
               {/* Content takes full screen */}
-              <div className="fixed inset-0 top-11 z-20 bg-black/50">
+              <div className="fixed inset-0 top-11 z-20 bg-background/50 backdrop-blur-sm">
                 {children}
               </div>
 

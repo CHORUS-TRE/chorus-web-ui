@@ -62,7 +62,7 @@ export function UserTable() {
 
   return (
     <Table
-      className="text-white"
+      className="text-foreground"
       aria-label={`User management table with ${users.length} users`}
     >
       <caption className="sr-only">

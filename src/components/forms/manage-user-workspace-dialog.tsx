@@ -324,7 +324,7 @@ export function ManageUserWorkspaceDialog({
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-accent text-black hover:bg-accent/80"
+                    className="bg-accent text-accent-foreground hover:bg-accent/80"
                   >
                     {actionMode === 'update' ? 'Update Role' : 'Add Role'}
                   </Button>

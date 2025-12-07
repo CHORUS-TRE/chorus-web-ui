@@ -33,15 +33,6 @@ export default function LoginInfo() {
   return (
     <div className="hidden w-full flex-col items-center justify-center p-8 md:flex md:w-1/2">
       <div className="mt-8 flex flex-grow flex-col items-center justify-center">
-        <Image
-          src={defaultLogo}
-          alt={`${instanceConfig.name} Logo`}
-          width={320}
-          height={180}
-          className="mb-12 h-36 w-auto max-w-full"
-          priority
-        />
-
         {customLogo && (
           <Image
             src={customLogo}
@@ -53,16 +44,27 @@ export default function LoginInfo() {
           />
         )}
 
+        <Image
+          src={defaultLogo}
+          alt={`${instanceConfig.name} Logo`}
+          width={320}
+          height={180}
+          className={`mb-12 h-36 w-auto ${customLogo ? 'hidden' : 'max-w-full'} `}
+          priority
+        />
+
         <div className="text-center">
           <h1 className="mb-2 text-2xl font-bold">{instanceConfig.headline}</h1>
-          <p className="text-md mb-4 text-muted">{instanceConfig.tagline}</p>
+          <p className="text-md mb-4 text-muted-foreground">
+            {instanceConfig.tagline}
+          </p>
         </div>
       </div>
       <div className="flex w-full items-end justify-between gap-2">
         <div>
           <a
             href="https://www.chorus-tre.ch/en/"
-            className="mb-1 flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
+            className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="CHORUS Website"
@@ -72,7 +74,7 @@ export default function LoginInfo() {
           </a>
           <a
             href={instanceConfig.website}
-            className="mb-1 flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
+            className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${instanceConfig.name} website`}
@@ -82,7 +84,7 @@ export default function LoginInfo() {
           </a>
           <a
             href="https://github.com/CHORUS-TRE/"
-            className="flex items-center gap-2 text-xs font-medium text-muted underline hover:text-accent"
+            className="flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GITHUB"
@@ -91,7 +93,7 @@ export default function LoginInfo() {
             <span>Github</span>
           </a>
         </div>
-        <p className="text-xs text-muted">
+        <p className="text-xs text-muted-foreground">
           Web-UI Version: {packageInfo.version}
         </p>
       </div>

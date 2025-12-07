@@ -233,7 +233,7 @@ export default function CHORUSDashboard() {
                         className="block w-full"
                         variant="rounded"
                       >
-                        <div className="w-full rounded-2xl bg-card p-4 text-card-foreground shadow-sm transition-all hover:bg-accent/10">
+                        <div className="w-full rounded-2xl bg-card/50 p-4 text-card-foreground shadow-sm transition-all">
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-3">
                               {workspace.image ? (
@@ -245,14 +245,14 @@ export default function CHORUSDashboard() {
                                   className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
                                 />
                               ) : (
-                                <Package className="h-10 w-10 flex-shrink-0 text-muted" />
+                                <Package className="h-10 w-10 flex-shrink-0 text-muted-foreground" />
                               )}
                             </div>
                             <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-muted">
+                              <h4 className="font-semibold text-muted-foreground">
                                 {workspace.name}
                               </h4>
-                              <p className="mt-1 text-xs text-muted">
+                              <p className="mt-1 text-xs text-muted-foreground">
                                 Created{' '}
                                 {formatDistanceToNow(
                                   workspace?.createdAt || new Date()
