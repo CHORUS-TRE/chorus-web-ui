@@ -14,9 +14,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Workbench } from '@/domain/model'
-import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
 

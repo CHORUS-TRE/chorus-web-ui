@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
-import { User, Workspace } from '@/domain/model'
+import { User, WorkspaceWithDev } from '@/domain/model'
 import { useInstanceTheme } from '@/hooks/use-instance-theme'
-import { useAppState } from '@/providers/app-state-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -48,7 +48,7 @@ export default function WorkspaceTable({
   description,
   onUpdate
 }: {
-  workspaces: Workspace[] | undefined
+  workspaces: WorkspaceWithDev[] | undefined
   user: User | undefined
   title?: string
   description?: string
@@ -56,7 +56,7 @@ export default function WorkspaceTable({
 }) {
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
-  const { refreshWorkspaces } = useAppState()
+  const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
 
   useEffect(() => {
     if (deleted) {
@@ -105,7 +105,7 @@ export default function WorkspaceTable({
     </>
   )
 
-  const TableRow = ({ workspace }: { workspace?: Workspace }) => {
+  const TableRow = ({ workspace }: { workspace?: WorkspaceWithDev }) => {
     const [open, setOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
     const router = useRouter()
@@ -161,9 +161,9 @@ export default function WorkspaceTable({
               className="relative h-8 w-8 overflow-hidden rounded-md"
               style={{ background: getCardGradient(workspace?.name || '') }}
             >
-              {workspace?.image && (
+              {workspace?.dev?.image && (
                 <Image
-                  src={workspace.image}
+                  src={workspace.dev.image}
                   alt={workspace?.name || ''}
                   fill
                   className="object-cover"
@@ -182,7 +182,7 @@ export default function WorkspaceTable({
             </div>
           </TableCell>
           <TableCell className="p-1 text-center">
-            {workspace?.owner || '-'}
+            {workspace?.dev?.owner || workspace?.dev?.owner || '-'}
           </TableCell>
           <TableCell className="p-1 text-center">
             {workspace?.status && (
@@ -190,19 +190,19 @@ export default function WorkspaceTable({
             )}
           </TableCell>
           <TableCell className="p-1 text-center">
-            {workspace?.tag && (
+            {(workspace?.dev?.tag || workspace?.dev?.tag) && (
               <Badge variant="secondary" className="capitalize">
-                {workspace?.tag}
+                {workspace?.dev?.tag || workspace?.dev?.tag}
               </Badge>
             )}
           </TableCell>
           <TableCell className="p-1 text-center">
-            {workspace?.members
+            {workspace?.dev?.members
               ?.map((member) => `${member.firstName} ${member.lastName}`)
               ?.join(', ')}
           </TableCell>
           <TableCell className="p-1 text-center">
-            {workspace?.workbenchCount || 0}
+            {workspace?.dev?.workbenchCount || 0}
           </TableCell>
           {/* <TableCell className="p-1">
             {workspace?.files || 0}

@@ -112,7 +112,8 @@ export async function handleOAuthRedirect(
       return { error: 'No token received' }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
+    // TODO: Remove this after testing
+    // await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
 
     return response
   } catch (error) {

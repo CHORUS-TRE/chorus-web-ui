@@ -11,8 +11,8 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
 import { Button } from '~/components/button'
@@ -25,7 +25,8 @@ import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
 
 export default function WorkspacesPage() {
-  const { workspaces, refreshWorkspaces } = useAppState()
+  const workspaces = useAppState((state) => state.workspaces)
+  const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
   const { user } = useAuthentication()
   const { canCreateWorkspace } = useAuthorizationViewModel()
 
@@ -60,8 +61,8 @@ export default function WorkspacesPage() {
       }
 
       if (showCenter || showProject) {
-        const matchesCenter = showCenter && workspace.tag === 'center'
-        const matchesProject = showProject && workspace.tag === 'project'
+        const matchesCenter = showCenter && workspace.dev?.tag === 'center'
+        const matchesProject = showProject && workspace.dev?.tag === 'project'
 
         if (!matchesCenter && !matchesProject) return false
       }
@@ -76,11 +77,11 @@ export default function WorkspacesPage() {
         // Search by name, owner, tag
         const matchesBasic =
           workspace.name?.toLowerCase().includes(query) ||
-          workspace.owner?.toLowerCase().includes(query) ||
-          workspace.tag?.toLowerCase().includes(query)
+          workspace.dev?.owner?.toLowerCase().includes(query) ||
+          workspace.dev?.tag?.toLowerCase().includes(query)
 
         // Search by members firstName, lastName, username
-        const matchesMember = workspace.members?.some(
+        const matchesMember = workspace.dev?.members?.some(
           (member) =>
             member.firstName?.toLowerCase().includes(query) ||
             member.lastName?.toLowerCase().includes(query) ||

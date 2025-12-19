@@ -94,7 +94,6 @@ class UserApiDataSourceImpl implements UserDataSource {
 
   update(user: UserUpdateType): Promise<ChorusUpdateUserReply> {
     const chorusUser = toChorusUserUpdate(user)
-    throw new Error('Not yet implemented')
     return this.service.userServiceUpdateUser({
       body: {
         ...chorusUser,

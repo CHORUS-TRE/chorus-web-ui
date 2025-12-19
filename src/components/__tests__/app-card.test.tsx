@@ -9,8 +9,8 @@ import { render, screen } from '@testing-library/react'
 import { AppCard } from '../../components/app-card'
 import { AppState } from '../../domain/model/app'
 
-// Mock the app-state-context
-jest.mock('../../providers/app-state-provider', () => ({
+// Mock the app state store hook
+jest.mock('../../stores/app-state-store', () => ({
   useAppState: jest.fn().mockReturnValue({
     setNotification: jest.fn()
   })

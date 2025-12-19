@@ -6,12 +6,12 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 import { WorkspaceUpdateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { mockNotifications } from '~/data/data-source/mock-data/notifications'
-import { useAppState } from '~/providers/app-state-provider'
 
 export default function Layout({
   children
@@ -22,7 +22,8 @@ export default function Layout({
   const pathname = usePathname()
   const params = useParams<{ workspaceId: string }>()
   const { user } = useAuthentication()
-  const { workspaces, refreshWorkspaces } = useAppState()
+  const workspaces = useAppState((state) => state.workspaces)
+  const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
   const [openEdit, setOpenEdit] = useState(false)
   const workspace = workspaces?.find(
     (workspace) => workspace.id === params?.workspaceId
@@ -67,9 +68,9 @@ export default function Layout({
       {/* Workspace name */}
       <div className="flex w-full flex-grow items-center justify-start">
         <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
-          {workspace?.image ? (
+          {workspace?.dev?.image ? (
             <Image
-              src={workspace.image}
+              src={workspace.dev.image}
               alt={workspace.name || 'Workspace'}
               width={36}
               height={36}
@@ -105,7 +106,8 @@ export default function Layout({
         </div>
       </div>
       <p className="text-md mb-4 text-xs italic text-muted-foreground">
-        Project ID: {workspace?.id} | Project owner: {workspace?.owner || '-'}
+        Project ID: {workspace?.id} | Project owner:{' '}
+        {workspace?.dev?.owner || '-'}
       </p>
       <Tabs
         value={activeTab}

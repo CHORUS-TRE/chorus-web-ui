@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 
-import { useAppState } from '@/providers/app-state-provider'
+import { useAppState } from '@/stores/app-state-store'
 import WorkbenchTable from '~/components/workbench-table'
 
 export default function SessionPage() {

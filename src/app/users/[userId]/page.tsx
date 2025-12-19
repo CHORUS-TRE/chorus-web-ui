@@ -27,8 +27,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { useAppState } from '@/stores/app-state-store'
 import { RoleHoverCard } from '~/components/role-hover-card'
-import { useAppState } from '~/providers/app-state-provider'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserProfile() {

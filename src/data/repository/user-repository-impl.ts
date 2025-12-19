@@ -99,14 +99,6 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      const workspaces = await workspaceList()
-      const isMain = workspaces?.data?.find(
-        (w) => w.isMain && w.userId === userResult.data.id
-      )
-      if (isMain) {
-        userResult.data.workspaceId = isMain.id
-      }
-
       return { data: userResult.data }
     } catch (error) {
       return {
@@ -178,7 +170,7 @@ export class UserRepositoryImpl implements UserRepository {
 
   async update(user: UserUpdateType): Promise<Result<User>> {
     try {
-      throw new Error('Not implemented')
+      // throw new Error('Not implemented')
       const response = await this.dataSource.update(user)
       const userResult = UserSchema.safeParse(response.result?.user)
 

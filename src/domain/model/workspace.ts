@@ -1,7 +1,11 @@
 import { z } from 'zod'
 
 import { UserSchema } from './user'
-import { WorkspaceConfigSchema } from './workspace-config'
+import {
+  NetworkPolicyEnum,
+  ResourcePresetEnum,
+  WorkspaceConfigSchema
+} from './workspace-config'
 
 export enum WorkspaceState {
   ACTIVE = 'active',
@@ -10,20 +14,8 @@ export enum WorkspaceState {
   UNKNOWN = ''
 }
 
-// future fields, implemented in dev store
-export const WorkspaceMetaSchema = z.object({
-  image: z.string().optional(),
-  tag: z.enum(['center', 'project']).optional(),
-  owner: z.string().optional(),
-  memberCount: z.number().optional(),
-  members: z.array(UserSchema).optional(),
-  workbenchCount: z.number().optional(),
-  files: z.number().optional(),
-  // Workspace configuration (stored in DevStore)
-  config: WorkspaceConfigSchema.optional()
-})
-
-export const WorkspaceSchema = WorkspaceMetaSchema.extend({
+// Workspace conforming to API (no DevStore enrichments)
+export const WorkspaceSchema = z.object({
   id: z.string(),
   tenantId: z.string(),
   userId: z.string(),
@@ -53,6 +45,48 @@ export const WorkspaceUpdateSchema = WorkspaceCreateSchema.extend({
   id: z.string()
 })
 
+// DevStore enrichments + computed for UI
+export const WorkspaceDevSchema = z.object({
+  // DevStore fields
+  image: z.union([z.any(), z.null()]).optional(),
+  tag: z.enum(['center', 'project']).default('project'),
+  config: WorkspaceConfigSchema.optional(),
+
+  // Computed fields (UI)
+  owner: z.string().optional(),
+  memberCount: z.number().default(0),
+  members: z.array(UserSchema).optional(),
+  workbenchCount: z.number().default(0),
+  files: z.number().default(0)
+})
+
+export const WorkspaceWithDevSchema = WorkspaceSchema.extend({
+  dev: WorkspaceDevSchema.optional()
+})
+
+// Schema for validating DevStore fields from forms
+export const WorkspaceDevFormSchema = z.object({
+  image: z.union([z.any(), z.null()]).optional(),
+  tag: z.enum(['center', 'project']).optional(),
+  descriptionMarkdown: z.string().optional(),
+  network: NetworkPolicyEnum.optional(),
+  allowCopyPaste: z.boolean().optional(),
+  resourcePreset: ResourcePresetEnum.optional(),
+  gpu: z.number().int().min(0).optional(),
+  cpu: z.string().optional(),
+  memory: z.string().optional(),
+  coldStorageEnabled: z.boolean().optional(),
+  coldStorageSize: z.string().optional(),
+  hotStorageEnabled: z.boolean().optional(),
+  hotStorageSize: z.string().optional(),
+  serviceGitlab: z.boolean().optional(),
+  serviceK8s: z.boolean().optional(),
+  serviceHpc: z.boolean().optional()
+})
+
 export type Workspace = z.infer<typeof WorkspaceSchema>
+export type WorkspaceDev = z.infer<typeof WorkspaceDevSchema>
+export type WorkspaceWithDev = z.infer<typeof WorkspaceWithDevSchema>
 export type WorkspaceCreateType = z.infer<typeof WorkspaceCreateSchema>
 export type WorkspaceUpdatetype = z.infer<typeof WorkspaceUpdateSchema>
+export type WorkspaceDevFormType = z.infer<typeof WorkspaceDevFormSchema>

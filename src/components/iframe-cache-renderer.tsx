@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
 import { CachedIframe } from '@/domain/model'
-import { useAppState } from '@/providers/app-state-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { useAppState } from '@/stores/app-state-store'
 
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'

@@ -13,9 +13,9 @@ import {
 } from '@/components/card'
 import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useAppState } from '@/stores/app-state-store'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { User } from '~/domain/model/user'
-import { useAppState } from '~/providers/app-state-provider'
 import { listUsers } from '~/view-model/user-view-model'
 
 export default function UsersPage() {

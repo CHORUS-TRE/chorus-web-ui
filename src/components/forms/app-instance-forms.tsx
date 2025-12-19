@@ -23,7 +23,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
-import { useAppState } from '@/providers/app-state-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
 import { AppInstance, Result } from '~/domain/model'
 

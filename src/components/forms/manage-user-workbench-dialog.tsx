@@ -4,6 +4,7 @@ import { Plus, Trash2, UserPlus } from 'lucide-react'
 import { startTransition, useActionState } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useAppState } from '@/stores/app-state-store'
 import {
   workbenchAddUserRole,
   workbenchRemoveUserRole
@@ -34,7 +35,6 @@ import {
 } from '~/components/ui/table'
 import { Result } from '~/domain/model'
 import type { Role, User } from '~/domain/model/user'
-import { useAppState } from '~/providers/app-state-provider'
 import { getWorkbenchRoles } from '~/utils/schema-roles'
 import { listUsers } from '~/view-model/user-view-model'
 
