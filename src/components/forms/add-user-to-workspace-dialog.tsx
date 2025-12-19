@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { useAppState } from '@/stores/app-state-store'
 import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import {
@@ -34,7 +35,6 @@ import {
 } from '~/components/ui/select'
 import { Result } from '~/domain/model'
 import { User } from '~/domain/model/user'
-import { useAppState } from '~/providers/app-state-provider'
 import { getWorkspaceRoles } from '~/utils/schema-roles'
 import { listUsers } from '~/view-model/user-view-model'
 

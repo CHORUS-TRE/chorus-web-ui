@@ -24,14 +24,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { User, Workspace, WorkspaceConfig } from '@/domain/model'
-import { useAppState } from '@/providers/app-state-provider'
+import { User, WorkspaceConfig, WorkspaceWithDev } from '@/domain/model'
+import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 
 import { toast } from './hooks/use-toast'
 
 interface WorkspacesGridProps {
-  workspaces: Workspace[] | undefined
+  workspaces: WorkspaceWithDev[] | undefined
   user: User | undefined
   onUpdate?: () => void
 }
@@ -44,9 +44,10 @@ export default function WorkspacesGrid({
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
-  const { refreshWorkspaces } = useAppState()
+  const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
 
-  const isCenter = (workspace: Workspace) => workspace.tag === 'center'
+  const isCenter = (workspace: WorkspaceWithDev) =>
+    workspace.dev?.tag === 'center'
 
   return (
     <div
@@ -70,9 +71,9 @@ export default function WorkspacesGrid({
                 <div className="flex items-start gap-3">
                   {/* Left: Image or Icon (64px) */}
                   <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted/30">
-                    {workspace.image ? (
+                    {workspace.dev?.image ? (
                       <Image
-                        src={workspace.image}
+                        src={workspace.dev.image}
                         alt={workspace.name}
                         width={64}
                         height={64}
@@ -90,8 +91,11 @@ export default function WorkspacesGrid({
                   {/* Title + Users + Created */}
                   <div className="min-w-0 flex-1">
                     <CardTitle className="text-foreground">
-                      <span className="line-clamp-2 text-base font-semibold leading-tight">
+                      <span className="block text-base font-semibold leading-tight">
                         {workspace?.name}
+                      </span>
+                      <span className="text-base text-xs font-semibold">
+                        {workspace?.dev?.owner}
                       </span>
                     </CardTitle>
 
@@ -101,14 +105,14 @@ export default function WorkspacesGrid({
                         <span className="flex items-center gap-1">
                           <Users className="h-3 w-3 shrink-0" />
                           <span>
-                            {workspace?.memberCount ||
-                              workspace?.members?.length ||
+                            {workspace?.dev?.memberCount ||
+                              workspace?.dev?.members?.length ||
                               0}
                           </span>
                         </span>
                         <span className="flex items-center gap-1">
                           <LaptopMinimal className="h-3 w-3 shrink-0" />
-                          <span>{workspace?.workbenchCount || 0}</span>
+                          <span>{workspace?.dev?.workbenchCount || 0}</span>
                         </span>
                       </span>
                       <span className="text-xs text-muted-foreground">
@@ -120,8 +124,9 @@ export default function WorkspacesGrid({
 
                 {/* Description - full width below title */}
                 {(() => {
-                  const desc = (workspace.config as WorkspaceConfig | undefined)
-                    ?.descriptionMarkdown
+                  const desc = (
+                    workspace.dev?.config as WorkspaceConfig | undefined
+                  )?.descriptionMarkdown
                   return desc ? (
                     <div className="prose prose-sm prose-muted dark:prose-invert mt-3 line-clamp-6 max-w-none text-xs text-muted-foreground">
                       <ReactMarkdown>{desc}</ReactMarkdown>
@@ -144,7 +149,7 @@ export default function WorkspacesGrid({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 hover:bg-muted/50"
+                        className="h-8 w-8 text-muted-foreground hover:bg-muted/50"
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>

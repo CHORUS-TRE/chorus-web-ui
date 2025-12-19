@@ -3,9 +3,9 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { User } from '~/domain/model/user'
 import { listUsers } from '~/view-model/user-view-model'
 

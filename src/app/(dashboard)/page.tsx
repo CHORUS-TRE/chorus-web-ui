@@ -23,8 +23,8 @@ import React, { useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
-import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import {
   Card,
   CardContent,
@@ -44,7 +44,10 @@ import { WorkbenchStatus } from '~/domain/model'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 export default function CHORUSDashboard() {
-  const { workspaces, workbenches, appInstances, apps } = useAppState()
+  const workspaces = useAppState((state) => state.workspaces)
+  const workbenches = useAppState((state) => state.workbenches)
+  const appInstances = useAppState((state) => state.appInstances)
+  const apps = useAppState((state) => state.apps)
   const { user } = useAuthentication()
   const instanceConfig = useInstanceConfig()
   const [updatesTab, setUpdatesTab] = useState<'notifications' | 'activity'>(
@@ -64,7 +67,7 @@ export default function CHORUSDashboard() {
         (workspace) =>
           user?.rolesWithContext?.some(
             (role) => role.context.workspace === workspace.id
-          ) && workspace.tag !== 'center'
+          ) && workspace.dev?.tag !== 'center'
       ),
     [workspaces, user?.rolesWithContext]
   )
@@ -236,9 +239,9 @@ export default function CHORUSDashboard() {
                         <div className="w-full rounded-2xl bg-card/50 p-4 text-card-foreground shadow-sm transition-all">
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-3">
-                              {workspace.image ? (
+                              {workspace.dev?.image ? (
                                 <Image
-                                  src={workspace.image}
+                                  src={workspace.dev.image}
                                   alt={workspace.name}
                                   width={32}
                                   height={32}

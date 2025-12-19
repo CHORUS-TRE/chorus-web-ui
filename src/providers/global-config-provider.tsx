@@ -11,8 +11,8 @@ import { useDevStoreCache } from '@/stores/dev-store-cache'
  * This ensures that the login page and other public pages can display
  * the instance branding.
  *
- * This component should be placed BEFORE AppStateProvider in the provider
- * hierarchy, and after ThemeProvider.
+ * This component should be placed before authentication/authorization providers
+ * and after ThemeProvider.
  *
  * Components access the config via hooks:
  * - useInstanceConfig() - full config (name, headline, tagline, etc.)

@@ -34,8 +34,8 @@ import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { mockRecentActivity } from '@/data/data-source/chorus-api/mock-data/activity'
 import { mockNotifications } from '@/data/data-source/chorus-api/mock-data/notifications'
-import { useAppState } from '@/providers/app-state-provider'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { formatFileSize } from '@/utils/format-file-size'
 import { useFileSystem } from '~/hooks/use-file-system'
 
@@ -355,16 +355,16 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardContent>
               <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
-                  {workspace?.members
-                    ?.filter((user) =>
-                      user.rolesWithContext?.some(
+                  {workspace?.dev?.members
+                    ?.filter((member) =>
+                      member.rolesWithContext?.some(
                         (role) =>
                           role.context.workspace === workspaceId &&
                           role.name.startsWith('Workspace')
                       )
                     )
-                    .map((user) => {
-                      const roleInWorkspace = user.rolesWithContext?.find(
+                    .map((member) => {
+                      const roleInWorkspace = member.rolesWithContext?.find(
                         (role) => role.context.workspace === workspaceId
                       )
                       let roleName = roleInWorkspace?.name
@@ -375,17 +375,17 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                       return (
                         <div
                           className="flex items-center justify-between gap-4 text-muted-foreground"
-                          key={`team-${user.id}`}
+                          key={`team-${member.id}`}
                         >
                           <div className="flex items-center gap-4">
                             <Avatar className="h-6 w-6 text-foreground">
                               <AvatarFallback>
-                                {user.firstName[0]?.toUpperCase()}{' '}
+                                {member.firstName[0]?.toUpperCase()}{' '}
                               </AvatarFallback>
                             </Avatar>
                             <div>
                               <p className="text-sm">
-                                {user.firstName} {user.lastName}
+                                {member.firstName} {member.lastName}
                               </p>
                             </div>
                           </div>

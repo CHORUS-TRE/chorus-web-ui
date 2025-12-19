@@ -1,7 +1,4 @@
-import { env } from 'next-runtime-env'
-
-import { DevStoreDataSourceImpl, WorkspaceDataSource } from '~/data/data-source'
-import { DevStoreRepositoryImpl } from '~/data/repository'
+import { WorkspaceDataSource } from '~/data/data-source'
 import {
   Result,
   Workspace,
@@ -10,94 +7,13 @@ import {
 } from '~/domain/model'
 import { User } from '~/domain/model/user'
 import { WorkspaceSchema } from '~/domain/model/workspace'
-import {
-  WorkspaceConfig,
-  WorkspaceConfigSchema
-} from '~/domain/model/workspace-config'
 import { WorkspaceRepository } from '~/domain/repository'
-import { DevStoreGetWorkspaceEntry } from '~/domain/use-cases/dev-store/dev-store-get-workspace-entry'
-
-const WORKSPACE_CONFIG_KEY = 'config'
 
 export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   private dataSource: WorkspaceDataSource
 
   constructor(dataSource: WorkspaceDataSource) {
     this.dataSource = dataSource
-  }
-
-  private async augmentWorkspace(workspace: Workspace): Promise<Workspace> {
-    if (typeof window === 'undefined') return workspace
-
-    const cacheKey = `workspace_meta_${workspace.id}`
-    const cached = localStorage.getItem(cacheKey)
-
-    // check cache, if not, fetch.
-    if (cached) {
-      try {
-        const meta = JSON.parse(cached) as {
-          tag?: 'center' | 'project'
-          image?: string
-          config?: WorkspaceConfig
-        }
-        // Ensure default tag is 'project' if missing
-        if (!meta.tag) {
-          meta.tag = 'project'
-        }
-        return { ...workspace, ...meta }
-      } catch (e) {
-        console.error('Error parsing cached workspace meta', e)
-        localStorage.removeItem(cacheKey)
-      }
-    }
-
-    try {
-      const dataSource = new DevStoreDataSourceImpl(
-        env('NEXT_PUBLIC_API_URL') || ''
-      )
-      const repository = new DevStoreRepositoryImpl(dataSource)
-      const getEntry = new DevStoreGetWorkspaceEntry(repository)
-
-      const [imageResult, tagResult, configResult] = await Promise.all([
-        getEntry.execute(workspace.id, 'image'),
-        getEntry.execute(workspace.id, 'tag'),
-        getEntry.execute(workspace.id, WORKSPACE_CONFIG_KEY)
-      ])
-
-      const image = imageResult.data?.value
-      const tagValue = tagResult.data?.value
-      // Default to 'project' if tag is missing or invalid
-      const tag =
-        tagValue === 'center' || tagValue === 'project'
-          ? (tagValue as 'center' | 'project')
-          : 'project'
-
-      // Parse config if present
-      let config: WorkspaceConfig | undefined
-      if (configResult.data?.value) {
-        try {
-          const parsed = JSON.parse(configResult.data.value)
-          const validated = WorkspaceConfigSchema.safeParse(parsed)
-          if (validated.success) {
-            config = validated.data
-          }
-        } catch (e) {
-          console.error('Error parsing workspace config', e)
-        }
-      }
-
-      const meta = { image, tag, config }
-      localStorage.setItem(cacheKey, JSON.stringify(meta))
-
-      return {
-        ...workspace,
-        ...meta
-      }
-    } catch (error) {
-      console.error('Error fetching workspace meta', error)
-      // Even on error, return workspace with default tag
-      return { ...workspace, tag: 'project' }
-    }
   }
 
   async create(workspace: WorkspaceCreateType): Promise<Result<Workspace>> {
@@ -117,7 +33,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
         }
       }
 
-      return { data: await this.augmentWorkspace(workspaceResult.data) }
+      return { data: workspaceResult.data }
     } catch (error) {
       console.error('Error creating workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
@@ -131,7 +47,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return { error: 'Not found' }
       }
       const validatedData = WorkspaceSchema.parse(response.result.workspace)
-      return { data: await this.augmentWorkspace(validatedData) }
+      return { data: validatedData }
     } catch (error) {
       console.error('Error getting workspace', error)
       return { error: error instanceof Error ? error.message : String(error) }
@@ -157,10 +73,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       const validatedData = response.result.workspaces.map((w) =>
         WorkspaceSchema.parse(w)
       )
-      const augmentedData = await Promise.all(
-        validatedData.map((w) => this.augmentWorkspace(w))
-      )
-      return { data: augmentedData }
+      return { data: validatedData }
     } catch (error) {
       console.error('Error listing workspaces', error)
       return {
@@ -172,10 +85,6 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async update(workspace: WorkspaceUpdatetype): Promise<Result<Workspace>> {
     try {
       await this.dataSource.update(workspace)
-      // Invalidate cache on update
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(`workspace_meta_${workspace.id}`)
-      }
       return this.get(workspace.id)
     } catch (error) {
       console.error('Error updating workspace', error)

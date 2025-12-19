@@ -15,7 +15,7 @@ import { useState } from 'react'
 import React from 'react'
 
 import { Link } from '@/components/link'
-import { useAppState } from '@/providers/app-state-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/card'
 import {

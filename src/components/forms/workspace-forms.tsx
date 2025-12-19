@@ -37,18 +37,14 @@ import {
 } from '@/components/ui/select'
 import {
   DEFAULT_WORKSPACE_CONFIG,
-  Workspace,
   WORKSPACE_RESOURCE_PRESETS,
   WorkspaceConfig,
-  WorkspaceCreateType,
-  WorkspaceState,
-  WorkspaceUpdatetype
+  WorkspaceWithDev
 } from '@/domain/model'
-import { useDevStoreCache } from '@/stores/dev-store-cache'
 import {
-  workspaceCreate,
+  workspaceCreateWithDev,
   workspaceDelete,
-  workspaceUpdate
+  workspaceUpdateWithDev
 } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import { Card, CardContent } from '~/components/card'
@@ -128,7 +124,7 @@ export function WorkspaceCreateForm({
   state: [open: boolean, setOpen: (open: boolean) => void]
   userId?: string
   children?: React.ReactNode
-  onSuccess?: (workspace: Workspace) => void
+  onSuccess?: (workspace: WorkspaceWithDev) => void
 }) {
   const [activeTab, setActiveTab] = useState('general')
 
@@ -168,29 +164,40 @@ export function WorkspaceCreateForm({
 
   async function onSubmit(data: WorkspaceFormData) {
     const formData = new FormData()
-    // Only append base workspace fields
-    const baseFields = [
-      'name',
-      'shortName',
-      'description',
-      'tenantId',
-      'userId',
-      'isMain'
-    ]
-    baseFields.forEach((key) => {
-      const value = data[key as keyof WorkspaceFormData]
-      if (value !== undefined && value !== null) {
-        formData.append(key, String(value))
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === undefined || value === null) return
+      if (value instanceof FileList) {
+        if (value.length > 0) {
+          formData.append(key, value[0])
+        }
+        return
       }
+      formData.append(key, String(value))
     })
-    formData.append('status', WorkspaceState.ACTIVE)
 
     startTransition(async () => {
-      const result = await workspaceCreate({}, formData)
+      const result = await workspaceCreateWithDev({}, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {
-          form.setError(issue.path[0] as keyof WorkspaceCreateType, {
+          let formField: keyof WorkspaceFormData
+          if (issue.path[0] === 'dev') {
+            if (issue.path.length === 2) {
+              formField = issue.path[1] as keyof WorkspaceFormData
+            } else if (issue.path.length >= 3 && issue.path[1] === 'config') {
+              formField = issue.path[
+                issue.path.length - 1
+              ] as keyof WorkspaceFormData
+            } else {
+              formField = issue.path[
+                issue.path.length - 1
+              ] as keyof WorkspaceFormData
+            }
+          } else {
+            formField = issue.path[0] as keyof WorkspaceFormData
+          }
+
+          form.setError(formField, {
             type: 'server',
             message: issue.message
           })
@@ -208,59 +215,6 @@ export function WorkspaceCreateForm({
       }
 
       if (result.data) {
-        const { setWorkspace, setWorkspaceConfig } = useDevStoreCache.getState()
-
-        if (result.data.id) {
-          // Save image
-          const imageFiles = data.image as FileList | undefined
-          if (imageFiles && imageFiles.length > 0) {
-            const file = imageFiles[0]
-            await new Promise<void>((resolve) => {
-              const reader = new FileReader()
-              reader.onloadend = async () => {
-                const imageBase64 = reader.result as string
-                await setWorkspace(result.data!.id, 'image', imageBase64)
-                resolve()
-              }
-              reader.readAsDataURL(file)
-            })
-          }
-
-          // Save tag
-          if (data.tag) {
-            await setWorkspace(result.data.id, 'tag', data.tag)
-          }
-
-          // Save config
-          const config: WorkspaceConfig = {
-            descriptionMarkdown: data.descriptionMarkdown ?? '',
-            security: {
-              network: data.network ?? 'closed',
-              allowCopyPaste: data.allowCopyPaste ?? false
-            },
-            resources: {
-              preset: data.resourcePreset ?? 'small',
-              gpu: data.gpu ?? 0,
-              cpu: data.cpu ?? '2',
-              memory: data.memory ?? '4Gi',
-              coldStorage: {
-                enabled: data.coldStorageEnabled ?? false,
-                size: data.coldStorageSize ?? '100Gi'
-              },
-              hotStorage: {
-                enabled: data.hotStorageEnabled ?? true,
-                size: data.hotStorageSize ?? '10Gi'
-              }
-            },
-            services: {
-              gitlab: data.serviceGitlab ?? false,
-              k8s: data.serviceK8s ?? false,
-              hpc: data.serviceHpc ?? false
-            }
-          }
-          await setWorkspaceConfig(result.data.id, config)
-        }
-
         toast({
           title: 'Success',
           description: 'Workspace created successfully'
@@ -396,16 +350,16 @@ export function WorkspaceUpdateForm({
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   trigger?: React.ReactNode
-  workspace?: Workspace
-  onSuccess?: (workspace: Workspace) => void
+  workspace?: WorkspaceWithDev
+  onSuccess?: (workspace: WorkspaceWithDev) => void
 }) {
   const [removeImage, setRemoveImage] = useState(false)
   const [activeTab, setActiveTab] = useState('general')
 
   // Get existing config or use defaults
   const getConfig = (): WorkspaceConfig => {
-    if (workspace?.config) {
-      return workspace.config as WorkspaceConfig
+    if (workspace?.dev?.config) {
+      return workspace.dev.config as WorkspaceConfig
     }
     return DEFAULT_WORKSPACE_CONFIG
   }
@@ -421,7 +375,7 @@ export function WorkspaceUpdateForm({
       isMain: workspace?.isMain || false,
       tenantId: '1',
       userId: workspace?.userId || '',
-      tag: workspace?.tag,
+      tag: workspace?.dev?.tag,
       descriptionMarkdown: existingConfig?.descriptionMarkdown || '',
       network: existingConfig?.security?.network || 'closed',
       allowCopyPaste: existingConfig?.security?.allowCopyPaste || false,
@@ -442,8 +396,8 @@ export function WorkspaceUpdateForm({
 
   useEffect(() => {
     if (open && workspace) {
-      const config = workspace.config
-        ? (workspace.config as WorkspaceConfig)
+      const config = workspace.dev?.config
+        ? (workspace.dev.config as WorkspaceConfig)
         : DEFAULT_WORKSPACE_CONFIG
       form.reset({
         id: workspace.id || '',
@@ -453,7 +407,7 @@ export function WorkspaceUpdateForm({
         isMain: workspace.isMain || false,
         tenantId: '1',
         userId: workspace.userId || '',
-        tag: workspace.tag,
+        tag: workspace.dev?.tag,
         descriptionMarkdown: config?.descriptionMarkdown || '',
         network: config?.security?.network || 'closed',
         allowCopyPaste: config?.security?.allowCopyPaste || false,
@@ -476,29 +430,43 @@ export function WorkspaceUpdateForm({
 
   async function onSubmit(data: WorkspaceFormData) {
     const formData = new FormData()
-    // Only append base workspace fields
-    const baseFields = [
-      'id',
-      'name',
-      'shortName',
-      'description',
-      'tenantId',
-      'userId',
-      'isMain'
-    ]
-    baseFields.forEach((key) => {
-      const value = data[key as keyof WorkspaceFormData]
-      if (value !== undefined && value !== null) {
-        formData.append(key, String(value))
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === undefined || value === null) return
+      if (value instanceof FileList) {
+        if (value.length > 0) {
+          formData.append(key, value[0])
+        }
+        return
       }
+      formData.append(key, String(value))
     })
+    if (removeImage) {
+      formData.append('removeImage', 'true')
+    }
 
     startTransition(async () => {
-      const result = await workspaceUpdate({}, formData)
+      const result = await workspaceUpdateWithDev({}, formData)
 
       if (result.issues) {
         result.issues.forEach((issue) => {
-          form.setError(issue.path[0] as keyof WorkspaceUpdatetype, {
+          let formField: keyof WorkspaceFormData
+          if (issue.path[0] === 'dev') {
+            if (issue.path.length === 2) {
+              formField = issue.path[1] as keyof WorkspaceFormData
+            } else if (issue.path.length >= 3 && issue.path[1] === 'config') {
+              formField = issue.path[
+                issue.path.length - 1
+              ] as keyof WorkspaceFormData
+            } else {
+              formField = issue.path[
+                issue.path.length - 1
+              ] as keyof WorkspaceFormData
+            }
+          } else {
+            formField = issue.path[0] as keyof WorkspaceFormData
+          }
+
+          form.setError(formField, {
             type: 'server',
             message: issue.message
           })
@@ -516,67 +484,6 @@ export function WorkspaceUpdateForm({
       }
 
       if (result.data) {
-        const { setWorkspace, deleteWorkspace, setWorkspaceConfig } =
-          useDevStoreCache.getState()
-
-        if (result.data.id) {
-          // Handle image
-          if (removeImage) {
-            await deleteWorkspace(result.data.id, 'image')
-          } else {
-            const imageFiles = data.image as FileList | undefined
-            if (imageFiles && imageFiles.length > 0) {
-              const file = imageFiles[0]
-              await new Promise<void>((resolve) => {
-                const reader = new FileReader()
-                reader.onloadend = async () => {
-                  const imageBase64 = reader.result as string
-                  await setWorkspace(result.data!.id, 'image', imageBase64)
-                  resolve()
-                }
-                reader.readAsDataURL(file)
-              })
-            }
-          }
-
-          // Save tag
-          if (data.tag) {
-            await setWorkspace(result.data.id, 'tag', data.tag)
-          }
-
-          // Save config
-          const config: WorkspaceConfig = {
-            descriptionMarkdown: data.descriptionMarkdown ?? '',
-            security: {
-              network: data.network ?? 'closed',
-              allowCopyPaste: data.allowCopyPaste ?? false
-            },
-            resources: {
-              preset: data.resourcePreset ?? 'small',
-              gpu: data.gpu ?? 0,
-              cpu: data.cpu ?? '2',
-              memory: data.memory ?? '4Gi',
-              coldStorage: {
-                enabled: data.coldStorageEnabled ?? false,
-                size: data.coldStorageSize ?? '100Gi'
-              },
-              hotStorage: {
-                enabled: data.hotStorageEnabled ?? true,
-                size: data.hotStorageSize ?? '10Gi'
-              }
-            },
-            services: {
-              gitlab: data.serviceGitlab ?? false,
-              k8s: data.serviceK8s ?? false,
-              hpc: data.serviceHpc ?? false
-            }
-          }
-          await setWorkspaceConfig(result.data.id, config)
-
-          // Invalidate localStorage cache
-          localStorage.removeItem(`workspace_meta_${result.data.id}`)
-        }
-
         toast({
           title: 'Success',
           description: 'Workspace updated successfully'
@@ -601,7 +508,7 @@ export function WorkspaceUpdateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4 grid w-full grid-cols-5">
+              <TabsList className="mb-4 grid grid-cols-5">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
                 <TabsTrigger value="resources">Resources</TabsTrigger>
@@ -675,7 +582,7 @@ function GeneralTabContent({
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any
-  workspace?: Workspace
+  workspace?: WorkspaceWithDev
   removeImage?: boolean
   setRemoveImage?: (value: boolean) => void
 }) {
@@ -759,17 +666,17 @@ function GeneralTabContent({
 
         <div className="space-y-2">
           <Label>Cover Image</Label>
-          {workspace?.image && !removeImage && (
+          {workspace?.dev?.image && !removeImage && (
             <div className="relative mb-2 h-32 w-full overflow-hidden rounded-md bg-muted/20">
               <Image
-                src={workspace.image}
+                src={workspace.dev.image}
                 alt="Workspace cover"
                 fill
                 className="object-cover"
               />
             </div>
           )}
-          {workspace?.image && setRemoveImage && (
+          {workspace?.dev?.image && setRemoveImage && (
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="remove-image"
@@ -1112,7 +1019,7 @@ function ResourcesTabContent({
   )
 }
 
-function TeamTabContent({ workspace }: { workspace?: Workspace }) {
+function TeamTabContent({ workspace }: { workspace?: WorkspaceWithDev }) {
   return (
     <Card className="border-none bg-transparent shadow-none">
       <CardContent className="p-0">
@@ -1121,9 +1028,9 @@ function TeamTabContent({ workspace }: { workspace?: Workspace }) {
           <h4 className="font-medium">Team Members</h4>
         </div>
 
-        {workspace?.members && workspace.members.length > 0 ? (
+        {workspace?.dev?.members && workspace.dev.members.length > 0 ? (
           <div className="space-y-2">
-            {workspace.members.map((member) => (
+            {workspace.dev.members.map((member) => (
               <div
                 key={member.id}
                 className="flex items-center justify-between rounded-lg border p-3"

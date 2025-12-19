@@ -3,7 +3,7 @@
 import { Database, Package } from 'lucide-react'
 
 import { Link } from '@/components/link'
-import { useAppState } from '@/providers/app-state-provider'
+import { useAppState } from '@/stores/app-state-store'
 import {
   Card,
   CardContent,

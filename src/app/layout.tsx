@@ -8,7 +8,7 @@ import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
 
-import { AppStateProvider } from '@/providers/app-state-provider'
+import { AppStateInitializer } from '@/components/app-state-initializer'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
@@ -64,14 +64,13 @@ export default async function RootLayout({
             <DynamicThemeApplicator />
             <AuthenticationProvider>
               <AuthorizationProvider>
-                <AppStateProvider>
-                  <IframeCacheProvider>
-                    {children}
-                    <IframeCacheRenderer />
-                    <IframeCleanupDialog />
-                    <IframeDebugPanel />
-                  </IframeCacheProvider>
-                </AppStateProvider>
+                <AppStateInitializer />
+                <IframeCacheProvider>
+                  {children}
+                  <IframeCacheRenderer />
+                  <IframeCleanupDialog />
+                  <IframeDebugPanel />
+                </IframeCacheProvider>
               </AuthorizationProvider>
             </AuthenticationProvider>
           </InstanceConfigInitializer>
