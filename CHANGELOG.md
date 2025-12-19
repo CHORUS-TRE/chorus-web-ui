@@ -1,3 +1,10 @@
+## [1.26.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.2...v1.26.3) (2025-12-19)
+
+
+### Bug Fixes
+
+* removed unuesed dependencies ([21068e5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/21068e5e49a6d4e4fdb612cdd06841a6842fe362))
+
 ## [1.26.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.1...v1.26.2) (2025-12-07)
 
 
