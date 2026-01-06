@@ -24,7 +24,7 @@ export const WorkspaceSchema = z.object({
   description: z.string().optional(),
   status: z.nativeEnum(WorkspaceState),
   isMain: z.boolean().optional(),
-  appInsanceIds: z.array(z.string()).optional(),
+  appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
   createdAt: z.date(),
   updatedAt: z.date()

@@ -44,7 +44,7 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
       'resetPassword',
       'createWorkspace',
       'listWorkspaces',
-      'listWorkbenchs',
+      'listWorkbenches',
       'listApps',
       'listAppInstances'
     ]
@@ -105,7 +105,7 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
     attributes: { workspace: 'x' },
     permissions: [
       'listAppInstances',
-      'listWorkbenchs',
+      'listWorkbenches',
       'updateWorkbench',
       'getWorkbench',
       'streamWorkbench',
@@ -129,7 +129,7 @@ export const SCHEMA_ROLES: EnhancedRole[] = [
     attributes: { workbench: 'x', workspace: 'x' },
     permissions: [
       'listAppInstances',
-      'listWorkbenchs',
+      'listWorkbenches',
       'getWorkbench',
       'streamWorkbench',
       'listUsers'
@@ -277,7 +277,7 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   deleteAppInstance: 'Remove app instances',
 
   // WorkbenchService
-  listWorkbenchs: 'View list of workbenches',
+  listWorkbenches: 'View list of workbenches',
   createWorkbench: 'Create new workbenches',
   updateWorkbench: 'Modify workbench settings',
   getWorkbench: 'View workbench details',

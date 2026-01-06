@@ -27,8 +27,8 @@ permissions:
       - workbench
 
   # WorkbenchService
-  - name: listWorkbenchs
-    description: This endpoint returns a list of workbenchs
+  - name: listWorkbenches
+    description: This endpoint returns a list of workbenches
     context:  []
   - name: createWorkbench
     description: This endpoint creates a workbench
@@ -249,7 +249,7 @@ roles:
     - resetPassword
     - createWorkspace
     - listWorkspaces
-    - listWorkbenchs
+    - listWorkbenches
     - listApps
     - listAppInstances
 
@@ -302,7 +302,7 @@ roles:
     - WorkspaceMaintainer
     permissions:
     - listAppInstances
-    - listWorkbenchs
+    - listWorkbenches
     - updateWorkbench
     - getWorkbench
     - streamWorkbench
@@ -324,7 +324,7 @@ roles:
     - Authenticated
     permissions:
     - listAppInstances
-    - listWorkbenchs
+    - listWorkbenches
     - getWorkbench
     - streamWorkbench
     - listUsers

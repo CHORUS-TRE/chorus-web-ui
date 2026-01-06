@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusNotificationContent } from './ChorusNotificationContent'
+import {
+  ChorusNotificationContentFromJSON,
+  ChorusNotificationContentFromJSONTyped,
+  ChorusNotificationContentToJSON
+} from './ChorusNotificationContent'
+
 /**
  *
  * @export
@@ -37,6 +44,12 @@ export interface ChorusNotification {
    * @memberof ChorusNotification
    */
   message?: string
+  /**
+   *
+   * @type {ChorusNotificationContent}
+   * @memberof ChorusNotification
+   */
+  content?: ChorusNotificationContent
   /**
    *
    * @type {Date}
@@ -75,6 +88,9 @@ export function ChorusNotificationFromJSONTyped(
     id: !exists(json, 'id') ? undefined : json['id'],
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
     message: !exists(json, 'message') ? undefined : json['message'],
+    content: !exists(json, 'content')
+      ? undefined
+      : ChorusNotificationContentFromJSON(json['content']),
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -95,6 +111,7 @@ export function ChorusNotificationToJSON(
     id: value.id,
     tenantId: value.tenantId,
     message: value.message,
+    content: ChorusNotificationContentToJSON(value.content),
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     readAt: value.readAt === undefined ? undefined : value.readAt.toISOString()

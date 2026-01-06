@@ -17,7 +17,7 @@ import type {
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
-  ChorusListWorkbenchsReply,
+  ChorusListWorkbenchesReply,
   ChorusManageUserRoleInWorkbenchReply,
   ChorusRemoveUserFromWorkbenchReply,
   ChorusUpdateWorkbenchReply,
@@ -32,8 +32,8 @@ import {
   ChorusDeleteWorkbenchReplyToJSON,
   ChorusGetWorkbenchReplyFromJSON,
   ChorusGetWorkbenchReplyToJSON,
-  ChorusListWorkbenchsReplyFromJSON,
-  ChorusListWorkbenchsReplyToJSON,
+  ChorusListWorkbenchesReplyFromJSON,
+  ChorusListWorkbenchesReplyToJSON,
   ChorusManageUserRoleInWorkbenchReplyFromJSON,
   ChorusManageUserRoleInWorkbenchReplyToJSON,
   ChorusRemoveUserFromWorkbenchReplyFromJSON,
@@ -52,7 +52,15 @@ export interface WorkbenchServiceCreateWorkbenchRequest {
   body: ChorusWorkbench
 }
 
+export interface WorkbenchServiceCreateWorkbench2Request {
+  body: ChorusWorkbench
+}
+
 export interface WorkbenchServiceDeleteWorkbenchRequest {
+  id: string
+}
+
+export interface WorkbenchServiceDeleteWorkbench2Request {
   id: string
 }
 
@@ -60,7 +68,20 @@ export interface WorkbenchServiceGetWorkbenchRequest {
   id: string
 }
 
-export interface WorkbenchServiceListWorkbenchsRequest {
+export interface WorkbenchServiceGetWorkbench2Request {
+  id: string
+}
+
+export interface WorkbenchServiceListWorkbenchesRequest {
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterWorkspaceIdsIn?: Array<string>
+}
+
+export interface WorkbenchServiceListWorkbenches2Request {
   paginationOffset?: number
   paginationLimit?: number
   paginationSortOrder?: string
@@ -75,12 +96,27 @@ export interface WorkbenchServiceManageUserRoleInWorkbenchRequest {
   body: WorkbenchServiceManageUserRoleInWorkbenchBody
 }
 
+export interface WorkbenchServiceManageUserRoleInWorkbench2Request {
+  id: string
+  userId: string
+  body: WorkbenchServiceManageUserRoleInWorkbenchBody
+}
+
 export interface WorkbenchServiceRemoveUserFromWorkbenchRequest {
   id: string
   userId: string
 }
 
+export interface WorkbenchServiceRemoveUserFromWorkbench2Request {
+  id: string
+  userId: string
+}
+
 export interface WorkbenchServiceUpdateWorkbenchRequest {
+  body: ChorusWorkbench
+}
+
+export interface WorkbenchServiceUpdateWorkbench2Request {
   body: ChorusWorkbench
 }
 
@@ -119,7 +155,7 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workbenchs`,
+        path: `/api/rest/v1/workbenches`,
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
@@ -149,6 +185,66 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
   }
 
   /**
+   * This endpoint creates a workbench
+   * Create a workbench
+   */
+  async workbenchServiceCreateWorkbench2Raw(
+    requestParameters: WorkbenchServiceCreateWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusCreateWorkbenchReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceCreateWorkbench2.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenchs`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ChorusWorkbenchToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusCreateWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint creates a workbench
+   * Create a workbench
+   */
+  async workbenchServiceCreateWorkbench2(
+    requestParameters: WorkbenchServiceCreateWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusCreateWorkbenchReply> {
+    const response = await this.workbenchServiceCreateWorkbench2Raw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
    * This endpoint deletes a workbench
    * Delete a workbench
    */
@@ -160,6 +256,63 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
       throw new runtime.RequiredError(
         'id',
         'Required parameter requestParameters.id was null or undefined when calling workbenchServiceDeleteWorkbench.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenches/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusDeleteWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint deletes a workbench
+   * Delete a workbench
+   */
+  async workbenchServiceDeleteWorkbench(
+    requestParameters: WorkbenchServiceDeleteWorkbenchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusDeleteWorkbenchReply> {
+    const response = await this.workbenchServiceDeleteWorkbenchRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint deletes a workbench
+   * Delete a workbench
+   */
+  async workbenchServiceDeleteWorkbench2Raw(
+    requestParameters: WorkbenchServiceDeleteWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusDeleteWorkbenchReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceDeleteWorkbench2.'
       )
     }
 
@@ -194,11 +347,11 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
    * This endpoint deletes a workbench
    * Delete a workbench
    */
-  async workbenchServiceDeleteWorkbench(
-    requestParameters: WorkbenchServiceDeleteWorkbenchRequest,
+  async workbenchServiceDeleteWorkbench2(
+    requestParameters: WorkbenchServiceDeleteWorkbench2Request,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusDeleteWorkbenchReply> {
-    const response = await this.workbenchServiceDeleteWorkbenchRaw(
+    const response = await this.workbenchServiceDeleteWorkbench2Raw(
       requestParameters,
       initOverrides
     )
@@ -217,6 +370,63 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
       throw new runtime.RequiredError(
         'id',
         'Required parameter requestParameters.id was null or undefined when calling workbenchServiceGetWorkbench.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenches/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusGetWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns a workbench
+   * Get a workbench
+   */
+  async workbenchServiceGetWorkbench(
+    requestParameters: WorkbenchServiceGetWorkbenchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusGetWorkbenchReply> {
+    const response = await this.workbenchServiceGetWorkbenchRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns a workbench
+   * Get a workbench
+   */
+  async workbenchServiceGetWorkbench2Raw(
+    requestParameters: WorkbenchServiceGetWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusGetWorkbenchReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceGetWorkbench2.'
       )
     }
 
@@ -251,11 +461,11 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
    * This endpoint returns a workbench
    * Get a workbench
    */
-  async workbenchServiceGetWorkbench(
-    requestParameters: WorkbenchServiceGetWorkbenchRequest,
+  async workbenchServiceGetWorkbench2(
+    requestParameters: WorkbenchServiceGetWorkbench2Request,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetWorkbenchReply> {
-    const response = await this.workbenchServiceGetWorkbenchRaw(
+    const response = await this.workbenchServiceGetWorkbench2Raw(
       requestParameters,
       initOverrides
     )
@@ -263,13 +473,87 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint returns a list of workbenchs
-   * List workbenchs
+   * This endpoint returns a list of workbenches
+   * List workbenches
    */
-  async workbenchServiceListWorkbenchsRaw(
-    requestParameters: WorkbenchServiceListWorkbenchsRequest,
+  async workbenchServiceListWorkbenchesRaw(
+    requestParameters: WorkbenchServiceListWorkbenchesRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusListWorkbenchsReply>> {
+  ): Promise<runtime.ApiResponse<ChorusListWorkbenchesReply>> {
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterWorkspaceIdsIn) {
+      queryParameters['filter.workspaceIdsIn'] =
+        requestParameters.filterWorkspaceIdsIn
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenches`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListWorkbenchesReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns a list of workbenches
+   * List workbenches
+   */
+  async workbenchServiceListWorkbenches(
+    requestParameters: WorkbenchServiceListWorkbenchesRequest = {},
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListWorkbenchesReply> {
+    const response = await this.workbenchServiceListWorkbenchesRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns a list of workbenches
+   * List workbenches
+   */
+  async workbenchServiceListWorkbenches2Raw(
+    requestParameters: WorkbenchServiceListWorkbenches2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListWorkbenchesReply>> {
     const queryParameters: any = {}
 
     if (requestParameters.paginationOffset !== undefined) {
@@ -317,19 +601,19 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
     )
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusListWorkbenchsReplyFromJSON(jsonValue)
+      ChorusListWorkbenchesReplyFromJSON(jsonValue)
     )
   }
 
   /**
-   * This endpoint returns a list of workbenchs
-   * List workbenchs
+   * This endpoint returns a list of workbenches
+   * List workbenches
    */
-  async workbenchServiceListWorkbenchs(
-    requestParameters: WorkbenchServiceListWorkbenchsRequest = {},
+  async workbenchServiceListWorkbenches2(
+    requestParameters: WorkbenchServiceListWorkbenches2Request = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusListWorkbenchsReply> {
-    const response = await this.workbenchServiceListWorkbenchsRaw(
+  ): Promise<ChorusListWorkbenchesReply> {
+    const response = await this.workbenchServiceListWorkbenches2Raw(
       requestParameters,
       initOverrides
     )
@@ -384,7 +668,7 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workbenchs/{id}/user/{userId}/role`
+        path: `/api/rest/v1/workbenches/{id}/user/{userId}/role`
           .replace(
             `{${'id'}}`,
             encodeURIComponent(String(requestParameters.id))
@@ -417,6 +701,93 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusManageUserRoleInWorkbenchReply> {
     const response = await this.workbenchServiceManageUserRoleInWorkbenchRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint manages a user\'s role in a workbench
+   * Manage a user\'s role in a workbench
+   */
+  async workbenchServiceManageUserRoleInWorkbench2Raw(
+    requestParameters: WorkbenchServiceManageUserRoleInWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusManageUserRoleInWorkbenchReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceManageUserRoleInWorkbench2.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workbenchServiceManageUserRoleInWorkbench2.'
+      )
+    }
+
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceManageUserRoleInWorkbench2.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenchs/{id}/user/{userId}/role`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: WorkbenchServiceManageUserRoleInWorkbenchBodyToJSON(
+          requestParameters.body
+        )
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusManageUserRoleInWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint manages a user\'s role in a workbench
+   * Manage a user\'s role in a workbench
+   */
+  async workbenchServiceManageUserRoleInWorkbench2(
+    requestParameters: WorkbenchServiceManageUserRoleInWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusManageUserRoleInWorkbenchReply> {
+    const response = await this.workbenchServiceManageUserRoleInWorkbench2Raw(
       requestParameters,
       initOverrides
     )
@@ -459,7 +830,7 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workbenchs/{id}/user/{userId}`
+        path: `/api/rest/v1/workbenches/{id}/user/{userId}`
           .replace(
             `{${'id'}}`,
             encodeURIComponent(String(requestParameters.id))
@@ -489,6 +860,78 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusRemoveUserFromWorkbenchReply> {
     const response = await this.workbenchServiceRemoveUserFromWorkbenchRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint removes a user from a workbench
+   * Remove a user from a workbench
+   */
+  async workbenchServiceRemoveUserFromWorkbench2Raw(
+    requestParameters: WorkbenchServiceRemoveUserFromWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusRemoveUserFromWorkbenchReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceRemoveUserFromWorkbench2.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workbenchServiceRemoveUserFromWorkbench2.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenchs/{id}/user/{userId}`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusRemoveUserFromWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint removes a user from a workbench
+   * Remove a user from a workbench
+   */
+  async workbenchServiceRemoveUserFromWorkbench2(
+    requestParameters: WorkbenchServiceRemoveUserFromWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusRemoveUserFromWorkbenchReply> {
+    const response = await this.workbenchServiceRemoveUserFromWorkbench2Raw(
       requestParameters,
       initOverrides
     )
@@ -526,7 +969,7 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/api/rest/v1/workbenchs`,
+        path: `/api/rest/v1/workbenches`,
         method: 'PUT',
         headers: headerParameters,
         query: queryParameters,
@@ -549,6 +992,66 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusUpdateWorkbenchReply> {
     const response = await this.workbenchServiceUpdateWorkbenchRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint updates a workbench
+   * Update a workbench
+   */
+  async workbenchServiceUpdateWorkbench2Raw(
+    requestParameters: WorkbenchServiceUpdateWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusUpdateWorkbenchReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceUpdateWorkbench2.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenchs`,
+        method: 'PUT',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ChorusWorkbenchToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusUpdateWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint updates a workbench
+   * Update a workbench
+   */
+  async workbenchServiceUpdateWorkbench2(
+    requestParameters: WorkbenchServiceUpdateWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusUpdateWorkbenchReply> {
+    const response = await this.workbenchServiceUpdateWorkbench2Raw(
       requestParameters,
       initOverrides
     )

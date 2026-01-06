@@ -8,7 +8,7 @@ import {
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
-  ChorusListWorkbenchsReply,
+  ChorusListWorkbenchesReply,
   ChorusManageUserRoleInWorkbenchReply,
   ChorusRemoveUserFromWorkbenchReply,
   ChorusUpdateWorkbenchReply,
@@ -28,7 +28,7 @@ interface WorkbenchDataSource {
   ) => Promise<ChorusCreateWorkbenchReply>
   get: (id: string) => Promise<ChorusGetWorkbenchReply>
   delete: (id: string) => Promise<ChorusDeleteWorkbenchReply>
-  list: () => Promise<ChorusListWorkbenchsReply>
+  list: () => Promise<ChorusListWorkbenchesReply>
   update: (
     workbench: WorkbenchUpdateType
   ) => Promise<ChorusUpdateWorkbenchReply>
@@ -57,7 +57,7 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   }
 
   streamUrl(id: string): string {
-    return `${env('NEXT_PUBLIC_API_URL')}${env('NEXT_PUBLIC_API_SUFFIX')}/workbenchs/${id}/stream/`
+    return `${env('NEXT_PUBLIC_API_URL')}${env('NEXT_PUBLIC_API_SUFFIX')}/workbenches/${id}/stream/`
   }
 
   streamProbe(id: string): Promise<Response> {
@@ -86,8 +86,8 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
     return this.service.workbenchServiceDeleteWorkbench({ id })
   }
 
-  list(): Promise<ChorusListWorkbenchsReply> {
-    return this.service.workbenchServiceListWorkbenchs()
+  list(): Promise<ChorusListWorkbenchesReply> {
+    return this.service.workbenchServiceListWorkbenches()
   }
 
   update(workbench: WorkbenchUpdateType): Promise<ChorusUpdateWorkbenchReply> {

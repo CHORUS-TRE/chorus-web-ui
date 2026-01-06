@@ -53,7 +53,7 @@ export const WorkbenchSchema = z.object({
   k8sStatus: z.nativeEnum(K8sWorkbenchStatus).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),
-  appInsanceIds: z.array(z.string()).optional(),
+  appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()

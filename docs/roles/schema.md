@@ -2,7 +2,7 @@
  graph BT
     %% Base roles
     Public["Public<br><small>authenticate<br>getListOfPossibleWayToAuthenticate<br>authenticateUsingAuth2.0<br>authenticateRedirectUsingAuth2.0</small>"]
-    Authenticated["Authenticated<br><small>adds notifications<br>logout<br>token refresh<br>user self-management<br>createWorkspace<br>listWorkspaces<br>listWorkbenchs<br>listApps<br>listAppInstances</small>"]
+    Authenticated["Authenticated<br><small>adds notifications<br>logout<br>token refresh<br>user self-management<br>createWorkspace<br>listWorkspaces<br>listWorkbenches<br>listApps<br>listAppInstances</small>"]
 
     %% Workspace roles
     WorkspaceGuest["WorkspaceGuest<small><br>listWorkspaces<br>getWorkspace<br>listUsers</small>"]
