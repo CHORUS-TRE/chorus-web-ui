@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.3...v1.27.0) (2026-01-06)
+
+
+### Features
+
+* Add system notification models and correct 'workbench' pluralization across API and models. ([34273f7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/34273f7a9055c04ceacf3de450de0bb5634969f1))
+
 ## [1.26.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.2...v1.26.3) (2025-12-19)
 
 
