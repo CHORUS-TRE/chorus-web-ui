@@ -84,8 +84,8 @@ models/ChorusListEntriesReply.ts
 models/ChorusListEntriesResult.ts
 models/ChorusListUsersReply.ts
 models/ChorusListUsersResult.ts
-models/ChorusListWorkbenchsReply.ts
-models/ChorusListWorkbenchsResult.ts
+models/ChorusListWorkbenchesReply.ts
+models/ChorusListWorkbenchesResult.ts
 models/ChorusListWorkspaceFilesReply.ts
 models/ChorusListWorkspaceFilesResult.ts
 models/ChorusListWorkspacesReply.ts
@@ -97,6 +97,7 @@ models/ChorusManageUserRoleInWorkspaceReply.ts
 models/ChorusManageUserRoleInWorkspaceResult.ts
 models/ChorusMarkNotificationsAsReadRequest.ts
 models/ChorusNotification.ts
+models/ChorusNotificationContent.ts
 models/ChorusOpenID.ts
 models/ChorusPaginationQuery.ts
 models/ChorusPaginationResult.ts
@@ -115,6 +116,7 @@ models/ChorusResetTotpRequest.ts
 models/ChorusResetTotpResult.ts
 models/ChorusRole.ts
 models/ChorusSort.ts
+models/ChorusSystemNotification.ts
 models/ChorusUpdateAppInstanceReply.ts
 models/ChorusUpdateAppInstanceResult.ts
 models/ChorusUpdateAppReply.ts

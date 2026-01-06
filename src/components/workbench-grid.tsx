@@ -22,7 +22,7 @@ import { Badge } from '~/components/ui/badge'
 
 import { toast } from './hooks/use-toast'
 
-interface WorkbenchsGridProps {
+interface WorkbenchesGridProps {
   workbenches: Workbench[] | undefined
   onUpdate?: () => void
 }
@@ -30,7 +30,7 @@ interface WorkbenchsGridProps {
 export default function WorkbenchGrid({
   workbenches,
   onUpdate
-}: WorkbenchsGridProps) {
+}: WorkbenchesGridProps) {
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
 
@@ -41,7 +41,7 @@ export default function WorkbenchGrid({
   return (
     <div
       className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,280px))]"
-      id="workbenchs-grid"
+      id="workbenches-grid"
     >
       {user &&
         workbenches?.map((workbench) => {

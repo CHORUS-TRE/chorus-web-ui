@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime'
-import type { ChorusListWorkbenchsResult } from './ChorusListWorkbenchsResult'
+import type { ChorusListWorkbenchesResult } from './ChorusListWorkbenchesResult'
 import {
-  ChorusListWorkbenchsResultFromJSON,
-  ChorusListWorkbenchsResultFromJSONTyped,
-  ChorusListWorkbenchsResultToJSON
-} from './ChorusListWorkbenchsResult'
+  ChorusListWorkbenchesResultFromJSON,
+  ChorusListWorkbenchesResultFromJSONTyped,
+  ChorusListWorkbenchesResultToJSON
+} from './ChorusListWorkbenchesResult'
 import type { ChorusPaginationResult } from './ChorusPaginationResult'
 import {
   ChorusPaginationResultFromJSON,
@@ -29,57 +29,57 @@ import {
 /**
  *
  * @export
- * @interface ChorusListWorkbenchsReply
+ * @interface ChorusListWorkbenchesReply
  */
-export interface ChorusListWorkbenchsReply {
+export interface ChorusListWorkbenchesReply {
   /**
    *
-   * @type {ChorusListWorkbenchsResult}
-   * @memberof ChorusListWorkbenchsReply
+   * @type {ChorusListWorkbenchesResult}
+   * @memberof ChorusListWorkbenchesReply
    */
-  result?: ChorusListWorkbenchsResult
+  result?: ChorusListWorkbenchesResult
   /**
    *
    * @type {ChorusPaginationResult}
-   * @memberof ChorusListWorkbenchsReply
+   * @memberof ChorusListWorkbenchesReply
    */
   pagination?: ChorusPaginationResult
 }
 
 /**
- * Check if a given object implements the ChorusListWorkbenchsReply interface.
+ * Check if a given object implements the ChorusListWorkbenchesReply interface.
  */
-export function instanceOfChorusListWorkbenchsReply(value: object): boolean {
+export function instanceOfChorusListWorkbenchesReply(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusListWorkbenchsReplyFromJSON(
+export function ChorusListWorkbenchesReplyFromJSON(
   json: any
-): ChorusListWorkbenchsReply {
-  return ChorusListWorkbenchsReplyFromJSONTyped(json, false)
+): ChorusListWorkbenchesReply {
+  return ChorusListWorkbenchesReplyFromJSONTyped(json, false)
 }
 
-export function ChorusListWorkbenchsReplyFromJSONTyped(
+export function ChorusListWorkbenchesReplyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusListWorkbenchsReply {
+): ChorusListWorkbenchesReply {
   if (json === undefined || json === null) {
     return json
   }
   return {
     result: !exists(json, 'result')
       ? undefined
-      : ChorusListWorkbenchsResultFromJSON(json['result']),
+      : ChorusListWorkbenchesResultFromJSON(json['result']),
     pagination: !exists(json, 'pagination')
       ? undefined
       : ChorusPaginationResultFromJSON(json['pagination'])
   }
 }
 
-export function ChorusListWorkbenchsReplyToJSON(
-  value?: ChorusListWorkbenchsReply | null
+export function ChorusListWorkbenchesReplyToJSON(
+  value?: ChorusListWorkbenchesReply | null
 ): any {
   if (value === undefined) {
     return undefined
@@ -88,7 +88,7 @@ export function ChorusListWorkbenchsReplyToJSON(
     return null
   }
   return {
-    result: ChorusListWorkbenchsResultToJSON(value.result),
+    result: ChorusListWorkbenchesResultToJSON(value.result),
     pagination: ChorusPaginationResultToJSON(value.pagination)
   }
 }

@@ -132,6 +132,18 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
+  kioskConfigJWTURL?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  kioskConfigJWTOIDCClientID?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
   iconURL?: string
   /**
    *
@@ -198,6 +210,12 @@ export function ChorusAppFromJSONTyped(
     kioskConfigURL: !exists(json, 'kioskConfigURL')
       ? undefined
       : json['kioskConfigURL'],
+    kioskConfigJWTURL: !exists(json, 'kioskConfigJWTURL')
+      ? undefined
+      : json['kioskConfigJWTURL'],
+    kioskConfigJWTOIDCClientID: !exists(json, 'kioskConfigJWTOIDCClientID')
+      ? undefined
+      : json['kioskConfigJWTOIDCClientID'],
     iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
@@ -234,6 +252,8 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     maxEphemeralStorage: value.maxEphemeralStorage,
     minEphemeralStorage: value.minEphemeralStorage,
     kioskConfigURL: value.kioskConfigURL,
+    kioskConfigJWTURL: value.kioskConfigJWTURL,
+    kioskConfigJWTOIDCClientID: value.kioskConfigJWTOIDCClientID,
     iconURL: value.iconURL,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),

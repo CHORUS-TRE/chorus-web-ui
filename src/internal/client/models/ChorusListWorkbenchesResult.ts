@@ -23,48 +23,48 @@ import {
 /**
  *
  * @export
- * @interface ChorusListWorkbenchsResult
+ * @interface ChorusListWorkbenchesResult
  */
-export interface ChorusListWorkbenchsResult {
+export interface ChorusListWorkbenchesResult {
   /**
    *
    * @type {Array<ChorusWorkbench>}
-   * @memberof ChorusListWorkbenchsResult
+   * @memberof ChorusListWorkbenchesResult
    */
-  workbenchs?: Array<ChorusWorkbench>
+  workbenches?: Array<ChorusWorkbench>
 }
 
 /**
- * Check if a given object implements the ChorusListWorkbenchsResult interface.
+ * Check if a given object implements the ChorusListWorkbenchesResult interface.
  */
-export function instanceOfChorusListWorkbenchsResult(value: object): boolean {
+export function instanceOfChorusListWorkbenchesResult(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ChorusListWorkbenchsResultFromJSON(
+export function ChorusListWorkbenchesResultFromJSON(
   json: any
-): ChorusListWorkbenchsResult {
-  return ChorusListWorkbenchsResultFromJSONTyped(json, false)
+): ChorusListWorkbenchesResult {
+  return ChorusListWorkbenchesResultFromJSONTyped(json, false)
 }
 
-export function ChorusListWorkbenchsResultFromJSONTyped(
+export function ChorusListWorkbenchesResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusListWorkbenchsResult {
+): ChorusListWorkbenchesResult {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    workbenchs: !exists(json, 'workbenchs')
+    workbenches: !exists(json, 'workbenches')
       ? undefined
-      : (json['workbenchs'] as Array<any>).map(ChorusWorkbenchFromJSON)
+      : (json['workbenches'] as Array<any>).map(ChorusWorkbenchFromJSON)
   }
 }
 
-export function ChorusListWorkbenchsResultToJSON(
-  value?: ChorusListWorkbenchsResult | null
+export function ChorusListWorkbenchesResultToJSON(
+  value?: ChorusListWorkbenchesResult | null
 ): any {
   if (value === undefined) {
     return undefined
@@ -73,9 +73,9 @@ export function ChorusListWorkbenchsResultToJSON(
     return null
   }
   return {
-    workbenchs:
-      value.workbenchs === undefined
+    workbenches:
+      value.workbenches === undefined
         ? undefined
-        : (value.workbenchs as Array<any>).map(ChorusWorkbenchToJSON)
+        : (value.workbenches as Array<any>).map(ChorusWorkbenchToJSON)
   }
 }

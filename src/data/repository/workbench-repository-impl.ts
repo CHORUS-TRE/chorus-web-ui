@@ -86,10 +86,10 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   async list(): Promise<Result<Workbench[]>> {
     try {
       const response = await this.dataSource.list()
-      if (!response.result?.workbenchs) {
+      if (!response.result?.workbenches) {
         return { data: [] }
       }
-      const validatedData = response.result.workbenchs.map((w) =>
+      const validatedData = response.result.workbenches.map((w) =>
         WorkbenchSchema.parse(w)
       )
       return { data: validatedData }
