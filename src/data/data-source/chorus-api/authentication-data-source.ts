@@ -17,7 +17,7 @@ interface AuthenticationDataSource {
   handleOAuthRedirect: (
     data: AuthenticationOAuthRedirectRequest
   ) => Promise<string>
-  logout: () => Promise<void>
+  logout: () => Promise<string | undefined>
 }
 
 export type { AuthenticationDataSource }
@@ -143,13 +143,20 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
     }
   }
 
-  async logout(): Promise<void> {
-    const response = await this.service.authenticationServiceLogout({
-      body: {}
-    })
+  async logout(): Promise<string | undefined> {
+    try {
+      const response = await this.service.authenticationServiceLogout({
+        body: {}
+      })
 
-    if (!response) {
-      throw new Error('Failed to logout')
+      if (!response) {
+        throw new Error('Failed to logout')
+      }
+
+      return response.redirectURL
+    } catch (error) {
+      console.error('Error logging out:', error)
+      throw error
     }
   }
 }
