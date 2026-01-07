@@ -118,7 +118,6 @@ function UserProfileSection() {
 
   const handleLogout = async () => {
     await logout()
-    router.push('/')
   }
 
   // Get initials for avatar

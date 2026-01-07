@@ -60,8 +60,9 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   async logout(): Promise<Result<string>> {
     try {
-      await this.dataSource.logout()
-      return { data: 'ok' }
+      const response = await this.dataSource.logout()
+
+      return { data: response }
     } catch (error) {
       console.error('Error logging out', error)
       return { error: error instanceof Error ? error.message : String(error) }

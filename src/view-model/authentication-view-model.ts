@@ -1,5 +1,6 @@
 'use client'
 
+import router from 'next/router'
 import { env } from 'next-runtime-env'
 
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source'
@@ -78,9 +79,27 @@ export async function logout() {
 
     if (result.error) {
       console.error('Error during logout:', result.error)
+      return {
+        error: result.error
+      }
+    }
+
+    if (!result.data) {
+      router.push('/')
+    }
+
+    if (result.data) {
+      window.location.href = result.data
+    }
+
+    return {
+      data: result.data
     }
   } catch (error) {
     console.error('Error during logout:', error)
+    return {
+      error: 'Failed to logout'
+    }
   }
 }
 
