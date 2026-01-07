@@ -1,3 +1,10 @@
+## [1.27.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.0...v1.27.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* logout by keycloak ([4ebb499](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4ebb499739611c52b4a1313d4928e355ddbc5d05))
+
 # [1.27.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.26.3...v1.27.0) (2026-01-06)
 
 
