@@ -73,7 +73,10 @@ export const AuthenticationProvider = ({
       setIsLoading(false)
     } catch (error) {
       console.error(error)
-      handleLogout()
+      if (user) {
+        handleLogout()
+      }
+      setIsLoading(false)
     }
   }, [setUser, handleLogout])
 
