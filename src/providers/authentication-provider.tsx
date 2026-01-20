@@ -46,8 +46,10 @@ export const AuthenticationProvider = ({
     if (user) {
       await logout()
     }
-    setIsLoading(false)
-    setUser(undefined)
+    setTimeout(() => {
+      setIsLoading(false)
+      setUser(undefined)
+    }, 300)
     // Note: IframeCacheProvider automatically clears cache when user becomes undefined
   }, [user])
 
