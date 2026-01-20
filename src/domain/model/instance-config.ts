@@ -60,7 +60,7 @@ export const InstanceConfigSchema = z.object({
   tagline: z
     .string()
     .default('Your One-Stop Shop for Data, Applications, and AI'),
-  website: z.string().url().default('https://www.chorus-tre.ch/en/'),
+  website: z.string().default('https://www.chorus-tre.ch/en/'),
   tags: z.array(InstanceTagSchema).default([
     { id: 'project', label: 'Workspace', display: true },
     { id: 'center', label: 'Center', display: true }

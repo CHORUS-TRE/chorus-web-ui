@@ -12,6 +12,19 @@ Chorus Web UI is the front-end interface for the Chorus platform. It is a modern
 - **Responsive UI:** The application must be responsive and accessible on various screen sizes.
 - **Clean Architecture:** The codebase must adhere to Clean Architecture principles, ensuring separation of concerns, testability, and maintainability.
 
+## 4. User Types
+1.  **Researchers**: Data scientists, medical professionals, bioinformaticians.
+    *   Primary actions: Create workspaces, launch apps, start sessions, analyze data.
+2.  **Project Managers**: Administrators managing research projects.
+    *   Primary actions: Manage user access, monitor resource usage, review projects.
+3.  **System Administrators**: IT staff managing platform infrastructure.
+    *   Primary actions: System configuration, user account management, platform maintenance.
+
+## 5. Compliance & Privacy
+*   **Healthcare TRE**: Designed as a secure, open-source Trusted Research Environment for biomedical research.
+*   **Data Protection**: Compliant with Swiss Federal Data Protection Act (FADP) and GDPR standards.
+*   **Security**: IP Anonymization (2 bytes) enabled by default; no PII passed to analytics.
+
 ## 3. Project Goals
 
 - Build a scalable and maintainable front-end application.

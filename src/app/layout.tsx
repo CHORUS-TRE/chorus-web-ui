@@ -9,6 +9,8 @@ import { env } from 'next-runtime-env'
 import React from 'react'
 
 import { AppStateInitializer } from '@/components/app-state-initializer'
+import { CookieConsent } from '@/components/cookie-consent'
+import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
@@ -44,6 +46,9 @@ export default async function RootLayout({
         <PublicEnvScript />
         <Script id="matomo-tag-manager" strategy="afterInteractive">
           {`
+            var _paq = window._paq = window._paq || [];
+            _paq.push(['requireConsent']);
+            _paq.push(['setAnonymizeIp', true]);
             var _mtm = window._mtm = window._mtm || [];
             _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
             var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
@@ -70,6 +75,8 @@ export default async function RootLayout({
                   <IframeCacheRenderer />
                   <IframeCleanupDialog />
                   <IframeDebugPanel />
+                  <CookieConsent />
+                  <MatomoConsentSync />
                 </IframeCacheProvider>
               </AuthorizationProvider>
             </AuthenticationProvider>

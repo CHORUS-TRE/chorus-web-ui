@@ -170,10 +170,12 @@ export default function UserProfile() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" disabled>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Button>
+                  <Link href={`/users/${userId}/settings/privacy`}>
+                    <Button variant="outline">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>
@@ -315,10 +317,12 @@ export default function UserProfile() {
                   <Key className="mr-2 h-4 w-4" />
                   Change Password
                 </Button>
-                <Button variant="outline" disabled>
-                  <Shield className="mr-2 h-4 w-4" />
-                  Security Settings
-                </Button>
+                <Link href={`/users/${userId}/settings/privacy`}>
+                  <Button variant="outline">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Privacy Settings
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

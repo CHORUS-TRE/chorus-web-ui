@@ -62,26 +62,18 @@ export default function LoginInfo() {
       </div>
       <div className="flex w-full items-end justify-between gap-2">
         <div>
-          <a
-            href="https://www.chorus-tre.ch/en/"
-            className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="CHORUS Website"
-          >
-            <ExternalLink className="size-4" />
-            CHORUS Website
-          </a>
-          <a
-            href={instanceConfig.website}
-            className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${instanceConfig.name} website`}
-          >
-            <ExternalLink className="size-4" />
-            {instanceConfig.name} Website
-          </a>
+          {instanceConfig.website && (
+            <a
+              href={instanceConfig.website}
+              className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${instanceConfig.name} website`}
+            >
+              <ExternalLink className="size-4" />
+              {instanceConfig.name} Website
+            </a>
+          )}
           <a
             href="https://github.com/CHORUS-TRE/"
             className="flex items-center gap-2 text-xs font-medium text-muted-foreground underline hover:text-accent"

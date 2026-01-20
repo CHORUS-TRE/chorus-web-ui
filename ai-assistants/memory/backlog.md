@@ -5,7 +5,10 @@
 ### AMLD Workshop Readiness
 - [ ] **[Data]** Fix upload and refresh of datasets issues (Source: AMLD)
     - *Context: Critical for workshop participants.*
-- [ ] **[Analytics]** Integrate Matomo metrics for user action tracking (Source: AMLD/TODO)
+- [ ] **[Analytics]** Integrate Matomo metrics for user action tracking
+    - [ ] **Phase 2**: Map personas from roles and app categories from metadata.
+    - [ ] **Phase 3**: Capture Web Vitals (LCP, CLS, TTFB) and UI/API error hashing.
+    - [ ] **Phase 4**: Configure Funnels (Dashboard -> Workspace -> Session).
 - [ ] **[UX]** Refine user journey for the specific AMLD use case (Source: AMLD)
 
 ### Critical Bugs
