@@ -175,11 +175,11 @@
 
   /* Navigation Link Variants */
   .nav-link {
-    @apply bg-transparent text-sm font-semibold text-accent;
+    @apply bg-transparent text-sm text-accent;
   }
 
   .nav-link-base {
-    @apply inline-flex bg-transparent font-semibold;
+    @apply inline-flex bg-transparent;
   }
 
   .nav-link-hover {

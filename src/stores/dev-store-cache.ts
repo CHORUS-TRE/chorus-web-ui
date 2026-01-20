@@ -41,6 +41,7 @@ type DevStoreCacheState = {
   isGlobalLoaded: boolean
   isUserLoaded: boolean
   loadedWorkspaces: Set<string>
+  isCookieConsentOpen: boolean
 
   // Initialize caches
   initGlobal: () => Promise<void>
@@ -104,6 +105,9 @@ type DevStoreCacheState = {
   setInstanceTags: (tags: InstanceTag[]) => Promise<boolean>
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
+
+  // UI Actions
+  setCookieConsentOpen: (open: boolean) => void
 }
 
 export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
@@ -114,6 +118,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
   isGlobalLoaded: false,
   isUserLoaded: false,
   loadedWorkspaces: new Set(),
+  isCookieConsentOpen: false,
 
   // Initialize global cache (call before login if needed)
   initGlobal: async () => {
@@ -478,5 +483,8 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       return get().deleteGlobal(INSTANCE_CONFIG_KEYS.THEME)
     }
     return get().setGlobal(INSTANCE_CONFIG_KEYS.THEME, JSON.stringify(theme))
-  }
+  },
+
+  // UI Actions
+  setCookieConsentOpen: (open: boolean) => set({ isCookieConsentOpen: open })
 }))

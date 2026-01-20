@@ -10,6 +10,7 @@ import {
   Package,
   PanelLeftClose,
   Settings,
+  Shield,
   Store,
   User
 } from 'lucide-react'
@@ -17,6 +18,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { Link } from '@/components/link'
+import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
@@ -185,19 +187,30 @@ function UserProfileSection() {
             <Link
               href={`/users/${user.id}`}
               variant="underline"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted/30"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-foreground transition-colors hover:bg-muted/30"
               onClick={() => setMenuOpen(false)}
             >
               <User className="h-4 w-4" />
               Profile
             </Link>
+
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted/30"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-foreground transition-colors hover:bg-muted/30"
             >
               <LogOut className="h-4 w-4" />
               Log out
             </button>
+            <Separator />
+            <Link
+              href={`/users/${user.id}/settings/privacy`}
+              variant="underline"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-foreground transition-colors hover:bg-muted/30"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Shield className="h-4 w-4" />
+              Settings
+            </Link>
           </div>
         )}
       </div>

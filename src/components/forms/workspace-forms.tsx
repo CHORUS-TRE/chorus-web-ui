@@ -41,6 +41,7 @@ import {
   WorkspaceConfig,
   WorkspaceWithDev
 } from '@/domain/model'
+import { Analytics } from '@/lib/analytics'
 import {
   workspaceCreateWithDev,
   workspaceDelete,
@@ -163,6 +164,8 @@ export function WorkspaceCreateForm({
   }, [open, form])
 
   async function onSubmit(data: WorkspaceFormData) {
+    Analytics.Workspace.createStart()
+
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value === undefined || value === null) return
@@ -179,6 +182,9 @@ export function WorkspaceCreateForm({
       const result = await workspaceCreateWithDev({}, formData)
 
       if (result.issues) {
+        // Track validation error as a generic error or specific form error
+        Analytics.Workspace.createError('Validation Issues')
+
         result.issues.forEach((issue) => {
           let formField: keyof WorkspaceFormData
           if (issue.path[0] === 'dev') {
@@ -206,6 +212,7 @@ export function WorkspaceCreateForm({
       }
 
       if (result.error) {
+        Analytics.Workspace.createError(result.error)
         toast({
           title: 'Error',
           description: result.error,
@@ -215,6 +222,7 @@ export function WorkspaceCreateForm({
       }
 
       if (result.data) {
+        Analytics.Workspace.createSuccess(result.data.id)
         toast({
           title: 'Success',
           description: 'Workspace created successfully'

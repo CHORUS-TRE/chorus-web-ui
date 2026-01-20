@@ -98,46 +98,6 @@ export function useInstanceConfig(): InstanceConfig {
 }
 
 /**
- * Hook to access just the instance name
- */
-export function useInstanceName(): string {
-  const name = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.NAME]
-  )
-  return name || DEFAULT_INSTANCE_CONFIG.name
-}
-
-/**
- * Hook to access just the instance headline
- */
-export function useInstanceHeadline(): string {
-  const headline = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.HEADLINE]
-  )
-  return headline || DEFAULT_INSTANCE_CONFIG.headline
-}
-
-/**
- * Hook to access just the instance tagline
- */
-export function useInstanceTagline(): string {
-  const tagline = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.TAGLINE]
-  )
-  return tagline || DEFAULT_INSTANCE_CONFIG.tagline
-}
-
-/**
- * Hook to access just the instance website
- */
-export function useInstanceWebsite(): string {
-  const website = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.WEBSITE]
-  )
-  return website || DEFAULT_INSTANCE_CONFIG.website
-}
-
-/**
  * Hook to access just the instance logo
  */
 export function useInstanceLogo(): InstanceLogo | null {
@@ -158,27 +118,4 @@ export function useInstanceLogo(): InstanceLogo | null {
       return null
     }
   }, [logoRaw])
-}
-
-/**
- * Hook to access just the instance tags (workspace types)
- */
-export function useInstanceTags(): InstanceTag[] {
-  const tagsRaw = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.TAGS]
-  )
-
-  return useMemo((): InstanceTag[] => {
-    if (!tagsRaw) return DEFAULT_INSTANCE_CONFIG.tags
-    try {
-      const parsed = JSON.parse(tagsRaw)
-      const validated = InstanceTagSchema.array().safeParse(parsed)
-      if (validated.success) {
-        return validated.data
-      }
-      return DEFAULT_INSTANCE_CONFIG.tags
-    } catch {
-      return DEFAULT_INSTANCE_CONFIG.tags
-    }
-  }, [tagsRaw])
 }
