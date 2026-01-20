@@ -1,3 +1,10 @@
+## [1.27.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.2...v1.27.3) (2026-01-20)
+
+
+### Bug Fixes
+
+* **logout:** add delay before logging out ([#162](https://github.com/CHORUS-TRE/chorus-web-ui/issues/162)) ([d6665cf](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d6665cf3f896980067961284a2997b7ba0e2a4d6))
+
 ## [1.27.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.1...v1.27.2) (2026-01-20)
 
 ## [1.27.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.0...v1.27.1) (2026-01-07)
