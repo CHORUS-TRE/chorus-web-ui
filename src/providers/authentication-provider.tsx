@@ -45,9 +45,11 @@ export const AuthenticationProvider = ({
   const handleLogout = useCallback(async () => {
     if (user) {
       await logout()
+      setTimeout(() => {
+        setUser(undefined)
+      }, 300)
     }
     setIsLoading(false)
-    setUser(undefined)
     // Note: IframeCacheProvider automatically clears cache when user becomes undefined
   }, [user])
 
@@ -71,7 +73,10 @@ export const AuthenticationProvider = ({
       setIsLoading(false)
     } catch (error) {
       console.error(error)
-      handleLogout()
+      if (user) {
+        handleLogout()
+      }
+      setIsLoading(false)
     }
   }, [setUser, handleLogout])
 
