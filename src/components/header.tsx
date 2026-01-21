@@ -142,28 +142,31 @@ export function Header() {
           }, 1000)
         }}
       >
-        <Link href="/" variant="muted" className="shrink-0">
-          <Image
-            src={defaultLogo}
-            alt="Chorus"
-            height={32}
-            width={54}
-            className="aspect-auto cursor-pointer"
-            id="logo"
-            priority
-          />
-          {logo && (
+        {/* Left section: Logo + Breadcrumb */}
+        <div className="flex items-center gap-4 shrink-0">
+          <Link href="/" variant="muted" className="shrink-0">
             <Image
-              src={logo}
+              src={defaultLogo}
               alt="Chorus"
               height={32}
-              width={75}
-              className="ml-4 aspect-[80/33] cursor-pointer"
+              width={54}
+              className="aspect-auto cursor-pointer"
               id="logo"
               priority
             />
-          )}
-        </Link>
+            {logo && (
+              <Image
+                src={logo}
+                alt="Chorus"
+                height={32}
+                width={75}
+                className="ml-4 aspect-[80/33] cursor-pointer"
+                id="logo"
+                priority
+              />
+            )}
+          </Link>
+        </div>
 
         {/* Center: Recent sessions and web apps */}
         {user && (recentSessions.length > 0 || recentWebApps.length > 0) && (
@@ -247,26 +250,26 @@ export function Header() {
                         {workspaces?.find(
                           (w) => w.id === sessionWorkbench.workspaceId
                         ) && (
-                          <>
-                            <button
-                              onClick={() =>
-                                router.push(
-                                  `/workspaces/${sessionWorkbench.workspaceId}`
-                                )
-                              }
-                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                            >
-                              <span className="truncate">
-                                {
-                                  workspaces.find(
-                                    (w) => w.id === sessionWorkbench.workspaceId
-                                  )?.name
+                            <>
+                              <button
+                                onClick={() =>
+                                  router.push(
+                                    `/workspaces/${sessionWorkbench.workspaceId}`
+                                  )
                                 }
-                              </span>
-                            </button>
-                            <div className="my-1 border-t border-muted/20" />
-                          </>
-                        )}
+                                className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                              >
+                                <span className="truncate">
+                                  {
+                                    workspaces.find(
+                                      (w) => w.id === sessionWorkbench.workspaceId
+                                    )?.name
+                                  }
+                                </span>
+                              </button>
+                              <div className="my-1 border-t border-muted/20" />
+                            </>
+                          )}
 
                         {/* Running apps */}
                         {appInstances
@@ -505,7 +508,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => {}}
+            onSuccess={() => { }}
           />
         )}
 

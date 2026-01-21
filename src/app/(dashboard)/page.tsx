@@ -84,8 +84,12 @@ export default function CHORUSDashboard() {
 
   return (
     <>
-      <div className="w-ful">
-        <h3 className="mb-8 mt-4 text-sm italic text-muted-foreground">
+      <div className="w-full">
+        <h2 className="mb-8 flex w-full flex-row items-center gap-3 text-start">
+          <CircleGauge className="h-9 w-9" />
+          Dashboard
+        </h2>
+        <h3 className="mb-8 text-sm italic text-muted-foreground">
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
@@ -306,12 +310,11 @@ export default function CHORUSDashboard() {
                                     </p>
                                   </div>
                                   <Badge
-                                    className={`pointer-events-none text-xs ${
-                                      workbench.status ===
+                                    className={`pointer-events-none text-xs ${workbench.status ===
                                       WorkbenchStatus.ACTIVE
-                                        ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                        : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                                    }`}
+                                      ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                      : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                                      }`}
                                   >
                                     {workbench.status}
                                   </Badge>
