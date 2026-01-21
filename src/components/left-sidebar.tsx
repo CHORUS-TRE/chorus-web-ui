@@ -277,10 +277,10 @@ function SidebarContent({
   return (
     <>
       {/* Header with title and close button */}
-      <SidebarHeader onClose={onClose} showCloseButton={showCloseButton} />
+      {/* <SidebarHeader onClose={onClose} showCloseButton={showCloseButton} /> */}
 
       {/* Main navigation */}
-      <nav className="flex flex-1 flex-col gap-0.5 px-4 py-2">
+      <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
         {/* Dashboard */}
         <Link
           href="/"
@@ -438,7 +438,7 @@ export function LeftSidebar({
           pathname={pathname}
           searchParams={searchParams}
           onClose={handleClose}
-          showCloseButton={isOpen}
+          showCloseButton={false}
         />
       </div>
     </>

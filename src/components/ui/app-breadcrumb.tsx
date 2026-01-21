@@ -1,12 +1,14 @@
 'use client'
 
-import { Home } from 'lucide-react'
+import { Home, Maximize, Minimize } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import React, { useMemo } from 'react'
 
 import { Link } from '@/components/link'
 import { useInstanceConfig } from '@/hooks/use-instance-config'
+import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
+import { Button } from '~/components/button'
 
 import {
   Breadcrumb,
@@ -21,6 +23,7 @@ export function AppBreadcrumb() {
   const pathname = usePathname()
   const instanceConfig = useInstanceConfig()
   const { workspaces, appInstances } = useAppState()
+  const { isFullscreen, toggleFullscreen } = useFullscreenContext()
 
   const projectLabel = useMemo(
     () =>
@@ -33,6 +36,12 @@ export function AppBreadcrumb() {
     () => pathname.split('/').filter(Boolean),
     [pathname]
   )
+
+  // Check if we're on a session page
+  const isSessionPage = useMemo(() => {
+    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+    return sessionPageRegex.test(pathname)
+  }, [pathname])
 
   const breadcrumbItems = useMemo(() => {
     const items: {
@@ -103,7 +112,7 @@ export function AppBreadcrumb() {
   ])
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-between">
       {breadcrumbItems.length > 0 && (
         <>
           <Breadcrumb>
@@ -140,6 +149,23 @@ export function AppBreadcrumb() {
             </BreadcrumbList>
           </Breadcrumb>
         </>
+      )}
+
+      {/* Fullscreen button - only on session pages */}
+      {isSessionPage && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleFullscreen}
+          className="ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"
+          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+        >
+          {isFullscreen ? (
+            <Minimize className="h-4 w-4" />
+          ) : (
+            <Maximize className="h-4 w-4" />
+          )}
+        </Button>
       )}
     </div>
   )

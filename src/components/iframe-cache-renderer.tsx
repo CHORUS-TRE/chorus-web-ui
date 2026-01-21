@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
 import { CachedIframe } from '@/domain/model'
+import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
@@ -173,11 +174,14 @@ function CachedIframeRenderer({
  *
  * Background mode: Shows iframe in background when in workspace context
  * or on app-store page.
+ *
+ * Fullscreen mode: Shows active iframe in fullscreen when fullscreen is enabled
  */
 export default function IframeCacheRenderer() {
   const { cachedIframes, activeIframeId } = useIframeCache()
   const { workbenches } = useAppState()
   const pathname = usePathname()
+  const { isFullscreen } = useFullscreenContext()
   const [iframeEntries, setIframeEntries] = useState<[string, CachedIframe][]>(
     []
   )
@@ -243,6 +247,18 @@ export default function IframeCacheRenderer() {
 
   // Don't render anything if there are no cached iframes
   if (iframeEntries.length === 0) {
+    return null
+  }
+
+  // Only render fixed-position iframes when:
+  // 1. In fullscreen mode (on session pages)
+  // 2. In background mode (on workspace or app-store pages)
+  // 3. On webapp pages (always fullscreen-style)
+  const shouldRenderFixedIframes =
+    isFullscreen || !isIframePage || pathname.includes('/webapps/')
+
+  if (!shouldRenderFixedIframes && isIframePage) {
+    // On session pages in normal mode, iframe is rendered in content, not here
     return null
   }
 

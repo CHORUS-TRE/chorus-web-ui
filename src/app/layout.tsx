@@ -12,6 +12,7 @@ import { AppStateInitializer } from '@/components/app-state-initializer'
 import { CookieConsent } from '@/components/cookie-consent'
 import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
+import { FullscreenProvider } from '@/providers/fullscreen-provider'
 import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
@@ -69,14 +70,16 @@ export default async function RootLayout({
             <AuthenticationProvider>
               <AuthorizationProvider>
                 <AppStateInitializer />
-                <IframeCacheProvider>
-                  {children}
-                  <IframeCacheRenderer />
-                  <IframeCleanupDialog />
-                  <IframeDebugPanel />
-                  <CookieConsent />
-                  <MatomoConsentSync />
-                </IframeCacheProvider>
+                <FullscreenProvider>
+                  <IframeCacheProvider>
+                    {children}
+                    <IframeCacheRenderer />
+                    <IframeCleanupDialog />
+                    <IframeDebugPanel />
+                    <CookieConsent />
+                    <MatomoConsentSync />
+                  </IframeCacheProvider>
+                </FullscreenProvider>
               </AuthorizationProvider>
             </AuthenticationProvider>
           </InstanceConfigInitializer>

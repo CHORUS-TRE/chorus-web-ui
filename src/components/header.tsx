@@ -38,6 +38,7 @@ import {
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
@@ -83,6 +84,7 @@ export function Header() {
   const { theme } = useTheme()
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
+  const { toggleFullscreen } = useFullscreenContext()
 
   const { canManageUsers } = useAuthorizationViewModel()
   // Recent sessions and webapps are persisted across logout/login
@@ -103,16 +105,6 @@ export function Header() {
     }
     const session = workbenches?.find((wb) => wb.id === sessionId)
     return session?.name || `Session ${sessionId?.slice(0, 8)}`
-  }
-
-  // Toggle fullscreen for active iframe
-  const toggleFullscreen = () => {
-    if (activeIframeId) {
-      const iframe = document.getElementById(`iframe-${activeIframeId}`)
-      if (iframe) {
-        iframe.requestFullscreen()
-      }
-    }
   }
 
   /**
@@ -143,7 +135,7 @@ export function Header() {
         }}
       >
         {/* Left section: Logo + Breadcrumb */}
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex shrink-0 items-center gap-4">
           <Link href="/" variant="muted" className="shrink-0">
             <Image
               src={defaultLogo}
@@ -250,26 +242,26 @@ export function Header() {
                         {workspaces?.find(
                           (w) => w.id === sessionWorkbench.workspaceId
                         ) && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  router.push(
-                                    `/workspaces/${sessionWorkbench.workspaceId}`
-                                  )
+                          <>
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/workspaces/${sessionWorkbench.workspaceId}`
+                                )
+                              }
+                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                            >
+                              <span className="truncate">
+                                {
+                                  workspaces.find(
+                                    (w) => w.id === sessionWorkbench.workspaceId
+                                  )?.name
                                 }
-                                className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                              >
-                                <span className="truncate">
-                                  {
-                                    workspaces.find(
-                                      (w) => w.id === sessionWorkbench.workspaceId
-                                    )?.name
-                                  }
-                                </span>
-                              </button>
-                              <div className="my-1 border-t border-muted/20" />
-                            </>
-                          )}
+                              </span>
+                            </button>
+                            <div className="my-1 border-t border-muted/20" />
+                          </>
+                        )}
 
                         {/* Running apps */}
                         {appInstances
@@ -508,7 +500,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => { }}
+            onSuccess={() => {}}
           />
         )}
 
