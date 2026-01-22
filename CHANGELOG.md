@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.3...v1.28.0) (2026-01-22)
+
+
+### Features
+
+* **rolling:** add values used for rolling release ([#163](https://github.com/CHORUS-TRE/chorus-web-ui/issues/163)) ([40f93e6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/40f93e6a3e9b942b27dadd30e3da1db9cb0e1cdc))
+
 ## [1.27.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.2...v1.27.3) (2026-01-20)
 
 
