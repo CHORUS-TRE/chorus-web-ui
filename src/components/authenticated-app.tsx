@@ -55,10 +55,11 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }
   }
 
-
   // Immersive Mode Logic
   const immersiveUIVisible = useAppState((state) => state.immersiveUIVisible)
-  const setImmersiveUIVisible = useAppState((state) => state.setImmersiveUIVisible)
+  const setImmersiveUIVisible = useAppState(
+    (state) => state.setImmersiveUIVisible
+  )
   const immersiveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
   // Reset visibility when not on a session page
@@ -168,7 +169,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   isFullscreen
                     ? 'w-full'
                     : // Desktop (>= xl): logic based on sidebar state
-                    leftSidebarOpen
+                      leftSidebarOpen
                       ? 'xl:min-w-[300px] xl:flex-1 2xl:w-[80vw] 2xl:flex-none'
                       : 'xl:w-[80vw] 2xl:w-[80vw]'
                 )}
@@ -193,7 +194,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                     className={cn(
                       'flex-1 overflow-auto',
                       !isIFramePage &&
-                      'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
+                        'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
                     )}
                   >
                     {children}
@@ -228,7 +229,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               >
                 <LeftSidebar
                   isOpen={false}
-                  setIsOpen={() => { }}
+                  setIsOpen={() => {}}
                   isHovered={true}
                   onHoverStart={handleHoverStart}
                   onHoverEnd={handleHoverEnd}

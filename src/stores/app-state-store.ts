@@ -145,7 +145,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   },
 
   immersiveUIVisible: true,
-  setImmersiveUIVisible: (visible: boolean) => set({ immersiveUIVisible: visible })
+  setImmersiveUIVisible: (visible: boolean) =>
+    set({ immersiveUIVisible: visible })
 }))
 
 // Convenience alias matching legacy naming

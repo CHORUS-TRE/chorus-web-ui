@@ -11,6 +11,8 @@ import { useAppState } from '@/stores/app-state-store'
 
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'
+import { useSidebar } from '@/hooks/use-sidebar'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 
 /**
  * Renders a single cached iframe with proper visibility management.
@@ -32,7 +34,7 @@ function CachedIframeRenderer({
   const { isLoading, error } =
     iframe.type === 'session'
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
-        useUrlProbing(iframe.id)
+      useUrlProbing(iframe.id)
       : { isLoading: false, error: null }
 
   // Note: useWorkbenchStatus could be used for HUD display in the future
@@ -179,12 +181,14 @@ function CachedIframeRenderer({
  */
 export default function IframeCacheRenderer() {
   const { cachedIframes, activeIframeId } = useIframeCache()
-  const { workbenches } = useAppState()
+  const { workbenches, immersiveUIVisible } = useAppState()
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
   const [iframeEntries, setIframeEntries] = useState<[string, CachedIframe][]>(
     []
   )
+  const { isOpen: leftSidebarOpen } = useSidebar()
+  const { showRightSidebar } = useUserPreferences()
 
   // Check if we're on a session or webapp page (full active mode)
   const isIframePage = useMemo(() => {
@@ -269,6 +273,73 @@ export default function IframeCacheRenderer() {
           isBackground={backgroundIframeId === id}
         />
       ))}
+
+      {/* SVG Mask Overlay - creates black overlay with hole for iframe content area */}
+      {isIframePage && activeIframeId && !isFullscreen && immersiveUIVisible && (() => {
+        // Calculate hole position based on layout
+        // Values are in percentage of viewport
+        const padding = 1.2 // ~16px / ~1300px viewport = ~1.2%
+        const breadcrumbHeight = 5 // ~52px / ~900px available height = ~6%
+        const bottomBar = 1 // ~8px / ~900px = ~1%
+        const glassPillar = 0.8 // ~8px / ~1000px = ~0.8%
+
+        // Left edge depends on sidebar: sidebar(240px) + padding(16px) + pillar(8px)
+        // On 1400px viewport: (240+16+8)/1400 = ~19% when sidebar open
+        // When closed: (16+8)/1400 = ~1.7%
+        const leftEdge = leftSidebarOpen
+          ? 20 + padding
+          : padding + 0.5
+
+        // Right edge depends on right sidebar
+        // Width of hole = 100 - leftEdge - rightEdge
+        const rightEdge = showRightSidebar
+          ? 20 + padding // sidebar + padding
+          : padding + 0.5
+
+        const holeX = leftEdge + glassPillar
+        const holeWidth = 100 - holeX - rightEdge - glassPillar
+        const holeY = breadcrumbHeight
+        const holeHeight = 100 - holeY - bottomBar - padding
+
+        return (
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              top: 44,
+              width: '100%',
+              height: 'calc(100vh - 44px)',
+              zIndex: 25,
+              pointerEvents: 'none'
+            }}
+          >
+            <defs>
+              <mask id="hole-mask">
+                <rect x="0" y="0" width="100" height="100" fill="white" />
+                <rect
+                  x={holeX}
+                  y={holeY}
+                  width={holeWidth}
+                  height={holeHeight}
+                  rx="1"
+                  ry="1"
+                  fill="black"
+                />
+              </mask>
+            </defs>
+            <rect
+              x="0"
+              y="0"
+              width="100"
+              height="100"
+              fill="black"
+              mask="url(#hole-mask)"
+            />
+          </svg>
+        )
+      })()}
     </>
   )
 }
