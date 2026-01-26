@@ -186,7 +186,9 @@ export default function WorkspacesPage() {
                   setWorkspaceFilter('showMyWorkspaces', checked as boolean)
                 }
               />
-              <Label htmlFor="my-workspaces">Workspaces I am the member of</Label>
+              <Label htmlFor="my-workspaces">
+                Workspaces I am the member of
+              </Label>
             </div>
           </div>
         )}
@@ -215,7 +217,8 @@ export default function WorkspacesPage() {
               <Package className="mb-4 h-12 w-12 opacity-50" />
               <p className="text-lg font-medium">No workspace found</p>
               <p className="mb-4 text-sm">
-                Select at least one filter to see workspaces or create a new workspace
+                Select at least one filter to see workspaces or create a new
+                workspace
               </p>
               <Button
                 onClick={() => setCreateOpen(true)}

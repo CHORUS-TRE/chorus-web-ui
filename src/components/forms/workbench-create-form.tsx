@@ -16,11 +16,20 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import {
   Workbench,
   WorkbenchCreateSchema,
   WorkbenchCreateType,
   WorkbenchStatus
 } from '@/domain/model'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { workbenchCreate } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/card'
@@ -34,15 +43,6 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 
-import { useAuthentication } from '@/providers/authentication-provider'
-import { useAppState } from '@/stores/app-state-store'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import { toast } from '../hooks/use-toast'
 import { Textarea } from '../ui/textarea'
 
@@ -238,7 +238,10 @@ export function WorkbenchCreateForm({
                         <SelectContent>
                           {myWorkspaces && myWorkspaces.length > 0 ? (
                             myWorkspaces.map((workspace) => (
-                              <SelectItem key={workspace.id} value={workspace.id}>
+                              <SelectItem
+                                key={workspace.id}
+                                value={workspace.id}
+                              >
                                 {workspace.name}
                               </SelectItem>
                             ))

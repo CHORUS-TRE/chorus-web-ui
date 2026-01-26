@@ -4,8 +4,14 @@ import { ShieldCheck, User } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/card'
 import { Button } from '~/components/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/card'
 
 export default function UserSettingsPage() {
   const params = useParams<{ userId: string }>()
@@ -36,10 +42,14 @@ export default function UserSettingsPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {settings.map((setting) => (
-          <Card key={setting.id} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => router.push(setting.href)}>
+          <Card
+            key={setting.id}
+            className="cursor-pointer transition-colors hover:bg-muted/50"
+            onClick={() => router.push(setting.href)}
+          >
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                <div className="rounded-lg bg-primary/10 p-2 text-primary">
                   {setting.icon}
                 </div>
                 <CardTitle>{setting.title}</CardTitle>
@@ -47,10 +57,14 @@ export default function UserSettingsPage() {
             </CardHeader>
             <CardContent>
               <CardDescription>{setting.description}</CardDescription>
-              <Button variant="link" className="px-0 mt-4 text-primary" onClick={(e) => {
-                e.stopPropagation()
-                router.push(setting.href)
-              }}>
+              <Button
+                variant="link"
+                className="mt-4 px-0 text-primary"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  router.push(setting.href)
+                }}
+              >
                 Configure
               </Button>
             </CardContent>
