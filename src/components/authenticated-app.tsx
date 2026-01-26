@@ -22,9 +22,9 @@ interface MainLayoutProps {
 }
 
 function AuthenticatedAppContent({ children }: MainLayoutProps) {
+  const { isOpen: leftSidebarOpen, setOpen: setLeftSidebarOpen } = useSidebar()
   const { showRightSidebar } = useUserPreferences()
   const pathname = usePathname()
-  const { isOpen: leftSidebarOpen, setOpen: setLeftSidebarOpen } = useSidebar()
   const { isFullscreen } = useFullscreenContext()
 
   const [leftSidebarHovered, setLeftSidebarHovered] = React.useState(false)
@@ -65,7 +65,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [setLeftSidebarOpen])
 
   return (
     <div id="authenticated-app">
@@ -90,18 +90,6 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               aria-hidden="true"
             />
           )}
-
-          {/* {background?.sessionId && (
-            <Link
-              href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
-              passHref
-            >
-              <div
-                className="fixed left-0 top-11 z-30 h-full w-full cursor-pointer bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 hover:text-accent"
-                id="iframe-overlay "
-              />
-            </Link>
-          )} */}
 
           <>
             {/* Normal layout container with flexbox - sidebar and content side by side */}
