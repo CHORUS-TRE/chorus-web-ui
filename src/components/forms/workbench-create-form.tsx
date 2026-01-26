@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { startTransition, useEffect, useState } from 'react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
@@ -34,6 +34,15 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { toast } from '../hooks/use-toast'
 import { Textarea } from '../ui/textarea'
 
@@ -43,13 +52,13 @@ const DEFAULT_VIEWPORT = {
 }
 
 export function WorkbenchCreateForm({
-  workspaceId,
+  workspaceId: initialWorkspaceId,
   workspaceName,
   userId,
   onSuccess,
   openOnStart = false
 }: {
-  workspaceId: string
+  workspaceId?: string
   workspaceName?: string
   userId?: string
   onSuccess?: (workbench: Workbench) => void
@@ -59,12 +68,24 @@ export function WorkbenchCreateForm({
   const [isCreating, setIsCreating] = useState(false)
   const [viewportDimensions, setViewportDimensions] = useState(DEFAULT_VIEWPORT)
   const router = useRouter()
+  const { workspaces } = useAppState()
+  const { user } = useAuthentication()
+
+  const myWorkspaces = useMemo(() => {
+    return workspaces?.filter((workspace) => {
+      const isOwner = workspace.userId === user?.id
+      const isMember = user?.rolesWithContext?.some(
+        (role) => role.context.workspace === workspace.id
+      )
+      return isOwner || isMember
+    })
+  }, [workspaces, user])
 
   const form = useForm<WorkbenchCreateType>({
     resolver: zodResolver(WorkbenchCreateSchema),
     defaultValues: {
-      name: `${workspaceName}-session`,
-      workspaceId: workspaceId,
+      name: workspaceName ? `${workspaceName}-session` : 'new-session',
+      workspaceId: initialWorkspaceId || '',
       userId: userId || '2',
       tenantId: '1',
       status: WorkbenchStatus.ACTIVE,
@@ -103,8 +124,8 @@ export function WorkbenchCreateForm({
   useEffect(() => {
     if (open) {
       form.reset({
-        name: `${workspaceName}-session`,
-        workspaceId: workspaceId,
+        name: workspaceName ? `${workspaceName}-session` : 'new-session',
+        workspaceId: initialWorkspaceId || form.getValues('workspaceId') || '',
         userId: userId || '2',
         tenantId: '1',
         status: WorkbenchStatus.ACTIVE,
@@ -116,7 +137,7 @@ export function WorkbenchCreateForm({
   }, [
     open,
     form,
-    workspaceId,
+    initialWorkspaceId,
     workspaceName,
     userId,
     viewportDimensions.height,
@@ -161,7 +182,7 @@ export function WorkbenchCreateForm({
         setOpen(false)
 
         router.push(
-          `/workspaces/${workspaceId}/sessions/${result.data.id as string}`
+          `/workspaces/${data.workspaceId}/sessions/${result.data.id as string}`
         )
         await new Promise((resolve) => setTimeout(resolve, 2000)) // Wait for the backend cache to be updated
         if (onSuccess) onSuccess(result.data)
@@ -194,10 +215,44 @@ export function WorkbenchCreateForm({
                   type="hidden"
                   {...form.register('initialResolutionHeight')}
                 />
-                <input type="hidden" {...form.register('workspaceId')} />
                 <input type="hidden" {...form.register('userId')} />
                 <input type="hidden" {...form.register('tenantId')} />
                 <input type="hidden" {...form.register('status')} />
+
+                <FormField
+                  control={form.control}
+                  name="workspaceId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Workspace</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={!!initialWorkspaceId}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a workspace" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {myWorkspaces && myWorkspaces.length > 0 ? (
+                            myWorkspaces.map((workspace) => (
+                              <SelectItem key={workspace.id} value={workspace.id}>
+                                {workspace.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="none" disabled>
+                              No available workspace
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}

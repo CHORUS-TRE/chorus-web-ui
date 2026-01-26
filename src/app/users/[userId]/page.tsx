@@ -170,7 +170,7 @@ export default function UserProfile() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/users/${userId}/settings/privacy`}>
+                  <Link href={`/users/${userId}/settings/`}>
                     <Button variant="outline">
                       <Settings className="mr-2 h-4 w-4" />
                       Settings

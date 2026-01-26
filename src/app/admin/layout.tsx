@@ -37,7 +37,7 @@ export default function Layout({
             <div className="flex items-center justify-between gap-3">
               <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
                 <Package className="h-9 w-9" />
-                Settings
+                Admin
               </h2>
             </div>
             <AdminTabs />

@@ -13,6 +13,7 @@ import {
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
+import { listUsers } from '@/view-model/user-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceListWithDev } from '@/view-model/workspace-view-model'
 
@@ -21,11 +22,13 @@ export type AppStateStore = {
   workbenches: Workbench[] | undefined
   apps: App[] | undefined
   appInstances: AppInstance[] | undefined
+  users: User[] | undefined
 
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   refreshApps: () => Promise<void>
   refreshAppInstances: () => Promise<void>
+  refreshUsers: () => Promise<void>
   clearState: () => void
   initialize: (user?: User) => Promise<void>
 }
@@ -35,6 +38,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   workbenches: undefined,
   apps: undefined,
   appInstances: undefined,
+  users: undefined,
 
   refreshWorkspaces: async () => {
     const result = await workspaceListWithDev()
@@ -97,12 +101,26 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
+  refreshUsers: async () => {
+    const result = await listUsers()
+    if (result.error) {
+      toast({ title: result.error, variant: 'destructive' })
+      return
+    }
+    if (result.data) {
+      set({
+        users: result.data.sort((a, b) => a.username.localeCompare(b.username))
+      })
+    }
+  },
+
   clearState: () => {
     set({
       workspaces: undefined,
       workbenches: undefined,
       apps: undefined,
-      appInstances: undefined
+      appInstances: undefined,
+      users: undefined
     })
     const { clearUserData } = useDevStoreCache.getState()
     clearUserData()
@@ -118,7 +136,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       get().refreshWorkspaces(),
       get().refreshWorkbenches(),
       get().refreshApps(),
-      get().refreshAppInstances()
+      get().refreshAppInstances(),
+      get().refreshUsers()
     ])
   }
 }))
