@@ -250,17 +250,14 @@ export default function IframeCacheRenderer() {
     return null
   }
 
-  // Only render fixed-position iframes when:
-  // 1. In fullscreen mode (on session pages)
-  // 2. In background mode (on workspace or app-store pages)
-  // 3. On webapp pages (always fullscreen-style)
-  const shouldRenderFixedIframes =
-    isFullscreen || !isIframePage || pathname.includes('/webapps/')
+  // Always render fixed-position iframes (Immersive Mode is now default for sessions)
+  // 1. In fullscreen mode
+  // 2. In background mode (workspace/app-store)
+  // 3. On webapp pages
+  // 4. On session pages (NOW ADDED)
 
-  if (!shouldRenderFixedIframes && isIframePage) {
-    // On session pages in normal mode, iframe is rendered in content, not here
-    return null
-  }
+  // We effectively always want the cache renderer to handle the iframes now for consistency
+  // and to support the immersive "under-UI" layout.
 
   return (
     <>

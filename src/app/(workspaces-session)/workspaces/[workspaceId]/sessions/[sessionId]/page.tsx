@@ -1,10 +1,10 @@
 'use client'
 
+import { Computer } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { useIframeCache } from '@/providers/iframe-cache-provider'
-
 /**
  * Page for displaying a workbench session in a cached iframe.
  * In normal mode: iframe appears in the content area
@@ -21,20 +21,27 @@ export default function WorkbenchPage() {
     }
   }, [params.sessionId, params.workspaceId, openSession, setActiveIframe])
 
-  const currentIframe = cachedIframes.get(params.sessionId)
-
+  // In Immersive Mode, the iframe is rendered by the global IframeCacheRenderer
+  // We use a Flex layout to create a "Glass Frame" around the transparent center "hole"
   return (
-    <div className="h-full w-full">
-      {currentIframe && (
-        <iframe
-          id={`content-iframe-${params.sessionId}`}
-          title={currentIframe.name}
-          src={currentIframe.url || 'about:blank'}
-          allow="autoplay; fullscreen; clipboard-write;"
-          className="h-full w-full rounded-lg border-0"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"
-        />
-      )}
+    <div className="flex h-full flex-col">
+      {/* Top Glass Bar (Header) */}
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Glass Pillar */}
+        <div className="w-4 flex-none border-r border-muted/20 bg-contrast-background/50 backdrop-blur-md sm:w-8" />
+
+        {/* The HOLE (Transparent Center) */}
+        <div className="relative flex-1 overflow-auto bg-transparent">
+          {/* Content goes here if needed */}
+        </div>
+
+        {/* Right Glass Pillar */}
+        <div className="w-4 flex-none border-l border-muted/20 bg-contrast-background/50 backdrop-blur-md sm:w-8" />
+      </div>
+
+      {/* Bottom Glass Bar */}
+      <div className="h-4 flex-none rounded-b-xl border-t border-muted/20 bg-contrast-background/50 backdrop-blur-md sm:h-8" />
     </div>
   )
 }
