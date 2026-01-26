@@ -31,6 +31,9 @@ export type AppStateStore = {
   refreshUsers: () => Promise<void>
   clearState: () => void
   initialize: (user?: User) => Promise<void>
+
+  immersiveUIVisible: boolean
+  setImmersiveUIVisible: (visible: boolean) => void
 }
 
 export const useAppStateStore = create<AppStateStore>((set, get) => ({
@@ -139,7 +142,10 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       get().refreshAppInstances(),
       get().refreshUsers()
     ])
-  }
+  },
+
+  immersiveUIVisible: true,
+  setImmersiveUIVisible: (visible: boolean) => set({ immersiveUIVisible: visible })
 }))
 
 // Convenience alias matching legacy naming

@@ -1,6 +1,6 @@
 'use client'
 
-import { Computer } from 'lucide-react'
+import { useAppState } from '@/stores/app-state-store'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -13,6 +13,7 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const { openSession, setActiveIframe, cachedIframes } = useIframeCache()
+  const setImmersiveUIVisible = useAppState((state) => state.setImmersiveUIVisible)
 
   useEffect(() => {
     if (params.sessionId && params.workspaceId) {
@@ -24,7 +25,10 @@ export default function WorkbenchPage() {
   // In Immersive Mode, the iframe is rendered by the global IframeCacheRenderer
   // We use a Flex layout to create a "Glass Frame" around the transparent center "hole"
   return (
-    <div className="flex h-full flex-col">
+    <div
+      className="flex h-full flex-col"
+      onClick={() => setImmersiveUIVisible(false)}
+    >
       {/* Top Glass Bar (Header) */}
 
       <div className="flex flex-1 overflow-hidden">

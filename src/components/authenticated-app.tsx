@@ -9,6 +9,7 @@ import { Header } from '@/components/header'
 import { useSidebar } from '@/hooks/use-sidebar'
 import { cn } from '@/lib/utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
@@ -54,27 +55,16 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }
   }
 
-  // Keyboard shortcut: Ctrl+B to toggle sidebar
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-        e.preventDefault()
-        setLeftSidebarOpen((prev: boolean) => !prev)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [setLeftSidebarOpen])
 
   // Immersive Mode Logic
-  const [isImmersiveUIVisible, setIsImmersiveUIVisible] = React.useState(true)
+  const immersiveUIVisible = useAppState((state) => state.immersiveUIVisible)
+  const setImmersiveUIVisible = useAppState((state) => state.setImmersiveUIVisible)
   const immersiveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
   // Reset visibility when not on a session page
   React.useEffect(() => {
     if (!isIFramePage) {
-      setIsImmersiveUIVisible(true)
+      setImmersiveUIVisible(true)
       if (immersiveTimeoutRef.current) {
         clearTimeout(immersiveTimeoutRef.current)
       }
@@ -83,18 +73,18 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     return () => {
       if (immersiveTimeoutRef.current) clearTimeout(immersiveTimeoutRef.current)
     }
-  }, [isIFramePage, pathname]) // Re-run when page changes
+  }, [isIFramePage, pathname, setImmersiveUIVisible]) // Re-run when page changes
 
   const handleHeaderHover = () => {
     // Show UI when hovering header
     if (isIFramePage) {
-      setIsImmersiveUIVisible(true)
+      setImmersiveUIVisible(true)
     }
   }
 
   // Handle closing the immersive UI manually (if we add a button later inside the UI)
   const toggleImmersiveUI = () => {
-    setIsImmersiveUIVisible((prev) => !prev)
+    setImmersiveUIVisible(!immersiveUIVisible)
   }
 
   return (
@@ -114,7 +104,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             <Header />
 
             {/* Close Overlay Button (Only on Session Pages) */}
-            {isIFramePage && isImmersiveUIVisible && (
+            {isIFramePage && immersiveUIVisible && (
               <div
                 className="absolute right-[35%] top-2 z-50 flex duration-300 animate-in fade-in"
                 title="Hide Sidebars"
@@ -123,7 +113,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7 bg-background/50 text-muted-foreground backdrop-blur hover:bg-background/80 hover:text-foreground"
-                  onClick={() => setIsImmersiveUIVisible(false)}
+                  onClick={() => setImmersiveUIVisible(false)}
                 >
                   <PanelLeftOpen className="h-4 w-4 rotate-180" />
                 </Button>
@@ -131,21 +121,11 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             )}
           </div>
 
-          {/* Invisible hover zone on left edge to reveal sidebar */}
-          {!leftSidebarOpen && !isFullscreen && (
-            <div
-              className="fixed left-0 top-11 z-50 h-[calc(100vh-2.75rem)] w-4 cursor-pointer"
-              onMouseEnter={handleHoverStart}
-              onMouseLeave={handleHoverEnd}
-              aria-hidden="true"
-            />
-          )}
-
           {/* Main Layout Container - Fades out in Immersive Mode */}
           <div
             className={cn(
               'fixed inset-0 top-12 z-30 p-4 transition-opacity duration-500 ease-in-out',
-              isIFramePage && !isImmersiveUIVisible
+              isIFramePage && !immersiveUIVisible
                 ? 'pointer-events-none opacity-0'
                 : 'opacity-100'
             )}
@@ -188,7 +168,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   isFullscreen
                     ? 'w-full'
                     : // Desktop (>= xl): logic based on sidebar state
-                      leftSidebarOpen
+                    leftSidebarOpen
                       ? 'xl:min-w-[300px] xl:flex-1 2xl:w-[80vw] 2xl:flex-none'
                       : 'xl:w-[80vw] 2xl:w-[80vw]'
                 )}
@@ -213,7 +193,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                     className={cn(
                       'flex-1 overflow-auto',
                       !isIFramePage &&
-                        'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
+                      'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
                     )}
                   >
                     {children}
@@ -240,7 +220,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
           {!leftSidebarOpen &&
             leftSidebarHovered &&
             !isFullscreen &&
-            !isImmersiveUIVisible && (
+            !immersiveUIVisible && (
               <div
                 className="fixed left-4 top-28 z-50 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] duration-200 animate-in slide-in-from-left"
                 onMouseEnter={handleHoverStart}
@@ -248,7 +228,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               >
                 <LeftSidebar
                   isOpen={false}
-                  setIsOpen={() => {}}
+                  setIsOpen={() => { }}
                   isHovered={true}
                   onHoverStart={handleHoverStart}
                   onHoverEnd={handleHoverEnd}
