@@ -1,3 +1,16 @@
+## [1.28.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.28.0...v1.28.1) (2026-01-27)
+
+
+### Bug Fixes
+
+* improve session overlay functionality ([9a1636d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9a1636db88da0bd4efdcd76672555f69836899f2))
+* layout ([23d3966](https://github.com/CHORUS-TRE/chorus-web-ui/commit/23d396651a2b827b7f294eed26c7aa34ef5169bc))
+* mouseleave events ([773cf4d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/773cf4d1ee7f991254ae37b692e3aeaf598acc5e))
+* onclick make the UI fade ([6df7e24](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6df7e24896f7708630bf0829d1988e11b2657fa5))
+* removed clientside ip anonymization ([0f7b783](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0f7b7830365f35f9d843ba03c4ef324a5d4377f0))
+* update baseline-browser-mapping lib ([8b96d53](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8b96d53c4a2ca31165d1658cc5ca7c5254fa50c1))
+* workspace selection for create session ([822ed30](https://github.com/CHORUS-TRE/chorus-web-ui/commit/822ed306fc9e9171e36ed8e0aa18298ddc655200))
+
 # [1.28.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.27.3...v1.28.0) (2026-01-22)
 
 
