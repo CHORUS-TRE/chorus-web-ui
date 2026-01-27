@@ -94,6 +94,13 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }
   }
 
+  const handleContentMainHover = () => {
+    // Show UI when hovering content-main
+    if (isIFramePage) {
+      setImmersiveUIVisible(false)
+    }
+  }
+
   // Handle closing the immersive UI manually (if we add a button later inside the UI)
   const toggleImmersiveUI = () => {
     setImmersiveUIVisible(!immersiveUIVisible)
@@ -114,23 +121,6 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             onMouseEnter={handleHeaderHover}
           >
             <Header />
-
-            {/* Close Overlay Button (Only on Session Pages) */}
-            {isIFramePage && immersiveUIVisible && (
-              <div
-                className="absolute right-[35%] top-2 z-50 flex duration-300 animate-in fade-in"
-                title="Hide Sidebars"
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 bg-background/50 text-muted-foreground backdrop-blur hover:bg-background/80 hover:text-foreground"
-                  onClick={() => setImmersiveUIVisible(false)}
-                >
-                  <PanelLeftOpen className="h-4 w-4 rotate-180" />
-                </Button>
-              </div>
-            )}
           </div>
 
           {/* Main Layout Container - Fades out in Immersive Mode */}
@@ -190,6 +180,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 
                   <div
                     id="content-main"
+                    onMouseEnter={handleContentMainHover}
                     ref={contentMainRef}
                     className={cn(
                       'flex-1 overflow-auto',

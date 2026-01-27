@@ -22,7 +22,7 @@ import {
 export function AppBreadcrumb() {
   const pathname = usePathname()
   const instanceConfig = useInstanceConfig()
-  const { workspaces, appInstances, users } = useAppState()
+  const { workspaces, appInstances, apps, users } = useAppState()
   const { isFullscreen, toggleFullscreen } = useFullscreenContext()
 
   const projectLabel = useMemo(
@@ -87,7 +87,10 @@ export function AppBreadcrumb() {
         if (workspace) label = workspace.name
       } else if (prevSegment === 'sessions' || prevSegment === 'webapps') {
         const instance = appInstances?.find((i) => i.id === seg.text)
-        if (instance) label = instance?.name
+        if (instance) {
+          const app = apps?.find((a) => a.id === instance.appId)
+          if (app) label = app.name
+        }
       } else if (prevSegment === 'users') {
         // Resolve user ID to username or full name
         const user = users?.find((u) => u.id === seg.text)
@@ -113,6 +116,7 @@ export function AppBreadcrumb() {
     pathname,
     workspaces,
     appInstances,
+    apps,
     users,
     projectLabel,
     instanceConfig.name
