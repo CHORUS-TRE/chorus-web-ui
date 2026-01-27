@@ -6,6 +6,7 @@ docs/chorus-ai-agent
 CLAUDE.md
 .claude/*
 conductor/
+brainstorming/
 
 
 # dependencies

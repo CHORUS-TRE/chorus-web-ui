@@ -45,7 +45,7 @@ export default function RightSidebar() {
           </div>
           <div className="flex w-full flex-col gap-4 p-4">
             <Link
-              href="https://docs.chorus-tre.ch/docs/category/getting-started"
+              href="https://docs.chorus-tre.ch/docs/user-guide/getting-started/"
               className="cursor"
               target="_blank"
               variant="rounded"

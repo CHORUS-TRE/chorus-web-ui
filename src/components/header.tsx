@@ -1,16 +1,22 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  ChevronDown,
   FlaskConical,
   Globe,
   HelpCircle,
   Info,
   LaptopMinimal,
+  LogOut,
   Maximize,
+  Moon,
   Plus,
   Search,
   Settings,
+  Shield,
+  Sun,
   Trash2,
+  User,
   UserPlus,
   X
 } from 'lucide-react'
@@ -35,9 +41,11 @@ import {
   HoverCardContent,
   HoverCardTrigger
 } from '@/components/ui/hover-card'
-import { useInstanceLogo } from '@/hooks/use-instance-config'
+import { Separator } from '@/components/ui/separator'
+import { useInstanceConfig, useInstanceLogo } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
@@ -49,7 +57,6 @@ import { useAuthorizationViewModel } from '~/view-model/authorization-view-model
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
-import { ThemeToggle } from './theme-toggle'
 
 export function Header() {
   const router = useRouter()
@@ -80,11 +87,15 @@ export function Header() {
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
   )
-  const { theme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
+  const { toggleFullscreen } = useFullscreenContext()
 
-  const { canManageUsers } = useAuthorizationViewModel()
+  const { setWorkspaceFilter, toggleRightSidebar } = useUserPreferences()
+  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+  const instanceConfig = useInstanceConfig()
+  const [menuOpen, setMenuOpen] = useState(false)
   // Recent sessions and webapps are persisted across logout/login
   // Use cachedIframes.has() to check if a session/webapp is currently loaded
 
@@ -105,29 +116,198 @@ export function Header() {
     return session?.name || `Session ${sessionId?.slice(0, 8)}`
   }
 
-  // Toggle fullscreen for active iframe
-  const toggleFullscreen = () => {
-    if (activeIframeId) {
-      const iframe = document.getElementById(`iframe-${activeIframeId}`)
-      if (iframe) {
-        iframe.requestFullscreen()
-      }
-    }
-  }
-
+  /**
+   * User profile section with dropdown
+   */
   /**
    * Help button - toggles right sidebar
    */
-  function HelpButton() {
-    const { toggleRightSidebar } = useUserPreferences()
+
+  function UserProfileSection() {
+    const { logout } = useAuthentication()
+    const { setWorkspaceFilter, toggleRightSidebar } = useUserPreferences()
+    const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+    const instanceConfig = useInstanceConfig()
+    const [menuOpen, setMenuOpen] = useState(false)
+
+    if (!user) return null
+
+    const handleLogout = async () => {
+      await logout()
+    }
+
+    // Get initials for avatar
+    const initials =
+      `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase()
+
+    // Get platform/global roles (exclude Workspace* and Workbench* roles)
+    const globalRoles = user.rolesWithContext
+      ?.filter(
+        (role) =>
+          !role.name.startsWith('Workspace') &&
+          !role.name.startsWith('Workbench')
+      )
+      .map((role) => role.name)
+      .filter((name, index, arr) => arr.indexOf(name) === index) // unique
+      .sort((a, b) => a.localeCompare(b)) // alphabetical order
 
     return (
-      <button
-        onClick={toggleRightSidebar}
-        className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-      >
-        <HelpCircle className="h-4 w-4" />
-      </button>
+      <div className="relative">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-muted/30"
+          title={`${user.firstName} ${user.lastName}`}
+        >
+          {/* Avatar */}
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium">
+            {initials || <User className="h-4 w-4" />}
+          </div>
+          {/* Chevron */}
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
+              menuOpen && 'rotate-180'
+            )}
+          />
+        </button>
+
+        {/* Dropdown menu */}
+        {menuOpen && (
+          <div className="absolute right-0 top-full z-[100] mt-1 max-h-[90vh] min-w-[280px] overflow-y-auto rounded-xl border border-muted/60 bg-contrast-background p-1 shadow-2xl backdrop-blur-md">
+            {/* Profile Header */}
+            <div className="flex items-center gap-3 px-3 py-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-base font-medium">
+                {initials || <User className="h-5 w-5" />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  @{user.username}
+                </p>
+                <Link
+                  href={`/users/${user.id}`}
+                  variant="underline"
+                  className="mt-1 block text-xs font-medium text-primary hover:text-primary/80"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  View your profile
+                </Link>
+              </div>
+            </div>
+
+            <Separator className="my-1" />
+
+            {/* Section 1: Account Management */}
+            <div className="py-1">
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
+
+            <Separator className="my-1" />
+
+            {/* Quick Settings */}
+            <div className="py-1">
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              </button>
+
+              <button
+                onClick={() => {
+                  toggleRightSidebar()
+                  setMenuOpen(false)
+                }}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+              >
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </button>
+            </div>
+
+            <Separator className="my-1" />
+
+            {/* Section 4: Settings & Data */}
+            <div className="py-1">
+              <Link
+                href={`/users/${user.id}/settings/privacy`}
+                variant="underline"
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Shield className="h-4 w-4" />
+                Privacy
+              </Link>
+
+              {(canManageUsers || canManageSettings) && (
+                <Link
+                  href="/admin"
+                  variant="underline"
+                  className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Settings className="h-4 w-4" />
+                  Admin
+                </Link>
+              )}
+            </div>
+
+            {/* Section 3: Lab */}
+            {canManageUsers && (
+              <>
+                <Separator className="my-1" />
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      router.push(`/lab`)
+                      setMenuOpen(false)
+                    }}
+                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+                  >
+                    <FlaskConical className="h-4 w-4" />
+                    Lab
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Roles Section (optional, moved to bottom) */}
+            {globalRoles && globalRoles.length > 0 && (
+              <>
+                <Separator className="my-1" />
+                <div className="px-3 py-2">
+                  <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    Your Roles
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {globalRoles.map((role) => (
+                      <span
+                        key={role}
+                        className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                      >
+                        {role}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     )
   }
 
@@ -136,38 +316,36 @@ export function Header() {
       <nav
         className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 border-b border-muted/40 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
         id="header"
-        onMouseLeave={() => {
-          setTimeout(() => {
-            document.getElementById('workspace-iframe')?.focus()
-          }, 1000)
-        }}
       >
-        <Link href="/" variant="muted" className="shrink-0">
-          <Image
-            src={defaultLogo}
-            alt="Chorus"
-            height={32}
-            width={54}
-            className="aspect-auto cursor-pointer"
-            id="logo"
-            priority
-          />
-          {logo && (
+        {/* Left section: Logo + Breadcrumb */}
+        <div className="flex shrink-0 items-center gap-4">
+          <Link href="/" variant="muted" className="shrink-0">
             <Image
-              src={logo}
+              src={defaultLogo}
               alt="Chorus"
               height={32}
-              width={75}
-              className="ml-4 aspect-[80/33] cursor-pointer"
+              width={54}
+              className="aspect-auto cursor-pointer"
               id="logo"
               priority
             />
-          )}
-        </Link>
+            {logo && (
+              <Image
+                src={logo}
+                alt="Chorus"
+                height={32}
+                width={75}
+                className="ml-4 aspect-[80/33] cursor-pointer"
+                id="logo"
+                priority
+              />
+            )}
+          </Link>
+        </div>
 
-        {/* Center: Recent sessions and web apps */}
+        {/* Center: Recent sessions and web apps as Tabs */}
         {user && (recentSessions.length > 0 || recentWebApps.length > 0) && (
-          <div className="flex flex-1 items-center justify-center gap-1 overflow-x-auto px-4">
+          <div className="flex flex-1 items-end justify-center gap-0 overflow-x-auto px-4">
             {/* Recent Sessions - displayed in order added (most recent first) */}
             {recentSessions.map((recentSession) => {
               const isActive = activeIframeId === recentSession.id
@@ -200,10 +378,10 @@ export function Header() {
                         }
                       }}
                       className={cn(
-                        'group flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all',
+                        'group relative flex items-center gap-2 border-b-2 px-4 py-2 text-xs font-medium transition-all',
                         isActive
-                          ? 'border-primary/50 bg-primary/10 text-primary'
-                          : 'border-muted/50 hover:bg-accent/10'
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-transparent text-muted-foreground hover:border-muted/50 hover:bg-muted/10 hover:text-foreground'
                       )}
                     >
                       <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
@@ -366,7 +544,7 @@ export function Header() {
 
             {/* Separator if both sessions and webapps */}
             {recentSessions.length > 0 && recentWebApps.length > 0 && (
-              <div className="mx-1 h-4 w-px bg-muted/30" />
+              <div className="mx-2 h-6 w-px self-center bg-muted/30" />
             )}
 
             {/* Recent Web Apps */}
@@ -396,10 +574,10 @@ export function Header() {
                     }
                   }}
                   className={cn(
-                    'group flex cursor-pointer items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
+                    'group relative flex cursor-pointer items-center gap-2 border-b-2 px-4 py-2 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
                     isActive
-                      ? 'border-primary/50 bg-primary/10 text-primary'
-                      : 'border-muted/50 hover:bg-accent/10'
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-transparent text-muted-foreground hover:border-muted/50 hover:bg-muted/10 hover:text-foreground'
                   )}
                 >
                   <Globe className="h-3.5 w-3.5 shrink-0" />
@@ -437,19 +615,7 @@ export function Header() {
             </div>
           )}
 
-          <ThemeToggle />
-          {canManageUsers && (
-            <Button
-              variant="ghost"
-              onClick={() => router.push(`/lab`)}
-              aria-label="Sandbox"
-              className="text-muted-foreground"
-            >
-              <FlaskConical className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Lab</span>
-            </Button>
-          )}
-          <HelpButton />
+          <UserProfileSection />
         </div>
 
         <WorkbenchDeleteForm

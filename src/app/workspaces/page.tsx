@@ -50,10 +50,11 @@ export default function WorkspacesPage() {
     let result = workspaces?.filter((workspace) => {
       // Filter by View (My Workspaces)
       if (showMyWorkspaces) {
-        const isMine = user?.rolesWithContext?.some(
+        const isOwner = workspace.userId === user?.id
+        const isMember = user?.rolesWithContext?.some(
           (role) => role.context.workspace === workspace.id
         )
-        if (!isMine) return false
+        if (!isOwner && !isMember) return false
       }
 
       if (!showMyWorkspaces && !showCenter && !showProject) {
@@ -185,7 +186,9 @@ export default function WorkspacesPage() {
                   setWorkspaceFilter('showMyWorkspaces', checked as boolean)
                 }
               />
-              <Label htmlFor="my-workspaces">Show Only My Workspaces</Label>
+              <Label htmlFor="my-workspaces">
+                Workspaces I am the member of
+              </Label>
             </div>
           </div>
         )}
@@ -214,8 +217,8 @@ export default function WorkspacesPage() {
               <Package className="mb-4 h-12 w-12 opacity-50" />
               <p className="text-lg font-medium">No workspace found</p>
               <p className="mb-4 text-sm">
-                Select at least one filter (Center or Project) to see workspaces
-                or create a new workspace
+                Select at least one filter to see workspaces or create a new
+                workspace
               </p>
               <Button
                 onClick={() => setCreateOpen(true)}

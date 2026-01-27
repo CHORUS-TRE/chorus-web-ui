@@ -1,13 +1,21 @@
 'use client'
 
-import { LaptopMinimal, LayoutGrid, Rows3, Search, X } from 'lucide-react'
+import {
+  CirclePlus,
+  LaptopMinimal,
+  LayoutGrid,
+  Rows3,
+  Search,
+  X
+} from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
+import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -28,6 +36,8 @@ export default function SessionPage() {
     showMySessions,
     setShowMySessions
   } = useUserPreferences()
+
+  const [createOpen, setCreateOpen] = useState(false)
 
   const searchQuery: string = sessionSearchQuery ?? ''
   const setSearchQuery = setSessionSearchQuery
@@ -92,6 +102,20 @@ export default function SessionPage() {
             <LaptopMinimal className="h-9 w-9" />
             Sessions
           </h2>
+          {workspaces && workspaces.length > 0 && (
+            <div className="flex items-center gap-2">
+              <WorkbenchCreateForm
+                workspaceId={workspaceId}
+                workspaceName={
+                  workspaces.find((w) => w.id === workspaceId)?.name
+                }
+                userId={user?.id}
+                onSuccess={() => {
+                  refreshWorkbenches()
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -175,11 +199,23 @@ export default function SessionPage() {
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <LaptopMinimal className="mb-4 h-12 w-12 opacity-50" />
               <p className="text-lg font-medium">No sessions found</p>
-              <p className="text-sm">
+              <p className="mb-4 text-sm">
                 {showMySessions
-                  ? 'You have no sessions. Create one from a workspace.'
+                  ? 'You have no sessions'
                   : 'No sessions available.'}
               </p>
+              {workspaces && workspaces.length > 0 && (
+                <WorkbenchCreateForm
+                  workspaceId={workspaceId}
+                  workspaceName={
+                    workspaces.find((w) => w.id === workspaceId)?.name
+                  }
+                  userId={user?.id}
+                  onSuccess={() => {
+                    refreshWorkbenches()
+                  }}
+                />
+              )}
             </div>
           )
         ) : sessionsViewMode === 'grid' ? (

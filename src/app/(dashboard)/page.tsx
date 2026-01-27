@@ -22,6 +22,7 @@ import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
+import { GettingStartedSection } from '@/components/getting-started-section'
 import { Link } from '@/components/link'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -42,7 +43,6 @@ import {
 } from '~/data/data-source/mock-data/dashboard-feed'
 import { WorkbenchStatus } from '~/domain/model'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
-
 export default function CHORUSDashboard() {
   const workspaces = useAppState((state) => state.workspaces)
   const workbenches = useAppState((state) => state.workbenches)
@@ -84,11 +84,17 @@ export default function CHORUSDashboard() {
 
   return (
     <>
-      <div className="w-ful">
-        <h3 className="mb-8 mt-4 text-sm italic text-muted-foreground">
+      <div className="w-full">
+        <h2 className="mb-8 flex w-full flex-row items-center gap-3 text-start">
+          <CircleGauge className="h-9 w-9" />
+          Dashboard
+        </h2>
+        <h3 className="mb-8 text-sm italic text-muted-foreground">
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
+
+      <GettingStartedSection />
 
       <div className="w-full space-y-6">
         <section>

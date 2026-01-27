@@ -3,3 +3,4 @@
 | Feature | Status | Stage | Owner | Last Updated |
 | :--- | :--- | :--- | :--- | :--- |
 | Matomo Analytics Strategy | Implemented | 3 - Implementation | Matomo Strategist | 2026-01-16 |
+| Universal Breadcrumb | Implemented | 3 - Implementation | Breadcrumb Designer | 2026-01-20 |

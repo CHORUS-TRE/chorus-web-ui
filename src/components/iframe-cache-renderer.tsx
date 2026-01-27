@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
 import { CachedIframe } from '@/domain/model'
+import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
@@ -173,11 +174,14 @@ function CachedIframeRenderer({
  *
  * Background mode: Shows iframe in background when in workspace context
  * or on app-store page.
+ *
+ * Fullscreen mode: Shows active iframe in fullscreen when fullscreen is enabled
  */
 export default function IframeCacheRenderer() {
   const { cachedIframes, activeIframeId } = useIframeCache()
   const { workbenches } = useAppState()
   const pathname = usePathname()
+  const { isFullscreen } = useFullscreenContext()
   const [iframeEntries, setIframeEntries] = useState<[string, CachedIframe][]>(
     []
   )
@@ -245,6 +249,15 @@ export default function IframeCacheRenderer() {
   if (iframeEntries.length === 0) {
     return null
   }
+
+  // Always render fixed-position iframes (Immersive Mode is now default for sessions)
+  // 1. In fullscreen mode
+  // 2. In background mode (workspace/app-store)
+  // 3. On webapp pages
+  // 4. On session pages (NOW ADDED)
+
+  // We effectively always want the cache renderer to handle the iframes now for consistency
+  // and to support the immersive "under-UI" layout.
 
   return (
     <>

@@ -2,38 +2,23 @@
 
 import {
   Building2,
-  ChevronUp,
   GaugeCircle,
   Globe,
+  HelpCircle,
   LaptopMinimal,
-  LogOut,
   Package,
   PanelLeftClose,
-  Settings,
-  Shield,
-  Store,
-  User
+  Store
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { Link } from '@/components/link'
-import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
-
-interface LeftSidebarProps {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  isHovered: boolean
-  onHoverStart: () => void
-  onHoverEnd: () => void
-}
 
 // All navigation items (for external use like mobile nav, page titles)
 // TODO: make it dynamic based on the instance config
@@ -68,173 +53,22 @@ export const navItems = [
     label: 'Services',
     icon: Globe,
     href: '/app-store?tab=webapps'
-  },
-  {
-    label: 'Settings',
-    icon: Settings,
-    href: '/admin'
   }
 ]
-
-/**
- * Sidebar header with title and close button
- */
-function SidebarHeader({
-  onClose,
-  showCloseButton
-}: {
-  onClose?: () => void
-  showCloseButton?: boolean
-}) {
-  const instanceConfig = useInstanceConfig()
-
-  return (
-    <div className="sticky top-0 z-[100] mb-4 flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
-      <h1 className="ml-2 text-lg font-semibold text-foreground">
-        {instanceConfig.name}
-      </h1>
-      {showCloseButton && onClose && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-accent hover:text-accent/80"
-          onClick={onClose}
-          title="Close sidebar"
-        >
-          <PanelLeftClose className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
-  )
-}
-
-/**
- * User profile section at the bottom of sidebar
- */
-function UserProfileSection() {
-  const { user, logout } = useAuthentication()
-  const router = useRouter()
-  const [menuOpen, setMenuOpen] = React.useState(false)
-
-  if (!user) return null
-
-  const handleLogout = async () => {
-    await logout()
-  }
-
-  // Get initials for avatar
-  const initials =
-    `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase()
-
-  // Get platform/global roles (exclude Workspace* and Workbench* roles)
-  const globalRoles = user.rolesWithContext
-    ?.filter(
-      (role) =>
-        !role.name.startsWith('Workspace') && !role.name.startsWith('Workbench')
-    )
-    .map((role) => role.name)
-    .filter((name, index, arr) => arr.indexOf(name) === index) // unique
-    .sort((a, b) => a.localeCompare(b)) // alphabetical order
-
-  return (
-    <div className="border-t border-muted/60 p-2 text-muted-foreground">
-      <div className="relative">
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-muted/30"
-        >
-          {/* Avatar */}
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium">
-            {initials || <User className="h-4 w-4" />}
-          </div>
-          {/* Name & Username */}
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">
-              {user.firstName} {user.lastName}
-            </p>
-            <p className="truncate text-xs">{user.username}</p>
-          </div>
-          {/* Chevron */}
-          <ChevronUp
-            className={cn(
-              'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
-              menuOpen && 'rotate-180'
-            )}
-          />
-        </button>
-
-        {/* Dropdown menu */}
-        {menuOpen && (
-          <div className="absolute bottom-full left-0 right-0 mb-1 max-h-64 overflow-y-auto rounded-lg border border-muted/60 bg-contrast-background p-1 shadow-lg">
-            {/* Roles section */}
-            {globalRoles && globalRoles.length > 0 && (
-              <div className="border-b border-muted/40 px-2 py-2">
-                <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Roles
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {globalRoles.map((role) => (
-                    <span
-                      key={role}
-                      className="rounded bg-muted/50 px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                    >
-                      {role}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            <Link
-              href={`/users/${user.id}`}
-              variant="underline"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-foreground transition-colors hover:bg-muted/30"
-              onClick={() => setMenuOpen(false)}
-            >
-              <User className="h-4 w-4" />
-              Profile
-            </Link>
-
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-foreground transition-colors hover:bg-muted/30"
-            >
-              <LogOut className="h-4 w-4" />
-              Log out
-            </button>
-            <Separator />
-            <Link
-              href={`/users/${user.id}/settings/privacy`}
-              variant="underline"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-foreground transition-colors hover:bg-muted/30"
-              onClick={() => setMenuOpen(false)}
-            >
-              <Shield className="h-4 w-4" />
-              Settings
-            </Link>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
 
 /**
  * Shared sidebar content - used by both floating and fixed sidebars
  */
 function SidebarContent({
   pathname,
-  searchParams,
-  onClose,
-  showCloseButton
+  searchParams
 }: {
   pathname: string
   searchParams: URLSearchParams
-  onClose?: () => void
-  showCloseButton?: boolean
 }) {
   const router = useRouter()
-  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
-  const { workspaceFilters, setWorkspaceFilter } = useUserPreferences()
+  const { workspaceFilters, setWorkspaceFilter, toggleRightSidebar } =
+    useUserPreferences()
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
 
@@ -277,10 +111,10 @@ function SidebarContent({
   return (
     <>
       {/* Header with title and close button */}
-      <SidebarHeader onClose={onClose} showCloseButton={showCloseButton} />
+      {/* <SidebarHeader onClose={onClose} showCloseButton={showCloseButton} /> */}
 
       {/* Main navigation */}
-      <nav className="flex flex-1 flex-col gap-0.5 px-4 py-2">
+      <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
         {/* Dashboard */}
         <Link
           href="/"
@@ -388,59 +222,33 @@ function SidebarContent({
           Services
         </Link>
 
-        {/* Settings */}
-        {(canManageUsers || canManageSettings) && (
-          <Link
-            href="/admin"
-            variant="underline"
-            className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-              isActive('/admin')
-                ? 'bg-primary/20 text-primary'
-                : 'text-muted-foreground'
-            )}
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Link>
-        )}
+        {/* Help */}
+        <button
+          onClick={toggleRightSidebar}
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'text-muted-foreground'
+          )}
+        >
+          <HelpCircle className="h-4 w-4" />
+          Help
+        </button>
       </nav>
-
-      {/* User profile section at bottom */}
-      <UserProfileSection />
     </>
   )
 }
 
-export function LeftSidebar({
-  isOpen,
-  setIsOpen,
-  isHovered,
-  onHoverStart: _onHoverStart,
-  onHoverEnd: _onHoverEnd
-}: LeftSidebarProps) {
+export function LeftSidebar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const handleClose = () => {
-    setIsOpen(false)
-  }
-
   return (
-    <>
-      <div
-        className={cn(
-          'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md transition-transform duration-300 ease-in-out',
-          !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
-        )}
-      >
-        <SidebarContent
-          pathname={pathname}
-          searchParams={searchParams}
-          onClose={handleClose}
-          showCloseButton={isOpen}
-        />
-      </div>
-    </>
+    <div
+      className={cn(
+        'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
+      )}
+    >
+      <SidebarContent pathname={pathname} searchParams={searchParams} />
+    </div>
   )
 }
