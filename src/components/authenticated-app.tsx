@@ -3,10 +3,9 @@
 import { PanelLeftOpen } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Header } from '@/components/header'
-import { useSidebar } from '@/hooks/use-sidebar'
 import { cn } from '@/lib/utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -23,7 +22,6 @@ interface MainLayoutProps {
 }
 
 function AuthenticatedAppContent({ children }: MainLayoutProps) {
-  const { isOpen: leftSidebarOpen } = useSidebar()
   const { showRightSidebar } = useUserPreferences()
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
@@ -41,8 +39,42 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
   )
   const immersiveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
+  // Ref for content-main element to measure its position
+  const contentMainRef = useRef<HTMLDivElement>(null)
+  const [contentRect, setContentRect] = useState<DOMRect | null>(null)
+
+  // Update content rect on resize
+  const updateContentRect = useCallback(() => {
+    if (contentMainRef.current) {
+      setContentRect(contentMainRef.current.getBoundingClientRect())
+    }
+  }, [])
+
+  // ResizeObserver to track content-main element size and position
+  useEffect(() => {
+    const element = contentMainRef.current
+    if (!element) return
+
+    // Initial measurement
+    updateContentRect()
+
+    // Observe resize
+    const resizeObserver = new ResizeObserver(() => {
+      updateContentRect()
+    })
+    resizeObserver.observe(element)
+
+    // Also listen to window resize for position changes
+    window.addEventListener('resize', updateContentRect)
+
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', updateContentRect)
+    }
+  }, [updateContentRect])
+
   // Reset visibility when not on a session page
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isIFramePage) {
       setImmersiveUIVisible(true)
       if (immersiveTimeoutRef.current) {
@@ -115,7 +147,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                 'flex h-full w-full',
                 'flex-row',
                 // Desktop: center content if sidebar closed, otherwise align to left
-                leftSidebarOpen && !isFullscreen
+                !isFullscreen
                   ? 'xl:justify-start 2xl:justify-start'
                   : 'xl:justify-center 2xl:justify-center'
               )}
@@ -124,9 +156,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               <div
                 className={cn(
                   'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] flex-shrink-0 overflow-hidden transition-all duration-300',
-                  leftSidebarOpen && !isFullscreen
-                    ? 'block opacity-100'
-                    : 'hidden opacity-0'
+                  !isFullscreen ? 'block opacity-100' : 'hidden opacity-0'
                 )}
               >
                 <LeftSidebar />
@@ -139,12 +169,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   // Mobile: content takes full width
                   'w-full',
                   // In fullscreen mode, take full width
-                  isFullscreen
-                    ? 'w-full'
-                    : // Desktop (>= xl): logic based on sidebar state
-                      leftSidebarOpen
-                      ? 'xl:min-w-[300px] xl:flex-1 2xl:w-[80vw] 2xl:flex-none'
-                      : 'xl:w-[80vw] 2xl:w-[80vw]'
+                  isFullscreen ? 'w-full' : 'xl:w-[80vw] 2xl:w-[80vw]'
                 )}
               >
                 {/* Main Content */}
@@ -164,6 +189,8 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   </div>
 
                   <div
+                    id="content-main"
+                    ref={contentMainRef}
                     className={cn(
                       'flex-1 overflow-auto',
                       !isIFramePage &&
@@ -190,73 +217,46 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             </div>
           </div>
 
-          {/* SVG Mask Overlay - creates black overlay with hole for iframe content area */}
+          {/* SVG Mask Overlay - creates overlay with hole for iframe content area */}
           {isIFramePage &&
             !isFullscreen &&
             immersiveUIVisible &&
-            (() => {
-              // Calculate hole position based on layout
-              // Values are in percentage of viewport
-              const padding = 1.2 // ~16px / ~1300px viewport = ~1.2%
-              const breadcrumbHeight = 5 // ~52px / ~900px available height = ~6%
-              const bottomBar = 1 // ~8px / ~900px = ~1%
-              const glassPillar = 0.8 // ~8px / ~1000px = ~0.8%
-
-              // Left edge depends on sidebar: sidebar(240px) + padding(16px) + pillar(8px)
-              // On 1400px viewport: (240+16+8)/1400 = ~19% when sidebar open
-              // When closed: (16+8)/1400 = ~1.7%
-              const leftEdge = leftSidebarOpen ? 20 + padding : padding + 0.5
-
-              // Right edge depends on right sidebar
-              // Width of hole = 100 - leftEdge - rightEdge
-              const rightEdge = showRightSidebar
-                ? 20 + padding // sidebar + padding
-                : padding + 0.5
-
-              const holeX = leftEdge + glassPillar
-              const holeWidth = 100 - holeX - rightEdge - glassPillar
-              const holeY = breadcrumbHeight
-              const holeHeight = 100 - holeY - bottomBar - padding
-
-              return (
-                <svg
-                  viewBox="0 0 100 100"
-                  preserveAspectRatio="none"
-                  style={{
-                    position: 'fixed',
-                    inset: 0,
-                    top: 44,
-                    width: '100%',
-                    height: 'calc(100vh - 44px)',
-                    zIndex: 25,
-                    pointerEvents: 'none'
-                  }}
-                >
-                  <defs>
-                    <mask id="hole-mask">
-                      <rect x="0" y="0" width="100" height="100" fill="white" />
-                      <rect
-                        x={holeX}
-                        y={holeY}
-                        width={holeWidth}
-                        height={holeHeight}
-                        rx="1"
-                        ry="1"
-                        fill="black"
-                      />
-                    </mask>
-                  </defs>
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100"
-                    height="100"
-                    fill="black"
-                    mask="url(#hole-mask)"
-                  />
-                </svg>
-              )
-            })()}
+            contentRect && (
+              <svg
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  zIndex: 25,
+                  pointerEvents: 'none'
+                }}
+              >
+                <defs>
+                  <mask id="hole-mask">
+                    <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                    <rect
+                      x={contentRect.left + 32}
+                      y={contentRect.top}
+                      width={contentRect.width - 64}
+                      height={contentRect.height - 32}
+                      rx="16"
+                      ry="16"
+                      fill="black"
+                    />
+                  </mask>
+                </defs>
+                <rect
+                  x="0"
+                  y="0"
+                  width="100%"
+                  height="100%"
+                  fill="hsl(var(--background))"
+                  mask="url(#hole-mask)"
+                />
+              </svg>
+            )}
         </NextStep>
       </NextStepProvider>
     </div>
