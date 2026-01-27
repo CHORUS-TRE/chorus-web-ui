@@ -17,18 +17,8 @@ import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { Button } from './button'
-
-interface LeftSidebarProps {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  isHovered: boolean
-  onHoverStart: () => void
-  onHoverEnd: () => void
-}
 
 // All navigation items (for external use like mobile nav, page titles)
 // TODO: make it dynamic based on the instance config
@@ -67,50 +57,14 @@ export const navItems = [
 ]
 
 /**
- * Sidebar header with title and close button
- */
-function SidebarHeader({
-  onClose,
-  showCloseButton
-}: {
-  onClose?: () => void
-  showCloseButton?: boolean
-}) {
-  const instanceConfig = useInstanceConfig()
-
-  return (
-    <div className="sticky top-0 z-[100] mb-4 flex h-11 items-center justify-between border-b border-muted/60 bg-contrast-background/60 p-2 backdrop-blur-md">
-      <h1 className="ml-2 text-lg font-semibold text-foreground">
-        {instanceConfig.name}
-      </h1>
-      {showCloseButton && onClose && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-accent hover:text-accent/80"
-          onClick={onClose}
-          title="Close sidebar"
-        >
-          <PanelLeftClose className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
-  )
-}
-
-/**
  * Shared sidebar content - used by both floating and fixed sidebars
  */
 function SidebarContent({
   pathname,
-  searchParams,
-  onClose,
-  showCloseButton
+  searchParams
 }: {
   pathname: string
   searchParams: URLSearchParams
-  onClose?: () => void
-  showCloseButton?: boolean
 }) {
   const router = useRouter()
   const { workspaceFilters, setWorkspaceFilter, toggleRightSidebar } =
@@ -284,35 +238,17 @@ function SidebarContent({
   )
 }
 
-export function LeftSidebar({
-  isOpen,
-  setIsOpen,
-  isHovered,
-  onHoverStart: _onHoverStart,
-  onHoverEnd: _onHoverEnd
-}: LeftSidebarProps) {
+export function LeftSidebar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const handleClose = () => {
-    setIsOpen(false)
-  }
-
   return (
-    <>
-      <div
-        className={cn(
-          'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md transition-transform duration-300 ease-in-out',
-          !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
-        )}
-      >
-        <SidebarContent
-          pathname={pathname}
-          searchParams={searchParams}
-          onClose={handleClose}
-          showCloseButton={false}
-        />
-      </div>
-    </>
+    <div
+      className={cn(
+        'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
+      )}
+    >
+      <SidebarContent pathname={pathname} searchParams={searchParams} />
+    </div>
   )
 }

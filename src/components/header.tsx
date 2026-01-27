@@ -348,9 +348,9 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Center: Recent sessions and web apps */}
+        {/* Center: Recent sessions and web apps as Tabs */}
         {user && (recentSessions.length > 0 || recentWebApps.length > 0) && (
-          <div className="flex flex-1 items-center justify-center gap-1 overflow-x-auto px-4">
+          <div className="flex flex-1 items-end justify-center gap-0 overflow-x-auto px-4">
             {/* Recent Sessions - displayed in order added (most recent first) */}
             {recentSessions.map((recentSession) => {
               const isActive = activeIframeId === recentSession.id
@@ -383,10 +383,10 @@ export function Header() {
                         }
                       }}
                       className={cn(
-                        'group flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all',
+                        'group relative flex items-center gap-2 border-b-2 px-4 py-2 text-xs font-medium transition-all',
                         isActive
-                          ? 'border-primary/50 bg-primary/10 text-primary'
-                          : 'border-muted/50 hover:bg-accent/10'
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-transparent text-muted-foreground hover:border-muted/50 hover:bg-muted/10 hover:text-foreground'
                       )}
                     >
                       <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
@@ -549,7 +549,7 @@ export function Header() {
 
             {/* Separator if both sessions and webapps */}
             {recentSessions.length > 0 && recentWebApps.length > 0 && (
-              <div className="mx-1 h-4 w-px bg-muted/30" />
+              <div className="mx-2 h-6 w-px self-center bg-muted/30" />
             )}
 
             {/* Recent Web Apps */}
@@ -579,10 +579,10 @@ export function Header() {
                     }
                   }}
                   className={cn(
-                    'group flex cursor-pointer items-center gap-2 rounded-xl border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
+                    'group relative flex cursor-pointer items-center gap-2 border-b-2 px-4 py-2 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
                     isActive
-                      ? 'border-primary/50 bg-primary/10 text-primary'
-                      : 'border-muted/50 hover:bg-accent/10'
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-transparent text-muted-foreground hover:border-muted/50 hover:bg-muted/10 hover:text-foreground'
                   )}
                 >
                   <Globe className="h-3.5 w-3.5 shrink-0" />

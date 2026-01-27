@@ -28,7 +28,7 @@ export default function WorkbenchPage() {
   // We use a Flex layout to create a "Glass Frame" around the transparent center "hole"
   return (
     <div
-      className="flex h-full flex-col"
+      className="flex h-full cursor-pointer flex-col"
       onClick={() => setImmersiveUIVisible(false)}
     >
       {/* Top Glass Bar (Header) */}

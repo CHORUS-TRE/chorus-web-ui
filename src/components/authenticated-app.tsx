@@ -23,37 +23,16 @@ interface MainLayoutProps {
 }
 
 function AuthenticatedAppContent({ children }: MainLayoutProps) {
-  const { isOpen: leftSidebarOpen, setOpen: setLeftSidebarOpen } = useSidebar()
+  const { isOpen: leftSidebarOpen } = useSidebar()
   const { showRightSidebar } = useUserPreferences()
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
-
-  const [leftSidebarHovered, setLeftSidebarHovered] = React.useState(false)
-  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
   const isIFramePage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
     const webappPageRegex = /^\/webapps\/[^/]+$/
     return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
   }, [pathname])
-
-  const handleHoverStart = () => {
-    if (!leftSidebarOpen) {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current)
-        hoverTimeoutRef.current = null
-      }
-      setLeftSidebarHovered(true)
-    }
-  }
-
-  const handleHoverEnd = () => {
-    if (!leftSidebarOpen) {
-      hoverTimeoutRef.current = setTimeout(() => {
-        setLeftSidebarHovered(false)
-      }, 200)
-    }
-  }
 
   // Immersive Mode Logic
   const immersiveUIVisible = useAppState((state) => state.immersiveUIVisible)
@@ -150,13 +129,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                     : 'hidden opacity-0'
                 )}
               >
-                <LeftSidebar
-                  isOpen={leftSidebarOpen}
-                  setIsOpen={setLeftSidebarOpen}
-                  isHovered={false}
-                  onHoverStart={handleHoverStart}
-                  onHoverEnd={handleHoverEnd}
-                />
+                <LeftSidebar />
               </div>
 
               {/* Content container */}
@@ -217,25 +190,73 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             </div>
           </div>
 
-          {/* Hover sidebar overlay - appears when sidebar is closed and hovered (same position as regular sidebar) */}
-          {!leftSidebarOpen &&
-            leftSidebarHovered &&
+          {/* SVG Mask Overlay - creates black overlay with hole for iframe content area */}
+          {isIFramePage &&
             !isFullscreen &&
-            !immersiveUIVisible && (
-              <div
-                className="fixed left-4 top-28 z-50 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] duration-200 animate-in slide-in-from-left"
-                onMouseEnter={handleHoverStart}
-                onMouseLeave={handleHoverEnd}
-              >
-                <LeftSidebar
-                  isOpen={false}
-                  setIsOpen={() => {}}
-                  isHovered={true}
-                  onHoverStart={handleHoverStart}
-                  onHoverEnd={handleHoverEnd}
-                />
-              </div>
-            )}
+            immersiveUIVisible &&
+            (() => {
+              // Calculate hole position based on layout
+              // Values are in percentage of viewport
+              const padding = 1.2 // ~16px / ~1300px viewport = ~1.2%
+              const breadcrumbHeight = 5 // ~52px / ~900px available height = ~6%
+              const bottomBar = 1 // ~8px / ~900px = ~1%
+              const glassPillar = 0.8 // ~8px / ~1000px = ~0.8%
+
+              // Left edge depends on sidebar: sidebar(240px) + padding(16px) + pillar(8px)
+              // On 1400px viewport: (240+16+8)/1400 = ~19% when sidebar open
+              // When closed: (16+8)/1400 = ~1.7%
+              const leftEdge = leftSidebarOpen ? 20 + padding : padding + 0.5
+
+              // Right edge depends on right sidebar
+              // Width of hole = 100 - leftEdge - rightEdge
+              const rightEdge = showRightSidebar
+                ? 20 + padding // sidebar + padding
+                : padding + 0.5
+
+              const holeX = leftEdge + glassPillar
+              const holeWidth = 100 - holeX - rightEdge - glassPillar
+              const holeY = breadcrumbHeight
+              const holeHeight = 100 - holeY - bottomBar - padding
+
+              return (
+                <svg
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  style={{
+                    position: 'fixed',
+                    inset: 0,
+                    top: 44,
+                    width: '100%',
+                    height: 'calc(100vh - 44px)',
+                    zIndex: 25,
+                    pointerEvents: 'none'
+                  }}
+                >
+                  <defs>
+                    <mask id="hole-mask">
+                      <rect x="0" y="0" width="100" height="100" fill="white" />
+                      <rect
+                        x={holeX}
+                        y={holeY}
+                        width={holeWidth}
+                        height={holeHeight}
+                        rx="1"
+                        ry="1"
+                        fill="black"
+                      />
+                    </mask>
+                  </defs>
+                  <rect
+                    x="0"
+                    y="0"
+                    width="100"
+                    height="100"
+                    fill="black"
+                    mask="url(#hole-mask)"
+                  />
+                </svg>
+              )
+            })()}
         </NextStep>
       </NextStepProvider>
     </div>
