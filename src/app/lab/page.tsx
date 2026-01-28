@@ -1,6 +1,13 @@
 'use client'
 
-import { FlaskConical } from 'lucide-react'
+import {
+  Code2,
+  Cpu,
+  FileText,
+  FlaskConical,
+  Layers,
+  PackageOpen
+} from 'lucide-react'
 
 import { Link } from '@/components/link'
 import {
@@ -25,7 +32,52 @@ export default function SandboxPage() {
       icon: React.ComponentType<{ className?: string }>
       status?: string
     }>
-  }> = []
+  }> = [
+    {
+      title: 'AI generated web pages',
+      description: 'AI Generated web pages for the CHORUS platform',
+      icon: FileText,
+      status: 'Demo',
+      children: [
+        {
+          title: 'CHORUS Architecture',
+          description: 'View the architecture of the CHORUS platform',
+          href: '/lab/architecture',
+          icon: Layers
+        },
+        {
+          title: 'CHORUS Protocol Builder',
+          description: 'Build and test protocols for the CHORUS platform',
+          href: '/lab/chorus-protocol-builder',
+          icon: FlaskConical
+        },
+        {
+          title: 'Data requests',
+          description: 'Manage data requests',
+          href: '/lab/data-requests',
+          icon: PackageOpen
+        },
+        {
+          title: 'Studies Dashboard',
+          description: 'Manage clinical studies',
+          href: '/lab/projects-dashboard',
+          icon: PackageOpen
+        },
+        {
+          title: 'Feasibility Assessment',
+          description: 'Pre-protocol Data Exploration & Cohort Analysis',
+          href: '/lab/feasability',
+          icon: PackageOpen
+        },
+        {
+          title: 'Footprint',
+          description: 'Manage clinical studies',
+          href: '/lab/footprint',
+          icon: PackageOpen
+        }
+      ]
+    }
+  ]
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -46,7 +98,7 @@ export default function SandboxPage() {
     <div>
       <div className="w-full">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
+          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <FlaskConical className="h-9 w-9" />
             Development Lab
           </h2>
@@ -54,11 +106,10 @@ export default function SandboxPage() {
       </div>
 
       <div className="w-full">
-        <div className="mb-2">
-          <p className="text-xs text-muted-foreground">
-            The lab environment provides access to experimental features,
-            development tools, and testing interfaces for the CHORUS platform.
-            These tools are intended for development and testing purposes.
+        <div className="mb-6">
+          <h3 className="mb-0 text-lg font-semibold">Development Lab</h3>
+          <p className="text-sm text-muted">
+            Experimental features and development tools for the CHORUS platform
           </p>
         </div>
 
