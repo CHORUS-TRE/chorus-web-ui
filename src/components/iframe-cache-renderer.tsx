@@ -27,6 +27,8 @@ function CachedIframeRenderer({
 }) {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
   const [isIframeLoaded, setIsIframeLoaded] = useState(false)
+  // Track which URLs have successfully loaded to handle switching between cached iframes
+  const loadedUrlsRef = useRef<Set<string>>(new Set())
 
   // Only probe for sessions, not webapps
   const { isLoading, error } =
@@ -55,8 +57,12 @@ function CachedIframeRenderer({
   // Reset loaded state when URL changes to a new URL
   useEffect(() => {
     if (iframe.url && iframe.url !== 'about:blank') {
-      // Check if this is a new URL (iframe was not already showing this URL)
-      if (iFrameRef.current?.src !== iframe.url) {
+      // Check if this URL has been loaded before
+      if (loadedUrlsRef.current.has(iframe.url)) {
+        // This URL was previously loaded, mark as loaded immediately
+        setIsIframeLoaded(true)
+      } else {
+        // New URL, wait for it to load
         setIsIframeLoaded(false)
       }
     } else {
@@ -64,35 +70,15 @@ function CachedIframeRenderer({
     }
   }, [iframe.url])
 
-  // When iframe becomes active, check if it's already loaded (already showing the correct URL)
-  useEffect(() => {
-    if (
-      isActive &&
-      iFrameRef.current &&
-      iframe.url &&
-      iframe.url !== 'about:blank'
-    ) {
-      const currentSrc = iFrameRef.current.src
-      // If iframe is already showing the correct URL, mark it as loaded
-      // This handles the case where we switch to an already-loaded iframe
-      if (
-        currentSrc &&
-        currentSrc !== 'about:blank' &&
-        currentSrc === iframe.url
-      ) {
-        setIsIframeLoaded(true)
-      }
-      // Don't set to false here - let the URL change effect handle that
-      // This way, new loads will show the loading overlay
-    }
-  }, [isActive, iframe.url])
-
   const handleLoad = useCallback(() => {
     // Only mark as loaded if the iframe is actually showing content (not about:blank)
     if (
       iFrameRef.current?.src &&
       !iFrameRef.current.src.includes('about:blank')
     ) {
+      const loadedUrl = iFrameRef.current.src
+      // Add this URL to the set of successfully loaded URLs
+      loadedUrlsRef.current.add(loadedUrl)
       setIsIframeLoaded(true)
     }
 
@@ -122,7 +108,9 @@ function CachedIframeRenderer({
   return (
     <>
       {/* Loading overlay for active iframes until they're fully loaded */}
-      {showLoadingOverlay && <LoadingOverlay isLoading={true} />}
+      {showLoadingOverlay && (
+        <LoadingOverlay isLoading={true} variant="container" />
+      )}
 
       {/* Error message */}
       {isActive && error && (
