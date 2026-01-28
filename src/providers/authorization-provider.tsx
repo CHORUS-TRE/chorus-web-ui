@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useMemo } from 'react'
 
-import { PERMISSIONS, ROLE_DEFINITIONS } from '@/config/permissions'
+import { getRolePermissions, PERMISSIONS } from '@/config/permissions'
 import { useAuthentication } from '@/providers/authentication-provider'
 
 // Define the shape of the context
@@ -30,34 +30,6 @@ export const useAuthorization = () => {
   return context
 }
 
-// Helper to resolve all permissions for a specific role definition (handling inheritance)
-const resolveRolePermissions = (
-  roleName: string,
-  cache: Map<string, string[]> = new Map()
-): string[] => {
-  if (cache.has(roleName)) return cache.get(roleName)!
-
-  const roleDef = ROLE_DEFINITIONS[roleName]
-  if (!roleDef) {
-    console.warn(`Role ${roleName} not found in definitions`)
-    return []
-  }
-
-  let permissions = [...roleDef.permissions]
-
-  if (roleDef.inheritsFrom) {
-    for (const parentRole of roleDef.inheritsFrom) {
-      const parentPermissions = resolveRolePermissions(parentRole, cache)
-      permissions = [...permissions, ...parentPermissions]
-    }
-  }
-
-  // Deduplicate
-  const uniquePermissions = Array.from(new Set(permissions))
-  cache.set(roleName, uniquePermissions)
-  return uniquePermissions
-}
-
 // Define the provider component
 export const AuthorizationProvider = ({
   children
@@ -70,11 +42,10 @@ export const AuthorizationProvider = ({
       return new Map<string, Record<string, string[]>>()
 
     const newPermissionsMap: Record<string, Record<string, string[]>> = {}
-    const cache = new Map<string, string[]>()
 
     user.rolesWithContext.forEach((role) => {
       // Resolve permissions for this role
-      const permissions = resolveRolePermissions(role.name, cache)
+      const permissions = getRolePermissions(role.name)
 
       permissions.forEach((permission) => {
         if (!newPermissionsMap[permission]) {
@@ -112,13 +83,12 @@ export const AuthorizationProvider = ({
     return Object.entries(context).every(([key, value]) => {
       const allowedValues = allowedContexts[key]
 
-      // If the permission doesn't have this context key recorded, it usually means
-      // the role didn't specify it.
+      // If the permission doesn't have this context key recorded, it usually means the role didn't specify it.
       // If the role context was empty, it might mean global access depending on convention.
       // But based on our transform, we only add keys that exist.
       // If a dimension is missing in allowedValues, we deny access to it to be safe,
       // unless we decide missing means "*" (global).
-      // Given the user example showed explicit "*", we assume explicit is required.
+      // We assume explicit is required.
 
       if (!allowedValues || allowedValues.length === 0) return false
 

@@ -33,9 +33,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
+import { getWorkspaceRoles } from '~/config/permissions'
 import { Result } from '~/domain/model'
 import { User } from '~/domain/model/user'
-import { getWorkspaceRoles } from '~/utils/schema-roles'
 import { listUsers } from '~/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'

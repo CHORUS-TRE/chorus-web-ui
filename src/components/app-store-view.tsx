@@ -129,17 +129,17 @@ export function AppStoreView() {
 
                 {activeTab === 'webapps'
                   ? can(PERMISSIONS.listApps) && (
-                    <Button onClick={() => setShowWebAppDialog(true)}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      Manage Services
-                    </Button>
-                  )
+                      <Button onClick={() => setShowWebAppDialog(true)}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        Manage Services
+                      </Button>
+                    )
                   : can(PERMISSIONS.createApp) && (
-                    <Button onClick={() => setShowCreateDialog(true)}>
-                      <CirclePlus className="mr-2 h-4 w-4" />
-                      Add New App
-                    </Button>
-                  )}
+                      <Button onClick={() => setShowCreateDialog(true)}>
+                        <CirclePlus className="mr-2 h-4 w-4" />
+                        Add New App
+                      </Button>
+                    )}
               </div>
 
               <TabsContent value="my-apps" className="mt-0">

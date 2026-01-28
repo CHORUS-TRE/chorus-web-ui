@@ -275,3 +275,142 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
     permissions: [PERMISSIONS.initializeTenant]
   }
 }
+
+// Permission descriptions extracted from the schema
+export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
+  // AppInstanceService
+  [PERMISSIONS.listAppInstances]: 'View list of app instances',
+  [PERMISSIONS.createAppInstance]: 'Create new app instances',
+  [PERMISSIONS.updateAppInstance]: 'Modify existing app instances',
+  [PERMISSIONS.getAppInstance]: 'View app instance details',
+  [PERMISSIONS.deleteAppInstance]: 'Remove app instances',
+
+  // WorkbenchService
+  [PERMISSIONS.listWorkbenches]: 'View list of workbenches',
+  [PERMISSIONS.createWorkbench]: 'Create new workbenches',
+  [PERMISSIONS.updateWorkbench]: 'Modify workbench settings',
+  [PERMISSIONS.getWorkbench]: 'View workbench details',
+  [PERMISSIONS.streamWorkbench]: 'Stream workbench sessions',
+  [PERMISSIONS.deleteWorkbench]: 'Remove workbenches',
+  [PERMISSIONS.manageUsersInWorkbench]: 'Add/remove users from workbenches',
+
+  // WorkspaceService
+  [PERMISSIONS.listWorkspaces]: 'View list of workspaces',
+  [PERMISSIONS.createWorkspace]: 'Create new workspaces',
+  [PERMISSIONS.updateWorkspace]: 'Modify workspace settings',
+  [PERMISSIONS.getWorkspace]: 'View workspace details',
+  [PERMISSIONS.deleteWorkspace]: 'Remove workspaces',
+  [PERMISSIONS.manageUsersInWorkspace]: 'Add/remove users from workspaces',
+  [PERMISSIONS.listFilesInWorkspace]: 'View files in workspaces',
+  [PERMISSIONS.uploadFilesToWorkspace]: 'Upload files to workspaces',
+  [PERMISSIONS.downloadFilesFromWorkspace]: 'Download files from workspaces',
+  [PERMISSIONS.modifyFilesInWorkspace]: 'Edit files in workspaces',
+  [PERMISSIONS.searchUsers]: 'Search for users',
+
+  // AppService
+  [PERMISSIONS.listApps]: 'View available applications',
+  [PERMISSIONS.createApp]: 'Create new applications',
+  [PERMISSIONS.updateApp]: 'Modify application definitions',
+  [PERMISSIONS.getApp]: 'View application details',
+  [PERMISSIONS.deleteApp]: 'Remove applications',
+
+  // AuthenticationService
+  [PERMISSIONS.authenticate]: 'Sign in to the system',
+  [PERMISSIONS.logout]: 'Sign out of the system',
+  [PERMISSIONS.getListOfPossibleWayToAuthenticate]:
+    'View authentication methods',
+  [PERMISSIONS.authenticateUsingAuth2]: 'Use OAuth2 authentication',
+  [PERMISSIONS.authenticateRedirectUsingAuth2]: 'Handle OAuth2 callbacks',
+  [PERMISSIONS.refreshToken]: 'Refresh authentication tokens',
+
+  // HealthService
+  [PERMISSIONS.getHealthCheck]: 'Check system health status',
+
+  // NotificationService
+  [PERMISSIONS.listNotifications]: 'View notifications',
+  [PERMISSIONS.countUnreadNotifications]: 'Count unread notifications',
+  [PERMISSIONS.markNotificationAsRead]: 'Mark notifications as read',
+
+  // StewardService
+  [PERMISSIONS.initializeTenant]: 'Initialize new tenants',
+
+  // UserService
+  [PERMISSIONS.listUsers]: 'View list of users',
+  [PERMISSIONS.createUser]: 'Create new user accounts',
+  [PERMISSIONS.updateUser]: 'Modify user profiles',
+  [PERMISSIONS.getMyOwnUser]: 'View own profile',
+  [PERMISSIONS.updatePassword]: 'Change passwords',
+  [PERMISSIONS.enableTotp]: 'Enable two-factor authentication',
+  [PERMISSIONS.resetTotp]: 'Reset two-factor authentication',
+  [PERMISSIONS.getUser]: 'View user profiles',
+  [PERMISSIONS.deleteUser]: 'Remove user accounts',
+  [PERMISSIONS.resetPassword]: 'Reset user passwords',
+  [PERMISSIONS.manageUserRoles]: 'Manage user roles',
+
+  // AdminService
+  [PERMISSIONS.getPlatformSettings]: 'View platform settings',
+  [PERMISSIONS.setPlatformSettings]: 'Modify platform settings'
+}
+
+// Get human-readable description for a permission
+export const getPermissionDescription = (permission: string): string => {
+  return PERMISSION_DESCRIPTIONS[permission] || permission
+}
+
+import { Role } from '@/domain/model/user'
+
+export type EnhancedRole = RoleDefinition
+
+// Get roles that are relevant for workspace context
+export const getWorkspaceRoles = (): Role[] => {
+  return Object.values(ROLE_DEFINITIONS)
+    .filter((role) => role.name.startsWith('Workspace'))
+    .map((role) => ({ ...role, id: role.name, context: role.attributes || {} }))
+}
+
+// Get roles that are relevant for workbench context
+export const getWorkbenchRoles = (): Role[] => {
+  return Object.values(ROLE_DEFINITIONS)
+    .filter((role) => role.name.startsWith('Workbench'))
+    .map((role) => ({ ...role, id: role.name, context: role.attributes || {} }))
+}
+
+// Get all available roles
+export const getAllRoles = (): Role[] => {
+  return Object.values(ROLE_DEFINITIONS).map((role) => ({
+    ...role,
+    id: role.name,
+    context: role.attributes || {}
+  }))
+}
+
+// Get enhanced role information including permissions and description
+export const getEnhancedRole = (roleName: string): EnhancedRole | undefined => {
+  return ROLE_DEFINITIONS[roleName]
+}
+
+// Get all permissions for a role (including inherited permissions)
+export const getRolePermissions = (roleName: string): string[] => {
+  const role = getEnhancedRole(roleName)
+  if (!role) return []
+
+  const permissions = new Set<string>(role.permissions)
+
+  // Add permissions from inherited roles
+  if (role.inheritsFrom) {
+    role.inheritsFrom.forEach((inheritedRoleName: string) => {
+      const inheritedPermissions = getRolePermissions(inheritedRoleName)
+      inheritedPermissions.forEach((permission: string) =>
+        permissions.add(permission)
+      )
+    })
+  }
+
+  return Array.from(permissions)
+}
+
+// Get role description
+export const getRoleDescription = (roleName: string): string => {
+  const role = getEnhancedRole(roleName)
+  return role?.description || `Role: ${roleName}`
+}
