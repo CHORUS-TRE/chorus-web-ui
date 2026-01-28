@@ -245,7 +245,7 @@ const MOCK_WORKSPACE: EnhancedChorusWorkspace = {
     'Secure analysis environment for CHORUS genomics research projects with controlled data movement.',
   status: 'active',
   isMain: true,
-  appInsanceIds: [],
+  appInstanceIds: [],
   appInstances: [],
   createdAt: new Date('2024-06-12T08:30:00Z'),
   updatedAt: new Date('2025-02-10T08:15:00Z'),
