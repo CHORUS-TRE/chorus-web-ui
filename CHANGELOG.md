@@ -1,3 +1,11 @@
+## [1.28.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.28.1...v1.28.2) (2026-01-28)
+
+
+### Bug Fixes
+
+* build error ([0ea6d2a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0ea6d2a149024dbe331cad970a9aadcc08ccbffb))
+* restored lab ([0df52b0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0df52b0d2015bbfb4995a7b31a304ed24e9df614))
+
 ## [1.28.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.28.0...v1.28.1) (2026-01-27)
 
 
