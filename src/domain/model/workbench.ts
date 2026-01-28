@@ -50,6 +50,10 @@ export const WorkbenchSchema = z.object({
   shortName: z.string().optional(),
   description: z.string().optional(),
   status: z.nativeEnum(WorkbenchStatus).optional(),
+  serverPodStatus: z.preprocess(
+    (val) => (val === '' ? WorkbenchServerPodStatus.UNKNOWN : val),
+    z.nativeEnum(WorkbenchServerPodStatus).optional()
+  ),
   k8sStatus: z.nativeEnum(K8sWorkbenchStatus).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),
