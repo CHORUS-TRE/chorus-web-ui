@@ -133,10 +133,12 @@ export const AuthorizationProvider = ({
       can(PERMISSIONS.listWorkspaces, { workspace: '*' }) ||
       can(PERMISSIONS.listUsers, { workspace: '*' }) ||
       can(PERMISSIONS.listWorkbenches, { workspace: '*' }) ||
-      can(PERMISSIONS.listApps, {}) ||
+      can(PERMISSIONS.createApp, {}) ||
       can(PERMISSIONS.setPlatformSettings, {})
     )
   }, [user, permissionsWithContextMap])
+
+  console.log(permissionsWithContextMap)
 
   const value = {
     PERMISSIONS,

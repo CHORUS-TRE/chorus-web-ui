@@ -311,11 +311,12 @@ export default function CHORUSDashboard() {
                                     </p>
                                   </div>
                                   <Badge
-                                    className={`pointer-events-none text-xs ${workbench.status ===
+                                    className={`pointer-events-none text-xs ${
+                                      workbench.status ===
                                       WorkbenchStatus.ACTIVE
-                                      ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                      : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                                      }`}
+                                        ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                        : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                                    }`}
                                   >
                                     {workbench.status}
                                   </Badge>
@@ -391,8 +392,6 @@ export default function CHORUSDashboard() {
                 </div>
               </CardContent>
             </Card>
-
-
           </div>
         </div>
       </div>

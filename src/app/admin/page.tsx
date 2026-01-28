@@ -104,7 +104,7 @@ const AdminPage = () => {
           </Link>
         )}
 
-        {can(PERMISSIONS.listApps) && (
+        {can(PERMISSIONS.createApp) && (
           <Link href="/admin/app-store">
             <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

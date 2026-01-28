@@ -30,7 +30,7 @@ export function AdminTabs() {
     {
       href: '/admin/app-store',
       label: 'App Store',
-      authorized: can(PERMISSIONS.listApps, {})
+      authorized: can(PERMISSIONS.createApp, {})
     },
     {
       href: '/admin/configuration',

@@ -1,25 +1,11 @@
 'use client'
 
-import { Shield, ShieldAlert } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import React from 'react'
 
-import { useAuthorization } from '@/providers/authorization-provider'
 import { Button } from '~/components/button'
 
 const RolesPage = () => {
-  const { can, PERMISSIONS } = useAuthorization()
-
-  if (!can(PERMISSIONS.listUsers)) {
-    return (
-      <div className="flex h-full w-full items-center justify-center text-red-500">
-        <ShieldAlert className="h-12 w-12" />
-        <p className="ml-4 text-xl">
-          You are not authorized to view this page.
-        </p>
-      </div>
-    )
-  }
-
   return (
     <>
       <div className="w-full">
