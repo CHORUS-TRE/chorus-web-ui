@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { K8sWorkbenchStatus, WorkbenchServerPodStatus } from '@/domain/model'
+import { WorkbenchServerPodStatus } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
 const POLLING_INTERVAL = 3000
