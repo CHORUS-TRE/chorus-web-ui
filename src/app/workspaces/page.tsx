@@ -12,9 +12,9 @@ import {
 import { useMemo, useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
@@ -23,12 +23,13 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
+import { PERMISSIONS } from '~/config/permissions'
 
 export default function WorkspacesPage() {
   const workspaces = useAppState((state) => state.workspaces)
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
   const { user } = useAuthentication()
-  const { canCreateWorkspace } = useAuthorizationViewModel()
+  const { can, PERMISSIONS } = useAuthorization()
 
   const {
     workspaceFilters,
@@ -120,7 +121,7 @@ export default function WorkspacesPage() {
               </>
             )}
           </h2>
-          {canCreateWorkspace && (
+          {can(PERMISSIONS.createWorkspace) && (
             <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
               <CirclePlus className="h-4 w-4" />
               Create Workspace

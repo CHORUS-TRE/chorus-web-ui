@@ -2,14 +2,14 @@
 
 import { Palette, ShieldAlert } from 'lucide-react'
 
+import { useAuthorization } from '@/providers/authorization-provider'
 import LogoUploadForm from '~/components/forms/logo-upload-form'
 import { ThemeEditorForm } from '~/components/forms/theme-editor-form'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 const ThemePage = () => {
-  const { canManageSettings } = useAuthorizationViewModel()
+  const { can, PERMISSIONS } = useAuthorization()
 
-  if (!canManageSettings) {
+  if (!can(PERMISSIONS.listUsers)) {
     return (
       <div className="flex h-full w-full items-center justify-center text-red-500">
         <ShieldAlert className="h-12 w-12" />

@@ -2,13 +2,13 @@
 
 import { Settings2, ShieldAlert } from 'lucide-react'
 
+import { useAuthorization } from '@/providers/authorization-provider'
 import { InstanceConfigForm } from '~/components/forms/instance-config-form'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 const ConfigurationPage = () => {
-  const { canManageSettings } = useAuthorizationViewModel()
+  const { can, PERMISSIONS } = useAuthorization()
 
-  if (!canManageSettings) {
+  if (!can(PERMISSIONS.setPlatformSettings)) {
     return (
       <div className="flex h-full w-full items-center justify-center text-red-500">
         <ShieldAlert className="h-12 w-12" />

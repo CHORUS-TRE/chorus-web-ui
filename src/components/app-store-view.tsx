@@ -4,6 +4,7 @@ import { CirclePlus, Globe, Search, Settings, X } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { AppCard } from '~/components/app-card'
@@ -13,7 +14,6 @@ import { WebAppCreateDialog } from '~/components/forms/webapp-create-dialog'
 import { Input } from '~/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { WebAppCard } from '~/components/webapp-card'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 export function AppStoreView() {
   const router = useRouter()
@@ -28,7 +28,7 @@ export function AppStoreView() {
   const [searchQuery, setSearchQuery] = useState('')
   const { apps, refreshApps } = useAppState()
   const { externalWebApps } = useIframeCache()
-  const { canManageSettings, canManageAppStore } = useAuthorizationViewModel()
+  const { can, PERMISSIONS } = useAuthorization()
 
   // Filter apps based on search query
   const filteredApps = useMemo(() => {
@@ -128,13 +128,13 @@ export function AppStoreView() {
                 </TabsList>
 
                 {activeTab === 'webapps'
-                  ? canManageSettings && (
+                  ? can(PERMISSIONS.listApps) && (
                       <Button onClick={() => setShowWebAppDialog(true)}>
                         <Settings className="mr-2 h-4 w-4" />
                         Manage Services
                       </Button>
                     )
-                  : canManageAppStore && (
+                  : can(PERMISSIONS.createApp) && (
                       <Button onClick={() => setShowCreateDialog(true)}>
                         <CirclePlus className="mr-2 h-4 w-4" />
                         Add New App

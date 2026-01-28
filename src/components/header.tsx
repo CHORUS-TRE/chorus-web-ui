@@ -45,6 +45,7 @@ import { Separator } from '@/components/ui/separator'
 import { useInstanceConfig, useInstanceLogo } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
@@ -52,7 +53,6 @@ import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -91,13 +91,7 @@ export function Header() {
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
   const { toggleFullscreen } = useFullscreenContext()
-
-  const { setWorkspaceFilter, toggleRightSidebar } = useUserPreferences()
-  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
-  const instanceConfig = useInstanceConfig()
-  const [menuOpen, setMenuOpen] = useState(false)
-  // Recent sessions and webapps are persisted across logout/login
-  // Use cachedIframes.has() to check if a session/webapp is currently loaded
+  const { isAdmin } = useAuthorization()
 
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
@@ -126,7 +120,7 @@ export function Header() {
   function UserProfileSection() {
     const { logout } = useAuthentication()
     const { setWorkspaceFilter, toggleRightSidebar } = useUserPreferences()
-    const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+    const { isAdmin } = useAuthorization()
     const instanceConfig = useInstanceConfig()
     const [menuOpen, setMenuOpen] = useState(false)
 
@@ -252,7 +246,7 @@ export function Header() {
                 Privacy
               </Link>
 
-              {(canManageUsers || canManageSettings) && (
+              {isAdmin && (
                 <Link
                   href="/admin"
                   variant="underline"
@@ -266,7 +260,7 @@ export function Header() {
             </div>
 
             {/* Section 3: Lab */}
-            {canManageUsers && (
+            {isAdmin && (
               <>
                 <Separator className="my-1" />
                 <div className="py-1">

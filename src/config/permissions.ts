@@ -1,4 +1,3 @@
-
 export const PERMISSIONS = {
   // AppInstanceService
   listAppInstances: 'listAppInstances',
@@ -70,10 +69,10 @@ export const PERMISSIONS = {
 
   // AdminService
   getPlatformSettings: 'getPlatformSettings',
-  setPlatformSettings: 'setPlatformSettings',
+  setPlatformSettings: 'setPlatformSettings'
 } as const
 
-export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS]
+export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
 export interface RoleDefinition {
   name: string
@@ -92,8 +91,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.getListOfPossibleWayToAuthenticate,
       PERMISSIONS.authenticateUsingAuth2,
       PERMISSIONS.authenticateRedirectUsingAuth2,
-      PERMISSIONS.getPlatformSettings,
-    ],
+      PERMISSIONS.getPlatformSettings
+    ]
   },
   Authenticated: {
     name: 'Authenticated',
@@ -116,8 +115,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.listWorkspaces,
       PERMISSIONS.listWorkbenches,
       PERMISSIONS.listApps,
-      PERMISSIONS.listAppInstances,
-    ],
+      PERMISSIONS.listAppInstances
+    ]
   },
   // Workspace roles
   WorkspaceGuest: {
@@ -128,18 +127,15 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
     permissions: [
       PERMISSIONS.listWorkspaces,
       PERMISSIONS.getWorkspace,
-      PERMISSIONS.listUsers,
-    ],
+      PERMISSIONS.listUsers
+    ]
   },
   WorkspaceMember: {
     name: 'WorkspaceMember',
     description: 'This role allows a user to create workbenches in a workspace',
     inheritsFrom: ['WorkspaceGuest'],
     attributes: { workspace: 'x' },
-    permissions: [
-      PERMISSIONS.createWorkbench,
-      PERMISSIONS.listFilesInWorkspace,
-    ],
+    permissions: [PERMISSIONS.createWorkbench, PERMISSIONS.listFilesInWorkspace]
   },
   WorkspaceMaintainer: {
     name: 'WorkspaceMaintainer',
@@ -150,8 +146,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.updateWorkspace,
       PERMISSIONS.uploadFilesToWorkspace,
       PERMISSIONS.modifyFilesInWorkspace,
-      PERMISSIONS.searchUsers,
-    ],
+      PERMISSIONS.searchUsers
+    ]
   },
   WorkspacePI: {
     name: 'WorkspacePI',
@@ -161,8 +157,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
     permissions: [
       PERMISSIONS.uploadFilesToWorkspace,
       PERMISSIONS.modifyFilesInWorkspace,
-      PERMISSIONS.downloadFilesFromWorkspace,
-    ],
+      PERMISSIONS.downloadFilesFromWorkspace
+    ]
   },
   WorkspaceAdmin: {
     name: 'WorkspaceAdmin',
@@ -181,8 +177,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.manageUsersInWorkspace,
       PERMISSIONS.uploadFilesToWorkspace,
       PERMISSIONS.modifyFilesInWorkspace,
-      PERMISSIONS.downloadFilesFromWorkspace,
-    ],
+      PERMISSIONS.downloadFilesFromWorkspace
+    ]
   },
   // Workbench roles
   WorkbenchViewer: {
@@ -195,12 +191,13 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.listWorkbenches,
       PERMISSIONS.getWorkbench,
       PERMISSIONS.streamWorkbench,
-      PERMISSIONS.listUsers,
-    ],
+      PERMISSIONS.listUsers
+    ]
   },
   WorkbenchMember: {
     name: 'WorkbenchMember',
-    description: 'This role allows a user to manage app instances in a workbench and update the workbench',
+    description:
+      'This role allows a user to manage app instances in a workbench and update the workbench',
     inheritsFrom: ['WorkbenchViewer'],
     attributes: { workbench: 'x', workspace: 'x' },
     permissions: [
@@ -208,8 +205,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.updateAppInstance,
       PERMISSIONS.getAppInstance,
       PERMISSIONS.deleteAppInstance,
-      PERMISSIONS.updateWorkbench,
-    ],
+      PERMISSIONS.updateWorkbench
+    ]
   },
   WorkbenchAdmin: {
     name: 'WorkbenchAdmin',
@@ -219,24 +216,25 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
     permissions: [
       PERMISSIONS.deleteWorkbench,
       PERMISSIONS.manageUsersInWorkbench,
-      PERMISSIONS.searchUsers,
-    ],
+      PERMISSIONS.searchUsers
+    ]
   },
   // Platform roles
   Healthchecker: {
     name: 'Healthchecker',
     description: 'This role is used by the healthchecker',
-    permissions: [PERMISSIONS.getHealthCheck],
+    permissions: [PERMISSIONS.getHealthCheck]
   },
   PlatformSettingsManager: {
     name: 'PlatformSettingsManager',
     description: 'This role allows a user to manage platform settings',
     inheritsFrom: ['Authenticated'],
-    permissions: [PERMISSIONS.setPlatformSettings],
+    permissions: [PERMISSIONS.setPlatformSettings]
   },
   PlateformUserManager: {
     name: 'PlateformUserManager',
-    description: 'This role allows a user a full control over ther user in at the platform level',
+    description:
+      'This role allows a user a full control over ther user in at the platform level',
     inheritsFrom: ['Authenticated'],
     attributes: { user: '*' },
     permissions: [
@@ -246,8 +244,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.manageUserRoles,
       PERMISSIONS.getUser,
       PERMISSIONS.deleteUser,
-      PERMISSIONS.resetPassword,
-    ],
+      PERMISSIONS.resetPassword
+    ]
   },
   AppStoreAdmin: {
     name: 'AppStoreAdmin',
@@ -258,8 +256,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.createApp,
       PERMISSIONS.updateApp,
       PERMISSIONS.getApp,
-      PERMISSIONS.deleteApp,
-    ],
+      PERMISSIONS.deleteApp
+    ]
   },
   SuperAdmin: {
     name: 'SuperAdmin',
@@ -271,9 +269,9 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       'AppStoreAdmin',
       'WorkspaceAdmin',
       'WorkbenchAdmin',
-      'Healthchecker',
+      'Healthchecker'
     ],
     attributes: { user: '*', workspace: '*', workbench: '*' },
-    permissions: [PERMISSIONS.initializeTenant],
-  },
+    permissions: [PERMISSIONS.initializeTenant]
+  }
 }

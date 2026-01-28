@@ -15,7 +15,9 @@ import React from 'react'
 
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
+import { PERMISSIONS } from '~/config/permissions'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 import { Button } from './button'
@@ -67,6 +69,7 @@ function SidebarContent({
   searchParams: URLSearchParams
 }) {
   const router = useRouter()
+  const { isAdmin } = useAuthorization()
   const { workspaceFilters, setWorkspaceFilter, toggleRightSidebar } =
     useUserPreferences()
   const currentTab = searchParams.get('tab')
@@ -233,6 +236,23 @@ function SidebarContent({
           <HelpCircle className="h-4 w-4" />
           Help
         </button>
+
+        {/* Admin */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            variant="underline"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+              pathname.includes('/admin') || isActive('/admin')
+                ? 'bg-primary/20 text-primary'
+                : 'text-muted-foreground'
+            )}
+          >
+            <Globe className="h-4 w-4" />
+            Admin
+          </Link>
+        )}
       </nav>
     </>
   )

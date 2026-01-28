@@ -2,22 +2,46 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 
+import { useAuthorization } from '@/providers/authorization-provider'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
 
 export function AdminTabs() {
   const pathname = usePathname()
   const router = useRouter()
-  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+
+  const { can, PERMISSIONS } = useAuthorization()
 
   const routes = [
     {
+      href: '/admin/users',
+      label: 'Users',
+      authorized: can(PERMISSIONS.listUsers, { user: '*' })
+    },
+    {
+      href: '/admin/workspaces',
+      label: 'Workspaces',
+      authorized: can(PERMISSIONS.listWorkspaces, { workspace: '*' })
+    },
+    {
+      href: '/admin/sessions',
+      label: 'Sessions',
+      authorized: can(PERMISSIONS.listWorkbenches, { workspace: '*' })
+    },
+    {
+      href: '/admin/app-store',
+      label: 'App Store',
+      authorized: can(PERMISSIONS.listApps, {})
+    },
+    {
       href: '/admin/configuration',
       label: 'Configuration',
-      authorized: canManageSettings
+      authorized: can(PERMISSIONS.setPlatformSettings, {})
     },
-    { href: '/admin/theme', label: 'Theme', authorized: canManageSettings },
-    { href: '/admin/users', label: 'Users', authorized: canManageUsers }
+    {
+      href: '/admin/theme',
+      label: 'Theme',
+      authorized: can(PERMISSIONS.setPlatformSettings, {})
+    }
   ]
 
   const handleTabChange = (value: string) => {

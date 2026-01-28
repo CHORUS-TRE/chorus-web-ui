@@ -3,13 +3,13 @@
 import { Shield, ShieldAlert } from 'lucide-react'
 import React from 'react'
 
-import { useAuthorizationViewModel } from '@/view-model/authorization-view-model'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { Button } from '~/components/button'
 
 const RolesPage = () => {
-  const { canCreateWorkspace } = useAuthorizationViewModel()
+  const { can, PERMISSIONS } = useAuthorization()
 
-  if (!canCreateWorkspace) {
+  if (!can(PERMISSIONS.listUsers)) {
     return (
       <div className="flex h-full w-full items-center justify-center text-red-500">
         <ShieldAlert className="h-12 w-12" />

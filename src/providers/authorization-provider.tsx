@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useMemo } from 'react'
+
 import { PERMISSIONS, ROLE_DEFINITIONS } from '@/config/permissions'
 import { useAuthentication } from '@/providers/authentication-provider'
 
@@ -15,7 +16,7 @@ interface AuthorizationContextType {
 const AuthorizationContext = createContext<AuthorizationContextType>({
   PERMISSIONS,
   can: (permission: string, context?: Record<string, string>) => false,
-  isAdmin: false,
+  isAdmin: false
 })
 
 // Create a custom hook for easy access to the context
@@ -59,13 +60,14 @@ const resolveRolePermissions = (
 
 // Define the provider component
 export const AuthorizationProvider = ({
-  children,
+  children
 }: {
   children: React.ReactNode
 }) => {
   const { user } = useAuthentication()
   const permissionsWithContextMap = useMemo(() => {
-    if (!user || !user.rolesWithContext) return new Map<string, Record<string, string[]>>()
+    if (!user || !user.rolesWithContext)
+      return new Map<string, Record<string, string[]>>()
 
     const newPermissionsMap: Record<string, Record<string, string[]>> = {}
     const cache = new Map<string, string[]>()
@@ -110,11 +112,11 @@ export const AuthorizationProvider = ({
     return Object.entries(context).every(([key, value]) => {
       const allowedValues = allowedContexts[key]
 
-      // If the permission doesn't have this context key recorded, it usually means 
-      // the role didn't specify it. 
+      // If the permission doesn't have this context key recorded, it usually means
+      // the role didn't specify it.
       // If the role context was empty, it might mean global access depending on convention.
       // But based on our transform, we only add keys that exist.
-      // If a dimension is missing in allowedValues, we deny access to it to be safe, 
+      // If a dimension is missing in allowedValues, we deny access to it to be safe,
       // unless we decide missing means "*" (global).
       // Given the user example showed explicit "*", we assume explicit is required.
 
@@ -136,11 +138,10 @@ export const AuthorizationProvider = ({
     )
   }, [user, permissionsWithContextMap])
 
-
   const value = {
     PERMISSIONS,
     can,
-    isAdmin,
+    isAdmin
   }
 
   return (
