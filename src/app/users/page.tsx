@@ -17,14 +17,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { User } from '@/domain/model/user'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
-import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
 
 export default function UsersPage() {
   const { can, PERMISSIONS } = useAuthorization()
   const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const { user } = useAuthentication()
 
   useEffect(() => {
@@ -37,21 +34,13 @@ export default function UsersPage() {
         const result = await listUsers()
         if (result.data) {
           setUsers(result.data)
-          setError(null)
-        } else {
-          setError(result.error || 'Failed to load users')
         }
       } else {
         setUsers([user!])
-        setError('You do not have permission to view users')
       }
     }
     loadUsers()
   }, [can, PERMISSIONS.listUsers, user])
-
-  if (!users) {
-    return <div className="flex justify-center p-8">Loading users...</div>
-  }
 
   return (
     <>

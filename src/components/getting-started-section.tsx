@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 import {
   Card,
@@ -63,7 +64,7 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
         title: 'Create a Workspace',
         description: 'Set up a secure project space',
         icon: 'package',
-        link: 'http://localhost:3000/sessions/chorus-documentation',
+        link: '/sessions/chorus-documentation',
         path: '/docs/user-guide/getting-started/create_workspace'
       },
       {
@@ -71,7 +72,7 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
         title: 'Open a Session',
         description: 'Start a computing environment',
         icon: 'computer',
-        link: 'http://localhost:3000/sessions/chorus-documentation',
+        link: '/sessions/chorus-documentation',
         path: '/docs/user-guide/getting-started/launch-desktop'
       },
       {
@@ -79,7 +80,7 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
         title: 'Launch an App',
         description: 'Run tools from session or store',
         icon: 'grid',
-        link: 'http://localhost:3000/sessions/chorus-documentation',
+        link: '/sessions/chorus-documentation',
         path: '/docs/user-guide/getting-started/start_app'
       }
     ]
@@ -90,6 +91,7 @@ export function GettingStartedSection() {
   const { user } = useAuthentication()
   const workspaces = useAppState((state) => state.workspaces)
   const workbenches = useAppState((state) => state.workbenches)
+  const { openWebApp, navigateWebApp } = useIframeCache()
   const [content, setContent] = useState<GettingStartedContent | null>(null)
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -143,6 +145,20 @@ export function GettingStartedSection() {
     }
   }, [isCollapsed])
 
+  const handleStepClick = useCallback(
+    (step: GettingStartedStep) => {
+      if (step.link.startsWith('/sessions/') && step.path) {
+        const webappId = step.link.replace('/sessions/', '')
+        // We use navigateWebApp which will open it if not already open,
+        // or just update path if it is.
+        navigateWebApp(webappId, step.path)
+      } else {
+        // Fallback for regular links if any
+      }
+    },
+    [navigateWebApp]
+  )
+
   if (isLoading || !content) {
     return null
   }
@@ -182,7 +198,9 @@ export function GettingStartedSection() {
                 <Link
                   key={step.id}
                   href={step.link}
-                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    handleStepClick(step)
+                  }}
                   className="block min-w-[120px] flex-1"
                 >
                   <div className="rounded-lg border border-border/50 bg-card p-4 transition-all hover:border-primary/50 hover:bg-card/80">

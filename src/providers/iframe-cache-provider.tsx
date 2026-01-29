@@ -59,7 +59,8 @@ type IframeCacheContextType = {
     workspaceId: string,
     name?: string
   ) => Promise<void>
-  openWebApp: (webappId: string) => void
+  openWebApp: (webappId: string, subpath?: string) => void
+  navigateWebApp: (webappId: string, subpath: string) => void
   closeIframe: (id: string) => void
   setActiveIframe: (id: string | null) => void
   clearAllCache: () => void
@@ -93,6 +94,7 @@ const IframeCacheContext = createContext<IframeCacheContextType>({
   recentWebApps: [],
   openSession: async () => {},
   openWebApp: () => {},
+  navigateWebApp: () => {},
   closeIframe: () => {},
   setActiveIframe: () => {},
   clearAllCache: () => {},
@@ -585,13 +587,37 @@ export const IframeCacheProvider = ({
 
   // Open a web app iframe
   const openWebApp = useCallback(
-    (webappId: string) => {
+    (webappId: string, subpath?: string) => {
+      // Find the webapp config
+      const webapp = externalWebApps.find((app) => app.id === webappId)
+      if (!webapp) {
+        // If external webapps haven't loaded yet, queue the request
+        if (!externalWebAppsLoaded) {
+          if (!pendingWebAppOpenRef.current.includes(webappId)) {
+            pendingWebAppOpenRef.current.push(webappId)
+          }
+          return
+        }
+
+        toast({
+          title: 'Error opening web app',
+          description: 'Web app not found',
+          variant: 'destructive'
+        })
+        return
+      }
+
+      const targetUrl = subpath
+        ? `${new URL(webapp.url).origin}${subpath.startsWith('/') ? '' : '/'}${subpath}`
+        : webapp.url
+
       // Check if already cached
       const existing = cacheRef.current.get(webappId)
       if (existing) {
-        // Update last accessed time
+        // Update last accessed time and URL if subpath provided
         cacheRef.current.set(webappId, {
           ...existing,
+          url: targetUrl,
           lastAccessed: new Date()
         })
         setActiveIframeIdState(webappId)
@@ -601,30 +627,11 @@ export const IframeCacheProvider = ({
         return
       }
 
-      // If external webapps haven't loaded yet, queue the request
-      if (!externalWebAppsLoaded) {
-        if (!pendingWebAppOpenRef.current.includes(webappId)) {
-          pendingWebAppOpenRef.current.push(webappId)
-        }
-        return
-      }
-
-      // Find the webapp config
-      const webapp = externalWebApps.find((app) => app.id === webappId)
-      if (!webapp) {
-        toast({
-          title: 'Error opening web app',
-          description: 'Web app not found',
-          variant: 'destructive'
-        })
-        return
-      }
-
       // Add to cache
       const newIframe: CachedIframe = {
         id: webappId,
         type: 'webapp',
-        url: webapp.url,
+        url: targetUrl,
         name: webapp.name,
         lastAccessed: new Date()
       }
@@ -644,6 +651,33 @@ export const IframeCacheProvider = ({
       checkCacheSize,
       addToRecentWebApps
     ]
+  )
+
+  // Navigate a loaded web app to a new subpath
+  const navigateWebApp = useCallback(
+    (webappId: string, subpath: string) => {
+      const existing = cacheRef.current.get(webappId)
+      const webapp = externalWebApps.find((app) => app.id === webappId)
+
+      if (!existing || !webapp) {
+        // If not loaded, just use openWebApp which handles loading
+        openWebApp(webappId, subpath)
+        return
+      }
+
+      const domainUrl = new URL(webapp.url).origin
+      const targetUrl = `${domainUrl}${subpath.startsWith('/') ? '' : '/'}${subpath}`
+
+      if (existing.url === targetUrl) return
+
+      cacheRef.current.set(webappId, {
+        ...existing,
+        url: targetUrl,
+        lastAccessed: new Date()
+      })
+      updateCache()
+    },
+    [externalWebApps, openWebApp, updateCache]
   )
 
   // Close an iframe
@@ -702,6 +736,7 @@ export const IframeCacheProvider = ({
       recentWebApps,
       openSession,
       openWebApp,
+      navigateWebApp,
       closeIframe,
       setActiveIframe,
       clearAllCache,
@@ -723,6 +758,7 @@ export const IframeCacheProvider = ({
       recentWebApps,
       openSession,
       openWebApp,
+      navigateWebApp,
       closeIframe,
       setActiveIframe,
       clearAllCache,
