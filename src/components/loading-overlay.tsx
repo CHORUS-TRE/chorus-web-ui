@@ -9,12 +9,14 @@ interface LoadingOverlayProps {
   isLoading: boolean
   message?: string
   delay?: number
+  variant?: 'page' | 'container'
 }
 
 export function LoadingOverlay({
   isLoading,
   message,
-  delay = 500
+  delay = 500,
+  variant = 'page'
 }: LoadingOverlayProps) {
   const [isVisible, setIsVisible] = useState(false)
 
@@ -38,12 +40,13 @@ export function LoadingOverlay({
 
   if (!isVisible) return null
 
+  const containerClassName =
+    variant === 'container'
+      ? 'absolute inset-0 z-[25] flex items-center justify-center bg-background'
+      : 'fixed inset-0 top-11 z-[30] flex items-center justify-center bg-background'
+
   return (
-    <div
-      className="fixed inset-0 top-11 z-[30] flex items-center justify-center bg-background"
-      role="status"
-      aria-label="Loading"
-    >
+    <div className={containerClassName} role="status" aria-label="Loading">
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="animate-pulse bg-transparent">
           <Image

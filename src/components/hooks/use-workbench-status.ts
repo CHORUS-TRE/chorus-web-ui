@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 
-import { K8sWorkbenchStatus } from '@/domain/model'
+import { WorkbenchServerPodStatus } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
 const POLLING_INTERVAL = 3000
 const TIMEOUT = 30 * 1000
 
 export function useWorkbenchStatus(workbenchId?: string) {
-  const [status, setStatus] = useState<K8sWorkbenchStatus | string | null>(null)
+  const [status, setStatus] = useState<
+    WorkbenchServerPodStatus | string | null
+  >(null)
 
   useEffect(() => {
     if (!workbenchId) {
@@ -25,9 +27,9 @@ export function useWorkbenchStatus(workbenchId?: string) {
       }
 
       if (result.data) {
-        setStatus(result.data.k8sStatus || null)
+        setStatus(result.data.serverPodStatus || null)
 
-        if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
+        if (result.data.serverPodStatus === WorkbenchServerPodStatus.RUNNING) {
           clearInterval(intervalId)
           clearTimeout(timeoutId)
         }
