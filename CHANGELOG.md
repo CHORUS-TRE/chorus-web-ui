@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.29.0...v1.29.1) (2026-01-29)
+
+
+### Bug Fixes
+
+* validate recent sessions against existing workbenches ([#167](https://github.com/CHORUS-TRE/chorus-web-ui/issues/167)) ([c9d6bcf](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c9d6bcf3c95016355309981bd69286b427bf12b7))
+
 # [1.29.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.28.2...v1.29.0) (2026-01-29)
 
 
