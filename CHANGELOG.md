@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.29.2...v1.30.0) (2026-01-29)
+
+
+### Features
+
+* removed unauthorized calls ([efa0a1a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/efa0a1af36f6052d103e927776b730a7c7d6a49f))
+
 ## [1.29.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.29.1...v1.29.2) (2026-01-29)
 
 
