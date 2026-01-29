@@ -9,7 +9,6 @@ import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
-import { appDelete } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
 import {
   Card,
@@ -50,49 +49,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
   const { background, openSession } = useIframeCache()
   const { user } = useAuthentication()
   const router = useRouter()
-
-  const handleDelete = async () => {
-    if (isDeleting) return
-
-    try {
-      setIsDeleting(true)
-
-      const result = await appDelete(app.id)
-
-      if (result.error) {
-        toast({
-          title: 'App deletion failed',
-          variant: 'destructive',
-          description: result.error
-        })
-        return
-      }
-
-      setShowDeleteDialog(false)
-      setTimeout(() => {
-        onUpdate()
-        setIsDeleting(false)
-      }, 100)
-    } catch (error) {
-      toast({
-        title: 'App deletion failed',
-        variant: 'destructive',
-        description:
-          error instanceof Error ? error.message : 'An error occurred'
-      })
-      setIsDeleting(false)
-    }
-  }
-
-  const handleDeleteClick = () => {
-    setShowDeleteDialog(true)
-  }
-
-  const handleDialogClose = (open: boolean) => {
-    if (!isDeleting) {
-      setShowDeleteDialog(open)
-    }
-  }
 
   const handleStartApp = async (
     targetSessionId?: string,
@@ -179,38 +135,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
               {app.name || 'Unnamed App'}
             </CardTitle>
           </div>
-          <div className="absolute right-2 top-4">
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="justifiy-center m-0 h-8 w-8 p-0 text-accent ring-0 hover:bg-accent hover:text-accent-foreground"
-                  disabled={isDeleting}
-                >
-                  <span className="sr-only">Open menu</span>
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={() => setShowEditDialog(true)}
-                  disabled={isDeleting}
-                >
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={handleDeleteClick}
-                  className="text-destructive focus:text-destructive"
-                  disabled={isDeleting}
-                >
-                  <Trash className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
           <CardDescription className="mb-3 text-xs text-muted-foreground">
             {app.dockerImageName}:{app.dockerImageTag}
           </CardDescription>
@@ -266,15 +190,6 @@ export function AppCard({ app, onUpdate }: AppCardProps) {
           onSuccess={onUpdate}
         />
       )}
-
-      <DeleteDialog
-        open={showDeleteDialog}
-        onCancel={() => handleDialogClose(false)}
-        onConfirm={handleDelete}
-        isDeleting={isDeleting}
-        title="Delete App"
-        description={`Are you sure you want to delete ${app.name || 'this app'}? This action cannot be undone.`}
-      />
     </>
   )
 }

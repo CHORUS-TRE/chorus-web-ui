@@ -1,20 +1,11 @@
-'use client'
-
-import { ExternalLink, Globe } from 'lucide-react'
+import { Globe } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 import { ExternalWebApp } from '@/domain/model'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { Button } from '~/components/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/card'
+import { Card, CardDescription, CardTitle } from '~/components/card'
+import { Badge } from '~/components/ui/badge'
 
 import { Avatar, AvatarFallback } from './ui/avatar'
 
@@ -27,61 +18,75 @@ interface WebAppCardProps {
  * Clicking "Open" will load the webapp in a cached iframe.
  */
 export function WebAppCard({ webapp }: WebAppCardProps) {
-  const router = useRouter()
   const { openWebApp, cachedIframes } = useIframeCache()
 
   const isOpen = cachedIframes.has(webapp.id)
 
   const handleOpen = () => {
     openWebApp(webapp.id)
-    router.push(`/webapps/${webapp.id}`)
   }
 
   return (
-    <Card>
-      <CardHeader className="relative pb-4">
-        <div className="flex items-center space-x-4">
-          {webapp.iconUrl ? (
-            <Image
-              src={webapp.iconUrl}
-              alt={webapp.name}
-              width={32}
-              height={32}
-              className="h-8 w-8 shrink-0 rounded"
-              priority
-            />
-          ) : (
-            <Avatar className="h-8 w-8 shrink-0">
-              <AvatarFallback className="bg-green-500/20 text-green-500">
-                <Globe className="h-4 w-4" />
-              </AvatarFallback>
-            </Avatar>
-          )}
-          <CardTitle className="flex items-center gap-2 truncate text-ellipsis pr-2 text-muted-foreground">
-            {webapp.name}
-          </CardTitle>
-        </div>
-        <CardDescription className="mb-3 truncate text-xs text-muted-foreground">
-          {new URL(webapp.url).hostname}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="text-sm text-muted-foreground">
-          {webapp.description || 'External web application'}
-        </div>
-      </CardContent>
-      <CardFooter className="mt-auto gap-2">
-        <Button onClick={handleOpen} className="small">
-          <ExternalLink className="mr-2 h-4 w-4" />
-          {isOpen ? 'Go to App' : 'Open'}
-        </Button>
-        {isOpen && (
-          <span className="text-xs text-green-500">
-            <span className="mr-1 inline-block h-2 w-2 animate-pulse rounded-full bg-green-500" />
-            Open
-          </span>
-        )}
-      </CardFooter>
-    </Card>
+    <div className="group relative">
+      <Card className="group/card relative flex h-40 flex-col overflow-hidden border-none">
+        {/* Background */}
+        <div className="absolute inset-0 bg-muted/20" />
+
+        {/* Glass overlay */}
+        <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />
+
+        {/* Content layer */}
+        <Link
+          href={`/sessions/${webapp.id}`}
+          className="relative flex h-full w-full flex-col items-start justify-between p-4"
+          onClick={handleOpen}
+        >
+          {/* Title - top left */}
+          <div className="w-full pr-5">
+            <CardTitle className="flex items-start gap-2 text-foreground">
+              {webapp.iconUrl ? (
+                <Image
+                  src={webapp.iconUrl}
+                  alt={webapp.name}
+                  width={20}
+                  height={20}
+                  className="mt-0.5 h-5 w-5 shrink-0 rounded"
+                />
+              ) : (
+                <Avatar className="mt-0.5 h-5 w-5 shrink-0">
+                  <AvatarFallback className="bg-transparent text-foreground">
+                    <Globe className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+              <span className="truncate text-lg font-semibold leading-tight">
+                {webapp.name}
+              </span>
+            </CardTitle>
+            <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">
+              {webapp.description || 'Web application'}
+            </span>
+          </div>
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Bottom info */}
+          <CardDescription className="flex w-full items-end justify-between text-sm text-muted-foreground">
+            <span className="block w-full">
+              <span className="block truncate">
+                {new URL(webapp.url).hostname}
+              </span>
+            </span>
+
+            {isOpen && (
+              <Badge variant="default" className="ml-2 bg-green-500/80 text-xs">
+                Open
+              </Badge>
+            )}
+          </CardDescription>
+        </Link>
+      </Card>
+    </div>
   )
 }

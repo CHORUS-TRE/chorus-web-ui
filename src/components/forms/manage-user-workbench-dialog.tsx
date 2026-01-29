@@ -33,9 +33,9 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
+import { getWorkbenchRoles } from '~/config/permissions'
 import { Result } from '~/domain/model'
 import type { Role, User } from '~/domain/model/user'
-import { getWorkbenchRoles } from '~/utils/schema-roles'
 import { listUsers } from '~/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'

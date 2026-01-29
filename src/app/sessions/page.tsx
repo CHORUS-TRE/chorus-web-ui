@@ -2,6 +2,7 @@
 
 import {
   CirclePlus,
+  Globe,
   LaptopMinimal,
   LayoutGrid,
   Rows3,
@@ -11,11 +12,15 @@ import {
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
+import { WebAppCard } from '@/components/webapp-card'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
+import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
+import { Link } from '~/components/link'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -25,8 +30,14 @@ import WorkbenchTable from '~/components/workbench-table'
 export default function SessionPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
-  const { refreshWorkbenches, workbenches, apps, appInstances, workspaces } =
-    useAppState()
+  const {
+    refreshWorkbenches,
+    workbenches,
+    apps,
+    appInstances,
+    workspaces,
+    refreshWorkspaces
+  } = useAppState()
   const { user } = useAuthentication()
   const {
     sessionsViewMode,
@@ -36,9 +47,8 @@ export default function SessionPage() {
     showMySessions,
     setShowMySessions
   } = useUserPreferences()
-
+  const { externalWebApps, cachedIframes } = useIframeCache()
   const [createOpen, setCreateOpen] = useState(false)
-
   const searchQuery: string = sessionSearchQuery ?? ''
   const setSearchQuery = setSessionSearchQuery
 
@@ -93,6 +103,24 @@ export default function SessionPage() {
     appInstances,
     apps
   ])
+
+  const filteredWebApps = useMemo(() => {
+    // Only show active/loaded webapps
+    let result = externalWebApps.filter((webapp) =>
+      cachedIframes.has(webapp.id)
+    )
+
+    if (searchQuery && searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter((webapp) => {
+        if (webapp.name.toLowerCase().includes(query)) return true
+        if (webapp.description?.toLowerCase().includes(query)) return true
+        return false
+      })
+    }
+
+    return result
+  }, [externalWebApps, searchQuery, cachedIframes])
 
   return (
     <>
@@ -201,9 +229,21 @@ export default function SessionPage() {
               <p className="text-lg font-medium">No sessions found</p>
               <p className="mb-4 text-sm">
                 {showMySessions
-                  ? 'You have no sessions'
-                  : 'No sessions available.'}
+                  ? 'You do not have any sessions'
+                  : 'You do not have access to any sessions.'}
               </p>
+              {!workspaces ||
+                (workspaces.length === 0 && (
+                  <>
+                    <p className="text-sm">A session requires a workspace.</p>
+                    <p className="mb-4 text-sm">
+                      <Link href="/workspaces" className="text-primary">
+                        Create
+                      </Link>{' '}
+                      or join a workspace to get started
+                    </p>
+                  </>
+                ))}
               {workspaces && workspaces.length > 0 && (
                 <WorkbenchCreateForm
                   workspaceId={workspaceId}
@@ -222,6 +262,20 @@ export default function SessionPage() {
           <WorkbenchGrid workbenches={filteredWorkbenches} />
         ) : (
           <WorkbenchTable workbenches={filteredWorkbenches} />
+        )}
+
+        {filteredWebApps.length > 0 && (
+          <div className="mt-8">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+              <Globe className="h-5 w-5" />
+              Services
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredWebApps.map((webapp) => (
+                <WebAppCard key={webapp.id} webapp={webapp} />
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </>

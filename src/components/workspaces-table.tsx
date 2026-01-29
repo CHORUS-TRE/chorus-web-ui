@@ -99,9 +99,6 @@ export default function WorkspaceTable({
       </TableHead>
       {/* <TableHead className="font-semibold text-foreground">Files</TableHead> */}
       <TableHead className="font-semibold text-foreground">Created</TableHead>
-      <TableHead>
-        <span className="sr-only">Actions</span>
-      </TableHead>
     </>
   )
 
@@ -123,35 +120,6 @@ export default function WorkspaceTable({
 
     return (
       <>
-        {open && (
-          <WorkspaceUpdateForm
-            workspace={workspace}
-            state={[open, setOpen]}
-            onSuccess={() => {
-              setUpdated(true)
-              setTimeout(() => {
-                setUpdated(false)
-              }, 3000)
-
-              if (onUpdate) onUpdate()
-            }}
-          />
-        )}
-
-        {deleteOpen && (
-          <WorkspaceDeleteForm
-            id={workspace?.id}
-            state={[deleteOpen, setDeleteOpen]}
-            onSuccess={() => {
-              refreshWorkspaces()
-              setDeleted(true)
-              setTimeout(() => {
-                setDeleted(false)
-              }, 3000)
-              if (onUpdate) onUpdate()
-            }}
-          />
-        )}
         <TableRowComponent
           className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
           onClick={() => router.push(`/workspaces/${workspace?.id}`)}
@@ -215,33 +183,6 @@ export default function WorkspaceTable({
                   year: 'numeric'
                 })
               : '-'}
-          </TableCell>
-          <TableCell className="p-1" onClick={(e) => e.stopPropagation()}>
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button aria-haspopup="true" variant="ghost">
-                  <EllipsisVerticalIcon className="h-4 w-4" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-elevated">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setOpen(true)
-                  }}
-                >
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setDeleteOpen(true)}
-                  className="text-red-500 focus:text-red-500"
-                >
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </TableCell>
         </TableRowComponent>
       </>

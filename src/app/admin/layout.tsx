@@ -6,11 +6,13 @@ const AuthenticatedApp = React.lazy(() =>
     default: mod.AuthenticatedApp
   }))
 )
-import { Package } from 'lucide-react'
+import { Package, ShieldAlert } from 'lucide-react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { Login } from '~/components/login'
+import { Unauthorized } from '~/components/unauthorized'
 
 import { AdminTabs } from './admin-tabs'
 
@@ -21,6 +23,7 @@ export default function Layout({
 }>) {
   const { setActiveIframe } = useIframeCache()
   const { user } = useAuthentication()
+  const { isAdmin } = useAuthorization()
 
   // Clear active iframe when navigating to admin pages
   useEffect(() => {
@@ -33,18 +36,23 @@ export default function Layout({
     <>
       <div className="w-full">
         <AuthenticatedApp>
-          <>
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
-                <Package className="h-9 w-9" />
-                Admin
-              </h2>
-            </div>
-            <AdminTabs />
-          </>
-          <div className="float-start flex w-full">
-            <main className="w-full px-8">{children}</main>
-          </div>
+          {!isAdmin && <Unauthorized />}
+
+          {isAdmin && (
+            <>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
+                  <Package className="h-9 w-9" />
+                  Admin
+                </h2>
+              </div>
+              <AdminTabs />
+
+              <div className="float-start flex w-full">
+                <main className="w-full px-8">{children}</main>
+              </div>
+            </>
+          )}
         </AuthenticatedApp>
       </div>
     </>

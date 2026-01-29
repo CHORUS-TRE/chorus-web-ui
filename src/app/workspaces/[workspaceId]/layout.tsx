@@ -95,14 +95,6 @@ export default function Layout({
             <Bell className="h-4 w-4" />
             {mockNotifications.length}
           </Button>
-          <Button
-            variant="accent-filled"
-            className="gap-2"
-            onClick={() => setOpenEdit(true)}
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Button>
         </div>
       </div>
       <p className="text-md mb-4 text-xs italic text-muted-foreground">
@@ -128,6 +120,7 @@ export default function Layout({
           <TabsTrigger disabled value="footprint" className="demo-effect">
             Footprint
           </TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
       </Tabs>
       {children}

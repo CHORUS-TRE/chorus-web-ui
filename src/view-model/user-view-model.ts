@@ -1,9 +1,9 @@
 'use client'
 import { env } from 'next-runtime-env'
 
-import { UserApiDataSourceImpl } from '~/data/data-source'
-import { UserRepositoryImpl } from '~/data/repository'
-import { Result } from '~/domain/model'
+import { UserApiDataSourceImpl } from '@/data/data-source'
+import { UserRepositoryImpl } from '@/data/repository'
+import { Result } from '@/domain/model'
 import {
   User,
   UserEditFormSchema,
@@ -11,15 +11,15 @@ import {
   UserRoleCreateType,
   UserUpdateSchema,
   UserUpdateType
-} from '~/domain/model/user'
-import { UserCreate } from '~/domain/use-cases/user/user-create'
-import { UserDelete } from '~/domain/use-cases/user/user-delete'
-import { UserGet } from '~/domain/use-cases/user/user-get'
-import { UserList } from '~/domain/use-cases/user/user-list'
-import { UserMe } from '~/domain/use-cases/user/user-me'
-import { UserRoleCreate } from '~/domain/use-cases/user/user-role-create'
-import { UserUpdate } from '~/domain/use-cases/user/user-update'
-import { UserServiceListUsersRequest } from '~/internal/client'
+} from '@/domain/model/user'
+import { UserCreate } from '@/domain/use-cases/user/user-create'
+import { UserDelete } from '@/domain/use-cases/user/user-delete'
+import { UserGet } from '@/domain/use-cases/user/user-get'
+import { UserList } from '@/domain/use-cases/user/user-list'
+import { UserMe } from '@/domain/use-cases/user/user-me'
+import { UserRoleCreate } from '@/domain/use-cases/user/user-role-create'
+import { UserUpdate } from '@/domain/use-cases/user/user-update'
+import { UserServiceListUsersRequest } from '@/internal/client'
 
 const getRepository = async () => {
   const dataSource = new UserApiDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')

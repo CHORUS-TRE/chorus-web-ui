@@ -76,7 +76,7 @@ export function AppBreadcrumb() {
         label = projectLabel
       } else if (seg.text === 'sessions') {
         label = 'Sessions'
-      } else if (seg.text === 'webapps') {
+      } else if (seg.text === 'services') {
         label = 'Services'
       }
 
@@ -85,7 +85,7 @@ export function AppBreadcrumb() {
       if (prevSegment === 'workspaces') {
         const workspace = workspaces?.find((w) => w.id === seg.text)
         if (workspace) label = workspace.name
-      } else if (prevSegment === 'sessions' || prevSegment === 'webapps') {
+      } else if (prevSegment === 'sessions' || prevSegment === 'services') {
         const instance = appInstances?.find((i) => i.id === seg.text)
         if (instance) {
           const app = apps?.find((a) => a.id === instance.appId)
@@ -167,8 +167,7 @@ export function AppBreadcrumb() {
         <Button
           variant="ghost"
           size="sm"
-          disabled={true}
-          onClick={toggleFullscreen}
+          disabled
           className="ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"
           aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
         >

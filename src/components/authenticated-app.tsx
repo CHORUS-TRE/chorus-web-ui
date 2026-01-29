@@ -14,7 +14,6 @@ import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar } from '~/components/left-sidebar'
 import RightSidebar from '~/components/right-sidebar'
-import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
 import { steps } from '~/lib/tours'
 
 interface MainLayoutProps {
@@ -22,13 +21,13 @@ interface MainLayoutProps {
 }
 
 function AuthenticatedAppContent({ children }: MainLayoutProps) {
-  const { showRightSidebar } = useUserPreferences()
+  const { showRightSidebar, showLeftSidebar } = useUserPreferences()
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
 
   const isIFramePage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    const webappPageRegex = /^\/webapps\/[^/]+$/
+    const webappPageRegex = /^\/sessions\/[^/]+$/
     return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
   }, [pathname])
 
@@ -41,7 +40,8 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 
   // Ref for content-main element to measure its position
   const contentMainRef = useRef<HTMLDivElement>(null)
-  const [contentRect, setContentRect] = useState<DOMRect | null>(null)
+  const setContentRect = useAppState((state) => state.setContentRect)
+  const contentRect = useAppState((state) => state.contentRect)
 
   // Update content rect on resize
   const updateContentRect = useCallback(() => {
@@ -87,17 +87,17 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }
   }, [isIFramePage, pathname, setImmersiveUIVisible]) // Re-run when page changes
 
-  const handleHeaderHover = () => {
-    // Show UI when hovering header
+  const handleHeaderClick = () => {
+    // Show UI when clicking header
     if (isIFramePage) {
       setImmersiveUIVisible(true)
     }
   }
 
-  const handleContentMainHover = () => {
-    // Show UI when hovering content-main
+  const handleContentClick = () => {
+    // Hide UI when clicking content-main
     if (isIFramePage) {
-      setImmersiveUIVisible(false)
+      // setImmersiveUIVisible(false)
     }
   }
 
@@ -118,7 +118,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
         >
           <div
             className="fixed left-0 top-0 z-40 h-11 min-w-full"
-            onMouseEnter={handleHeaderHover}
+            onClick={handleHeaderClick}
           >
             <Header />
           </div>
@@ -145,8 +145,12 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               {/* Left Sidebar - in flex flow - hidden in fullscreen */}
               <div
                 className={cn(
-                  'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] flex-shrink-0 overflow-hidden transition-all duration-300',
-                  !isFullscreen ? 'block opacity-100' : 'hidden opacity-0'
+                  'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out',
+                  !isFullscreen && (showLeftSidebar || !isIFramePage)
+                    ? 'w-[240px] translate-x-0 opacity-100'
+                    : 'w-0 -translate-x-4 opacity-0',
+                  // Ensure margin is removed when closed to avoid gap
+                  ((!showLeftSidebar && isIFramePage) || isFullscreen) && 'mr-0'
                 )}
               >
                 <LeftSidebar />
@@ -173,14 +177,9 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                       : 'w-full'
                   )}
                 >
-                  {/* Breadcrumb - above all content */}
-                  <div className="border-b border-muted/20 bg-contrast-background/50 px-8 py-3 backdrop-blur-md">
-                    <AppBreadcrumb />
-                  </div>
-
                   <div
                     id="content-main"
-                    onMouseEnter={handleContentMainHover}
+                    onClick={handleContentClick}
                     ref={contentMainRef}
                     className={cn(
                       'flex-1 overflow-auto',
@@ -197,7 +196,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   className={cn(
                     'h-full overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
                     showRightSidebar && !isFullscreen
-                      ? 'w-[240px] flex-shrink-0'
+                      ? 'w-[320px] flex-shrink-0'
                       : 'hidden'
                   )}
                   id="right-sidebar"
@@ -209,45 +208,6 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
           </div>
 
           {/* SVG Mask Overlay - creates overlay with hole for iframe content area */}
-          {isIFramePage &&
-            !isFullscreen &&
-            immersiveUIVisible &&
-            contentRect && (
-              <svg
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  width: '100vw',
-                  height: '100vh',
-                  zIndex: 25,
-                  pointerEvents: 'none'
-                }}
-              >
-                <defs>
-                  <mask id="hole-mask">
-                    <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                    <rect
-                      x={contentRect.left + 32}
-                      y={contentRect.top}
-                      width={contentRect.width - 64}
-                      height={contentRect.height - 32}
-                      rx="16"
-                      ry="16"
-                      fill="black"
-                    />
-                  </mask>
-                </defs>
-                <rect
-                  x="0"
-                  y="0"
-                  width="100%"
-                  height="100%"
-                  fill="hsl(var(--background))"
-                  mask="url(#hole-mask)"
-                />
-              </svg>
-            )}
         </NextStep>
       </NextStepProvider>
     </div>

@@ -36,9 +36,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
+import { getAllRoles } from '~/config/permissions'
 import { Result } from '~/domain/model'
 import { Role, User } from '~/domain/model/user'
-import { getAllRoles } from '~/utils/schema-roles'
 import { createUserRole } from '~/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'

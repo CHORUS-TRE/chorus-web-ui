@@ -21,7 +21,7 @@ import { ScrollArea } from './ui/scroll-area'
 
 /**
  * Dialog for managing cached iframes.
- * Allows users to selectively close sessions/webapps to free memory.
+ * Allows users to selectively close sessions to free memory.
  */
 export function IframeCleanupDialog() {
   const {

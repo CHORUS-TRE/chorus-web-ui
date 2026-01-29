@@ -1,7 +1,9 @@
 'use client'
 
+import { Separator } from '@radix-ui/react-menubar'
 import {
   Building2,
+  CircleHelp,
   GaugeCircle,
   Globe,
   HelpCircle,
@@ -15,7 +17,9 @@ import React from 'react'
 
 import { Link } from '@/components/link'
 import { cn } from '@/lib/utils'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
+import { PERMISSIONS } from '~/config/permissions'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 import { Button } from './button'
@@ -52,7 +56,7 @@ export const navItems = [
   {
     label: 'Services',
     icon: Globe,
-    href: '/app-store?tab=webapps'
+    href: '/app-store?tab=services'
   }
 ]
 
@@ -67,10 +71,20 @@ function SidebarContent({
   searchParams: URLSearchParams
 }) {
   const router = useRouter()
-  const { workspaceFilters, setWorkspaceFilter, toggleRightSidebar } =
-    useUserPreferences()
+  const { isAdmin } = useAuthorization()
+  const {
+    workspaceFilters,
+    setWorkspaceFilter,
+    toggleRightSidebar,
+    toggleLeftSidebar
+  } = useUserPreferences()
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
+
+  // Function to handle closing the sidebar
+  const handleClose = () => {
+    toggleLeftSidebar()
+  }
 
   // Check if Projects filter is active (only projects, not centers)
   const isProjectsActive =
@@ -108,10 +122,30 @@ function SidebarContent({
     return pathname === href || pathname.startsWith(href + '/')
   }
 
+  const isSessionPage =
+    /^\/workspaces\/[^/]+\/sessions\/[^/]+$/.test(pathname) ||
+    /^\/sessions\/[^/]+$/.test(pathname)
+
   return (
     <>
       {/* Header with title and close button */}
-      {/* <SidebarHeader onClose={onClose} showCloseButton={showCloseButton} /> */}
+      <div className="flex items-center justify-between px-4 pt-4">
+        <span className="text-xs font-semibold uppercase text-muted-foreground/70">
+          Navigation
+        </span>
+        {isSessionPage && (
+          <Button
+            variant="ghost"
+            size="icon"
+            disabled
+            onClick={handleClose}
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            title="Close Sidebar"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
 
       {/* Main navigation */}
       <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
@@ -197,7 +231,7 @@ function SidebarContent({
           variant="underline"
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isActive('/app-store') && currentTab !== 'webapps'
+            isActive('/app-store') && currentTab !== 'services'
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
@@ -207,32 +241,56 @@ function SidebarContent({
         </Link>
 
         {/* Services */}
-        <Link
-          href="/app-store?tab=webapps"
+        {/* <Link
+          href="/app-store?tab=sessions"
           variant="underline"
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            pathname.includes('/webapps') ||
-              (isActive('/app-store') && currentTab === 'webapps')
+            pathname.includes('/sessions') ||
+              (isActive('/app-store') && currentTab === 'sessions')
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
           <Globe className="h-4 w-4" />
           Services
-        </Link>
+        </Link> */}
 
-        {/* Help */}
-        <button
-          onClick={toggleRightSidebar}
+        <Separator />
+
+        <Link
+          href="/sessions/chorus-documentation"
+          variant="underline"
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            'text-muted-foreground'
+            isActive('/sessions/chorus-documentation')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
           )}
         >
-          <HelpCircle className="h-4 w-4" />
-          Help
-        </button>
+          <CircleHelp className="h-4 w-4" />
+          Documentation
+        </Link>
+
+        {/* Admin */}
+        {isAdmin && (
+          <>
+            <Separator />
+            <Link
+              href="/admin"
+              variant="underline"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                pathname.includes('/admin') || isActive('/admin')
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Globe className="h-4 w-4" />
+              Admin
+            </Link>
+          </>
+        )}
       </nav>
     </>
   )

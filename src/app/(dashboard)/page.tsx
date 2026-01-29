@@ -33,7 +33,6 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
 import { Badge } from '~/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import {
@@ -93,8 +92,6 @@ export default function CHORUSDashboard() {
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
-
-      <GettingStartedSection />
 
       <div className="w-full space-y-6">
         <section>
@@ -393,15 +390,6 @@ export default function CHORUSDashboard() {
                 </div>
               </CardContent>
             </Card>
-
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Action Required</AlertTitle>
-              <AlertDescription>
-                Your storage quota is at 85%. Please archive or delete unused
-                data to avoid session disruptions.
-              </AlertDescription>
-            </Alert>
           </div>
         </div>
       </div>

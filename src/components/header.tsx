@@ -10,6 +10,7 @@ import {
   LogOut,
   Maximize,
   Moon,
+  PanelLeftOpen,
   Plus,
   Search,
   Settings,
@@ -21,7 +22,7 @@ import {
   X
 } from 'lucide-react'
 import Image from 'next/image'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useState } from 'react'
 
@@ -45,6 +46,7 @@ import { Separator } from '@/components/ui/separator'
 import { useInstanceConfig, useInstanceLogo } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
@@ -52,7 +54,7 @@ import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { AppInstanceCreateForm } from '~/components/forms/app-instance-forms'
-import { useAuthorizationViewModel } from '~/view-model/authorization-view-model'
+import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -91,13 +93,14 @@ export function Header() {
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
   const { toggleFullscreen } = useFullscreenContext()
+  const { toggleRightSidebar, showLeftSidebar, toggleLeftSidebar } =
+    useUserPreferences()
+  const { isAdmin } = useAuthorization()
+  const pathname = usePathname()
 
-  const { setWorkspaceFilter, toggleRightSidebar } = useUserPreferences()
-  const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
-  const instanceConfig = useInstanceConfig()
-  const [menuOpen, setMenuOpen] = useState(false)
-  // Recent sessions and webapps are persisted across logout/login
-  // Use cachedIframes.has() to check if a session/webapp is currently loaded
+  const isIFramePage =
+    /^\/workspaces\/[^/]+\/sessions\/[^/]+$/.test(pathname) ||
+    /^\/sessions\/[^/]+$/.test(pathname)
 
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
@@ -125,8 +128,8 @@ export function Header() {
 
   function UserProfileSection() {
     const { logout } = useAuthentication()
-    const { setWorkspaceFilter, toggleRightSidebar } = useUserPreferences()
-    const { canManageUsers, canManageSettings } = useAuthorizationViewModel()
+    const { setWorkspaceFilter } = useUserPreferences()
+    const { isAdmin } = useAuthorization()
     const instanceConfig = useInstanceConfig()
     const [menuOpen, setMenuOpen] = useState(false)
 
@@ -152,7 +155,7 @@ export function Header() {
       .sort((a, b) => a.localeCompare(b)) // alphabetical order
 
     return (
-      <div className="relative">
+      <div className="relative" style={{ zIndex: 100 }}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-muted/30"
@@ -225,17 +228,6 @@ export function Header() {
                 )}
                 {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
               </button>
-
-              <button
-                onClick={() => {
-                  toggleRightSidebar()
-                  setMenuOpen(false)
-                }}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-              >
-                <HelpCircle className="h-4 w-4" />
-                Help
-              </button>
             </div>
 
             <Separator className="my-1" />
@@ -252,7 +244,7 @@ export function Header() {
                 Privacy
               </Link>
 
-              {(canManageUsers || canManageSettings) && (
+              {isAdmin && (
                 <Link
                   href="/admin"
                   variant="underline"
@@ -266,7 +258,7 @@ export function Header() {
             </div>
 
             {/* Section 3: Lab */}
-            {canManageUsers && (
+            {isAdmin && (
               <>
                 <Separator className="my-1" />
                 <div className="py-1">
@@ -317,8 +309,20 @@ export function Header() {
         className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 border-b border-muted/40 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
         id="header"
       >
-        {/* Left section: Logo + Breadcrumb */}
-        <div className="flex shrink-0 items-center gap-4">
+        {/* Left section: Sidebar toggle + Logo + Breadcrumb */}
+        <div className="flex shrink-0 items-center gap-2">
+          {/* {!showLeftSidebar && isIFramePage && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleLeftSidebar}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              title="Open Sidebar"
+            >
+              <PanelLeftOpen className="h-4 w-4" />
+            </Button>
+          )} */}
+
           <Link href="/" variant="muted" className="shrink-0">
             <Image
               src={defaultLogo}
@@ -341,6 +345,10 @@ export function Header() {
               />
             )}
           </Link>
+
+          <div className="ml-4">
+            <AppBreadcrumb />
+          </div>
         </div>
 
         {/* Center: Recent sessions and web apps as Tabs */}
@@ -562,7 +570,7 @@ export function Header() {
                     if (!isLoaded) {
                       openWebApp(recentWebApp.id)
                     }
-                    router.push(`/webapps/${recentWebApp.id}`)
+                    router.push(`/sessions/${recentWebApp.id}`)
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -570,7 +578,7 @@ export function Header() {
                       if (!isLoaded) {
                         openWebApp(recentWebApp.id)
                       }
-                      router.push(`/webapps/${recentWebApp.id}`)
+                      router.push(`/sessions/${recentWebApp.id}`)
                     }
                   }}
                   className={cn(
@@ -614,6 +622,14 @@ export function Header() {
               />
             </div>
           )}
+
+          <button
+            onClick={() => toggleRightSidebar()}
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
+            title="Help"
+          >
+            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+          </button>
 
           <UserProfileSection />
         </div>

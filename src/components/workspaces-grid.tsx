@@ -13,10 +13,6 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { Card, CardTitle } from '@/components/card'
-import {
-  WorkspaceDeleteForm,
-  WorkspaceUpdateForm
-} from '@/components/forms/workspace-forms'
 import { Link } from '@/components/link'
 import {
   DropdownMenu,
@@ -137,76 +133,7 @@ export default function WorkspacesGrid({
                 {/* Spacer */}
                 <div className="flex-1" />
               </Link>
-
-              {/* Dropdown menu + Sessions - top right */}
-              <div className="absolute right-2 top-2 z-10 flex flex-col items-end gap-2">
-                {/* Dropdown menu */}
-                {user?.rolesWithContext?.some(
-                  (role) => role.context.workspace === workspace.id
-                ) && (
-                  <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:bg-muted/50"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="glass-elevated">
-                      <DropdownMenuItem
-                        onClick={() => setActiveUpdateId(workspace.id)}
-                      >
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setActiveDeleteId(workspace.id)}
-                        className="text-red-500 focus:text-red-500"
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
             </Card>
-
-            {activeUpdateId === workspace.id && (
-              <WorkspaceUpdateForm
-                workspace={workspace}
-                state={[
-                  activeUpdateId === workspace.id,
-                  () => setActiveUpdateId(null)
-                ]}
-                onSuccess={() => {
-                  toast({
-                    title: 'Success!',
-                    description: 'Workspace updated'
-                  })
-                  if (onUpdate) onUpdate()
-                }}
-              />
-            )}
-
-            {activeDeleteId === workspace.id && (
-              <WorkspaceDeleteForm
-                id={workspace.id}
-                state={[
-                  activeDeleteId === workspace.id,
-                  () => setActiveDeleteId(null)
-                ]}
-                onSuccess={() => {
-                  refreshWorkspaces()
-
-                  toast({
-                    title: 'Success!',
-                    description: `Workspace ${workspace.name} deleted`
-                  })
-                  if (onUpdate) onUpdate()
-                }}
-              />
-            )}
           </div>
         ))}
     </div>

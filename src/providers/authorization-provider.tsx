@@ -1,51 +1,22 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useMemo } from 'react'
 
-import type { User } from '@/domain/model/user'
-import { Result } from '~/domain/model'
-
-interface WasmUser {
-  roles: Array<{
-    name: string
-    description: string
-    permissions: Array<{
-      name: string
-      description: string
-    }>
-  }>
-}
-
-interface WasmAuthenticationService {
-  isUserAllowed: (permission: { name: string; description: string }) => boolean
-  getUserPermissions: () => string[]
-}
-
-declare global {
-  class Go {
-    importObject: WebAssembly.Imports
-    run(instance: WebAssembly.Instance): Promise<void>
-  }
-
-  interface Window {
-    createAuthenticationService: (user: WasmUser) => WasmAuthenticationService
-  }
-}
+import { getRolePermissions, PERMISSIONS } from '@/config/permissions'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 // Define the shape of the context
 interface AuthorizationContextType {
-  isUserAllowed: (user: User, permission: string) => Promise<Result<boolean>>
-  getUserPermissions: (user: User) => Result<string[]>
-  isInitialized: boolean
-  error?: string
+  PERMISSIONS: typeof PERMISSIONS
+  can: (permission: string, context?: Record<string, string>) => boolean
+  isAdmin: boolean
 }
 
 // Create the context with a default value
 const AuthorizationContext = createContext<AuthorizationContextType>({
-  isUserAllowed: async () => ({ data: false }),
-  getUserPermissions: () => ({ data: [] }),
-  isInitialized: false,
-  error: undefined
+  PERMISSIONS,
+  can: (permission: string, context?: Record<string, string>) => false,
+  isAdmin: false
 })
 
 // Create a custom hook for easy access to the context
@@ -65,137 +36,84 @@ export const AuthorizationProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const [isWasmInitialized, setIsWasmInitialized] = useState(false)
+  const { user } = useAuthentication()
+  const permissionsWithContextMap = useMemo(() => {
+    if (!user || !user.rolesWithContext)
+      return new Map<string, Record<string, string[]>>()
 
-  useEffect(() => {
-    async function loadWasm() {
-      if (typeof window !== 'undefined') {
-        const wasmExec = document.createElement('script')
-        wasmExec.src = '/wasm_exec.js'
-        wasmExec.async = true
+    const newPermissionsMap: Record<string, Record<string, string[]>> = {}
 
-        await new Promise((resolve) => {
-          wasmExec.onload = resolve
-          document.head.appendChild(wasmExec)
-        })
+    user.rolesWithContext.forEach((role) => {
+      // Resolve permissions for this role
+      const permissions = getRolePermissions(role.name)
 
-        const go = new (window as unknown as { Go: typeof Go }).Go()
-        WebAssembly.instantiateStreaming(
-          fetch('/gatekeeper.wasm'),
-          go.importObject
-        ).then((result) => {
-          const wasm = result.instance
-          go.run(wasm)
+      permissions.forEach((permission) => {
+        if (!newPermissionsMap[permission]) {
+          newPermissionsMap[permission] = {}
+        }
 
-          if (typeof window.createAuthenticationService === 'function') {
-            setIsWasmInitialized(true)
-          } else {
-            console.error('createAuthenticationService not found globally')
-            console.error(
-              'Available global functions:',
-              Object.keys(window).filter(
-                (key) => typeof window[key as keyof Window] === 'function'
-              )
-            )
-            setIsWasmInitialized(false)
+        const permContext = newPermissionsMap[permission]
+
+        // Merge role context into permission context
+        Object.entries(role.context).forEach(([key, value]) => {
+          if (!permContext[key]) {
+            permContext[key] = []
+          }
+
+          if (!permContext[key].includes(value)) {
+            permContext[key].push(value)
           }
         })
-      }
-    }
+      })
+    })
 
-    loadWasm()
-  }, [])
+    return new Map(Object.entries(newPermissionsMap))
+  }, [user])
 
-  const isUserAllowed = async (
-    user: User,
-    permission: string
-  ): Promise<Result<boolean>> => {
-    try {
-      if (isWasmInitialized) {
-        // Convert user to WASM format
-        const wasmUser: WasmUser = {
-          roles:
-            user.rolesWithContext?.map((role) => ({
-              name: role.name,
-              description: `Role: ${role.name}`,
-              permissions: [
-                {
-                  name: `${role.name}:read`,
-                  description: `Read permission for ${role.name}`
-                },
-                {
-                  name: `${role.name}:write`,
-                  description: `Write permission for ${role.name}`
-                }
-              ]
-            })) || []
-        }
+  const can = (permission: string, context: Record<string, string> = {}) => {
+    if (!permissionsWithContextMap.has(permission)) return false
 
-        // Create a new service instance for this user
-        const userService = window.createAuthenticationService(wasmUser)
+    const allowedContexts = permissionsWithContextMap.get(permission)!
 
-        // Call isUserAllowed with permission object
-        const permissionObj = {
-          name: permission,
-          description: `Permission: ${permission}`
-        }
-        const isAllowed = userService.isUserAllowed(permissionObj)
+    // If no context constraints in request, and user has the permission (with any context), allow.
+    // NOTE: This assumes having the permission implies *some* access.
+    if (Object.keys(context).length === 0) return true
 
-        return { data: isAllowed }
-      }
+    // Check request context against allowedContexts
+    return Object.entries(context).every(([key, value]) => {
+      const allowedValues = allowedContexts[key]
 
-      // Fallback when WASM not initialized
-      return { data: false }
-    } catch (error) {
-      console.error('Error in isUserAllowed:', error)
-      return { error: String(error) }
-    }
+      // If the permission doesn't have this context key recorded, it usually means the role didn't specify it.
+      // If the role context was empty, it might mean global access depending on convention.
+      // But based on our transform, we only add keys that exist.
+      // If a dimension is missing in allowedValues, we deny access to it to be safe,
+      // unless we decide missing means "*" (global).
+      // We assume explicit is required.
+
+      if (!allowedValues || allowedValues.length === 0) return false
+
+      return allowedValues.includes('*') || allowedValues.includes(value)
+    })
   }
 
-  const getUserPermissions = (user: User): Result<string[]> => {
-    try {
-      if (isWasmInitialized) {
-        // Convert user to WASM format
-        const wasmUser: WasmUser = {
-          roles:
-            user.rolesWithContext?.map((role) => ({
-              name: role.name,
-              description: `Role: ${role.name}`,
-              permissions: [
-                {
-                  name: `${role.name}:read`,
-                  description: `Read permission for ${role.name}`
-                },
-                {
-                  name: `${role.name}:write`,
-                  description: `Write permission for ${role.name}`
-                }
-              ]
-            })) || []
-        }
+  // Set admin state
+  const isAdmin = useMemo(() => {
+    if (!user || !user.rolesWithContext) return false
+    return (
+      can(PERMISSIONS.listWorkspaces, { workspace: '*' }) ||
+      can(PERMISSIONS.listUsers, { workspace: '*' }) ||
+      can(PERMISSIONS.listWorkbenches, { workspace: '*' }) ||
+      can(PERMISSIONS.createApp, {}) ||
+      can(PERMISSIONS.setPlatformSettings, {})
+    )
+  }, [user, permissionsWithContextMap])
 
-        // Create a new service instance for this user
-        const userService = window.createAuthenticationService(wasmUser)
-
-        // Get user permissions
-        const permissions = userService.getUserPermissions()
-
-        return { data: permissions }
-      }
-
-      // Fallback when WASM not initialized
-      return { data: [] }
-    } catch (error) {
-      console.error('Error in getUserPermissions:', error)
-      return { error: String(error) }
-    }
-  }
+  console.log(permissionsWithContextMap)
 
   const value = {
-    isUserAllowed,
-    getUserPermissions,
-    isInitialized: isWasmInitialized,
-    error: undefined
+    PERMISSIONS,
+    can,
+    isAdmin
   }
 
   return (
