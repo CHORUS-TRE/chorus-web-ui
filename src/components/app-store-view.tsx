@@ -23,7 +23,7 @@ export function AppStoreView() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showWebAppDialog, setShowWebAppDialog] = useState(false)
   const [activeTab, setActiveTab] = useState(
-    tabFromUrl === 'webapps' ? 'webapps' : 'my-apps'
+    tabFromUrl === 'services' ? 'services' : 'my-apps'
   )
   const [searchQuery, setSearchQuery] = useState('')
   const { apps, refreshApps } = useAppState()
@@ -55,7 +55,7 @@ export function AppStoreView() {
 
   // Sync tab state with URL when URL changes
   useEffect(() => {
-    const newTab = tabFromUrl === 'webapps' ? 'webapps' : 'my-apps'
+    const newTab = tabFromUrl === 'services' ? 'services' : 'my-apps'
     if (newTab !== activeTab) {
       setActiveTab(newTab)
     }
@@ -64,8 +64,8 @@ export function AppStoreView() {
   // Update URL when tab changes
   const handleTabChange = (value: string) => {
     setActiveTab(value)
-    if (value === 'webapps') {
-      router.push('/app-store?tab=webapps')
+    if (value === 'services') {
+      router.push('/app-store?tab=services')
     } else {
       router.push('/app-store')
     }
@@ -115,7 +115,7 @@ export function AppStoreView() {
                     )}
                   </TabsTrigger>
                   <TabsTrigger
-                    value="webapps"
+                    value="services"
                     className="text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
                   >
                     Services
@@ -127,8 +127,8 @@ export function AppStoreView() {
                   </TabsTrigger>
                 </TabsList>
 
-                {activeTab === 'webapps'
-                  ? can(PERMISSIONS.listApps) && (
+                {activeTab === 'services'
+                  ? can(PERMISSIONS.createApp) && (
                       <Button onClick={() => setShowWebAppDialog(true)}>
                         <Settings className="mr-2 h-4 w-4" />
                         Manage Services
@@ -182,7 +182,7 @@ export function AppStoreView() {
                 )}
               </TabsContent>
 
-              <TabsContent value="webapps" className="mt-0">
+              <TabsContent value="services" className="mt-0">
                 {filteredWebApps.length > 0 ? (
                   <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,250px))]">
                     {filteredWebApps.map((webapp) => (

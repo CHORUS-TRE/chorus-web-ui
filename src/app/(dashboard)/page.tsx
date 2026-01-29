@@ -93,8 +93,6 @@ export default function CHORUSDashboard() {
         </h3>
       </div>
 
-      <GettingStartedSection />
-
       <div className="w-full space-y-6">
         <section>
           <h3 className="mb-3 font-semibold">Activity Overview</h3>

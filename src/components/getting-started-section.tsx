@@ -52,7 +52,7 @@ interface GettingStartedContent {
 }
 
 const STORAGE_KEY_DISMISSED = 'getting-started-dismissed'
-const STORAGE_KEY_COLLAPSED = 'getting-started-collapsed'
+export const STORAGE_KEY_COLLAPSED = 'getting-started-collapsed'
 
 async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
   return {
@@ -89,18 +89,7 @@ export function GettingStartedSection() {
   const [content, setContent] = useState<GettingStartedContent | null>(null)
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isDismissed, setIsDismissed] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
-
-  // Check if user has dismissed this section
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const dismissed = localStorage.getItem(STORAGE_KEY_DISMISSED) === 'true'
-      const collapsed = localStorage.getItem(STORAGE_KEY_COLLAPSED) === 'true'
-      setIsDismissed(dismissed)
-      setIsCollapsed(collapsed)
-    }
-  }, [])
 
   // Fetch content and generate suggestions
   useEffect(() => {
@@ -139,17 +128,8 @@ export function GettingStartedSection() {
       }
     }
 
-    if (!isDismissed) {
-      loadContent()
-    }
-  }, [user, workspaces, workbenches, isDismissed])
-
-  const handleDismiss = useCallback(() => {
-    setIsDismissed(true)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY_DISMISSED, 'true')
-    }
-  }, [])
+    loadContent()
+  }, [user, workspaces, workbenches])
 
   const handleToggleCollapse = useCallback(() => {
     const newCollapsed = !isCollapsed
@@ -159,7 +139,7 @@ export function GettingStartedSection() {
     }
   }, [isCollapsed])
 
-  if (isDismissed || isLoading || !content) {
+  if (isLoading || !content) {
     return null
   }
 
@@ -168,10 +148,7 @@ export function GettingStartedSection() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">
-              Getting Started with CHORUS
-            </CardTitle>
+            <CardTitle className="text-lg">Getting Started</CardTitle>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -186,14 +163,6 @@ export function GettingStartedSection() {
                 <ChevronUp className="h-4 w-4" />
               )}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDismiss}
-              className="h-8 w-8 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </div>
         <CardDescription>Follow these steps to get started.</CardDescription>
@@ -204,14 +173,14 @@ export function GettingStartedSection() {
           {/* Getting Started Steps */}
           <div>
             <h4 className="mb-3 text-sm font-semibold">Quick Start Guide</h4>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="flex flex-wrap gap-3">
               {content.steps.map((step) => (
                 <Link
                   key={step.id}
                   href={step.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block"
+                  className="block min-w-[120px] flex-1"
                 >
                   <div className="rounded-lg border border-border/50 bg-card p-4 transition-all hover:border-primary/50 hover:bg-card/80">
                     <div className="mb-2 flex items-center gap-2">

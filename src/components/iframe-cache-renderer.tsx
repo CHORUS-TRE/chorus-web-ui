@@ -29,12 +29,15 @@ function CachedIframeRenderer({
   const [isIframeLoaded, setIsIframeLoaded] = useState(false)
   // Track which URLs have successfully loaded to handle switching between cached iframes
   const loadedUrlsRef = useRef<Set<string>>(new Set())
+  const { isFullscreen } = useFullscreenContext()
+  const contentRect = useAppState((state) => state.contentRect)
+  const immersiveUIVisible = useAppState((state) => state.immersiveUIVisible)
 
   // Only probe for sessions, not webapps
   const { isLoading, error } =
     iframe.type === 'session'
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
-        useUrlProbing(iframe.id)
+      useUrlProbing(iframe.id)
       : { isLoading: false, error: null }
 
   // Note: useWorkbenchStatus could be used for HUD display in the future
@@ -124,26 +127,39 @@ function CachedIframeRenderer({
         src={iframeSrc}
         allow="autoplay; fullscreen; clipboard-write;"
         style={{
-          width: '100vw',
-          height: 'calc(100vh - 44px)',
+          width:
+            !isFullscreen && contentRect ? `${contentRect.width}px` : '100vw',
+          height:
+            !isFullscreen && contentRect
+              ? `${contentRect.height}px`
+              : isFullscreen
+                ? '100vh'
+                : 'calc(100vh - 44px)',
           visibility: showLoadingOverlay
             ? 'hidden'
             : isActive || isBackground
               ? 'visible'
               : 'hidden',
           pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
-          position: 'fixed',
-          left: 0,
-          top: 44, // Header height
-          zIndex: isActive ? 20 : isBackground ? 5 : -1,
+          position: 'fixed' as const,
+          left: !isFullscreen && contentRect ? `${contentRect.left}px` : 0,
+          top:
+            !isFullscreen && contentRect
+              ? `${contentRect.top}px`
+              : isFullscreen
+                ? 0
+                : 44,
+          zIndex: isActive ? 30 : isBackground ? 5 : -1,
           opacity: showLoadingOverlay
             ? 0
             : isBackground && !isActive
               ? 0.15
               : 1,
-          filter: isBackground && !isActive ? 'blur(2px)' : 'none'
+          filter: isBackground && !isActive ? 'blur(2px)' : 'none',
+          borderRadius: !isFullscreen && contentRect ? '16px' : '0px',
+          overflow: 'hidden'
         }}
-        className="bg-background"
+        className="bg-background transition-all duration-500 ease-in-out"
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
@@ -177,7 +193,7 @@ export default function IframeCacheRenderer() {
   // Check if we're on a session or webapp page (full active mode)
   const isIframePage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    const webappPageRegex = /^\/webapps\/[^/]+$/
+    const webappPageRegex = /^\/sessions\/[^/]+$/
     return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
   }, [pathname])
 

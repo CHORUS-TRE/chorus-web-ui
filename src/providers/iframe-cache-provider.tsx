@@ -29,7 +29,7 @@ const DEVSTORE_KEY_EXTERNAL_WEBAPPS = 'external_webapps'
 const LOCALSTORAGE_KEY_RECENT_SESSIONS = 'chorus_recent_sessions'
 const LOCALSTORAGE_KEY_RECENT_WEBAPPS = 'chorus_recent_webapps'
 
-// Type for persisted recent items (sessions/webapps that were opened)
+// Type for persisted recent items (sessions/ that were opened)
 export type RecentSession = {
   id: string
   workspaceId: string

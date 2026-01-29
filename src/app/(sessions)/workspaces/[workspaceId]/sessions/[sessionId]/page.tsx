@@ -26,28 +26,5 @@ export default function WorkbenchPage() {
 
   // In Immersive Mode, the iframe is rendered by the global IframeCacheRenderer
   // We use a Flex layout to create a "Glass Frame" around the transparent center "hole"
-  return (
-    <div
-      className="flex h-full cursor-pointer flex-col"
-      onClick={() => setImmersiveUIVisible(false)}
-    >
-      {/* Top Glass Bar (Header) */}
-
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left Glass Pillar */}
-        <div className="w-4 flex-none border-r border-muted/20 bg-contrast-background/50 backdrop-blur-md sm:w-8" />
-
-        {/* The HOLE (Transparent Center) */}
-        <div className="relative flex-1 overflow-auto bg-transparent">
-          {/* Content goes here if needed */}
-        </div>
-
-        {/* Right Glass Pillar */}
-        <div className="w-4 flex-none border-l border-muted/20 bg-contrast-background/50 backdrop-blur-md sm:w-8" />
-      </div>
-
-      {/* Bottom Glass Bar */}
-      <div className="h-4 flex-none rounded-b-xl border-t border-muted/20 bg-contrast-background/50 backdrop-blur-md sm:h-8" />
-    </div>
-  )
+  return null
 }

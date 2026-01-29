@@ -34,6 +34,9 @@ export type AppStateStore = {
 
   immersiveUIVisible: boolean
   setImmersiveUIVisible: (visible: boolean) => void
+
+  contentRect: DOMRect | null
+  setContentRect: (rect: DOMRect | null) => void
 }
 
 export const useAppStateStore = create<AppStateStore>((set, get) => ({
@@ -146,7 +149,10 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
 
   immersiveUIVisible: true,
   setImmersiveUIVisible: (visible: boolean) =>
-    set({ immersiveUIVisible: visible })
+    set({ immersiveUIVisible: visible }),
+
+  contentRect: null,
+  setContentRect: (rect: DOMRect | null) => set({ contentRect: rect })
 }))
 
 // Convenience alias matching legacy naming
