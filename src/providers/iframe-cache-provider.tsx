@@ -18,6 +18,7 @@ import {
   ExternalWebApp,
   ExternalWebAppsArraySchema
 } from '@/domain/model'
+import { useAppStateStore } from '@/stores/app-state-store'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { workbenchStreamUrl } from '@/view-model/workbench-view-model'
 
@@ -161,6 +162,7 @@ export const IframeCacheProvider = ({
   children: ReactNode
 }): ReactElement => {
   const { user } = useAuthentication()
+  const workbenches = useAppStateStore((state) => state.workbenches)
 
   // Use a ref to store the Map to avoid re-renders on every update
   const cacheRef = useRef<Map<string, CachedIframe>>(new Map())
@@ -181,6 +183,26 @@ export const IframeCacheProvider = ({
     setRecentSessions(loadRecentSessions())
     setRecentWebApps(loadRecentWebApps())
   }, [])
+
+  // Validate recent sessions against workbenches
+  useEffect(() => {
+    if (!workbenches || workbenches.length === 0) return
+
+    const workbenchIds = new Set(workbenches.map((wb) => wb.id))
+
+    setRecentSessions((prev) => {
+      const validSessions = prev.filter((session) =>
+        workbenchIds.has(session.id)
+      )
+
+      if (validSessions.length !== prev.length) {
+        saveRecentSessions(validSessions)
+        return validSessions
+      }
+      return prev
+    })
+  }, [workbenches])
+
   const [showCleanupDialog, setShowCleanupDialog] = useState(false)
 
   // Track previous user to detect logout
