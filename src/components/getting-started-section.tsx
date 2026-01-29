@@ -28,6 +28,7 @@ interface GettingStartedStep {
   description: string
   icon: string
   link: string
+  path?: string
 }
 
 interface AISuggestion {
@@ -62,21 +63,24 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
         title: 'Create a Workspace',
         description: 'Set up a secure project space',
         icon: 'package',
-        link: 'https://docs.chorus-tre.ch/docs/user-guide/getting-started/create_workspace'
+        link: 'http://localhost:3000/sessions/chorus-documentation',
+        path: '/docs/user-guide/getting-started/create_workspace'
       },
       {
         id: 'session',
         title: 'Open a Session',
         description: 'Start a computing environment',
         icon: 'computer',
-        link: 'https://docs.chorus-tre.ch/docs/user-guide/getting-started/launch-desktop'
+        link: 'http://localhost:3000/sessions/chorus-documentation',
+        path: '/docs/user-guide/getting-started/launch-desktop'
       },
       {
         id: 'app',
         title: 'Launch an App',
         description: 'Run tools from session or store',
         icon: 'grid',
-        link: 'https://docs.chorus-tre.ch/docs/user-guide/getting-started/start_app'
+        link: 'http://localhost:3000/sessions/chorus-documentation',
+        path: '/docs/user-guide/getting-started/start_app'
       }
     ]
   }
@@ -178,7 +182,6 @@ export function GettingStartedSection() {
                 <Link
                   key={step.id}
                   href={step.link}
-                  target="_blank"
                   rel="noopener noreferrer"
                   className="block min-w-[120px] flex-1"
                 >

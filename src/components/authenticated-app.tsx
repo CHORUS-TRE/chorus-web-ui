@@ -14,7 +14,7 @@ import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar } from '~/components/left-sidebar'
 import RightSidebar from '~/components/right-sidebar'
-import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
+
 import { steps } from '~/lib/tours'
 
 interface MainLayoutProps {
@@ -178,10 +178,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                       : 'w-full'
                   )}
                 >
-                  {/* Breadcrumb - above all content */}
-                  <div className="border-b border-muted/20 bg-contrast-background/50 px-8 py-3 backdrop-blur-md">
-                    <AppBreadcrumb />
-                  </div>
+
 
                   <div
                     id="content-main"
@@ -190,7 +187,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                     className={cn(
                       'flex-1 overflow-auto',
                       !isIFramePage &&
-                        'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
+                      'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
                     )}
                   >
                     {children}
