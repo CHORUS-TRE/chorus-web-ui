@@ -9,6 +9,7 @@ import { useInstanceConfig } from '@/hooks/use-instance-config'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
+import { useAuthentication } from '~/providers/authentication-provider'
 
 import {
   Breadcrumb,
@@ -22,7 +23,8 @@ import {
 export function AppBreadcrumb() {
   const pathname = usePathname()
   const instanceConfig = useInstanceConfig()
-  const { workspaces, appInstances, apps, users } = useAppState()
+  const { workspaces, appInstances, apps } = useAppState()
+  const { user } = useAuthentication()
   const { isFullscreen, toggleFullscreen } = useFullscreenContext()
 
   const projectLabel = useMemo(
@@ -93,8 +95,7 @@ export function AppBreadcrumb() {
         }
       } else if (prevSegment === 'users') {
         // Resolve user ID to username or full name
-        const user = users?.find((u) => u.id === seg.text)
-        if (user) {
+        if (user?.id === seg.text) {
           label = user.username || `${user.firstName} ${user.lastName}`
         }
       } else if (seg.text === 'app-store') {
@@ -117,7 +118,6 @@ export function AppBreadcrumb() {
     workspaces,
     appInstances,
     apps,
-    users,
     projectLabel,
     instanceConfig.name
   ])

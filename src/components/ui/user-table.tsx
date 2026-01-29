@@ -16,12 +16,14 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { User } from '~/domain/model/user'
+import { useAuthorization } from '~/providers/authorization-provider'
 
 export function UserTable() {
   const [users, setUsers] = useState<User[]>([])
   const [userCollapsed, setUserCollapsed] = useState<boolean[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const { can, PERMISSIONS } = useAuthorization()
 
   const handleUserChange = useCallback(() => {
     setRefreshKey((oldKey) => oldKey + 1)
@@ -48,7 +50,9 @@ export function UserTable() {
         setError(result.error || 'Failed to load users.')
       }
     }
-    loadUsers()
+    if ((can(PERMISSIONS.listUsers), { workspace: '*' })) {
+      loadUsers()
+    }
   }, [refreshKey])
 
   if (error) {

@@ -10,29 +10,41 @@ import {
   Users
 } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { PERMISSIONS, ROLE_DEFINITIONS } from '@/config/permissions'
+import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 
 const AdminPage = () => {
   const { can } = useAuthorization()
+  const [users, setUsers] = useState<User[]>([])
+
+  useEffect(() => {
+    async function loadUsers() {
+      if (can(PERMISSIONS.listUsers, { user: '*' })) {
+        const result = await listUsers()
+        if (result.data) {
+          setUsers(result.data)
+        }
+      }
+    }
+    loadUsers()
+  }, [can, PERMISSIONS.listUsers])
 
   const {
-    users,
     workspaces,
     workbenches,
     apps,
-    refreshUsers,
     refreshWorkspaces,
     refreshWorkbenches,
     refreshApps
   } = useAppState()
 
   useEffect(() => {
-    refreshUsers()
     refreshWorkspaces()
     refreshWorkbenches()
     refreshApps()
