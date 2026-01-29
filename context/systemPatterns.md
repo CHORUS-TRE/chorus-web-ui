@@ -48,7 +48,7 @@ graph TD
   - Layout components split into authenticated/unauthenticated states
   - Background iframe integration for application hosting
   - Client-side context providers (`src/providers`) for auth state
-- **View-Model and Data Fetching Strategy:** The primary approach is using Next.js Server Actions, which are defined in the `src/view-model` directory. These actions are called from UI components (often via `use-form-state` for forms) and are responsible for instantiating the necessary repository and calling the appropriate use case. This keeps the data-fetching logic separate from the UI components and centralizes it in the view-model layer.
+- **View-Model and Data Fetching Strategy:** The primary approach is using the **client-side view-model**, which are defined in the `src/view-model` directory. Usage of server-side data fetching (Server Actions/Components) should be motivated by specific needs (SEO, initial load performance, security), but the default is client-side logic to maintain a clear separation and utilizing the established client-side Architecture.
 - **Repository Pattern:** This is the core of our data handling strategy.
   - **Interface (`domain/repository`):** Defines the contract for data operations, using domain models (e.g., `App`, `AppCreateType`).
   - **Implementation (`data/repository`):** Implements the interface. It calls the data source, and its primary responsibility is to catch errors and map the raw data source response into the standard `Result<T>` object (`{ data?, error?, issues? }`).
