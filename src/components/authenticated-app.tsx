@@ -14,7 +14,6 @@ import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar } from '~/components/left-sidebar'
 import RightSidebar from '~/components/right-sidebar'
-
 import { steps } from '~/lib/tours'
 
 interface MainLayoutProps {
@@ -178,8 +177,6 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                       : 'w-full'
                   )}
                 >
-
-
                   <div
                     id="content-main"
                     onClick={handleContentClick}
@@ -187,7 +184,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                     className={cn(
                       'flex-1 overflow-auto',
                       !isIFramePage &&
-                      'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
+                        'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
                     )}
                   >
                     {children}

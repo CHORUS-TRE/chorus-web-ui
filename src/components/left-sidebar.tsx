@@ -137,6 +137,7 @@ function SidebarContent({
           <Button
             variant="ghost"
             size="icon"
+            disabled
             onClick={handleClose}
             className="h-6 w-6 text-muted-foreground hover:text-foreground"
             title="Close Sidebar"

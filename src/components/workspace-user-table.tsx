@@ -159,58 +159,7 @@ export default function WorkspaceUserTable({
           {user.createdAt && formatDistanceToNow(user.createdAt ?? new Date())}{' '}
           ago
         </TableCell>
-        <TableCell className="p-1">
-          {
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <ManageUserWorkspaceDialog
-                  userId={user.id}
-                  workspaceId={workspaceId}
-                  onUserAdded={handleUserChange}
-                >
-                  <DropdownMenuItem
-                    onSelect={(e) => e.preventDefault()}
-                    className="flex items-center gap-2"
-                  >
-                    <Pencil className="h-4 w-4 text-muted-foreground" />
-                    Manage Workspace Role
-                  </DropdownMenuItem>
-                </ManageUserWorkspaceDialog>
-                <ManageUserWorkbenchDialog
-                  userId={user.id}
-                  workspaceId={workspaceId}
-                  onUserAdded={handleUserChange}
-                >
-                  <DropdownMenuItem
-                    onSelect={(e) => e.preventDefault()}
-                    className="flex items-center gap-2"
-                  >
-                    <Pencil className="h-4 w-4 text-muted-foreground" />
-                    Manage Sessions Role
-                  </DropdownMenuItem>
-                </ManageUserWorkbenchDialog>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setDeletingUserId(user.id)
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                  Remove User
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          }
-        </TableCell>
+        <TableCell className="p-1"></TableCell>
       </TableRowComponent>
     )
   }

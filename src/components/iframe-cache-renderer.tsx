@@ -37,7 +37,7 @@ function CachedIframeRenderer({
   const { isLoading, error } =
     iframe.type === 'session'
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
-      useUrlProbing(iframe.id)
+        useUrlProbing(iframe.id)
       : { isLoading: false, error: null }
 
   // Note: useWorkbenchStatus could be used for HUD display in the future

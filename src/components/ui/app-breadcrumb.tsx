@@ -167,6 +167,7 @@ export function AppBreadcrumb() {
         <Button
           variant="ghost"
           size="sm"
+          disabled
           className="ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"
           aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
         >
