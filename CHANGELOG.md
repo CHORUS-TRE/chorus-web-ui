@@ -1,3 +1,13 @@
+## [1.29.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.29.1...v1.29.2) (2026-01-29)
+
+
+### Bug Fixes
+
+* admin pages and accesses ([71aeae3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/71aeae3cba3b008c5038c1da97faac96b0d28df3))
+* route webapps to services ([678f764](https://github.com/CHORUS-TRE/chorus-web-ui/commit/678f76484a3dd219afe27086d21759a0d8c95a0f))
+* types errors ([ace35c7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ace35c7e5353b66f6a6e634a488e276e7b1bd90c))
+* validate recent sessions against existing workbenches ([#167](https://github.com/CHORUS-TRE/chorus-web-ui/issues/167)) ([95ada65](https://github.com/CHORUS-TRE/chorus-web-ui/commit/95ada653ac8360a1b7a71da5b3f2cfbe44c24d82))
+
 ## [1.29.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.29.0...v1.29.1) (2026-01-29)
 
 
