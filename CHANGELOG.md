@@ -1,3 +1,18 @@
+# [1.29.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.28.2...v1.29.0) (2026-01-29)
+
+
+### Bug Fixes
+
+* improve iframe loading state management ([15b7fed](https://github.com/CHORUS-TRE/chorus-web-ui/commit/15b7fed624ee648e4ed2a3cb10e9a5ae2118cd07))
+* improve LoadingOverlay to support container loading ([b56389e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b56389edb58b066baef081e2113d927dd54d4f5d))
+* remove unused import ([822a27a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/822a27a9668610c81e18518ef069701487082316))
+* update workbench status handling to use serverPodStatus ([7152109](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7152109c4ac01485a91de6c68855fc09f14b3872))
+
+
+### Features
+
+* add server pod status to workbench schema ([babd7fb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/babd7fb655935ca4a632ab906d71276f9a23a144))
+
 ## [1.28.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.28.1...v1.28.2) (2026-01-28)
 
 
