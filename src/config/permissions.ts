@@ -390,17 +390,17 @@ export const getEnhancedRole = (roleName: string): EnhancedRole | undefined => {
 }
 
 // Get all permissions for a role (including inherited permissions)
-export const getRolePermissions = (roleName: string): string[] => {
+export const getRolePermissions = (roleName: string): Permission[] => {
   const role = getEnhancedRole(roleName)
   if (!role) return []
 
-  const permissions = new Set<string>(role.permissions)
+  const permissions = new Set<Permission>(role.permissions)
 
   // Add permissions from inherited roles
   if (role.inheritsFrom) {
     role.inheritsFrom.forEach((inheritedRoleName: string) => {
       const inheritedPermissions = getRolePermissions(inheritedRoleName)
-      inheritedPermissions.forEach((permission: string) =>
+      inheritedPermissions.forEach((permission: Permission) =>
         permissions.add(permission)
       )
     })

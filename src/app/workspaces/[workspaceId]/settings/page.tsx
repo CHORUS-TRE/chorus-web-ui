@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { PERMISSIONS, ROLE_DEFINITIONS } from '@/config/permissions'
+import { Workspace } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
