@@ -71,16 +71,34 @@ export function UserTable() {
       </caption>
       <TableHeader>
         <TableRow>
-          <TableHead scope="col"></TableHead>
-          <TableHead scope="col">ID</TableHead>
-          <TableHead scope="col">Name</TableHead>
-          <TableHead scope="col">Username</TableHead>
-          <TableHead scope="col">Roles</TableHead>
-          <TableHead scope="col">Workspace</TableHead>
-          <TableHead scope="col">Workbench</TableHead>
-          <TableHead scope="col">User</TableHead>
-          <TableHead scope="col">Status</TableHead>
-          <TableHead scope="col">Actions</TableHead>
+          <TableHead scope="col" className="text-muted-foreground"></TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            ID
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Name
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Username
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Roles
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Workspace
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Workbench
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            User
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Status
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Actions
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="text-foreground">

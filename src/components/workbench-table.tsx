@@ -10,7 +10,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowUpDown, EllipsisVerticalIcon } from 'lucide-react'
+import { ArrowUpDown, Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import React from 'react'
 
@@ -18,12 +18,6 @@ import { Link } from '@/components/link'
 import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -84,29 +78,27 @@ const ActionCell = ({
           }}
         />
       )}
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            aria-haspopup="true"
-            variant="ghost"
-            className="text-muted ring-0"
-          >
-            <EllipsisVerticalIcon className="h-4 w-4" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="glass-elevated">
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setDeleteOpen(true)}
-            className="text-red-500 focus:text-red-500"
-          >
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+
+      <div className="flex justify-end gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            setOpen(true)
+            // router.push(`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`)
+          }}
+        >
+          <Pencil className="h-4 w-4 text-muted-foreground" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-destructive hover:text-destructive"
+          onClick={() => setDeleteOpen(true)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
     </>
   )
 }
@@ -223,9 +215,7 @@ export default function WorkbenchTable({
   workbenches: Workbench[] | undefined
 }) {
   const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
-
   const [sorting, setSorting] = useState<SortingState>([])
-
   const data = workbenches
 
   const tableColumns = React.useMemo(
@@ -263,7 +253,10 @@ export default function WorkbenchTable({
                 >
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead
+                        key={header.id}
+                        className="text-muted-foreground"
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -308,7 +301,7 @@ export default function WorkbenchTable({
           </Table>
         </CardContent>
         <CardFooter>
-          <div className="text-xs text-muted">
+          <div className="text-xs text-muted-foreground">
             Showing <strong>1-{data?.length}</strong> of{' '}
             <strong>{data?.length}</strong> sessions
           </div>
