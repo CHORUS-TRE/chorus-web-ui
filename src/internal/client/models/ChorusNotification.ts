@@ -43,6 +43,12 @@ export interface ChorusNotification {
    * @type {string}
    * @memberof ChorusNotification
    */
+  userId?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusNotification
+   */
   message?: string
   /**
    *
@@ -87,6 +93,7 @@ export function ChorusNotificationFromJSONTyped(
   return {
     id: !exists(json, 'id') ? undefined : json['id'],
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
+    userId: !exists(json, 'userId') ? undefined : json['userId'],
     message: !exists(json, 'message') ? undefined : json['message'],
     content: !exists(json, 'content')
       ? undefined
@@ -110,6 +117,7 @@ export function ChorusNotificationToJSON(
   return {
     id: value.id,
     tenantId: value.tenantId,
+    userId: value.userId,
     message: value.message,
     content: ChorusNotificationContentToJSON(value.content),
     createdAt:

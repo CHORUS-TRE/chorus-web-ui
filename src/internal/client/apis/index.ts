@@ -1,7 +1,8 @@
 /* tslint:disable */
-
+/* eslint-disable */
 export * from './AppInstanceServiceApi'
 export * from './AppServiceApi'
+export * from './ApprovalRequestServiceApi'
 export * from './AuthenticationServiceApi'
 export * from './DevstoreServiceApi'
 export * from './HealthServiceApi'
