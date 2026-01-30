@@ -48,7 +48,7 @@ import { toast } from './hooks/use-toast'
 import { ChartContainer } from './ui/chart'
 import { Progress } from './ui/progress'
 import { ScrollArea } from './ui/scroll-area'
-import { WorkspaceWorkbenchList } from './workspace-workbench-list'
+import WorkbenchGrid from './workbench-grid'
 
 // Add a simple custom bar chart component
 function SimpleBarChart({
@@ -209,42 +209,11 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<div>Loading sessions...</div>}>
-              {(() => {
-                const sessionCount =
-                  workbenches?.filter(
-                    (workbench) =>
-                      workbench.workspaceId === workspaceId &&
-                      workbench.userId === user?.id
-                  )?.length || 0
-
-                // Adaptive layout based on session count
-                const getScrollAreaClass = () => {
-                  if (sessionCount === 0) return 'flex flex-col'
-                  if (sessionCount <= 2)
-                    return 'flex max- flex-col overflow-y-auto'
-                  if (sessionCount <= 4)
-                    return 'flex max-h-32 flex-col overflow-y-auto'
-                  return 'flex max-h-40 flex-col overflow-y-auto'
-                }
-
-                return (
-                  <ScrollArea
-                    className={getScrollAreaClass()}
-                    type="hover"
-                    role="region"
-                    aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
-                    aria-describedby="scroll-hint"
-                  >
-                    <div id="scroll-hint" className="sr-only">
-                      Use arrow keys or scroll to navigate through sessions
-                    </div>
-                    <WorkspaceWorkbenchList
-                      workspaceId={workspaceId}
-                      size="small"
-                    />
-                  </ScrollArea>
-                )
-              })()}
+              <WorkbenchGrid
+                workbenches={workbenches?.filter(
+                  (wb) => wb.workspaceId === workspaceId
+                )}
+              />
             </Suspense>
           </CardContent>
           <div className="flex-grow" />
