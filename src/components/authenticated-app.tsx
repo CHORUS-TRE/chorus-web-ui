@@ -79,6 +79,16 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }
   }, [isSessionPage, pathname])
 
+  // On first arrival to session page, briefly show the left sidebar then hide
+  useEffect(() => {
+    if (isSessionPage) {
+      setLeftSidebarVisible(true)
+      leftHideTimeoutRef.current = setTimeout(() => {
+        setLeftSidebarVisible(false)
+      }, 2000)
+    }
+  }, [])
+
   // Left sidebar controls (edge hover)
   const showLeftSidebarHandler = useCallback(() => {
     if (leftHideTimeoutRef.current) {
