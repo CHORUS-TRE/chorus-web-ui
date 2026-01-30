@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.30.1...v1.31.0) (2026-01-30)
+
+
+### Features
+
+* improve layout with full page sessions ([#171](https://github.com/CHORUS-TRE/chorus-web-ui/issues/171)) ([5693396](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5693396baf8fc0ce3090a3f2f15f2d67f8178bcf))
+
 ## [1.30.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.30.0...v1.30.1) (2026-01-30)
 
 
