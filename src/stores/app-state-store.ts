@@ -6,6 +6,7 @@ import { toast } from '@/components/hooks/use-toast'
 import {
   App,
   AppInstance,
+  Notification,
   User,
   Workbench,
   WorkspaceWithDev
@@ -13,6 +14,10 @@ import {
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
+import {
+  countUnreadNotifications,
+  listNotifications
+} from '@/view-model/notification-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceListWithDev } from '@/view-model/workspace-view-model'
 
@@ -21,11 +26,17 @@ export type AppStateStore = {
   workbenches: Workbench[] | undefined
   apps: App[] | undefined
   appInstances: AppInstance[] | undefined
+  notifications: Notification[] | undefined
+  unreadNotificationsCount: number | undefined
 
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
   refreshApps: () => Promise<void>
   refreshAppInstances: () => Promise<void>
+  refreshNotifications: () => Promise<void>
+  refreshUnreadNotificationsCount: () => Promise<void>
+  startNotificationsPolling: (intervalMs?: number) => void
+  stopNotificationsPolling: () => void
   clearState: () => void
   initialize: (user?: User) => Promise<void>
 
@@ -34,6 +45,7 @@ export type AppStateStore = {
 
   contentRect: DOMRect | null
   setContentRect: (rect: DOMRect | null) => void
+  notificationsPollingInterval: ReturnType<typeof setInterval> | null
 }
 
 export const useAppStateStore = create<AppStateStore>((set, get) => ({
@@ -41,7 +53,10 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   workbenches: undefined,
   apps: undefined,
   appInstances: undefined,
+  notifications: undefined,
+  unreadNotificationsCount: undefined,
   users: undefined,
+  notificationsPollingInterval: null,
 
   refreshWorkspaces: async () => {
     const result = await workspaceListWithDev()
@@ -104,12 +119,66 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
+  refreshNotifications: async () => {
+    const result = await listNotifications()
+    if (result.error) {
+      // Avoid spamming toasts for background polling errors
+      console.error('Failed to refresh notifications:', result.error)
+      return
+    }
+    if (result.data) {
+      set({ notifications: result.data })
+    }
+  },
+
+  refreshUnreadNotificationsCount: async () => {
+    const result = await countUnreadNotifications()
+    if (result.error) {
+      console.error('Failed to refresh unread count:', result.error)
+      return
+    }
+    if (result.data !== undefined) {
+      set({ unreadNotificationsCount: result.data })
+    }
+  },
+
+  startNotificationsPolling: (intervalMs: number = 30000) => {
+    const {
+      stopNotificationsPolling,
+      refreshNotifications,
+      refreshUnreadNotificationsCount
+    } = get()
+    stopNotificationsPolling()
+
+    // Initial fetch
+    refreshNotifications()
+    refreshUnreadNotificationsCount()
+
+    const interval = setInterval(() => {
+      refreshNotifications()
+      refreshUnreadNotificationsCount()
+    }, intervalMs)
+
+    set({ notificationsPollingInterval: interval })
+  },
+
+  stopNotificationsPolling: () => {
+    const { notificationsPollingInterval } = get()
+    if (notificationsPollingInterval) {
+      clearInterval(notificationsPollingInterval)
+      set({ notificationsPollingInterval: null })
+    }
+  },
+
   clearState: () => {
+    get().stopNotificationsPolling()
     set({
       workspaces: undefined,
       workbenches: undefined,
       apps: undefined,
-      appInstances: undefined
+      appInstances: undefined,
+      notifications: undefined,
+      unreadNotificationsCount: undefined
     })
     const { clearUserData } = useDevStoreCache.getState()
     clearUserData()
@@ -127,6 +196,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       get().refreshApps(),
       get().refreshAppInstances()
     ])
+
+    get().startNotificationsPolling()
   },
 
   immersiveUIVisible: true,

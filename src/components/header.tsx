@@ -1,6 +1,7 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  Bell,
   ChevronDown,
   FlaskConical,
   Globe,
@@ -37,6 +38,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
 import {
   HoverCard,
   HoverCardContent,
@@ -62,8 +64,14 @@ import { toast } from './hooks/use-toast'
 
 export function Header() {
   const router = useRouter()
-  const { workbenches, workspaces, apps, appInstances, refreshWorkbenches } =
-    useAppState()
+  const {
+    workbenches,
+    workspaces,
+    apps,
+    appInstances,
+    refreshWorkbenches,
+    unreadNotificationsCount
+  } = useAppState()
   const instanceLogo = useInstanceLogo()
   const {
     background,
@@ -255,6 +263,24 @@ export function Header() {
                   Admin
                 </Link>
               )}
+
+              <Link
+                href={`/users/${user.id}/notifications`}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Bell className="h-4 w-4" />
+                Notifications
+                {unreadNotificationsCount !== undefined &&
+                  unreadNotificationsCount > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="ml-auto h-4 px-1 text-[10px]"
+                    >
+                      {unreadNotificationsCount}
+                    </Badge>
+                  )}
+              </Link>
             </div>
 
             {/* Section 3: Lab */}
@@ -629,6 +655,22 @@ export function Header() {
             title="Help"
           >
             <HelpCircle className="h-4 w-4 text-muted-foreground" />
+          </button>
+
+          <button
+            onClick={() => router.push(`/users/${user.id}/notifications`)}
+            className="group relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
+            title="Notifications"
+          >
+            <Bell className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+            {unreadNotificationsCount !== undefined &&
+              unreadNotificationsCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+                  {unreadNotificationsCount > 99
+                    ? '99+'
+                    : unreadNotificationsCount}
+                </span>
+              )}
           </button>
 
           <UserProfileSection />
