@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.30.0...v1.30.1) (2026-01-30)
+
+
+### Bug Fixes
+
+* create/update app ([2daa75f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2daa75f02f7665097a0fcb16e7e27007208f0006))
+
 # [1.30.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.29.2...v1.30.0) (2026-01-29)
 
 
