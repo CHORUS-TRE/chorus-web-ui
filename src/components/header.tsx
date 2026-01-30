@@ -454,26 +454,26 @@ export function Header() {
                         {workspaces?.find(
                           (w) => w.id === sessionWorkbench.workspaceId
                         ) && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  router.push(
-                                    `/workspaces/${sessionWorkbench.workspaceId}`
-                                  )
+                          <>
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/workspaces/${sessionWorkbench.workspaceId}`
+                                )
+                              }
+                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                            >
+                              <span className="truncate">
+                                {
+                                  workspaces.find(
+                                    (w) => w.id === sessionWorkbench.workspaceId
+                                  )?.name
                                 }
-                                className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                              >
-                                <span className="truncate">
-                                  {
-                                    workspaces.find(
-                                      (w) => w.id === sessionWorkbench.workspaceId
-                                    )?.name
-                                  }
-                                </span>
-                              </button>
-                              <div className="my-1 border-t border-muted/20" />
-                            </>
-                          )}
+                              </span>
+                            </button>
+                            <div className="my-1 border-t border-muted/20" />
+                          </>
+                        )}
 
                         {/* Running apps */}
                         {appInstances
@@ -727,7 +727,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => { }}
+            onSuccess={() => {}}
           />
         )}
 
