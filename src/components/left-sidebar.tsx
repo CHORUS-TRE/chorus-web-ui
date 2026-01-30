@@ -6,10 +6,9 @@ import {
   CircleHelp,
   GaugeCircle,
   Globe,
-  HelpCircle,
   LaptopMinimal,
+  Menu,
   Package,
-  PanelLeftClose,
   Store
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -72,19 +71,9 @@ function SidebarContent({
 }) {
   const router = useRouter()
   const { isAdmin } = useAuthorization()
-  const {
-    workspaceFilters,
-    setWorkspaceFilter,
-    toggleRightSidebar,
-    toggleLeftSidebar
-  } = useUserPreferences()
+  const { workspaceFilters, setWorkspaceFilter } = useUserPreferences()
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
-
-  // Function to handle closing the sidebar
-  const handleClose = () => {
-    toggleLeftSidebar()
-  }
 
   // Check if Projects filter is active (only projects, not centers)
   const isProjectsActive =
@@ -128,23 +117,12 @@ function SidebarContent({
 
   return (
     <>
-      {/* Header with title and close button */}
-      <div className="flex items-center justify-between px-4 pt-4">
-        <span className="text-xs font-semibold uppercase text-muted-foreground/70">
+      {/* Header with title */}
+      <div className="sticky top-0 z-[100] flex h-11 items-center border-b border-muted/50 bg-contrast-background px-2">
+        <h1 className="ml-2 flex items-center gap-2 text-lg font-semibold">
+          <Menu className="h-4 w-4" />
           Navigation
-        </span>
-        {isSessionPage && (
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled
-            onClick={handleClose}
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
-            title="Close Sidebar"
-          >
-            <PanelLeftClose className="h-4 w-4" />
-          </Button>
-        )}
+        </h1>
       </div>
 
       {/* Main navigation */}
