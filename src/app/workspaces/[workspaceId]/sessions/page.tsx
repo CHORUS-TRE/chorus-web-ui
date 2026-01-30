@@ -1,12 +1,15 @@
 'use client'
 
-import { LaptopMinimal } from 'lucide-react'
+import { LaptopMinimal, LayoutGrid, Rows3 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
+import { useUserPreferences } from '@/stores/user-preferences-store'
+import { Button } from '~/components/button'
 import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
+import WorkbenchGrid from '~/components/workbench-grid'
 import WorkbenchTable from '~/components/workbench-table'
 
 export default function SessionPage() {
@@ -14,6 +17,7 @@ export default function SessionPage() {
   const workspaceId = params?.workspaceId
   const { refreshWorkbenches, workbenches, workspaces } = useAppState()
   const { user } = useAuthentication()
+  const { sessionsViewMode, setSessionsViewMode } = useUserPreferences()
 
   useEffect(() => {
     if (workspaceId) {
@@ -37,16 +41,46 @@ export default function SessionPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Sessions</h2>
-        {workspaceWorkbenches && workspaceWorkbenches.length > 0 && (
-          <WorkbenchCreateForm
-            workspaceId={workspaceId}
-            workspaceName={workspaceName}
-            userId={user?.id}
-            onSuccess={() => {
-              refreshWorkbenches()
-            }}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0">
+            <Button
+              variant="ghost"
+              className={
+                sessionsViewMode === 'grid'
+                  ? 'bg-primary text-primary-foreground'
+                  : ''
+              }
+              onClick={() => setSessionsViewMode('grid')}
+              disabled={sessionsViewMode === 'grid'}
+              aria-label="Switch to grid view"
+            >
+              <LayoutGrid />
+            </Button>
+            <Button
+              variant="ghost"
+              className={
+                sessionsViewMode === 'table'
+                  ? 'bg-primary text-primary-foreground'
+                  : ''
+              }
+              onClick={() => setSessionsViewMode('table')}
+              disabled={sessionsViewMode === 'table'}
+              aria-label="Switch to table view"
+            >
+              <Rows3 />
+            </Button>
+          </div>
+          {workspaceWorkbenches && workspaceWorkbenches.length > 0 && (
+            <WorkbenchCreateForm
+              workspaceId={workspaceId}
+              workspaceName={workspaceName}
+              userId={user?.id}
+              onSuccess={() => {
+                refreshWorkbenches()
+              }}
+            />
+          )}
+        </div>
       </div>
 
       {!workbenches ? (
@@ -67,6 +101,8 @@ export default function SessionPage() {
             }}
           />
         </div>
+      ) : sessionsViewMode === 'grid' ? (
+        <WorkbenchGrid workbenches={workspaceWorkbenches} />
       ) : (
         <WorkbenchTable workbenches={workspaceWorkbenches} />
       )}

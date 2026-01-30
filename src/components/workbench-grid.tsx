@@ -56,11 +56,35 @@ export default function WorkbenchGrid({
               <Card
                 className={`group/card relative flex h-40 flex-col overflow-hidden border-none`}
               >
-                {/* Background */}
-                <div className="absolute inset-0 bg-muted/20" />
+                {/* Background - live preview if cached, fallback to muted */}
+                {cachedIframe?.url ? (
+                  <div className="absolute inset-0 overflow-hidden">
+                    <iframe
+                      src={cachedIframe.url}
+                      title={`Preview of ${workbench.name}`}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      className="pointer-events-none origin-top-left border-0"
+                      style={{
+                        width: '1280px',
+                        height: '800px',
+                        transform: 'scale(0.22)',
+                        transformOrigin: 'top left'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 bg-muted/20" />
+                )}
 
-                {/* Glass overlay */}
-                <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />
+                {/* Glass overlay - lighter when preview is shown */}
+                <div
+                  className={
+                    cachedIframe?.url
+                      ? 'absolute inset-0 bg-contrast-background/40 backdrop-blur-[1px]'
+                      : 'absolute inset-0 bg-contrast-background/70 backdrop-blur-sm'
+                  }
+                />
 
                 {/* Content layer */}
                 <Link
