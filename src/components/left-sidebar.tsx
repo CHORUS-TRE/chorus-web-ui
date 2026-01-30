@@ -4,6 +4,7 @@ import { Separator } from '@radix-ui/react-menubar'
 import {
   Building2,
   CircleHelp,
+  Database,
   GaugeCircle,
   Globe,
   LaptopMinimal,
@@ -201,6 +202,21 @@ function SidebarContent({
         >
           <LaptopMinimal className="h-4 w-4" />
           Sessions
+        </Link>
+
+        {/* Data */}
+        <Link
+          href="/data"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/data')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Database className="h-4 w-4" />
+          Data
         </Link>
 
         {/* App Store */}

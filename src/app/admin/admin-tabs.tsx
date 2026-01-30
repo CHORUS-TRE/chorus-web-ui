@@ -13,6 +13,11 @@ export function AdminTabs() {
 
   const routes = [
     {
+      href: '/admin/',
+      label: 'Overview',
+      authorized: true
+    },
+    {
       href: '/admin/users',
       label: 'Users',
       authorized: can(PERMISSIONS.listUsers, { user: '*' })

@@ -56,7 +56,7 @@ export function AppBreadcrumb() {
 
     // Always start with Home icon and instance name
     items.push({
-      label: instanceConfig.name,
+      label: '',
       href: '/',
       icon: Home,
       isPage: pathname === '/',

@@ -103,7 +103,6 @@ export function Header() {
   const { toggleFullscreen } = useFullscreenContext()
   const { toggleRightSidebar, showLeftSidebar, toggleLeftSidebar } =
     useUserPreferences()
-  const { isAdmin } = useAuthorization()
   const pathname = usePathname()
 
   const isIFramePage =
@@ -136,9 +135,7 @@ export function Header() {
 
   function UserProfileSection() {
     const { logout } = useAuthentication()
-    const { setWorkspaceFilter } = useUserPreferences()
     const { isAdmin } = useAuthorization()
-    const instanceConfig = useInstanceConfig()
     const [menuOpen, setMenuOpen] = useState(false)
 
     if (!user) return null
@@ -207,6 +204,28 @@ export function Header() {
                 </Link>
               </div>
             </div>
+
+            {/* Roles Section (optional, moved to bottom) */}
+            {globalRoles && globalRoles.length > 0 && (
+              <>
+                <Separator className="my-1" />
+                <div className="px-3 py-2">
+                  <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    Your Roles
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {globalRoles.map((role) => (
+                      <span
+                        key={role}
+                        className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                      >
+                        {role}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             <Separator className="my-1" />
 
@@ -302,27 +321,7 @@ export function Header() {
               </>
             )}
 
-            {/* Roles Section (optional, moved to bottom) */}
-            {globalRoles && globalRoles.length > 0 && (
-              <>
-                <Separator className="my-1" />
-                <div className="px-3 py-2">
-                  <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                    Your Roles
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {globalRoles.map((role) => (
-                      <span
-                        key={role}
-                        className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                      >
-                        {role}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
+
           </div>
         )}
       </div>
@@ -372,9 +371,11 @@ export function Header() {
             )}
           </Link>
 
-          <div className="ml-4">
-            <AppBreadcrumb />
-          </div>
+          {user && (
+            <div className="ml-4">
+              <AppBreadcrumb />
+            </div>
+          )}
         </div>
 
         {/* Center: Recent sessions and web apps as Tabs */}
@@ -459,26 +460,26 @@ export function Header() {
                         {workspaces?.find(
                           (w) => w.id === sessionWorkbench.workspaceId
                         ) && (
-                          <>
-                            <button
-                              onClick={() =>
-                                router.push(
-                                  `/workspaces/${sessionWorkbench.workspaceId}`
-                                )
-                              }
-                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                            >
-                              <span className="truncate">
-                                {
-                                  workspaces.find(
-                                    (w) => w.id === sessionWorkbench.workspaceId
-                                  )?.name
+                            <>
+                              <button
+                                onClick={() =>
+                                  router.push(
+                                    `/workspaces/${sessionWorkbench.workspaceId}`
+                                  )
                                 }
-                              </span>
-                            </button>
-                            <div className="my-1 border-t border-muted/20" />
-                          </>
-                        )}
+                                className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                              >
+                                <span className="truncate">
+                                  {
+                                    workspaces.find(
+                                      (w) => w.id === sessionWorkbench.workspaceId
+                                    )?.name
+                                  }
+                                </span>
+                              </button>
+                              <div className="my-1 border-t border-muted/20" />
+                            </>
+                          )}
 
                         {/* Running apps */}
                         {appInstances
@@ -644,20 +645,22 @@ export function Header() {
                 type="text"
                 placeholder="Search..."
                 disabled
-                className="h-8 w-40 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
+                className="h-8 w-52 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
               />
             </div>
           )}
 
-          <button
+
+          {user && <button
             onClick={() => toggleRightSidebar()}
             className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
             title="Help"
           >
             <HelpCircle className="h-4 w-4 text-muted-foreground" />
           </button>
+          }
 
-          <button
+          {user && <button
             onClick={() => router.push(`/users/${user.id}/notifications`)}
             className="group relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
             title="Notifications"
@@ -672,7 +675,7 @@ export function Header() {
                 </span>
               )}
           </button>
-
+          }
           <UserProfileSection />
         </div>
 
@@ -729,7 +732,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => {}}
+            onSuccess={() => { }}
           />
         )}
 
