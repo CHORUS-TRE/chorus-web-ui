@@ -91,6 +91,12 @@ export default function AppEditPage() {
     if (id) fetchApp()
   }, [id, form])
 
+  useEffect(() => {
+    if (form.formState.errors) {
+      console.error('AppEditPage form errors:', form.formState.errors)
+    }
+  }, [form.formState.errors])
+
   async function onSubmit(data: FormData) {
     try {
       const formData = new FormData()
@@ -196,6 +202,10 @@ export default function AppEditPage() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <input type="hidden" {...form.register('id')} />
+            <input type="hidden" {...form.register('tenantId')} />
+            <input type="hidden" {...form.register('userId')} />
+            <input type="hidden" {...form.register('status')} />
             <div
               className={`grid gap-8 ${showAdvanced ? 'md:grid-cols-2' : 'grid-cols-1'}`}
             >

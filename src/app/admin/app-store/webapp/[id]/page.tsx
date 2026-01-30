@@ -85,6 +85,15 @@ export default function WebAppEditPage() {
     }
   }, [id, externalWebApps, form])
 
+  useEffect(() => {
+    if (
+      form.formState.errors &&
+      Object.keys(form.formState.errors).length > 0
+    ) {
+      console.error('WebAppEditPage form errors:', form.formState.errors)
+    }
+  }, [form.formState.errors])
+
   const onSubmit = async (data: WebAppFormValues) => {
     try {
       if (!webapp) return
