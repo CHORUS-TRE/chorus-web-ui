@@ -318,7 +318,7 @@ export function WebAppCreateDialog({
                       >
                         <div className="min-w-0 flex-1">
                           <div className="font-medium">{webapp.name}</div>
-                          <div className="truncate text-xs text-muted-foreground">
+                          <div className="ellipsis max-w-80 overflow-hidden text-xs text-muted-foreground">
                             {webapp.url}
                           </div>
                         </div>

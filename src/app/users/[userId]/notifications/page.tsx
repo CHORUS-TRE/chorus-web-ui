@@ -43,8 +43,7 @@ export default function NotificationsPage() {
     refreshNotifications,
     refreshUnreadNotificationsCount
   } = useAppState()
-  const params = useParams<{ userId: string }>()
-  const userId = params?.userId
+  const { userId } = (useParams() ?? {}) as { userId?: string }
 
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
 

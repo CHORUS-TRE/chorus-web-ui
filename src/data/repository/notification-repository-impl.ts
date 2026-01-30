@@ -21,7 +21,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
       const response = await this.dataSource.getNotifications(params)
       const notificationsResult = z
         .array(NotificationSchema)
-        .safeParse(response.result?.notifications)
+        .safeParse(response.result)
 
       if (!notificationsResult.success) {
         return {
@@ -41,7 +41,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
   async countUnread(): Promise<Result<number>> {
     try {
       const response = await this.dataSource.countUnreadNotifications()
-      const count = response.result?.count
+      const count = response.result
 
       if (count === undefined) {
         return { error: 'API response validation failed' }

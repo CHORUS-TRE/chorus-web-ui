@@ -229,19 +229,6 @@ export function Header() {
 
             <Separator className="my-1" />
 
-            {/* Section 1: Account Management */}
-            <div className="py-1">
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            </div>
-
-            <Separator className="my-1" />
-
             {/* Quick Settings */}
             <div className="py-1">
               <button
@@ -321,7 +308,18 @@ export function Header() {
               </>
             )}
 
+            <Separator className="my-1" />
 
+            {/* Section 1: Account Management */}
+            <div className="py-1">
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -460,26 +458,26 @@ export function Header() {
                         {workspaces?.find(
                           (w) => w.id === sessionWorkbench.workspaceId
                         ) && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  router.push(
-                                    `/workspaces/${sessionWorkbench.workspaceId}`
-                                  )
+                          <>
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/workspaces/${sessionWorkbench.workspaceId}`
+                                )
+                              }
+                              className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                            >
+                              <span className="truncate">
+                                {
+                                  workspaces.find(
+                                    (w) => w.id === sessionWorkbench.workspaceId
+                                  )?.name
                                 }
-                                className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                              >
-                                <span className="truncate">
-                                  {
-                                    workspaces.find(
-                                      (w) => w.id === sessionWorkbench.workspaceId
-                                    )?.name
-                                  }
-                                </span>
-                              </button>
-                              <div className="my-1 border-t border-muted/20" />
-                            </>
-                          )}
+                              </span>
+                            </button>
+                            <div className="my-1 border-t border-muted/20" />
+                          </>
+                        )}
 
                         {/* Running apps */}
                         {appInstances
@@ -650,32 +648,33 @@ export function Header() {
             </div>
           )}
 
+          {user && (
+            <button
+              onClick={() => toggleRightSidebar()}
+              className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
+              title="Help"
+            >
+              <HelpCircle className="h-4 w-4 text-muted-foreground" />
+            </button>
+          )}
 
-          {user && <button
-            onClick={() => toggleRightSidebar()}
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
-            title="Help"
-          >
-            <HelpCircle className="h-4 w-4 text-muted-foreground" />
-          </button>
-          }
-
-          {user && <button
-            onClick={() => router.push(`/users/${user.id}/notifications`)}
-            className="group relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
-            title="Notifications"
-          >
-            <Bell className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
-            {unreadNotificationsCount !== undefined &&
-              unreadNotificationsCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
-                  {unreadNotificationsCount > 99
-                    ? '99+'
-                    : unreadNotificationsCount}
-                </span>
-              )}
-          </button>
-          }
+          {user && (
+            <button
+              onClick={() => router.push(`/users/${user.id}/notifications`)}
+              className="group relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
+              title="Notifications"
+            >
+              <Bell className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+              {unreadNotificationsCount !== undefined &&
+                unreadNotificationsCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+                    {unreadNotificationsCount > 99
+                      ? '99+'
+                      : unreadNotificationsCount}
+                  </span>
+                )}
+            </button>
+          )}
           <UserProfileSection />
         </div>
 
@@ -732,7 +731,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => { }}
+            onSuccess={() => {}}
           />
         )}
 
