@@ -333,7 +333,7 @@ export function Header() {
         id="header"
       >
         {/* Left section: Sidebar toggle + Logo + Breadcrumb */}
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center">
           {/* {!showLeftSidebar && isIFramePage && (
             <Button
               variant="ghost"

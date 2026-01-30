@@ -58,8 +58,9 @@ export function AppBreadcrumb() {
     items.push({
       label: '',
       href: '/',
+      // icon: Home,
       isPage: pathname === '/',
-      iconOnly: false
+      iconOnly: true
     })
 
     let currentHref = ''
