@@ -54,7 +54,7 @@ export function AppBreadcrumb() {
       iconOnly?: boolean
     }[] = []
 
-    // Always start with Home icon and instance name
+    // Always start with Home icon
     items.push({
       label: '',
       href: '/',
@@ -126,22 +126,22 @@ export function AppBreadcrumb() {
       {breadcrumbItems.length > 0 && (
         <>
           <Breadcrumb>
-            <BreadcrumbList className="gap-1 text-sm">
+            <BreadcrumbList className="gap-0.5 text-sm">
               {breadcrumbItems.map((item, index) => (
                 <React.Fragment key={item.href}>
                   <BreadcrumbItem>
                     {item.isPage ? (
-                      <BreadcrumbPage className="flex max-w-[200px] items-center gap-2 truncate font-medium text-foreground">
-                        {item.icon && <item.icon className="h-4 w-4" />}
+                      <BreadcrumbPage className="flex max-w-[200px] items-center gap-0.5 truncate font-medium text-foreground">
+                        {item.icon && <item.icon className="h-3.5 w-3.5" />}
                         {!item.iconOnly && item.label}
                       </BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink asChild>
                         <Link
                           href={item.href}
-                          className="flex items-center gap-2 transition-opacity hover:opacity-80"
+                          className="flex items-center gap-0.5 transition-opacity hover:opacity-80"
                         >
-                          {item.icon && <item.icon className="h-4 w-4" />}
+                          {item.icon && <item.icon className="h-3.5 w-3.5" />}
                           {!item.iconOnly && (
                             <span className="max-w-[150px] truncate text-muted-foreground hover:text-foreground">
                               {item.label}
@@ -152,7 +152,7 @@ export function AppBreadcrumb() {
                     )}
                   </BreadcrumbItem>
                   {index < breadcrumbItems.length - 1 && (
-                    <BreadcrumbSeparator className="mx-1 text-muted-foreground" />
+                    <BreadcrumbSeparator className="text-muted-foreground" />
                   )}
                 </React.Fragment>
               ))}
