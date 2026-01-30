@@ -1,6 +1,6 @@
 'use client'
 
-import { PanelLeftOpen } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { Button } from '~/components/button'
 import GettingStartedCard from '~/components/getting-started-card'
 import { LeftSidebar } from '~/components/left-sidebar'
 import RightSidebar from '~/components/right-sidebar'
@@ -25,30 +24,25 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
 
-  const isIFramePage = useMemo(() => {
+  const isSessionPage = useMemo(() => {
     const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    const webappPageRegex = /^\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
+    return sessionPageRegex.test(pathname)
   }, [pathname])
 
-  // Immersive Mode Logic
-  const immersiveUIVisible = useAppState((state) => state.immersiveUIVisible)
-  const setImmersiveUIVisible = useAppState(
-    (state) => state.setImmersiveUIVisible
-  )
-  const immersiveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  // Left sidebar visibility for immersive mode (edge hover)
+  const [leftSidebarVisible, setLeftSidebarVisible] = useState(false)
+  const leftHideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Ref for content-main element to measure its position
   const contentMainRef = useRef<HTMLDivElement>(null)
   const setContentRect = useAppState((state) => state.setContentRect)
-  const contentRect = useAppState((state) => state.contentRect)
 
   // Update content rect on resize
   const updateContentRect = useCallback(() => {
     if (contentMainRef.current) {
       setContentRect(contentMainRef.current.getBoundingClientRect())
     }
-  }, [])
+  }, [setContentRect])
 
   // ResizeObserver to track content-main element size and position
   useEffect(() => {
@@ -73,38 +67,44 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }
   }, [updateContentRect])
 
-  // Reset visibility when not on a session page
+  // Reset left sidebar visibility when leaving iframe page
   useEffect(() => {
-    if (!isIFramePage) {
-      setImmersiveUIVisible(true)
-      if (immersiveTimeoutRef.current) {
-        clearTimeout(immersiveTimeoutRef.current)
-      }
+    if (!isSessionPage) {
+      setLeftSidebarVisible(false)
+      if (leftHideTimeoutRef.current) clearTimeout(leftHideTimeoutRef.current)
     }
 
     return () => {
-      if (immersiveTimeoutRef.current) clearTimeout(immersiveTimeoutRef.current)
+      if (leftHideTimeoutRef.current) clearTimeout(leftHideTimeoutRef.current)
     }
-  }, [isIFramePage, pathname, setImmersiveUIVisible]) // Re-run when page changes
+  }, [isSessionPage, pathname])
 
-  const handleHeaderClick = () => {
-    // Show UI when clicking header
-    if (isIFramePage) {
-      setImmersiveUIVisible(true)
+  // On first arrival to session page, briefly show the left sidebar then hide
+  useEffect(() => {
+    if (isSessionPage) {
+      setLeftSidebarVisible(true)
+      leftHideTimeoutRef.current = setTimeout(() => {
+        setLeftSidebarVisible(false)
+      }, 2000)
     }
-  }
+  }, [])
 
-  const handleContentClick = () => {
-    // Hide UI when clicking content-main
-    if (isIFramePage) {
-      // setImmersiveUIVisible(false)
+  // Left sidebar controls (edge hover)
+  const showLeftSidebarHandler = useCallback(() => {
+    if (leftHideTimeoutRef.current) {
+      clearTimeout(leftHideTimeoutRef.current)
+      leftHideTimeoutRef.current = null
     }
-  }
+    setLeftSidebarVisible(true)
+  }, [])
 
-  // Handle closing the immersive UI manually (if we add a button later inside the UI)
-  const toggleImmersiveUI = () => {
-    setImmersiveUIVisible(!immersiveUIVisible)
-  }
+  const hideLeftSidebarHandler = useCallback(() => {
+    if (!isSessionPage) return
+    if (leftHideTimeoutRef.current) clearTimeout(leftHideTimeoutRef.current)
+    leftHideTimeoutRef.current = setTimeout(() => {
+      setLeftSidebarVisible(false)
+    }, 100) // 100ms delay before hiding
+  }, [isSessionPage])
 
   return (
     <div id="authenticated-app">
@@ -116,98 +116,131 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
           clickThroughOverlay={true}
           cardComponent={GettingStartedCard}
         >
-          <div
-            className="fixed left-0 top-0 z-40 h-11 min-w-full"
-            onClick={handleHeaderClick}
-          >
+          <div className="fixed left-0 top-0 z-40 h-11 min-w-full">
             <Header />
           </div>
 
-          {/* Main Layout Container - Fades out in Immersive Mode */}
-          <div
-            className={cn(
-              'fixed inset-0 top-12 z-30 p-4 transition-opacity duration-500 ease-in-out',
-              isIFramePage && !immersiveUIVisible
-                ? 'pointer-events-none opacity-0'
-                : 'opacity-100'
-            )}
-          >
+          {/* Left edge trigger zone - shows left sidebar when hovered */}
+          {isSessionPage && !isFullscreen && (
             <div
-              className={cn(
-                'flex h-full w-full',
-                'flex-row',
-                // Desktop: center content if sidebar closed, otherwise align to left
-                !isFullscreen
-                  ? 'xl:justify-start 2xl:justify-start'
-                  : 'xl:justify-center 2xl:justify-center'
-              )}
+              className="fixed left-0 top-11 z-30 flex h-[calc(100vh-44px)] items-center justify-center text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+              style={{ width: 15 }}
+              onMouseEnter={showLeftSidebarHandler}
             >
-              {/* Left Sidebar - in flex flow - hidden in fullscreen */}
+              <ChevronRight className="h-5 w-5" />
+            </div>
+          )}
+
+          {/* Fixed sidebars for iframe pages - positioned at screen edges */}
+          {isSessionPage && !isFullscreen && (
+            <>
+              {/* Left Sidebar - fixed at left edge, controlled by edge hover */}
               <div
                 className={cn(
-                  'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out',
-                  !isFullscreen && (showLeftSidebar || !isIFramePage)
+                  'fixed left-3 top-16 z-30 h-[calc(100vh-5rem)] overflow-hidden transition-all duration-300 ease-in-out',
+                  leftSidebarVisible && showLeftSidebar
                     ? 'w-[240px] translate-x-0 opacity-100'
-                    : 'w-0 -translate-x-4 opacity-0',
-                  // Ensure margin is removed when closed to avoid gap
-                  ((!showLeftSidebar && isIFramePage) || isFullscreen) && 'mr-0'
+                    : 'pointer-events-none w-0 -translate-x-full opacity-0'
                 )}
+                onMouseEnter={showLeftSidebarHandler}
+                onMouseLeave={hideLeftSidebarHandler}
               >
                 <LeftSidebar />
               </div>
 
-              {/* Content container */}
+              {/* Right Sidebar - fixed at right edge, controlled by header button only */}
               <div
                 className={cn(
-                  'flex h-full items-start gap-2',
-                  // Mobile: content takes full width
-                  'w-full',
-                  // In fullscreen mode, take full width
-                  isFullscreen ? 'w-full' : 'xl:w-[80vw] 2xl:w-[80vw]'
+                  'fixed right-4 top-16 z-30 h-[calc(100vh-5rem)] overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                  showRightSidebar
+                    ? 'w-[320px] translate-x-0 opacity-100'
+                    : 'pointer-events-none w-0 translate-x-full opacity-0'
+                )}
+                id="right-sidebar-immersive"
+              >
+                <RightSidebar />
+              </div>
+            </>
+          )}
+
+          {/* Main Layout Container - only for non-iframe pages */}
+          {!isSessionPage && (
+            <div className="fixed inset-0 top-12 z-30 p-4 transition-all duration-300 ease-in-out">
+              <div
+                className={cn(
+                  'flex h-full w-full',
+                  'flex-row',
+                  !isFullscreen
+                    ? 'xl:justify-start 2xl:justify-start'
+                    : 'xl:justify-center 2xl:justify-center'
                 )}
               >
-                {/* Main Content */}
+                {/* Left Sidebar */}
                 <div
-                  id="content"
                   className={cn(
-                    'relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
-                    // Background is handled by children or specific pages now
-                    showRightSidebar && !isFullscreen
-                      ? 'min-w-0 flex-1'
-                      : 'w-full'
+                    'h-[calc(100vh-2.75rem-1rem-16px)] flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out',
+                    !isFullscreen && showLeftSidebar
+                      ? 'mr-2 w-[240px] translate-x-0 opacity-100'
+                      : 'mr-0 w-0 -translate-x-full opacity-0'
                   )}
                 >
-                  <div
-                    id="content-main"
-                    onClick={handleContentClick}
-                    ref={contentMainRef}
-                    className={cn(
-                      'flex-1 overflow-auto',
-                      !isIFramePage &&
-                        'bg-contrast-background/50 px-8 py-4 backdrop-blur-md'
-                    )}
-                  >
-                    {children}
-                  </div>
+                  <LeftSidebar />
                 </div>
 
-                {/* Right Sidebar - hidden in fullscreen */}
+                {/* Content container */}
                 <div
                   className={cn(
-                    'h-full overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
-                    showRightSidebar && !isFullscreen
-                      ? 'w-[320px] flex-shrink-0'
-                      : 'hidden'
+                    'flex h-full items-start gap-2',
+                    'w-full',
+                    isFullscreen ? 'w-full' : 'xl:w-[80vw] 2xl:w-[80vw]'
                   )}
-                  id="right-sidebar"
                 >
-                  <RightSidebar />
+                  {/* Main Content */}
+                  <div
+                    id="content"
+                    className={cn(
+                      'relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
+                      showRightSidebar && !isFullscreen
+                        ? 'min-w-0 flex-1'
+                        : 'w-full'
+                    )}
+                  >
+                    <div
+                      id="content-main"
+                      ref={contentMainRef}
+                      className="flex-1 overflow-auto bg-contrast-background/50 px-8 py-4 backdrop-blur-md"
+                    >
+                      {children}
+                    </div>
+                  </div>
+
+                  {/* Right Sidebar */}
+                  <div
+                    className={cn(
+                      'h-full overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                      !isFullscreen && showRightSidebar
+                        ? 'w-[320px] flex-shrink-0 translate-x-0 opacity-100'
+                        : 'w-0 translate-x-full opacity-0'
+                    )}
+                    id="right-sidebar"
+                  >
+                    <RightSidebar />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* SVG Mask Overlay - creates overlay with hole for iframe content area */}
+          {/* Content area for iframe pages */}
+          {isSessionPage && (
+            <div
+              id="content-main"
+              ref={contentMainRef}
+              className="pointer-events-none fixed inset-0 top-12"
+            >
+              {children}
+            </div>
+          )}
         </NextStep>
       </NextStepProvider>
     </div>
