@@ -27,8 +27,8 @@ export class ApprovalRequestRepositoryImpl
       await this.dataSource.approve({
         id: action.id,
         body: {
-          approved: action.approved,
-          reason: action.reason
+          approve: action.approved,
+          comment: action.reason
         }
       })
       return { data: undefined }
@@ -48,7 +48,7 @@ export class ApprovalRequestRepositoryImpl
           title: request.title,
           description: request.description,
           sourceWorkspaceId: request.sourceWorkspaceId,
-          fileIds: request.fileIds
+          filePaths: request.fileIds
         }
       })
 
@@ -80,7 +80,7 @@ export class ApprovalRequestRepositoryImpl
           description: request.description,
           sourceWorkspaceId: request.sourceWorkspaceId,
           destinationWorkspaceId: request.destinationWorkspaceId,
-          fileIds: request.fileIds
+          filePaths: request.fileIds
         }
       })
 

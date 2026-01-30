@@ -167,7 +167,7 @@ export function SelectionBasket({
 
           <Button
             size="sm"
-            variant="accent-outline"
+            variant="outline"
             onClick={() => handleStartRequest('transfer')}
             className="flex w-full items-center justify-center gap-2"
           >
