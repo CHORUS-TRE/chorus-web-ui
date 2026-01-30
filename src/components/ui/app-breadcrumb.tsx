@@ -127,7 +127,7 @@ export function AppBreadcrumb() {
       {breadcrumbItems.length > 0 && (
         <>
           <Breadcrumb>
-            <BreadcrumbList className="gap-0.5 text-xs">
+            <BreadcrumbList className="gap-0.5 text-sm">
               {breadcrumbItems.map((item, index) => (
                 <React.Fragment key={item.href}>
                   <BreadcrumbItem>
