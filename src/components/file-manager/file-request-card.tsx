@@ -342,7 +342,7 @@ export const FileRequestCard = React.memo(function FileRequestCard({
         {showApprovalActions && request.status === 'pending' && (
           <div className="flex w-full gap-2">
             <Button
-              variant="accent-outline"
+              variant="outline"
               size="sm"
               onClick={onReject}
               className="h-10 flex-1 rounded-xl"

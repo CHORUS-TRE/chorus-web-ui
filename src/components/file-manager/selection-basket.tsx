@@ -102,7 +102,7 @@ export function SelectionBasket({
               aria-hidden="true"
             />
             Selection Basket
-            <Badge variant="accent-filled" className="rounded-full px-2">
+            <Badge variant="default" className="rounded-full px-2">
               {selectedItems.length}
             </Badge>
           </CardTitle>
