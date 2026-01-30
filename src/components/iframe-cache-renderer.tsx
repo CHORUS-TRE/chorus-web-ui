@@ -30,8 +30,6 @@ function CachedIframeRenderer({
   // Track which URLs have successfully loaded to handle switching between cached iframes
   const loadedUrlsRef = useRef<Set<string>>(new Set())
   const { isFullscreen } = useFullscreenContext()
-  const contentRect = useAppState((state) => state.contentRect)
-  const immersiveUIVisible = useAppState((state) => state.immersiveUIVisible)
 
   // Only probe for sessions, not webapps
   const { isLoading, error } =
@@ -127,14 +125,12 @@ function CachedIframeRenderer({
         src={iframeSrc}
         allow="autoplay; fullscreen; clipboard-write;"
         style={{
-          width:
-            !isFullscreen && contentRect ? `${contentRect.width}px` : '100vw',
-          height:
-            !isFullscreen && contentRect
-              ? `${contentRect.height}px`
-              : isFullscreen
-                ? '100vh'
-                : 'calc(100vh - 44px)',
+          width: isBackground
+            ? '100vw'
+            : isFullscreen
+              ? '100vw'
+              : 'calc(100vw - 15px)',
+          height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',
           visibility: showLoadingOverlay
             ? 'hidden'
             : isActive || isBackground
@@ -142,24 +138,21 @@ function CachedIframeRenderer({
               : 'hidden',
           pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
           position: 'fixed' as const,
-          left: !isFullscreen && contentRect ? `${contentRect.left}px` : 0,
-          top:
-            !isFullscreen && contentRect
-              ? `${contentRect.top}px`
-              : isFullscreen
-                ? 0
-                : 44,
-          zIndex: isActive ? 30 : isBackground ? 5 : -1,
+          left: isBackground ? 0 : isFullscreen ? 0 : 15,
+          top: isFullscreen ? 0 : 44,
+          zIndex: isActive ? 20 : isBackground ? 5 : -1,
           opacity: showLoadingOverlay
             ? 0
-            : isBackground && !isActive
+            : isBackground
               ? 0.15
-              : 1,
-          filter: isBackground && !isActive ? 'blur(2px)' : 'none',
-          borderRadius: !isFullscreen && contentRect ? '16px' : '0px',
+              : isActive
+                ? 1
+                : 0,
+          filter: isBackground ? 'blur(2px)' : 'none',
+          borderRadius: 0,
           overflow: 'hidden'
         }}
-        className="bg-background transition-all duration-500 ease-in-out"
+        className="bg-background transition-all duration-150 ease-in-out"
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
@@ -270,7 +263,7 @@ export default function IframeCacheRenderer() {
           key={id}
           iframe={iframe}
           isActive={isIframePage && activeIframeId === id}
-          isBackground={backgroundIframeId === id}
+          isBackground={false}
         />
       ))}
     </>
