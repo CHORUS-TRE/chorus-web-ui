@@ -632,7 +632,7 @@ export function Header() {
 
         <div className="flex shrink-0 items-center justify-end gap-2">
           {/* Search bar (disabled) */}
-          {user && (
+          {/* {user && (
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
               <input
@@ -642,7 +642,7 @@ export function Header() {
                 className="h-8 w-52 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
               />
             </div>
-          )}
+          )} */}
 
           {user && (
             <button
