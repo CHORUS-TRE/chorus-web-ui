@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusApprovalRequestNotification } from './ChorusApprovalRequestNotification'
+import {
+  ChorusApprovalRequestNotificationFromJSON,
+  ChorusApprovalRequestNotificationFromJSONTyped,
+  ChorusApprovalRequestNotificationToJSON
+} from './ChorusApprovalRequestNotification'
 import type { ChorusSystemNotification } from './ChorusSystemNotification'
 import {
   ChorusSystemNotificationFromJSON,
@@ -32,6 +38,12 @@ export interface ChorusNotificationContent {
    * @memberof ChorusNotificationContent
    */
   systemNotification?: ChorusSystemNotification
+  /**
+   *
+   * @type {ChorusApprovalRequestNotification}
+   * @memberof ChorusNotificationContent
+   */
+  approvalRequestNotification?: ChorusApprovalRequestNotification
 }
 
 /**
@@ -59,7 +71,12 @@ export function ChorusNotificationContentFromJSONTyped(
   return {
     systemNotification: !exists(json, 'systemNotification')
       ? undefined
-      : ChorusSystemNotificationFromJSON(json['systemNotification'])
+      : ChorusSystemNotificationFromJSON(json['systemNotification']),
+    approvalRequestNotification: !exists(json, 'approvalRequestNotification')
+      ? undefined
+      : ChorusApprovalRequestNotificationFromJSON(
+          json['approvalRequestNotification']
+        )
   }
 }
 
@@ -73,6 +90,11 @@ export function ChorusNotificationContentToJSON(
     return null
   }
   return {
-    systemNotification: ChorusSystemNotificationToJSON(value.systemNotification)
+    systemNotification: ChorusSystemNotificationToJSON(
+      value.systemNotification
+    ),
+    approvalRequestNotification: ChorusApprovalRequestNotificationToJSON(
+      value.approvalRequestNotification
+    )
   }
 }

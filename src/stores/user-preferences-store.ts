@@ -30,6 +30,8 @@ interface UserPreferencesState {
   // View preferences
   showWorkspacesTable: boolean
   toggleWorkspaceView: () => void
+  showUsersTable: boolean
+  toggleUsersView: () => void
 
   // Left sidebar
   showLeftSidebar: boolean
@@ -65,6 +67,7 @@ const defaultPreferences = {
   sessionSearchQuery: '',
   showMySessions: false,
   showWorkspacesTable: false,
+  showUsersTable: false,
   showLeftSidebar: true,
   showRightSidebar: true,
   sessionsViewMode: 'grid' as const,
@@ -96,6 +99,9 @@ export const useUserPreferences = create<UserPreferencesState>()(
       showWorkspacesTable: defaultPreferences.showWorkspacesTable,
       toggleWorkspaceView: () =>
         set((state) => ({ showWorkspacesTable: !state.showWorkspacesTable })),
+      showUsersTable: defaultPreferences.showUsersTable,
+      toggleUsersView: () =>
+        set((state) => ({ showUsersTable: !state.showUsersTable })),
 
       // Left sidebar
       showLeftSidebar: defaultPreferences.showLeftSidebar,

@@ -78,7 +78,7 @@ export const AuthenticationProvider = ({
       }
       setIsLoading(false)
     }
-  }, [setUser, handleLogout])
+  }, [user, handleLogout])
 
   useEffect(() => {
     if (!user) {

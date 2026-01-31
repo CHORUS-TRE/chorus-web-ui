@@ -1,21 +1,27 @@
 'use client'
 
-import React, { createContext, useContext, useMemo } from 'react'
+import React, { createContext, useCallback, useContext, useMemo } from 'react'
 
 import { getRolePermissions, PERMISSIONS } from '@/config/permissions'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { User } from '~/domain/model/user'
 
 // Define the shape of the context
 interface AuthorizationContextType {
   PERMISSIONS: typeof PERMISSIONS
   can: (permission: string, context?: Record<string, string>) => boolean
+  getPermissionsForUser: (
+    user: User,
+    context?: Record<string, string>
+  ) => Set<string>
   isAdmin: boolean
 }
 
 // Create the context with a default value
 const AuthorizationContext = createContext<AuthorizationContextType>({
   PERMISSIONS,
-  can: (permission: string, context?: Record<string, string>) => false,
+  can: () => false,
+  getPermissionsForUser: () => new Set<string>(),
   isAdmin: false
 })
 
@@ -70,31 +76,55 @@ export const AuthorizationProvider = ({
     return new Map(Object.entries(newPermissionsMap))
   }, [user])
 
-  const can = (permission: string, context: Record<string, string> = {}) => {
-    if (!permissionsWithContextMap.has(permission)) return false
+  const can = useCallback(
+    (permission: string, context: Record<string, string> = {}) => {
+      if (!permissionsWithContextMap.has(permission)) return false
 
-    const allowedContexts = permissionsWithContextMap.get(permission)!
+      const allowedContexts = permissionsWithContextMap.get(permission)!
 
-    // If no context constraints in request, and user has the permission (with any context), allow.
-    // NOTE: This assumes having the permission implies *some* access.
-    if (Object.keys(context).length === 0) return true
+      // If no context constraints in request, and user has the permission (with any context), allow.
+      // NOTE: This assumes having the permission implies *some* access.
+      if (Object.keys(context).length === 0) return true
 
-    // Check request context against allowedContexts
-    return Object.entries(context).every(([key, value]) => {
-      const allowedValues = allowedContexts[key]
+      // Check request context against allowedContexts
+      return Object.entries(context).every(([key, value]) => {
+        const allowedValues = allowedContexts[key]
 
-      // If the permission doesn't have this context key recorded, it usually means the role didn't specify it.
-      // If the role context was empty, it might mean global access depending on convention.
-      // But based on our transform, we only add keys that exist.
-      // If a dimension is missing in allowedValues, we deny access to it to be safe,
-      // unless we decide missing means "*" (global).
-      // We assume explicit is required.
+        // If the permission doesn't have this context key recorded, it usually means the role didn't specify it.
+        // If the role context was empty, it might mean global access depending on convention.
+        // But based on our transform, we only add keys that exist.
+        // If a dimension is missing in allowedValues, we deny access to it to be safe,
+        // unless we decide missing means "*" (global).
+        // We assume explicit is required.
 
-      if (!allowedValues || allowedValues.length === 0) return false
+        if (!allowedValues || allowedValues.length === 0) return false
 
-      return allowedValues.includes('*') || allowedValues.includes(value)
-    })
-  }
+        return allowedValues.includes('*') || allowedValues.includes(value)
+      })
+    },
+    [permissionsWithContextMap]
+  )
+
+  const getPermissionsForUser = useCallback(
+    (user: User, context: Record<string, string> = {}) => {
+      const permissions = new Set<string>()
+      if (!user || !user.rolesWithContext) return permissions
+
+      user.rolesWithContext.forEach((role) => {
+        // Check if context matches
+        const contextMatches = Object.entries(context).every(
+          ([key, value]) => role.context?.[key] === value
+        )
+
+        if (contextMatches) {
+          getRolePermissions(role.name).forEach((p) => permissions.add(p))
+        }
+      })
+
+      return permissions
+    },
+    []
+  )
 
   // Set admin state
   const isAdmin = useMemo(() => {
@@ -106,13 +136,14 @@ export const AuthorizationProvider = ({
       can(PERMISSIONS.createApp, {}) ||
       can(PERMISSIONS.setPlatformSettings, {})
     )
-  }, [user, permissionsWithContextMap])
+  }, [user, can])
 
   console.log(permissionsWithContextMap)
 
   const value = {
     PERMISSIONS,
     can,
+    getPermissionsForUser,
     isAdmin
   }
 

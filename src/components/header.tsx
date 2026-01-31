@@ -1,6 +1,7 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  Bell,
   ChevronDown,
   FlaskConical,
   Globe,
@@ -37,6 +38,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
 import {
   HoverCard,
   HoverCardContent,
@@ -62,8 +64,14 @@ import { toast } from './hooks/use-toast'
 
 export function Header() {
   const router = useRouter()
-  const { workbenches, workspaces, apps, appInstances, refreshWorkbenches } =
-    useAppState()
+  const {
+    workbenches,
+    workspaces,
+    apps,
+    appInstances,
+    refreshWorkbenches,
+    unreadNotificationsCount
+  } = useAppState()
   const instanceLogo = useInstanceLogo()
   const {
     background,
@@ -95,7 +103,6 @@ export function Header() {
   const { toggleFullscreen } = useFullscreenContext()
   const { toggleRightSidebar, showLeftSidebar, toggleLeftSidebar } =
     useUserPreferences()
-  const { isAdmin } = useAuthorization()
   const pathname = usePathname()
 
   const isIFramePage =
@@ -128,9 +135,7 @@ export function Header() {
 
   function UserProfileSection() {
     const { logout } = useAuthentication()
-    const { setWorkspaceFilter } = useUserPreferences()
     const { isAdmin } = useAuthorization()
-    const instanceConfig = useInstanceConfig()
     const [menuOpen, setMenuOpen] = useState(false)
 
     if (!user) return null
@@ -200,18 +205,27 @@ export function Header() {
               </div>
             </div>
 
-            <Separator className="my-1" />
-
-            {/* Section 1: Account Management */}
-            <div className="py-1">
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            </div>
+            {/* Roles Section (optional, moved to bottom) */}
+            {globalRoles && globalRoles.length > 0 && (
+              <>
+                <Separator className="my-1" />
+                <div className="px-3 py-2">
+                  <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    Your Roles
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {globalRoles.map((role) => (
+                      <span
+                        key={role}
+                        className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                      >
+                        {role}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             <Separator className="my-1" />
 
@@ -255,6 +269,24 @@ export function Header() {
                   Admin
                 </Link>
               )}
+
+              <Link
+                href={`/users/${user.id}/notifications`}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Bell className="h-4 w-4" />
+                Notifications
+                {unreadNotificationsCount !== undefined &&
+                  unreadNotificationsCount > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="ml-auto h-4 px-1 text-[10px]"
+                    >
+                      {unreadNotificationsCount}
+                    </Badge>
+                  )}
+              </Link>
             </div>
 
             {/* Section 3: Lab */}
@@ -276,27 +308,18 @@ export function Header() {
               </>
             )}
 
-            {/* Roles Section (optional, moved to bottom) */}
-            {globalRoles && globalRoles.length > 0 && (
-              <>
-                <Separator className="my-1" />
-                <div className="px-3 py-2">
-                  <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                    Your Roles
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {globalRoles.map((role) => (
-                      <span
-                        key={role}
-                        className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                      >
-                        {role}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
+            <Separator className="my-1" />
+
+            {/* Section 1: Account Management */}
+            <div className="py-1">
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -346,9 +369,7 @@ export function Header() {
             )}
           </Link>
 
-          <div className="ml-4">
-            <AppBreadcrumb />
-          </div>
+          {user && <AppBreadcrumb />}
         </div>
 
         {/* Center: Recent sessions and web apps as Tabs */}
@@ -618,19 +639,38 @@ export function Header() {
                 type="text"
                 placeholder="Search..."
                 disabled
-                className="h-8 w-40 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
+                className="h-8 w-52 cursor-not-allowed rounded-lg border border-muted/50 bg-muted/20 pl-8 pr-3 text-sm text-muted-foreground/50 placeholder:text-muted-foreground/40"
               />
             </div>
           )} */}
 
-          <button
-            onClick={() => toggleRightSidebar()}
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
-            title="Help"
-          >
-            <HelpCircle className="h-4 w-4 text-muted-foreground" />
-          </button>
+          {user && (
+            <button
+              onClick={() => toggleRightSidebar()}
+              className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
+              title="Help"
+            >
+              <HelpCircle className="h-4 w-4 text-muted-foreground" />
+            </button>
+          )}
 
+          {user && (
+            <button
+              onClick={() => router.push(`/users/${user.id}/notifications`)}
+              className="group relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
+              title="Notifications"
+            >
+              <Bell className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+              {unreadNotificationsCount !== undefined &&
+                unreadNotificationsCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+                    {unreadNotificationsCount > 99
+                      ? '99+'
+                      : unreadNotificationsCount}
+                  </span>
+                )}
+            </button>
+          )}
           <UserProfileSection />
         </div>
 

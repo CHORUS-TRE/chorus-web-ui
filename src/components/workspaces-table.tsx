@@ -20,13 +20,6 @@ import {
 } from '~/components/card'
 import { Badge } from '~/components/ui/badge'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
-import {
   Table,
   TableBody,
   TableCell,
@@ -41,7 +34,8 @@ import {
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
 import { toast } from './hooks/use-toast'
-
+import { useAuthorization } from '@/providers/authorization-provider'
+import { PencilIcon, TrashIcon } from 'lucide-react'
 export default function WorkspaceTable({
   workspaces,
   title,
@@ -57,6 +51,7 @@ export default function WorkspaceTable({
   const [deleted, setDeleted] = useState<boolean>(false)
   const [updated, setUpdated] = useState<boolean>(false)
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
+  const { can, PERMISSIONS } = useAuthorization()
 
   useEffect(() => {
     if (deleted) {
@@ -99,6 +94,9 @@ export default function WorkspaceTable({
       </TableHead>
       {/* <TableHead className="font-semibold text-foreground">Files</TableHead> */}
       <TableHead className="font-semibold text-foreground">Created</TableHead>
+      <TableHead>
+        <span className="sr-only">Actions</span>
+      </TableHead>
     </>
   )
 
@@ -120,6 +118,35 @@ export default function WorkspaceTable({
 
     return (
       <>
+        {open && (
+          <WorkspaceUpdateForm
+            workspace={workspace}
+            state={[open, setOpen]}
+            onSuccess={() => {
+              setUpdated(true)
+              setTimeout(() => {
+                setUpdated(false)
+              }, 3000)
+
+              if (onUpdate) onUpdate()
+            }}
+          />
+        )}
+
+        {deleteOpen && (
+          <WorkspaceDeleteForm
+            id={workspace?.id}
+            state={[deleteOpen, setDeleteOpen]}
+            onSuccess={() => {
+              refreshWorkspaces()
+              setDeleted(true)
+              setTimeout(() => {
+                setDeleted(false)
+              }, 3000)
+              if (onUpdate) onUpdate()
+            }}
+          />
+        )}
         <TableRowComponent
           className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
           onClick={() => router.push(`/workspaces/${workspace?.id}`)}
@@ -178,11 +205,35 @@ export default function WorkspaceTable({
           <TableCell className="p-1">
             {workspace?.createdAt
               ? new Date(workspace.createdAt).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric'
-                })
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              })
               : '-'}
+          </TableCell>
+          <TableCell className="p-1" onClick={(e) => e.stopPropagation()}>
+            {workspace?.id && can(PERMISSIONS.updateWorkspace, { workspace: workspace?.id }) && (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(true)
+                  }}
+                >
+                  <PencilIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setDeleteOpen(true)
+                  }}
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </Button>
+              </>
+            )}
           </TableCell>
         </TableRowComponent>
       </>

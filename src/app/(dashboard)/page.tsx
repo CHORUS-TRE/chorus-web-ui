@@ -37,8 +37,7 @@ import { Badge } from '~/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import {
   dashboardActivities,
-  type DashboardFeedIcon,
-  dashboardNotifications
+  type DashboardFeedIcon
 } from '~/data/data-source/mock-data/dashboard-feed'
 import { WorkbenchStatus } from '~/domain/model'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
@@ -48,10 +47,22 @@ export default function CHORUSDashboard() {
   const appInstances = useAppState((state) => state.appInstances)
   const apps = useAppState((state) => state.apps)
   const { user } = useAuthentication()
+  const notifications = useAppState((state) => state.notifications)
+  const refreshNotifications = useAppState(
+    (state) => state.refreshNotifications
+  )
   const instanceConfig = useInstanceConfig()
   const [updatesTab, setUpdatesTab] = useState<'notifications' | 'activity'>(
     'notifications'
   )
+
+  const handleTabChange = (value: string) => {
+    const tab = value as 'notifications' | 'activity'
+    setUpdatesTab(tab)
+    if (tab === 'notifications') {
+      refreshNotifications()
+    }
+  }
   const feedIconComponents: Record<DashboardFeedIcon, LucideIcon> = {
     workspace: Package,
     session: LaptopMinimal,
@@ -347,14 +358,12 @@ export default function CHORUSDashboard() {
                       : 'Recent Activity'}
                   </CardTitle>
                   <span className="rounded-full border border-muted/40 bg-muted px-3 py-1 text-xs font-semibold text-foreground">
-                    {dashboardNotifications.length} new
+                    {notifications?.length || 0}
                   </span>
                 </div>
                 <Tabs
                   value={updatesTab}
-                  onValueChange={(value) =>
-                    setUpdatesTab(value as 'notifications' | 'activity')
-                  }
+                  onValueChange={handleTabChange}
                   className="w-full"
                 >
                   <TabsList className="grid w-full grid-cols-2">
@@ -368,7 +377,19 @@ export default function CHORUSDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {(updatesTab === 'notifications'
-                    ? dashboardNotifications
+                    ? (notifications || []).slice(0, 5).map((n) => ({
+                        id: n.id || Math.random().toString(),
+                        title: n.message || 'New Notification',
+                        description: n.content?.approvalRequestNotification
+                          ? 'New approval request requires your attention'
+                          : 'System notification',
+                        time: n.createdAt
+                          ? formatDistanceToNow(n.createdAt) + ' ago'
+                          : '',
+                        icon: n.content?.approvalRequestNotification
+                          ? ('security' as DashboardFeedIcon)
+                          : ('system' as DashboardFeedIcon)
+                      }))
                     : dashboardActivities
                   ).map((item) => {
                     const Icon =

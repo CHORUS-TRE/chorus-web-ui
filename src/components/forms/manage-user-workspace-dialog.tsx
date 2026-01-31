@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useAppState } from '@/stores/app-state-store'
+import { deleteUserRole, listUsers } from '@/view-model/user-view-model'
 import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import {
@@ -36,7 +36,7 @@ import {
 import { getWorkspaceRoles } from '~/config/permissions'
 import { Result } from '~/domain/model'
 import { User } from '~/domain/model/user'
-import { listUsers } from '~/view-model/user-view-model'
+import { useAppState } from '~/stores/app-state-store'
 
 import { toast } from '../hooks/use-toast'
 
@@ -49,17 +49,18 @@ type AddUserFormData = z.infer<typeof AddUserToWorkspaceSchema>
 type ActionMode = 'add' | 'update' | 'remove'
 
 export function ManageUserWorkspaceDialog({
-  userId,
+  user,
   workspaceId,
   onUserAdded,
   children
 }: {
-  userId?: string
+  user?: User
   workspaceId: string
   onUserAdded: () => void
   children?: React.ReactNode
 }) {
   const { workspaces } = useAppState()
+  const [users, setUsers] = useState<User[]>([])
   const workspace = workspaces?.find(
     (workspace) => workspace.id === workspaceId
   )
@@ -67,37 +68,9 @@ export function ManageUserWorkspaceDialog({
 
   const [open, setOpen] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  const loadUsers = useCallback(async () => {
-    setLoading(true)
-    const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
-    if (result.data) {
-      setUsers(result.data)
-      setError(null)
-    } else {
-      setError(result.error || 'Failed to load workspace members')
-      toast({
-        title: 'Error',
-        description: result.error || 'Failed to load workspace members',
-        variant: 'destructive'
-      })
-    }
-    setLoading(false)
-  }, [workspaceId])
-
-  useEffect(() => {
-    if (workspaceId) {
-      loadUsers()
-    }
-  }, [workspaceId, loadUsers])
-
-  // Get the current user and their workspace roles
-  const currentUser = useMemo(() => {
-    return users?.find((user) => user.id === userId)
-  }, [users, userId])
+  const currentUser = user
+  const userId = user?.id
 
   const currentWorkspaceRoles = useMemo(() => {
     return (
@@ -134,12 +107,12 @@ export function ManageUserWorkspaceDialog({
   }, [open, userId, currentRoleName, form])
 
   // Determine action mode based on current role and selected role
+  const selectedRoleName = form.watch('roleName')
   const actionMode: ActionMode = useMemo(() => {
-    const selectedRole = form.watch('roleName')
     if (!currentRoleName) return 'add'
-    if (selectedRole === currentRoleName) return 'remove'
+    if (selectedRoleName === currentRoleName) return 'remove'
     return 'update'
-  }, [currentRoleName, form])
+  }, [currentRoleName, selectedRoleName])
 
   const [state, formAction] = useActionState(
     workspaceAddUserRole,
@@ -150,19 +123,43 @@ export function ManageUserWorkspaceDialog({
   const handleRemoveRole = useCallback(
     async (e: React.MouseEvent) => {
       e.preventDefault()
+      if (!userId || !currentWorkspaceRoles[0]?.id) return
+
       setIsRemoving(true)
-      // TODO: Implement remove role API call
-      toast({
-        title: 'Role Removed',
-        description: 'User role removed from workspace successfully.'
-      })
+      const result = await deleteUserRole(userId, currentWorkspaceRoles[0].id)
+
+      if (result.error) {
+        toast({
+          title: 'Error removing role',
+          description: result.error,
+          variant: 'destructive'
+        })
+      } else {
+        toast({
+          title: 'Role Removed',
+          description: 'User role removed from workspace successfully.'
+        })
+        setOpen(false)
+        form.reset()
+        onUserAdded()
+      }
       setIsRemoving(false)
-      setOpen(false)
-      form.reset()
-      onUserAdded()
     },
-    [form, onUserAdded]
+    [userId, currentWorkspaceRoles, onUserAdded, form]
   )
+
+  useEffect(() => {
+    if (open && !userId) {
+      // If we are in "Add" mode and no user is provided, we might still need the list
+      // But standard practice now is to use AddUserToWorkspaceDialog for that.
+      // However, to keep this component working in case it's used for adding:
+      const loadAllUsers = async () => {
+        const usersResult = await listUsers({ filterSearch: '' })
+        if (usersResult.data) setUsers(usersResult.data)
+      }
+      loadAllUsers()
+    }
+  }, [open, userId])
 
   useEffect(() => {
     if (state.error) {
@@ -324,7 +321,7 @@ export function ManageUserWorkspaceDialog({
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-accent text-accent-foreground hover:bg-accent/80"
+                    className="bg-accent text-black hover:bg-accent/80"
                   >
                     {actionMode === 'update' ? 'Update Role' : 'Add Role'}
                   </Button>
