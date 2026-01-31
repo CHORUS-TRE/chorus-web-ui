@@ -1,3 +1,13 @@
+## [1.31.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.31.1...v1.31.2) (2026-01-31)
+
+
+### Bug Fixes
+
+* adjust breadcrumb size ([423c9bd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/423c9bda72bb1093adc6aac1ccfb03951e9610ee))
+* adjust breadcrumb text size ([7be4127](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7be4127daca414f5edaa83de316ba0f909643383))
+* comment out user search bar in header ([c2eefee](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c2eefee6013c18aa1ed37ad206a0ccf2db2c4fc6))
+* remove icon from breadcrumb and adjust gap ([527fc54](https://github.com/CHORUS-TRE/chorus-web-ui/commit/527fc5487253defd6b2447ef1f724fcb58747775))
+
 ## [1.31.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.31.0...v1.31.1) (2026-01-31)
 
 
