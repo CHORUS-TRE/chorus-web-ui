@@ -1,3 +1,33 @@
+# [1.32.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.31.2...v1.32.0) (2026-01-31)
+
+
+### Bug Fixes
+
+* adjust breadcrumb size ([ac2c214](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ac2c214c40958ae9443ef98b879b9ee1b06f0d79))
+* adjust breadcrumb size ([f6b230b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f6b230bbcda721b11dac2c73deb69b4150bd0ea3))
+* adjust breadcrumb text size ([dc4f3b9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dc4f3b9b7866b623c5bc038fb1bfa0ac96aa8157))
+* admin tabs with edit/delete ([bfc9706](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bfc9706d4c1ad3556aa80fafa1fbc12d6e228e0e))
+* admin tabs with edit/delete ([1a6deb9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1a6deb97cc99787d3261941f3208c5062c6f8e5c))
+* comment out user search bar in header ([47e23d3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/47e23d3d9f5209e94ac371bf5fa5c71afd476e04))
+* comment out user search bar in header ([e0acde1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e0acde1ea598c08dff8504c4e32c476ed77117e8))
+* create/update app ([a67527a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a67527a2209cbef5705da07a963ee26e8b10883c))
+* layout ([b5a305e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b5a305ee8bcfccd29d5c5e8562a91dd4627ec342))
+* lost edit & delete buttons ([77b7bac](https://github.com/CHORUS-TRE/chorus-web-ui/commit/77b7bacfe7f8c4e4ef401dd8558badf469f0accd))
+* remove icon from breadcrumb and adjust gap ([a8ef702](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a8ef702ffee3c25d4f6318053e74b1c491648950))
+* revert data ([2ef5510](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2ef55107db9a83546e871cb21ed0f08dfa09e89d))
+* small UI fixes ([2d51773](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2d51773bab6f4b7313f0520529599dd70c5ecdce))
+* style ([0cb1dac](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0cb1dac630d3f2f68bb02919dbbe60bdc1da5433))
+* style ([5df6c20](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5df6c200048f1ab90d4a1ac347ece07d3b87b4c3))
+* update service page layout ([c2e96b6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c2e96b6d016ff52de3ca880f35e06f7b157e44ca))
+* variant error ([e28b08d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e28b08d5f5d880539909502a90c677c2a6a213ee))
+* variant error ([2fea601](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2fea601ae670a2c50c376dae1c59b143ca46c7a8))
+* workspace authz ([e66b0b8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e66b0b8f356093fad4b61c1bef808e8bced72a40))
+
+
+### Features
+
+* improve layout with full page sessions ([#171](https://github.com/CHORUS-TRE/chorus-web-ui/issues/171)) ([e2b45d4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e2b45d4ada54ed4ec9241fa9af80084466d7dc63))
+
 ## [1.31.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.31.1...v1.31.2) (2026-01-31)
 
 
