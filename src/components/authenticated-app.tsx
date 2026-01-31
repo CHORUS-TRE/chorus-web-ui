@@ -25,7 +25,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
   const { isFullscreen } = useFullscreenContext()
 
   const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
+    const sessionPageRegex = /^(\/workspaces\/[^/]+)?\/sessions\/[^/]+$/
     return sessionPageRegex.test(pathname)
   }, [pathname])
 
