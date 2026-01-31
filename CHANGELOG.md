@@ -1,3 +1,10 @@
+## [1.31.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.31.0...v1.31.1) (2026-01-31)
+
+
+### Bug Fixes
+
+* update service page layout ([5e3f1a4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5e3f1a45c49f95710ecc1716b8ec48a664742dba))
+
 # [1.31.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.30.1...v1.31.0) (2026-01-30)
 
 
