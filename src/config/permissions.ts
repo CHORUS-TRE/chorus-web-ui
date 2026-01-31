@@ -72,6 +72,17 @@ export const PERMISSIONS = {
   setPlatformSettings: 'setPlatformSettings'
 } as const
 
+export const WORKSPACE_PERMISSIONS_DISPLAY = [
+  { label: 'List Files', key: PERMISSIONS.listFilesInWorkspace },
+  { label: 'Upload Files', key: PERMISSIONS.uploadFilesToWorkspace },
+  { label: 'Download Files', key: PERMISSIONS.downloadFilesFromWorkspace },
+  { label: 'Modify Files', key: PERMISSIONS.modifyFilesInWorkspace },
+  { label: 'Manage Members', key: PERMISSIONS.manageUsersInWorkspace },
+  { label: 'Configure', key: PERMISSIONS.updateWorkspace },
+  { label: 'Create Workbench', key: PERMISSIONS.createWorkbench },
+  { label: 'Delete Workspace', key: PERMISSIONS.deleteWorkspace }
+]
+
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
 export interface RoleDefinition {

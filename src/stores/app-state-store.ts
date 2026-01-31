@@ -55,7 +55,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   appInstances: undefined,
   notifications: undefined,
   unreadNotificationsCount: undefined,
-  users: undefined,
   notificationsPollingInterval: null,
 
   refreshWorkspaces: async () => {
