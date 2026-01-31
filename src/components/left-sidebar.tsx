@@ -119,11 +119,10 @@ function SidebarContent({
   return (
     <>
       {/* Header with title */}
-      <div className="sticky top-0 z-[100] flex h-11 items-center border-b border-muted/50 bg-contrast-background px-2">
-        <h1 className="ml-2 flex items-center gap-2 text-lg font-semibold">
-          <Menu className="h-4 w-4" />
+      <div className="sticky top-0 z-[100] flex h-11 items-center border-b border-muted/50 px-2">
+        <span className="px-4 text-xs font-semibold uppercase text-muted-foreground/70">
           Navigation
-        </h1>
+        </span>
       </div>
 
       {/* Main navigation */}

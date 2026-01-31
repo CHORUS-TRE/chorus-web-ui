@@ -369,11 +369,7 @@ export function Header() {
             )}
           </Link>
 
-          {user && (
-            <div className="ml-4">
-              <AppBreadcrumb />
-            </div>
-          )}
+          {user && <AppBreadcrumb />}
         </div>
 
         {/* Center: Recent sessions and web apps as Tabs */}
