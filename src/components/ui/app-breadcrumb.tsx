@@ -35,7 +35,6 @@ export function AppBreadcrumb() {
     [pathname]
   )
 
-
   const breadcrumbItems = useMemo(() => {
     const items: {
       label: string

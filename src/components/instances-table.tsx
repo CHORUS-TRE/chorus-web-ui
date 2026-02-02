@@ -126,16 +126,20 @@ export default function InstancesTable({
                 <TableCell className="text-xs text-muted-foreground">
                   {instance.createdAt
                     ? formatDistanceToNow(new Date(instance.createdAt), {
-                      addSuffix: true
-                    })
+                        addSuffix: true
+                      })
                     : '-'}
                 </TableCell>
-                <TableCell className="text-xs text-muted-foreground" onClick={(e) => e.stopPropagation()}>
-                  {instance.workspaceId && workspaces &&
+                <TableCell
+                  className="text-xs text-muted-foreground"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {instance.workspaceId &&
+                    workspaces &&
                     can(PERMISSIONS.deleteAppInstance, {
-                      workspace: workspaces?.find(
-                        (w) => w.id === instance.workspaceId
-                      )?.id || '*'
+                      workspace:
+                        workspaces?.find((w) => w.id === instance.workspaceId)
+                          ?.id || '*'
                     }) && (
                       <div className="flex gap-2">
                         <Button
