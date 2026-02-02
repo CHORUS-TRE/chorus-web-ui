@@ -1,3 +1,10 @@
+## [1.32.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.1...v1.32.2) (2026-02-02)
+
+
+### Bug Fixes
+
+* hide App Store hero section ([ba559d6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ba559d6a5d64bc546dedca82d6b161423a4b5c9a))
+
 ## [1.32.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.0...v1.32.1) (2026-02-02)
 
 
