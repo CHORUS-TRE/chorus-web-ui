@@ -1,3 +1,11 @@
+## [1.32.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.2...v1.32.3) (2026-02-02)
+
+
+### Bug Fixes
+
+* delete app instance ([3e2f0c9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3e2f0c9593fbaf8a4453f0472cf3d3ed6d5c7cd5))
+* warnings ([b34e5bb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b34e5bb8448fe3db115651150503af0c3b2cddcd))
+
 ## [1.32.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.1...v1.32.2) (2026-02-02)
 
 
