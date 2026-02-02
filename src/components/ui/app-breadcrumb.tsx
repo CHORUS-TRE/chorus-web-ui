@@ -1,14 +1,11 @@
 'use client'
 
-import { Home, Maximize, Minimize } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import React, { useMemo } from 'react'
 
 import { Link } from '@/components/link'
 import { useInstanceConfig } from '@/hooks/use-instance-config'
-import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 import {
@@ -25,7 +22,6 @@ export function AppBreadcrumb() {
   const instanceConfig = useInstanceConfig()
   const { workspaces, appInstances, apps, workbenches } = useAppState()
   const { user } = useAuthentication()
-  const { isFullscreen, toggleFullscreen } = useFullscreenContext()
 
   const projectLabel = useMemo(
     () =>
@@ -39,11 +35,6 @@ export function AppBreadcrumb() {
     [pathname]
   )
 
-  // Check if we're on a session page
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
 
   const breadcrumbItems = useMemo(() => {
     const items: {
@@ -64,7 +55,7 @@ export function AppBreadcrumb() {
     })
 
     let currentHref = ''
-    const processedSegments = segments.map((s, i) => ({
+    const processedSegments = segments.map((s) => ({
       text: s,
       path: (currentHref += `/${s}`)
     }))
@@ -117,7 +108,6 @@ export function AppBreadcrumb() {
         isPage: isLast
       })
     })
-
     return items
   }, [
     segments,
@@ -125,8 +115,12 @@ export function AppBreadcrumb() {
     workspaces,
     appInstances,
     apps,
+    workbenches,
     projectLabel,
-    instanceConfig.name
+    user?.username,
+    user?.firstName,
+    user?.lastName,
+    user?.id
   ])
 
   return (

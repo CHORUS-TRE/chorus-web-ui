@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { Cpu } from 'lucide-react'
+import { Cpu, TrashIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import { AppInstance } from '@/domain/model'
@@ -15,6 +15,7 @@ import {
   CardTitle
 } from '~/components/card'
 import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
 import {
   Table,
   TableBody,
@@ -23,6 +24,8 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
+import { useAuthorization } from '~/providers/authorization-provider'
+import { deleteAppInstance } from '~/view-model/app-instance-view-model'
 
 export default function InstancesTable({
   instances,
@@ -34,7 +37,8 @@ export default function InstancesTable({
   description?: string
 }) {
   const router = useRouter()
-  const { apps, workspaces, workbenches } = useAppState()
+  const { apps, workspaces, workbenches, refreshAppInstances } = useAppState()
+  const { can, PERMISSIONS } = useAuthorization()
 
   const getAppName = (appId: string) => {
     return apps?.find((app) => app.id === appId)?.name || appId
@@ -79,6 +83,9 @@ export default function InstancesTable({
               <TableHead className="font-semibold text-foreground">
                 Created
               </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -119,9 +126,31 @@ export default function InstancesTable({
                 <TableCell className="text-xs text-muted-foreground">
                   {instance.createdAt
                     ? formatDistanceToNow(new Date(instance.createdAt), {
-                        addSuffix: true
-                      })
+                      addSuffix: true
+                    })
                     : '-'}
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground" onClick={(e) => e.stopPropagation()}>
+                  {instance.workspaceId && workspaces &&
+                    can(PERMISSIONS.deleteAppInstance, {
+                      workspace: workspaces?.find(
+                        (w) => w.id === instance.workspaceId
+                      )?.id || '*'
+                    }) && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            deleteAppInstance(instance.id)
+                            refreshAppInstances()
+                          }}
+                          className="text-destructive/60 hover:bg-destructive/20 hover:text-destructive"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                 </TableCell>
               </TableRow>
             ))}
