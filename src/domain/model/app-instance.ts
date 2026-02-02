@@ -27,6 +27,7 @@ export const AppInstanceSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
   appId: z.string(),
+  name: z.string().optional(),
   workspaceId: z.string(),
   workbenchId: z.string(),
   status: z.nativeEnum(AppInstanceStatus),

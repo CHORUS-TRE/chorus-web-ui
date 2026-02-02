@@ -344,7 +344,7 @@ export default function CHORUSDashboard() {
 
           <div className="lg:col-span-1">
             <h3 className="mb-3 font-semibold">Notifications</h3>
-            <Card className="demo-effect mb-6">
+            <Card className="mb-6">
               <CardHeader className="space-y-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg">

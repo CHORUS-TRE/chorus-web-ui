@@ -23,7 +23,7 @@ import {
 export function AppBreadcrumb() {
   const pathname = usePathname()
   const instanceConfig = useInstanceConfig()
-  const { workspaces, appInstances, apps } = useAppState()
+  const { workspaces, appInstances, apps, workbenches } = useAppState()
   const { user } = useAuthentication()
   const { isFullscreen, toggleFullscreen } = useFullscreenContext()
 
@@ -88,10 +88,17 @@ export function AppBreadcrumb() {
         const workspace = workspaces?.find((w) => w.id === seg.text)
         if (workspace) label = workspace.name
       } else if (prevSegment === 'sessions' || prevSegment === 'services') {
-        const instance = appInstances?.find((i) => i.id === seg.text)
-        if (instance) {
-          const app = apps?.find((a) => a.id === instance.appId)
-          if (app) label = app.name
+        const workbench = workbenches?.find((w) => w.id === seg.text)
+        if (workbench) {
+          label = workbench.name || label
+        } else {
+          const instance = appInstances?.find((i) => i.id === seg.text)
+          if (instance) {
+            label =
+              instance.name ||
+              apps?.find((a) => a.id === instance.appId)?.name ||
+              label
+          }
         }
       } else if (prevSegment === 'users') {
         // Resolve user ID to username or full name
@@ -160,23 +167,6 @@ export function AppBreadcrumb() {
             </BreadcrumbList>
           </Breadcrumb>
         </>
-      )}
-
-      {/* Fullscreen button - only on session pages */}
-      {isSessionPage && (
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled
-          className="ml-2 h-8 px-2 text-muted-foreground hover:text-foreground"
-          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-        >
-          {isFullscreen ? (
-            <Minimize className="h-4 w-4" />
-          ) : (
-            <Maximize className="h-4 w-4" />
-          )}
-        </Button>
       )}
     </div>
   )

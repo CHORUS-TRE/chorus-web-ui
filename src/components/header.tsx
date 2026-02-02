@@ -197,7 +197,7 @@ export function Header() {
                 <Link
                   href={`/users/${user.id}`}
                   variant="underline"
-                  className="mt-1 block text-xs font-medium text-primary hover:text-primary/80"
+                  className="mt-1 block text-xs font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
                   View your profile

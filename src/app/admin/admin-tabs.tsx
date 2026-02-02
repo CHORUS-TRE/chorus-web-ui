@@ -38,6 +38,21 @@ export function AdminTabs() {
       authorized: can(PERMISSIONS.createApp, {})
     },
     {
+      href: '/admin/instances',
+      label: 'Instances',
+      authorized: can(PERMISSIONS.listAppInstances, {})
+    },
+    {
+      href: '/admin/notifications',
+      label: 'Notifications',
+      authorized: can(PERMISSIONS.listNotifications, {})
+    },
+    {
+      href: '/admin/data-requests',
+      label: 'Data Requests',
+      authorized: can(PERMISSIONS.listWorkspaces, { workspace: '*' })
+    },
+    {
       href: '/admin/configuration',
       label: 'Configuration',
       authorized: can(PERMISSIONS.setPlatformSettings, {})

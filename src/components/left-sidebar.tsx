@@ -1,6 +1,5 @@
 'use client'
 
-import { Separator } from '@radix-ui/react-menubar'
 import {
   Building2,
   CircleHelp,
@@ -16,6 +15,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { Link } from '@/components/link'
+import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
@@ -127,6 +127,26 @@ function SidebarContent({
 
       {/* Main navigation */}
       <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
+        {/* Admin */}
+        {isAdmin && (
+          <>
+            <Link
+              href="/admin"
+              variant="underline"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                pathname.includes('/admin') || isActive('/admin')
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Globe className="h-4 w-4" />
+              Admin
+            </Link>
+            <Separator />
+          </>
+        )}
+
         {/* Dashboard */}
         <Link
           href="/"
@@ -249,8 +269,6 @@ function SidebarContent({
           Services
         </Link> */}
 
-        <Separator />
-
         <Link
           href="/sessions/chorus-documentation"
           variant="underline"
@@ -264,26 +282,6 @@ function SidebarContent({
           <CircleHelp className="h-4 w-4" />
           Documentation
         </Link>
-
-        {/* Admin */}
-        {isAdmin && (
-          <>
-            <Separator />
-            <Link
-              href="/admin"
-              variant="underline"
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                pathname.includes('/admin') || isActive('/admin')
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-muted-foreground'
-              )}
-            >
-              <Globe className="h-4 w-4" />
-              Admin
-            </Link>
-          </>
-        )}
       </nav>
     </>
   )

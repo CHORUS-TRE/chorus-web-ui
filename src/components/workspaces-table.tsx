@@ -1,6 +1,7 @@
 'use client'
 
 import { EllipsisVerticalIcon, HomeIcon } from 'lucide-react'
+import { PencilIcon, TrashIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -8,6 +9,7 @@ import { useEffect, useState } from 'react'
 
 import { User, WorkspaceWithDev } from '@/domain/model'
 import { useInstanceTheme } from '@/hooks/use-instance-theme'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 import {
@@ -34,8 +36,6 @@ import {
   WorkspaceUpdateForm
 } from './forms/workspace-forms'
 import { toast } from './hooks/use-toast'
-import { useAuthorization } from '@/providers/authorization-provider'
-import { PencilIcon, TrashIcon } from 'lucide-react'
 export default function WorkspaceTable({
   workspaces,
   title,
@@ -205,35 +205,41 @@ export default function WorkspaceTable({
           <TableCell className="p-1">
             {workspace?.createdAt
               ? new Date(workspace.createdAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-              })
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })
               : '-'}
           </TableCell>
           <TableCell className="p-1" onClick={(e) => e.stopPropagation()}>
-            {workspace?.id && can(PERMISSIONS.updateWorkspace, { workspace: workspace?.id }) && (
-              <>
-                <Button
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setOpen(true)
-                  }}
-                >
-                  <PencilIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setDeleteOpen(true)
-                  }}
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              </>
-            )}
+            {workspace?.id &&
+              can(PERMISSIONS.updateWorkspace, {
+                workspace: workspace?.id
+              }) && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setOpen(true)
+                    }}
+                    className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive/60 hover:bg-destructive/20 hover:text-destructive"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setDeleteOpen(true)
+                    }}
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
           </TableCell>
         </TableRowComponent>
       </>

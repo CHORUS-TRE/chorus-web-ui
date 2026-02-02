@@ -6,6 +6,7 @@ import { toast } from '@/components/hooks/use-toast'
 import {
   App,
   AppInstance,
+  ApprovalRequest,
   Notification,
   User,
   Workbench,
@@ -14,6 +15,7 @@ import {
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
+import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 import {
   countUnreadNotifications,
   listNotifications
@@ -27,6 +29,7 @@ export type AppStateStore = {
   apps: App[] | undefined
   appInstances: AppInstance[] | undefined
   notifications: Notification[] | undefined
+  approvalRequests: ApprovalRequest[] | undefined
   unreadNotificationsCount: number | undefined
 
   refreshWorkspaces: () => Promise<void>
@@ -34,6 +37,7 @@ export type AppStateStore = {
   refreshApps: () => Promise<void>
   refreshAppInstances: () => Promise<void>
   refreshNotifications: () => Promise<void>
+  refreshApprovalRequests: () => Promise<void>
   refreshUnreadNotificationsCount: () => Promise<void>
   startNotificationsPolling: (intervalMs?: number) => void
   stopNotificationsPolling: () => void
@@ -54,6 +58,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   apps: undefined,
   appInstances: undefined,
   notifications: undefined,
+  approvalRequests: undefined,
   unreadNotificationsCount: undefined,
   notificationsPollingInterval: null,
 
@@ -130,6 +135,17 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
+  refreshApprovalRequests: async () => {
+    const result = await listApprovalRequests()
+    if (result.error) {
+      console.error('Failed to refresh approval requests:', result.error)
+      return
+    }
+    if (result.data) {
+      set({ approvalRequests: result.data })
+    }
+  },
+
   refreshUnreadNotificationsCount: async () => {
     const result = await countUnreadNotifications()
     if (result.error) {
@@ -177,6 +193,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       apps: undefined,
       appInstances: undefined,
       notifications: undefined,
+      approvalRequests: undefined,
       unreadNotificationsCount: undefined
     })
     const { clearUserData } = useDevStoreCache.getState()
@@ -193,7 +210,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       get().refreshWorkspaces(),
       get().refreshWorkbenches(),
       get().refreshApps(),
-      get().refreshAppInstances()
+      get().refreshAppInstances(),
+      get().refreshApprovalRequests()
     ])
 
     get().startNotificationsPolling()

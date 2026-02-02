@@ -1,6 +1,9 @@
 'use client'
 
 import {
+  Bell,
+  Cpu,
+  FileCheck,
   LayoutGrid,
   Package,
   Palette,
@@ -33,22 +36,38 @@ const AdminPage = () => {
       }
     }
     loadUsers()
-  }, [can, PERMISSIONS.listUsers])
+  }, [can])
 
   const {
     workspaces,
     workbenches,
     apps,
+    appInstances,
+    notifications,
+    approvalRequests,
     refreshWorkspaces,
     refreshWorkbenches,
-    refreshApps
+    refreshApps,
+    refreshAppInstances,
+    refreshNotifications,
+    refreshApprovalRequests
   } = useAppState()
 
   useEffect(() => {
     refreshWorkspaces()
     refreshWorkbenches()
     refreshApps()
-  }, [])
+    refreshAppInstances()
+    refreshNotifications()
+    refreshApprovalRequests()
+  }, [
+    refreshWorkspaces,
+    refreshWorkbenches,
+    refreshApps,
+    refreshAppInstances,
+    refreshNotifications,
+    refreshApprovalRequests
+  ])
 
   const roleCount = Object.keys(ROLE_DEFINITIONS).length
 
@@ -127,6 +146,69 @@ const AdminPage = () => {
                 <div className="text-2xl font-bold">{apps?.length || 0}</div>
                 <p className="text-xs text-muted-foreground">
                   Applications Available
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        )}
+
+        {can(PERMISSIONS.listAppInstances) && (
+          <Link href="/admin/instances">
+            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  App Instances
+                </CardTitle>
+                <Cpu className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {appInstances?.length || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Running Instances
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        )}
+
+        {can(PERMISSIONS.listNotifications) && (
+          <Link href="/admin/notifications">
+            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Notifications
+                </CardTitle>
+                <Bell className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {notifications?.length || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  System Notifications
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        )}
+
+        {can(PERMISSIONS.listWorkspaces) && (
+          <Link href="/admin/data-requests">
+            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Data Requests
+                </CardTitle>
+                <FileCheck className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {approvalRequests?.length || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Pending Approvals
                 </p>
               </CardContent>
             </Card>

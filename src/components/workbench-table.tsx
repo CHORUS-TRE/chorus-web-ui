@@ -87,13 +87,14 @@ const ActionCell = ({
             setOpen(true)
             // router.push(`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`)
           }}
+          className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
         >
-          <Pencil className="h-4 w-4 text-muted-foreground" />
+          <Pencil className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="text-destructive hover:text-destructive"
+          className="text-destructive/60 hover:bg-destructive/20 hover:text-destructive"
           onClick={() => setDeleteOpen(true)}
         >
           <Trash2 className="h-4 w-4" />
