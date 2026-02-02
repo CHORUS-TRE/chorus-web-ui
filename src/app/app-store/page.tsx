@@ -20,7 +20,7 @@ export default function Page() {
           <Store className="h-9 w-9" />
           App Store
         </h2>
-        <Button
+        {/* <Button
           onClick={toggleAppStoreHero}
           className={`mt-5 overflow-hidden text-muted hover:bg-inherit hover:text-accent`}
           aria-label={
@@ -32,9 +32,9 @@ export default function Page() {
           ) : (
             <ChevronDown className="h-4 w-4" />
           )}
-        </Button>
+        </Button> */}
       </div>
-      {showAppStoreHero && <AppStoreHero />}
+      {/* {showAppStoreHero && <AppStoreHero />} */}
       <AppStoreView />
     </>
   )
