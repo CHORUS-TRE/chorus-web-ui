@@ -1,3 +1,10 @@
+## [1.32.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.3...v1.32.4) (2026-02-02)
+
+
+### Bug Fixes
+
+* matomo ([52609b8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/52609b8ec3c61e6f5b1b06a9fce4bebffac251e2))
+
 ## [1.32.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.2...v1.32.3) (2026-02-02)
 
 
