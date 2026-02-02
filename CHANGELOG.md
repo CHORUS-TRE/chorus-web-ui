@@ -1,3 +1,10 @@
+## [1.32.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.0...v1.32.1) (2026-02-02)
+
+
+### Bug Fixes
+
+* ui ([53ee44c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/53ee44cc4b921bdbeb740010b67a3d523f97630d))
+
 # [1.32.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.31.2...v1.32.0) (2026-01-31)
 
 
