@@ -84,7 +84,7 @@ const WorkspaceFormSchema = z.object({
   descriptionMarkdown: z.string().optional(),
 
   // Security
-  network: z.enum(['closed', 'whitelist', 'open']).optional(),
+  network: z.enum(['closed', 'allowlist', 'open']).optional(),
   allowCopyPaste: z.boolean().optional(),
 
   // Resources
@@ -754,15 +754,15 @@ function SecurityTabContent({
                       </div>
                       <div className="flex items-center space-x-3 rounded-lg border p-3">
                         <RadioGroupItem
-                          value="whitelist"
-                          id="network-whitelist"
+                          value="allowlist"
+                          id="network-allowlist"
                         />
                         <div className="flex-1">
                           <Label
-                            htmlFor="network-whitelist"
+                            htmlFor="network-allowlist"
                             className="font-medium"
                           >
-                            Whitelist
+                            Allowlist
                           </Label>
                           <p className="text-sm text-muted-foreground">
                             Only approved destinations

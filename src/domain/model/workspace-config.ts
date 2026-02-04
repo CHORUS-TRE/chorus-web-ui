@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Network policy options
-export const NetworkPolicyEnum = z.enum(['closed', 'whitelist', 'open'])
+export const NetworkPolicyEnum = z.enum(['closed', 'allowlist', 'open'])
 export type NetworkPolicy = z.infer<typeof NetworkPolicyEnum>
 
 // Resource preset options (matching app presets)
