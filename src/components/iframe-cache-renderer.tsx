@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useUrlProbing } from '@/components/hooks/use-url-probing'
 import { CachedIframe } from '@/domain/model'
+import { isSessionPath } from '@/lib/route-utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -99,6 +100,7 @@ function CachedIframeRenderer({
   // 3. Either showing about:blank OR still probing (for sessions) OR has a URL to load
   const isShowingAboutBlank = iframeSrc === 'about:blank' || !iframeSrc
   const hasUrlToLoad = iframe.url && iframe.url !== 'about:blank'
+
   const showLoadingOverlay =
     isActive &&
     !isIframeLoaded &&
@@ -175,7 +177,13 @@ function CachedIframeRenderer({
  * Fullscreen mode: Shows active iframe in fullscreen when fullscreen is enabled
  */
 export default function IframeCacheRenderer() {
-  const { cachedIframes, activeIframeId } = useIframeCache()
+  const {
+    cachedIframes,
+    activeIframeId,
+    openSession,
+    openWebApp,
+    setActiveIframe
+  } = useIframeCache()
   const { workbenches } = useAppState()
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
@@ -184,77 +192,54 @@ export default function IframeCacheRenderer() {
   )
 
   // Check if we're on a session or webapp page (full active mode)
-  const isIframePage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    const webappPageRegex = /^\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname) || webappPageRegex.test(pathname)
-  }, [pathname])
+  const isIframePage = useMemo(() => isSessionPath(pathname), [pathname])
 
-  // Extract workspace ID from current path
-  const currentWorkspaceId = useMemo(() => {
-    const match = pathname.match(/^\/workspaces\/([^/]+)/)
+  // Extract sessionId from pathname if applicable
+  const currentSessionId = useMemo(() => {
+    // Matches /sessions/[id] or /workspaces/[id]/sessions/[id]
+    const match = pathname.match(/(?:\/sessions\/)([^/]+)/)
     return match ? match[1] : null
   }, [pathname])
-
-  // Check if we're on app-store page
-  const isAppStorePage = pathname === '/app-store'
-
-  // Determine which iframe should be shown in background
-  const backgroundIframeId = useMemo(() => {
-    // If we're on an iframe page, no background needed (it's active)
-    if (isIframePage) return null
-
-    // If we're in a workspace or on app-store
-    if (currentWorkspaceId || isAppStorePage) {
-      // Find a loaded session from the current workspace (or any if on app-store)
-      for (const [id, iframe] of cachedIframes.entries()) {
-        if (iframe.type === 'session') {
-          const workbench = workbenches?.find((wb) => wb.id === id)
-          if (workbench) {
-            // If on app-store, show any active session
-            if (isAppStorePage && activeIframeId === id) {
-              return id
-            }
-            // If in workspace, show session from this workspace
-            if (
-              currentWorkspaceId &&
-              workbench.workspaceId === currentWorkspaceId
-            ) {
-              return id
-            }
-          }
-        }
-      }
-    }
-
-    return null
-  }, [
-    isIframePage,
-    currentWorkspaceId,
-    isAppStorePage,
-    cachedIframes,
-    workbenches,
-    activeIframeId
-  ])
 
   // Update iframe entries when cache changes
   useEffect(() => {
     setIframeEntries(Array.from(cachedIframes.entries()))
   }, [cachedIframes])
 
+  // Ensure the session or webapp is opened and active if we are on its subpage
+  useEffect(() => {
+    if (
+      isIframePage &&
+      currentSessionId &&
+      activeIframeId !== currentSessionId
+    ) {
+      // Find workspaceId from pathname if it exists
+      const wsMatch = pathname.match(/\/workspaces\/([^/]+)/)
+      const workspaceId = wsMatch ? wsMatch[1] : ''
+
+      // Open session/webapp if not already in cache.
+      // The open methods handle checking if already cached.
+      if (workspaceId) {
+        openSession(currentSessionId, workspaceId)
+      } else {
+        openWebApp(currentSessionId)
+      }
+      setActiveIframe(currentSessionId)
+    }
+  }, [
+    isIframePage,
+    currentSessionId,
+    activeIframeId,
+    pathname,
+    openSession,
+    openWebApp,
+    setActiveIframe
+  ])
+
   // Don't render anything if there are no cached iframes
   if (iframeEntries.length === 0) {
     return null
   }
-
-  // Always render fixed-position iframes (Immersive Mode is now default for sessions)
-  // 1. In fullscreen mode
-  // 2. In background mode (workspace/app-store)
-  // 3. On webapp pages
-  // 4. On session pages (NOW ADDED)
-
-  // We effectively always want the cache renderer to handle the iframes now for consistency
-  // and to support the immersive "under-UI" layout.
 
   return (
     <>
@@ -262,7 +247,9 @@ export default function IframeCacheRenderer() {
         <CachedIframeRenderer
           key={id}
           iframe={iframe}
-          isActive={isIframePage && activeIframeId === id}
+          isActive={
+            isIframePage && (activeIframeId === id || currentSessionId === id)
+          }
           isBackground={false}
         />
       ))}

@@ -249,7 +249,6 @@ export function IframeDebugPanel() {
                   'iframe[id^="iframe-"]'
                 )
                 console.group('🔍 Iframe DOM Check')
-                console.log(`Found ${iframes.length} iframes in DOM`)
                 iframes.forEach((f) => {
                   const iframe = f as HTMLIFrameElement
                   console.log({

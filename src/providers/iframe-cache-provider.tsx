@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import {
   createContext,
   ReactElement,
@@ -165,6 +166,7 @@ export const IframeCacheProvider = ({
 }): ReactElement => {
   const { user } = useAuthentication()
   const workbenches = useAppStateStore((state) => state.workbenches)
+  const router = useRouter()
 
   // Use a ref to store the Map to avoid re-renders on every update
   const cacheRef = useRef<Map<string, CachedIframe>>(new Map())
@@ -624,6 +626,8 @@ export const IframeCacheProvider = ({
         updateCache()
         // Update recent list
         addToRecentWebApps(webappId, existing.name)
+        // Navigate to the web app page
+        router.push(`/sessions/${webappId}`)
         return
       }
 
@@ -643,13 +647,17 @@ export const IframeCacheProvider = ({
 
       // Add to recent list
       addToRecentWebApps(webappId, webapp.name)
+
+      // Navigate to the web app page
+      router.push(`/sessions/${webappId}`)
     },
     [
       externalWebApps,
       externalWebAppsLoaded,
       updateCache,
       checkCacheSize,
-      addToRecentWebApps
+      addToRecentWebApps,
+      router
     ]
   )
 
@@ -668,16 +676,19 @@ export const IframeCacheProvider = ({
       const domainUrl = new URL(webapp.url).origin
       const targetUrl = `${domainUrl}${subpath.startsWith('/') ? '' : '/'}${subpath}`
 
-      if (existing.url === targetUrl) return
-
+      // Update cache with new URL
       cacheRef.current.set(webappId, {
         ...existing,
         url: targetUrl,
         lastAccessed: new Date()
       })
+      setActiveIframeIdState(webappId)
       updateCache()
+
+      // Navigate to the web app page
+      router.push(`/sessions/${webappId}`)
     },
-    [externalWebApps, openWebApp, updateCache]
+    [externalWebApps, openWebApp, updateCache, router]
   )
 
   // Close an iframe

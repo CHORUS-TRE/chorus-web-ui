@@ -2,14 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
-import { startTransition, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
 import {
   Dialog as DialogContainer,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
@@ -20,7 +21,6 @@ import {
 } from '@/domain/model'
 import { workbenchUpdate } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter } from '~/components/card'
 import {
   Form,
   FormControl,
@@ -75,12 +75,14 @@ export function WorkbenchUpdateForm({
   }, [open, workbench, form])
 
   async function onSubmit(data: WorkbenchUpdateType) {
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      if (value) formData.append(key, String(value))
-    })
+    try {
+      const formData = new FormData()
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value))
+        }
+      })
 
-    startTransition(async () => {
       const result = await workbenchUpdate({}, formData)
 
       if (result.issues) {
@@ -89,6 +91,11 @@ export function WorkbenchUpdateForm({
             type: 'server',
             message: issue.message
           })
+        })
+        toast({
+          title: 'Validation Error',
+          description: 'Please check the form for errors.',
+          variant: 'destructive'
         })
         return
       }
@@ -110,12 +117,28 @@ export function WorkbenchUpdateForm({
         if (onSuccess) onSuccess(result.data)
         setOpen(false)
       }
+    } catch (err) {
+      console.error('Submission error:', err)
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred during submission.',
+        variant: 'destructive'
+      })
+    }
+  }
+
+  const onInvalid = (errors: FieldErrors<WorkbenchUpdateType>) => {
+    console.error('Form validation errors:', errors)
+    toast({
+      title: 'Form Error',
+      description: 'Some required fields are missing or invalid.',
+      variant: 'destructive'
     })
   }
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-background">
+      <DialogContent className="bg-background sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Session</DialogTitle>
           <DialogDescription>
@@ -123,64 +146,72 @@ export function WorkbenchUpdateForm({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="w-full max-w-md border-none bg-background">
-              <CardContent className="grid gap-4">
-                <input type="hidden" {...form.register('id')} />
-                <input type="hidden" {...form.register('tenantId')} />
-                <input type="hidden" {...form.register('userId')} />
-                <input type="hidden" {...form.register('workspaceId')} />
-                <input
-                  type="hidden"
-                  {...form.register('initialResolutionWidth')}
-                />
-                <input
-                  type="hidden"
-                  {...form.register('initialResolutionHeight')}
-                />
-                <input type="hidden" {...form.register('status')} />
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+            className="space-y-4"
+          >
+            <input type="hidden" {...form.register('id')} />
+            <input type="hidden" {...form.register('tenantId')} />
+            <input type="hidden" {...form.register('userId')} />
+            <input type="hidden" {...form.register('workspaceId')} />
+            <input
+              type="hidden"
+              {...form.register('initialResolutionWidth')}
+            />
+            <input
+              type="hidden"
+              {...form.register('initialResolutionHeight')}
+            />
+            <input type="hidden" {...form.register('status')} />
 
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Session name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} className="min-h-[100px]" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardFooter>
-                <Button
-                  className="ml-auto"
-                  type="submit"
-                  disabled={form.formState.isSubmitting}
-                >
-                  {form.formState.isSubmitting && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Save Changes
-                </Button>
-              </CardFooter>
-            </Card>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      className="min-h-[100px] resize-none"
+                      placeholder="Session description (optional)"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Save Changes
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

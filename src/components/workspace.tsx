@@ -113,68 +113,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         />
       )}
 
-      {/* Quick Stats */}
-      {/* <div className="mb-4 grid grid-cols-4 gap-4">
-        <Card className="bg-primary/40">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-primary-foreground/80">
-                  Project Progress
-                </p>
-                <p className="text-2xl font-bold text-primary-foreground">
-                  65%
-                </p>
-              </div>
-              <BarChart3 className="h-8 w-8 text-secondary" />
-            </div>
-            <Progress value={65} className="mt-2" />
-          </CardContent>
-        </Card>
-
-        <Card className="bg-primary/40">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-primary-foreground/80">
-                  Team Members
-                </p>
-                <p className="text-2xl font-bold text-primary-foreground">5</p>
-              </div>
-              <Users className="h-8 w-8 text-secondary" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-primary/40">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-primary-foreground/80">Datasets</p>
-                <p className="text-2xl font-bold text-primary-foreground">3</p>
-              </div>
-              <Database className="h-8 w-8 text-secondary" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-primary/40">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-primary-foreground/80">
-                  Current Phase
-                </p>
-                <p className="text-lg font-bold text-primary-foreground">
-                  Data Analysis
-                </p>
-              </div>
-              <FileText className="h-8 w-8 text-secondary" />
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
-
       <div className="my-1 grid w-full gap-4 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
         {/* Sessions Card */}
         <Card

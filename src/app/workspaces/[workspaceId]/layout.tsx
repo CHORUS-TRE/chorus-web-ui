@@ -90,12 +90,6 @@ export default function Layout({
             </span>
           )}
         </h2>
-        <div className="flex gap-2">
-          <Button variant="accent-filled" disabled className="gap-2">
-            <Bell className="h-4 w-4" />
-            {mockNotifications.length}
-          </Button>
-        </div>
       </div>
       <p className="text-md mb-4 text-xs italic text-muted-foreground">
         Project ID: {workspace?.id} | Project owner:{' '}
@@ -110,8 +104,9 @@ export default function Layout({
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
           <TabsTrigger value="data">Data</TabsTrigger>
+          <TabsTrigger value="requests">Data Requests</TabsTrigger>
           <TabsTrigger value="users">Members</TabsTrigger>
-          <TabsTrigger disabled value="activities" className="demo-effect">
+          {/* <TabsTrigger disabled value="activities" className="demo-effect">
             Recent Activities
           </TabsTrigger>
           <TabsTrigger disabled value="resources" className="demo-effect">
@@ -119,7 +114,7 @@ export default function Layout({
           </TabsTrigger>
           <TabsTrigger disabled value="footprint" className="demo-effect">
             Footprint
-          </TabsTrigger>
+          </TabsTrigger> */}
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
       </Tabs>

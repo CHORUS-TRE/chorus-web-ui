@@ -93,8 +93,12 @@ export async function workbenchCreate(
     const rawData = Object.fromEntries(formData.entries())
     const workbench: WorkbenchCreateType = {
       ...rawData,
-      initialResolutionWidth: Number(rawData.initialResolutionWidth),
-      initialResolutionHeight: Number(rawData.initialResolutionHeight)
+      initialResolutionWidth: rawData.initialResolutionWidth
+        ? Number(rawData.initialResolutionWidth)
+        : undefined,
+      initialResolutionHeight: rawData.initialResolutionHeight
+        ? Number(rawData.initialResolutionHeight)
+        : undefined
     } as WorkbenchCreateType
 
     const validation = WorkbenchCreateSchema.safeParse(workbench)
@@ -149,8 +153,12 @@ export async function workbenchUpdate(
     const rawData = Object.fromEntries(formData.entries())
     const workbench: WorkbenchUpdateType = {
       ...rawData,
-      initialResolutionWidth: Number(rawData.initialResolutionWidth),
-      initialResolutionHeight: Number(rawData.initialResolutionHeight)
+      initialResolutionWidth: rawData.initialResolutionWidth
+        ? Number(rawData.initialResolutionWidth)
+        : undefined,
+      initialResolutionHeight: rawData.initialResolutionHeight
+        ? Number(rawData.initialResolutionHeight)
+        : undefined
     } as WorkbenchUpdateType
 
     const validation = WorkbenchUpdateSchema.safeParse(workbench)

@@ -76,8 +76,16 @@ export const WorkbenchCreateSchema = z.object({
 
 export const WorkbenchEditFormSchema = WorkbenchCreateSchema
 
-export const WorkbenchUpdateSchema = WorkbenchCreateSchema.extend({
-  id: z.string()
+export const WorkbenchUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Name is required'),
+  description: z.string().optional(),
+  status: z.nativeEnum(WorkbenchStatus).optional(),
+  tenantId: z.string().optional(),
+  userId: z.string().optional(),
+  workspaceId: z.string().optional(),
+  initialResolutionWidth: z.coerce.number().optional().nullable(),
+  initialResolutionHeight: z.coerce.number().optional().nullable()
 })
 
 export type Workbench = z.infer<typeof WorkbenchSchema>

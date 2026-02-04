@@ -263,20 +263,6 @@ export default function SessionPage() {
         ) : (
           <WorkbenchTable workbenches={filteredWorkbenches} />
         )}
-
-        {filteredWebApps.length > 0 && (
-          <div className="mt-8">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-              <Globe className="h-5 w-5" />
-              Services
-            </h3>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredWebApps.map((webapp) => (
-                <WebAppCard key={webapp.id} webapp={webapp} />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </>
   )
