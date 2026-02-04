@@ -1,7 +1,7 @@
 'use client'
 
 import { ShieldCheck, User } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '~/components/button'
@@ -12,34 +12,31 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
+import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserSettingsPage() {
-  const params = useParams<{ userId: string }>()
-  const userId = params?.userId
+  const {} = useAuthentication()
   const router = useRouter()
 
   const settings = [
+    {
+      id: 'profile',
+      title: 'Profile',
+      description: 'Manage your profile information.',
+      icon: <User className="h-5 w-5" />,
+      href: `/settings/profile`
+    },
     {
       id: 'privacy',
       title: 'Privacy',
       description: 'Manage your privacy settings and cookie consent.',
       icon: <ShieldCheck className="h-5 w-5" />,
-      href: `/users/${userId}/settings/privacy`
+      href: `/settings/privacy`
     }
   ]
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h2 className="flex items-center gap-3 text-3xl font-bold tracking-tight">
-          <User className="h-8 w-8" />
-          User Settings
-        </h2>
-        <p className="text-muted-foreground">
-          Manage your account preferences and security settings.
-        </p>
-      </div>
-
+    <div className="container mx-auto py-4">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {settings.map((setting) => (
           <Card

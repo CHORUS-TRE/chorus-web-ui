@@ -7,13 +7,11 @@ import {
   Crown,
   Key,
   LaptopMinimal,
-  Package,
   Settings,
   Shield,
   User,
   XCircle
 } from 'lucide-react'
-import { useParams } from 'next/navigation'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -27,6 +25,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { Role } from '@/domain/model'
 import { useAppState } from '@/stores/app-state-store'
 import { RoleHoverCard } from '~/components/role-hover-card'
 import { useAuthentication } from '~/providers/authentication-provider'
@@ -34,23 +33,6 @@ import { useAuthentication } from '~/providers/authentication-provider'
 export default function UserProfile() {
   const { user } = useAuthentication()
   const { workspaces } = useAppState()
-  const params = useParams<{ userId: string }>()
-  const userId = params?.userId
-
-  // const { users: userList } = useAppState()
-  // const profileUser = userList?.find((u) => u.id === userId)
-
-  if (user?.id !== userId) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">No user information available</p>
-        </div>
-      </div>
-    )
-  }
-
-  const profileUser = user
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -79,19 +61,13 @@ export default function UserProfile() {
   }
 
   const groupRolesByWorkspace = () => {
-    if (
-      !profileUser.rolesWithContext ||
-      profileUser.rolesWithContext.length === 0
-    ) {
+    if (!user?.rolesWithContext || user?.rolesWithContext.length === 0) {
       return {}
     }
 
-    const groups: Record<
-      string,
-      Record<string, typeof profileUser.rolesWithContext>
-    > = {}
+    const groups: Record<string, Record<string, Role[]>> = {}
 
-    profileUser.rolesWithContext.forEach((role) => {
+    user?.rolesWithContext.forEach((role) => {
       const workspaceId = role.context.workspace || 'undefined'
       const roleName = role.name
 
@@ -109,29 +85,8 @@ export default function UserProfile() {
     return groups
   }
 
-  const formatContextDisplay = (context: Record<string, string>) => {
-    return Object.entries(context)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join(', ')
-  }
-
   return (
     <>
-      <div className="w-full">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Package className="h-9 w-9" />
-            User Profile
-          </h2>
-          {/* {canCreateWorkspace && (
-            <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
-              <CirclePlus className="h-4 w-4" />
-              Create Workspace
-            </Button>
-          )} */}
-        </div>
-      </div>
-
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           {/* Profile Header */}
@@ -140,25 +95,23 @@ export default function UserProfile() {
               <div className="flex items-start space-x-4">
                 <Avatar className="h-20 w-20">
                   <AvatarFallback className="text-2xl">
-                    {profileUser.firstName.charAt(0)}
-                    {profileUser.lastName.charAt(0)}
+                    {user?.firstName.charAt(0)}
+                    {user?.lastName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-2">
                   <div>
                     <h1 className="text-3xl font-bold">
-                      {profileUser.firstName} {profileUser.lastName}
+                      {user?.firstName} {user?.lastName}
                     </h1>
-                    <p className="text-muted-foreground">
-                      @{profileUser.username}
-                    </p>
+                    <p className="text-muted-foreground">@{user?.username}</p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {getStatusIcon(profileUser.status)}
-                    <Badge className={getStatusColor(profileUser.status)}>
-                      {profileUser.status}
+                    {getStatusIcon(user?.status ?? '')}
+                    <Badge className={getStatusColor(user?.status ?? '')}>
+                      {user?.status}
                     </Badge>
-                    {profileUser.totpEnabled && (
+                    {user?.totpEnabled && (
                       <Badge
                         variant="outline"
                         className="flex items-center gap-1"
@@ -168,14 +121,6 @@ export default function UserProfile() {
                       </Badge>
                     )}
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <Link href={`/users/${userId}/settings/`}>
-                    <Button variant="outline">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </Button>
-                  </Link>
                 </div>
               </div>
             </CardContent>
@@ -195,27 +140,27 @@ export default function UserProfile() {
                   <label className="text-sm font-medium text-muted-foreground">
                     User ID
                   </label>
-                  <p className="font-mono text-sm">{profileUser.id}</p>
+                  <p className="font-mono text-sm">{user?.id}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Username
                   </label>
-                  <p>{profileUser.username}</p>
+                  <p>{user?.username}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Full Name
                   </label>
                   <p>
-                    {profileUser.firstName} {profileUser.lastName}
+                    {user?.firstName} {user?.lastName}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Authentication Source
                   </label>
-                  <p>{profileUser.source}</p>
+                  <p>{user?.source}</p>
                 </div>
               </CardContent>
             </Card>
@@ -231,26 +176,22 @@ export default function UserProfile() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Account Status</span>
-                  <Badge className={getStatusColor(profileUser.status)}>
-                    {profileUser.status}
+                  <Badge className={getStatusColor(user?.status ?? '')}>
+                    {user?.status}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Two-Factor Auth</span>
-                  <Badge
-                    variant={profileUser.totpEnabled ? 'default' : 'secondary'}
-                  >
-                    {profileUser.totpEnabled ? 'Enabled' : 'Disabled'}
+                  <Badge variant={user?.totpEnabled ? 'default' : 'secondary'}>
+                    {user?.totpEnabled ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Password Changed</span>
                   <Badge
-                    variant={
-                      profileUser.passwordChanged ? 'default' : 'secondary'
-                    }
+                    variant={user?.passwordChanged ? 'default' : 'secondary'}
                   >
-                    {profileUser.passwordChanged ? 'Yes' : 'No'}
+                    {user?.passwordChanged ? 'Yes' : 'No'}
                   </Badge>
                 </div>
                 <Separator />
@@ -260,7 +201,7 @@ export default function UserProfile() {
                       Created
                     </span>
                     <p className="text-sm">
-                      {new Date(profileUser.createdAt).toLocaleDateString()}
+                      {new Date(user?.createdAt ?? '').toLocaleDateString()}
                     </p>
                   </div>
                   <div>
@@ -268,7 +209,7 @@ export default function UserProfile() {
                       Last Updated
                     </span>
                     <p className="text-sm">
-                      {new Date(profileUser.updatedAt).toLocaleDateString()}
+                      {new Date(user?.updatedAt ?? '').toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -277,28 +218,26 @@ export default function UserProfile() {
           </div>
 
           {/* Workspace Information */}
-          {profileUser.workspaceId && (
+          {user?.workspaceId && (
             <Card className="card-glass flex h-full flex-col rounded-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AppWindow className="h-5 w-5" />
                   Personal Workspace
                   <Badge variant="outline" className="text-xs">
-                    {profileUser.workspaceId ? 'Assigned' : 'Unassigned'}
+                    {user?.workspaceId ? 'Assigned' : 'Unassigned'}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
-                    <Link href={`/workspaces/${profileUser.workspaceId}`}>
+                    <Link href={`/workspaces/${user?.workspaceId}`}>
                       Current Workspace ID
                     </Link>
                   </label>
                   <p className="font-mono text-sm">
-                    {profileUser.workspaceId
-                      ? profileUser.workspaceId
-                      : 'Unassigned'}
+                    {user?.workspaceId ? user?.workspaceId : 'Unassigned'}
                   </p>
                 </div>
               </CardContent>
@@ -317,12 +256,6 @@ export default function UserProfile() {
                   <Key className="mr-2 h-4 w-4" />
                   Change Password
                 </Button>
-                <Link href={`/users/${userId}/settings/privacy`}>
-                  <Button variant="outline">
-                    <Shield className="mr-2 h-4 w-4" />
-                    Privacy Settings
-                  </Button>
-                </Link>
               </div>
             </CardContent>
           </Card>
