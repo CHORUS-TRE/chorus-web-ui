@@ -3,16 +3,11 @@
 import '@/app/build.css'
 import '@/styles/globals.css'
 
-import { ChevronDown, ChevronUp, Store } from 'lucide-react'
+import { Store } from 'lucide-react'
 
-import { useUserPreferences } from '@/stores/user-preferences-store'
-import AppStoreHero from '~/components/app-store-hero'
-import { AppStoreView } from '~/components/app-store-view'
-import { Button } from '~/components/button'
+import { AppStoreView } from '@/components/app-store/app-store-view'
 
 export default function Page() {
-  const { showAppStoreHero, toggleAppStoreHero } = useUserPreferences()
-
   return (
     <>
       <div className="flex items-center justify-between gap-3">
@@ -20,21 +15,7 @@ export default function Page() {
           <Store className="h-9 w-9" />
           App Store
         </h2>
-        {/* <Button
-          onClick={toggleAppStoreHero}
-          className={`mt-5 overflow-hidden text-muted hover:bg-inherit hover:text-accent`}
-          aria-label={
-            showAppStoreHero ? 'Hide hero section' : 'Show hero section'
-          }
-        >
-          {showAppStoreHero ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-        </Button> */}
       </div>
-      {/* {showAppStoreHero && <AppStoreHero />} */}
       <AppStoreView />
     </>
   )

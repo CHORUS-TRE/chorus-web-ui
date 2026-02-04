@@ -44,9 +44,6 @@ export type AppStateStore = {
   clearState: () => void
   initialize: (user?: User) => Promise<void>
 
-  immersiveUIVisible: boolean
-  setImmersiveUIVisible: (visible: boolean) => void
-
   contentRect: DOMRect | null
   setContentRect: (rect: DOMRect | null) => void
   notificationsPollingInterval: ReturnType<typeof setInterval> | null
@@ -216,10 +213,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
 
     get().startNotificationsPolling()
   },
-
-  immersiveUIVisible: true,
-  setImmersiveUIVisible: (visible: boolean) =>
-    set({ immersiveUIVisible: visible }),
 
   contentRect: null,
   setContentRect: (rect: DOMRect | null) => set({ contentRect: rect })

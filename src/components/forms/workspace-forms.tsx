@@ -47,9 +47,9 @@ import {
   workspaceDelete,
   workspaceUpdateWithDev
 } from '@/view-model/workspace-view-model'
-import { Button } from '~/components/button'
 import { Card, CardContent } from '~/components/card'
 import { DeleteDialog } from '~/components/forms/delete-dialog'
+import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import {
   Form,
