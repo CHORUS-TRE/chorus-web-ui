@@ -15,7 +15,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle
 } from '~/components/ui/card'
 import {
@@ -90,90 +89,80 @@ export function SelectionBasket({
     setRequestMode(null)
   }
 
-  if (selectedItems.length === 0) return null
-
   return (
-    <Card className="card-glass border-2 border-primary/50 bg-card/50 backdrop-blur-md">
-      <CardHeader className="pb-3">
+    <>
+      <div className="p-2 pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
             <ShoppingBasket
-              className="h-5 w-5 text-primary"
+              className="text-foreground-muted h-5 w-5"
               aria-hidden="true"
             />
             Selection Basket
-            <Badge variant="default" className="rounded-full px-2">
-              {selectedItems.length}
-            </Badge>
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearSelection}
-            className="h-8 w-8 rounded-full p-0 hover:bg-muted/80"
-            aria-label="Clear selection"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          <Badge className="rounded-full px-2">{selectedItems.length}</Badge>
         </div>
-        <CardDescription className="text-xs text-muted-foreground">
+        <CardDescription className="mt-1 text-xs text-muted-foreground">
           Total size:{' '}
           <span className="font-medium text-foreground">
             {formatBytes(totalSize)}
           </span>
         </CardDescription>
-      </CardHeader>
+      </div>
 
-      <CardContent className="space-y-4">
-        <ScrollArea className="max-h-32 pr-4">
-          <div className="space-y-1.5">
+      <CardContent className="flex flex-1 flex-col p-2 pt-0">
+        <ScrollArea className="flex-1 pr-4">
+          <div className="mt-2 space-y-1">
             {selectedItems.map((item) => (
               <div
                 key={item.id}
-                className="group flex items-center justify-between rounded-lg bg-muted/30 px-3 py-1.5 text-xs transition-colors hover:bg-muted/50"
+                className="group flex items-center justify-between rounded-lg bg-muted/20 px-3 py-2 text-xs transition-all hover:bg-muted/40"
               >
-                <span className="truncate pr-2 font-medium">{item.name}</span>
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground">
+                <span className="min-w-0 flex-1 truncate pr-3 font-medium text-foreground/90">
+                  {item.name}
+                </span>
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="text-[10px] tabular-nums text-muted-foreground/60">
                     {formatBytes(item.size || 0)}
                   </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 rounded-md p-0 opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                  <button
                     onClick={() => onRemoveItem(item.id)}
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive focus:outline-none"
                     aria-label={`Remove ${item.name}`}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </ScrollArea>
 
-        <Separator className="bg-muted/40" />
+        <div className="mt-auto p-2 pt-4">
+          <Separator className="mb-4 bg-muted/40" />
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              size="sm"
+              variant="default"
+              disabled={selectedItems.length === 0}
+              onClick={() => handleStartRequest('download')}
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-xl"
+            >
+              <ArrowDownToLine className="h-4 w-4" aria-hidden="true" />
+              Download
+            </Button>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            size="sm"
-            variant="accent-filled"
-            onClick={() => handleStartRequest('download')}
-            className="flex w-full items-center justify-center gap-2"
-          >
-            <ArrowDownToLine className="h-4 w-4" aria-hidden="true" />
-            Download
-          </Button>
-
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => handleStartRequest('transfer')}
-            className="flex w-full items-center justify-center gap-2"
-          >
-            <ArrowRightLeft className="h-4 w-4" aria-hidden="true" />
-            Transfer
-          </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={selectedItems.length === 0}
+              onClick={() => handleStartRequest('transfer')}
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-xl"
+            >
+              <ArrowRightLeft className="h-4 w-4" aria-hidden="true" />
+              Transfer
+            </Button>
+          </div>
         </div>
       </CardContent>
 
@@ -265,6 +254,6 @@ export function SelectionBasket({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </>
   )
 }

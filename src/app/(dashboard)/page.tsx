@@ -22,17 +22,10 @@ import Image from 'next/image'
 import React, { useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
-import { GettingStartedSection } from '@/components/getting-started-section'
 import { Link } from '@/components/link'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
 import { Badge } from '~/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import {

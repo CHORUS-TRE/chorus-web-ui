@@ -150,9 +150,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               {(() => {
                 const sessionCount =
                   workbenches?.filter(
-                    (workbench) =>
-                      workbench.workspaceId === workspaceId &&
-                      workbench.userId === user?.id
+                    (workbench) => workbench.workspaceId === workspaceId
                   )?.length || 0
 
                 // Adaptive layout based on session count

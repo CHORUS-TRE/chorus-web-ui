@@ -1,7 +1,7 @@
 'use client'
 import { Store } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -14,16 +14,17 @@ import { useAppState } from '@/stores/app-state-store'
  * In fullscreen mode: iframe takes full window under header
  */
 export default function WorkbenchPage() {
+  const [noAppsRunning, setNoAppsRunning] = useState(false)
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const { openSession, setActiveIframe } = useIframeCache()
+  const { appInstances, refreshAppInstances } = useAppState()
 
   const workspaceId = params.workspaceId
   const sessionId = params.sessionId
 
-  const appInstances = useAppState((state) => state.appInstances)
-  const noAppsRunning =
-    appInstances?.filter((instance) => instance.workbenchId === sessionId)
-      .length === 0
+  const sessionAppInstances = appInstances?.filter(
+    (appInstance) => appInstance.workbenchId === sessionId
+  )
 
   useEffect(() => {
     if (sessionId && workspaceId) {
@@ -31,6 +32,19 @@ export default function WorkbenchPage() {
       setActiveIframe(sessionId)
     }
   }, [sessionId, workspaceId, openSession, setActiveIframe])
+
+  useEffect(() => {
+    console.log('sessionAppInstances', sessionAppInstances)
+    if (sessionAppInstances?.length === 0) {
+      setNoAppsRunning(true)
+    } else {
+      setNoAppsRunning(false)
+    }
+  }, [sessionAppInstances])
+
+  useEffect(() => {
+    refreshAppInstances()
+  }, [refreshAppInstances])
 
   if (!noAppsRunning) return null
 

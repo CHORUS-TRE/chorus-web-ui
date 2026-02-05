@@ -31,7 +31,9 @@ export function StatCard({
           {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
         </CardHeader>
         <CardContent>
-          {value !== undefined && <div className="text-2xl font-bold">{value}</div>}
+          {value !== undefined && (
+            <div className="text-2xl font-bold">{value}</div>
+          )}
           {description && (
             <p className="text-xs text-muted-foreground">{description}</p>
           )}

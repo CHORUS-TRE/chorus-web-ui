@@ -43,14 +43,14 @@ export default function SessionPage() {
     sessionsViewMode,
     setSessionsViewMode,
     sessionSearchQuery,
-    setSessionSearchQuery,
-    showMySessions,
-    setShowMySessions
+    setSessionSearchQuery
   } = useUserPreferences()
   const { externalWebApps, cachedIframes } = useIframeCache()
   const [createOpen, setCreateOpen] = useState(false)
   const searchQuery: string = sessionSearchQuery ?? ''
   const setSearchQuery = setSessionSearchQuery
+
+  const showMySessions = true
 
   useEffect(() => {
     if (workspaceId) {
@@ -148,40 +148,26 @@ export default function SessionPage() {
       </div>
 
       <div className="w-full space-y-4">
-        {/* Search bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search by session name, workspace, or apps..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-4 text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="my-sessions"
-                checked={showMySessions}
-                onCheckedChange={(checked) =>
-                  setShowMySessions(checked as boolean)
-                }
-              />
-              <Label htmlFor="my-sessions">Show Only My Sessions</Label>
-            </div>
+        {/* Search bar with view toggle */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search by session name, workspace, or apps..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
-
           <div className="flex items-center justify-end gap-0">
             <Button
               variant="ghost"
