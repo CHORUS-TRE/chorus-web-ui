@@ -154,10 +154,7 @@ export function WorkbenchUpdateForm({
             <input type="hidden" {...form.register('tenantId')} />
             <input type="hidden" {...form.register('userId')} />
             <input type="hidden" {...form.register('workspaceId')} />
-            <input
-              type="hidden"
-              {...form.register('initialResolutionWidth')}
-            />
+            <input type="hidden" {...form.register('initialResolutionWidth')} />
             <input
               type="hidden"
               {...form.register('initialResolutionHeight')}
