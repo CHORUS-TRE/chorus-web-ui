@@ -16,6 +16,7 @@ import React from 'react'
 
 import { Link } from '@/components/link'
 import { Separator } from '@/components/ui/separator'
+import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
@@ -112,9 +113,7 @@ function SidebarContent({
     return pathname === href || pathname.startsWith(href + '/')
   }
 
-  const isSessionPage =
-    /^\/workspaces\/[^/]+\/sessions\/[^/]+$/.test(pathname) ||
-    /^\/sessions\/[^/]+$/.test(pathname)
+  const isSessionPage = isSessionPath(pathname)
 
   return (
     <>
@@ -127,26 +126,6 @@ function SidebarContent({
 
       {/* Main navigation */}
       <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
-        {/* Admin */}
-        {isAdmin && (
-          <>
-            <Link
-              href="/admin"
-              variant="underline"
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                pathname.includes('/admin') || isActive('/admin')
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-muted-foreground'
-              )}
-            >
-              <Globe className="h-4 w-4" />
-              Admin
-            </Link>
-            <Separator />
-          </>
-        )}
-
         {/* Dashboard */}
         <Link
           href="/"
@@ -253,22 +232,6 @@ function SidebarContent({
           App Store
         </Link>
 
-        {/* Services */}
-        {/* <Link
-          href="/app-store?tab=sessions"
-          variant="underline"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            pathname.includes('/sessions') ||
-              (isActive('/app-store') && currentTab === 'sessions')
-              ? 'bg-primary/20 text-primary'
-              : 'text-muted-foreground'
-          )}
-        >
-          <Globe className="h-4 w-4" />
-          Services
-        </Link> */}
-
         <Link
           href="/sessions/chorus-documentation"
           variant="underline"
@@ -282,6 +245,28 @@ function SidebarContent({
           <CircleHelp className="h-4 w-4" />
           Documentation
         </Link>
+
+        <div className="flex-1" />
+
+        {/* Admin */}
+        {isAdmin && (
+          <>
+            <Separator />
+            <Link
+              href="/admin"
+              variant="underline"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                pathname.includes('/admin') || isActive('/admin')
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Globe className="h-4 w-4" />
+              Admin
+            </Link>
+          </>
+        )}
       </nav>
     </>
   )

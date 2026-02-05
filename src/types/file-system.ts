@@ -30,6 +30,7 @@ export interface FileSystemState {
   items: Record<string, FileSystemItem>
   uploads: Record<string, FileSystemUploadItem>
   selectedItems: string[]
+  basketItems: string[]
   currentFolderId: string | null
   viewMode: 'list' | 'grid'
 }

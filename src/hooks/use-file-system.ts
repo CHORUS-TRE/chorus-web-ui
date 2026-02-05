@@ -93,6 +93,7 @@ export function useFileSystem(workspaceId?: string) {
     items: {},
     uploads: {},
     selectedItems: [],
+    basketItems: [],
     currentFolderId: 'root',
     viewMode: 'list'
   })
@@ -185,6 +186,22 @@ export function useFileSystem(workspaceId?: string) {
           : [...prev.selectedItems, itemId]
         : [itemId]
     }))
+  }, [])
+
+  const selectBasketItem = useCallback((itemId: string, force?: boolean) => {
+    setState((prev) => {
+      const isSelected = prev.basketItems.includes(itemId)
+      const shouldSelect = force !== undefined ? force : !isSelected
+
+      return {
+        ...prev,
+        basketItems: shouldSelect
+          ? isSelected
+            ? prev.basketItems
+            : [...prev.basketItems, itemId]
+          : prev.basketItems.filter((id) => id !== itemId)
+      }
+    })
   }, [])
 
   const navigateToFolder = useCallback(
@@ -752,6 +769,13 @@ export function useFileSystem(workspaceId?: string) {
     }))
   }, [])
 
+  const clearBasket = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      basketItems: []
+    }))
+  }, [])
+
   const setSearch = useCallback((query: string) => {
     setSearchQuery(query)
   }, [])
@@ -859,6 +883,8 @@ export function useFileSystem(workspaceId?: string) {
     setSearch,
     toggleViewMode,
     clearSelection,
+    clearBasket,
+    selectBasketItem,
     fetchFolderContents,
     refresh: () => workspaceId && fetchWorkspaceFiles(workspaceId, '')
   }

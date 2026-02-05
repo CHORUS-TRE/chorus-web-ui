@@ -6,6 +6,7 @@ import { NextStep, NextStepProvider } from 'nextstepjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Header } from '@/components/header'
+import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -24,10 +25,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
   const pathname = usePathname()
   const { isFullscreen } = useFullscreenContext()
 
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^(\/workspaces\/[^/]+)?\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
+  const isSessionPage = useMemo(() => isSessionPath(pathname), [pathname])
 
   // Left sidebar visibility for immersive mode (edge hover)
   const [leftSidebarVisible, setLeftSidebarVisible] = useState(false)
@@ -106,8 +104,50 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }, 100) // 100ms delay before hiding
   }, [isSessionPage])
 
+  // Right sidebar resizing
+  const [rightSidebarWidth, setRightSidebarWidth] = useState(320)
+  const [isResizing, setIsResizing] = useState(false)
+
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsResizing(true)
+  }, [])
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false)
+  }, [])
+
+  const resize = useCallback(
+    (e: MouseEvent) => {
+      if (isResizing) {
+        const newWidth = window.innerWidth - e.clientX
+        if (newWidth >= 200 && newWidth <= 800) {
+          setRightSidebarWidth(newWidth)
+        }
+      }
+    },
+    [isResizing]
+  )
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener('mousemove', resize)
+      window.addEventListener('mouseup', stopResizing)
+    } else {
+      window.removeEventListener('mousemove', resize)
+      window.removeEventListener('mouseup', stopResizing)
+    }
+    return () => {
+      window.removeEventListener('mousemove', resize)
+      window.removeEventListener('mouseup', stopResizing)
+    }
+  }, [isResizing, resize, stopResizing])
+
   return (
-    <div id="authenticated-app">
+    <div
+      id="authenticated-app"
+      className={cn(isResizing && 'cursor-col-resize select-none')}
+    >
       <NextStepProvider>
         <NextStep
           steps={steps}
@@ -151,14 +191,25 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               {/* Right Sidebar - fixed at right edge, controlled by header button only */}
               <div
                 className={cn(
-                  'fixed right-4 top-16 z-30 h-[calc(100vh-5rem)] overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                  'fixed right-4 top-16 z-30 h-[calc(100vh-5rem)] overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
                   showRightSidebar
-                    ? 'w-[320px] translate-x-0 opacity-100'
-                    : 'pointer-events-none w-0 translate-x-full opacity-0'
+                    ? 'translate-x-0 opacity-100'
+                    : 'pointer-events-none translate-x-full opacity-0',
+                  isResizing && 'duration-0'
                 )}
+                style={{ width: showRightSidebar ? rightSidebarWidth : 0 }}
                 id="right-sidebar-immersive"
               >
-                <RightSidebar />
+                {/* Resize Handle */}
+                {showRightSidebar && (
+                  <div
+                    className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
+                    onMouseDown={startResizing}
+                  />
+                )}
+                <div className="h-full w-full overflow-hidden">
+                  <RightSidebar />
+                </div>
               </div>
             </>
           )}
@@ -217,14 +268,30 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   {/* Right Sidebar */}
                   <div
                     className={cn(
-                      'h-full overflow-hidden rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                      'relative h-full overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
                       !isFullscreen && showRightSidebar
-                        ? 'w-[320px] flex-shrink-0 translate-x-0 opacity-100'
-                        : 'w-0 translate-x-full opacity-0'
+                        ? 'flex-shrink-0 translate-x-0 opacity-100'
+                        : 'w-0 translate-x-full opacity-0',
+                      isResizing && 'duration-0'
                     )}
+                    style={{
+                      width:
+                        !isFullscreen && showRightSidebar
+                          ? rightSidebarWidth
+                          : 0
+                    }}
                     id="right-sidebar"
                   >
-                    <RightSidebar />
+                    {/* Resize Handle */}
+                    {showRightSidebar && !isFullscreen && (
+                      <div
+                        className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
+                        onMouseDown={startResizing}
+                      />
+                    )}
+                    <div className="h-full w-full overflow-hidden">
+                      <RightSidebar />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -236,7 +303,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             <div
               id="content-main"
               ref={contentMainRef}
-              className="pointer-events-none fixed inset-0 top-12"
+              className="pointer-events-none fixed inset-0 top-12 z-30"
             >
               {children}
             </div>

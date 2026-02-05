@@ -1,6 +1,6 @@
 'use client'
 
-import { ShieldCheck, User } from 'lucide-react'
+import { Bell, ShieldCheck, User } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -12,19 +12,33 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
+import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserSettingsPage() {
-  const params = useParams<{ userId: string }>()
-  const userId = params?.userId
+  const { user } = useAuthentication()
   const router = useRouter()
 
   const settings = [
+    {
+      id: 'profile',
+      title: 'Profile',
+      description: 'Manage your profile information.',
+      icon: <User className="h-5 w-5" />,
+      href: `/settings/profile`
+    },
     {
       id: 'privacy',
       title: 'Privacy',
       description: 'Manage your privacy settings and cookie consent.',
       icon: <ShieldCheck className="h-5 w-5" />,
-      href: `/users/${userId}/settings/privacy`
+      href: `/settings/privacy`
+    },
+    {
+      id: 'notifications',
+      title: 'Notifications',
+      description: 'Manage your notification preferences.',
+      icon: <Bell className="h-5 w-5" />,
+      href: `/settings/notifications`
     }
   ]
 

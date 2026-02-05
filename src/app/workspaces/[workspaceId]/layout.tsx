@@ -49,7 +49,7 @@ export default function Layout({
     }
   }
   return (
-    <>
+    <div className="flex h-full flex-col overflow-hidden">
       {openEdit && (
         <WorkspaceUpdateForm
           workspace={workspace}
@@ -66,7 +66,7 @@ export default function Layout({
       )}
 
       {/* Workspace name */}
-      <div className="flex w-full flex-grow items-center justify-start">
+      <div className="flex w-full flex-shrink-0 items-center justify-start px-1">
         <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
           {workspace?.dev?.image ? (
             <Image
@@ -90,40 +90,28 @@ export default function Layout({
             </span>
           )}
         </h2>
-        <div className="flex gap-2">
-          <Button variant="accent-filled" disabled className="gap-2">
-            <Bell className="h-4 w-4" />
-            {mockNotifications.length}
-          </Button>
-        </div>
       </div>
-      <p className="text-md mb-4 text-xs italic text-muted-foreground">
+      <p className="text-md mb-4 flex-shrink-0 px-1 text-xs italic text-muted-foreground">
         Project ID: {workspace?.id} | Project owner:{' '}
         {workspace?.dev?.owner || '-'}
       </p>
-      <Tabs
-        value={activeTab}
-        onValueChange={handleTabChange}
-        className="mb-0 w-full"
-      >
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="sessions">Sessions</TabsTrigger>
-          <TabsTrigger value="data">Data</TabsTrigger>
-          <TabsTrigger value="users">Members</TabsTrigger>
-          <TabsTrigger disabled value="activities" className="demo-effect">
-            Recent Activities
-          </TabsTrigger>
-          <TabsTrigger disabled value="resources" className="demo-effect">
-            Resources
-          </TabsTrigger>
-          <TabsTrigger disabled value="footprint" className="demo-effect">
-            Footprint
-          </TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      {children}
-    </>
+      <div className="flex-shrink-0 px-1">
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="mb-0 w-full"
+        >
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="sessions">Sessions</TabsTrigger>
+            <TabsTrigger value="data">Data</TabsTrigger>
+            <TabsTrigger value="requests">Data Requests</TabsTrigger>
+            <TabsTrigger value="users">Members</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+      <div className="flex-1 overflow-auto px-1">{children}</div>
+    </div>
   )
 }

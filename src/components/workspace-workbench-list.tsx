@@ -57,14 +57,7 @@ export function WorkspaceWorkbenchList({
 
   const workbenchList = useMemo(() => {
     return workbenches
-      ?.filter((workbench) =>
-        user?.rolesWithContext?.some(
-          (role) => role.context.workbench === workbench.id
-        )
-      )
-      ?.filter(
-        (workbench) => workbench.workspaceId === workspaceId || !workspaceId
-      )
+      ?.filter((workbench) => workbench.workspaceId === workspaceId)
       ?.sort((a) => (a.userId === user?.id ? -1 : 1))
   }, [workbenches, workspaceId, user?.rolesWithContext, user?.id])
 
@@ -104,7 +97,7 @@ export function WorkspaceWorkbenchList({
             (instance) => id === instance.workbenchId
           )
           const app = apps?.find((app) => app.id === appInstance?.appId)
-          const appNames = app?.name || sessionName || 'Session'
+          const appNames = app?.name || 'No app running yet'
           const isActive = background?.sessionId === id
           const isUserSession = userId === user?.id
           const workspace = workspaces?.find(
@@ -152,46 +145,42 @@ export function WorkspaceWorkbenchList({
               onKeyDown={handleKeyDown}
               className={`group relative flex ${
                 size === 'small' ? 'h-24' : 'h-32'
-              } flex-col justify-between overflow-hidden rounded-md text-muted transition-colors ${
+              } flex-col justify-between overflow-hidden rounded-lg border border-transparent bg-muted/90 p-3 transition-all duration-200 hover:border-accent hover:bg-accent/5 ${
                 userId === user?.id
-                  ? 'cursor-pointer hover:bg-accent/80 hover:text-accent-foreground'
-                  : 'cursor-default'
+                  ? 'cursor-pointer hover:shadow-md'
+                  : 'cursor-default opacity-70'
               }`}
             >
-              <div className="absolute inset-0">
-                {app?.iconURL && (
-                  <Image
-                    src={app.iconURL}
-                    alt={appNames}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                )}
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent" />
-              <div className="relative z-10 flex items-start justify-between p-2">
+              {/* Active indicator */}
+              <div className="flex items-center justify-between">
+                <span
+                  className={`truncate font-medium text-foreground ${size === 'small' ? 'text-sm' : 'text-base'}`}
+                >
+                  {sessionName || 'Unnamed Session'}
+                </span>
                 {isActive && (
                   <div
-                    className="m-1 h-2 w-2 animate-pulse rounded-full bg-accent"
+                    className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-accent"
                     aria-hidden="true"
+                    title="Active session"
                   />
                 )}
               </div>
-              <div className="relative z-10 p-2 text-foreground">
+
+              {/* App info */}
+              <div className="mt-auto pt-2 text-muted-foreground">
                 <div
-                  className={`w-full min-w-0 flex-1 overflow-hidden truncate font-semibold ${
-                    size === 'small' ? 'text-xs' : 'text-sm'
-                  }`}
+                  className={`w-full truncate ${size === 'small' ? 'text-xs' : 'text-sm'}`}
                 >
                   {appNames}
                 </div>
                 {workspaceName && !workspaceId && (
-                  <p className="truncate text-xs font-light text-muted-foreground">
+                  <p className="mt-1 truncate text-xs text-muted-foreground/80">
                     {workspaceName}
                   </p>
                 )}
-                <p className="text-xs font-normal">
-                  {userDisplayName},{' '}
+                <p className="mt-1 text-[9px] text-muted-foreground/60">
+                  {userDisplayName} ·{' '}
                   {formatDistanceToNow(createdAt || new Date())} ago
                 </p>
               </div>

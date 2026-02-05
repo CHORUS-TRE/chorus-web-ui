@@ -462,7 +462,7 @@ function WorkspaceDashboard({
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Skip Link for keyboard navigation */}
       <a
         href="#main-content"

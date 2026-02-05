@@ -138,8 +138,6 @@ export const AuthorizationProvider = ({
     )
   }, [user, can])
 
-  console.log(permissionsWithContextMap)
-
   const value = {
     PERMISSIONS,
     can,

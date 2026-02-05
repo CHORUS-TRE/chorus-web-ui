@@ -33,7 +33,6 @@ export default function WorkspacesPage() {
 
   const {
     workspaceFilters,
-    setWorkspaceFilter,
     showWorkspacesTable,
     toggleWorkspaceView,
     workspaceSearchQuery,
@@ -43,7 +42,8 @@ export default function WorkspacesPage() {
   const searchQuery: string = workspaceSearchQuery ?? ''
   const setSearchQuery = setWorkspaceSearchQuery
 
-  const { showMyWorkspaces, showCenter, showProject } = workspaceFilters
+  const { showCenter, showProject } = workspaceFilters
+  const showMyWorkspaces = true
 
   const [createOpen, setCreateOpen] = useState(false)
 
@@ -175,24 +175,6 @@ export default function WorkspacesPage() {
             </Button>
           </div>
         </div>
-
-        {/* Filters */}
-        {!(showCenter && !showProject) && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="my-workspaces"
-                checked={showMyWorkspaces}
-                onCheckedChange={(checked) =>
-                  setWorkspaceFilter('showMyWorkspaces', checked as boolean)
-                }
-              />
-              <Label htmlFor="my-workspaces">
-                Workspaces I am the member of
-              </Label>
-            </div>
-          </div>
-        )}
 
         {!workspaces ? (
           <span className="animate-pulse text-muted">

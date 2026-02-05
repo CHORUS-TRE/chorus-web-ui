@@ -16,9 +16,11 @@ import { useDevStoreCache } from '@/stores/dev-store-cache'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
+import { refreshToken } from '@/view-model/authentication-view-model'
 import {
   countUnreadNotifications,
-  listNotifications
+  listNotifications,
+  markNotificationsAsRead
 } from '@/view-model/notification-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceListWithDev } from '@/view-model/workspace-view-model'
@@ -43,9 +45,6 @@ export type AppStateStore = {
   stopNotificationsPolling: () => void
   clearState: () => void
   initialize: (user?: User) => Promise<void>
-
-  immersiveUIVisible: boolean
-  setImmersiveUIVisible: (visible: boolean) => void
 
   contentRect: DOMRect | null
   setContentRect: (rect: DOMRect | null) => void
@@ -124,6 +123,20 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   },
 
   refreshNotifications: async () => {
+    // Optimization: Check unread count first
+    const countResult = await countUnreadNotifications()
+
+    if (countResult.data !== undefined) {
+      set({ unreadNotificationsCount: countResult.data })
+    }
+
+    // If there are no unread notifications and we already have a list,
+    // we skip the full fetch to save bandwidth/resources.
+    // However, if we don't have ANY notifications yet (undefined), we still fetch once.
+    if (countResult.data === 0 && get().notifications !== undefined) {
+      return
+    }
+
     const result = await listNotifications()
     if (result.error) {
       // Avoid spamming toasts for background polling errors
@@ -131,7 +144,39 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      set({ notifications: result.data })
+      // Logic for system notifications (e.g., refresh token)
+      const systemNotifications = result.data.filter(
+        (n) => n.content?.systemNotification
+      )
+      const regularNotifications = result.data.filter(
+        (n) => !n.content?.systemNotification
+      )
+
+      // Set only regular notifications to the state (don't display system notifications)
+      set({ notifications: regularNotifications })
+
+      // Handle system notifications
+      if (systemNotifications.length > 0) {
+        const needsRefresh = systemNotifications.some(
+          (n) => n.content?.systemNotification?.refreshJWTRequired
+        )
+
+        if (needsRefresh) {
+          console.log('Token refresh requested via notification')
+          await refreshToken()
+        }
+
+        // Mark system notifications as read so they don't stay in the unread count
+        const systemIds = systemNotifications
+          .map((n) => n.id)
+          .filter((id): id is string => !!id)
+
+        if (systemIds.length > 0) {
+          await markNotificationsAsRead(systemIds)
+          // Refresh unread count to reflect the marking as read
+          get().refreshUnreadNotificationsCount()
+        }
+      }
     }
   },
 
@@ -167,11 +212,9 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
 
     // Initial fetch
     refreshNotifications()
-    refreshUnreadNotificationsCount()
 
     const interval = setInterval(() => {
       refreshNotifications()
-      refreshUnreadNotificationsCount()
     }, intervalMs)
 
     set({ notificationsPollingInterval: interval })
@@ -216,10 +259,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
 
     get().startNotificationsPolling()
   },
-
-  immersiveUIVisible: true,
-  setImmersiveUIVisible: (visible: boolean) =>
-    set({ immersiveUIVisible: visible }),
 
   contentRect: null,
   setContentRect: (rect: DOMRect | null) => set({ contentRect: rect })

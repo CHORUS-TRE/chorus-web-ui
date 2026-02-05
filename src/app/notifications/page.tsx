@@ -71,16 +71,6 @@ export default function NotificationsPage() {
     }
   }
 
-  if (user?.id !== userId) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">Access denied</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       <div className="w-full">

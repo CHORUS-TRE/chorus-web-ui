@@ -13,9 +13,6 @@ import { useAppState } from '@/stores/app-state-store'
 export default function WebAppPage() {
   const params = useParams<{ webappId: string }>()
   const { openWebApp, setActiveIframe } = useIframeCache()
-  const setImmersiveUIVisible = useAppState(
-    (state) => state.setImmersiveUIVisible
-  )
 
   useEffect(() => {
     if (params.webappId) {

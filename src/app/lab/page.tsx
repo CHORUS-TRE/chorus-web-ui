@@ -52,12 +52,6 @@ export default function SandboxPage() {
           icon: FlaskConical
         },
         {
-          title: 'Data requests',
-          description: 'Manage data requests',
-          href: '/lab/data-requests',
-          icon: PackageOpen
-        },
-        {
           title: 'Studies Dashboard',
           description: 'Manage clinical studies',
           href: '/lab/projects-dashboard',

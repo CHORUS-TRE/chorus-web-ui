@@ -20,7 +20,7 @@ import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { StatCard } from '~/components/dashboard/stat-card'
 
 const AdminPage = () => {
   const { can } = useAuthorization()
@@ -77,175 +77,97 @@ const AdminPage = () => {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {can(PERMISSIONS.listUsers) && (
-          <Link href="/admin/users">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Users</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{users?.length || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Registered Users
-                </p>
-                <div className="mt-4 flex items-center text-xs text-muted-foreground">
-                  <Shield className="mr-1 h-3 w-3" />
-                  {roleCount} System Roles Defined
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/users"
+            title="Users"
+            icon={Users}
+            value={users?.length || 0}
+            description="Registered Users"
+          >
+            <div className="mt-4 flex items-center text-xs text-muted-foreground">
+              <Shield className="mr-1 h-3 w-3" />
+              {roleCount} System Roles Defined
+            </div>
+          </StatCard>
         )}
 
         {can(PERMISSIONS.listWorkspaces) && (
-          <Link href="/admin/workspaces">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Workspaces
-                </CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {workspaces?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Active Workspaces
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/workspaces"
+            title="Workspaces"
+            icon={Package}
+            value={workspaces?.length || 0}
+            description="Active Workspaces"
+          />
         )}
 
         {can(PERMISSIONS.listWorkbenches) && (
-          <Link href="/admin/sessions">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Sessions</CardTitle>
-                <Terminal className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {workbenches?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">Active Sessions</p>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/sessions"
+            title="Sessions"
+            icon={Terminal}
+            value={workbenches?.length || 0}
+            description="Active Sessions"
+          />
         )}
 
         {can(PERMISSIONS.createApp) && (
-          <Link href="/admin/app-store">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">App Store</CardTitle>
-                <LayoutGrid className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{apps?.length || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Applications Available
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/app-store"
+            title="App Store"
+            icon={LayoutGrid}
+            value={apps?.length || 0}
+            description="Applications Available"
+          />
         )}
 
         {can(PERMISSIONS.listAppInstances) && (
-          <Link href="/admin/instances">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  App Instances
-                </CardTitle>
-                <Cpu className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {appInstances?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Running Instances
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/instances"
+            title="App Instances"
+            icon={Cpu}
+            value={appInstances?.length || 0}
+            description="Running Instances"
+          />
         )}
 
         {can(PERMISSIONS.listNotifications) && (
-          <Link href="/admin/notifications">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Notifications
-                </CardTitle>
-                <Bell className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {notifications?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  System Notifications
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/notifications"
+            title="Notifications"
+            icon={Bell}
+            value={notifications?.length || 0}
+            description="System Notifications"
+          />
         )}
 
         {can(PERMISSIONS.listWorkspaces) && (
-          <Link href="/admin/data-requests">
-            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Data Requests
-                </CardTitle>
-                <FileCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {approvalRequests?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Pending Approvals
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <StatCard
+            href="/admin/data-requests"
+            title="Data Requests"
+            icon={FileCheck}
+            value={approvalRequests?.length || 0}
+            description="Pending Approvals"
+          />
         )}
 
         {can(PERMISSIONS.setPlatformSettings) && (
           <>
-            <Link href="/admin/configuration">
-              <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Configuration
-                  </CardTitle>
-                  <Settings className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Manage platform settings
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <StatCard
+              href="/admin/configuration"
+              title="Configuration"
+              icon={Settings}
+              value=""
+              description="Manage platform settings"
+            />
 
-            <Link href="/admin/theme">
-              <Card className="h-full cursor-pointer transition-colors hover:bg-muted/50">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Theme</CardTitle>
-                  <Palette className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Customize UI appearance
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <StatCard
+              href="/admin/theme"
+              title="Theme"
+              icon={Palette}
+              value=""
+              description="Customize UI appearance"
+            />
           </>
         )}
       </div>

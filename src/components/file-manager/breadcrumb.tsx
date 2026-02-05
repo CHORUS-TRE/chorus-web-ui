@@ -12,18 +12,18 @@ export function Breadcrumb({
   onNavigateToFolder
 }: BreadcrumbProps) {
   return (
-    <div className="flex items-center gap-1 border-b border-muted/40 p-4">
+    <div className="flex items-center gap-1 border-b border-muted/40 p-4 text-muted-foreground">
       {currentPath.map((item, index) => (
         <div key={item.id} className="flex items-center gap-1">
           <Button
             variant="link"
             onClick={() => onNavigateToFolder(item.id)}
-            className="h-8 px-2 text-sm"
+            className="h-8 px-2 text-sm text-muted-foreground"
           >
             {item.name}
           </Button>
           {index < currentPath.length - 1 && (
-            <ChevronRight className="h-4 w-4 text-muted" />
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           )}
         </div>
       ))}

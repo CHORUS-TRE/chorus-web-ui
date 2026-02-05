@@ -4,13 +4,10 @@ import {
   CheckCircle2,
   Cookie,
   HelpCircle,
-  Shield,
   Sparkles,
   XCircle
 } from 'lucide-react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,17 +19,13 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
-import { putUserEntry } from '@/view-model/dev-store-view-model'
 import { USER_CONFIG_KEYS } from '~/domain/model/user-config'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function PrivacySettingsPage() {
-  const { user } = useAuthentication()
-  const { getUser, isUserLoaded, setCookieConsentOpen } = useDevStoreCache()
-  const params = useParams<{ userId: string }>()
-  const userId = params?.userId
+  const {} = useAuthentication()
+  const { getUser, setCookieConsentOpen } = useDevStoreCache()
 
   const handleManageCookies = () => {
     setCookieConsentOpen(true)
@@ -71,29 +64,8 @@ export default function PrivacySettingsPage() {
     )
   }
 
-  if (!isUserLoaded || user?.id !== userId) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center text-muted-foreground">
-          Loading privacy settings...
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="mx-auto max-w-4xl space-y-6 py-6">
-      <div className="flex items-center gap-3">
-        <Shield className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold tracking-tight">Privacy Settings</h1>
-      </div>
-      <p className="text-muted-foreground">
-        Manage your privacy preferences and how your data is handled within the
-        platform.
-      </p>
-
-      <Separator />
-
+    <div className="mx-auto max-w-4xl space-y-6 py-4">
       <Card className="card-glass overflow-hidden border-none shadow-lg">
         <CardHeader className="bg-primary/5 pb-6">
           <div className="mb-1 flex items-center gap-2">

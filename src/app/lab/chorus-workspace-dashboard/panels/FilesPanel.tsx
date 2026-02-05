@@ -191,16 +191,6 @@ export function FilesPanel({
 
   // Submit request
   const submitRequest = () => {
-    console.log('Submit request:', {
-      type: selectionState.selectionMode,
-      files: selectionState.selectedFiles,
-      justification: requestJustification,
-      targetWorkspaceId:
-        selectionState.selectionMode === 'transfer'
-          ? targetWorkspaceId
-          : undefined
-    })
-
     // Reset state
     clearSelection()
     setRequestJustification('')
@@ -289,7 +279,7 @@ export function FilesPanel({
     if (selectionState.selectedFiles.length === 0) return null
 
     return (
-      <Card className="sticky top-0 z-10 border-2 border-primary">
+      <Card className="flex h-[400px] flex-col border-2 border-primary">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -313,9 +303,9 @@ export function FilesPanel({
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        <CardContent className="flex flex-1 flex-col space-y-3 overflow-hidden">
           {/* Selected files list */}
-          <ScrollArea className="max-h-32">
+          <ScrollArea className="flex-1">
             <div className="space-y-1">
               {selectionState.selectedFiles.map((file) => (
                 <div
@@ -337,41 +327,43 @@ export function FilesPanel({
             </div>
           </ScrollArea>
 
-          <Separator />
+          <div className="mt-auto pt-2">
+            <Separator className="mb-3" />
 
-          {/* Action buttons */}
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => startRequest('download')}
-              disabled={!currentUser.permissions.download}
-              className="flex items-center gap-1"
-              aria-label="Request download approval"
-            >
-              <ArrowDownToLine className="h-4 w-4" aria-hidden="true" />
-              Download
-            </Button>
+            {/* Action buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => startRequest('download')}
+                disabled={!currentUser.permissions.download}
+                className="flex items-center gap-1"
+                aria-label="Request download approval"
+              >
+                <ArrowDownToLine className="h-4 w-4" aria-hidden="true" />
+                Download
+              </Button>
 
-            <Button
-              size="sm"
-              variant="default"
-              onClick={() => startRequest('transfer')}
-              disabled={!currentUser.permissions.transfer}
-              className="flex items-center gap-1"
-              aria-label="Request transfer approval"
-            >
-              <ArrowRightLeft className="h-4 w-4" aria-hidden="true" />
-              Transfer
-            </Button>
+              <Button
+                size="sm"
+                variant="default"
+                onClick={() => startRequest('transfer')}
+                disabled={!currentUser.permissions.transfer}
+                className="flex items-center gap-1"
+                aria-label="Request transfer approval"
+              >
+                <ArrowRightLeft className="h-4 w-4" aria-hidden="true" />
+                Transfer
+              </Button>
+            </div>
+
+            {!currentUser.permissions.download &&
+              !currentUser.permissions.transfer && (
+                <p className="mt-2 text-xs text-destructive">
+                  You don&apos;t have permission to download or transfer files
+                </p>
+              )}
           </div>
-
-          {!currentUser.permissions.download &&
-            !currentUser.permissions.transfer && (
-              <p className="text-xs text-destructive">
-                You don&apos;t have permission to download or transfer files
-              </p>
-            )}
         </CardContent>
       </Card>
     )

@@ -18,6 +18,7 @@ interface AuthenticationDataSource {
     data: AuthenticationOAuthRedirectRequest
   ) => Promise<string>
   logout: () => Promise<string | undefined>
+  refreshToken: () => Promise<string>
 }
 
 export type { AuthenticationDataSource }
@@ -156,6 +157,24 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
       return response.redirectURL
     } catch (error) {
       console.error('Error logging out:', error)
+      throw error
+    }
+  }
+
+  async refreshToken(): Promise<string> {
+    try {
+      const response = await this.service.authenticationServiceRefreshToken({
+        body: {}
+      })
+
+      const token = response.result?.token
+      if (!token) {
+        throw new Error('Failed to refresh token')
+      }
+
+      return token
+    } catch (error) {
+      console.error('Error refreshing token:', error)
       throw error
     }
   }

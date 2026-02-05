@@ -12,12 +12,13 @@ import {
   DialogTitle
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
+import type { FileSystemItem } from '~/types/file-system'
 
 interface ActionBarProps {
-  selectedItems: string[]
+  selectedItems: FileSystemItem[]
   onDelete: (itemId: string) => Promise<void>
   onRename: (itemId: string, newName: string) => Promise<void>
-  onDownload: (itemId: string) => Promise<void>
+  onAddToBasket: (itemId: string) => void
   onClearSelection: () => void
   getItemName: (itemId: string) => string
 }
@@ -26,20 +27,16 @@ export function ActionBar({
   selectedItems,
   onDelete,
   onRename,
-  onDownload,
+  onAddToBasket,
   onClearSelection,
   getItemName
 }: ActionBarProps) {
   const [showRenameDialog, setShowRenameDialog] = useState(false)
   const [renameValue, setRenameValue] = useState('')
 
-  if (selectedItems.length === 0) {
-    return null
-  }
-
   const handleRename = () => {
     if (selectedItems.length === 1) {
-      const itemName = getItemName(selectedItems[0])
+      const itemName = selectedItems[0].name
       setRenameValue(itemName)
       setShowRenameDialog(true)
     }
@@ -48,20 +45,20 @@ export function ActionBar({
   const handleRenameSubmit = async () => {
     if (renameValue.trim() && selectedItems.length === 1) {
       try {
-        await onRename(selectedItems[0], renameValue.trim())
+        await onRename(selectedItems[0].id, renameValue.trim())
         setShowRenameDialog(false)
         setRenameValue('')
       } catch (error) {
         console.error('Error renaming item:', error)
-        // Error is already handled in the hook and displayed via error state
+        // Error is already handled in the hook and d isplayed via error state
       }
     }
   }
 
   const handleDelete = async () => {
-    for (const itemId of selectedItems) {
+    for (const item of selectedItems) {
       try {
-        await onDelete(itemId)
+        await onDelete(item.id)
       } catch (error) {
         console.error('Error deleting item:', error)
       }
@@ -69,14 +66,13 @@ export function ActionBar({
     onClearSelection()
   }
 
-  const handleDownload = async () => {
-    for (const itemId of selectedItems) {
-      try {
-        await onDownload(itemId)
-      } catch (error) {
-        console.error('Error downloading item:', error)
+  const handleAddToBasket = () => {
+    for (const item of selectedItems) {
+      if (item.type !== 'folder') {
+        onAddToBasket(item.id)
       }
     }
+    onClearSelection()
   }
 
   return (
@@ -84,51 +80,62 @@ export function ActionBar({
       <div className="flex items-center gap-2 rounded-2xl border border-muted/40 bg-background/60 p-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>
-            {selectedItems.length} selected
-            {selectedItems.length > 1 ? 's' : ''}
+            {selectedItems.length}{' '}
+            {selectedItems.length <= 1 ? 'item' : 'items'} selected
           </span>
-          <Button
-            variant="ghost"
-            onClick={onClearSelection}
-            className="h-6 w-6 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
 
-        <div className="ml-4 flex items-center gap-1">
-          <Button
-            variant="ghost"
-            onClick={handleDelete}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-
-          {selectedItems.length === 1 && (
-            <Button variant="ghost" onClick={handleRename}>
-              <Edit3 className="h-4 w-4" />
+          {selectedItems.length > 0 && (
+            <Button
+              variant="ghost"
+              onClick={onClearSelection}
+              className="h-6 w-6 p-0"
+            >
+              <X className="h-4 w-4" />
             </Button>
           )}
+        </div>
 
-          <Button variant="ghost" disabled>
-            <Share2 className="h-4 w-4" />
-          </Button>
+        {selectedItems.length > 0 && (
+          <div className="ml-4 flex items-center gap-1">
+            <Button
+              variant="ghost"
+              onClick={handleDelete}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
 
-          <Button variant="ghost" onClick={handleDownload}>
-            <Download className="h-4 w-4" />
-          </Button>
+            {selectedItems.length === 1 && (
+              <Button
+                variant="ghost"
+                onClick={handleRename}
+                className="text-muted-foreground hover:text-accent"
+              >
+                <Edit3 className="h-4 w-4" />
+              </Button>
+            )}
 
+            {selectedItems.every((item) => item.type !== 'folder') && (
+              <Button
+                variant="ghost"
+                onClick={handleAddToBasket}
+                className="text-muted-foreground hover:text-accent"
+                title="Add to basket"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            )}
+            {/* 
           <Button variant="ghost" disabled>
             <Copy className="h-4 w-4" />
           </Button>
 
           <Button variant="ghost" disabled>
             <Move className="h-4 w-4" />
-          </Button>
-        </div>
+          </Button> */}
+          </div>
+        )}
       </div>
-
       <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
         <DialogContent>
           <DialogHeader>

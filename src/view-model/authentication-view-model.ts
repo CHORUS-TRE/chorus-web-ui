@@ -10,7 +10,8 @@ import {
   AuthenticationGetOAuthUrl,
   AuthenticationLogin,
   AuthenticationLogout,
-  AuthenticationOAuthRedirect
+  AuthenticationOAuthRedirect,
+  AuthenticationRefreshToken
 } from '@/domain/use-cases'
 import {
   AuthenticationMode,
@@ -138,5 +139,17 @@ export async function handleOAuthRedirect(
   } catch (error) {
     console.error('Error handling OAuth redirect:', error)
     return { error: 'Failed to handle OAuth redirect' }
+  }
+}
+
+export async function refreshToken(): Promise<Result<string>> {
+  try {
+    const repository = await getRepository()
+    const useCase = new AuthenticationRefreshToken(repository)
+
+    return await useCase.execute()
+  } catch (error) {
+    console.error('Error refreshing token:', error)
+    return { error: 'Failed to refresh token' }
   }
 }

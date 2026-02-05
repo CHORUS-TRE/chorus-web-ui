@@ -318,8 +318,6 @@ export function ServicesPanel({
               key={service.id}
               service={service}
               canConfigure={canConfigureServices}
-              onStart={() => console.log('Start service:', service.id)}
-              onStop={() => console.log('Stop service:', service.id)}
               onOpen={() => window.open(service.url, '_blank')}
             />
           ))}

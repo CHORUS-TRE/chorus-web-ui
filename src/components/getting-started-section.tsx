@@ -1,27 +1,12 @@
 'use client'
 
-import {
-  BookOpen,
-  ChevronDown,
-  ChevronUp,
-  FileText,
-  Lightbulb,
-  X
-} from 'lucide-react'
+import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
-import { Link } from '@/components/link'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/card'
 
 interface GettingStartedStep {
   id: string
@@ -61,7 +46,7 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
     steps: [
       {
         id: 'workspace',
-        title: 'Create a Workspace',
+        title: 'How to create a Workspace',
         description: 'Set up a secure project space',
         icon: 'package',
         link: '/sessions/chorus-documentation',
@@ -69,7 +54,7 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
       },
       {
         id: 'session',
-        title: 'Open a Session',
+        title: 'How to open a Session',
         description: 'Start a computing environment',
         icon: 'computer',
         link: '/sessions/chorus-documentation',
@@ -77,7 +62,7 @@ async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
       },
       {
         id: 'app',
-        title: 'Launch an App',
+        title: 'How to launch an App',
         description: 'Run tools from session or store',
         icon: 'grid',
         link: '/sessions/chorus-documentation',
@@ -164,60 +149,53 @@ export function GettingStartedSection() {
   }
 
   return (
-    <Card className="mb-6 border-primary/20">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-lg">Getting Started</CardTitle>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleToggleCollapse}
-              className="h-8 w-8 p-0"
-            >
-              {isCollapsed ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronUp className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+    <div className="flex h-full flex-col p-4">
+      {/* Header */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold">Getting Started</h3>
         </div>
-        <CardDescription>Follow these steps to get started.</CardDescription>
-      </CardHeader>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleToggleCollapse}
+          className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+        >
+          {isCollapsed ? (
+            <ChevronDown className="h-3.5 w-3.5" />
+          ) : (
+            <ChevronUp className="h-3.5 w-3.5" />
+          )}
+        </Button>
+      </div>
 
       {!isCollapsed && (
-        <CardContent className="space-y-6">
-          {/* Getting Started Steps */}
-          <div>
-            <h4 className="mb-3 text-sm font-semibold">Quick Start Guide</h4>
-            <div className="flex flex-wrap gap-3">
-              {content.steps.map((step) => (
-                <Link
-                  key={step.id}
-                  href={step.link}
-                  onClick={(e) => {
-                    handleStepClick(step)
-                  }}
-                  className="block min-w-[120px] flex-1"
-                >
-                  <div className="rounded-lg border border-border/50 bg-card p-4 transition-all hover:border-primary/50 hover:bg-card/80">
-                    <div className="mb-2 flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <h5 className="text-sm font-medium">{step.title}</h5>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {step.description}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </CardContent>
+        <div className="flex flex-col gap-2">
+          <p className="mb-2 text-xs text-muted-foreground">
+            Follow these steps to get started with Chorus.
+          </p>
+          {content.steps.map((step, index) => (
+            <button
+              key={step.id}
+              onClick={() => handleStepClick(step)}
+              className="group flex items-start gap-3 rounded-lg border border-muted/30 bg-muted/10 p-3 text-left transition-all duration-200 hover:border-accent hover:bg-accent/10"
+            >
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                {index + 1}
+              </div>
+              <div className="flex-1">
+                <h5 className="text-sm font-medium text-foreground group-hover:text-accent">
+                  {step.title}
+                </h5>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {step.description}
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
       )}
-    </Card>
+    </div>
   )
 }
