@@ -415,21 +415,19 @@ export function Header() {
                           tabIndex={0}
                           onClick={(e) => {
                             e.stopPropagation()
-                            removeFromRecent(recentSession.id, 'session')
+
+                            if (isActive) {
+                              router.push(
+                                `/workspaces/${recentSession.workspaceId}`
+                              )
+                            }
+
                             // Also close iframe if it's loaded
                             if (isLoaded) {
                               closeIframe(recentSession.id)
                             }
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.stopPropagation()
-                              e.preventDefault()
-                              removeFromRecent(recentSession.id, 'session')
-                              if (isLoaded) {
-                                closeIframe(recentSession.id)
-                              }
-                            }
+
+                            removeFromRecent(recentSession.id, 'session')
                           }}
                           className="ml-1 cursor-pointer rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
                         >
@@ -635,11 +633,17 @@ export function Header() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        removeFromRecent(recentWebApp.id, 'webapp')
+
+                        if (isActive) {
+                          router.push(`/workspaces/`)
+                        }
+
                         // Also close iframe if it's loaded
                         if (isLoaded) {
                           closeIframe(recentWebApp.id)
                         }
+
+                        removeFromRecent(recentWebApp.id, 'webapp')
                       }}
                       className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
                     >

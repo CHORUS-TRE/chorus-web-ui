@@ -4,13 +4,7 @@ import { Database, Package } from 'lucide-react'
 
 import { Link } from '@/components/link'
 import { useAppState } from '@/stores/app-state-store'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/card'
+import { StatCard } from '~/components/dashboard/stat-card'
 import {
   Accordion,
   AccordionContent,
@@ -24,12 +18,20 @@ export default function DataPage() {
   const { user } = useAuthentication()
 
   const publicChuvData = [
-    { id: 'clinical-trials', name: 'CHUV Clinical Trials (public)', href: '#' },
-    { id: 'publications', name: 'CHUV Publications (open access)', href: '#' },
+    {
+      id: 'clinical-trials',
+      name: 'CHUV Clinical Trials (public)',
+      href: '/public-data/clinical-trials'
+    },
+    {
+      id: 'publications',
+      name: 'CHUV Publications (open access)',
+      href: '/public-data/publications'
+    },
     {
       id: 'biostats',
       name: 'Aggregated Biostatistics (de-identified)',
-      href: '#'
+      href: '/public-data/biostats'
     }
   ]
 
@@ -70,31 +72,20 @@ export default function DataPage() {
                   )
                 )
                 .map((w) => (
-                  <Card
+                  <StatCard
                     key={`workspace-data-${w.id}`}
-                    className="card-glass rounded-2xl"
-                  >
-                    <CardHeader className="pb-2">
-                      <CardTitle className="">{w.name}</CardTitle>
-                      <CardDescription className="text-muted-foreground">
-                        {/* {users?.find((user) => user.id === w.userId)?.firstName}{' '}
-                        {users?.find((user) => user.id === w.userId)?.lastName} */}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Link href={`/workspaces/${w.id}/data`} variant="nav">
-                        View data for this workspace
-                      </Link>
-                    </CardContent>
-                  </Card>
+                    href={`/workspaces/${w.id}/data`}
+                    title={w.name}
+                    description="View data for this workspace"
+                  />
                 ))}
               {!workspaces?.filter((workspace) =>
                 user?.rolesWithContext?.some(
                   (role) => role.context.workspace === workspace.id
                 )
               ).length && (
-                <div className="text-muted">No workspaces found.</div>
-              )}
+                  <div className="text-muted">No workspaces found.</div>
+                )}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -116,31 +107,20 @@ export default function DataPage() {
               {workspaces
                 ?.filter((workspace) => workspace.userId !== user?.id)
                 .map((w) => (
-                  <Card
+                  <StatCard
                     key={`workspace-data-${w.id}`}
-                    className="card-glass rounded-2xl"
-                  >
-                    <CardHeader className="pb-2">
-                      <CardTitle className="">{w.name}</CardTitle>
-                      <CardDescription className="text-muted-foreground">
-                        {/* {users?.find((user) => user.id === w.userId)?.firstName}{' '}
-                        {users?.find((user) => user.id === w.userId)?.lastName} */}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Link href={`/workspaces/${w.id}/data`} variant="nav">
-                        View data for this workspace
-                      </Link>
-                    </CardContent>
-                  </Card>
+                    href={`/workspaces/${w.id}/data`}
+                    title={w.name}
+                    description="View data for this workspace"
+                  />
                 ))}
               {!workspaces?.filter((workspace) =>
                 user?.rolesWithContext?.some(
                   (role) => role.context.workspace === workspace.id
                 )
               ).length && (
-                <div className="text-muted">No workspaces found.</div>
-              )}
+                  <div className="text-muted">No workspaces found.</div>
+                )}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -160,22 +140,12 @@ export default function DataPage() {
           <AccordionContent className="border-b-0">
             <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
               {publicChuvData.map((d) => (
-                <Card
+                <StatCard
                   key={`public-data-${d.id}`}
-                  className="card-glass rounded-2xl"
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="">{d.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <a
-                      href={d.href}
-                      className="text-accent underline-offset-4 hover:underline"
-                    >
-                      Explore
-                    </a>
-                  </CardContent>
-                </Card>
+                  href={d.href}
+                  title={d.name}
+                  description="Explore"
+                />
               ))}
             </div>
           </AccordionContent>

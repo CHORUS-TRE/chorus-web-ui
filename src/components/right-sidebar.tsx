@@ -1,26 +1,14 @@
 'use client'
 
 import { owl } from '@lucide/lab'
-import {
-  Bot,
-  CircleHelp,
-  CircleX,
-  createLucideIcon,
-  HelpCircle,
-  Send,
-  Settings,
-  Sparkles,
-  Store,
-  User
-} from 'lucide-react'
+import { Bot, CircleX, createLucideIcon, Store, User } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { isSessionPath, isWebappPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
-import { Input } from '~/components/ui/input'
 
 import { GettingStartedSection } from './getting-started-section'
 
@@ -39,7 +27,7 @@ const Owl = createLucideIcon('Owl', owl)
 
 export default function RightSidebar() {
   const router = useRouter()
-  const { toggleRightSidebar, showRightSidebar } = useUserPreferences()
+  const { toggleRightSidebar } = useUserPreferences()
   const { workspaceId, sessionId } = useParams()
   const pathname = usePathname()
   const scrollRef = useRef<HTMLDivElement>(null)
