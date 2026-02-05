@@ -1,3 +1,15 @@
+## [1.32.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.4...v1.32.5) (2026-02-05)
+
+
+### Bug Fixes
+
+* layout ([dbaad4c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dbaad4c81f2cc440fa13e7d392e38a5f7c169e1c))
+* layout ([5389732](https://github.com/CHORUS-TRE/chorus-web-ui/commit/53897329d8a47f0924b22e99661c64a93db159c0))
+* libc: [glibc] ([0dc96f6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0dc96f6f509d16577a56033b2bb3fd3f1fa8eb0a))
+* notification, refresh token ([0cf5c37](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0cf5c378fb0fb78eb568e4b0183bf8b69ea99a4c))
+* system notifications handling ([226309d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/226309d37e66a6fe571a85660587ec7243eee4e3))
+* warnings ([d57e2d6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d57e2d6d3c8e4dbc5218132b1d13922bfc26ccaa))
+
 ## [1.32.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.3...v1.32.4) (2026-02-02)
 
 
