@@ -68,4 +68,14 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
+
+  async refreshToken(): Promise<Result<string>> {
+    try {
+      const token = await this.dataSource.refreshToken()
+      return { data: token }
+    } catch (error) {
+      console.error('Error refreshing token', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
 }
