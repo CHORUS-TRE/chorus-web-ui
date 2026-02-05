@@ -84,8 +84,8 @@ export const WorkbenchUpdateSchema = z.object({
   tenantId: z.string().optional(),
   userId: z.string().optional(),
   workspaceId: z.string().optional(),
-  initialResolutionWidth: z.coerce.number().optional().nullable(),
-  initialResolutionHeight: z.coerce.number().optional().nullable()
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export type Workbench = z.infer<typeof WorkbenchSchema>

@@ -117,12 +117,7 @@ export default function WorkspaceUserTable({
     return (
       <TableRowComponent className="card-glass transition-colors hover:bg-background/80">
         <TableCell className="p-1 font-semibold">
-          <Link
-            href={`/users/${user.id}`}
-            className="nav-link-base nav-link-hover [&.active]:nav-link-active"
-          >
-            {user.firstName} {user.lastName}
-          </Link>
+          {user.firstName} {user.lastName}
         </TableCell>
         <TableCell className="w-48 text-wrap p-1">{user.username}</TableCell>
         <TableCell className="p-1">

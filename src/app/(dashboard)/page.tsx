@@ -228,11 +228,7 @@ export default function CHORUSDashboard() {
                 )}
                 {myWorkspaces?.map((workspace) => {
                   const workspaceSessions = workbenches?.filter(
-                    (wb) =>
-                      wb.workspaceId === workspace.id &&
-                      user?.rolesWithContext?.some(
-                        (role) => role.context.workbench === wb.id
-                      )
+                    (wb) => wb.workspaceId === workspace.id
                   )
 
                   return (

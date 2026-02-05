@@ -10,12 +10,17 @@
     - [ ] **Phase 3**: Capture Web Vitals (LCP, CLS, TTFB) and UI/API error hashing.
     - [ ] **Phase 4**: Configure Funnels (Dashboard -> Workspace -> Session).
 - [ ] **[UX]** Refine user journey for the specific AMLD use case (Source: AMLD)
+- [ ] **[Sessions]** Use cards for session listing.
+- [ ] **[Notifications]** Handle refresh token for notifications.
 
 ### Critical Bugs
 - [ ] **[Forms]** Fix: Forms are quitting/resetting when content is updated (Potential Zustand/Context issue).
 - [ ] **[Sessions]** Fix: Session edits are not working.
 - [ ] **[Markdown]** Fix: Markdown save doesn't work when creating.
 - [ ] **[Markdown]** Fix: Markdown preview doesn't work.
+- [ ] **[Sessions]** Fix: Session not showing after creation (requires refresh).
+- [ ] **[Bug]** Fix: Xpra navigation bar takes full width and masks apps.
+- [ ] **[Workspaces]** Fix: Workspace creation requires manual refresh.
 
 ## 📦 Features & Improvements
 
@@ -30,6 +35,10 @@
 - [ ] **[Store]** Harmonize global, user, and workspace stores (local vs server config).
 - [ ] **[Tags]** Rename/Refactor `tag` to `tags` everywhere.
 - [ ] **[Admin]** Interface to manage members (add/remove) and list user roles.
+- [ ] **[Workspaces]** Create workspace directly on dashboard.
+- [ ] **[Sessions]** Display session names everywhere (instead of technical IDs/placeholders).
+- [ ] **[Apps]** Find a better way to start apps.
+- [ ] **[Apps]** Reload state for app instances.
 - [UR.4] Workspace creation assistant (storage/security config).
 - [UR.13] RBAC interface for granular permissions.
 - [UR.17] Admin interface to edit/delete workspaces.
@@ -40,6 +49,8 @@
 - [ ] **[Help]** Fix "Help" display (Z-index/Overlay issue).
 - [ ] **[Login]** Remove app store hero or simplify it.
 - [ ] **[Login]** Fix forms visibility on login page.
+- [ ] **[Sessions]** Create session: get rid of the app image in the chooser.
+- [ ] **[UI]** Add documentation panel on the right.
 - [ ] **[Mobile]** Ensure responsive design (min 360px) [UR.16].
 - [ ] **[Nav]** Tab/Windowing system for open apps [UR.15, UR.12].
 - [UR.1] High Performance: Initial load < 5s.
