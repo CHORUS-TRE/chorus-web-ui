@@ -83,13 +83,13 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
             type: mode.type as AuthenticationModeType,
             internal: mode.internal
               ? ({
-                enabled: mode.internal.publicRegistrationEnabled ?? false
-              } as AuthenticationInternal)
+                  enabled: mode.internal.publicRegistrationEnabled ?? false
+                } as AuthenticationInternal)
               : undefined,
             openid: mode.openid
               ? ({
-                id: mode.openid.id ?? ''
-              } as AuthenticationOpenID)
+                  id: mode.openid.id ?? ''
+                } as AuthenticationOpenID)
               : undefined
           }
           return authMode
