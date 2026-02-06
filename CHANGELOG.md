@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.5...v1.33.0) (2026-02-06)
+
+
+### Features
+
+* use new app instance statuses ([#181](https://github.com/CHORUS-TRE/chorus-web-ui/issues/181)) ([fbc1f63](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fbc1f630ef6a6cef50b5a9b9bc48db2d2d864128))
+
 ## [1.32.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.4...v1.32.5) (2026-02-05)
 
 
