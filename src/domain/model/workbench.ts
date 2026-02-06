@@ -54,6 +54,7 @@ export const WorkbenchSchema = z.object({
     (val) => (val === '' ? WorkbenchServerPodStatus.UNKNOWN : val),
     z.nativeEnum(WorkbenchServerPodStatus).optional()
   ),
+  serverPodMessage: z.string().optional(),
   k8sStatus: z.nativeEnum(K8sWorkbenchStatus).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),

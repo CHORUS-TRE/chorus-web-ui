@@ -78,6 +78,12 @@ export interface ChorusWorkbench {
    * @type {string}
    * @memberof ChorusWorkbench
    */
+  serverPodMessage?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkbench
+   */
   k8sStatus?: string
   /**
    *
@@ -137,6 +143,9 @@ export function ChorusWorkbenchFromJSONTyped(
     serverPodStatus: !exists(json, 'serverPodStatus')
       ? undefined
       : json['serverPodStatus'],
+    serverPodMessage: !exists(json, 'serverPodMessage')
+      ? undefined
+      : json['serverPodMessage'],
     k8sStatus: !exists(json, 'k8sStatus') ? undefined : json['k8sStatus'],
     initialResolutionWidth: !exists(json, 'initialResolutionWidth')
       ? undefined
@@ -170,6 +179,7 @@ export function ChorusWorkbenchToJSON(value?: ChorusWorkbench | null): any {
     description: value.description,
     status: value.status,
     serverPodStatus: value.serverPodStatus,
+    serverPodMessage: value.serverPodMessage,
     k8sStatus: value.k8sStatus,
     initialResolutionWidth: value.initialResolutionWidth,
     initialResolutionHeight: value.initialResolutionHeight,
