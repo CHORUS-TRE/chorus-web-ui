@@ -37,6 +37,7 @@ export const AppInstanceSchema = z.object({
   workbenchId: z.string(),
   status: z.nativeEnum(AppInstanceStatus),
   k8sStatus: z.nativeEnum(K8sAppInstanceStatus).optional(),
+  k8sMessage: z.string().optional(),
   k8sState: z.nativeEnum(K8sAppInstanceState).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),
