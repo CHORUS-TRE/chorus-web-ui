@@ -57,7 +57,7 @@ export default function WorkbenchGrid({
                 className={`group/card relative flex h-40 flex-col overflow-hidden border-none`}
               >
                 {/* Background */}
-                <div className="absolute inset-0 bg-muted/20" />
+                <div className="absolute inset-0" />
 
                 {/* Glass overlay */}
                 <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />

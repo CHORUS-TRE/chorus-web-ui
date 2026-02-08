@@ -8,6 +8,7 @@ import { Link } from '@/components/link'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
+const EMPTY_STATE_TIMEOUT = 1000
 /**
  * Page for displaying a workbench session in a cached iframe.
  * In normal mode: iframe appears in the content area
@@ -17,10 +18,15 @@ export default function WorkbenchPage() {
   const [noAppsRunning, setNoAppsRunning] = useState(false)
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const { openSession, setActiveIframe } = useIframeCache()
-  const { appInstances, refreshAppInstances } = useAppState()
+  const { appInstances, refreshAppInstances, workbenches } = useAppState()
 
   const workspaceId = params.workspaceId
   const sessionId = params.sessionId
+
+  const workbench = workbenches?.find((wb) => wb.id === sessionId)
+  const isPodReady =
+    workbench?.serverPodStatus === 'Ready' ||
+    workbench?.serverPodStatus === 'Running'
 
   const sessionAppInstances = appInstances?.filter(
     (appInstance) => appInstance.workbenchId === sessionId
@@ -34,7 +40,6 @@ export default function WorkbenchPage() {
   }, [sessionId, workspaceId, openSession, setActiveIframe])
 
   useEffect(() => {
-    console.log('sessionAppInstances', sessionAppInstances)
     if (sessionAppInstances?.length === 0) {
       setNoAppsRunning(true)
     } else {
@@ -46,7 +51,17 @@ export default function WorkbenchPage() {
     refreshAppInstances()
   }, [refreshAppInstances])
 
-  if (!noAppsRunning) return null
+  const [showEmptyState, setShowEmptyState] = useState(false)
+
+  useEffect(() => {
+    if (isPodReady && noAppsRunning) {
+      setShowEmptyState(true)
+    } else {
+      setShowEmptyState(false)
+    }
+  }, [isPodReady, noAppsRunning])
+
+  if (!showEmptyState) return null
 
   return (
     <div className="pointer-events-none flex h-full w-full items-center justify-center p-4">
@@ -72,7 +87,7 @@ export default function WorkbenchPage() {
                 href={`/workspaces/${workspaceId}/sessions/${sessionId}/app-store`}
               >
                 <Store className="mr-2 h-5 w-5" />
-                Open App Store
+                Launch your first app
               </Link>
             </Button>
           </div>

@@ -269,10 +269,13 @@ export default function CHORUSDashboard() {
                                 <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
                                   <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
                                   <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium">
-                                      {sessionAppNames || workbench.name}
+                                    <p className="mb-1 text-sm font-medium">
+                                      {workbench.name}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-[10px] text-muted-foreground">
+                                      {sessionAppNames}
+                                    </p>
+                                    <p className="text-[12px] text-muted-foreground">
                                       Created{' '}
                                       {formatDistanceToNow(
                                         workbench.createdAt || new Date()
@@ -280,19 +283,6 @@ export default function CHORUSDashboard() {
                                       ago
                                     </p>
                                   </div>
-                                  {workbench.status ===
-                                    WorkbenchStatus.ACTIVE && (
-                                    <Badge
-                                      className={`pointer-events-none text-xs ${
-                                        workbench.status ===
-                                        WorkbenchStatus.ACTIVE
-                                          ? 'border-secondary bg-secondary/10 text-secondary dark:border-secondary dark:bg-secondary/30 dark:text-secondary'
-                                          : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                                      }`}
-                                    >
-                                      {workbench.status}
-                                    </Badge>
-                                  )}
                                 </div>
                               </Link>
                             )

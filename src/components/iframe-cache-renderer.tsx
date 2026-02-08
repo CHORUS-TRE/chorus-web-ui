@@ -98,21 +98,49 @@ function CachedIframeRenderer({
   // 1. Iframe is active
   // 2. Not already loaded
   // 3. Either showing about:blank OR still probing (for sessions) OR has a URL to load
+  const { workbenches } = useAppState()
+  const workbench = useMemo(
+    () => workbenches?.find((wb) => wb.id === iframe.id),
+    [workbenches, iframe.id]
+  )
+
+  const isPodReady =
+    iframe.type !== 'session' ||
+    workbench?.serverPodStatus === 'Ready' ||
+    workbench?.serverPodStatus === 'Running'
+
+  // Show loading overlay if:
+  // 1. Iframe is active
+  // 2. Not already loaded
+  // 3. Either pod not ready OR showing about:blank OR still probing (for sessions) OR has a URL to load
   const isShowingAboutBlank = iframeSrc === 'about:blank' || !iframeSrc
   const hasUrlToLoad = iframe.url && iframe.url !== 'about:blank'
 
   const showLoadingOverlay =
     isActive &&
     !isIframeLoaded &&
-    (isShowingAboutBlank ||
+    (!isPodReady ||
+      isShowingAboutBlank ||
       (iframe.type === 'session' && isLoading) ||
       (hasUrlToLoad && !isIframeLoaded))
+
+  const loadingMessage = useMemo(() => {
+    if (!isActive || isIframeLoaded) return undefined
+    if (iframe.type !== 'session' || !workbench) return undefined
+    if (workbench.serverPodStatus === 'Unknown') return 'Starting session...'
+
+    return workbench.serverPodMessage || workbench.serverPodStatus
+  }, [isActive, isIframeLoaded, iframe.type, workbench])
 
   return (
     <>
       {/* Loading overlay for active iframes until they're fully loaded */}
       {showLoadingOverlay && (
-        <LoadingOverlay isLoading={true} variant="container" />
+        <LoadingOverlay
+          isLoading={true}
+          variant="container"
+          message={loadingMessage}
+        />
       )}
 
       {/* Error message */}

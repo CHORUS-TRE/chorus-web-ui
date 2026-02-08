@@ -57,7 +57,9 @@ export function WorkspaceWorkbenchList({
 
   const workbenchList = useMemo(() => {
     return workbenches
-      ?.filter((workbench) => workbench.workspaceId === workspaceId)
+      ?.filter((workbench) =>
+        workspaceId ? workbench.workspaceId === workspaceId : true
+      )
       ?.sort((a) => (a.userId === user?.id ? -1 : 1))
   }, [workbenches, workspaceId, user?.rolesWithContext, user?.id])
 
@@ -160,7 +162,7 @@ export function WorkspaceWorkbenchList({
                 </span>
                 {isActive && (
                   <div
-                    className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-accent"
+                    className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-primary"
                     aria-hidden="true"
                     title="Active session"
                   />
