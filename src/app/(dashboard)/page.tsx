@@ -1,98 +1,68 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import type { LucideIcon } from 'lucide-react'
 import {
-  Activity,
-  AlertCircle,
   ArrowRight,
-  BellRing,
   CircleGauge,
+  CirclePlus,
   Clock,
   Cpu,
   DatabaseZap,
-  FileText,
-  Folders,
   LaptopMinimal,
-  Package,
-  Plus,
-  ShieldCheck
+  Package
 } from 'lucide-react'
 import Image from 'next/image'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { useAppState } from '@/stores/app-state-store'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { useAppStateStore } from '@/stores/app-state-store'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
+import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 import { Badge } from '~/components/ui/badge'
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import {
-  dashboardActivities,
-  type DashboardFeedIcon
-} from '~/data/data-source/mock-data/dashboard-feed'
 import { WorkbenchStatus } from '~/domain/model'
-import { useInstanceConfig } from '~/hooks/use-instance-config'
+import { listApprovalRequests } from '~/view-model/approval-request-view-model'
+
 export default function CHORUSDashboard() {
-  const workspaces = useAppState((state) => state.workspaces)
-  const workbenches = useAppState((state) => state.workbenches)
-  const appInstances = useAppState((state) => state.appInstances)
-  const apps = useAppState((state) => state.apps)
+  const { workspaces, refreshWorkspaces, workbenches, appInstances, apps } =
+    useAppStateStore()
   const { user } = useAuthentication()
-  const notifications = useAppState((state) => state.notifications)
-  const refreshNotifications = useAppState(
-    (state) => state.refreshNotifications
-  )
-  const instanceConfig = useInstanceConfig()
-  const [updatesTab, setUpdatesTab] = useState<'notifications' | 'activity'>(
-    'notifications'
-  )
+  const [createOpen, setCreateOpen] = useState(false)
+  const { can, PERMISSIONS } = useAuthorization()
+  const [pendingApprovals, setPendingApprovals] = useState(0)
 
-  const handleTabChange = (value: string) => {
-    const tab = value as 'notifications' | 'activity'
-    setUpdatesTab(tab)
-    if (tab === 'notifications') {
-      refreshNotifications()
-    }
-  }
-  const feedIconComponents: Record<DashboardFeedIcon, LucideIcon> = {
-    workspace: Package,
-    session: LaptopMinimal,
-    data: FileText,
-    security: ShieldCheck,
-    system: CircleGauge
-  }
+  useEffect(() => {
+    listApprovalRequests({}).then((res) => {
+      setPendingApprovals(res.data?.length || 0)
+    })
+  }, [])
 
-  const myWorkspaces = useMemo(
-    () =>
-      workspaces?.filter(
-        (workspace) =>
-          user?.rolesWithContext?.some(
-            (role) => role.context.workspace === workspace.id
-          ) && workspace.dev?.tag !== 'center'
-      ),
-    [workspaces, user?.rolesWithContext]
-  )
-
-  const myWorkbenches = useMemo(
-    () =>
-      workbenches?.filter((workbench) =>
+  const workspaceList =
+    workspaces?.filter(
+      (workspace) =>
         user?.rolesWithContext?.some(
-          (role) => role.context.workbench === workbench.id
-        )
-      ),
-    [workbenches, user?.rolesWithContext]
-  )
+          (role) => role.context.workspace === workspace.id
+        ) || user?.id === workspace.userId
+    ) || []
+
+  const workbenchesList =
+    workbenches?.filter(
+      (workbench) =>
+        user?.rolesWithContext?.some(
+          (role) => role.context.workspace === workbench.workspaceId
+        ) || user?.id === workbench.userId
+    ) || []
 
   return (
     <>
       <div className="w-full">
-        <h2 className="mb-8 flex w-full flex-row items-center gap-3 text-start">
+        <h2 className="mb-2 flex w-full flex-row items-center gap-3 text-start">
           <CircleGauge className="h-9 w-9" />
           Dashboard
         </h2>
-        <h3 className="mb-8 text-sm italic text-muted-foreground">
+        <h3 className="mb-4 text-sm italic text-muted-foreground">
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
@@ -104,49 +74,47 @@ export default function CHORUSDashboard() {
             <Card variant="default">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-foreground">
-                  Total{' '}
-                  {instanceConfig.tags.find((tag) => tag.id === 'project')
-                    ?.label || 'Workspaces'}
+                  Total Workspaces
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-blue-600">
-                    {myWorkspaces?.length}
+                  <span className="text-3xl font-bold text-secondary">
+                    {workspaceList?.length}
                   </span>
-                  <Folders className="h-8 w-8 text-blue-600" />
+                  <Package className="h-8 w-8 text-secondary" />
                 </div>
               </CardContent>
             </Card>
 
             <Card variant="default">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-foreground">
+                <CardTitle className="text-sm font-medium text-secondary">
                   Active Sessions
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-green-600">
-                    {myWorkbenches?.length}
+                  <span className="text-3xl font-bold text-secondary">
+                    {workbenchesList?.length}
                   </span>
-                  <LaptopMinimal className="h-8 w-8 text-green-600" />
+                  <LaptopMinimal className="h-8 w-8 text-secondary" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="demo-effect" variant="default">
+            <Card variant="default">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-foreground">
+                <CardTitle className="text-sm font-medium text-secondary">
                   Pending Approval
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-yellow-600">
-                    {1}
+                  <span className="text-3xl font-bold text-secondary">
+                    {pendingApprovals}
                   </span>
-                  <Clock className="h-8 w-8 text-yellow-600" />
+                  <Clock className="h-8 w-8 text-secondary" />
                 </div>
               </CardContent>
             </Card>
@@ -186,93 +154,97 @@ export default function CHORUSDashboard() {
         </section>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <h3 className="mb-3 font-semibold">
-              My{' '}
-              {instanceConfig.tags.find((tag) => tag.id === 'project')?.label ||
-                'Workspaces'}{' '}
-              & Sessions
-            </h3>
+          <div className="lg:col-span-3">
+            <h3 className="mb-3 font-semibold">My Workspaces & Sessions</h3>
             <Card variant="glass">
               <CardHeader className="flex flex-col gap-2">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-base sm:text-lg">
                     <Package className="h-5 w-5" />
-                    {instanceConfig.tags.find((tag) => tag.id === 'project')
-                      ?.label || 'Workspaces'}
+                    Workspaces
                   </div>
                   <Link
                     href="/workspaces"
                     className="flex items-center gap-1 text-sm"
-                    variant="muted"
+                    variant="nav"
                   >
                     View all
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {(!myWorkspaces || myWorkspaces.length === 0) && (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
+              <CardContent className="grid grid-cols-3 gap-6 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
+                {(!workspaceList || workspaceList.length === 0) && (
+                  <div className="col-span-3 flex flex-col items-center justify-center py-8 text-center">
                     <Package className="mb-4 h-12 w-12 text-muted-foreground/50" />
                     <p className="mb-4 text-sm text-muted-foreground">
                       You don&apos;t have any workspaces yet
                     </p>
-                    <Link href="/workspaces">
-                      <Button>
-                        <Plus className="mr-2 h-4 w-4" />
+                    {can(PERMISSIONS.createWorkspace) && (
+                      <Button
+                        onClick={() => setCreateOpen(true)}
+                        variant="accent-filled"
+                      >
+                        <CirclePlus className="h-4 w-4" />
                         Create Workspace
                       </Button>
-                    </Link>
+                    )}
                   </div>
                 )}
-                {myWorkspaces?.map((workspace) => {
+                {workspaceList?.map((workspace) => {
                   const workspaceSessions = workbenches?.filter(
                     (wb) => wb.workspaceId === workspace.id
                   )
-
                   return (
-                    <div key={workspace.id} className="space-y-3">
-                      {/* Workspace header */}
+                    <div
+                      key={workspace.id}
+                      className="group/workspace relative w-full rounded-2xl border border-muted/40 bg-card/50 text-card-foreground shadow-sm transition-all duration-300 hover:border-accent has-[.session-link:hover]:border-muted/40"
+                    >
+                      {/* Workspace link as a separate clickable area */}
                       <Link
                         href={`/workspaces/${workspace.id}`}
-                        className="block w-full"
-                        variant="rounded"
+                        variant="plain"
+                        className="flex w-full cursor-pointer rounded-t-2xl p-4 transition-colors hover:bg-muted/10"
                       >
-                        <div className="w-full rounded-2xl bg-card/50 p-4 text-card-foreground shadow-sm transition-all">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
-                              {workspace.dev?.image ? (
-                                <Image
-                                  src={workspace.dev.image}
-                                  alt={workspace.name}
-                                  width={32}
-                                  height={32}
-                                  className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
-                                />
-                              ) : (
-                                <Package className="h-10 w-10 flex-shrink-0 text-muted-foreground" />
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-muted-foreground">
-                                {workspace.name}
-                              </h4>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                Created{' '}
-                                {formatDistanceToNow(
-                                  workspace?.createdAt || new Date()
-                                )}{' '}
-                                ago · {workspaceSessions?.length || 0} sessions
-                              </p>
-                            </div>
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-3">
+                            {workspace.dev?.image ? (
+                              <Image
+                                src={workspace.dev.image}
+                                alt={workspace.name}
+                                width={32}
+                                height={32}
+                                className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
+                              />
+                            ) : (
+                              <Package className="h-10 w-10 flex-shrink-0 text-muted-foreground" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-semibold text-muted-foreground">
+                              {workspace.name}
+                            </h4>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Created{' '}
+                              {formatDistanceToNow(
+                                workspace?.createdAt || new Date()
+                              )}{' '}
+                              ago
+                            </p>
                           </div>
                         </div>
                       </Link>
 
                       {/* Sessions under this workspace */}
                       {workspaceSessions && workspaceSessions.length > 0 && (
-                        <div className="ml-6 space-y-2 border-l-2 border-primary/20 pl-4">
+                        <div className="space-y-2 px-4 pb-4">
+                          <div className="text-md flex items-center gap-2 pt-2">
+                            <LaptopMinimal className="h-4 w-4" />
+                            {workspaceSessions.length}{' '}
+                            {workspaceSessions.length === 1
+                              ? 'Session'
+                              : 'Sessions'}
+                          </div>
                           {workspaceSessions.map((workbench) => {
                             const sessionAppNames = appInstances
                               ?.filter(
@@ -291,16 +263,19 @@ export default function CHORUSDashboard() {
                               <Link
                                 key={workbench.id}
                                 href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
-                                className="block w-full"
+                                className="session-link block w-full"
                                 variant="rounded"
                               >
-                                <div className="flex w-full items-center gap-3 rounded-xl border border-primary/10 bg-primary/5 p-3 transition-all hover:border-primary/30 hover:bg-primary/10">
-                                  <LaptopMinimal className="h-10 w-10 flex-shrink-0 text-primary" />
+                                <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
+                                  <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
                                   <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium">
-                                      {sessionAppNames || workbench.name}
+                                    <p className="mb-1 text-sm font-medium">
+                                      {workbench.name}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-[10px] text-muted-foreground">
+                                      {sessionAppNames}
+                                    </p>
+                                    <p className="text-[12px] text-muted-foreground">
                                       Created{' '}
                                       {formatDistanceToNow(
                                         workbench.createdAt || new Date()
@@ -308,16 +283,6 @@ export default function CHORUSDashboard() {
                                       ago
                                     </p>
                                   </div>
-                                  <Badge
-                                    className={`pointer-events-none text-xs ${
-                                      workbench.status ===
-                                      WorkbenchStatus.ACTIVE
-                                        ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                        : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                                    }`}
-                                  >
-                                    {workbench.status}
-                                  </Badge>
                                 </div>
                               </Link>
                             )
@@ -330,77 +295,16 @@ export default function CHORUSDashboard() {
               </CardContent>
             </Card>
           </div>
-
-          <div className="lg:col-span-1">
-            <h3 className="mb-3 font-semibold">Notifications</h3>
-            <Card className="mb-6">
-              <CardHeader className="space-y-3">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                    {updatesTab === 'notifications' ? (
-                      <BellRing className="h-5 w-5" />
-                    ) : (
-                      <Activity className="h-5 w-5" />
-                    )}
-                    {updatesTab === 'notifications'
-                      ? 'Notifications'
-                      : 'Recent Activity'}
-                  </CardTitle>
-                  <span className="rounded-full border border-muted/40 bg-muted px-3 py-1 text-xs font-semibold text-foreground">
-                    {notifications?.length || 0}
-                  </span>
-                </div>
-                <Tabs
-                  value={updatesTab}
-                  onValueChange={handleTabChange}
-                  className="w-full"
-                >
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="notifications">
-                      Notifications
-                    </TabsTrigger>
-                    <TabsTrigger value="activity">Activity</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {(updatesTab === 'notifications'
-                    ? (notifications || []).slice(0, 5).map((n) => ({
-                        id: n.id || Math.random().toString(),
-                        title: n.message || 'New Notification',
-                        description: n.content?.approvalRequestNotification
-                          ? 'New approval request requires your attention'
-                          : 'System notification',
-                        time: n.createdAt
-                          ? formatDistanceToNow(n.createdAt) + ' ago'
-                          : '',
-                        icon: n.content?.approvalRequestNotification
-                          ? ('security' as DashboardFeedIcon)
-                          : ('system' as DashboardFeedIcon)
-                      }))
-                    : dashboardActivities
-                  ).map((item) => {
-                    const Icon =
-                      feedIconComponents[item.icon] ??
-                      feedIconComponents.workspace
-                    return (
-                      <div key={item.id} className="flex gap-3">
-                        <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium">{item.title}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {item.description}
-                          </p>
-                          <p className="mt-1 text-xs text-muted">{item.time}</p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          {createOpen && (
+            <WorkspaceCreateForm
+              state={[createOpen, setCreateOpen]}
+              userId={user?.id}
+              onSuccess={async (workspace) => {
+                workspaceList.push(workspace)
+                await refreshWorkspaces()
+              }}
+            />
+          )}
         </div>
       </div>
     </>

@@ -1,17 +1,25 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
+  AlertCircle,
   Bell,
+  Check,
+  CheckCircle2,
   ChevronDown,
+  Circle,
   FlaskConical,
   Globe,
   HelpCircle,
   Info,
   LaptopMinimal,
+  Loader2,
   LogOut,
   Maximize,
   Moon,
+  MoreVertical,
+  Rocket,
   Settings,
+  Square,
   Store,
   Sun,
   Trash2,
@@ -22,7 +30,7 @@ import {
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -36,6 +44,12 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import {
   HoverCard,
   HoverCardContent,
@@ -55,6 +69,7 @@ import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
+import { K8sAppInstanceStatus } from '~/domain/model/app-instance'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -102,6 +117,35 @@ export function Header() {
   const { toggleRightSidebar } = useUserPreferences()
   const pathname = usePathname()
 
+  // Track launching apps for the current session
+  const launchingApps = useMemo(() => {
+    if (!params.sessionId || !appInstances) return []
+    return appInstances.filter(
+      (i) =>
+        i.workbenchId === params.sessionId &&
+        i.k8sStatus !== K8sAppInstanceStatus.RUNNING &&
+        i.k8sStatus !== K8sAppInstanceStatus.STOPPED &&
+        i.k8sStatus !== K8sAppInstanceStatus.KILLED &&
+        i.k8sStatus !== K8sAppInstanceStatus.FAILED &&
+        i.k8sStatus !== K8sAppInstanceStatus.COMPLETE
+    )
+  }, [params.sessionId, appInstances])
+
+  const getAppName = (appId: string) =>
+    apps?.find((a) => a.id === appId)?.name ?? 'App'
+
+  // Poll app instances while on a session page or launching apps exist
+  useEffect(() => {
+    const isSession = isSessionPath(pathname)
+    if (!isSession && launchingApps.length === 0) return
+
+    const pollInterval = setInterval(() => {
+      refreshAppInstances()
+    }, 2000)
+
+    return () => clearInterval(pollInterval)
+  }, [pathname, launchingApps.length, refreshAppInstances])
+
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
     const session = workbenches?.find((wb) => wb.id === sessionId)
@@ -131,6 +175,195 @@ export function Header() {
       description: `${name || 'App'} has been closed`
     })
     refreshAppInstances()
+  }
+
+  const renderSessionMenuContent = (sessionId: string) => {
+    const session = workbenches?.find((wb) => wb.id === sessionId)
+    if (!session) return null
+
+    const appsRunning = getSessionApps(sessionId)
+
+    return (
+      <div className="flex min-w-[260px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-[#1a1b23] shadow-2xl">
+        {/* Applications Section */}
+        <div className="space-y-4 p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
+            Applications
+          </p>
+
+          {appsRunning.length > 0 ? (
+            <div className="space-y-4">
+              {appsRunning.map((instance) => {
+                const appName =
+                  apps?.find((a) => a.id === instance.appId)?.name ||
+                  instance.name ||
+                  'App'
+                const isRunning =
+                  instance.k8sStatus === K8sAppInstanceStatus.RUNNING
+
+                return (
+                  <div key={instance.id} className="space-y-3">
+                    <div className="group/app flex items-center justify-between">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+                          <Rocket className="h-5 w-5 text-[#88b04b]" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold leading-tight text-white">
+                            {appName}
+                          </p>
+                          <p className="truncate text-[11px] text-muted-foreground/60">
+                            {isRunning ? 'Running' : 'Starting...'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {isRunning ? (
+                          <span className="text-[11px] font-bold text-[#88b04b]"></span>
+                        ) : (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/40" />
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 opacity-0 transition-opacity hover:bg-white/5 group-hover/app:opacity-100"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            closeAppInstance(instance.id, appName)
+                          }}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    {/* Progress Bar */}
+                    {!isRunning && (
+                      <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
+                        <div
+                          className={cn(
+                            'h-full transition-all duration-1000',
+                            isRunning
+                              ? 'w-full bg-[#88b04b]'
+                              : 'w-1/3 animate-pulse bg-[#88b04b]/40'
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="py-2">
+              <p className="text-[11px] italic text-muted-foreground/40">
+                No apps active in this session
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="h-px bg-white/5" />
+
+        {/* Actions Section */}
+        <div className="space-y-0.5 p-1.5">
+          <button
+            onClick={() =>
+              router.push(
+                `/workspaces/${session.workspaceId}/sessions/${sessionId}/app-store`
+              )
+            }
+            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+          >
+            <Rocket className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            Launch an app
+          </button>
+
+          <button
+            onClick={() =>
+              router.push(`/workspaces/${session.workspaceId}/users`)
+            }
+            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+          >
+            <UserPlus className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            Add Member
+          </button>
+
+          <button
+            onClick={() => setUpdateSessionId(sessionId)}
+            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+          >
+            <Settings className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            Settings
+          </button>
+
+          <button
+            onClick={toggleFullscreen}
+            disabled
+            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+          >
+            <Maximize className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            Fullscreen
+          </button>
+        </div>
+
+        {/* Delete Section */}
+        <div className="mt-auto border-t border-white/5 bg-red-500/5 p-1.5">
+          <button
+            onClick={() => setDeleteSessionId(sessionId)}
+            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
+          >
+            <Trash2 className="h-4 w-4 text-red-400/60 transition-colors group-hover:text-red-400" />
+            Delete Session
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const renderSessionInfoHover = (sessionId: string) => {
+    const session = workbenches?.find((wb) => wb.id === sessionId)
+    if (!session) return null
+
+    const appsRunning = getSessionApps(sessionId)
+
+    return (
+      <div className="flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between border-t border-muted/10 bg-accent/[0.03] p-2.5">
+          {appsRunning.length > 0 ? (
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold text-muted-foreground">
+                Running apps
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {appsRunning.map((instance) => {
+                  const appName =
+                    apps?.find((a) => a.id === instance.appId)?.name ||
+                    instance.name ||
+                    'App'
+                  return (
+                    <div
+                      key={instance.id}
+                      className="flex items-center gap-1.5 rounded-md border border-muted/40 bg-muted/20 px-1.5 py-0.5"
+                    >
+                      <div className="h-1 w-1 rounded-full bg-accent" />
+                      <span className="max-w-[120px] truncate text-[10px] font-medium text-foreground/70">
+                        {appName}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold text-muted-foreground">
+                No apps running
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    )
   }
 
   function UserProfileSection() {
@@ -356,7 +589,60 @@ export function Header() {
             )}
           </Link>
 
-          {user && <AppBreadcrumb />}
+          {user && (
+            <div className="flex items-center gap-4">
+              <AppBreadcrumb />
+              {isSessionPath(pathname) && params.sessionId && (
+                /* Unified Session Pill */
+                <div className="group/pill flex h-9 items-center rounded-xl border border-muted bg-muted/50 px-1 shadow-lg backdrop-blur-md transition-all hover:bg-muted/80">
+                  {/* Left: Info & Status */}
+                  <div className="flex min-w-0 flex-col justify-center px-4">
+                    <p className="truncate text-[13px] font-bold leading-tight text-white">
+                      {getSessionDisplayName(params.sessionId)}
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                      {launchingApps.length > 0 ? (
+                        <>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-[#88b04b] shadow-[0_0_8px_#88b04b]" />
+                          <p className="text-[10px] font-bold uppercase leading-none text-[#88b04b]">
+                            Launching {getAppName(launchingApps[0].appId)}...
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
+                          <p className="text-[10px] font-medium leading-none text-muted-foreground/60">
+                            Session Active
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Vertical Separator */}
+                  <div className="h-5 w-px bg-white/10" />
+
+                  {/* Right: MENU Trigger */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="group/menu ml-1 mr-0.5 flex h-7 items-center gap-2 rounded-full px-3 transition-colors hover:text-accent">
+                        <span className="text-[11px] font-black tracking-widest text-white">
+                          MENU
+                        </span>
+                        <MoreVertical className="h-3.5 w-3.5 text-white/80" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="mt-2 border-none bg-transparent p-0 shadow-none"
+                      align="end"
+                    >
+                      {renderSessionMenuContent(params.sessionId)}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Center: Recent sessions and web apps as Tabs */}
@@ -397,8 +683,8 @@ export function Header() {
                         className={cn(
                           'group relative flex items-center gap-2 px-3 py-2 text-xs font-medium transition-all duration-200',
                           isActive
-                            ? 'z-20 translate-y-[1px] rounded-t-md border-x border-t border-muted bg-muted text-accent shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)] before:absolute before:bottom-0 before:left-[-12px] before:h-3 before:w-3 after:absolute after:bottom-0 after:right-[-12px] after:h-3 after:w-3'
-                            : 'rounded-t-md border-x border-t border-muted text-muted-foreground hover:bg-muted/5 hover:text-foreground'
+                            ? 'text-foreground-muted z-20 translate-y-[1px] rounded-t-md border-x border-t border-primary bg-primary/40 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)] before:absolute before:bottom-0 before:left-[-12px] before:h-3 before:w-3 after:absolute after:bottom-0 after:right-[-12px] after:h-3 after:w-3'
+                            : 'rounded-t-md border-x border-t border-muted text-accent/50 hover:bg-muted/5 hover:text-accent'
                         )}
                       >
                         <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
@@ -437,146 +723,11 @@ export function Header() {
                     </HoverCardTrigger>
                     {sessionWorkbench && (
                       <HoverCardContent
-                        className="glass-elevated w-52 p-2"
+                        className="glass-elevated w-72 p-0"
                         align="center"
+                        sideOffset={12}
                       >
-                        <div className="flex flex-col gap-0.5 text-sm">
-                          {/* Workspace name - clickable */}
-                          {workspaces?.find(
-                            (w) => w.id === sessionWorkbench.workspaceId
-                          ) && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  router.push(
-                                    `/workspaces/${sessionWorkbench.workspaceId}`
-                                  )
-                                }
-                                className="flex items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                              >
-                                <span className="truncate">
-                                  {
-                                    workspaces.find(
-                                      (w) =>
-                                        w.id === sessionWorkbench.workspaceId
-                                    )?.name
-                                  }
-                                </span>
-                              </button>
-                              <div className="my-1 border-t border-muted/20" />
-                            </>
-                          )}
-
-                          {/* Running apps */}
-                          <div
-                            key={recentSession.id}
-                            className="text-xs text-muted-foreground"
-                          >
-                            {getSessionApps(recentSession.id)?.map(
-                              (instance) => {
-                                const appName =
-                                  apps?.find((a) => a.id === instance.appId)
-                                    ?.name ||
-                                  instance.name ||
-                                  'App'
-                                return (
-                                  <div
-                                    key={instance.id}
-                                    className="group/app flex items-center justify-between gap-2 py-0.5"
-                                  >
-                                    <div className="flex min-w-0 items-center gap-1.5">
-                                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                                      <span className="truncate text-foreground/80">
-                                        {appName}
-                                      </span>
-                                    </div>
-                                    <Button
-                                      variant="ghost"
-                                      className="h-6 w-6 rounded-md p-0 opacity-0 transition-opacity hover:bg-muted/50 group-hover/app:opacity-100"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        closeAppInstance(instance.id, appName)
-                                      }}
-                                      title={`Close ${appName}`}
-                                    >
-                                      <X className="h-3 w-3 text-muted-foreground" />
-                                    </Button>
-                                  </div>
-                                )
-                              }
-                            )}
-                          </div>
-
-                          {appInstances?.some(
-                            (i) => i.workbenchId === recentSession.id
-                          ) && (
-                            <div className="my-1 border-t border-muted/20" />
-                          )}
-                          <Separator />
-                          {/* Actions */}
-                          <button
-                            onClick={() =>
-                              router.push(
-                                `/workspaces/${sessionWorkbench.workspaceId}/sessions/${recentSession.id}/app-store`
-                              )
-                            }
-                            className="flex items-center gap-2 rounded px-2 py-1.5 text-accent/75 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                          >
-                            <Store className="h-3.5 w-3.5" />
-                            <span>Open App Store</span>
-                          </button>
-
-                          <Separator />
-                          <button
-                            onClick={() =>
-                              router.push(
-                                `/workspaces/${sessionWorkbench.workspaceId}/users`
-                              )
-                            }
-                            className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                          >
-                            <UserPlus className="h-3.5 w-3.5" />
-                            <span>Add Member</span>
-                          </button>
-
-                          <button
-                            onClick={() => setUpdateSessionId(recentSession.id)}
-                            className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                          >
-                            <Settings className="h-3.5 w-3.5" />
-                            <span>Settings</span>
-                          </button>
-
-                          <button
-                            onClick={toggleFullscreen}
-                            className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                          >
-                            <Maximize className="h-3.5 w-3.5" />
-                            <span>Fullscreen</span>
-                          </button>
-
-                          {/* <button
-                            onClick={() =>
-                              router.push(
-                                `/workspaces/${sessionWorkbench.workspaceId}/sessions/${recentSession.id}`
-                              )
-                            }
-                            className="flex items-center gap-2 rounded px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
-                          >
-                            <Info className="h-3.5 w-3.5" />
-                            <span>Session Info</span>
-                          </button> */}
-
-                          <div className="my-1 border-t border-muted/20" />
-
-                          <button
-                            onClick={() => setDeleteSessionId(recentSession.id)}
-                            className="flex items-center gap-2 rounded px-2 py-1.5 text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            <span>Delete Session</span>
-                          </button>
-                        </div>
+                        {renderSessionInfoHover(recentSession.id)}
                       </HoverCardContent>
                     )}
                   </HoverCard>

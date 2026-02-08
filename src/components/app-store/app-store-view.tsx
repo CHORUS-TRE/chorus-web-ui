@@ -72,11 +72,6 @@ export function AppStoreView() {
   ) => {
     if (!sessionId || !workspaceId) return
 
-    toast({
-      title: 'Launching app...',
-      description: `Starting ${app.name}`
-    })
-
     const formData = new FormData()
     formData.append('appId', app.id)
     formData.append('tenantId', '1')
@@ -88,11 +83,6 @@ export function AppStoreView() {
     try {
       const result = await createAppInstance({}, formData)
       if (result.error) throw new Error(result.error)
-
-      toast({
-        title: 'Success!',
-        description: `${app.name} launched successfully`
-      })
 
       openSession(sessionId as string, workspaceId as string)
       router.push(`/workspaces/${workspaceId}/sessions/${sessionId}`)

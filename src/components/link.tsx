@@ -15,6 +15,7 @@ const linkVariants = cva('nav-link-base', {
       flex: 'nav-link-hover flex gap-2 items-center justify-start',
       rounded:
         'border border-muted/40 rounded-2xl  hover:border-accent animate-all duration-300',
+      plain: '',
       underline:
         'text-accent hover:text-accent hover:underline hover:no-border underline-offset-4'
     }

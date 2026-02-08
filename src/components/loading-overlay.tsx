@@ -58,7 +58,7 @@ export function LoadingOverlay({
             priority
           />
         </div>
-        {message && <p className="max-w-md text-center">{message}</p>}
+        {message && <p className="max-w-md text-sm text-muted">{message}</p>}
       </div>
     </div>
   )
