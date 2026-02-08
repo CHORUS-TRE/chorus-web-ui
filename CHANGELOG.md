@@ -1,3 +1,11 @@
+## [1.33.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.33.0...v1.33.1) (2026-02-08)
+
+
+### Bug Fixes
+
+* links ([b3e852a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b3e852ab6ab4938e058da5fc3081e1848f777000))
+* workspace visibility with userId ([4461b67](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4461b675ffffd23ceab5907fdc1e0d4c7e0fd3f3))
+
 # [1.33.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.32.5...v1.33.0) (2026-02-06)
 
 
