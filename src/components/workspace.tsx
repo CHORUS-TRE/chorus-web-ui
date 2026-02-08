@@ -35,7 +35,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { mockRecentActivity } from '@/data/data-source/chorus-api/mock-data/activity'
 import { mockNotifications } from '@/data/data-source/chorus-api/mock-data/notifications'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { useAppState } from '@/stores/app-state-store'
+import { useAppStateStore } from '@/stores/app-state-store'
 import { formatFileSize } from '@/utils/format-file-size'
 import { useFileSystem } from '~/hooks/use-file-system'
 
@@ -88,7 +88,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
   const { workbenches, refreshWorkspaces, workspaces, refreshWorkbenches } =
-    useAppState()
+    useAppStateStore()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
 

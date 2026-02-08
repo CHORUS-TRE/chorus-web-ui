@@ -13,7 +13,7 @@ import { useMemo, useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
-import { useAppState } from '@/stores/app-state-store'
+import { useAppStateStore } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { Button } from '~/components/button'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
@@ -23,11 +23,9 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import WorkspacesGrid from '~/components/workspaces-grid'
 import WorkspaceTable from '~/components/workspaces-table'
-import { PERMISSIONS } from '~/config/permissions'
 
 export default function WorkspacesPage() {
-  const workspaces = useAppState((state) => state.workspaces)
-  const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
+  const { workspaces, refreshWorkspaces } = useAppStateStore()
   const { user } = useAuthentication()
   const { can, PERMISSIONS } = useAuthorization()
 
@@ -49,24 +47,12 @@ export default function WorkspacesPage() {
 
   const filteredWorkspaces = useMemo(() => {
     let result = workspaces?.filter((workspace) => {
-      // Filter by View (My Workspaces)
       if (showMyWorkspaces) {
         const isOwner = workspace.userId === user?.id
         const isMember = user?.rolesWithContext?.some(
           (role) => role.context.workspace === workspace.id
         )
         if (!isOwner && !isMember) return false
-      }
-
-      if (!showMyWorkspaces && !showCenter && !showProject) {
-        return false
-      }
-
-      if (showCenter || showProject) {
-        const matchesCenter = showCenter && workspace.dev?.tag === 'center'
-        const matchesProject = showProject && workspace.dev?.tag === 'project'
-
-        if (!matchesCenter && !matchesProject) return false
       }
 
       return true

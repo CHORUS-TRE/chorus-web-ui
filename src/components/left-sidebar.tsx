@@ -20,7 +20,6 @@ import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { PERMISSIONS } from '~/config/permissions'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
 
 import { Button } from './button'
@@ -73,36 +72,8 @@ function SidebarContent({
 }) {
   const router = useRouter()
   const { isAdmin } = useAuthorization()
-  const { workspaceFilters, setWorkspaceFilter } = useUserPreferences()
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
-
-  // Check if Projects filter is active (only projects, not centers)
-  const isProjectsActive =
-    pathname === '/workspaces' &&
-    !workspaceFilters.showCenter &&
-    workspaceFilters.showProject
-
-  // Check if Centers filter is active (only centers, not projects)
-  const isCentersActive =
-    pathname === '/workspaces' &&
-    workspaceFilters.showCenter &&
-    !workspaceFilters.showProject
-
-  const handleProjectsClick = () => {
-    // Set filters for Projects view - preserve showMyWorkspaces preference
-    setWorkspaceFilter('showCenter', false)
-    setWorkspaceFilter('showProject', true)
-    router.push('/workspaces')
-  }
-
-  const handleCentersClick = () => {
-    // Set filters for Centers view - always show all centers (not just mine)
-    setWorkspaceFilter('showMyWorkspaces', false)
-    setWorkspaceFilter('showCenter', true)
-    setWorkspaceFilter('showProject', false)
-    router.push('/workspaces')
-  }
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -142,50 +113,19 @@ function SidebarContent({
         </Link>
 
         {/* Workspaces */}
-        {/* <button
-          onClick={handleWorkspacesClick}
+        <Link
+          href="/workspaces"
+          variant="underline"
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isAllWorkspacesActive
-              ? 'bg-primary/20 text-primary'
-              : 'text-muted-foreground'
-          )}
-        >
-          <Package className="h-4 w-4" />
-          Workspaces
-        </button> */}
-
-        {/* Centers */}
-        {instanceConfig.tags.find((tag) => tag.id === 'center')?.display && (
-          <button
-            onClick={handleCentersClick}
-            className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-              isCentersActive
-                ? 'bg-primary/20 text-primary'
-                : 'text-muted-foreground'
-            )}
-          >
-            <Building2 className="h-4 w-4" />
-            {instanceConfig.tags.find((tag) => tag.id === 'center')?.label ||
-              'Centers'}
-          </button>
-        )}
-
-        {/* Projects */}
-        <button
-          onClick={handleProjectsClick}
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isProjectsActive
+            isActive('/workspaces')
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
           <Package className="h-3.5 w-3.5" />
-          {instanceConfig.tags.find((tag) => tag.id === 'project')?.label ||
-            'Workspaces'}
-        </button>
+          Workspaces
+        </Link>
 
         {/* Sessions */}
         <Link
