@@ -166,14 +166,14 @@ export default function CHORUSDashboard() {
                   <Link
                     href="/workspaces"
                     className="flex items-center gap-1 text-sm"
-                    variant="muted"
+                    variant="nav"
                   >
                     View all
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-3 gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+              <CardContent className="grid grid-cols-3 gap-6 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
                 {(!workspaceList || workspaceList.length === 0) && (
                   <div className="col-span-3 flex flex-col items-center justify-center py-8 text-center">
                     <Package className="mb-4 h-12 w-12 text-muted-foreground/50" />
@@ -196,118 +196,109 @@ export default function CHORUSDashboard() {
                     (wb) => wb.workspaceId === workspace.id
                   )
                   return (
-                    <div key={workspace.id} className="space-y-3">
-                      {/* Workspace header */}
+                    <div
+                      key={workspace.id}
+                      className="group/workspace relative w-full rounded-2xl border border-muted/40 bg-card/50 text-card-foreground shadow-sm transition-all duration-300 hover:border-accent has-[.session-link:hover]:border-muted/40"
+                    >
+                      {/* Workspace link as a separate clickable area */}
                       <Link
                         href={`/workspaces/${workspace.id}`}
-                        className="block w-full"
-                        variant="rounded"
+                        variant="plain"
+                        className="flex w-full cursor-pointer rounded-t-2xl p-4 transition-colors hover:bg-muted/10"
                       >
-                        <div className="w-full rounded-2xl bg-card/50 p-4 text-card-foreground shadow-sm transition-all">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
-                              {workspace.dev?.image ? (
-                                <Image
-                                  src={workspace.dev.image}
-                                  alt={workspace.name}
-                                  width={32}
-                                  height={32}
-                                  className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
-                                />
-                              ) : (
-                                <Package className="h-10 w-10 flex-shrink-0 text-muted-foreground" />
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-muted-foreground">
-                                {workspace.name}
-                              </h4>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                Created{' '}
-                                {formatDistanceToNow(
-                                  workspace?.createdAt || new Date()
-                                )}{' '}
-                                ago
-                              </p>
-                            </div>
-                          </div>
-                          {/* Sessions under this workspace */}
-                          {/* {workspaceSessions && workspaceSessions.length == 0 && (
-                            <div className="flex items-center justify-between">
-                              <Link href={`/workspaces/${workspace.id}`}>
-                                <Button variant="accent-filled">
-                                  Create Session
-                                </Button>
-                              </Link>
-                            </div>
-                          )} */}
-                          {workspaceSessions &&
-                            workspaceSessions.length > 0 && (
-                              <div className="mt-5 space-y-2">
-                                <div className="text-md flex items-center gap-2">
-                                  <LaptopMinimal className="h-4 w-4" />
-                                  {workspaceSessions.length}{' '}
-                                  {workspaceSessions.length === 1
-                                    ? 'Session'
-                                    : 'Sessions'}
-                                </div>
-                                {workspaceSessions.map((workbench) => {
-                                  const sessionAppNames = appInstances
-                                    ?.filter(
-                                      (instance) =>
-                                        instance.workbenchId === workbench.id
-                                    )
-                                    .map(
-                                      (instance) =>
-                                        apps?.find(
-                                          (app) => app.id === instance.appId
-                                        )?.name
-                                    )
-                                    .filter(Boolean)
-                                    .join(', ')
-
-                                  return (
-                                    <Link
-                                      key={workbench.id}
-                                      href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
-                                      className="block w-full"
-                                      variant="rounded"
-                                    >
-                                      <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
-                                        <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
-                                        <div className="min-w-0 flex-1">
-                                          <p className="text-sm font-medium">
-                                            {sessionAppNames || workbench.name}
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                            Created{' '}
-                                            {formatDistanceToNow(
-                                              workbench.createdAt || new Date()
-                                            )}{' '}
-                                            ago
-                                          </p>
-                                        </div>
-                                        {workbench.status ===
-                                          WorkbenchStatus.ACTIVE && (
-                                          <Badge
-                                            className={`pointer-events-none text-xs ${
-                                              workbench.status ===
-                                              WorkbenchStatus.ACTIVE
-                                                ? 'border-secondary bg-secondary/10 text-secondary dark:border-secondary dark:bg-secondary/30 dark:text-secondary'
-                                                : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                                            }`}
-                                          >
-                                            {workbench.status}
-                                          </Badge>
-                                        )}
-                                      </div>
-                                    </Link>
-                                  )
-                                })}
-                              </div>
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-3">
+                            {workspace.dev?.image ? (
+                              <Image
+                                src={workspace.dev.image}
+                                alt={workspace.name}
+                                width={32}
+                                height={32}
+                                className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
+                              />
+                            ) : (
+                              <Package className="h-10 w-10 flex-shrink-0 text-muted-foreground" />
                             )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-semibold text-muted-foreground">
+                              {workspace.name}
+                            </h4>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Created{' '}
+                              {formatDistanceToNow(
+                                workspace?.createdAt || new Date()
+                              )}{' '}
+                              ago
+                            </p>
+                          </div>
                         </div>
                       </Link>
+
+                      {/* Sessions under this workspace */}
+                      {workspaceSessions && workspaceSessions.length > 0 && (
+                        <div className="space-y-2 px-4 pb-4">
+                          <div className="text-md flex items-center gap-2 pt-2">
+                            <LaptopMinimal className="h-4 w-4" />
+                            {workspaceSessions.length}{' '}
+                            {workspaceSessions.length === 1
+                              ? 'Session'
+                              : 'Sessions'}
+                          </div>
+                          {workspaceSessions.map((workbench) => {
+                            const sessionAppNames = appInstances
+                              ?.filter(
+                                (instance) =>
+                                  instance.workbenchId === workbench.id
+                              )
+                              .map(
+                                (instance) =>
+                                  apps?.find((app) => app.id === instance.appId)
+                                    ?.name
+                              )
+                              .filter(Boolean)
+                              .join(', ')
+
+                            return (
+                              <Link
+                                key={workbench.id}
+                                href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
+                                className="session-link block w-full"
+                                variant="rounded"
+                              >
+                                <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
+                                  <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium">
+                                      {sessionAppNames || workbench.name}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Created{' '}
+                                      {formatDistanceToNow(
+                                        workbench.createdAt || new Date()
+                                      )}{' '}
+                                      ago
+                                    </p>
+                                  </div>
+                                  {workbench.status ===
+                                    WorkbenchStatus.ACTIVE && (
+                                    <Badge
+                                      className={`pointer-events-none text-xs ${
+                                        workbench.status ===
+                                        WorkbenchStatus.ACTIVE
+                                          ? 'border-secondary bg-secondary/10 text-secondary dark:border-secondary dark:bg-secondary/30 dark:text-secondary'
+                                          : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                                      }`}
+                                    >
+                                      {workbench.status}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      )}
                     </div>
                   )
                 })}
