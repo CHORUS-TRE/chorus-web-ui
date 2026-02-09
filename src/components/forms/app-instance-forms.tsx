@@ -23,6 +23,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
 import { AppInstance, Result } from '~/domain/model'
@@ -49,6 +50,19 @@ export function AppInstanceCreateForm({
 }) {
   const [state, formAction] = useActionState(createAppInstance, initialState)
   const { apps } = useAppState()
+  const { appInstances: appInstanceLimits } = useInstanceLimits(userId)
+
+  // Show toast and close dialog when limit is reached
+  useEffect(() => {
+    if (open && appInstanceLimits.isAtLimit) {
+      toast({
+        title: 'App instance limit reached',
+        description: `You've reached the maximum number of app instances (${appInstanceLimits.current}/${appInstanceLimits.max}). Please delete existing app instances before creating new ones.`,
+        variant: 'destructive'
+      })
+      setOpen(false)
+    }
+  }, [open, appInstanceLimits, setOpen])
 
   useEffect(() => {
     if (state.error) {

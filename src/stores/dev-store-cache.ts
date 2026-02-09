@@ -6,6 +6,8 @@ import {
   DEFAULT_INSTANCE_CONFIG,
   INSTANCE_CONFIG_KEYS,
   InstanceConfig,
+  InstanceLimits,
+  InstanceLimitsSchema,
   InstanceLogo,
   InstanceLogoSchema,
   InstanceTag,
@@ -97,6 +99,7 @@ type DevStoreCacheState = {
   getInstanceTags: () => InstanceTag[]
   getInstanceLogo: () => InstanceLogo | null
   getInstanceTheme: () => InstanceTheme | null
+  getInstanceLimits: () => InstanceLimits | null
 
   setInstanceName: (name: string) => Promise<boolean>
   setInstanceHeadline: (headline: string) => Promise<boolean>
@@ -105,6 +108,7 @@ type DevStoreCacheState = {
   setInstanceTags: (tags: InstanceTag[]) => Promise<boolean>
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
+  setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
 
   // UI Actions
   setCookieConsentOpen: (open: boolean) => void
@@ -450,6 +454,24 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     }
   },
 
+  getInstanceLimits: () => {
+    const value = get().global[INSTANCE_CONFIG_KEYS.LIMITS]
+    if (!value) return null
+
+    try {
+      const parsed = JSON.parse(value)
+      const validated = InstanceLimitsSchema.safeParse(parsed)
+      if (validated.success) {
+        return validated.data
+      }
+      console.error('Invalid instance limits:', validated.error.issues)
+      return null
+    } catch (e) {
+      console.error('Error parsing instance limits:', e)
+      return null
+    }
+  },
+
   // Individual setters
   setInstanceName: async (name: string) => {
     return get().setGlobal(INSTANCE_CONFIG_KEYS.NAME, name)
@@ -483,6 +505,13 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       return get().deleteGlobal(INSTANCE_CONFIG_KEYS.THEME)
     }
     return get().setGlobal(INSTANCE_CONFIG_KEYS.THEME, JSON.stringify(theme))
+  },
+
+  setInstanceLimits: async (limits: InstanceLimits | null) => {
+    if (limits === null) {
+      return get().deleteGlobal(INSTANCE_CONFIG_KEYS.LIMITS)
+    }
+    return get().setGlobal(INSTANCE_CONFIG_KEYS.LIMITS, JSON.stringify(limits))
   },
 
   // UI Actions

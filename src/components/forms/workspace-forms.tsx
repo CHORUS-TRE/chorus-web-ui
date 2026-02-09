@@ -41,6 +41,7 @@ import {
   WorkspaceConfig,
   WorkspaceWithDev
 } from '@/domain/model'
+import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { Analytics } from '@/lib/analytics'
 import {
   workspaceCreateWithDev,
@@ -128,6 +129,19 @@ export function WorkspaceCreateForm({
   onSuccess?: (workspace: WorkspaceWithDev) => void
 }) {
   const [activeTab, setActiveTab] = useState('general')
+  const { workspaces: workspaceLimits } = useInstanceLimits(userId)
+
+  // Show toast and close dialog when limit is reached
+  useEffect(() => {
+    if (open && workspaceLimits.isAtLimit) {
+      toast({
+        title: 'Workspace limit reached',
+        description: `You've reached the maximum number of workspaces (${workspaceLimits.current}/${workspaceLimits.max}). Please delete existing workspaces before creating new ones.`,
+        variant: 'destructive'
+      })
+      setOpen(false)
+    }
+  }, [open, workspaceLimits, setOpen])
 
   const form = useForm<WorkspaceFormData>({
     resolver: zodResolver(WorkspaceFormSchema),

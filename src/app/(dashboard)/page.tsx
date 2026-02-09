@@ -16,6 +16,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
+import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
@@ -31,6 +32,11 @@ export default function CHORUSDashboard() {
   const { user } = useAuthentication()
   const [createOpen, setCreateOpen] = useState(false)
   const { can, PERMISSIONS } = useAuthorization()
+  const {
+    workspaces: workspaceLimits,
+    sessions: sessionLimits,
+    appInstances: appInstanceLimits
+  } = useInstanceLimits(user?.id)
   const [pendingApprovals, setPendingApprovals] = useState(0)
 
   useEffect(() => {
@@ -55,6 +61,14 @@ export default function CHORUSDashboard() {
         ) || user?.id === workbench.userId
     ) || []
 
+  const appInstancesList =
+    appInstances?.filter(
+      (instance) =>
+        user?.rolesWithContext?.some(
+          (role) => role.context.workspace === instance.workspaceId
+        ) || user?.id === instance.userId
+    ) || []
+
   return (
     <>
       <div className="w-full">
@@ -73,7 +87,7 @@ export default function CHORUSDashboard() {
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
             <Card variant="default">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-foreground">
+                <CardTitle className="text-sm font-medium text-secondary">
                   Total Workspaces
                 </CardTitle>
               </CardHeader>
@@ -81,6 +95,11 @@ export default function CHORUSDashboard() {
                 <div className="flex items-center justify-between">
                   <span className="text-3xl font-bold text-secondary">
                     {workspaceList?.length}
+                    {workspaceLimits.max != null && (
+                      <span className="text-3xl font-normal text-muted-foreground">
+                        /{workspaceLimits.max}
+                      </span>
+                    )}
                   </span>
                   <Package className="h-8 w-8 text-secondary" />
                 </div>
@@ -97,6 +116,32 @@ export default function CHORUSDashboard() {
                 <div className="flex items-center justify-between">
                   <span className="text-3xl font-bold text-secondary">
                     {workbenchesList?.length}
+                    {sessionLimits.max != null && (
+                      <span className="text-3xl font-normal text-muted-foreground">
+                        /{sessionLimits.max}
+                      </span>
+                    )}
+                  </span>
+                  <LaptopMinimal className="h-8 w-8 text-secondary" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card variant="default">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-secondary">
+                  Active Apps
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-secondary">
+                    {appInstancesList?.length}
+                    {appInstanceLimits.max != null && (
+                      <span className="text-3xl font-normal text-muted-foreground">
+                        /{appInstanceLimits.max}
+                      </span>
+                    )}
                   </span>
                   <LaptopMinimal className="h-8 w-8 text-secondary" />
                 </div>
@@ -135,7 +180,7 @@ export default function CHORUSDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="demo-effect" variant="default">
+            {/* <Card className="demo-effect" variant="default">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-foreground">
                   Storage Usage
@@ -149,7 +194,7 @@ export default function CHORUSDashboard() {
                   <DatabaseZap className="h-8 w-8 text-gray-600" />
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </section>
 
