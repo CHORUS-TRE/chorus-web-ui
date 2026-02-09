@@ -42,7 +42,10 @@ const instanceConfigFormSchema = z.object({
   headline: z.string().min(1, 'Headline is required'),
   tagline: z.string().min(1, 'Tagline is required'),
   website: z.string().url('Must be a valid URL'),
-  tags: z.array(instanceTagSchema).min(1, 'At least one tag is required')
+  tags: z.array(instanceTagSchema).min(1, 'At least one tag is required'),
+  maxWorkspacesPerUser: z.string().optional(),
+  maxSessionsPerUser: z.string().optional(),
+  maxAppInstancesPerUser: z.string().optional()
 })
 
 type InstanceConfigFormValues = z.infer<typeof instanceConfigFormSchema>
@@ -57,7 +60,13 @@ export function InstanceConfigForm() {
       headline: instanceConfig.headline,
       tagline: instanceConfig.tagline,
       website: instanceConfig.website,
-      tags: instanceConfig.tags
+      tags: instanceConfig.tags,
+      maxWorkspacesPerUser:
+        instanceConfig.limits?.maxWorkspacesPerUser?.toString() ?? '',
+      maxSessionsPerUser:
+        instanceConfig.limits?.maxSessionsPerUser?.toString() ?? '',
+      maxAppInstancesPerUser:
+        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? ''
     }
   })
 
@@ -73,7 +82,13 @@ export function InstanceConfigForm() {
       headline: instanceConfig.headline,
       tagline: instanceConfig.tagline,
       website: instanceConfig.website,
-      tags: instanceConfig.tags
+      tags: instanceConfig.tags,
+      maxWorkspacesPerUser:
+        instanceConfig.limits?.maxWorkspacesPerUser?.toString() ?? '',
+      maxSessionsPerUser:
+        instanceConfig.limits?.maxSessionsPerUser?.toString() ?? '',
+      maxAppInstancesPerUser:
+        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? ''
     })
   }, [instanceConfig, form])
 
@@ -84,8 +99,22 @@ export function InstanceConfigForm() {
         setInstanceHeadline,
         setInstanceTagline,
         setInstanceWebsite,
-        setInstanceTags
+        setInstanceTags,
+        setInstanceLimits
       } = useDevStoreCache.getState()
+
+      // Parse limit values: empty string → null (unlimited), otherwise number
+      const parsedLimits = {
+        maxWorkspacesPerUser: data.maxWorkspacesPerUser
+          ? parseInt(data.maxWorkspacesPerUser, 10)
+          : null,
+        maxSessionsPerUser: data.maxSessionsPerUser
+          ? parseInt(data.maxSessionsPerUser, 10)
+          : null,
+        maxAppInstancesPerUser: data.maxAppInstancesPerUser
+          ? parseInt(data.maxAppInstancesPerUser, 10)
+          : null
+      }
 
       // Save all fields
       const results = await Promise.all([
@@ -93,7 +122,8 @@ export function InstanceConfigForm() {
         setInstanceHeadline(data.headline),
         setInstanceTagline(data.tagline),
         setInstanceWebsite(data.website),
-        setInstanceTags(data.tags)
+        setInstanceTags(data.tags),
+        setInstanceLimits(parsedLimits)
       ])
 
       if (results.every(Boolean)) {
@@ -134,7 +164,8 @@ export function InstanceConfigForm() {
         deleteGlobal('instance.headline'),
         deleteGlobal('instance.tagline'),
         deleteGlobal('instance.website'),
-        deleteGlobal('instance.tags')
+        deleteGlobal('instance.tags'),
+        deleteGlobal('instance.limits')
       ])
 
       toast({
@@ -341,6 +372,79 @@ export function InstanceConfigForm() {
                     </Button>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Resource Limits */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium">Resource Limits</h3>
+                <p className="text-sm text-muted-foreground">
+                  Set the maximum number of resources each user can create.
+                  Leave empty for unlimited.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="maxWorkspacesPerUser"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Max Workspaces</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Unlimited"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Per user</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="maxSessionsPerUser"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Max Sessions</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Unlimited"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Per user</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="maxAppInstancesPerUser"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Max App Instances</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Unlimited"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Per user</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
