@@ -8,7 +8,8 @@ export const INSTANCE_CONFIG_KEYS = {
   WEBSITE: 'instance.website',
   TAGS: 'instance.tags',
   LOGO: 'instance.logo',
-  THEME: 'instance.theme'
+  THEME: 'instance.theme',
+  LIMITS: 'instance.limits'
 } as const
 
 // Tag configuration for workspace types
@@ -49,6 +50,15 @@ export const InstanceThemeSchema = z.object({
 
 export type InstanceTheme = z.infer<typeof InstanceThemeSchema>
 
+// Resource limits per user
+export const InstanceLimitsSchema = z.object({
+  maxWorkspacesPerUser: z.number().int().min(0).nullable().default(null),
+  maxSessionsPerUser: z.number().int().min(0).nullable().default(null),
+  maxAppInstancesPerUser: z.number().int().min(0).nullable().default(null)
+})
+
+export type InstanceLimits = z.infer<typeof InstanceLimitsSchema>
+
 // Full instance configuration
 export const InstanceConfigSchema = z.object({
   name: z.string().default('CHORUS'),
@@ -66,7 +76,8 @@ export const InstanceConfigSchema = z.object({
     { id: 'center', label: 'Center', display: true }
   ]),
   logo: InstanceLogoSchema.nullable().optional(),
-  theme: InstanceThemeSchema.nullable().optional()
+  theme: InstanceThemeSchema.nullable().optional(),
+  limits: InstanceLimitsSchema.nullable().optional()
 })
 
 export type InstanceConfig = z.infer<typeof InstanceConfigSchema>
@@ -83,5 +94,10 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
     { id: 'center', label: 'Center', display: true }
   ],
   logo: null,
-  theme: null
+  theme: null,
+  limits: {
+    maxWorkspacesPerUser: null,
+    maxSessionsPerUser: null,
+    maxAppInstancesPerUser: null
+  }
 }

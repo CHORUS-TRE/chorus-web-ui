@@ -2,15 +2,19 @@
 
 import { useMemo } from 'react'
 
+import { AppInstanceStatus, WorkbenchStatus } from '@/domain/model'
 import {
   DEFAULT_INSTANCE_CONFIG,
   INSTANCE_CONFIG_KEYS,
   InstanceConfig,
+  InstanceLimits,
+  InstanceLimitsSchema,
   InstanceLogo,
   InstanceLogoSchema,
   InstanceTag,
   InstanceTagSchema
 } from '@/domain/model/instance-config'
+import { useAppState } from '@/stores/app-state-store'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 
 /**
@@ -41,6 +45,9 @@ export function useInstanceConfig(): InstanceConfig {
   )
   const themeRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.THEME]
+  )
+  const limitsRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.LIMITS]
   )
 
   // Memoize the parsed config
@@ -83,6 +90,16 @@ export function useInstanceConfig(): InstanceConfig {
       }
     }
 
+    // Parse limits (reuse logic from useInstanceLimits for consistency)
+    let limits = null
+    if (limitsRaw) {
+      try {
+        limits = JSON.parse(limitsRaw)
+      } catch {
+        // Keep null
+      }
+    }
+
     return {
       name: nameRaw || DEFAULT_INSTANCE_CONFIG.name,
       headline: headlineRaw || DEFAULT_INSTANCE_CONFIG.headline,
@@ -90,9 +107,19 @@ export function useInstanceConfig(): InstanceConfig {
       website: websiteRaw || DEFAULT_INSTANCE_CONFIG.website,
       tags,
       logo,
-      theme
+      theme,
+      limits
     }
-  }, [nameRaw, headlineRaw, taglineRaw, websiteRaw, tagsRaw, logoRaw, themeRaw])
+  }, [
+    nameRaw,
+    headlineRaw,
+    taglineRaw,
+    websiteRaw,
+    tagsRaw,
+    logoRaw,
+    themeRaw,
+    limitsRaw
+  ])
 
   return config
 }
@@ -118,4 +145,78 @@ export function useInstanceLogo(): InstanceLogo | null {
       return null
     }
   }, [logoRaw])
+}
+
+type ResourceCheck = {
+  current: number
+  max: number | null
+  isAtLimit: boolean
+}
+
+type InstanceLimitsResult = {
+  limits: InstanceLimits | null
+  workspaces: ResourceCheck
+  sessions: ResourceCheck
+  appInstances: ResourceCheck
+}
+
+/**
+ * Hook to access instance limits and check resource usage for a user.
+ * When userId is provided, computes current counts and isAtLimit flags.
+ */
+export function useInstanceLimits(userId?: string): InstanceLimitsResult {
+  const limitsRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.LIMITS]
+  )
+  const { workspaces, workbenches, appInstances } = useAppState()
+
+  return useMemo((): InstanceLimitsResult => {
+    let limits: InstanceLimits | null = null
+    if (limitsRaw) {
+      try {
+        const parsed = JSON.parse(limitsRaw)
+        const validated = InstanceLimitsSchema.safeParse(parsed)
+        if (validated.success) limits = validated.data
+      } catch {
+        // Keep null
+      }
+    }
+
+    const workspaceCount =
+      workspaces?.filter((w) => w.userId === userId && w.status !== 'deleted')
+        .length ?? 0
+    const sessionCount =
+      workbenches?.filter(
+        (wb) => wb.userId === userId && wb.status !== WorkbenchStatus.DELETED
+      ).length ?? 0
+    const appInstanceCount =
+      appInstances?.filter(
+        (ai) => ai.userId === userId && ai.status !== AppInstanceStatus.DELETED
+      ).length ?? 0
+
+    return {
+      limits,
+      workspaces: {
+        current: workspaceCount,
+        max: limits?.maxWorkspacesPerUser ?? null,
+        isAtLimit:
+          limits?.maxWorkspacesPerUser != null &&
+          workspaceCount >= limits.maxWorkspacesPerUser
+      },
+      sessions: {
+        current: sessionCount,
+        max: limits?.maxSessionsPerUser ?? null,
+        isAtLimit:
+          limits?.maxSessionsPerUser != null &&
+          sessionCount >= limits.maxSessionsPerUser
+      },
+      appInstances: {
+        current: appInstanceCount,
+        max: limits?.maxAppInstancesPerUser ?? null,
+        isAtLimit:
+          limits?.maxAppInstancesPerUser != null &&
+          appInstanceCount >= limits.maxAppInstancesPerUser
+      }
+    }
+  }, [limitsRaw, workspaces, workbenches, appInstances, userId])
 }
