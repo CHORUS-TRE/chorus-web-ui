@@ -4,7 +4,7 @@ import { AlertCircle, Circle, Loader2, Square, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
 import { useAppState } from '@/stores/app-state-store'
 import {
   deleteAppInstance,
@@ -42,46 +42,46 @@ function InstanceEntry({
   }
 
   return (
-    <div className="flex items-center gap-2 border-b border-muted/10 px-3 py-2 last:border-b-0">
+    <div className="flex items-center gap-2 border-b border-muted/10 px-2 py-1.5 last:border-b-0">
       {/* Status icon */}
-      <div className="flex w-4 shrink-0 items-center justify-center">
+      <div className="flex w-3 shrink-0 items-center justify-center">
         {isLoading && (
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+          <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
         )}
         {isRunning && (
-          <Circle className="h-2.5 w-2.5 fill-green-500 text-green-500" />
+          <Circle className="h-2 w-2 fill-green-500 text-green-500" />
         )}
-        {isFailed && <AlertCircle className="h-3.5 w-3.5 text-destructive" />}
+        {isFailed && <AlertCircle className="h-3 w-3 text-destructive" />}
       </div>
 
       {/* App name + error message */}
       <div className="min-w-0 flex-1">
         <span
           className={cn(
-            'block truncate text-sm',
+            'block truncate text-xs',
             isFailed && 'text-destructive'
           )}
         >
           {appName}
         </span>
         {isFailed && instance.k8sMessage && (
-          <p className="truncate text-xs text-destructive/70">
-            {instance.k8sMessage}
+          <p className="truncate text-[10px] text-destructive/70">
+            {parseK8sInsufficientResourceMessage(instance.k8sMessage)}
           </p>
         )}
       </div>
 
-      {/* Stop button for running instances */}
-      {isRunning && (
+      {/* Stop button for all non-stopped/killed instances */}
+      {!isFailed && (
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
+          className="h-5 w-5 shrink-0 text-red-500 hover:bg-red-500/10 hover:text-red-600"
           onClick={handleStop}
           disabled={stopping}
           title="Stop app"
         >
-          <Square className="h-3 w-3" />
+          <Square className="h-2.5 w-2.5" />
         </Button>
       )}
     </div>
@@ -131,8 +131,10 @@ export function LaunchingAppsPanel() {
     return appInstances.filter(
       (i) =>
         i.workbenchId === workbenchId &&
+        i.k8sStatus !== K8sAppInstanceStatus.RUNNING &&
         i.k8sStatus !== K8sAppInstanceStatus.STOPPED &&
-        i.k8sStatus !== K8sAppInstanceStatus.KILLED
+        i.k8sStatus !== K8sAppInstanceStatus.KILLED &&
+        i.k8sStatus !== K8sAppInstanceStatus.COMPLETE
     )
   }, [appInstances, workbenchId])
 
@@ -150,21 +152,21 @@ export function LaunchingAppsPanel() {
   if (!workbenchId || filteredInstances.length === 0 || dismissed) return null
 
   return (
-    <div className="fixed right-4 top-14 z-40 w-72 overflow-hidden rounded-xl border border-muted/40 bg-contrast-background/90 shadow-lg backdrop-blur-md">
-      <div className="flex items-center justify-between border-b border-muted/20 px-3 py-2">
-        <span className="text-xs font-medium text-foreground">
-          Apps ({filteredInstances.length})
-        </span>
+    <div className="fixed right-4 top-14 z-40 w-60 overflow-hidden rounded-lg border border-muted/40 bg-contrast-background/90 shadow-lg backdrop-blur-md">
+      <div className="flex items-center justify-between border-b border-muted/20 px-2 py-1.5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
+            Applications ({filteredInstances.length})
+          </p>
         <Button
           variant="ghost"
           size="icon"
-          className="h-5 w-5"
+          className="h-4 w-4"
           onClick={() => setDismissed(true)}
         >
-          <X className="h-3.5 w-3.5" />
+          <X className="h-3 w-3" />
         </Button>
       </div>
-      <div className="max-h-60 overflow-y-auto">
+      <div className="max-h-48 overflow-y-auto">
         {filteredInstances.map((instance) => (
           <InstanceEntry
             key={instance.id}

@@ -10,6 +10,7 @@ import React from 'react'
 
 import { AppStateInitializer } from '@/components/app-state-initializer'
 import { CookieConsent } from '@/components/cookie-consent'
+import { LaunchingAppsPanel } from '@/components/launching-apps-panel'
 import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { FullscreenProvider } from '@/providers/fullscreen-provider'
@@ -74,6 +75,7 @@ export default async function RootLayout({
                   <IframeCacheProvider>
                     {children}
                     <IframeCacheRenderer />
+                    <LaunchingAppsPanel />
                     <IframeCleanupDialog />
                     <IframeDebugPanel />
                     <CookieConsent />

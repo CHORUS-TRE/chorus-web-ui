@@ -58,7 +58,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
-import { cn } from '@/lib/utils'
+import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
@@ -205,15 +205,18 @@ export function Header() {
                   <div key={instance.id} className="space-y-3">
                     <div className="group/app flex items-center justify-between">
                       <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+                        {/* <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
                           <Rocket className="h-5 w-5 text-[#88b04b]" />
-                        </div>
+                        </div> */}
                         <div className="min-w-0">
                           <p className="text-sm font-bold leading-tight text-white">
                             {appName}
                           </p>
                           <p className="truncate text-[11px] text-muted-foreground/60">
-                            {isRunning ? 'Running' : 'Starting...'}
+                            {isRunning
+                              ? 'Running'
+                              : parseK8sInsufficientResourceMessage(instance.k8sMessage) ||
+                                'Starting...'}
                           </p>
                         </div>
                       </div>
