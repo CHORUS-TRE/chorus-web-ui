@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 
 import { WorkspaceWorkbenchList } from '@/components/workspace-workbench-list'
 import { CATEGORIES, filterApps } from '@/config/app-store'
+import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -41,6 +42,7 @@ export function AppStoreView() {
   const { externalWebApps, background, openSession, openWebApp } =
     useIframeCache()
   const { user } = useAuthentication()
+  const { appInstances: appInstanceLimits } = useInstanceLimits(user?.id)
   const router = useRouter()
   const { workspaceId: paramWorkspaceId, sessionId: paramSessionId } =
     useParams()
@@ -71,6 +73,21 @@ export function AppStoreView() {
     workspaceId = paramWorkspaceId || background?.workspaceId
   ) => {
     if (!sessionId || !workspaceId) return
+    console.log('Launching app', {
+      appId: app.id,
+      sessionId,
+      workspaceId,
+      limit: appInstanceLimits.max,
+      current: appInstanceLimits.current
+    })
+    if (appInstanceLimits.isAtLimit) {
+      toast({
+        title: 'App instance limit reached',
+        description: `You've reached the maximum number of app instances (${appInstanceLimits.current}/${appInstanceLimits.max}). Please delete existing app instances before creating new ones.`,
+        variant: 'destructive'
+      })
+      return
+    }
 
     const formData = new FormData()
     formData.append('appId', app.id)

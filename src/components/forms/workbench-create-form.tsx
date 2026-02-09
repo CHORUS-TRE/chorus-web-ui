@@ -28,6 +28,7 @@ import {
   WorkbenchCreateType,
   WorkbenchStatus
 } from '@/domain/model'
+import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { workbenchCreate } from '@/view-model/workbench-view-model'
@@ -70,6 +71,19 @@ export function WorkbenchCreateForm({
   const router = useRouter()
   const { workspaces } = useAppState()
   const { user } = useAuthentication()
+  const { sessions: sessionLimits } = useInstanceLimits(user?.id)
+
+  // Show toast and close dialog when limit is reached
+  useEffect(() => {
+    if (open && sessionLimits.isAtLimit) {
+      toast({
+        title: 'Session limit reached',
+        description: `You've reached the maximum number of sessions (${sessionLimits.current}/${sessionLimits.max}). Please delete existing sessions before creating new ones.`,
+        variant: 'destructive'
+      })
+      setOpen(false)
+    }
+  }, [open, sessionLimits])
 
   const myWorkspaces = useMemo(() => {
     return workspaces?.filter((workspace) => {
