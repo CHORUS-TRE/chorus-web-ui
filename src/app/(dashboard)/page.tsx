@@ -96,7 +96,7 @@ export default function CHORUSDashboard() {
                   <span className="text-3xl font-bold text-secondary">
                     {workspaceList?.length}
                     {workspaceLimits.max != null && (
-                      <span className="text-lg font-normal text-muted-foreground">
+                      <span className="text-3xl font-normal text-muted-foreground">
                         /{workspaceLimits.max}
                       </span>
                     )}
@@ -117,7 +117,7 @@ export default function CHORUSDashboard() {
                   <span className="text-3xl font-bold text-secondary">
                     {workbenchesList?.length}
                     {sessionLimits.max != null && (
-                      <span className="text-lg font-normal text-muted-foreground">
+                      <span className="text-3xl font-normal text-muted-foreground">
                         /{sessionLimits.max}
                       </span>
                     )}
@@ -138,7 +138,7 @@ export default function CHORUSDashboard() {
                   <span className="text-3xl font-bold text-secondary">
                     {appInstancesList?.length}
                     {appInstanceLimits.max != null && (
-                      <span className="text-lg font-normal text-muted-foreground">
+                      <span className="text-3xl font-normal text-muted-foreground">
                         /{appInstanceLimits.max}
                       </span>
                     )}
