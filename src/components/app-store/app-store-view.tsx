@@ -73,7 +73,7 @@ export function AppStoreView() {
     workspaceId = paramWorkspaceId || background?.workspaceId
   ) => {
     if (!sessionId || !workspaceId) return
-    
+
     if (appInstanceLimits.isAtLimit) {
       toast({
         title: 'App instance limit reached',
