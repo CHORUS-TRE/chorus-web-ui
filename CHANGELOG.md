@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.33.1...v1.34.0) (2026-02-09)
+
+
+### Features
+
+* implement simple object quotas on workspaces, sessions and app instances ([#183](https://github.com/CHORUS-TRE/chorus-web-ui/issues/183)) ([738129a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/738129aefc67dc7aa7a55e1fb4773b474241e5f5))
+
 ## [1.33.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.33.0...v1.33.1) (2026-02-08)
 
 
