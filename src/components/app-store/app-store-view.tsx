@@ -73,13 +73,7 @@ export function AppStoreView() {
     workspaceId = paramWorkspaceId || background?.workspaceId
   ) => {
     if (!sessionId || !workspaceId) return
-    console.log('Launching app', {
-      appId: app.id,
-      sessionId,
-      workspaceId,
-      limit: appInstanceLimits.max,
-      current: appInstanceLimits.current
-    })
+    
     if (appInstanceLimits.isAtLimit) {
       toast({
         title: 'App instance limit reached',
