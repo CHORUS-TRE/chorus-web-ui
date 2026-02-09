@@ -38,11 +38,15 @@ export function formatFileSize(bytes?: number): string {
  * Example input: "Scheduling: Unschedulable - 0/1 nodes are available: 1 Insufficient cpu..."
  * Example output: "0/1 nodes available: Insufficient cpu"
  */
-export function parseK8sInsufficientResourceMessage(message: string | undefined): string | null {
+export function parseK8sInsufficientResourceMessage(
+  message: string | undefined
+): string | null {
   if (!message) return null
 
   // Match pattern: "X/Y nodes are available: Z Insufficient [resource]"
-  const match = message.match(/(\d+\/\d+)\s+nodes?\s+are\s+available:\s+\d+\s+Insufficient\s+(\w+)/i)
+  const match = message.match(
+    /(\d+\/\d+)\s+nodes?\s+are\s+available:\s+\d+\s+Insufficient\s+(\w+)/i
+  )
 
   if (match) {
     const [, nodeRatio, resource] = match

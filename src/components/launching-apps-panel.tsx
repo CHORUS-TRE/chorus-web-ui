@@ -155,8 +155,8 @@ export function LaunchingAppsPanel() {
     <div className="fixed right-4 top-14 z-40 w-60 overflow-hidden rounded-lg border border-muted/40 bg-contrast-background/90 shadow-lg backdrop-blur-md">
       <div className="flex items-center justify-between border-b border-muted/20 px-2 py-1.5">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
-            Applications ({filteredInstances.length})
-          </p>
+          Applications ({filteredInstances.length})
+        </p>
         <Button
           variant="ghost"
           size="icon"

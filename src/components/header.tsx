@@ -215,8 +215,9 @@ export function Header() {
                           <p className="truncate text-[11px] text-muted-foreground/60">
                             {isRunning
                               ? 'Running'
-                              : parseK8sInsufficientResourceMessage(instance.k8sMessage) ||
-                                'Starting...'}
+                              : parseK8sInsufficientResourceMessage(
+                                  instance.k8sMessage
+                                ) || 'Starting...'}
                           </p>
                         </div>
                       </div>
