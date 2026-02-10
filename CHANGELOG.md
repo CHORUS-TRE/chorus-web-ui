@@ -1,3 +1,10 @@
+## [1.35.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.1...v1.35.2) (2026-02-10)
+
+
+### Bug Fixes
+
+* update loading overlay positioning for better visibility ([d3a9717](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d3a971734fccf05ed72d60ddeb8391916d74f80a))
+
 ## [1.35.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.0...v1.35.1) (2026-02-10)
 
 
