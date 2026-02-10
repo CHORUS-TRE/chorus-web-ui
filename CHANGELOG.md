@@ -1,3 +1,10 @@
+# [1.35.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.34.1...v1.35.0) (2026-02-10)
+
+
+### Features
+
+* improve app store view on session page ([#184](https://github.com/CHORUS-TRE/chorus-web-ui/issues/184)) ([af63746](https://github.com/CHORUS-TRE/chorus-web-ui/commit/af63746fa6ca0a5e9fab9f75276145861f6fef6f))
+
 ## [1.34.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.34.0...v1.34.1) (2026-02-10)
 
 # [1.34.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.33.1...v1.34.0) (2026-02-09)
