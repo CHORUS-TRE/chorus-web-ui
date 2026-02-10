@@ -162,7 +162,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
         )
 
         if (needsRefresh) {
-          console.log('Token refresh requested via notification')
           await refreshToken()
         }
 

@@ -191,10 +191,6 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 workspaceName={workspace?.name}
                 onSuccess={() => {
                   refreshWorkbenches()
-                  toast({
-                    title: 'Success',
-                    description: 'Session created'
-                  })
                 }}
               />
             </div>

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { startTransition, useEffect, useMemo, useState } from 'react'
+import { startTransition, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
@@ -69,7 +69,7 @@ export function WorkbenchCreateForm({
   const [isCreating, setIsCreating] = useState(false)
   const [viewportDimensions, setViewportDimensions] = useState(DEFAULT_VIEWPORT)
   const router = useRouter()
-  const { workspaces } = useAppState()
+  const { workspaces, workbenches } = useAppState()
   const { user } = useAuthentication()
   const { sessions: sessionLimits } = useInstanceLimits(user?.id)
 
@@ -85,20 +85,12 @@ export function WorkbenchCreateForm({
     }
   }, [open, sessionLimits])
 
-  const myWorkspaces = useMemo(() => {
-    return workspaces?.filter((workspace) => {
-      const isOwner = workspace.userId === user?.id
-      const isMember = user?.rolesWithContext?.some(
-        (role) => role.context.workspace === workspace.id
-      )
-      return isOwner || isMember
-    })
-  }, [workspaces, user])
+  const initialDimensionsSet = useRef(false)
 
   const form = useForm<WorkbenchCreateType>({
     resolver: zodResolver(WorkbenchCreateSchema),
     defaultValues: {
-      name: workspaceName ? `${workspaceName}-session` : 'new-session',
+      name: workspaceName ? `${workspaceName}-session` : 'session',
       workspaceId: initialWorkspaceId || '',
       userId: userId || '2',
       tenantId: '1',
@@ -109,16 +101,37 @@ export function WorkbenchCreateForm({
     }
   })
 
-  useEffect(() => {
-    // Set initial dimensions
-    setViewportDimensions({
-      width: Math.floor(
-        window?.visualViewport?.width || DEFAULT_VIEWPORT.width
-      ),
-      height: Math.floor(
-        window?.visualViewport?.height || DEFAULT_VIEWPORT.height
+  const watchedWorkspaceId = form.watch('workspaceId')
+
+  const nextSessionNumber = useMemo(() => {
+    const wsId = watchedWorkspaceId || initialWorkspaceId
+    if (!workbenches || !wsId) return 1
+    const workspaceSessions = workbenches.filter((w) => w.workspaceId === wsId)
+    return workspaceSessions.length + 1
+  }, [workbenches, initialWorkspaceId, watchedWorkspaceId])
+
+  const myWorkspaces = useMemo(() => {
+    return workspaces?.filter((workspace) => {
+      const isOwner = workspace.userId === user?.id
+      const isMember = user?.rolesWithContext?.some(
+        (role) => role.context.workspace === workspace.id
       )
+      return isOwner || isMember
     })
+  }, [workspaces, user])
+
+  useEffect(() => {
+    if (!initialDimensionsSet.current && typeof window !== 'undefined') {
+      setViewportDimensions({
+        width: Math.floor(
+          window.visualViewport?.width || DEFAULT_VIEWPORT.width
+        ),
+        height: Math.floor(
+          window.visualViewport?.height || DEFAULT_VIEWPORT.height
+        )
+      })
+      initialDimensionsSet.current = true
+    }
 
     const updateDimensions = () => {
       setViewportDimensions({
@@ -137,9 +150,13 @@ export function WorkbenchCreateForm({
 
   useEffect(() => {
     if (open) {
+      const currentWorkspaceId =
+        initialWorkspaceId || form.getValues('workspaceId')
       form.reset({
-        name: workspaceName ? `${workspaceName}-session` : 'new-session',
-        workspaceId: initialWorkspaceId || form.getValues('workspaceId') || '',
+        name: workspaceName
+          ? `${workspaceName}-session-${nextSessionNumber}`
+          : `session-${nextSessionNumber}`,
+        workspaceId: currentWorkspaceId || '',
         userId: userId || '2',
         tenantId: '1',
         status: WorkbenchStatus.ACTIVE,
@@ -154,6 +171,7 @@ export function WorkbenchCreateForm({
     initialWorkspaceId,
     workspaceName,
     userId,
+    nextSessionNumber,
     viewportDimensions.height,
     viewportDimensions.width
   ])
@@ -189,16 +207,11 @@ export function WorkbenchCreateForm({
       }
 
       if (result.data) {
-        toast({
-          title: 'Success',
-          description: `Session is creating. Redirecting to session...`
-        })
         setOpen(false)
 
         router.push(
           `/workspaces/${data.workspaceId}/sessions/${result.data.id as string}`
         )
-        await new Promise((resolve) => setTimeout(resolve, 2000)) // Wait for the backend cache to be updated
         if (onSuccess) onSuccess(result.data)
       }
     })
