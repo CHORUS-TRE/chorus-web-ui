@@ -1,3 +1,11 @@
+## [1.35.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.0...v1.35.1) (2026-02-10)
+
+
+### Bug Fixes
+
+* build errors ([823c0ee](https://github.com/CHORUS-TRE/chorus-web-ui/commit/823c0ee62259f092364c82473845c51fbb10a1e8))
+* error messages ([645a647](https://github.com/CHORUS-TRE/chorus-web-ui/commit/645a647a132a31ce5b4690738951e53e0a1e259c))
+
 # [1.35.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.34.1...v1.35.0) (2026-02-10)
 
 
