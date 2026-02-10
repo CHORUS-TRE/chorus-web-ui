@@ -47,7 +47,7 @@ export function LoadingOverlay({
 
   return (
     <div className={containerClassName} role="status" aria-label="Loading">
-      <div className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col items-start justify-start gap-4">
         <div className="animate-pulse bg-transparent">
           <Image
             src={logo}
@@ -58,7 +58,7 @@ export function LoadingOverlay({
             priority
           />
         </div>
-        {message && <p className="max-w-md text-sm text-muted">{message}</p>}
+        <p className="max-w-md text-sm text-muted">{message}</p>
       </div>
     </div>
   )

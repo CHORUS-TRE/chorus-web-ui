@@ -24,7 +24,7 @@ import {
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -52,7 +52,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
-import { cn } from '@/lib/utils'
+import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
@@ -63,11 +63,14 @@ import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
-import { K8sAppInstanceStatus } from '~/domain/model/app-instance'
+import { AppInstance, K8sAppInstanceStatus } from '~/domain/model/app-instance'
+import { WorkbenchServerPodStatus } from '~/domain/model/workbench'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
+import { useAppInstanceStatus } from './hooks/use-app-instance-status'
 import { toast } from './hooks/use-toast'
+import { useWorkbenchStatus } from './hooks/use-workbench-status'
 
 export function Header() {
   const router = useRouter()
@@ -101,6 +104,8 @@ export function Header() {
   const [updateOpen, setUpdateOpen] = useState(false)
   const [updateSessionId, setUpdateSessionId] = useState<string | null>(null)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
   )
@@ -114,16 +119,39 @@ export function Header() {
   // Track launching apps for the current session
   const launchingApps = useMemo(() => {
     if (!params.sessionId || !appInstances) return []
+    // Items that are actively starting up
     return appInstances.filter(
       (i) =>
         i.workbenchId === params.sessionId &&
-        i.k8sStatus !== K8sAppInstanceStatus.RUNNING &&
-        i.k8sStatus !== K8sAppInstanceStatus.STOPPED &&
-        i.k8sStatus !== K8sAppInstanceStatus.KILLED &&
-        i.k8sStatus !== K8sAppInstanceStatus.FAILED &&
-        i.k8sStatus !== K8sAppInstanceStatus.COMPLETE
+        (i.k8sStatus === K8sAppInstanceStatus.PROGRESSING ||
+          i.k8sStatus === K8sAppInstanceStatus.UNKNOWN ||
+          i.k8sStatus === K8sAppInstanceStatus.EMPTY ||
+          !i.k8sStatus)
     )
   }, [params.sessionId, appInstances])
+
+  // Automatically open menu when a new app is launching or session is starting
+  const prevLaunchingAppsCount = useRef(0)
+  const prevSessionId = useRef<string | null>(null)
+
+  useEffect(() => {
+    // If we have more launching apps than before, or we switched to a new session that is starting
+    const hasMoreLaunchingApps =
+      launchingApps.length > prevLaunchingAppsCount.current
+
+    const session = workbenches?.find((wb) => wb.id === params.sessionId)
+    const isNewSessionStarting =
+      params.sessionId !== prevSessionId.current &&
+      session &&
+      session.serverPodStatus !== WorkbenchServerPodStatus.READY
+
+    if (hasMoreLaunchingApps || isNewSessionStarting) {
+      setIsMenuOpen(true)
+    }
+
+    prevLaunchingAppsCount.current = launchingApps.length
+    prevSessionId.current = params.sessionId || null
+  }, [launchingApps.length, params.sessionId, workbenches])
 
   const getAppName = (appId: string) =>
     apps?.find((a) => a.id === appId)?.name ?? 'App'
@@ -171,6 +199,212 @@ export function Header() {
     refreshAppInstances()
   }
 
+  // --- Sub-components for real-time status ---
+
+  const AppLaunchingPill = ({
+    initialInstance
+  }: {
+    initialInstance: AppInstance
+  }) => {
+    const { data: statusData } = useAppInstanceStatus(initialInstance.id)
+    const currentStatus = statusData?.status || initialInstance.k8sStatus
+
+    // If it reached a terminal state, hide the launching status
+    if (
+      currentStatus === K8sAppInstanceStatus.RUNNING ||
+      currentStatus === K8sAppInstanceStatus.COMPLETE ||
+      currentStatus === K8sAppInstanceStatus.FAILED ||
+      currentStatus === K8sAppInstanceStatus.STOPPED ||
+      currentStatus === K8sAppInstanceStatus.KILLED
+    ) {
+      return (
+        <>
+          <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
+          <p className="text-[10px] font-medium leading-none text-muted-foreground/60">
+            Session Active
+          </p>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <div className="h-2 w-2 animate-pulse rounded-full bg-[#88b04b] shadow-[0_0_8px_#88b04b]" />
+        <p className="text-[10px] font-bold uppercase leading-none text-[#88b04b]">
+          Launching {getAppName(initialInstance.appId)}...
+        </p>
+      </>
+    )
+  }
+
+  const SessionStatusSection = ({
+    sessionId,
+    onDelete
+  }: {
+    sessionId: string
+    onDelete: (id: string) => void
+  }) => {
+    const session = workbenches?.find((wb) => wb.id === sessionId)
+    const { data: statusData } = useWorkbenchStatus(sessionId)
+
+    if (!session) return null
+
+    const currentStatus = statusData?.status || session.serverPodStatus
+    const currentMessage = statusData?.message || session.serverPodMessage
+
+    const isRunning =
+      currentStatus === WorkbenchServerPodStatus.RUNNING ||
+      currentStatus === WorkbenchServerPodStatus.READY
+    const isFailed =
+      currentStatus === WorkbenchServerPodStatus.FAILED ||
+      currentStatus === WorkbenchServerPodStatus.FAILING
+
+    return (
+      <div className="space-y-4 p-4 pb-0">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
+          Session
+        </p>
+
+        <div className="space-y-3">
+          <div className="group/session flex items-center justify-between">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+                <LaptopMinimal className="h-5 w-5 text-[#88b04b]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold leading-tight text-white">
+                  {session.name}
+                </p>
+                <p className="truncate text-[11px] text-muted-foreground/60">
+                  {isRunning ? 'Running' : currentStatus}
+                </p>
+                {isFailed && currentMessage && (
+                  <p className="mt-1 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60 w-36">
+                    {parseK8sInsufficientResourceMessage(currentMessage)}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {isRunning ? (
+                <span className="text-[11px] font-bold text-[#88b04b]"></span>
+              ) : (
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/40" />
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 opacity-75 transition-opacity hover:bg-white/5 group-hover/session:opacity-100"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDelete(sessionId)
+                }}
+                title="Delete Session"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+          {/* Progress Bar */}
+          {!isRunning && (
+            <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
+              <div
+                className={cn(
+                  'h-full transition-all duration-1000',
+                  isRunning
+                    ? 'w-full bg-[#88b04b]'
+                    : 'w-1/3 animate-pulse bg-[#88b04b]/40'
+                )}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  const AppInstanceStatusRow = ({
+    instance,
+    onClose
+  }: {
+    instance: AppInstance
+    onClose: (id: string, name: string) => void
+  }) => {
+    const { data: statusData } = useAppInstanceStatus(instance.id)
+
+    const appName =
+      apps?.find((a) => a.id === instance.appId)?.name ||
+      instance.name ||
+      'App'
+
+    const currentStatus = statusData?.status || instance.k8sStatus
+    const currentMessage = statusData?.message || instance.k8sMessage
+
+    const isRunning = currentStatus === K8sAppInstanceStatus.RUNNING
+    const isDone =
+      isRunning ||
+      currentStatus === K8sAppInstanceStatus.COMPLETE ||
+      currentStatus === K8sAppInstanceStatus.FAILED ||
+      currentStatus === K8sAppInstanceStatus.STOPPED ||
+      currentStatus === K8sAppInstanceStatus.KILLED
+
+    return (
+      <div className="space-y-3">
+        <div className="group/app flex items-center justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+              <Rocket className="h-5 w-5 text-[#88b04b]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold leading-tight text-white">
+                {appName}
+              </p>
+              <p className="truncate text-[11px] text-muted-foreground/60">
+                {isRunning ? 'Running' : currentStatus}
+              </p>
+              {!isDone && (
+                <p className="mt-1 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60 w-36">
+                  {parseK8sInsufficientResourceMessage(currentMessage)}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {isRunning ? (
+              <span className="text-[11px] font-bold text-[#88b04b]"></span>
+            ) : (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/40" />
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 opacity-75 transition-opacity hover:bg-white/5 group-hover/app:opacity-100"
+              onClick={(e) => {
+                e.stopPropagation()
+                onClose(instance.id, appName)
+              }}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+        {/* Progress Bar */}
+        {!isDone && (
+          <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
+            <div
+              className={cn(
+                'h-full transition-all duration-1000',
+                isRunning
+                  ? 'w-full bg-[#88b04b]'
+                  : 'w-1/3 animate-pulse bg-[#88b04b]/40'
+              )}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+
   const renderSessionMenuContent = (sessionId: string) => {
     const session = workbenches?.find((wb) => wb.id === sessionId)
     if (!session) return null
@@ -179,6 +413,11 @@ export function Header() {
 
     return (
       <div className="flex min-w-[260px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-[#1a1b23] shadow-2xl">
+        <SessionStatusSection
+          sessionId={sessionId}
+          onDelete={setDeleteSessionId}
+        />
+
         {/* Applications Section */}
         <div className="space-y-4 p-4">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
@@ -187,65 +426,13 @@ export function Header() {
 
           {appsRunning.length > 0 ? (
             <div className="space-y-4">
-              {appsRunning.map((instance) => {
-                const appName =
-                  apps?.find((a) => a.id === instance.appId)?.name ||
-                  instance.name ||
-                  'App'
-                const isRunning =
-                  instance.k8sStatus === K8sAppInstanceStatus.RUNNING
-
-                return (
-                  <div key={instance.id} className="space-y-3">
-                    <div className="group/app flex items-center justify-between">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
-                          <Rocket className="h-5 w-5 text-[#88b04b]" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-bold leading-tight text-white">
-                            {appName}
-                          </p>
-                          <p className="truncate text-[11px] text-muted-foreground/60">
-                            {isRunning ? 'Running' : instance.k8sStatus}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {isRunning ? (
-                          <span className="text-[11px] font-bold text-[#88b04b]"></span>
-                        ) : (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/40" />
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 opacity-0 transition-opacity hover:bg-white/5 group-hover/app:opacity-100"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            closeAppInstance(instance.id, appName)
-                          }}
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                    {/* Progress Bar */}
-                    {!isRunning && (
-                      <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
-                        <div
-                          className={cn(
-                            'h-full transition-all duration-1000',
-                            isRunning
-                              ? 'w-full bg-[#88b04b]'
-                              : 'w-1/3 animate-pulse bg-[#88b04b]/40'
-                          )}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+              {appsRunning.map((instance: AppInstance) => (
+                <AppInstanceStatusRow
+                  key={instance.id}
+                  instance={instance}
+                  onClose={closeAppInstance}
+                />
+              ))}
             </div>
           ) : (
             <div className="py-2">
@@ -322,11 +509,14 @@ export function Header() {
 
     return (
       <div className="flex flex-col overflow-hidden">
+        <p className="px-2.5 pt-3 text-xs font-bold text-muted-foreground">
+          {session.name}
+        </p>
         <div className="flex items-center justify-between border-t border-muted/10 bg-accent/[0.03] p-2.5">
           {appsRunning.length > 0 ? (
             <div className="space-y-1.5">
               <p className="text-[10px] font-bold text-muted-foreground">
-                Running apps
+                Apps
               </p>
               <div className="flex flex-wrap gap-1">
                 {appsRunning.map((instance) => {
@@ -339,7 +529,6 @@ export function Header() {
                       key={instance.id}
                       className="flex items-center gap-1.5 rounded-md border border-muted/40 bg-muted/20 px-1.5 py-0.5"
                     >
-                      <div className="h-1 w-1 rounded-full bg-accent" />
                       <span className="max-w-[120px] truncate text-[10px] font-medium text-foreground/70">
                         {appName}
                       </span>
@@ -593,12 +782,7 @@ export function Header() {
                     </p>
                     <div className="flex items-center gap-1.5">
                       {launchingApps.length > 0 ? (
-                        <>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-[#88b04b] shadow-[0_0_8px_#88b04b]" />
-                          <p className="text-[10px] font-bold uppercase leading-none text-[#88b04b]">
-                            Launching {getAppName(launchingApps[0].appId)}...
-                          </p>
-                        </>
+                        <AppLaunchingPill initialInstance={launchingApps[0]} />
                       ) : (
                         <>
                           <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
@@ -614,7 +798,7 @@ export function Header() {
                   <div className="h-5 w-px bg-white/10" />
 
                   {/* Right: MENU Trigger */}
-                  <DropdownMenu>
+                  <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                     <DropdownMenuTrigger asChild>
                       <button className="group/menu ml-1 mr-0.5 flex h-7 items-center gap-2 rounded-full px-3 transition-colors hover:text-accent">
                         <span className="text-[11px] font-black tracking-widest text-white">
@@ -845,6 +1029,8 @@ export function Header() {
           id={params.sessionId}
           state={[deleteOpen, setDeleteOpen]}
           onSuccess={() => {
+            closeIframe(params.sessionId)
+            removeFromRecent(params.sessionId, 'session')
             toast({
               title: 'Success!',
               description: 'Session is deleting, redirecting to workspace...',
@@ -888,7 +1074,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => {}}
+            onSuccess={() => { }}
           />
         )}
 

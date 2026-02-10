@@ -4,7 +4,9 @@ import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
+import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
 import { Link } from '@/components/link'
+import { WorkbenchServerPodStatus } from '@/domain/model'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
@@ -19,14 +21,17 @@ export default function WorkbenchPage() {
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const { openSession, setActiveIframe } = useIframeCache()
   const { appInstances, refreshAppInstances, workbenches } = useAppState()
+  const workbenchStatus = useWorkbenchStatus(params.sessionId)
 
   const workspaceId = params.workspaceId
   const sessionId = params.sessionId
 
   const workbench = workbenches?.find((wb) => wb.id === sessionId)
+  const currentStatus = workbenchStatus?.data?.status || workbench?.serverPodStatus
+
   const isPodReady =
-    workbench?.serverPodStatus === 'Ready' ||
-    workbench?.serverPodStatus === 'Running'
+    currentStatus === WorkbenchServerPodStatus.READY ||
+    currentStatus === WorkbenchServerPodStatus.RUNNING
 
   const sessionAppInstances = appInstances?.filter(
     (appInstance) => appInstance.workbenchId === sessionId
@@ -63,6 +68,8 @@ export default function WorkbenchPage() {
 
   if (!showEmptyState) return null
 
+
+  return null
   return (
     <div className="pointer-events-none flex h-full w-full items-center justify-center p-4">
       <div className="pointer-events-auto relative isolate w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-8 shadow-2xl backdrop-blur-3xl duration-500 animate-in fade-in zoom-in lg:p-12">

@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { useUrlProbing } from '@/components/hooks/use-url-probing'
 import { CachedIframe } from '@/domain/model'
+import { WorkbenchServerPodStatus } from '@/domain/model'
 import { isSessionPath } from '@/lib/route-utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
@@ -13,18 +13,17 @@ import { useAppState } from '@/stores/app-state-store'
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'
 
+
 /**
  * Renders a single cached iframe with proper visibility management.
  * Each iframe maintains its own state and doesn't unmount when hidden.
  */
 function CachedIframeRenderer({
   iframe,
-  isActive,
-  isBackground
+  isActive
 }: {
   iframe: CachedIframe
   isActive: boolean
-  isBackground: boolean
 }) {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
   const [isIframeLoaded, setIsIframeLoaded] = useState(false)
@@ -32,29 +31,15 @@ function CachedIframeRenderer({
   const loadedUrlsRef = useRef<Set<string>>(new Set())
   const { isFullscreen } = useFullscreenContext()
 
-  // Only probe for sessions, not webapps
-  const { isLoading, error } =
-    iframe.type === 'session'
-      ? // eslint-disable-next-line react-hooks/rules-of-hooks
-        useUrlProbing(iframe.id)
-      : { isLoading: false, error: null }
-
   // Note: useWorkbenchStatus could be used for HUD display in the future
   // Currently only used for session iframes to track status
-  if (iframe.type === 'session') {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useWorkbenchStatus(iframe.id)
-  }
+  // Always call hooks at the top level
+  const status = useWorkbenchStatus(iframe.type === 'session' ? iframe.id : undefined)
+  const workbenchStatus = iframe.type === 'session' ? status : null
 
-  // Determine the URL to load
-  const iframeSrc = useMemo(() => {
-    if (iframe.type === 'session') {
-      // For sessions, wait until URL probing is complete
-      return isLoading ? 'about:blank' : iframe.url || 'about:blank'
-    }
-    // For webapps, load directly
-    return iframe.url
-  }, [iframe.type, iframe.url, isLoading])
+  if (workbenchStatus?.data?.message) {
+    console.log(workbenchStatus.data.message)
+  }
 
   // Reset loaded state when URL changes to a new URL
   useEffect(() => {
@@ -104,25 +89,25 @@ function CachedIframeRenderer({
     [workbenches, iframe.id]
   )
 
-  const isPodReady =
-    iframe.type !== 'session' ||
-    workbench?.serverPodStatus === 'Ready' ||
-    workbench?.serverPodStatus === 'Running'
-
   // Show loading overlay if:
   // 1. Iframe is active
   // 2. Not already loaded
   // 3. Either pod not ready OR showing about:blank OR still probing (for sessions) OR has a URL to load
-  const isShowingAboutBlank = iframeSrc === 'about:blank' || !iframeSrc
-  const hasUrlToLoad = iframe.url && iframe.url !== 'about:blank'
+  const isShowingAboutBlank = iframe.url === 'about:blank' || !iframe.url
+  const hasUrlToLoad = iframe.url && iframe.url !== 'about:blank' || false
 
-  const showLoadingOverlay =
-    isActive &&
-    !isIframeLoaded &&
-    (!isPodReady ||
-      isShowingAboutBlank ||
-      (iframe.type === 'session' && isLoading) ||
-      (hasUrlToLoad && !isIframeLoaded))
+  const showLoadingOverlay = useMemo(() => {
+    if (!isActive || isIframeLoaded) return false
+
+    if (iframe.type === 'session') {
+      const isRunning = workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING ||
+        workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY
+      return !isRunning || isShowingAboutBlank || hasUrlToLoad
+    }
+
+    // For web apps, just check loading state and URL
+    return isShowingAboutBlank || hasUrlToLoad
+  }, [isActive, isIframeLoaded, iframe.type, workbenchStatus?.data?.status, isShowingAboutBlank, hasUrlToLoad])
 
   const loadingMessage = useMemo(() => {
     if (!isActive || isIframeLoaded) return undefined
@@ -135,50 +120,46 @@ function CachedIframeRenderer({
   return (
     <>
       {/* Loading overlay for active iframes until they're fully loaded */}
-      {showLoadingOverlay && (
-        <LoadingOverlay
-          isLoading={true}
-          variant="container"
-          message={loadingMessage}
-        />
-      )}
+      <LoadingOverlay
+        isLoading={showLoadingOverlay}
+        variant="container"
+        message={loadingMessage}
+        delay={300}
+      />
 
       {/* Error message */}
-      {isActive && error && (
+
+      {/* FIXME: Add error message */}
+      {/* {workbenchStatus?.error && (
         <div className="fixed left-1/2 top-2/3 z-20 -translate-x-1/2 -translate-y-1/2 transform text-gray-400">
-          {error.message}
+          {workbenchStatus?.error}
         </div>
-      )}
+      )} */}
 
       <iframe
         title={iframe.name}
-        src={iframeSrc}
+        src={iframe.type === 'session'
+          ? (workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY || workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING ? iframe.url : 'about:blank')
+          : iframe.url
+        }
         allow="autoplay; fullscreen; clipboard-write;"
         style={{
-          width: isBackground
+          width: isFullscreen
             ? '100vw'
-            : isFullscreen
-              ? '100vw'
-              : 'calc(100vw - 15px)',
+            : 'calc(100vw - 15px)',
           height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',
           visibility: showLoadingOverlay
             ? 'hidden'
-            : isActive || isBackground
+            : isActive
               ? 'visible'
               : 'hidden',
           pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
           position: 'fixed' as const,
-          left: isBackground ? 0 : isFullscreen ? 0 : 15,
+          left: isFullscreen ? 0 : 15,
           top: isFullscreen ? 0 : 44,
-          zIndex: isActive ? 20 : isBackground ? 5 : -1,
-          opacity: showLoadingOverlay
-            ? 0
-            : isBackground
-              ? 0.15
-              : isActive
-                ? 1
-                : 0,
-          filter: isBackground ? 'blur(2px)' : 'none',
+          zIndex: isActive ? 20 : -1,
+          opacity: showLoadingOverlay ? 0 : isActive ? 1 : 0,
+          filter: 'none',
           borderRadius: 0,
           overflow: 'hidden'
         }}
@@ -186,7 +167,7 @@ function CachedIframeRenderer({
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
-        aria-hidden={showLoadingOverlay || (!isActive && !isBackground)}
+        aria-hidden={showLoadingOverlay || (!isActive)}
         onLoad={handleLoad}
         tabIndex={isActive && !showLoadingOverlay ? 0 : -1}
       />
@@ -278,7 +259,6 @@ export default function IframeCacheRenderer() {
           isActive={
             isIframePage && (activeIframeId === id || currentSessionId === id)
           }
-          isBackground={false}
         />
       ))}
     </>
