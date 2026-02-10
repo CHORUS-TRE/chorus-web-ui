@@ -133,7 +133,7 @@ function CachedIframeRenderer({
         isLoading={showLoadingOverlay}
         variant="container"
         message={loadingMessage}
-        delay={300}
+        delay={0}
       />
 
       {/* Error message */}

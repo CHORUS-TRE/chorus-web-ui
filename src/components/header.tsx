@@ -50,6 +50,11 @@ import {
   HoverCardTrigger
 } from '@/components/ui/hover-card'
 import { Separator } from '@/components/ui/separator'
+import {
+  AppInstance,
+  K8sAppInstanceStatus,
+  WorkbenchServerPodStatus
+} from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
@@ -63,11 +68,6 @@ import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
-import {
-  AppInstance,
-  K8sAppInstanceStatus,
-  WorkbenchServerPodStatus
-} from '@/domain/model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -159,18 +159,6 @@ export function Header() {
   const getAppName = (appId: string) =>
     apps?.find((a) => a.id === appId)?.name ?? 'App'
 
-  // Poll app instances while on a session page or launching apps exist
-  // useEffect(() => {
-  //   const isSession = isSessionPath(pathname)
-  //   if (!isSession && launchingApps.length === 0) return
-
-  //   const pollInterval = setInterval(() => {
-  //     refreshAppInstances()
-  //   }, 2000)
-
-  //   return () => clearInterval(pollInterval)
-  // }, [pathname, launchingApps.length, refreshAppInstances])
-
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
     const session = workbenches?.find((wb) => wb.id === sessionId)
@@ -255,12 +243,7 @@ export function Header() {
     const currentStatus = statusData?.status || session.serverPodStatus
     const currentMessage = statusData?.message || session.serverPodMessage
 
-    const isRunning =
-      currentStatus === WorkbenchServerPodStatus.RUNNING ||
-      currentStatus === WorkbenchServerPodStatus.READY
-    const isFailed =
-      currentStatus === WorkbenchServerPodStatus.FAILED ||
-      currentStatus === WorkbenchServerPodStatus.FAILING
+    const isRunning = currentStatus === WorkbenchServerPodStatus.READY
 
     return (
       <div className="space-y-4 p-4 pb-0">
@@ -281,7 +264,7 @@ export function Header() {
                 <p className="truncate text-[11px] text-muted-foreground/60">
                   {isRunning ? 'Running' : currentStatus}
                 </p>
-                {isFailed && currentMessage && (
+                {!isRunning && currentMessage && (
                   <p className="mt-1 w-36 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60">
                     {parseK8sInsufficientResourceMessage(currentMessage)}
                   </p>
@@ -342,12 +325,6 @@ export function Header() {
     const currentMessage = statusData?.message || instance.k8sMessage
 
     const isRunning = currentStatus === K8sAppInstanceStatus.RUNNING
-    const isDone =
-      isRunning ||
-      currentStatus === K8sAppInstanceStatus.COMPLETE ||
-      currentStatus === K8sAppInstanceStatus.FAILED ||
-      currentStatus === K8sAppInstanceStatus.STOPPED ||
-      currentStatus === K8sAppInstanceStatus.KILLED
 
     return (
       <div className="space-y-3">
@@ -363,7 +340,7 @@ export function Header() {
               <p className="truncate text-[11px] text-muted-foreground/60">
                 {isRunning ? 'Running' : currentStatus}
               </p>
-              {!isDone && (
+              {!isRunning && (
                 <p className="mt-1 w-36 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60">
                   {parseK8sInsufficientResourceMessage(currentMessage)}
                 </p>
@@ -390,7 +367,7 @@ export function Header() {
           </div>
         </div>
         {/* Progress Bar */}
-        {!isDone && (
+        {!isRunning && (
           <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
             <div
               className={cn(
