@@ -1,3 +1,10 @@
+## [1.35.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.3...v1.35.4) (2026-02-10)
+
+
+### Bug Fixes
+
+* trigger release 1.35.4 ([d241961](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d241961c747590c0301cd2738be00d5e991feb50))
+
 ## [1.35.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.2...v1.35.3) (2026-02-10)
 
 
