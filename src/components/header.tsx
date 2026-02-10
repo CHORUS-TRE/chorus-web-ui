@@ -63,8 +63,11 @@ import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
-import { AppInstance, K8sAppInstanceStatus } from '~/domain/model/app-instance'
-import { WorkbenchServerPodStatus } from '~/domain/model/workbench'
+import {
+  AppInstance,
+  K8sAppInstanceStatus,
+  WorkbenchServerPodStatus
+} from '@/domain/model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -174,7 +177,7 @@ export function Header() {
     return session?.name || `Session ${sessionId?.slice(0, 8)}`
   }
 
-  const getSessionApps = (sessionId: string) => {
+  const getSessionApps = (sessionId: string): AppInstance[] => {
     return (
       appInstances?.filter((instance) => instance.workbenchId === sessionId) ||
       []
@@ -279,7 +282,7 @@ export function Header() {
                   {isRunning ? 'Running' : currentStatus}
                 </p>
                 {isFailed && currentMessage && (
-                  <p className="mt-1 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60 w-36">
+                  <p className="mt-1 w-36 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60">
                     {parseK8sInsufficientResourceMessage(currentMessage)}
                   </p>
                 )}
@@ -333,9 +336,7 @@ export function Header() {
     const { data: statusData } = useAppInstanceStatus(instance.id)
 
     const appName =
-      apps?.find((a) => a.id === instance.appId)?.name ||
-      instance.name ||
-      'App'
+      apps?.find((a) => a.id === instance.appId)?.name || instance.name || 'App'
 
     const currentStatus = statusData?.status || instance.k8sStatus
     const currentMessage = statusData?.message || instance.k8sMessage
@@ -363,7 +364,7 @@ export function Header() {
                 {isRunning ? 'Running' : currentStatus}
               </p>
               {!isDone && (
-                <p className="mt-1 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60 w-36">
+                <p className="mt-1 w-36 whitespace-normal text-[11px] leading-relaxed text-muted-foreground/60">
                   {parseK8sInsufficientResourceMessage(currentMessage)}
                 </p>
               )}
@@ -519,7 +520,7 @@ export function Header() {
                 Apps
               </p>
               <div className="flex flex-wrap gap-1">
-                {appsRunning.map((instance) => {
+                {appsRunning.map((instance: AppInstance) => {
                   const appName =
                     apps?.find((a) => a.id === instance.appId)?.name ||
                     instance.name ||
@@ -1074,7 +1075,7 @@ export function Header() {
           <WorkbenchUpdateForm
             state={[updateOpen, setUpdateOpen]}
             workbench={currentWorkbench}
-            onSuccess={() => { }}
+            onSuccess={() => {}}
           />
         )}
 
@@ -1134,11 +1135,11 @@ export function Header() {
                   const filteredApps =
                     appInstances
                       ?.filter(
-                        (instance) =>
+                        (instance: AppInstance) =>
                           instance.workbenchId === background?.sessionId
                       )
                       ?.map(
-                        (instance) =>
+                        (instance: AppInstance) =>
                           apps?.find((app) => app.id === instance.appId)?.name
                       )
                       ?.filter(Boolean) || []

@@ -13,7 +13,6 @@ import { useAppState } from '@/stores/app-state-store'
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'
 
-
 /**
  * Renders a single cached iframe with proper visibility management.
  * Each iframe maintains its own state and doesn't unmount when hidden.
@@ -34,7 +33,9 @@ function CachedIframeRenderer({
   // Note: useWorkbenchStatus could be used for HUD display in the future
   // Currently only used for session iframes to track status
   // Always call hooks at the top level
-  const status = useWorkbenchStatus(iframe.type === 'session' ? iframe.id : undefined)
+  const status = useWorkbenchStatus(
+    iframe.type === 'session' ? iframe.id : undefined
+  )
   const workbenchStatus = iframe.type === 'session' ? status : null
 
   if (workbenchStatus?.data?.message) {
@@ -94,20 +95,28 @@ function CachedIframeRenderer({
   // 2. Not already loaded
   // 3. Either pod not ready OR showing about:blank OR still probing (for sessions) OR has a URL to load
   const isShowingAboutBlank = iframe.url === 'about:blank' || !iframe.url
-  const hasUrlToLoad = iframe.url && iframe.url !== 'about:blank' || false
+  const hasUrlToLoad = (iframe.url && iframe.url !== 'about:blank') || false
 
   const showLoadingOverlay = useMemo(() => {
     if (!isActive || isIframeLoaded) return false
 
     if (iframe.type === 'session') {
-      const isRunning = workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING ||
+      const isRunning =
+        workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING ||
         workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY
       return !isRunning || isShowingAboutBlank || hasUrlToLoad
     }
 
     // For web apps, just check loading state and URL
     return isShowingAboutBlank || hasUrlToLoad
-  }, [isActive, isIframeLoaded, iframe.type, workbenchStatus?.data?.status, isShowingAboutBlank, hasUrlToLoad])
+  }, [
+    isActive,
+    isIframeLoaded,
+    iframe.type,
+    workbenchStatus?.data?.status,
+    isShowingAboutBlank,
+    hasUrlToLoad
+  ])
 
   const loadingMessage = useMemo(() => {
     if (!isActive || isIframeLoaded) return undefined
@@ -138,15 +147,18 @@ function CachedIframeRenderer({
 
       <iframe
         title={iframe.name}
-        src={iframe.type === 'session'
-          ? (workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY || workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING ? iframe.url : 'about:blank')
-          : iframe.url
+        src={
+          iframe.type === 'session'
+            ? workbenchStatus?.data?.status ===
+                WorkbenchServerPodStatus.READY ||
+              workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING
+              ? iframe.url
+              : 'about:blank'
+            : iframe.url
         }
         allow="autoplay; fullscreen; clipboard-write;"
         style={{
-          width: isFullscreen
-            ? '100vw'
-            : 'calc(100vw - 15px)',
+          width: isFullscreen ? '100vw' : 'calc(100vw - 15px)',
           height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',
           visibility: showLoadingOverlay
             ? 'hidden'
@@ -167,7 +179,7 @@ function CachedIframeRenderer({
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
-        aria-hidden={showLoadingOverlay || (!isActive)}
+        aria-hidden={showLoadingOverlay || !isActive}
         onLoad={handleLoad}
         tabIndex={isActive && !showLoadingOverlay ? 0 : -1}
       />
