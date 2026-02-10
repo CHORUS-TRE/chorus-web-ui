@@ -1,3 +1,10 @@
+## [1.35.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.2...v1.35.3) (2026-02-10)
+
+
+### Bug Fixes
+
+* app messages ([57748a7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/57748a77ca69c3452aff5513029a64cc92474ee3))
+
 ## [1.35.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.1...v1.35.2) (2026-02-10)
 
 
