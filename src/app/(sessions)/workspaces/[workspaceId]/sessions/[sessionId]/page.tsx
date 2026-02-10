@@ -27,7 +27,8 @@ export default function WorkbenchPage() {
   const sessionId = params.sessionId
 
   const workbench = workbenches?.find((wb) => wb.id === sessionId)
-  const currentStatus = workbenchStatus?.data?.status || workbench?.serverPodStatus
+  const currentStatus =
+    workbenchStatus?.data?.status || workbench?.serverPodStatus
 
   const isPodReady =
     currentStatus === WorkbenchServerPodStatus.READY ||
@@ -67,7 +68,6 @@ export default function WorkbenchPage() {
   }, [isPodReady, noAppsRunning])
 
   if (!showEmptyState) return null
-
 
   return null
   return (

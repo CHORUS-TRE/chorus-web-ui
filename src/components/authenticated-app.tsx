@@ -177,10 +177,10 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               {/* Left Sidebar - fixed at left edge, controlled by edge hover */}
               <div
                 className={cn(
-                  'fixed left-3 top-16 z-30 h-[calc(100vh-5rem)] overflow-hidden transition-all duration-300 ease-in-out',
+                  'fixed left-3 top-16 z-40 h-[calc(100vh-5rem)] w-[240px] overflow-hidden transition-transform duration-300 ease-in-out',
                   leftSidebarVisible && showLeftSidebar
-                    ? 'w-[240px] translate-x-0 opacity-100'
-                    : 'pointer-events-none w-0 -translate-x-full opacity-0'
+                    ? 'translate-x-0'
+                    : 'pointer-events-none -translate-x-[calc(100%+12px)]'
                 )}
                 onMouseEnter={showLeftSidebarHandler}
                 onMouseLeave={hideLeftSidebarHandler}
