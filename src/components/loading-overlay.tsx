@@ -42,7 +42,7 @@ export function LoadingOverlay({
 
   const containerClassName =
     variant === 'container'
-      ? 'absolute inset-0 z-[25] flex items-center justify-center bg-background'
+      ? 'fixed inset-0 top-11 z-[35] flex items-center justify-center bg-background'
       : 'fixed inset-0 top-11 z-[30] flex items-center justify-center bg-background'
 
   return (
