@@ -1,16 +1,12 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
-  AlertCircle,
   Bell,
-  Check,
   CheckCircle2,
   ChevronDown,
-  Circle,
   FlaskConical,
   Globe,
   HelpCircle,
-  Info,
   LaptopMinimal,
   Loader2,
   LogOut,
@@ -19,8 +15,6 @@ import {
   MoreVertical,
   Rocket,
   Settings,
-  Square,
-  Store,
   Sun,
   Trash2,
   User,
@@ -135,16 +129,16 @@ export function Header() {
     apps?.find((a) => a.id === appId)?.name ?? 'App'
 
   // Poll app instances while on a session page or launching apps exist
-  useEffect(() => {
-    const isSession = isSessionPath(pathname)
-    if (!isSession && launchingApps.length === 0) return
+  // useEffect(() => {
+  //   const isSession = isSessionPath(pathname)
+  //   if (!isSession && launchingApps.length === 0) return
 
-    const pollInterval = setInterval(() => {
-      refreshAppInstances()
-    }, 2000)
+  //   const pollInterval = setInterval(() => {
+  //     refreshAppInstances()
+  //   }, 2000)
 
-    return () => clearInterval(pollInterval)
-  }, [pathname, launchingApps.length, refreshAppInstances])
+  //   return () => clearInterval(pollInterval)
+  // }, [pathname, launchingApps.length, refreshAppInstances])
 
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
@@ -213,7 +207,7 @@ export function Header() {
                             {appName}
                           </p>
                           <p className="truncate text-[11px] text-muted-foreground/60">
-                            {isRunning ? 'Running' : 'Starting...'}
+                            {isRunning ? 'Running' : instance.k8sStatus}
                           </p>
                         </div>
                       </div>
@@ -266,55 +260,55 @@ export function Header() {
 
         {/* Actions Section */}
         <div className="space-y-0.5 p-1.5">
-          <button
+          <DropdownMenuItem
             onClick={() =>
               router.push(
                 `/workspaces/${session.workspaceId}/sessions/${sessionId}/app-store`
               )
             }
-            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
           >
             <Rocket className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
             Launch an app
-          </button>
+          </DropdownMenuItem>
 
-          <button
+          <DropdownMenuItem
             onClick={() =>
               router.push(`/workspaces/${session.workspaceId}/users`)
             }
-            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
           >
             <UserPlus className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
             Add Member
-          </button>
+          </DropdownMenuItem>
 
-          <button
+          <DropdownMenuItem
             onClick={() => setUpdateSessionId(sessionId)}
-            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
           >
             <Settings className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
             Settings
-          </button>
+          </DropdownMenuItem>
 
-          <button
+          <DropdownMenuItem
             onClick={toggleFullscreen}
             disabled
-            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
           >
             <Maximize className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
             Fullscreen
-          </button>
+          </DropdownMenuItem>
         </div>
 
         {/* Delete Section */}
         <div className="mt-auto border-t border-white/5 bg-red-500/5 p-1.5">
-          <button
+          <DropdownMenuItem
             onClick={() => setDeleteSessionId(sessionId)}
-            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
           >
             <Trash2 className="h-4 w-4 text-red-400/60 transition-colors group-hover:text-red-400" />
             Delete Session
-          </button>
+          </DropdownMenuItem>
         </div>
       </div>
     )
@@ -369,7 +363,6 @@ export function Header() {
   function UserProfileSection() {
     const { logout } = useAuthentication()
     const { isAdmin } = useAuthorization()
-    const [menuOpen, setMenuOpen] = useState(false)
 
     if (!user) return null
 
@@ -393,120 +386,119 @@ export function Header() {
       .sort((a, b) => a.localeCompare(b)) // alphabetical order
 
     return (
-      <div className="relative" style={{ zIndex: 100 }}>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-muted/30"
-          title={`${user.firstName} ${user.lastName}`}
-        >
-          {/* Avatar */}
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium">
-            {initials || <User className="h-4 w-4" />}
-          </div>
-          {/* Chevron */}
-          <ChevronDown
-            className={cn(
-              'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
-              menuOpen && 'rotate-180'
-            )}
-          />
-        </button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-muted/30"
+            title={`${user.firstName} ${user.lastName}`}
+          >
+            {/* Avatar */}
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium">
+              {initials || <User className="h-4 w-4" />}
+            </div>
+            {/* Chevron */}
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+          </button>
+        </DropdownMenuTrigger>
 
         {/* Dropdown menu */}
-        {menuOpen && (
-          <div className="absolute right-0 top-full z-[100] mt-1 max-h-[90vh] min-w-[280px] overflow-y-auto rounded-xl border border-muted/60 bg-contrast-background p-1 shadow-2xl backdrop-blur-md">
-            {/* Profile Header */}
-            <div className="flex items-center gap-3 px-3 py-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-base font-medium">
-                {initials || <User className="h-5 w-5" />}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-foreground">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="truncate text-xs text-muted-foreground">
-                  @{user.username}
-                </p>
-                <Link
-                  href={`/settings/profile`}
-                  variant="underline"
-                  className="mt-1 block text-xs font-medium"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  View your profile
-                </Link>
-              </div>
+        <DropdownMenuContent
+          align="end"
+          className="z-[100] mt-1 max-h-[90vh] min-w-[280px] overflow-y-auto rounded-xl border border-muted/60 bg-contrast-background p-1 shadow-2xl backdrop-blur-md"
+        >
+          {/* Profile Header */}
+          <div className="flex items-center gap-3 px-3 py-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-base font-medium">
+              {initials || <User className="h-5 w-5" />}
             </div>
-
-            {/* Roles Section (optional, moved to bottom) */}
-            {globalRoles && globalRoles.length > 0 && (
-              <>
-                <Separator className="my-1" />
-                <div className="px-3 py-2">
-                  <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                    Your Roles
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {globalRoles.map((role) => (
-                      <span
-                        key={role}
-                        className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                      >
-                        {role}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            <Separator className="my-1" />
-
-            {/* Quick Settings */}
-            <div className="py-1">
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-foreground">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                @{user.username}
+              </p>
+              <Link
+                href={`/settings/profile`}
+                variant="underline"
+                className="mt-1 block text-xs font-medium"
               >
-                {theme === 'dark' ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )}
-                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-              </button>
+                View your profile
+              </Link>
             </div>
+          </div>
 
-            <Separator className="my-1" />
+          {/* Roles Section (optional, moved to bottom) */}
+          {globalRoles && globalRoles.length > 0 && (
+            <>
+              <Separator className="my-1" />
+              <div className="px-3 py-2">
+                <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Your Roles
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {globalRoles.map((role) => (
+                    <span
+                      key={role}
+                      className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
-            {/* Section 4: Settings & Data */}
-            <div className="py-1">
+          <Separator className="my-1" />
+
+          {/* Quick Settings */}
+          <div className="py-1">
+            <DropdownMenuItem
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </DropdownMenuItem>
+          </div>
+
+          <Separator className="my-1" />
+
+          {/* Section 4: Settings & Data */}
+          <div className="py-1">
+            <DropdownMenuItem asChild>
               <Link
                 href={`/settings`}
                 variant="underline"
                 className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-                onClick={() => setMenuOpen(false)}
               >
                 <Settings className="h-4 w-4" />
                 Settings
               </Link>
+            </DropdownMenuItem>
 
-              {isAdmin && (
+            {isAdmin && (
+              <DropdownMenuItem asChild>
                 <Link
                   href="/admin"
                   variant="underline"
                   className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-                  onClick={() => setMenuOpen(false)}
                 >
                   <Settings className="h-4 w-4" />
                   Admin
                 </Link>
-              )}
+              </DropdownMenuItem>
+            )}
 
+            <DropdownMenuItem asChild>
               <Link
                 href={`/notifications`}
                 className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-                onClick={() => setMenuOpen(false)}
               >
                 <Bell className="h-4 w-4" />
                 Notifications
@@ -520,42 +512,41 @@ export function Header() {
                     </Badge>
                   )}
               </Link>
-            </div>
-
-            {/* Section 3: Lab */}
-            {isAdmin && (
-              <>
-                <Separator className="my-1" />
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      router.push(`/lab`)
-                      setMenuOpen(false)
-                    }}
-                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-                  >
-                    <FlaskConical className="h-4 w-4" />
-                    Lab
-                  </button>
-                </div>
-              </>
-            )}
-
-            <Separator className="my-1" />
-
-            {/* Section 1: Account Management */}
-            <div className="py-1">
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            </div>
+            </DropdownMenuItem>
           </div>
-        )}
-      </div>
+
+          {/* Section 3: Lab */}
+          {isAdmin && (
+            <>
+              <Separator className="my-1" />
+              <div className="py-1">
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push(`/lab`)
+                  }}
+                  className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+                >
+                  <FlaskConical className="h-4 w-4" />
+                  Lab
+                </DropdownMenuItem>
+              </div>
+            </>
+          )}
+
+          <Separator className="my-1" />
+
+          {/* Section 1: Account Management */}
+          <div className="py-1">
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 
@@ -594,7 +585,7 @@ export function Header() {
               <AppBreadcrumb />
               {isSessionPath(pathname) && params.sessionId && (
                 /* Unified Session Pill */
-                <div className="group/pill flex h-9 items-center rounded-xl border border-muted bg-muted/50 px-1 shadow-lg backdrop-blur-md transition-all hover:bg-muted/80">
+                <div className="group/pill flex h-9 items-center rounded-xl border border-muted bg-muted/50 shadow-lg backdrop-blur-md transition-all hover:bg-muted/80">
                   {/* Left: Info & Status */}
                   <div className="flex min-w-0 flex-col justify-center px-4">
                     <p className="truncate text-[13px] font-bold leading-tight text-white">
@@ -877,13 +868,14 @@ export function Header() {
               const session = workbenches?.find(
                 (wb) => wb.id === deleteSessionId
               )
+              router.push(`/workspaces/${workspaceId}`)
               refreshWorkbenches()
 
               // Remove from recent sessions bar and close iframe
               removeFromRecent(deleteSessionId, 'session')
               closeIframe(deleteSessionId)
               setDeleteSessionId(null)
-              router.push(`/workspaces/${workspaceId}`)
+
               toast({
                 title: 'Success!',
                 description: `Session ${session?.name || ''} deleted`

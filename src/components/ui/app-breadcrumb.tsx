@@ -35,7 +35,7 @@ export function AppBreadcrumb() {
     [pathname]
   )
 
-  const breadcrumbItems = useMemo(() => {
+  const data = useMemo(() => {
     const items: {
       label: string
       href: string
@@ -59,6 +59,7 @@ export function AppBreadcrumb() {
       path: (currentHref += `/${s}`)
     }))
 
+    let lastSegmentSkipped = false
     processedSegments.forEach((seg, index) => {
       const isLast = index === segments.length - 1
       let label = seg.text.charAt(0).toUpperCase() + seg.text.slice(1)
@@ -80,7 +81,9 @@ export function AppBreadcrumb() {
       } else if (prevSegment === 'sessions' || prevSegment === 'services') {
         const workbench = workbenches?.find((w) => w.id === seg.text)
         if (workbench) {
-          label = workbench.name || label
+          // Skip session name - we use the dropdown pill in the header instead
+          if (isLast) lastSegmentSkipped = true
+          return
         } else {
           const instance = appInstances?.find((i) => i.id === seg.text)
           if (instance) {
@@ -107,7 +110,13 @@ export function AppBreadcrumb() {
         isPage: isLast
       })
     })
-    return items
+
+    // Ensure the last item is marked as isPage: true, UNLESS we skipped the last segment (the session ID)
+    if (items.length > 0 && !lastSegmentSkipped) {
+      items[items.length - 1].isPage = true
+    }
+
+    return { items, lastSegmentSkipped }
   }, [
     segments,
     pathname,
@@ -121,6 +130,9 @@ export function AppBreadcrumb() {
     user?.lastName,
     user?.id
   ])
+
+  const breadcrumbItems = data.items
+  const lastSegmentSkipped = data.lastSegmentSkipped
 
   return (
     <div className="flex items-center justify-between">
@@ -152,7 +164,8 @@ export function AppBreadcrumb() {
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
-                  {index < breadcrumbItems.length - 1 && (
+                  {(index < breadcrumbItems.length - 1 ||
+                    (item.label === 'Sessions' && lastSegmentSkipped)) && (
                     <BreadcrumbSeparator className="text-muted-foreground" />
                   )}
                 </React.Fragment>
