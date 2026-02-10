@@ -242,7 +242,6 @@ export function Header() {
 
     const currentStatus = statusData?.status || session.serverPodStatus
     const currentMessage = statusData?.message || session.serverPodMessage
-
     const isRunning = currentStatus === WorkbenchServerPodStatus.READY
 
     return (
@@ -323,7 +322,6 @@ export function Header() {
 
     const currentStatus = statusData?.status || instance.k8sStatus
     const currentMessage = statusData?.message || instance.k8sMessage
-
     const isRunning = currentStatus === K8sAppInstanceStatus.RUNNING
 
     return (

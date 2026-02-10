@@ -30,9 +30,7 @@ export default function WorkbenchPage() {
   const currentStatus =
     workbenchStatus?.data?.status || workbench?.serverPodStatus
 
-  const isPodReady =
-    currentStatus === WorkbenchServerPodStatus.READY ||
-    currentStatus === WorkbenchServerPodStatus.RUNNING
+  const isPodReady = currentStatus === WorkbenchServerPodStatus.READY
 
   const sessionAppInstances = appInstances?.filter(
     (appInstance) => appInstance.workbenchId === sessionId

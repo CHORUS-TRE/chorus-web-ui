@@ -102,7 +102,6 @@ function CachedIframeRenderer({
 
     if (iframe.type === 'session') {
       const isRunning =
-        workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING ||
         workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY
       return !isRunning || isShowingAboutBlank || hasUrlToLoad
     }
@@ -149,9 +148,7 @@ function CachedIframeRenderer({
         title={iframe.name}
         src={
           iframe.type === 'session'
-            ? workbenchStatus?.data?.status ===
-                WorkbenchServerPodStatus.READY ||
-              workbenchStatus?.data?.status === WorkbenchServerPodStatus.RUNNING
+            ? workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY
               ? iframe.url
               : 'about:blank'
             : iframe.url
