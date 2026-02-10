@@ -44,6 +44,11 @@ export function useAppInstanceStatus(appInstanceId?: string) {
           clearInterval(intervalId)
           clearTimeout(timeoutId)
         }
+
+        if (result.data.k8sStatus === K8sAppInstanceStatus.FAILED) {
+          clearInterval(intervalId)
+          clearTimeout(timeoutId)
+        }
       }
     }
 

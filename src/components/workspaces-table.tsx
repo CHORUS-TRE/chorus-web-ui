@@ -81,12 +81,6 @@ export default function WorkspaceTable({
         Owner
       </TableHead>
       <TableHead className="text-center font-semibold text-foreground">
-        Status
-      </TableHead>
-      <TableHead className="text-center font-semibold text-foreground">
-        Tag
-      </TableHead>
-      <TableHead className="text-center font-semibold text-foreground">
         Members
       </TableHead>
       <TableHead className="text-center font-semibold text-foreground">
@@ -180,18 +174,6 @@ export default function WorkspaceTable({
             {workspace?.dev?.owner || workspace?.dev?.owner || '-'}
           </TableCell>
           <TableCell className="p-1 text-center">
-            {workspace?.status && (
-              <Badge variant="outline">{workspace?.status || 'active'}</Badge>
-            )}
-          </TableCell>
-          <TableCell className="p-1 text-center">
-            {(workspace?.dev?.tag || workspace?.dev?.tag) && (
-              <Badge variant="secondary" className="capitalize">
-                {workspace?.dev?.tag || workspace?.dev?.tag}
-              </Badge>
-            )}
-          </TableCell>
-          <TableCell className="p-1 text-center">
             {workspace?.dev?.members
               ?.map((member) => `${member.firstName} ${member.lastName}`)
               ?.join(', ')}
@@ -273,7 +255,7 @@ export default function WorkspaceTable({
           </Table>
         </CardContent>
         <CardFooter>
-          <div className="text-xs text-muted">
+          <div className="text-foreground-muted text-xs">
             Showing <strong>1-{workspaces?.length}</strong> of{' '}
             <strong>{workspaces?.length}</strong>
           </div>

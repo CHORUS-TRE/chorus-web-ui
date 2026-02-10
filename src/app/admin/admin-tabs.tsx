@@ -33,14 +33,14 @@ export function AdminTabs() {
       authorized: can(PERMISSIONS.listWorkbenches, { workspace: '*' })
     },
     {
+      href: '/admin/instances',
+      label: 'App Instances',
+      authorized: can(PERMISSIONS.listAppInstances, {})
+    },
+    {
       href: '/admin/app-store',
       label: 'App Store',
       authorized: can(PERMISSIONS.createApp, {})
-    },
-    {
-      href: '/admin/instances',
-      label: 'Instances',
-      authorized: can(PERMISSIONS.listAppInstances, {})
     },
     {
       href: '/admin/notifications',
@@ -77,7 +77,7 @@ export function AdminTabs() {
               <TabsTrigger
                 key={route.href}
                 value={route.href}
-                className="text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
+                className="text-accent text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
               >
                 {route.label}
               </TabsTrigger>

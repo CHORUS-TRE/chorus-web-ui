@@ -1,10 +1,11 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { Cpu, TrashIcon } from 'lucide-react'
+import { Rocket, TrashIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-import { AppInstance } from '@/domain/model'
+import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
+import { cn } from '@/lib/utils'
 import { useAppState } from '@/stores/app-state-store'
 import {
   Card,
@@ -30,11 +31,13 @@ import { deleteAppInstance } from '~/view-model/app-instance-view-model'
 export default function InstancesTable({
   instances,
   title = 'App Instances',
-  description = 'List of all running app instances on the platform.'
+  description = 'List of all running app instances on the platform.',
+  refreshKey
 }: {
   instances: AppInstance[] | undefined
   title?: string
   description?: string
+  refreshKey?: number
 }) {
   const router = useRouter()
   const { apps, workspaces, workbenches, refreshAppInstances } = useAppState()
@@ -52,11 +55,46 @@ export default function InstancesTable({
     return workbenches?.find((wb) => wb.id === workbenchId)?.name || workbenchId
   }
 
+  const AppInstanceK8sStatusCell = ({
+    instance
+  }: {
+    instance: AppInstance
+  }) => {
+    const currentStatus = instance.k8sStatus
+    const currentMessage = instance.k8sMessage
+
+    return (
+      <>
+        <TableCell className="text-center">
+          <Badge
+            variant="outline"
+            className={cn(
+              'font-mono text-[10px] uppercase',
+              currentStatus === K8sAppInstanceStatus.RUNNING
+                ? 'border-green-500/20 bg-green-500/10 text-green-500'
+                : currentStatus === K8sAppInstanceStatus.FAILED
+                  ? 'border-red-500/20 bg-red-500/10 text-red-500'
+                  : 'border-muted bg-muted/20 text-muted-foreground'
+            )}
+          >
+            {currentStatus || 'Unknown'}
+          </Badge>
+        </TableCell>
+        <TableCell
+          className="max-w-[200px] truncate text-xs text-muted-foreground"
+          title={currentMessage}
+        >
+          {currentMessage || '-'}
+        </TableCell>
+      </>
+    )
+  }
+
   return (
     <Card variant="glass" className="flex h-full flex-col justify-between">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
-          <Cpu className="h-5 w-5 text-muted-foreground" />
+          <Rocket className="h-5 w-5 text-muted-foreground" />
           <CardTitle>{title}</CardTitle>
         </div>
         <CardDescription>{description}</CardDescription>
@@ -79,6 +117,9 @@ export default function InstancesTable({
               </TableHead>
               <TableHead className="text-center font-semibold text-foreground">
                 Status
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Message
               </TableHead>
               <TableHead className="font-semibold text-foreground">
                 Created
@@ -111,18 +152,10 @@ export default function InstancesTable({
                 <TableCell className="max-w-[150px] truncate">
                   {getWorkbenchName(instance.workbenchId)}
                 </TableCell>
-                <TableCell className="text-center">
-                  <Badge
-                    variant="outline"
-                    className={
-                      instance.status === 'active'
-                        ? 'border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400'
-                        : 'border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                    }
-                  >
-                    {instance.status}
-                  </Badge>
-                </TableCell>
+                <AppInstanceK8sStatusCell
+                  key={`${instance.id}-${refreshKey}`}
+                  instance={instance}
+                />
                 <TableCell className="text-xs text-muted-foreground">
                   {instance.createdAt
                     ? formatDistanceToNow(new Date(instance.createdAt), {
@@ -161,7 +194,7 @@ export default function InstancesTable({
             {(!instances || instances.length === 0) && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={9}
                   className="h-24 text-center text-muted-foreground"
                 >
                   No app instances found.

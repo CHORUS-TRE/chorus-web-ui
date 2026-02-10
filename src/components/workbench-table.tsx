@@ -10,12 +10,15 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowUpDown, Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 import React from 'react'
 
 import { Link } from '@/components/link'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardFooter } from '~/components/card'
 import {
@@ -26,6 +29,7 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
+import { WorkbenchServerPodStatus } from '~/domain/model'
 import { App, AppInstance, User, Workbench, Workspace } from '~/domain/model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
@@ -103,20 +107,76 @@ const ActionCell = ({
     </>
   )
 }
+const WorkbenchK8sStatusBadge = ({
+  workbench
+}: {
+  workbench: Workbench
+  refreshKey?: number
+}) => {
+  const currentStatus = workbench.serverPodStatus
+
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        'font-mono text-[10px] uppercase',
+        currentStatus === WorkbenchServerPodStatus.READY
+          ? 'border-green-500/20 bg-green-500/10 text-green-500'
+          : currentStatus === WorkbenchServerPodStatus.FAILED
+            ? 'border-red-500/20 bg-red-500/10 text-red-500'
+            : 'border-muted bg-muted/20 text-muted-foreground'
+      )}
+    >
+      {currentStatus || 'Unknown'}
+    </Badge>
+  )
+}
+
+const WorkbenchK8sMessage = ({
+  workbench
+}: {
+  workbench: Workbench
+  refreshKey?: number
+}) => {
+  const currentMessage = workbench.serverPodMessage
+
+  return (
+    <div
+      className="max-w-[200px] truncate text-xs text-muted-foreground"
+      title={currentMessage}
+    >
+      {currentMessage || '-'}
+    </div>
+  )
+}
 
 export const columns = (
   apps: App[] | undefined,
   users: User[] | undefined,
   workspaces: Workspace[] | undefined,
   refreshWorkbenches: () => void,
-  appInstances: AppInstance[] | undefined
+  appInstances: AppInstance[] | undefined,
+  refreshKey?: number
 ): ColumnDef<Workbench>[] => [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    cell: ({ row }) => (
+      <div
+        className="max-w-[100px] truncate font-mono text-xs"
+        title={row.original.id}
+      >
+        {row.original.id}
+      </div>
+    )
+  },
   {
     accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
+          className="text-accent/60 hover:text-accent"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Session
@@ -146,8 +206,29 @@ export const columns = (
     }
   },
   {
+    id: 'owner',
+    header: 'Owner',
+    cell: ({ row }) => {
+      const workbench = row.original
+      const workbenchUsers = users?.filter((user) =>
+        user.rolesWithContext?.some(
+          (role) => role.context.workbench === workbench.id
+        )
+      )
+      return (
+        <div className="text-xs">
+          {workbenchUsers && workbenchUsers.length > 0
+            ? workbenchUsers
+                .map((u) => `${u.firstName} ${u.lastName}`)
+                .join(', ')
+            : '-'}
+        </div>
+      )
+    }
+  },
+  {
     id: 'apps',
-    header: 'Running Apps',
+    header: 'Apps',
     cell: ({ row }) => {
       const workbench = row.original
       return (
@@ -165,12 +246,35 @@ export const columns = (
     }
   },
   {
-    id: 'owner',
-    header: 'Owner',
+    id: 'k8sStatus',
+    header: () => (
+      <div className="text-foreground-muted text-center">Status</div>
+    ),
     cell: ({ row }) => {
       const workbench = row.original
-      const user = users?.find((user) => user.id === workbench?.userId)
-      return user ? `${user.firstName} ${user.lastName}` : '-'
+      return (
+        <div className="text-center">
+          <WorkbenchK8sStatusBadge
+            key={`${workbench.id}-status-${refreshKey}`}
+            workbench={workbench}
+            refreshKey={refreshKey}
+          />
+        </div>
+      )
+    }
+  },
+  {
+    id: 'k8sMessage',
+    header: 'Message',
+    cell: ({ row }) => {
+      const workbench = row.original
+      return (
+        <WorkbenchK8sMessage
+          key={`${workbench.id}-msg-${refreshKey}`}
+          workbench={workbench}
+          refreshKey={refreshKey}
+        />
+      )
     }
   },
   {
@@ -179,6 +283,7 @@ export const columns = (
       return (
         <Button
           variant="ghost"
+          className="text-accent/60 hover:text-accent"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Created
@@ -211,17 +316,55 @@ export const columns = (
 ]
 
 export default function WorkbenchTable({
-  workbenches
+  workbenches,
+  refreshKey
 }: {
   workbenches: Workbench[] | undefined
+  refreshKey?: number
 }) {
   const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
+  const [users, setUsers] = useState<User[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+
+  const loadAllUsers = useCallback(async () => {
+    if (!workbenches || workbenches.length === 0) {
+      setUsers([])
+      return
+    }
+
+    setLoadingUsers(true)
+    const workbenchIds =
+      workbenches?.map((wb) => wb.id).filter((id): id is string => !!id) || []
+    try {
+      const result = await listUsers({ filterWorkbenchIDs: workbenchIds })
+      if (result.data) {
+        setUsers(result.data as User[])
+      }
+    } catch (error) {
+      console.error('Failed to load workspace members', error)
+    } finally {
+      setLoadingUsers(false)
+    }
+  }, [workbenches])
+
+  useEffect(() => {
+    loadAllUsers()
+  }, [loadAllUsers, refreshKey])
+
   const [sorting, setSorting] = useState<SortingState>([])
   const data = workbenches
 
   const tableColumns = React.useMemo(
-    () => columns(apps, [], workspaces, refreshWorkbenches, appInstances),
-    [apps, workspaces, refreshWorkbenches, appInstances]
+    () =>
+      columns(
+        apps,
+        users,
+        workspaces,
+        refreshWorkbenches,
+        appInstances,
+        refreshKey
+      ),
+    [apps, users, workspaces, refreshWorkbenches, appInstances, refreshKey]
   )
 
   const table = useReactTable({
@@ -237,9 +380,7 @@ export default function WorkbenchTable({
 
   return (
     <div className="mb-4 grid flex-1 items-start gap-4">
-      <div className="flex items-center justify-end">
-        {/* <WorkbenchCreateForm workspaceId={workspaceId} /> */}
-      </div>
+      <div className="flex items-center justify-end"></div>
       <Card
         variant="glass"
         className="flex h-full flex-col justify-between duration-300"
