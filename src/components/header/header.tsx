@@ -108,10 +108,6 @@ export function Header() {
       return
     }
 
-    toast({
-      title: 'App closed',
-      description: `${name || 'App'} has been closed`
-    })
     refreshAppInstances()
   }
 
