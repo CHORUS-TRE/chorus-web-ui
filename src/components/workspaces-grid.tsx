@@ -13,6 +13,10 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { Card, CardTitle } from '@/components/card'
+import {
+  WorkspaceDeleteForm,
+  WorkspaceUpdateForm
+} from '@/components/forms/workspace-forms'
 import { Link } from '@/components/link'
 import {
   DropdownMenu,
@@ -21,6 +25,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { User, WorkspaceConfig, WorkspaceWithDev } from '@/domain/model'
+import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { Button } from '~/components/button'
 
@@ -39,6 +44,7 @@ export default function WorkspacesGrid({
 }: WorkspacesGridProps) {
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
+  const { can, PERMISSIONS } = useAuthorization()
 
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
 
@@ -119,7 +125,7 @@ export default function WorkspacesGrid({
                 </div>
 
                 {/* Description - full width below title */}
-                {(() => {
+                {/* {(() => {
                   const desc = (
                     workspace.dev?.config as WorkspaceConfig | undefined
                   )?.descriptionMarkdown
@@ -128,12 +134,93 @@ export default function WorkspacesGrid({
                       <ReactMarkdown>{desc}</ReactMarkdown>
                     </div>
                   ) : null
-                })()}
+                })()} */}
 
                 {/* Spacer */}
-                <div className="flex-1" />
+                {/* <div className="flex-1" /> */}
               </Link>
+
+              {/* Dropdown menu - top right */}
+              {(can(PERMISSIONS.deleteWorkspace, { workspace: workspace.id }) ||
+                can(PERMISSIONS.updateWorkspace, {
+                  workspace: workspace.id
+                })) && (
+                <div className="absolute right-2 top-2 z-10">
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="glass-elevated">
+                      {can(PERMISSIONS.updateWorkspace, {
+                        workspace: workspace.id
+                      }) && (
+                        <DropdownMenuItem
+                          onClick={() =>
+                            setActiveUpdateId(workspace.id || null)
+                          }
+                        >
+                          Edit
+                        </DropdownMenuItem>
+                      )}
+                      {can(PERMISSIONS.deleteWorkspace, {
+                        workspace: workspace.id
+                      }) && (
+                        <DropdownMenuItem
+                          onClick={() =>
+                            setActiveDeleteId(workspace.id || null)
+                          }
+                          className="text-red-500 focus:text-red-500"
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
             </Card>
+
+            {activeUpdateId === workspace.id && (
+              <WorkspaceUpdateForm
+                workspace={workspace}
+                state={[
+                  activeUpdateId === workspace.id,
+                  () => setActiveUpdateId(null)
+                ]}
+                onSuccess={(updatedWorkspace) => {
+                  toast({
+                    title: 'Success!',
+                    description: 'Workspace updated'
+                  })
+                  if (onUpdate) onUpdate()
+                  refreshWorkspaces()
+                }}
+              />
+            )}
+
+            {activeDeleteId === workspace.id && (
+              <WorkspaceDeleteForm
+                id={workspace.id}
+                state={[
+                  activeDeleteId === workspace.id,
+                  () => setActiveDeleteId(null)
+                ]}
+                onSuccess={() => {
+                  refreshWorkspaces()
+                  toast({
+                    title: 'Success!',
+                    description: `Workspace ${workspace.name} deleted`
+                  })
+                  if (onUpdate) onUpdate()
+                }}
+              />
+            )}
           </div>
         ))}
     </div>
