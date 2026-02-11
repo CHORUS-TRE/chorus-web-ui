@@ -3,6 +3,7 @@
 import { env } from 'next-runtime-env'
 import { ZodIssue } from 'zod'
 
+import { Analytics } from '@/lib/analytics/service'
 import { WorkspaceDataSourceImpl } from '~/data/data-source'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
@@ -262,7 +263,13 @@ export async function workspaceDelete(id: string): Promise<Result<string>> {
     if (!id) throw new Error('Invalid workspace id')
     const repository = await getRepository()
     const useCase = new WorkspaceDelete(repository)
-    return await useCase.execute(id)
+    const result = await useCase.execute(id)
+
+    if (result.data) {
+      Analytics.Workspace.deleteSuccess()
+    }
+
+    return result
   } catch (error) {
     console.error('Error deleting workspace', error)
     return { error: error instanceof Error ? error.message : String(error) }
@@ -300,6 +307,7 @@ export async function workspaceCreate(
   formData: FormData
 ): Promise<Result<Workspace>> {
   try {
+    Analytics.Workspace.createStart()
     const repository = await getRepository()
     const useCase = new WorkspaceCreate(repository)
 
@@ -315,13 +323,24 @@ export async function workspaceCreate(
 
     const validation = WorkspaceCreateSchema.safeParse(workspace)
     if (!validation.success) {
+      Analytics.Workspace.createError('Validation Issues')
       return { issues: validation.error.issues }
     }
 
-    return await useCase.execute(validation.data)
+    const result = await useCase.execute(validation.data)
+
+    if (result.error) {
+      Analytics.Workspace.createError(result.error)
+    } else if (result.data) {
+      Analytics.Workspace.createSuccess(result.data.id)
+    }
+
+    return result
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    Analytics.Workspace.createError(errorMessage)
     console.error('Error creating workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: errorMessage }
   }
 }
 
@@ -400,6 +419,7 @@ export async function workspaceCreateWithDev(
     const devValidation = extractAndValidateDevFields(normalized)
 
     if (apiValidation.issues || devValidation.issues) {
+      Analytics.Workspace.createError('Validation Issues')
       return {
         issues: combineValidationIssues(
           apiValidation.issues,
@@ -412,9 +432,20 @@ export async function workspaceCreateWithDev(
     const createResult = await useCase.execute(
       apiValidation.data as WorkspaceCreateType
     )
-    if (createResult.error) return { error: createResult.error }
-    if (createResult.issues) return { issues: createResult.issues }
-    if (!createResult.data) return { error: 'Failed to create workspace' }
+    if (createResult.error) {
+      Analytics.Workspace.createError(createResult.error)
+      return { error: createResult.error }
+    }
+    if (createResult.issues) {
+      Analytics.Workspace.createError('Validation Issues')
+      return { issues: createResult.issues }
+    }
+    if (!createResult.data) {
+      Analytics.Workspace.createError('Failed to create workspace')
+      return { error: 'Failed to create workspace' }
+    }
+
+    Analytics.Workspace.createSuccess(createResult.data.id)
 
     if (devValidation.data && createResult.data.id) {
       const { setWorkspace, setWorkspaceConfig } = useDevStoreCache.getState()
@@ -447,8 +478,10 @@ export async function workspaceCreateWithDev(
     const enriched = await enrichWorkspaceWithDev(createResult.data)
     return { data: enriched }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    Analytics.Workspace.createError(errorMessage)
     console.error('Error creating workspace with dev fields', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: errorMessage }
   }
 }
 

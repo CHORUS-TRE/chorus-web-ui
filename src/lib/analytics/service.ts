@@ -197,26 +197,71 @@ export const Analytics = {
           [`dimension${CustomDimension.WorkspaceID}`]: sessionId
         }
       }),
+    launchError: (errorCode: string) =>
+      trackEvent({
+        category: 'Session',
+        action: 'Session_Launch_Error',
+        name: 'Error',
+        value: errorCode,
+        customDimensions: {
+          [`dimension${CustomDimension.ErrorType}`]: errorCode
+        }
+      }),
     terminateClick: (durationSeconds: number) =>
       trackEvent({
         category: 'Session',
         action: 'Session_Terminate_Click',
         name: 'Click',
         value: durationSeconds
-      }),
-    launchAppStart: (appName: string) =>
+      })
+  },
+
+  AppInstance: {
+    launchStart: (appName: string) =>
       trackEvent({
         category: 'AppInstance',
         action: 'AppInstance_Launch_Start',
         name: 'Start',
         customDimensions: { [`dimension${CustomDimension.AppRef}`]: appName }
       }),
-    launchAppSuccess: (appName: string) =>
+    launchSuccess: (appName: string) =>
       trackEvent({
         category: 'AppInstance',
         action: 'AppInstance_Launch_Success',
         name: 'Success',
         customDimensions: { [`dimension${CustomDimension.AppRef}`]: appName }
+      }),
+    launchError: (appName: string, errorCode: string) =>
+      trackEvent({
+        category: 'AppInstance',
+        action: 'AppInstance_Launch_Error',
+        name: 'Error',
+        value: errorCode,
+        customDimensions: {
+          [`dimension${CustomDimension.AppRef}`]: appName,
+          [`dimension${CustomDimension.ErrorType}`]: errorCode
+        }
+      }),
+    terminateClick: (appName: string, durationSeconds: number) =>
+      trackEvent({
+        category: 'AppInstance',
+        action: 'AppInstance_Terminate_Click',
+        name: 'Click',
+        value: durationSeconds,
+        customDimensions: { [`dimension${CustomDimension.AppRef}`]: appName }
+      })
+  },
+
+  System: {
+    error: (errorSource: string, errorMessage: string) =>
+      trackEvent({
+        category: 'System',
+        action: 'System_Error',
+        name: 'Error',
+        value: errorMessage,
+        customDimensions: {
+          [`dimension${CustomDimension.ErrorType}`]: errorSource
+        }
       })
   },
 

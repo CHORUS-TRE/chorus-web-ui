@@ -2,6 +2,7 @@
 
 import { env } from 'next-runtime-env'
 
+import { Analytics } from '@/lib/analytics/service'
 import { WorkspaceFileDataSourceImpl } from '~/data/data-source'
 import { WorkspaceFileRepositoryImpl } from '~/data/repository'
 import { Result } from '~/domain/model'
@@ -130,8 +131,16 @@ export async function workspaceFileInitUpload(
     if (!path) throw new Error('Invalid file path')
     const repository = await getRepository()
     const useCase = new WorkspaceFileInitUpload(repository)
-    return await useCase.execute(workspaceId, path, file)
+    const result = await useCase.execute(workspaceId, path, file)
+
+    if (result.data) {
+      const size = file.size ? parseInt(file.size, 10) : 0
+      Analytics.Data.uploadStart(isNaN(size) ? 0 : size)
+    }
+
+    return result
   } catch (error) {
+    Analytics.Data.uploadError()
     console.error('Error initializing workspace file upload', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
@@ -151,6 +160,7 @@ export async function workspaceFileUploadPart(
     const useCase = new WorkspaceFileUploadPart(repository)
     return await useCase.execute(workspaceId, path, uploadId, part)
   } catch (error) {
+    Analytics.Data.uploadError()
     console.error('Error uploading workspace file part', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
@@ -168,8 +178,17 @@ export async function workspaceFileCompleteUpload(
     if (!uploadId) throw new Error('Invalid upload id')
     const repository = await getRepository()
     const useCase = new WorkspaceFileCompleteUpload(repository)
-    return await useCase.execute(workspaceId, path, uploadId, parts)
+    const result = await useCase.execute(workspaceId, path, uploadId, parts)
+
+    if (result.data) {
+      Analytics.Data.uploadSuccess()
+    } else if (result.error) {
+      Analytics.Data.uploadError()
+    }
+
+    return result
   } catch (error) {
+    Analytics.Data.uploadError()
     console.error('Error completing workspace file upload', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
