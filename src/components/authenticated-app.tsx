@@ -167,7 +167,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
               style={{ width: 15 }}
               onMouseEnter={showLeftSidebarHandler}
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5 text-accent" />
             </div>
           )}
 
