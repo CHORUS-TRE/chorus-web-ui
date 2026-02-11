@@ -4,6 +4,8 @@ export type EventCategory =
   | 'Data'
   | 'Session'
   | 'AppInstance'
+  | 'User'
+  | 'System'
 
 export interface AnalyticsEvent {
   category: EventCategory
