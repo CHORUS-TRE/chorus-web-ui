@@ -50,7 +50,6 @@ export default async function RootLayout({
           {`
             var _paq = window._paq = window._paq || [];
             _paq.push(['requireConsent']);
-            _paq.push(['setExcludedUrls', ['/oauthredirect']]);
             _paq.push(['setTrackerUrl', '${matomoUrl}/matomo.php']);
             _paq.push(['setSiteId', '${siteId}']);
             var _mtm = window._mtm = window._mtm || [];
