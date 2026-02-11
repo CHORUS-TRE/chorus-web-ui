@@ -7,6 +7,7 @@ import Script from 'next/script'
 import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
+import { Toaster as SonnerToaster } from 'sonner'
 
 import { AppStateInitializer } from '@/components/app-state-initializer'
 import { CookieConsent } from '@/components/cookie-consent'
@@ -40,6 +41,7 @@ export default async function RootLayout({
 }) {
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
+  const siteId = env('NEXT_PUBLIC_MATOMO_SITE_ID')
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -49,11 +51,18 @@ export default async function RootLayout({
           {`
             var _paq = window._paq = window._paq || [];
             _paq.push(['requireConsent']);
-            _paq.push(['setExcludedUrls', ['/oauthredirect']]);
+            _paq.push(['setTrackerUrl', '${matomoUrl}/matomo.php']);
+            _paq.push(['setSiteId', '${siteId}']);
             var _mtm = window._mtm = window._mtm || [];
             _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.async=true; g.src='${matomoUrl}/js/container_${containerId}.js'; s.parentNode.insertBefore(g,s);
+            (function() {
+              var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+              g.async=true; g.src='${matomoUrl}/matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
+            (function() {
+              var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+              g.async=true; g.src='${matomoUrl}/js/container_${containerId}.js'; s.parentNode.insertBefore(g,s);
+            })();
           `}
         </Script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -66,6 +75,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
+          <SonnerToaster position="top-right" theme="dark" richColors />
           <InstanceConfigInitializer>
             <DynamicThemeApplicator />
             <AuthenticationProvider>

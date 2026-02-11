@@ -99,7 +99,9 @@ export function AppBreadcrumb() {
           label = user.username || `${user.firstName} ${user.lastName}`
         }
       } else if (seg.text === 'app-store') {
-        label = 'App Store'
+        // Skip app-store — accessible via session pill menu
+        if (isLast) lastSegmentSkipped = true
+        return
       } else if (seg.text === 'admin') {
         label = 'Admin'
       }

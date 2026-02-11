@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { env } from 'next-runtime-env'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { CachedIframe } from '@/domain/model'
@@ -38,9 +39,29 @@ function CachedIframeRenderer({
   )
   const workbenchStatus = iframe.type === 'session' ? status : null
 
-  if (workbenchStatus?.data?.message) {
-    console.log(workbenchStatus.data.message)
-  }
+  // Configurable delay before loading session iframe after pod is READY
+  const sessionReadyDelay = parseInt(
+    env('NEXT_PUBLIC_SESSION_READY_DELAY_MS') || '0',
+    10
+  )
+  const isPodReady =
+    workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY
+  const [isDelayComplete, setIsDelayComplete] = useState(false)
+
+  useEffect(() => {
+    if (iframe.type !== 'session' || !isPodReady) {
+      setIsDelayComplete(false)
+      return
+    }
+
+    if (sessionReadyDelay <= 0) {
+      setIsDelayComplete(true)
+      return
+    }
+
+    const timer = setTimeout(() => setIsDelayComplete(true), sessionReadyDelay)
+    return () => clearTimeout(timer)
+  }, [iframe.type, isPodReady, sessionReadyDelay])
 
   // Reset loaded state when URL changes to a new URL
   useEffect(() => {
@@ -148,7 +169,7 @@ function CachedIframeRenderer({
         title={iframe.name}
         src={
           iframe.type === 'session'
-            ? workbenchStatus?.data?.status === WorkbenchServerPodStatus.READY
+            ? isPodReady && isDelayComplete
               ? iframe.url
               : 'about:blank'
             : iframe.url
