@@ -1,3 +1,12 @@
+## [1.35.6](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.5...v1.35.6) (2026-02-11)
+
+
+### Bug Fixes
+
+* configurable delay before displaying the session ([3a2ea25](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3a2ea252743f9439768aae1f1ff3d9ddfab0c87a))
+* matomo ([fef809c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fef809c9b03e109014163a10e9dca853749a8037))
+* matomo script ([2be9722](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2be972256613e10e83fa6f4b5dc23b59aedd2694))
+
 ## [1.35.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.4...v1.35.5) (2026-02-11)
 
 
