@@ -13,6 +13,7 @@ import {
   AuthenticationOAuthRedirect,
   AuthenticationRefreshToken
 } from '@/domain/use-cases'
+import { Analytics } from '@/lib/analytics/service'
 import {
   AuthenticationMode,
   AuthenticationOAuthRedirectRequest,
@@ -51,6 +52,8 @@ export async function login(
       error: 'Something went wrong, please try again'
     }
 
+  Analytics.Auth.loginSuccess()
+
   return {
     ...prevState,
     data: login.data
@@ -75,6 +78,8 @@ export async function logout() {
   try {
     const repository = await getRepository()
     const useCase = new AuthenticationLogout(repository)
+
+    Analytics.Auth.logout()
 
     const result = await useCase.execute()
 

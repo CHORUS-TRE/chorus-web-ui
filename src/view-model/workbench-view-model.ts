@@ -9,6 +9,7 @@ import {
   WorkbenchUpdateSchema,
   WorkbenchUpdateType
 } from '@/domain/model/workbench'
+import { Analytics } from '@/lib/analytics/service'
 import { WorkbenchDataSourceImpl } from '~/data/data-source'
 import { WorkbenchRepositoryImpl } from '~/data/repository'
 import { Result } from '~/domain/model'
@@ -75,7 +76,13 @@ export async function workbenchDelete(id: string): Promise<Result<string>> {
     }
     const repository = await getRepository()
     const useCase = new WorkbenchDelete(repository)
-    return await useCase.execute(id)
+    const result = await useCase.execute(id)
+
+    if (result.data) {
+      Analytics.Session.terminateClick(0)
+    }
+
+    return result
   } catch (error) {
     console.error('Error deleting workbench', error)
     return { error: error instanceof Error ? error.message : String(error) }
@@ -89,6 +96,8 @@ export async function workbenchCreate(
   try {
     const repository = await getRepository()
     const useCase = new WorkbenchCreate(repository)
+
+    Analytics.Session.launchStart()
 
     const rawData = Object.fromEntries(formData.entries())
     const workbench: WorkbenchCreateType = {
@@ -110,12 +119,22 @@ export async function workbenchCreate(
       }
     }
 
-    return await useCase.execute(validation.data)
+    const result = await useCase.execute(validation.data)
+
+    if (result.error) {
+      Analytics.Session.launchError(result.error)
+    } else if (result.data) {
+      Analytics.Session.launchSuccess(result.data.id as string)
+    }
+
+    return result
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    Analytics.Session.launchError(errorMessage)
     console.error('Error creating workbench', error)
     return {
       ...prevState,
-      error: error instanceof Error ? error.message : String(error)
+      error: errorMessage
     }
   }
 }
