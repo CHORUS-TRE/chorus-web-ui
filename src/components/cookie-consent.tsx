@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { USER_CONFIG_KEYS } from '@/domain/model/user-config'
+import { Analytics } from '@/lib/analytics/service'
 import { cn } from '@/lib/utils'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 
@@ -30,20 +31,27 @@ export const CookieConsent = () => {
     await setUser(USER_CONFIG_KEYS.COOKIE_CONSENT, 'true')
     setCookieConsentOpen(false)
 
-    // Trigger Matomo
+    // Matomo: enable tracking + cookies
     if (window._paq) {
+      window._paq.push(['setConsentGiven'])
       window._paq.push(['rememberConsentGiven'])
+      window._paq.push(['setCookieConsentGiven'])
     }
+
+    Analytics.User.consentUpdate(true)
   }
 
   const onDecline = async () => {
     await setUser(USER_CONFIG_KEYS.COOKIE_CONSENT, 'false')
     setCookieConsentOpen(false)
 
-    // Matomo decline logic (if we want to be explicit)
+    // Matomo: disable tracking + delete cookies
     if (window._paq) {
       window._paq.push(['forgetConsentGiven'])
+      window._paq.push(['deleteCookies'])
     }
+
+    Analytics.User.consentUpdate(false)
   }
 
   if (!isCookieConsentOpen) {
