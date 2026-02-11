@@ -12,6 +12,8 @@ env:
     value: https://makoto.int.chorus-tre.ch
   - name: NEXT_PUBLIC_MATOMO_CONTAINER_ID
     value: 8JI99voW
+  - name: NEXT_PUBLIC_MATOMO_SITE_ID
+    value: "1"
 
 ingress:
   hosts:

@@ -12,6 +12,8 @@ env:
     value: https://makoto.exodev.chorus-tre.ch
   - name: NEXT_PUBLIC_MATOMO_CONTAINER_ID
     value: 5XEMtiAP
+  - name: NEXT_PUBLIC_MATOMO_SITE_ID
+    value: "1"
 
 ingress:
   hosts:
