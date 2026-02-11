@@ -67,7 +67,6 @@ export default function WorkbenchPage() {
 
   if (!showEmptyState) return null
 
-  return null
   return (
     <div className="pointer-events-none flex h-full w-full items-center justify-center p-4">
       <div className="pointer-events-auto relative isolate w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-8 shadow-2xl backdrop-blur-3xl duration-500 animate-in fade-in zoom-in lg:p-12">

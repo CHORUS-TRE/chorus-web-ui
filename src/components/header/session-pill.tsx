@@ -5,7 +5,6 @@ import {
   LaptopMinimal,
   Loader2,
   Maximize,
-  MoreVertical,
   Rocket,
   Settings,
   Trash2,
@@ -13,16 +12,18 @@ import {
   X
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from '@/components/ui/navigation-menu'
 import {
   App,
   AppInstance,
@@ -33,19 +34,19 @@ import {
 import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 
+import { AppLaunchToastContent } from './app-launch-toast'
+
 // --- Internal sub-components ---
 
 function AppLaunchingPill({
-  initialInstance,
-  getAppName
+  initialInstance
 }: {
   initialInstance: AppInstance
-  getAppName: (appId: string) => string
 }) {
   const { data: statusData } = useAppInstanceStatus(initialInstance.id)
   const currentStatus = statusData?.status || initialInstance.k8sStatus
 
-  // If it reached a terminal state, hide the launching status
+  // If it reached a terminal state, show active indicator only
   if (
     currentStatus === K8sAppInstanceStatus.RUNNING ||
     currentStatus === K8sAppInstanceStatus.COMPLETE ||
@@ -53,23 +54,12 @@ function AppLaunchingPill({
     currentStatus === K8sAppInstanceStatus.STOPPED ||
     currentStatus === K8sAppInstanceStatus.KILLED
   ) {
-    return (
-      <>
-        <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
-        <p className="text-[10px] font-medium leading-none text-muted-foreground/60">
-          Session Active
-        </p>
-      </>
-    )
+    return <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
   }
 
+  // Just the animated loading dot — no text
   return (
-    <>
-      <div className="h-2 w-2 animate-pulse rounded-full bg-[#88b04b] shadow-[0_0_8px_#88b04b]" />
-      <p className="text-[10px] font-bold uppercase leading-none text-[#88b04b]">
-        Launching {getAppName(initialInstance.appId)}...
-      </p>
-    </>
+    <div className="h-2 w-2 animate-pulse rounded-full bg-[#88b04b] shadow-[0_0_8px_#88b04b]" />
   )
 }
 
@@ -92,19 +82,19 @@ function SessionStatusSection({
   const isRunning = currentStatus === WorkbenchServerPodStatus.READY
 
   return (
-    <div className="space-y-4 p-4 pb-0">
-      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
+    <div className="space-y-2 p-3 pb-0">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
         Session
       </p>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="group/session flex items-center justify-between">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
-              <LaptopMinimal className="h-5 w-5 text-[#88b04b]" />
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+              <LaptopMinimal className="h-3 w-3 text-[#88b04b]" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold leading-tight text-white">
+              <p className="text-xs font-bold leading-tight text-muted-foreground">
                 {session.name}
               </p>
               <p className="truncate text-[11px] text-muted-foreground/60">
@@ -168,20 +158,26 @@ function AppInstanceStatusRow({
 
   const appName =
     apps?.find((a) => a.id === instance.appId)?.name || instance.name || 'App'
+  const appIcon =
+    apps?.find((a) => a.id === instance.appId)?.iconURL || 'Rocket'
 
   const currentStatus = statusData?.status || instance.k8sStatus
   const currentMessage = statusData?.message || instance.k8sMessage
   const isRunning = currentStatus === K8sAppInstanceStatus.RUNNING
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="group/app flex items-center justify-between">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
-            <Rocket className="h-5 w-5 text-[#88b04b]" />
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+            {appIcon ? (
+              <img src={appIcon} alt={appName} className="h-3 w-3" />
+            ) : (
+              <Rocket className="h-3 w-3 text-[#88b04b]" />
+            )}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-bold leading-tight text-white">
+            <p className="text-xs font-bold leading-tight text-muted-foreground">
               {appName}
             </p>
             <p className="truncate text-[11px] text-muted-foreground/60">
@@ -203,7 +199,7 @@ function AppInstanceStatusRow({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 opacity-75 transition-opacity hover:bg-white/5 group-hover/app:opacity-100"
+            className="h-6 w-6 opacity-90 transition-opacity hover:bg-white/5 group-hover/app:opacity-100"
             onClick={(e) => {
               e.stopPropagation()
               onClose(instance.id, appName)
@@ -240,8 +236,6 @@ export interface SessionPillProps {
   apps: App[] | undefined
   appInstances: AppInstance[] | undefined
   workbenches: Workbench[] | undefined
-  isMenuOpen: boolean
-  setIsMenuOpen: (open: boolean) => void
   onDeleteSession: (id: string) => void
   onUpdateSession: (id: string) => void
   onCloseAppInstance: (id: string, name?: string) => Promise<void>
@@ -255,14 +249,21 @@ export function SessionPill({
   apps,
   appInstances,
   workbenches,
-  isMenuOpen,
-  setIsMenuOpen,
   onDeleteSession,
   onUpdateSession,
   onCloseAppInstance
 }: SessionPillProps) {
   const router = useRouter()
   const { toggleFullscreen } = useFullscreenContext()
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set())
+
+  const handleAppDone = useCallback((id: string) => {
+    setDismissedIds((prev) => new Set(prev).add(id))
+  }, [])
+
+  const visibleLaunchingApps = launchingApps.filter(
+    (a) => !dismissedIds.has(a.id)
+  )
 
   const getSessionApps = (sid: string): AppInstance[] => {
     return (
@@ -272,7 +273,7 @@ export function SessionPill({
 
   const session = workbenches?.find((wb) => wb.id === sessionId)
 
-  const renderSessionMenuContent = () => {
+  const menuContent = () => {
     if (!session) return null
 
     const appsRunning = getSessionApps(sessionId)
@@ -287,7 +288,7 @@ export function SessionPill({
 
         {/* Applications Section */}
         <div className="space-y-4 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
             Applications
           </p>
 
@@ -315,104 +316,107 @@ export function SessionPill({
 
         {/* Actions Section */}
         <div className="space-y-0.5 p-1.5">
-          <DropdownMenuItem
+          <button
             onClick={() =>
               router.push(
                 `/workspaces/${session.workspaceId}/sessions/${sessionId}/app-store`
               )
             }
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent transition-all hover:bg-accent hover:text-black/80"
           >
-            <Rocket className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            <Rocket className="h-4 w-4" style={{ color: 'inherit' }} />
             Launch an app
-          </DropdownMenuItem>
+          </button>
 
-          <DropdownMenuItem
+          <button
             onClick={() =>
               router.push(`/workspaces/${session.workspaceId}/users`)
             }
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-black/80"
           >
-            <UserPlus className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            <UserPlus className="h-4 w-4" style={{ color: 'inherit' }} />
             Add Member
-          </DropdownMenuItem>
+          </button>
 
-          <DropdownMenuItem
+          <button
             onClick={() => onUpdateSession(sessionId)}
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-black/80"
           >
-            <Settings className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            <Settings className="h-4 w-4" style={{ color: 'inherit' }} />
             Settings
-          </DropdownMenuItem>
+          </button>
 
-          <DropdownMenuItem
+          <button
             onClick={toggleFullscreen}
             disabled
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-black/80 disabled:opacity-40"
           >
-            <Maximize className="h-4 w-4 text-muted-foreground/60 transition-colors group-hover:text-white" />
+            <Maximize className="h-4 w-4" style={{ color: 'inherit' }} />
             Fullscreen
-          </DropdownMenuItem>
+          </button>
         </div>
 
         {/* Delete Section */}
         <div className="mt-auto border-t border-white/5 bg-red-500/5 p-1.5">
-          <DropdownMenuItem
+          <button
             onClick={() => onDeleteSession(sessionId)}
             className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
           >
             <Trash2 className="h-4 w-4 text-red-400/60 transition-colors group-hover:text-red-400" />
             Delete Session
-          </DropdownMenuItem>
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="group/pill flex h-9 items-center rounded-xl border border-muted bg-muted/50 shadow-lg backdrop-blur-md transition-all hover:bg-muted/80">
-      {/* Left: Info & Status */}
-      <div className="flex min-w-0 flex-col justify-center px-4">
+    <div className="group/pill relative flex h-9 items-center shadow-lg backdrop-blur-md">
+      {/* Left: Logo + Session Name & Status */}
+      <div className="flex items-center gap-1.5 pr-2">
+        {launchingApps.length > 0 ? (
+          <AppLaunchingPill initialInstance={launchingApps[0]} />
+        ) : (
+          <CheckCircle2 className="h-3 w-3 text-accent" />
+        )}
+      </div>
+      <div className="flex min-w-0 flex-col justify-center">
         <p className="truncate text-[13px] font-bold leading-tight text-white">
           {sessionName}
         </p>
-        <div className="flex items-center gap-1.5">
-          {launchingApps.length > 0 ? (
-            <AppLaunchingPill
-              initialInstance={launchingApps[0]}
-              getAppName={getAppName}
-            />
-          ) : (
-            <>
-              <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
-              <p className="text-[10px] font-medium leading-none text-muted-foreground/60">
-                Session Active
-              </p>
-            </>
-          )}
-        </div>
       </div>
 
       {/* Vertical Separator */}
-      <div className="h-5 w-px bg-white/10" />
+      <div className="ml-2 h-5 w-px bg-white/50" />
 
-      {/* Right: MENU Trigger */}
-      <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <DropdownMenuTrigger asChild>
-          <button className="group/menu ml-1 mr-0.5 flex h-7 items-center gap-2 rounded-full px-3 transition-colors hover:text-accent">
-            <span className="text-[11px] font-black tracking-widest text-white">
+      {/* Right: MENU Trigger via NavigationMenu */}
+      <NavigationMenu className="z-50">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className="mr-0.5 flex h-7 items-center gap-2 rounded-full border-none bg-transparent px-3 pt-0.5 text-[11px] font-black tracking-widest text-accent shadow-none hover:bg-transparent hover:text-accent data-[state=open]:bg-transparent">
               MENU
-            </span>
-            <MoreVertical className="h-3.5 w-3.5 text-white/80" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="mt-2 border-none bg-transparent p-0 shadow-none"
-          align="end"
-        >
-          {renderSessionMenuContent()}
-        </DropdownMenuContent>
-      </DropdownMenu>
+            </NavigationMenuTrigger>
+            <NavigationMenuContent className="!left-auto !right-0 !translate-x-0 border-none bg-transparent p-0 shadow-none">
+              {menuContent()}
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+
+      {/* Floating app launch status panel */}
+      {visibleLaunchingApps.length > 0 && (
+        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[260px] space-y-1.5 rounded-2xl border border-white/5 bg-[#1a1b23] p-3 shadow-2xl">
+          {visibleLaunchingApps.map((instance) => (
+            <AppLaunchToastContent
+              key={instance.id}
+              appInstanceId={instance.id}
+              appName={getAppName(instance.appId)}
+              appIconUrl={apps?.find((a) => a.id === instance.appId)?.iconURL}
+              onDone={() => handleAppDone(instance.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

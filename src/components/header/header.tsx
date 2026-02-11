@@ -5,7 +5,7 @@ import { Bell, HelpCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
@@ -20,11 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import {
-  AppInstance,
-  K8sAppInstanceStatus,
-  WorkbenchServerPodStatus
-} from '@/domain/model'
+import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -68,7 +64,6 @@ export function Header() {
   const [updateOpen, setUpdateOpen] = useState(false)
   const [updateSessionId, setUpdateSessionId] = useState<string | null>(null)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
@@ -92,29 +87,6 @@ export function Header() {
           !i.k8sStatus)
     )
   }, [params.sessionId, appInstances])
-
-  // Automatically open menu when a new app is launching or session is starting
-  const prevLaunchingAppsCount = useRef(0)
-  const prevSessionId = useRef<string | null>(null)
-
-  useEffect(() => {
-    // If we have more launching apps than before, or we switched to a new session that is starting
-    const hasMoreLaunchingApps =
-      launchingApps.length > prevLaunchingAppsCount.current
-
-    const session = workbenches?.find((wb) => wb.id === params.sessionId)
-    const isNewSessionStarting =
-      params.sessionId !== prevSessionId.current &&
-      session &&
-      session.serverPodStatus !== WorkbenchServerPodStatus.READY
-
-    if (hasMoreLaunchingApps || isNewSessionStarting) {
-      setIsMenuOpen(true)
-    }
-
-    prevLaunchingAppsCount.current = launchingApps.length
-    prevSessionId.current = params.sessionId || null
-  }, [launchingApps.length, params.sessionId, workbenches])
 
   const getAppName = (appId: string) =>
     apps?.find((a) => a.id === appId)?.name ?? 'App'
@@ -175,7 +147,7 @@ export function Header() {
           </Link>
 
           {user && (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
               <AppBreadcrumb />
               {isSessionPath(pathname) && params.sessionId && (
                 <SessionPill
@@ -186,8 +158,6 @@ export function Header() {
                   apps={apps}
                   appInstances={appInstances}
                   workbenches={workbenches}
-                  isMenuOpen={isMenuOpen}
-                  setIsMenuOpen={setIsMenuOpen}
                   onDeleteSession={setDeleteSessionId}
                   onUpdateSession={setUpdateSessionId}
                   onCloseAppInstance={closeAppInstance}
@@ -198,7 +168,7 @@ export function Header() {
         </div>
 
         {/* Center: Recent sessions and web apps as Tabs */}
-        <div className="flex h-full w-full min-w-0 items-end justify-end self-stretch">
+        <div className="flex h-full min-w-0 flex-1 items-end justify-end self-stretch overflow-hidden">
           {user && (recentSessions.length > 0 || recentWebApps.length > 0) && (
             <RecentTabs
               recentSessions={recentSessions}
