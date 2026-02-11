@@ -1,3 +1,13 @@
+## [1.35.7](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.6...v1.35.7) (2026-02-11)
+
+
+### Bug Fixes
+
+* matomo events ([caed657](https://github.com/CHORUS-TRE/chorus-web-ui/commit/caed657b86fc687c3e41da8411366703cb6f5981))
+* removed deleted app ([2d41143](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2d41143f7530d3c9bff95cfb83e8e04935dc3f0e))
+* update left hover icon color ([fd0667b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fd0667ba0252bfdc7773311860bcfacbe8b20625))
+* worspaces delete button ([418762f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/418762f265e23453202cbf46e768ae18eaddea8f))
+
 ## [1.35.6](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.5...v1.35.6) (2026-02-11)
 
 
