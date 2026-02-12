@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
+import { Checkbox } from '~/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -27,6 +28,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Switch } from '~/components/ui/switch'
 import { Textarea } from '~/components/ui/textarea'
+import { useIframeCache } from '~/providers/iframe-cache-provider'
 import { useDevStoreCache } from '~/stores/dev-store-cache'
 
 import { toast } from '../hooks/use-toast'
@@ -45,13 +47,15 @@ const instanceConfigFormSchema = z.object({
   tags: z.array(instanceTagSchema).min(1, 'At least one tag is required'),
   maxWorkspacesPerUser: z.string().optional(),
   maxSessionsPerUser: z.string().optional(),
-  maxAppInstancesPerUser: z.string().optional()
+  maxAppInstancesPerUser: z.string().optional(),
+  sidebarWebapps: z.array(z.string()).optional()
 })
 
 type InstanceConfigFormValues = z.infer<typeof instanceConfigFormSchema>
 
 export function InstanceConfigForm() {
   const instanceConfig = useInstanceConfig()
+  const { externalWebApps } = useIframeCache()
 
   const form = useForm<InstanceConfigFormValues>({
     resolver: zodResolver(instanceConfigFormSchema),
@@ -66,7 +70,8 @@ export function InstanceConfigForm() {
       maxSessionsPerUser:
         instanceConfig.limits?.maxSessionsPerUser?.toString() ?? '',
       maxAppInstancesPerUser:
-        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? ''
+        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? '',
+      sidebarWebapps: instanceConfig.sidebarWebapps
     }
   })
 
@@ -88,7 +93,8 @@ export function InstanceConfigForm() {
       maxSessionsPerUser:
         instanceConfig.limits?.maxSessionsPerUser?.toString() ?? '',
       maxAppInstancesPerUser:
-        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? ''
+        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? '',
+      sidebarWebapps: instanceConfig.sidebarWebapps
     })
   }, [instanceConfig, form])
 
@@ -100,7 +106,8 @@ export function InstanceConfigForm() {
         setInstanceTagline,
         setInstanceWebsite,
         setInstanceTags,
-        setInstanceLimits
+        setInstanceLimits,
+        setInstanceSidebarWebapps
       } = useDevStoreCache.getState()
 
       // Parse limit values: empty string → null (unlimited), otherwise number
@@ -123,7 +130,10 @@ export function InstanceConfigForm() {
         setInstanceTagline(data.tagline),
         setInstanceWebsite(data.website),
         setInstanceTags(data.tags),
-        setInstanceLimits(parsedLimits)
+        setInstanceLimits(parsedLimits),
+        data.sidebarWebapps
+          ? setInstanceSidebarWebapps(data.sidebarWebapps)
+          : Promise.resolve(true)
       ])
 
       if (results.every(Boolean)) {
@@ -165,7 +175,8 @@ export function InstanceConfigForm() {
         deleteGlobal('instance.tagline'),
         deleteGlobal('instance.website'),
         deleteGlobal('instance.tags'),
-        deleteGlobal('instance.limits')
+        deleteGlobal('instance.limits'),
+        deleteGlobal('instance.sidebar_webapps')
       ])
 
       toast({
@@ -373,6 +384,71 @@ export function InstanceConfigForm() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Sidebar Navigation */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium">Sidebar Navigation</h3>
+                <p className="text-sm text-muted-foreground">
+                  Select which External Web Apps to display in the left sidebar.
+                </p>
+              </div>
+
+              {externalWebApps.length === 0 ? (
+                <div className="text-sm italic text-muted-foreground">
+                  No external web apps configured. Add them via App Store
+                  configuration.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="sidebarWebapps"
+                    render={() => (
+                      <FormItem className="col-span-2 space-y-3">
+                        {externalWebApps.map((webapp) => (
+                          <FormField
+                            key={webapp.id}
+                            control={form.control}
+                            name="sidebarWebapps"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={webapp.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(webapp.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([
+                                              ...(field.value || []),
+                                              webapp.id
+                                            ])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== webapp.id
+                                              )
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {webapp.name}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Resource Limits */}
