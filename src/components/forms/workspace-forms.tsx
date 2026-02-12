@@ -15,7 +15,7 @@ import {
   Users
 } from 'lucide-react'
 import Image from 'next/image'
-import { startTransition, useEffect, useState } from 'react'
+import { startTransition, useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -129,6 +129,8 @@ export function WorkspaceCreateForm({
 }) {
   const [activeTab, setActiveTab] = useState('general')
   const { workspaces: workspaceLimits } = useInstanceLimits(userId)
+
+  const [isPending, startTransition] = useTransition()
 
   // Show toast and close dialog when limit is reached
   useEffect(() => {
@@ -293,8 +295,11 @@ export function WorkspaceCreateForm({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && (
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting || isPending}
+              >
+                {(form.formState.isSubmitting || isPending) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Create Workspace
@@ -368,6 +373,7 @@ export function WorkspaceUpdateForm({
   workspace?: WorkspaceWithDev
   onSuccess?: (workspace: WorkspaceWithDev) => void
 }) {
+  const [isPending, startTransition] = useTransition()
   const [removeImage, setRemoveImage] = useState(false)
   const [activeTab, setActiveTab] = useState('general')
 
@@ -571,8 +577,11 @@ export function WorkspaceUpdateForm({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && (
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting || isPending}
+              >
+                {(form.formState.isSubmitting || isPending) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Save Changes
