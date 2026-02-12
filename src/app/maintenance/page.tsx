@@ -1,10 +1,12 @@
 import Image from 'next/image'
 
+import logo from '@/assets/logo-chorus-primaire-white@2x.svg'
+
 export default function MaintenancePage() {
   return (
     <div className="flex h-screen w-full animate-pulse flex-col items-center justify-center">
       <Image
-        src="/logo-chorus-primaire-white@2x.svg"
+        src={logo}
         alt="Chorus"
         width={128}
         height={128}

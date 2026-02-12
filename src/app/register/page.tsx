@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 
-import cover from '@/public/cover.jpeg'
+import cover from '@/assets/cover.jpeg'
 import UserRegisterForm from '~/components/forms/user-register-form'
 import { Header } from '~/components/header'
 import LoginInfo from '~/components/login-info'

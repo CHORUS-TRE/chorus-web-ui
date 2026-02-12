@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import React from 'react'
 
+import cover from '@/assets/cover.jpeg'
 import { Header } from '@/components/header'
-import cover from '@/public/cover.jpeg'
 import LoginForm from '~/components/forms/login-form'
 import LoginInfo from '~/components/login-info'
 

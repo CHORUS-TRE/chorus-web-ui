@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-import logo from '@/public/logo-chorus-primaire-white@2x.svg'
+import logo from '@/assets/logo-chorus-primaire-white@2x.svg'
 
 interface LoadingOverlayProps {
   isLoading: boolean
