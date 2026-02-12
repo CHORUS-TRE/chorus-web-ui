@@ -1,3 +1,10 @@
+## [1.36.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.36.0...v1.36.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* wait creation ([b06a23a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b06a23a226a2473256fbbe612e3db79bac2ede8b))
+
 # [1.36.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.7...v1.36.0) (2026-02-12)
 
 
