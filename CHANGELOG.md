@@ -1,3 +1,10 @@
+# [1.36.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.7...v1.36.0) (2026-02-12)
+
+
+### Features
+
+* added customizable links to the left sidebar ([daf7bf4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/daf7bf40fb8ca1f0d793404c50783c62c9bf392b))
+
 ## [1.35.7](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.35.6...v1.35.7) (2026-02-11)
 
 
