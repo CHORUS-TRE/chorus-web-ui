@@ -74,7 +74,6 @@ export function RecentTabs({
         <div className="flex items-center justify-between border-t border-muted/10 bg-accent/[0.03] p-2.5">
           {appsRunning.length > 0 ? (
             <div className="space-y-1.5">
-
               <div className="flex flex-wrap gap-1">
                 {appsRunning.map((instance: AppInstance) => {
                   const appName =

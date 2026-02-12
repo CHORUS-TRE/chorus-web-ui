@@ -9,7 +9,8 @@ export const INSTANCE_CONFIG_KEYS = {
   TAGS: 'instance.tags',
   LOGO: 'instance.logo',
   THEME: 'instance.theme',
-  LIMITS: 'instance.limits'
+  LIMITS: 'instance.limits',
+  SIDEBAR_WEBAPPS: 'instance.sidebar_webapps'
 } as const
 
 // Tag configuration for workspace types
@@ -77,7 +78,8 @@ export const InstanceConfigSchema = z.object({
   ]),
   logo: InstanceLogoSchema.nullable().optional(),
   theme: InstanceThemeSchema.nullable().optional(),
-  limits: InstanceLimitsSchema.nullable().optional()
+  limits: InstanceLimitsSchema.nullable().optional(),
+  sidebarWebapps: z.array(z.string()).default([])
 })
 
 export type InstanceConfig = z.infer<typeof InstanceConfigSchema>
@@ -99,5 +101,6 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
     maxWorkspacesPerUser: null,
     maxSessionsPerUser: null,
     maxAppInstancesPerUser: null
-  }
+  },
+  sidebarWebapps: []
 }

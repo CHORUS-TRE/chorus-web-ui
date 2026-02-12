@@ -7,7 +7,6 @@ import {
   GaugeCircle,
   Globe,
   LaptopMinimal,
-  Menu,
   Package,
   Store
 } from 'lucide-react'
@@ -19,8 +18,8 @@ import { Separator } from '@/components/ui/separator'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
-import { useUserPreferences } from '@/stores/user-preferences-store'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
+import { useIframeCache } from '~/providers/iframe-cache-provider'
 
 import { Button } from './button'
 
@@ -74,6 +73,7 @@ function SidebarContent({
   const { isAdmin } = useAuthorization()
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
+  const { externalWebApps } = useIframeCache()
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -172,19 +172,50 @@ function SidebarContent({
           App Store
         </Link>
 
-        <Link
-          href="/sessions/chorus-documentation"
-          variant="underline"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isActive('/sessions/chorus-documentation')
-              ? 'bg-primary/20 text-primary'
-              : 'text-muted-foreground'
-          )}
-        >
-          <CircleHelp className="h-4 w-4" />
-          Documentation
-        </Link>
+        {instanceConfig.sidebarWebapps.length > 0 && (
+          <>
+            <Separator className="my-2" />
+            <div className="sticky top-0 z-[100] flex h-11 items-center px-2">
+              <span className="text-xs font-semibold uppercase text-muted-foreground/70">
+                Links
+              </span>
+            </div>
+          </>
+        )}
+
+        {instanceConfig.sidebarWebapps.map((webappId) => {
+          const webapp = externalWebApps.find((w) => w.id === webappId)
+          if (!webapp) return null
+
+          const href = `/sessions/${webapp.id}`
+          const isLinkActive = isActive(href)
+
+          return (
+            <Link
+              key={webapp.id}
+              href={href}
+              variant="underline"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                isLinkActive
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-muted-foreground'
+              )}
+            >
+              {webapp.iconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={webapp.iconUrl}
+                  alt=""
+                  className="h-4 w-4 object-contain"
+                />
+              ) : (
+                <CircleHelp className="h-4 w-4" />
+              )}
+              {webapp.name}
+            </Link>
+          )
+        })}
 
         <div className="flex-1" />
 

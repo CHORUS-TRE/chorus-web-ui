@@ -49,6 +49,9 @@ export function useInstanceConfig(): InstanceConfig {
   const limitsRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.LIMITS]
   )
+  const sidebarWebappsRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.SIDEBAR_WEBAPPS]
+  )
 
   // Memoize the parsed config
   const config = useMemo((): InstanceConfig => {
@@ -100,6 +103,22 @@ export function useInstanceConfig(): InstanceConfig {
       }
     }
 
+    // Parse sidebar webapps
+    let sidebarWebapps: string[] = DEFAULT_INSTANCE_CONFIG.sidebarWebapps
+    if (sidebarWebappsRaw) {
+      try {
+        const parsed = JSON.parse(sidebarWebappsRaw)
+        if (
+          Array.isArray(parsed) &&
+          parsed.every((i) => typeof i === 'string')
+        ) {
+          sidebarWebapps = parsed
+        }
+      } catch {
+        // Keep default
+      }
+    }
+
     return {
       name: nameRaw || DEFAULT_INSTANCE_CONFIG.name,
       headline: headlineRaw || DEFAULT_INSTANCE_CONFIG.headline,
@@ -108,7 +127,8 @@ export function useInstanceConfig(): InstanceConfig {
       tags,
       logo,
       theme,
-      limits
+      limits,
+      sidebarWebapps
     }
   }, [
     nameRaw,
@@ -118,7 +138,8 @@ export function useInstanceConfig(): InstanceConfig {
     tagsRaw,
     logoRaw,
     themeRaw,
-    limitsRaw
+    limitsRaw,
+    sidebarWebappsRaw
   ])
 
   return config
