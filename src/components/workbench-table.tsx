@@ -11,7 +11,7 @@ import {
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
 import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
 import { Link } from '@/components/link'
@@ -38,73 +38,34 @@ import { toast } from './hooks/use-toast'
 
 const ActionCell = ({
   row,
-  refreshWorkbenches,
-  workspaces
+  onEdit,
+  onDelete
 }: {
   row: Row<Workbench>
-  refreshWorkbenches: () => void
-  workspaces: Workspace[] | undefined
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
 }) => {
   const workbench = row.original
-  const [open, setOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
 
   return (
-    <>
-      {workbench && open && (
-        <WorkbenchUpdateForm
-          workbench={workbench}
-          state={[open, setOpen]}
-          onSuccess={() => {
-            refreshWorkbenches()
-            toast({
-              title: 'Success!',
-              description: 'Session updated successfully'
-            })
-          }}
-        />
-      )}
-      {deleteOpen && (
-        <WorkbenchDeleteForm
-          id={workbench?.id}
-          state={[deleteOpen, setDeleteOpen]}
-          onSuccess={() => {
-            setTimeout(() => {
-              refreshWorkbenches()
-            }, 2000)
-            toast({
-              title: 'Success!',
-              description: `Session ${workbench?.name} in ${
-                workspaces?.find((w) => w.id === workbench.workspaceId)?.name
-              } was deleted`,
-              variant: 'default'
-            })
-          }}
-        />
-      )}
-
-      <div className="flex justify-end gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            setOpen(true)
-            // router.push(`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`)
-          }}
-          className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-destructive/60 hover:bg-destructive/20 hover:text-destructive"
-          onClick={() => setDeleteOpen(true)}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
-    </>
+    <div className="flex justify-end gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => workbench.id && onEdit(workbench.id)}
+        className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+      >
+        <Pencil className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-destructive/60 hover:bg-destructive/20 hover:text-destructive"
+        onClick={() => workbench.id && onDelete(workbench.id)}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
   )
 }
 const WorkbenchK8sStatusBadge = ({
@@ -154,7 +115,8 @@ export const columns = (
   apps: App[] | undefined,
   users: User[] | undefined,
   workspaces: Workspace[] | undefined,
-  refreshWorkbenches: () => void,
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
   appInstances: AppInstance[] | undefined,
   refreshKey?: number
 ): ColumnDef<Workbench>[] => [
@@ -306,11 +268,7 @@ export const columns = (
   {
     id: 'actions',
     cell: (props) => (
-      <ActionCell
-        {...props}
-        refreshWorkbenches={refreshWorkbenches}
-        workspaces={workspaces}
-      />
+      <ActionCell {...props} onEdit={onEdit} onDelete={onDelete} />
     )
   }
 ]
@@ -325,6 +283,20 @@ export default function WorkbenchTable({
   const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
   const [users, setUsers] = useState<User[]>([])
   const [loadingUsers, setLoadingUsers] = useState(false)
+  const [activeEditId, setActiveEditId] = useState<string | null>(null)
+  const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
+
+  const closeEdit = useCallback(() => setActiveEditId(null), [])
+  const closeDelete = useCallback(() => setActiveDeleteId(null), [])
+
+  const activeEditWorkbench = useMemo(
+    () => workbenches?.find((w) => w.id === activeEditId),
+    [workbenches, activeEditId]
+  )
+  const activeDeleteWorkbench = useMemo(
+    () => workbenches?.find((w) => w.id === activeDeleteId),
+    [workbenches, activeDeleteId]
+  )
 
   const loadAllUsers = useCallback(async () => {
     if (!workbenches || workbenches.length === 0) {
@@ -360,11 +332,12 @@ export default function WorkbenchTable({
         apps,
         users,
         workspaces,
-        refreshWorkbenches,
+        setActiveEditId,
+        setActiveDeleteId,
         appInstances,
         refreshKey
       ),
-    [apps, users, workspaces, refreshWorkbenches, appInstances, refreshKey]
+    [apps, users, workspaces, appInstances, refreshKey]
   )
 
   const table = useReactTable({
@@ -379,76 +352,112 @@ export default function WorkbenchTable({
   })
 
   return (
-    <div className="mb-4 grid flex-1 items-start gap-4">
-      <div className="flex items-center justify-end"></div>
-      <Card
-        variant="glass"
-        className="flex h-full flex-col justify-between duration-300"
-      >
-        <CardContent>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow
-                  key={headerGroup.id}
-                  className="hover:bg-background/80"
-                >
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        className="text-muted-foreground"
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    )
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
+    <>
+      {/* Render dialogs outside table so they survive row re-renders */}
+      {activeEditWorkbench && (
+        <WorkbenchUpdateForm
+          workbench={activeEditWorkbench}
+          state={[!!activeEditId, closeEdit]}
+          onSuccess={() => {
+            refreshWorkbenches()
+            closeEdit()
+            toast({
+              title: 'Success!',
+              description: 'Session updated successfully'
+            })
+          }}
+        />
+      )}
+      <WorkbenchDeleteForm
+        id={activeDeleteWorkbench?.id}
+        state={[!!activeDeleteId, closeDelete]}
+        onSuccess={() => {
+          closeDelete()
+          setTimeout(() => {
+            refreshWorkbenches()
+          }, 2000)
+          toast({
+            title: 'Success!',
+            description: `Session ${activeDeleteWorkbench?.name} in ${
+              workspaces?.find(
+                (w) => w.id === activeDeleteWorkbench?.workspaceId
+              )?.name
+            } was deleted`,
+            variant: 'default'
+          })
+        }}
+      />
+      <div className="mb-4 grid flex-1 items-start gap-4">
+        <div className="flex items-center justify-end"></div>
+        <Card
+          variant="glass"
+          className="flex h-full flex-col justify-between duration-300"
+        >
+          <CardContent>
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                    className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                    key={headerGroup.id}
+                    className="hover:bg-background/80"
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="p-1">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className="text-muted-foreground"
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={table.getAllColumns().length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-{data?.length}</strong> of{' '}
-            <strong>{data?.length}</strong> sessions
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className="p-1">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={table.getAllColumns().length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+          <CardFooter>
+            <div className="text-xs text-muted-foreground">
+              Showing <strong>1-{data?.length}</strong> of{' '}
+              <strong>{data?.length}</strong> sessions
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </>
   )
 }

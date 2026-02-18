@@ -2,7 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pencil, Trash2 } from 'lucide-react'
-import { startTransition, useActionState, useEffect, useState } from 'react'
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -53,9 +59,15 @@ export function UserEditDialog({
   const [dialogOpen, setDialogOpen] = useState(false)
   const [internalUser, setInternalUser] = useState(user)
   const [hasBeenModified, setHasBeenModified] = useState(false)
+  const prevDialogOpenRef = useRef(false)
 
+  // Only sync user prop to internalUser when dialog transitions from closed to open,
+  // not when user prop changes due to polling while dialog is open
   useEffect(() => {
-    if (dialogOpen) {
+    const wasOpen = prevDialogOpenRef.current
+    prevDialogOpenRef.current = dialogOpen
+
+    if (dialogOpen && !wasOpen) {
       setInternalUser(user)
       setHasBeenModified(false)
     }

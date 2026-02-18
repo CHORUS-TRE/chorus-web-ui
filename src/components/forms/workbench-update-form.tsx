@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
@@ -58,8 +58,15 @@ export function WorkbenchUpdateForm({
     }
   })
 
+  const prevOpenRef = useRef(false)
+
+  // Only reset form when the dialog transitions from closed to open,
+  // not when workbench prop changes due to polling while the dialog is open
   useEffect(() => {
-    if (open) {
+    const wasOpen = prevOpenRef.current
+    prevOpenRef.current = open
+
+    if (open && !wasOpen) {
       form.reset({
         id: workbench.id,
         name: workbench.name,
@@ -140,8 +147,8 @@ export function WorkbenchUpdateForm({
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogContent className="bg-background sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit Session</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-foreground">Edit Session</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Make changes to your session here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
@@ -168,7 +175,11 @@ export function WorkbenchUpdateForm({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Session name" />
+                    <Input
+                      {...field}
+                      placeholder="Session name"
+                      className="text-muted-foreground placeholder:text-muted-foreground"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -184,7 +195,7 @@ export function WorkbenchUpdateForm({
                   <FormControl>
                     <Textarea
                       {...field}
-                      className="min-h-[100px] resize-none"
+                      className="min-h-[100px] resize-none text-muted-foreground placeholder:text-muted-foreground"
                       placeholder="Session description (optional)"
                     />
                   </FormControl>
