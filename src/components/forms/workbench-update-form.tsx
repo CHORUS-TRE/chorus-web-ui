@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
@@ -58,8 +58,15 @@ export function WorkbenchUpdateForm({
     }
   })
 
+  const prevOpenRef = useRef(false)
+
+  // Only reset form when the dialog transitions from closed to open,
+  // not when workbench prop changes due to polling while the dialog is open
   useEffect(() => {
-    if (open) {
+    const wasOpen = prevOpenRef.current
+    prevOpenRef.current = open
+
+    if (open && !wasOpen) {
       form.reset({
         id: workbench.id,
         name: workbench.name,

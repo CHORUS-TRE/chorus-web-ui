@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import Color from 'color'
 import { Paintbrush } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -60,15 +60,22 @@ export function ThemeEditorForm() {
     }
   })
 
+  const isInitializedRef = useRef(false)
+
+  // Update form when instanceTheme changes (e.g., after save),
+  // but not while the user is actively editing
   useEffect(() => {
-    form.reset({
-      light_primary: instanceTheme.light.primary,
-      light_secondary: instanceTheme.light.secondary,
-      light_accent: instanceTheme.light.accent,
-      dark_primary: instanceTheme.dark.primary,
-      dark_secondary: instanceTheme.dark.secondary,
-      dark_accent: instanceTheme.dark.accent
-    })
+    if (!isInitializedRef.current || !form.formState.isDirty) {
+      form.reset({
+        light_primary: instanceTheme.light.primary,
+        light_secondary: instanceTheme.light.secondary,
+        light_accent: instanceTheme.light.accent,
+        dark_primary: instanceTheme.dark.primary,
+        dark_secondary: instanceTheme.dark.secondary,
+        dark_accent: instanceTheme.dark.accent
+      })
+      isInitializedRef.current = true
+    }
   }, [instanceTheme, form])
 
   async function handleReset() {

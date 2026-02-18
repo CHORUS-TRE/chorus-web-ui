@@ -51,6 +51,21 @@ export type AppStateStore = {
   notificationsPollingInterval: ReturnType<typeof setInterval> | null
 }
 
+/**
+ * Shallow-compare two sorted arrays by their serialized form.
+ * Returns the existing array if data hasn't changed, avoiding unnecessary re-renders.
+ */
+function stableUpdate<T>(existing: T[] | undefined, incoming: T[]): T[] {
+  if (
+    existing &&
+    existing.length === incoming.length &&
+    JSON.stringify(existing) === JSON.stringify(incoming)
+  ) {
+    return existing
+  }
+  return incoming
+}
+
 export const useAppStateStore = create<AppStateStore>((set, get) => ({
   workspaces: undefined,
   workbenches: undefined,
@@ -68,12 +83,14 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      set({
-        workspaces: result.data.sort(
-          (a, b) =>
-            (b.createdAt?.getTime?.() ?? 0) - (a.createdAt?.getTime?.() ?? 0)
-        )
-      })
+      const sorted = result.data.sort(
+        (a, b) =>
+          (b.createdAt?.getTime?.() ?? 0) - (a.createdAt?.getTime?.() ?? 0)
+      )
+      const stable = stableUpdate(get().workspaces, sorted)
+      if (stable !== get().workspaces) {
+        set({ workspaces: stable })
+      }
     }
   },
 
@@ -84,11 +101,13 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      set({
-        workbenches: result.data.sort((a, b) =>
-          a.name && b.name ? a.name.localeCompare(b.name) : 0
-        )
-      })
+      const sorted = result.data.sort((a, b) =>
+        a.name && b.name ? a.name.localeCompare(b.name) : 0
+      )
+      const stable = stableUpdate(get().workbenches, sorted)
+      if (stable !== get().workbenches) {
+        set({ workbenches: stable })
+      }
     }
   },
 
@@ -99,11 +118,13 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      set({
-        apps: result.data.sort((a, b) =>
-          a.name && b.name ? a.name.localeCompare(b.name) : 0
-        )
-      })
+      const sorted = result.data.sort((a, b) =>
+        a.name && b.name ? a.name.localeCompare(b.name) : 0
+      )
+      const stable = stableUpdate(get().apps, sorted)
+      if (stable !== get().apps) {
+        set({ apps: stable })
+      }
     }
   },
 
@@ -114,11 +135,13 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      set({
-        appInstances: result.data.sort(
-          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-        )
-      })
+      const sorted = result.data.sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      )
+      const stable = stableUpdate(get().appInstances, sorted)
+      if (stable !== get().appInstances) {
+        set({ appInstances: stable })
+      }
     }
   },
 
@@ -153,7 +176,13 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       )
 
       // Set only regular notifications to the state (don't display system notifications)
-      set({ notifications: regularNotifications })
+      const stableNotifications = stableUpdate(
+        get().notifications,
+        regularNotifications
+      )
+      if (stableNotifications !== get().notifications) {
+        set({ notifications: stableNotifications })
+      }
 
       // Handle system notifications
       if (systemNotifications.length > 0) {
@@ -186,7 +215,10 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      set({ approvalRequests: result.data })
+      const stable = stableUpdate(get().approvalRequests, result.data)
+      if (stable !== get().approvalRequests) {
+        set({ approvalRequests: stable })
+      }
     }
   },
 

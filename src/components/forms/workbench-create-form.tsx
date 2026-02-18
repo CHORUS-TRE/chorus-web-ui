@@ -3,7 +3,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CirclePlus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { startTransition, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
@@ -148,25 +155,24 @@ export function WorkbenchCreateForm({
       window?.visualViewport?.removeEventListener('resize', updateDimensions)
   }, [])
 
-  useEffect(() => {
-    if (open) {
-      const currentWorkspaceId =
-        initialWorkspaceId || form.getValues('workspaceId')
-      form.reset({
-        name: workspaceName
-          ? `${workspaceName}-session-${nextSessionNumber}`
-          : `session-${nextSessionNumber}`,
-        workspaceId: currentWorkspaceId || '',
-        userId: userId || '2',
-        tenantId: '1',
-        status: WorkbenchStatus.ACTIVE,
-        description: '',
-        initialResolutionHeight: viewportDimensions.height,
-        initialResolutionWidth: viewportDimensions.width
-      })
-    }
+  const prevOpenRef = useRef(false)
+
+  const resetForm = useCallback(() => {
+    const currentWorkspaceId =
+      initialWorkspaceId || form.getValues('workspaceId')
+    form.reset({
+      name: workspaceName
+        ? `${workspaceName}-session-${nextSessionNumber}`
+        : `session-${nextSessionNumber}`,
+      workspaceId: currentWorkspaceId || '',
+      userId: userId || '2',
+      tenantId: '1',
+      status: WorkbenchStatus.ACTIVE,
+      description: '',
+      initialResolutionHeight: viewportDimensions.height,
+      initialResolutionWidth: viewportDimensions.width
+    })
   }, [
-    open,
     form,
     initialWorkspaceId,
     workspaceName,
@@ -175,6 +181,17 @@ export function WorkbenchCreateForm({
     viewportDimensions.height,
     viewportDimensions.width
   ])
+
+  // Only reset form when the dialog transitions from closed to open,
+  // not when external data (e.g. workbenches) changes while the dialog is open
+  useEffect(() => {
+    const wasOpen = prevOpenRef.current
+    prevOpenRef.current = open
+
+    if (open && !wasOpen) {
+      resetForm()
+    }
+  }, [open, resetForm])
 
   async function onSubmit(data: WorkbenchCreateType) {
     const formData = new FormData()

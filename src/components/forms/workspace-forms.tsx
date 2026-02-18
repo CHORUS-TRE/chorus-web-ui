@@ -15,7 +15,13 @@ import {
   Users
 } from 'lucide-react'
 import Image from 'next/image'
-import { startTransition, useEffect, useState, useTransition } from 'react'
+import {
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+  useTransition
+} from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -415,8 +421,15 @@ export function WorkspaceUpdateForm({
     }
   })
 
+  const prevOpenRef = useRef(false)
+
+  // Only reset form when the dialog transitions from closed to open,
+  // not when workspace prop changes due to polling while the dialog is open
   useEffect(() => {
-    if (open && workspace) {
+    const wasOpen = prevOpenRef.current
+    prevOpenRef.current = open
+
+    if (open && !wasOpen && workspace) {
       const config = workspace.dev?.config
         ? (workspace.dev.config as WorkspaceConfig)
         : DEFAULT_WORKSPACE_CONFIG

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Settings2, Trash2 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -80,22 +80,29 @@ export function InstanceConfigForm() {
     name: 'tags'
   })
 
-  // Update form when instanceConfig changes (e.g., after save)
+  const isInitializedRef = useRef(false)
+
+  // Update form when instanceConfig changes (e.g., after save),
+  // but not while the user is actively editing
   useEffect(() => {
-    form.reset({
-      name: instanceConfig.name,
-      headline: instanceConfig.headline,
-      tagline: instanceConfig.tagline,
-      website: instanceConfig.website,
-      tags: instanceConfig.tags,
-      maxWorkspacesPerUser:
-        instanceConfig.limits?.maxWorkspacesPerUser?.toString() ?? '',
-      maxSessionsPerUser:
-        instanceConfig.limits?.maxSessionsPerUser?.toString() ?? '',
-      maxAppInstancesPerUser:
-        instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? '',
-      sidebarWebapps: instanceConfig.sidebarWebapps
-    })
+    // Always sync on initial load or when form is not dirty (user hasn't made changes)
+    if (!isInitializedRef.current || !form.formState.isDirty) {
+      form.reset({
+        name: instanceConfig.name,
+        headline: instanceConfig.headline,
+        tagline: instanceConfig.tagline,
+        website: instanceConfig.website,
+        tags: instanceConfig.tags,
+        maxWorkspacesPerUser:
+          instanceConfig.limits?.maxWorkspacesPerUser?.toString() ?? '',
+        maxSessionsPerUser:
+          instanceConfig.limits?.maxSessionsPerUser?.toString() ?? '',
+        maxAppInstancesPerUser:
+          instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? '',
+        sidebarWebapps: instanceConfig.sidebarWebapps
+      })
+      isInitializedRef.current = true
+    }
   }, [instanceConfig, form])
 
   async function onSubmit(data: InstanceConfigFormValues) {

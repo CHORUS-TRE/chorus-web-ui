@@ -68,7 +68,14 @@ export const AuthenticationProvider = ({
         nextUser = { ...nextUser, workspaceId: isMain.id }
       }
 
-      setUser(nextUser)
+      // Only update state if user data actually changed,
+      // to avoid unnecessary re-renders that cascade into form resets
+      setUser((prev) => {
+        if (prev && JSON.stringify(prev) === JSON.stringify(nextUser)) {
+          return prev
+        }
+        return nextUser
+      })
 
       setIsLoading(false)
     } catch (error) {
