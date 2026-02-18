@@ -534,7 +534,7 @@ export function WorkspaceUpdateForm({
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Update Workspace</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-muted-foreground">
             Modify your workspace configuration.
           </DialogDescription>
         </DialogHeader>

@@ -245,7 +245,9 @@ export function WorkbenchCreateForm({
       <DialogContent className="bg-background">
         <DialogHeader>
           <DialogTitle>Create Session</DialogTitle>
-          <DialogDescription>Create a new session.</DialogDescription>
+          <DialogDescription className="text-muted-foreground">
+            Create a new session.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -310,6 +312,7 @@ export function WorkbenchCreateForm({
                       <FormControl>
                         <Input
                           {...field}
+                          className="text-muted-foreground placeholder:text-muted-foreground"
                           required
                           placeholder="Enter session name"
                         />
@@ -328,8 +331,8 @@ export function WorkbenchCreateForm({
                       <FormControl>
                         <Textarea
                           {...field}
+                          className="min-h-[100px] text-muted-foreground placeholder:text-muted-foreground"
                           placeholder="Enter description"
-                          className="min-h-[100px]"
                         />
                       </FormControl>
                       <FormMessage />

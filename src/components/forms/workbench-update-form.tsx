@@ -147,8 +147,8 @@ export function WorkbenchUpdateForm({
     <DialogContainer open={open} onOpenChange={setOpen}>
       <DialogContent className="bg-background sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit Session</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-foreground">Edit Session</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Make changes to your session here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
@@ -175,7 +175,11 @@ export function WorkbenchUpdateForm({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Session name" />
+                    <Input
+                      {...field}
+                      placeholder="Session name"
+                      className="text-muted-foreground placeholder:text-muted-foreground"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,7 +195,7 @@ export function WorkbenchUpdateForm({
                   <FormControl>
                     <Textarea
                       {...field}
-                      className="min-h-[100px] resize-none"
+                      className="min-h-[100px] resize-none text-muted-foreground placeholder:text-muted-foreground"
                       placeholder="Session description (optional)"
                     />
                   </FormControl>
