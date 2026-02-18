@@ -1,3 +1,11 @@
+## [1.36.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.36.1...v1.36.2) (2026-02-18)
+
+
+### Bug Fixes
+
+* polling refreshes ([3f95048](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3f95048898eb4501de320a119e13b407e5e636b9))
+* prevent forms from resetting/closing during background polling ([44a73f7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/44a73f70d49335fe3cd30c8d30508e74ab942f30))
+
 ## [1.36.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.36.0...v1.36.1) (2026-02-12)
 
 
