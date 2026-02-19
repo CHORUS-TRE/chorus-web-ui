@@ -94,11 +94,7 @@ export function SelectionBasket({
       <div className="p-2 pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
-            <ShoppingBasket
-              className="text-foreground-muted h-5 w-5"
-              aria-hidden="true"
-            />
-            Selection Basket
+            Selected Files
           </CardTitle>
           <Badge className="rounded-full px-2">{selectedItems.length}</Badge>
         </div>
@@ -113,6 +109,15 @@ export function SelectionBasket({
       <CardContent className="flex flex-1 flex-col p-2 pt-0">
         <ScrollArea className="flex-1 pr-4">
           <div className="mt-2 space-y-1">
+            {selectedItems.length === 0 && (
+              <div className="mt-8 p-6 text-center text-sm text-muted-foreground">
+                Select the files you would like to download or transfer to
+                another workspace.
+                <br /> <br />
+                All requests must be reviewed and approved by a data manager
+                before the files can be downloaded or transferred.
+              </div>
+            )}
             {selectedItems.map((item) => (
               <div
                 key={item.id}

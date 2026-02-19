@@ -17,32 +17,22 @@ export default function AdminWorkspacesPage() {
   }, [refreshWorkspaces])
 
   return (
-    <>
-      <div className="w-full">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-              <Package className="h-9 w-9" />
-              Workspaces Management
-            </h2>
-            <div className="">
-              <p className="text-sm text-muted-foreground">
-                Manage all workspaces on the platform.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="container mx-auto p-6">
+      <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
+        <Package className="h-9 w-9" />
+        Workspaces Management
+      </h1>
+      <p className="mb-8 text-muted-foreground">
+        Manage all workspaces on the platform.
+      </p>
 
-      <div className="w-full">
-        <WorkspaceTable
-          workspaces={workspaces}
-          user={user}
-          onUpdate={refreshWorkspaces}
-          title="All Workspaces"
-          description="List of all workspaces created on the platform."
-        />
-      </div>
-    </>
+      <WorkspaceTable
+        workspaces={workspaces}
+        user={user}
+        onUpdate={refreshWorkspaces}
+        title="All Workspaces"
+        description="List of all workspaces created on the platform."
+      />
+    </div>
   )
 }

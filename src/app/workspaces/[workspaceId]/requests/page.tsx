@@ -62,11 +62,13 @@ export default function RequestsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-4 pt-2">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="container mx-auto p-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Data Requests</h2>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-semibold text-muted-foreground">
+            Data Requests
+          </h1>
+          <p className="mb-8 text-muted-foreground">
             Monitor and manage your data extraction and transfer requests.
           </p>
         </div>

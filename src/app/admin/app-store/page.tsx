@@ -72,16 +72,16 @@ export default function AdminAppStorePage() {
   }
 
   return (
-    <div className="w-full space-y-6 p-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Store className="h-8 w-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">App Store</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage global application settings and available apps.
-            </p>
-          </div>
+    <div className="container mx-auto p-6">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
+            <Store className="h-9 w-9" />
+            App Store
+          </h1>
+          <p className="mb-8 text-muted-foreground">
+            Manage global application settings and available apps.
+          </p>
         </div>
       </div>
 

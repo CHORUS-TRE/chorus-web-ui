@@ -45,14 +45,13 @@ export default function WorkspaceSettingsPage() {
   }
 
   return (
-    <div className="w-full space-y-6 p-8">
+    <div className="container mx-auto p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="flex items-center gap-2 text-2xl font-bold">
-            <Settings className="h-6 w-6" />
+          <h1 className="text-3xl font-semibold text-muted-foreground">
             Workspace Settings
-          </h2>
-          <p className="text-muted-foreground">
+          </h1>
+          <p className="mb-8 text-muted-foreground">
             Manage workspace configuration.
           </p>
         </div>

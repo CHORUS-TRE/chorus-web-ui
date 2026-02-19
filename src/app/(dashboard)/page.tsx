@@ -72,12 +72,12 @@ export default function CHORUSDashboard() {
 
   return (
     <>
-      <div className="w-full">
-        <h2 className="mb-2 flex w-full flex-row items-center gap-3 text-start">
+      <div className="mb-8 w-full">
+        <h2 className="mb-2 mt-5 flex w-full flex-row items-center gap-3 text-start">
           <CircleGauge className="h-9 w-9" />
           Dashboard
         </h2>
-        <h3 className="mb-4 text-sm italic text-muted-foreground">
+        <h3 className="mb-2 text-sm italic text-muted-foreground">
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
@@ -94,7 +94,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {workspaceList?.length}
                     {workspaceLimits.max != null && (
                       <span className="text-3xl font-normal text-muted-foreground">
@@ -115,7 +115,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {workbenchesList?.length}
                     {sessionLimits.max != null && (
                       <span className="text-3xl font-normal text-muted-foreground">
@@ -136,7 +136,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {appInstancesList?.length}
                     {appInstanceLimits.max != null && (
                       <span className="text-3xl font-normal text-muted-foreground">
@@ -157,7 +157,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {pendingApprovals}
                   </span>
                   <Clock className="h-8 w-8 text-secondary" />
@@ -173,7 +173,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-purple-600">
+                  <span className="text-3xl font-semibold text-muted-foreground text-purple-600">
                     {'73%'}
                   </span>
                   <Cpu className="h-8 w-8 text-purple-600" />
@@ -189,7 +189,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-gray-600">
+                  <span className="text-3xl font-semibold text-muted-foreground text-gray-600">
                     {'85%'}
                   </span>
                   <DatabaseZap className="h-8 w-8 text-gray-600" />

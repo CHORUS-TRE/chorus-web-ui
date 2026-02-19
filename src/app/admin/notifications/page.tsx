@@ -14,26 +14,18 @@ export default function AdminNotificationsPage() {
   }, [refreshNotifications])
 
   return (
-    <>
-      <div className="w-full">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-              <Bell className="h-9 w-9" />
-              Notifications Management
-            </h2>
-            <div className="">
-              <p className="text-sm text-muted-foreground">
-                View and track all system-wide notifications and alerts.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="container mx-auto p-6">
+      <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
+        <Bell className="h-9 w-9" />
+        Notifications Management
+      </h1>
+      <p className="mb-8 text-muted-foreground">
+        View and track all system-wide notifications and alerts.
+      </p>
 
-      <div className="mt-6 w-full">
+      <div className="w-full">
         <NotificationsTable notifications={notifications} />
       </div>
-    </>
+    </div>
   )
 }

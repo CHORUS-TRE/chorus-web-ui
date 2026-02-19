@@ -101,7 +101,7 @@ export default function UserProfile() {
                 </Avatar>
                 <div className="flex-1 space-y-2">
                   <div>
-                    <h1 className="text-3xl font-bold">
+                    <h1 className="text-3xl font-semibold text-muted-foreground">
                       {user?.firstName} {user?.lastName}
                     </h1>
                     <p className="text-muted-foreground">@{user?.username}</p>

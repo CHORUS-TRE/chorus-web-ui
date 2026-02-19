@@ -34,9 +34,11 @@ export default function SessionPage() {
   const workspaceName = workspaces?.find((w) => w.id === workspaceId)?.name
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="container mx-auto p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Sessions</h2>
+        <h1 className="mb-8 text-3xl font-semibold text-muted-foreground">
+          Sessions
+        </h1>
         {workspaceWorkbenches && workspaceWorkbenches.length > 0 && (
           <WorkbenchCreateForm
             workspaceId={workspaceId}

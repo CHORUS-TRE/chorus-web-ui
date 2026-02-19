@@ -7,25 +7,17 @@ import { ThemeEditorForm } from '~/components/forms/theme-editor-form'
 
 const ThemePage = () => {
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Palette className="h-9 w-9" />
-            Branding & Theme
-          </h2>
-          <div className="">
-            <p className="text-sm text-muted-foreground">
-              Customize the look and feel of the application.
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="container mx-auto p-6">
+      <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
+        <Palette className="h-9 w-9" />
+        Branding & Theme
+      </h1>
+      <p className="mb-8 text-muted-foreground">
+        Customize the look and feel of the application.
+      </p>
 
-      <div className="mt-8">
-        <h3 className="mb-4 text-lg font-semibold">Logo</h3>
-        <LogoUploadForm />
-      </div>
+      <h3 className="mb-4 text-lg font-semibold">Logo</h3>
+      <LogoUploadForm />
 
       <div className="mt-8">
         <h3 className="mb-4 text-lg font-semibold">Theme</h3>

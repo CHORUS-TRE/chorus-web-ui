@@ -245,7 +245,9 @@ export default function PrivacyPolicyPage() {
           <Separator className="my-8" />
 
           <section className="space-y-6 py-8 text-center">
-            <h2 className="text-3xl font-bold">Still have questions?</h2>
+            <h2 className="text-3xl font-semibold text-muted-foreground">
+              Still have questions?
+            </h2>
             <p className="mx-auto max-w-lg text-muted-foreground">
               Our privacy team is here to help if you have any concerns about
               how your data is handled.

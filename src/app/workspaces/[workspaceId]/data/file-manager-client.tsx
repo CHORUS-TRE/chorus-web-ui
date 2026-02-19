@@ -223,9 +223,9 @@ export default function FileManagerClient({
       {/* Main Content */}
       <div className="card-glass flex flex-1 overflow-hidden bg-card">
         {/* Sidebar */}
-        <div className="flex w-64 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
+        <div className="flex w-48 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
           <div className="border-b border-muted/40 p-4">
-            <div className="text-2xl font-medium text-sidebar-foreground">
+            <div className="text-md font-medium text-muted-foreground">
               Explorer
             </div>
           </div>

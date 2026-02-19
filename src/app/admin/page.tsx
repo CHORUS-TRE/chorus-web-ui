@@ -77,7 +77,9 @@ const AdminPage = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="mb-8 text-3xl font-bold">Admin Dashboard</h1>
+      <h1 className="mb-8 text-3xl font-semibold text-muted-foreground">
+        Admin Dashboard
+      </h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {can(PERMISSIONS.listUsers) && (

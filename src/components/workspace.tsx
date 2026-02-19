@@ -480,7 +480,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardHeader>
           <CardContent>
             <>
-              <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none text-muted">
+              <div className="flex items-baseline gap-1 text-3xl font-semibold tabular-nums leading-none text-muted text-muted-foreground">
                 12.5
                 <span className="text-sm font-normal text-muted">Mo/day</span>
               </div>

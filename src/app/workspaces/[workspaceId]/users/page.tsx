@@ -53,12 +53,12 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="container mx-auto p-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-3xl font-semibold text-foreground text-muted-foreground">
           Workspace Members
         </h1>
-        <p className="text-muted-foreground">
+        <p className="mb-8 text-muted-foreground">
           Manage users and their roles in this workspace
         </p>
       </div>
