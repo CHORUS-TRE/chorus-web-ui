@@ -13,7 +13,7 @@ export function AdminTabs() {
 
   const routes = [
     {
-      href: '/admin/',
+      href: '/admin',
       label: 'Overview',
       authorized: true
     },
@@ -77,7 +77,7 @@ export function AdminTabs() {
               <TabsTrigger
                 key={route.href}
                 value={route.href}
-                className="text-accent text-foreground data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
+                className="text-accent data-[state=active]:text-primary data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4"
               >
                 {route.label}
               </TabsTrigger>

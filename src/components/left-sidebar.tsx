@@ -1,13 +1,17 @@
 'use client'
 
 import {
+  Bell,
   Building2,
   CircleHelp,
   Database,
   GaugeCircle,
   Globe,
+  HelpCircle,
   LaptopMinimal,
+  MessageSquare,
   Package,
+  SlidersHorizontal,
   Store
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -20,6 +24,8 @@ import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useInstanceConfig } from '~/hooks/use-instance-config'
 import { useIframeCache } from '~/providers/iframe-cache-provider'
+import { useAppState } from '~/stores/app-state-store'
+import { useUserPreferences } from '~/stores/user-preferences-store'
 
 import { Button } from './button'
 
@@ -74,6 +80,7 @@ function SidebarContent({
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
   const { externalWebApps } = useIframeCache()
+  const { unreadNotificationsCount } = useAppState()
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -84,6 +91,7 @@ function SidebarContent({
     return pathname === href || pathname.startsWith(href + '/')
   }
 
+  const { toggleRightSidebar } = useUserPreferences()
   const isSessionPage = isSessionPath(pathname)
 
   return (
@@ -171,6 +179,45 @@ function SidebarContent({
           <Store className="h-4 w-4" />
           App Store
         </Link>
+        <Separator className="my-2" />
+
+        <Link
+          href="/notifications"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/notifications')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Bell className="h-4 w-4" />
+          Notifications
+          {unreadNotificationsCount !== undefined &&
+            unreadNotificationsCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+                {unreadNotificationsCount > 99
+                  ? '99+'
+                  : unreadNotificationsCount}
+              </span>
+            )}
+        </Link>
+
+        <Link
+          onClick={() => toggleRightSidebar()}
+          href="#"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/data-requests')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+          title="Help"
+        >
+          <HelpCircle className="h-4 w-4" />
+          Help
+        </Link>
 
         {instanceConfig.sidebarWebapps.length > 0 && (
           <>
@@ -233,7 +280,7 @@ function SidebarContent({
                   : 'text-muted-foreground'
               )}
             >
-              <Globe className="h-4 w-4" />
+              <SlidersHorizontal className="h-4 w-4" />
               Admin
             </Link>
           </>

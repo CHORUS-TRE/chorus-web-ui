@@ -176,7 +176,7 @@ export default function LoginForm() {
                         name="username"
                         required
                         disabled={pending}
-                        className="border border-muted/40 bg-background"
+                        className="border border-muted/40 bg-background text-muted-foreground"
                         defaultValue={searchParams.get('username') || ''}
                       />
                     </div>
@@ -188,7 +188,7 @@ export default function LoginForm() {
                         id="password"
                         type="password"
                         name="password"
-                        className="border border-muted/40 bg-background text-muted"
+                        className="border border-muted/40 bg-background text-muted-foreground"
                         required
                         autoComplete="current-password"
                         disabled={pending}
@@ -216,7 +216,7 @@ export default function LoginForm() {
                     Don&apos;t have an account?{' '}
                     <Link
                       href="/register"
-                      className="text-muted underline hover:text-accent"
+                      className="text-muted text-muted-foreground underline hover:text-accent"
                       prefetch={false}
                     >
                       Register

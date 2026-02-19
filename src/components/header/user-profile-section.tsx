@@ -57,15 +57,13 @@ export function UserProfileSection() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-muted/30"
+          className="flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-muted/30"
           title={`${user.firstName} ${user.lastName}`}
         >
           {/* Avatar */}
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-medium">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">
             {initials || <User className="h-4 w-4" />}
           </div>
-          {/* Chevron */}
-          <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
         </button>
       </DropdownMenuTrigger>
 

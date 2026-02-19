@@ -1,6 +1,6 @@
 'use client'
 
-import { RefreshCw, Rocket } from 'lucide-react'
+import { AppWindow, RefreshCw, Rocket } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import InstancesTable from '@/components/instances-table'
@@ -40,7 +40,7 @@ export default function AdminInstancesPage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start text-3xl font-bold">
-              <Rocket className="h-9 w-9" />
+              <AppWindow className="h-9 w-9" />
               App Instances Management
             </h2>
             <div className="">

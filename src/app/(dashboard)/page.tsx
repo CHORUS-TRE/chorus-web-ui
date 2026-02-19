@@ -2,6 +2,7 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import {
+  AppWindow,
   ArrowRight,
   CircleGauge,
   CirclePlus,
@@ -143,7 +144,7 @@ export default function CHORUSDashboard() {
                       </span>
                     )}
                   </span>
-                  <LaptopMinimal className="h-8 w-8 text-secondary" />
+                  <AppWindow className="h-8 w-8 text-secondary" />
                 </div>
               </CardContent>
             </Card>
@@ -204,18 +205,24 @@ export default function CHORUSDashboard() {
             <Card variant="glass">
               <CardHeader className="flex flex-col gap-2">
                 <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-base sm:text-lg">
-                    <Package className="h-5 w-5" />
-                    Workspaces
-                  </div>
                   <Link
                     href="/workspaces"
                     className="flex items-center gap-1 text-sm"
-                    variant="nav"
                   >
-                    View all
-                    <ArrowRight className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-base sm:text-lg">
+                      <Package className="h-5 w-5" />
+                      Workspaces
+                    </div>
                   </Link>
+                  {can(PERMISSIONS.createWorkspace) && (
+                    <Button
+                      onClick={() => setCreateOpen(true)}
+                      variant="accent-filled"
+                    >
+                      <CirclePlus className="h-4 w-4" />
+                      Create Workspace
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-3 gap-6 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
@@ -269,7 +276,7 @@ export default function CHORUSDashboard() {
                             <h4 className="font-semibold text-muted-foreground">
                               {workspace.name}
                             </h4>
-                            <p className="mt-1 text-xs text-muted-foreground">
+                            <p className="mt-2 text-[10px] font-medium text-muted-foreground">
                               Created{' '}
                               {formatDistanceToNow(
                                 workspace?.createdAt || new Date()
@@ -283,7 +290,7 @@ export default function CHORUSDashboard() {
                       {/* Sessions under this workspace */}
                       {workspaceSessions && workspaceSessions.length > 0 && (
                         <div className="space-y-2 px-4 pb-4">
-                          <div className="text-md flex items-center gap-2 pt-2">
+                          <div className="flex items-center gap-2 pt-2 text-sm font-semibold text-muted-foreground">
                             <LaptopMinimal className="h-4 w-4" />
                             {workspaceSessions.length}{' '}
                             {workspaceSessions.length === 1
@@ -314,13 +321,13 @@ export default function CHORUSDashboard() {
                                 <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
                                   <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
                                   <div className="min-w-0 flex-1">
-                                    <p className="mb-1 text-sm font-medium">
+                                    <p className="text-sm font-semibold text-muted-foreground hover:text-accent">
                                       {workbench.name}
                                     </p>
-                                    <p className="text-[10px] text-muted-foreground">
+                                    <p className="text-[12px] text-muted-foreground">
                                       {sessionAppNames}
                                     </p>
-                                    <p className="text-[12px] text-muted-foreground">
+                                    <p className="mt-2 text-[10px] font-medium text-muted-foreground">
                                       Created{' '}
                                       {formatDistanceToNow(
                                         workbench.createdAt || new Date()

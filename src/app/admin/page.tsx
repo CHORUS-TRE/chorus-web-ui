@@ -1,14 +1,18 @@
 'use client'
 
 import {
+  AppWindow,
   Bell,
   Cpu,
   FileCheck,
+  LaptopMinimal,
   LayoutGrid,
   Package,
   Palette,
   Settings,
+  Settings2,
   Shield,
+  Store,
   Terminal,
   Users
 } from 'lucide-react'
@@ -105,7 +109,7 @@ const AdminPage = () => {
           <StatCard
             href="/admin/sessions"
             title="Sessions"
-            icon={Terminal}
+            icon={LaptopMinimal}
             value={workbenches?.length || 0}
             description="Active Sessions"
           />
@@ -115,7 +119,7 @@ const AdminPage = () => {
           <StatCard
             href="/admin/app-store"
             title="App Store"
-            icon={LayoutGrid}
+            icon={Store}
             value={apps?.length || 0}
             description="Applications Available"
           />
@@ -125,7 +129,7 @@ const AdminPage = () => {
           <StatCard
             href="/admin/instances"
             title="App Instances"
-            icon={Cpu}
+            icon={AppWindow}
             value={appInstances?.length || 0}
             description="Running Instances"
           />
@@ -156,7 +160,7 @@ const AdminPage = () => {
             <StatCard
               href="/admin/configuration"
               title="Configuration"
-              icon={Settings}
+              icon={Settings2}
               value=""
               description="Manage platform settings"
             />
