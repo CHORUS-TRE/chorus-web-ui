@@ -47,9 +47,6 @@ export default function WorkspacesGrid({
 
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
 
-  const isCenter = (workspace: WorkspaceWithDev) =>
-    workspace.dev?.tag === 'center'
-
   // Find the active workspace for dialogs, using a stable lookup
   const activeUpdateWorkspace = useMemo(
     () => workspaces?.find((w) => w.id === activeUpdateId),
@@ -94,8 +91,6 @@ export default function WorkspacesGrid({
                           height={64}
                           className="h-16 w-16 object-cover"
                         />
-                      ) : isCenter(workspace) ? (
-                        <Building2 className="h-8 w-8 text-muted-foreground" />
                       ) : workspace.isMain ? (
                         <HomeIcon className="h-8 w-8 text-muted-foreground" />
                       ) : (

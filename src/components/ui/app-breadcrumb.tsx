@@ -23,13 +23,6 @@ export function AppBreadcrumb() {
   const { workspaces, appInstances, apps, workbenches } = useAppState()
   const { user } = useAuthentication()
 
-  const projectLabel = useMemo(
-    () =>
-      instanceConfig.tags.find((tag) => tag.id === 'project')?.label ||
-      'Workspaces',
-    [instanceConfig]
-  )
-
   const segments = useMemo(
     () => pathname.split('/').filter(Boolean),
     [pathname]
@@ -66,7 +59,7 @@ export function AppBreadcrumb() {
 
       // Name resolution for collection names and IDs
       if (seg.text === 'workspaces') {
-        label = projectLabel
+        label = 'Workspaces'
       } else if (seg.text === 'sessions') {
         label = 'Sessions'
       } else if (seg.text === 'services') {
@@ -126,7 +119,6 @@ export function AppBreadcrumb() {
     appInstances,
     apps,
     workbenches,
-    projectLabel,
     user?.username,
     user?.firstName,
     user?.lastName,

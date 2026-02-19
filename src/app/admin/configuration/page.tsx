@@ -15,7 +15,7 @@ const ConfigurationPage = () => {
           </h2>
           <div>
             <p className="text-sm text-muted-foreground">
-              Configure the instance name, branding text, and workspace types.
+              Configure the instance name, branding text.
             </p>
           </div>
         </div>

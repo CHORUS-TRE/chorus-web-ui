@@ -10,9 +10,7 @@ import {
   InstanceLimits,
   InstanceLimitsSchema,
   InstanceLogo,
-  InstanceLogoSchema,
-  InstanceTag,
-  InstanceTagSchema
+  InstanceLogoSchema
 } from '@/domain/model/instance-config'
 import { useAppState } from '@/stores/app-state-store'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
@@ -37,9 +35,6 @@ export function useInstanceConfig(): InstanceConfig {
   const websiteRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.WEBSITE]
   )
-  const tagsRaw = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.TAGS]
-  )
   const logoRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.LOGO]
   )
@@ -55,20 +50,6 @@ export function useInstanceConfig(): InstanceConfig {
 
   // Memoize the parsed config
   const config = useMemo((): InstanceConfig => {
-    // Parse tags
-    let tags: InstanceTag[] = DEFAULT_INSTANCE_CONFIG.tags
-    if (tagsRaw) {
-      try {
-        const parsed = JSON.parse(tagsRaw)
-        const validated = InstanceTagSchema.array().safeParse(parsed)
-        if (validated.success) {
-          tags = validated.data
-        }
-      } catch {
-        // Keep default
-      }
-    }
-
     // Parse logo
     let logo: InstanceLogo | null = null
     if (logoRaw) {
@@ -124,7 +105,6 @@ export function useInstanceConfig(): InstanceConfig {
       headline: headlineRaw || DEFAULT_INSTANCE_CONFIG.headline,
       tagline: taglineRaw || DEFAULT_INSTANCE_CONFIG.tagline,
       website: websiteRaw || DEFAULT_INSTANCE_CONFIG.website,
-      tags,
       logo,
       theme,
       limits,
@@ -135,7 +115,6 @@ export function useInstanceConfig(): InstanceConfig {
     headlineRaw,
     taglineRaw,
     websiteRaw,
-    tagsRaw,
     logoRaw,
     themeRaw,
     limitsRaw,

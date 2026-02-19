@@ -44,11 +44,6 @@ export const navItems = [
     href: '/workspaces'
   },
   {
-    label: 'Centers',
-    icon: Building2,
-    href: '/workspaces'
-  },
-  {
     label: 'Sessions',
     icon: LaptopMinimal,
     href: '/sessions'

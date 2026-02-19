@@ -30,7 +30,6 @@ export default function WorkspacesPage() {
   const { can, PERMISSIONS } = useAuthorization()
 
   const {
-    workspaceFilters,
     showWorkspacesTable,
     toggleWorkspaceView,
     workspaceSearchQuery,
@@ -40,7 +39,6 @@ export default function WorkspacesPage() {
   const searchQuery: string = workspaceSearchQuery ?? ''
   const setSearchQuery = setWorkspaceSearchQuery
 
-  const { showCenter, showProject } = workspaceFilters
   const showMyWorkspaces = true
 
   const [createOpen, setCreateOpen] = useState(false)
@@ -65,9 +63,7 @@ export default function WorkspacesPage() {
         // Search by name, owner, tag
         const matchesBasic =
           workspace.name?.toLowerCase().includes(query) ||
-          workspace.dev?.owner?.toLowerCase().includes(query) ||
-          workspace.dev?.tag?.toLowerCase().includes(query)
-
+          workspace.dev?.owner?.toLowerCase().includes(query)
         // Search by members firstName, lastName, username
         const matchesMember = workspace.dev?.members?.some(
           (member) =>
@@ -81,31 +77,17 @@ export default function WorkspacesPage() {
     }
 
     return result
-  }, [
-    workspaces,
-    showMyWorkspaces,
-    showCenter,
-    showProject,
-    searchQuery,
-    user?.rolesWithContext
-  ])
+  }, [workspaces, showMyWorkspaces, searchQuery, user?.rolesWithContext])
 
   return (
     <>
       <div className="w-full">
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            {showCenter && !showProject ? (
-              <>
-                <Building2 className="h-9 w-9" />
-                Centers
-              </>
-            ) : (
-              <>
-                <Package className="h-9 w-9" />
-                Workspaces
-              </>
-            )}
+            <>
+              <Package className="h-9 w-9" />
+              Workspaces
+            </>
           </h2>
           {can(PERMISSIONS.createWorkspace) && (
             <Button onClick={() => setCreateOpen(true)} variant="accent-filled">

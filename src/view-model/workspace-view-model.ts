@@ -53,9 +53,6 @@ async function enrichWorkspaceWithDev(
   const devStore = useDevStoreCache.getState()
 
   const image = devStore.getWorkspace(workspace.id, 'image')
-  const tagValue = devStore.getWorkspace(workspace.id, 'tag')
-  const tag: 'center' | 'project' =
-    tagValue === 'center' || tagValue === 'project' ? tagValue : 'project'
   const config = devStore.getWorkspaceConfig(workspace.id)
 
   const usersResult = await listUsers({ filterWorkspaceIDs: [workspace.id] })
@@ -78,7 +75,6 @@ async function enrichWorkspaceWithDev(
 
   const dev: WorkspaceDev = {
     image: image || undefined,
-    tag,
     config,
     owner: owner ? `${owner.firstName} ${owner.lastName}` : undefined,
     memberCount: users.length,
@@ -238,7 +234,6 @@ function extractAndValidateDevFields(data: Record<string, unknown>): {
   return {
     data: {
       image: devForm.image,
-      tag: devForm.tag,
       config
     }
   }
@@ -466,10 +461,6 @@ export async function workspaceCreateWithDev(
         }
       }
 
-      if (dev.tag) {
-        await setWorkspace(createResult.data.id, 'tag', dev.tag)
-      }
-
       if (dev.config) {
         await setWorkspaceConfig(createResult.data.id, dev.config)
       }
@@ -547,10 +538,6 @@ export async function workspaceUpdateWithDev(
         } else if (typeof dev.image === 'string') {
           await setWorkspace(updateResult.data.id, 'image', dev.image)
         }
-      }
-
-      if (dev.tag) {
-        await setWorkspace(updateResult.data.id, 'tag', dev.tag)
       }
 
       if (dev.config) {

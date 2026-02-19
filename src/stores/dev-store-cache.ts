@@ -9,8 +9,6 @@ import {
   InstanceLimitsSchema,
   InstanceLogo,
   InstanceLogoSchema,
-  InstanceTag,
-  InstanceTagSchema,
   InstanceTheme,
   InstanceThemeSchema
 } from '@/domain/model/instance-config'
@@ -95,7 +93,6 @@ type DevStoreCacheState = {
   getInstanceHeadline: () => string
   getInstanceTagline: () => string
   getInstanceWebsite: () => string
-  getInstanceTags: () => InstanceTag[]
   getInstanceLogo: () => InstanceLogo | null
   getInstanceTheme: () => InstanceTheme | null
   getInstanceLimits: () => InstanceLimits | null
@@ -105,7 +102,6 @@ type DevStoreCacheState = {
   setInstanceHeadline: (headline: string) => Promise<boolean>
   setInstanceTagline: (tagline: string) => Promise<boolean>
   setInstanceWebsite: (website: string) => Promise<boolean>
-  setInstanceTags: (tags: InstanceTag[]) => Promise<boolean>
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
@@ -374,7 +370,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       headline: state.getInstanceHeadline(),
       tagline: state.getInstanceTagline(),
       website: state.getInstanceWebsite(),
-      tags: state.getInstanceTags(),
       logo: state.getInstanceLogo(),
       theme: state.getInstanceTheme(),
       sidebarWebapps: state.getInstanceSidebarWebapps()
@@ -400,24 +395,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
   getInstanceWebsite: () => {
     const value = get().global[INSTANCE_CONFIG_KEYS.WEBSITE]
     return value || DEFAULT_INSTANCE_CONFIG.website
-  },
-
-  getInstanceTags: () => {
-    const value = get().global[INSTANCE_CONFIG_KEYS.TAGS]
-    if (!value) return DEFAULT_INSTANCE_CONFIG.tags
-
-    try {
-      const parsed = JSON.parse(value)
-      const validated = InstanceTagSchema.array().safeParse(parsed)
-      if (validated.success) {
-        return validated.data
-      }
-      console.error('Invalid instance tags:', validated.error.issues)
-      return DEFAULT_INSTANCE_CONFIG.tags
-    } catch (e) {
-      console.error('Error parsing instance tags:', e)
-      return DEFAULT_INSTANCE_CONFIG.tags
-    }
   },
 
   getInstanceLogo: () => {
@@ -508,10 +485,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
 
   setInstanceWebsite: async (website: string) => {
     return get().setGlobal(INSTANCE_CONFIG_KEYS.WEBSITE, website)
-  },
-
-  setInstanceTags: async (tags: InstanceTag[]) => {
-    return get().setGlobal(INSTANCE_CONFIG_KEYS.TAGS, JSON.stringify(tags))
   },
 
   setInstanceLogo: async (logo: InstanceLogo | null) => {

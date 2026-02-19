@@ -95,11 +95,10 @@ export function GettingStartedSection() {
 
         // Get user's workspaces
         const myWorkspaces =
-          workspaces?.filter(
-            (workspace) =>
-              user?.rolesWithContext?.some(
-                (role) => role.context.workspace === workspace.id
-              ) && workspace.dev?.tag !== 'center'
+          workspaces?.filter((workspace) =>
+            user?.rolesWithContext?.some(
+              (role) => role.context.workspace === workspace.id
+            )
           ) || []
 
         // Get user's active sessions
