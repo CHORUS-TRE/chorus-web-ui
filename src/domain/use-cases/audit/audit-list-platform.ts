@@ -13,6 +13,6 @@ export class AuditListPlatform implements AuditListPlatformUseCase {
   }
 
   async execute(): Promise<Result<AuditEntry[]>> {
-    return await this.repository.list()
+    return await this.repository.listPlatform()
   }
 }

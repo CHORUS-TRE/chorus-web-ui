@@ -1,14 +1,26 @@
 import {
   AuditServiceApi,
-  AuditServiceListAuditEntriesRequest,
-  ChorusListAuditEntriesReply,
+  AuditServiceListPlatformAuditRequest,
+  AuditServiceListUserAuditRequest,
+  AuditServiceListWorkbenchAuditRequest,
+  AuditServiceListWorkspaceAuditRequest,
+  ChorusListAuditReply,
   Configuration
 } from '~/internal/client'
 
 interface AuditDataSource {
-  list: (
-    request: AuditServiceListAuditEntriesRequest
-  ) => Promise<ChorusListAuditEntriesReply>
+  listPlatform: (
+    request: AuditServiceListPlatformAuditRequest
+  ) => Promise<ChorusListAuditReply>
+  listWorkspace: (
+    request: AuditServiceListWorkspaceAuditRequest
+  ) => Promise<ChorusListAuditReply>
+  listWorkbench: (
+    request: AuditServiceListWorkbenchAuditRequest
+  ) => Promise<ChorusListAuditReply>
+  listUser: (
+    request: AuditServiceListUserAuditRequest
+  ) => Promise<ChorusListAuditReply>
 }
 
 export type { AuditDataSource }
@@ -24,9 +36,27 @@ export class AuditDataSourceImpl implements AuditDataSource {
     this.client = new AuditServiceApi(configuration)
   }
 
-  list(
-    request: AuditServiceListAuditEntriesRequest
-  ): Promise<ChorusListAuditEntriesReply> {
-    return this.client.auditServiceListAuditEntries(request)
+  listPlatform(
+    request: AuditServiceListPlatformAuditRequest
+  ): Promise<ChorusListAuditReply> {
+    return this.client.auditServiceListPlatformAudit(request)
+  }
+
+  listWorkspace(
+    request: AuditServiceListWorkspaceAuditRequest
+  ): Promise<ChorusListAuditReply> {
+    return this.client.auditServiceListWorkspaceAudit(request)
+  }
+
+  listWorkbench(
+    request: AuditServiceListWorkbenchAuditRequest
+  ): Promise<ChorusListAuditReply> {
+    return this.client.auditServiceListWorkbenchAudit(request)
+  }
+
+  listUser(
+    request: AuditServiceListUserAuditRequest
+  ): Promise<ChorusListAuditReply> {
+    return this.client.auditServiceListUserAudit(request)
   }
 }

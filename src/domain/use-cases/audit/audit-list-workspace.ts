@@ -1,18 +1,18 @@
 import { AuditEntry, Result } from '@/domain/model'
-import { WorkspaceRepository } from '@/domain/repository'
+import { AuditRepository } from '@/domain/repository'
 
 export interface AuditListWorkspaceUseCase {
   execute(workspaceId: string): Promise<Result<AuditEntry[]>>
 }
 
 export class AuditListWorkspace implements AuditListWorkspaceUseCase {
-  private repository: WorkspaceRepository
+  private repository: AuditRepository
 
-  constructor(repository: WorkspaceRepository) {
+  constructor(repository: AuditRepository) {
     this.repository = repository
   }
 
   async execute(workspaceId: string): Promise<Result<AuditEntry[]>> {
-    return await this.repository.listAudit(workspaceId)
+    return await this.repository.listWorkspace(workspaceId)
   }
 }
