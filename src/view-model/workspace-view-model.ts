@@ -7,6 +7,7 @@ import { Analytics } from '@/lib/analytics/service'
 import { WorkspaceDataSourceImpl } from '~/data/data-source'
 import { WorkspaceRepositoryImpl } from '~/data/repository'
 import {
+  AuditEntry,
   Result,
   Workspace,
   WorkspaceCreateType,
@@ -609,6 +610,18 @@ export async function workspaceRemoveUserFromWorkspace(
     return await repository.removeUserFromWorkspace(workspaceId, userId)
   } catch (error) {
     console.error('Error removing user from workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceAuditList(
+  workspaceId: string
+): Promise<Result<AuditEntry[]>> {
+  try {
+    const repository = await getRepository()
+    return await repository.listAudit(workspaceId)
+  } catch (error) {
+    console.error('Error listing workspace audit', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }
