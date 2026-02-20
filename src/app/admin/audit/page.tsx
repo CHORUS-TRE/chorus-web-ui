@@ -5,13 +5,13 @@ import { useCallback, useEffect, useState } from 'react'
 
 import AuditTable from '@/components/audit-table'
 import { AuditEntry } from '@/domain/model'
-import { listAudit } from '~/view-model/audit-view-model'
+import { listPlatform } from '~/view-model/audit-view-model'
 
 export default function AdminAuditPage() {
   const [entries, setEntries] = useState<AuditEntry[] | undefined>(undefined)
 
   const loadAudit = useCallback(async () => {
-    const result = await listAudit()
+    const result = await listPlatform()
     if (result.data) {
       setEntries(result.data)
     }
