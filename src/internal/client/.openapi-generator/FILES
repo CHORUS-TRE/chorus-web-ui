@@ -1,7 +1,9 @@
 apis/AppInstanceServiceApi.ts
 apis/AppServiceApi.ts
 apis/ApprovalRequestServiceApi.ts
+apis/AuditServiceApi.ts
 apis/AuthenticationServiceApi.ts
+apis/AuthorizationServiceApi.ts
 apis/DevstoreServiceApi.ts
 apis/HealthServiceApi.ts
 apis/NotificationServiceApi.ts
@@ -17,6 +19,7 @@ models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusAbortWorkspaceFileUploadReply.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
+models/ChorusAppInstanceFilter.ts
 models/ChorusApprovalRequest.ts
 models/ChorusApprovalRequestFile.ts
 models/ChorusApprovalRequestFilter.ts
@@ -25,6 +28,8 @@ models/ChorusApprovalRequestStatus.ts
 models/ChorusApprovalRequestType.ts
 models/ChorusApproveApprovalRequestReply.ts
 models/ChorusApproveApprovalRequestResult.ts
+models/ChorusAuditEntry.ts
+models/ChorusAuditFilter.ts
 models/ChorusAuthenticateOauthRedirectReply.ts
 models/ChorusAuthenticateOauthRedirectResult.ts
 models/ChorusAuthenticateOauthReply.ts
@@ -32,6 +37,8 @@ models/ChorusAuthenticateOauthResult.ts
 models/ChorusAuthenticationMode.ts
 models/ChorusAuthenticationReply.ts
 models/ChorusAuthenticationResult.ts
+models/ChorusAuthorizationPermission.ts
+models/ChorusAuthorizationRole.ts
 models/ChorusBulkCreateAppsReply.ts
 models/ChorusBulkCreateAppsRequest.ts
 models/ChorusCompleteWorkspaceFileUploadReply.ts
@@ -70,6 +77,8 @@ models/ChorusDeleteUserRoleResult.ts
 models/ChorusDeleteWorkbenchReply.ts
 models/ChorusDeleteWorkspaceFileReply.ts
 models/ChorusDeleteWorkspaceReply.ts
+models/ChorusDownloadApprovalRequestFileReply.ts
+models/ChorusDownloadApprovalRequestFileResult.ts
 models/ChorusEnableTotpReply.ts
 models/ChorusEnableTotpRequest.ts
 models/ChorusGetAppInstanceReply.ts
@@ -103,8 +112,14 @@ models/ChorusListApprovalRequestsReply.ts
 models/ChorusListApprovalRequestsResult.ts
 models/ChorusListAppsReply.ts
 models/ChorusListAppsResult.ts
+models/ChorusListAuditReply.ts
+models/ChorusListAuditResult.ts
 models/ChorusListEntriesReply.ts
 models/ChorusListEntriesResult.ts
+models/ChorusListPermissionsReply.ts
+models/ChorusListPermissionsResult.ts
+models/ChorusListRolesReply.ts
+models/ChorusListRolesResult.ts
 models/ChorusListUsersReply.ts
 models/ChorusListUsersResult.ts
 models/ChorusListWorkbenchesReply.ts

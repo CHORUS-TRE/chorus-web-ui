@@ -67,6 +67,12 @@ export const PERMISSIONS = {
   resetPassword: 'resetPassword',
   manageUserRoles: 'manageUserRoles',
 
+  // AuditService
+  auditPlatform: 'auditPlatform',
+  auditWorkspace: 'auditWorkspace',
+  auditWorkbench: 'auditWorkbench',
+  auditUser: 'auditUser',
+
   // AdminService
   getPlatformSettings: 'getPlatformSettings',
   setPlatformSettings: 'setPlatformSettings'
@@ -257,6 +263,12 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.deleteUser,
       PERMISSIONS.resetPassword
     ]
+  },
+  PlatformAuditor: {
+    name: 'PlatformAuditor',
+    description: 'This role allows a user to audit the platform',
+    inheritsFrom: ['Authenticated'],
+    permissions: [PERMISSIONS.auditPlatform]
   },
   AppStoreAdmin: {
     name: 'AppStoreAdmin',

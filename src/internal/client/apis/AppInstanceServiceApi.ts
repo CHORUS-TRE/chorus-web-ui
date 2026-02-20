@@ -57,6 +57,7 @@ export interface AppInstanceServiceListAppInstancesRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
+  filterWorkbenchIdsIn?: Array<string>
 }
 
 export interface AppInstanceServiceUpdateAppInstanceRequest {
@@ -271,6 +272,11 @@ export class AppInstanceServiceApi extends runtime.BaseAPI {
 
     if (requestParameters.paginationQuery) {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterWorkbenchIdsIn) {
+      queryParameters['filter.workbenchIdsIn'] =
+        requestParameters.filterWorkbenchIdsIn
     }
 
     const headerParameters: runtime.HTTPHeaders = {}

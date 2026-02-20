@@ -43,12 +43,6 @@ export interface ChorusCreateDataExtractionRequestRequest {
    * @memberof ChorusCreateDataExtractionRequestRequest
    */
   filePaths?: Array<string>
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof ChorusCreateDataExtractionRequestRequest
-   */
-  approverIds?: Array<string>
 }
 
 /**
@@ -81,8 +75,7 @@ export function ChorusCreateDataExtractionRequestRequestFromJSONTyped(
       : json['sourceWorkspaceId'],
     title: !exists(json, 'title') ? undefined : json['title'],
     description: !exists(json, 'description') ? undefined : json['description'],
-    filePaths: !exists(json, 'filePaths') ? undefined : json['filePaths'],
-    approverIds: !exists(json, 'approverIds') ? undefined : json['approverIds']
+    filePaths: !exists(json, 'filePaths') ? undefined : json['filePaths']
   }
 }
 
@@ -99,7 +92,6 @@ export function ChorusCreateDataExtractionRequestRequestToJSON(
     sourceWorkspaceId: value.sourceWorkspaceId,
     title: value.title,
     description: value.description,
-    filePaths: value.filePaths,
-    approverIds: value.approverIds
+    filePaths: value.filePaths
   }
 }

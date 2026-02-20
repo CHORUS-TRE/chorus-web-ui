@@ -128,6 +128,18 @@ export interface ChorusApprovalRequest {
    * @memberof ChorusApprovalRequest
    */
   approvedAt?: Date
+  /**
+   *
+   * @type {boolean}
+   * @memberof ChorusApprovalRequest
+   */
+  autoApproved?: boolean
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApprovalRequest
+   */
+  approvalMessage?: string
 }
 
 /**
@@ -182,7 +194,13 @@ export function ChorusApprovalRequestFromJSONTyped(
       : new Date(json['updatedAt']),
     approvedAt: !exists(json, 'approvedAt')
       ? undefined
-      : new Date(json['approvedAt'])
+      : new Date(json['approvedAt']),
+    autoApproved: !exists(json, 'autoApproved')
+      ? undefined
+      : json['autoApproved'],
+    approvalMessage: !exists(json, 'approvalMessage')
+      ? undefined
+      : json['approvalMessage']
   }
 }
 
@@ -214,6 +232,8 @@ export function ChorusApprovalRequestToJSON(
     approvedAt:
       value.approvedAt === undefined
         ? undefined
-        : value.approvedAt.toISOString()
+        : value.approvedAt.toISOString(),
+    autoApproved: value.autoApproved,
+    approvalMessage: value.approvalMessage
   }
 }
