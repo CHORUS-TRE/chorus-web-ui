@@ -49,12 +49,6 @@ export interface ChorusCreateDataTransferRequestRequest {
    * @memberof ChorusCreateDataTransferRequestRequest
    */
   filePaths?: Array<string>
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof ChorusCreateDataTransferRequestRequest
-   */
-  approverIds?: Array<string>
 }
 
 /**
@@ -90,8 +84,7 @@ export function ChorusCreateDataTransferRequestRequestFromJSONTyped(
       : json['destinationWorkspaceId'],
     title: !exists(json, 'title') ? undefined : json['title'],
     description: !exists(json, 'description') ? undefined : json['description'],
-    filePaths: !exists(json, 'filePaths') ? undefined : json['filePaths'],
-    approverIds: !exists(json, 'approverIds') ? undefined : json['approverIds']
+    filePaths: !exists(json, 'filePaths') ? undefined : json['filePaths']
   }
 }
 
@@ -109,7 +102,6 @@ export function ChorusCreateDataTransferRequestRequestToJSON(
     destinationWorkspaceId: value.destinationWorkspaceId,
     title: value.title,
     description: value.description,
-    filePaths: value.filePaths,
-    approverIds: value.approverIds
+    filePaths: value.filePaths
   }
 }

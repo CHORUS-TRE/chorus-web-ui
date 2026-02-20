@@ -147,6 +147,12 @@ export interface ChorusApp {
   iconURL?: string
   /**
    *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  iconBackgroundColor?: string
+  /**
+   *
    * @type {Date}
    * @memberof ChorusApp
    */
@@ -217,6 +223,9 @@ export function ChorusAppFromJSONTyped(
       ? undefined
       : json['kioskConfigJWTOIDCClientID'],
     iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
+    iconBackgroundColor: !exists(json, 'iconBackgroundColor')
+      ? undefined
+      : json['iconBackgroundColor'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -255,6 +264,7 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     kioskConfigJWTURL: value.kioskConfigJWTURL,
     kioskConfigJWTOIDCClientID: value.kioskConfigJWTOIDCClientID,
     iconURL: value.iconURL,
+    iconBackgroundColor: value.iconBackgroundColor,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:

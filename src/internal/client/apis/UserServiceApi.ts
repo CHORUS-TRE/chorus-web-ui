@@ -22,6 +22,7 @@ import type {
   ChorusEnableTotpRequest,
   ChorusGetUserMeReply,
   ChorusGetUserReply,
+  ChorusListUserAuditReply,
   ChorusListUsersReply,
   ChorusResetPasswordReply,
   ChorusResetTotpReply,
@@ -50,6 +51,8 @@ import {
   ChorusGetUserMeReplyToJSON,
   ChorusGetUserReplyFromJSON,
   ChorusGetUserReplyToJSON,
+  ChorusListUserAuditReplyFromJSON,
+  ChorusListUserAuditReplyToJSON,
   ChorusListUsersReplyFromJSON,
   ChorusListUsersReplyToJSON,
   ChorusResetPasswordReplyFromJSON,
@@ -96,6 +99,21 @@ export interface UserServiceEnableTotpRequest {
 
 export interface UserServiceGetUserRequest {
   id: string
+}
+
+export interface UserServiceListUserAuditRequest {
+  id: string
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterUserId?: string
+  filterWorkspaceId?: string
+  filterWorkbenchId?: string
+  filterAction?: string
+  filterFromTime?: Date
+  filterToTime?: Date
 }
 
 export interface UserServiceListUsersRequest {
@@ -547,6 +565,115 @@ export class UserServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetUserMeReply> {
     const response = await this.userServiceGetUserMeRaw(initOverrides)
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific user
+   * List user audit entries
+   */
+  async userServiceListUserAuditRaw(
+    requestParameters: UserServiceListUserAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListUserAuditReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling userServiceListUserAudit.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
+    }
+
+    if (requestParameters.filterWorkspaceId !== undefined) {
+      queryParameters['filter.workspaceId'] =
+        requestParameters.filterWorkspaceId
+    }
+
+    if (requestParameters.filterWorkbenchId !== undefined) {
+      queryParameters['filter.workbenchId'] =
+        requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterAction !== undefined) {
+      queryParameters['filter.action'] = requestParameters.filterAction
+    }
+
+    if (requestParameters.filterFromTime !== undefined) {
+      queryParameters['filter.fromTime'] = (
+        requestParameters.filterFromTime as any
+      ).toISOString()
+    }
+
+    if (requestParameters.filterToTime !== undefined) {
+      queryParameters['filter.toTime'] = (
+        requestParameters.filterToTime as any
+      ).toISOString()
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/users/{id}/audit`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListUserAuditReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific user
+   * List user audit entries
+   */
+  async userServiceListUserAudit(
+    requestParameters: UserServiceListUserAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListUserAuditReply> {
+    const response = await this.userServiceListUserAuditRaw(
+      requestParameters,
+      initOverrides
+    )
     return await response.value()
   }
 

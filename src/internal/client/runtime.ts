@@ -99,7 +99,7 @@ export const DefaultConfig = new Configuration()
  */
 export class BaseAPI {
   private static readonly jsonRegex = new RegExp(
-    '^(:?application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(:?;.*)?$',
+    '^(:?application\/json|[^;/ \t]+\/[^;/ \t]+[+]json)[ \t]*(:?;.*)?$',
     'i'
   )
   private middleware: Middleware[]
@@ -147,7 +147,7 @@ export class BaseAPI {
     return BaseAPI.jsonRegex.test(mime)
   }
 
-  async request(
+  protected async request(
     context: RequestOpts,
     initOverrides?: RequestInit | InitOverrideFunction
   ): Promise<Response> {
@@ -156,18 +156,7 @@ export class BaseAPI {
     if (response && response.status >= 200 && response.status < 300) {
       return response
     }
-
-    const errorBody = await response.json().catch(() => null)
-    const errorMessage =
-      errorBody?.message || errorBody?.error || response.statusText
-    console.error('API Error:', {
-      status: response.status,
-      statusText: response.statusText,
-      error: errorMessage,
-      details: errorBody
-    })
-
-    throw new ResponseError(response, errorMessage)
+    throw new ResponseError(response, 'Response returned an error code')
   }
 
   private async createFetchParams(
@@ -267,10 +256,6 @@ export class BaseAPI {
       }
       if (response === undefined) {
         if (e instanceof Error) {
-          console.error('API Error:', {
-            error: e?.message
-          })
-
           throw new FetchError(
             e,
             'The request failed and the interceptors did not return an alternative response'
