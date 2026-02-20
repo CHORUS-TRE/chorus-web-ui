@@ -17,7 +17,6 @@ import type {
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
-  ChorusListWorkbenchAuditReply,
   ChorusListWorkbenchesReply,
   ChorusManageUserRoleInWorkbenchReply,
   ChorusRemoveUserFromWorkbenchReply,
@@ -33,8 +32,6 @@ import {
   ChorusDeleteWorkbenchReplyToJSON,
   ChorusGetWorkbenchReplyFromJSON,
   ChorusGetWorkbenchReplyToJSON,
-  ChorusListWorkbenchAuditReplyFromJSON,
-  ChorusListWorkbenchAuditReplyToJSON,
   ChorusListWorkbenchesReplyFromJSON,
   ChorusListWorkbenchesReplyToJSON,
   ChorusManageUserRoleInWorkbenchReplyFromJSON,
@@ -73,21 +70,6 @@ export interface WorkbenchServiceGetWorkbenchRequest {
 
 export interface WorkbenchServiceGetWorkbench2Request {
   id: string
-}
-
-export interface WorkbenchServiceListWorkbenchAuditRequest {
-  id: string
-  paginationOffset?: number
-  paginationLimit?: number
-  paginationSortOrder?: string
-  paginationSortType?: string
-  paginationQuery?: Array<string>
-  filterUserId?: string
-  filterWorkspaceId?: string
-  filterWorkbenchId?: string
-  filterAction?: string
-  filterFromTime?: Date
-  filterToTime?: Date
 }
 
 export interface WorkbenchServiceListWorkbenchesRequest {
@@ -484,115 +466,6 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetWorkbenchReply> {
     const response = await this.workbenchServiceGetWorkbench2Raw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint returns audit entries for a specific workbench
-   * List workbench audit entries
-   */
-  async workbenchServiceListWorkbenchAuditRaw(
-    requestParameters: WorkbenchServiceListWorkbenchAuditRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusListWorkbenchAuditReply>> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-      throw new runtime.RequiredError(
-        'id',
-        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceListWorkbenchAudit.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    if (requestParameters.paginationOffset !== undefined) {
-      queryParameters['pagination.offset'] = requestParameters.paginationOffset
-    }
-
-    if (requestParameters.paginationLimit !== undefined) {
-      queryParameters['pagination.limit'] = requestParameters.paginationLimit
-    }
-
-    if (requestParameters.paginationSortOrder !== undefined) {
-      queryParameters['pagination.sort.order'] =
-        requestParameters.paginationSortOrder
-    }
-
-    if (requestParameters.paginationSortType !== undefined) {
-      queryParameters['pagination.sort.type'] =
-        requestParameters.paginationSortType
-    }
-
-    if (requestParameters.paginationQuery) {
-      queryParameters['pagination.query'] = requestParameters.paginationQuery
-    }
-
-    if (requestParameters.filterUserId !== undefined) {
-      queryParameters['filter.userId'] = requestParameters.filterUserId
-    }
-
-    if (requestParameters.filterWorkspaceId !== undefined) {
-      queryParameters['filter.workspaceId'] =
-        requestParameters.filterWorkspaceId
-    }
-
-    if (requestParameters.filterWorkbenchId !== undefined) {
-      queryParameters['filter.workbenchId'] =
-        requestParameters.filterWorkbenchId
-    }
-
-    if (requestParameters.filterAction !== undefined) {
-      queryParameters['filter.action'] = requestParameters.filterAction
-    }
-
-    if (requestParameters.filterFromTime !== undefined) {
-      queryParameters['filter.fromTime'] = (
-        requestParameters.filterFromTime as any
-      ).toISOString()
-    }
-
-    if (requestParameters.filterToTime !== undefined) {
-      queryParameters['filter.toTime'] = (
-        requestParameters.filterToTime as any
-      ).toISOString()
-    }
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workbenches/{id}/audit`.replace(
-          `{${'id'}}`,
-          encodeURIComponent(String(requestParameters.id))
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusListWorkbenchAuditReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint returns audit entries for a specific workbench
-   * List workbench audit entries
-   */
-  async workbenchServiceListWorkbenchAudit(
-    requestParameters: WorkbenchServiceListWorkbenchAuditRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusListWorkbenchAuditReply> {
-    const response = await this.workbenchServiceListWorkbenchAuditRaw(
       requestParameters,
       initOverrides
     )

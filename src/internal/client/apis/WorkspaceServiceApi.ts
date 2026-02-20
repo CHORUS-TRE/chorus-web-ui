@@ -17,7 +17,6 @@ import type {
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
-  ChorusListWorkspaceAuditReply,
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
@@ -33,8 +32,6 @@ import {
   ChorusDeleteWorkspaceReplyToJSON,
   ChorusGetWorkspaceReplyFromJSON,
   ChorusGetWorkspaceReplyToJSON,
-  ChorusListWorkspaceAuditReplyFromJSON,
-  ChorusListWorkspaceAuditReplyToJSON,
   ChorusListWorkspacesReplyFromJSON,
   ChorusListWorkspacesReplyToJSON,
   ChorusManageUserRoleInWorkspaceReplyFromJSON,
@@ -61,21 +58,6 @@ export interface WorkspaceServiceDeleteWorkspaceRequest {
 
 export interface WorkspaceServiceGetWorkspaceRequest {
   id: string
-}
-
-export interface WorkspaceServiceListWorkspaceAuditRequest {
-  id: string
-  paginationOffset?: number
-  paginationLimit?: number
-  paginationSortOrder?: string
-  paginationSortType?: string
-  paginationQuery?: Array<string>
-  filterUserId?: string
-  filterWorkspaceId?: string
-  filterWorkbenchId?: string
-  filterAction?: string
-  filterFromTime?: Date
-  filterToTime?: Date
 }
 
 export interface WorkspaceServiceListWorkspacesRequest {
@@ -274,115 +256,6 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetWorkspaceReply> {
     const response = await this.workspaceServiceGetWorkspaceRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint returns audit entries for a specific workspace
-   * List workspace audit entries
-   */
-  async workspaceServiceListWorkspaceAuditRaw(
-    requestParameters: WorkspaceServiceListWorkspaceAuditRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusListWorkspaceAuditReply>> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-      throw new runtime.RequiredError(
-        'id',
-        'Required parameter requestParameters.id was null or undefined when calling workspaceServiceListWorkspaceAudit.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    if (requestParameters.paginationOffset !== undefined) {
-      queryParameters['pagination.offset'] = requestParameters.paginationOffset
-    }
-
-    if (requestParameters.paginationLimit !== undefined) {
-      queryParameters['pagination.limit'] = requestParameters.paginationLimit
-    }
-
-    if (requestParameters.paginationSortOrder !== undefined) {
-      queryParameters['pagination.sort.order'] =
-        requestParameters.paginationSortOrder
-    }
-
-    if (requestParameters.paginationSortType !== undefined) {
-      queryParameters['pagination.sort.type'] =
-        requestParameters.paginationSortType
-    }
-
-    if (requestParameters.paginationQuery) {
-      queryParameters['pagination.query'] = requestParameters.paginationQuery
-    }
-
-    if (requestParameters.filterUserId !== undefined) {
-      queryParameters['filter.userId'] = requestParameters.filterUserId
-    }
-
-    if (requestParameters.filterWorkspaceId !== undefined) {
-      queryParameters['filter.workspaceId'] =
-        requestParameters.filterWorkspaceId
-    }
-
-    if (requestParameters.filterWorkbenchId !== undefined) {
-      queryParameters['filter.workbenchId'] =
-        requestParameters.filterWorkbenchId
-    }
-
-    if (requestParameters.filterAction !== undefined) {
-      queryParameters['filter.action'] = requestParameters.filterAction
-    }
-
-    if (requestParameters.filterFromTime !== undefined) {
-      queryParameters['filter.fromTime'] = (
-        requestParameters.filterFromTime as any
-      ).toISOString()
-    }
-
-    if (requestParameters.filterToTime !== undefined) {
-      queryParameters['filter.toTime'] = (
-        requestParameters.filterToTime as any
-      ).toISOString()
-    }
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workspaces/{id}/audit`.replace(
-          `{${'id'}}`,
-          encodeURIComponent(String(requestParameters.id))
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusListWorkspaceAuditReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint returns audit entries for a specific workspace
-   * List workspace audit entries
-   */
-  async workspaceServiceListWorkspaceAudit(
-    requestParameters: WorkspaceServiceListWorkspaceAuditRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusListWorkspaceAuditReply> {
-    const response = await this.workspaceServiceListWorkspaceAuditRaw(
       requestParameters,
       initOverrides
     )
