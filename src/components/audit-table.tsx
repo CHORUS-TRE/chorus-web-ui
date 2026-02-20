@@ -2,6 +2,7 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { ScrollText } from 'lucide-react'
+import { useState } from 'react'
 
 import { AuditEntry } from '@/domain/model'
 import {
@@ -31,6 +32,13 @@ export default function AuditTable({
   title?: string
   description?: string
 }) {
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+
+  const toggleRow = (id: string | undefined) => {
+    if (!id) return
+    setExpandedId(expandedId === id ? null : id)
+  }
+
   return (
     <Card variant="glass" className="flex h-full flex-col justify-between">
       <CardHeader className="pb-4">
@@ -69,36 +77,50 @@ export default function AuditTable({
           </TableHeader>
           <TableBody>
             {entries?.map((entry) => (
-              <TableRow
-                key={entry.id}
-                className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
-              >
-                <TableCell className="max-w-[100px] truncate font-mono text-xs">
-                  {entry.id}
-                </TableCell>
-                <TableCell className="max-w-[150px] truncate text-sm">
-                  {entry.username || entry.userId || '-'}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{entry.action || '-'}</Badge>
-                </TableCell>
-                <TableCell className="font-mono text-xs">
-                  {entry.workspaceId || '-'}
-                </TableCell>
-                <TableCell className="font-mono text-xs">
-                  {entry.workbenchId || '-'}
-                </TableCell>
-                <TableCell className="max-w-[300px] truncate text-sm">
-                  {entry.description || '-'}
-                </TableCell>
-                <TableCell className="text-xs text-muted-foreground">
-                  {entry.createdAt
-                    ? formatDistanceToNow(new Date(entry.createdAt), {
-                        addSuffix: true
-                      })
-                    : '-'}
-                </TableCell>
-              </TableRow>
+              <>
+                <TableRow
+                  key={entry.id}
+                  className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                  onClick={() => toggleRow(entry.id)}
+                >
+                  <TableCell className="max-w-[100px] truncate font-mono text-xs">
+                    {entry.id}
+                  </TableCell>
+                  <TableCell className="max-w-[150px] truncate text-sm">
+                    {entry.username || entry.userId || '-'}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">{entry.action || '-'}</Badge>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {entry.workspaceId || '-'}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {entry.workbenchId || '-'}
+                  </TableCell>
+                  <TableCell className="max-w-[300px] truncate text-sm">
+                    {entry.description || '-'}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {entry.createdAt
+                      ? formatDistanceToNow(new Date(entry.createdAt), {
+                          addSuffix: true
+                        })
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+                {expandedId === entry.id && (
+                  <TableRow key={`${entry.id}-details`}>
+                    <TableCell colSpan={7} className="bg-muted/20 p-4">
+                      <pre className="max-h-[300px] overflow-auto rounded-md bg-muted/40 p-3 font-mono text-xs">
+                        {entry.details && Object.keys(entry.details).length > 0
+                          ? JSON.stringify(entry.details, null, 2)
+                          : 'No details available.'}
+                      </pre>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
             ))}
             {(!entries || entries.length === 0) && (
               <TableRow>
