@@ -1,5 +1,4 @@
 import {
-  AuditEntry,
   Result,
   Workspace,
   WorkspaceCreateType,
@@ -18,5 +17,4 @@ export interface WorkspaceRepository {
     userId: string,
     roleName: string
   ) => Promise<Result<User>>
-  listAudit: (workspaceId: string) => Promise<Result<AuditEntry[]>>
 }

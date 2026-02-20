@@ -1,7 +1,5 @@
 import { WorkspaceDataSource } from '~/data/data-source'
 import {
-  AuditEntry,
-  AuditEntrySchema,
   Result,
   Workspace,
   WorkspaceCreateType,
@@ -174,22 +172,6 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       }
     } catch (error) {
       console.error('Error removing user from workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
-    }
-  }
-
-  async listAudit(workspaceId: string): Promise<Result<AuditEntry[]>> {
-    try {
-      const response = await this.dataSource.listAudit({ id: workspaceId })
-      if (!response.result?.entries) {
-        return { data: [] }
-      }
-      const entries = response.result.entries.map((e) =>
-        AuditEntrySchema.parse(e)
-      )
-      return { data: entries }
-    } catch (error) {
-      console.error('Error listing workspace audit', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }

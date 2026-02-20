@@ -3,14 +3,12 @@ import {
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
-  ChorusListWorkspaceAuditReply,
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
   ChorusUpdateWorkspaceReply,
   Configuration,
   WorkspaceServiceApi,
-  WorkspaceServiceListWorkspaceAuditRequest,
   WorkspaceServiceManageUserRoleInWorkspaceBody
 } from '~/internal/client'
 
@@ -35,9 +33,6 @@ interface WorkspaceDataSource {
     workspaceId: string,
     userId: string
   ) => Promise<ChorusRemoveUserFromWorkspaceReply>
-  listAudit: (
-    request: WorkspaceServiceListWorkspaceAuditRequest
-  ) => Promise<ChorusListWorkspaceAuditReply>
 }
 
 export type { WorkspaceDataSource }
@@ -99,12 +94,6 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
       id: workspaceId,
       userId
     })
-  }
-
-  listAudit(
-    request: WorkspaceServiceListWorkspaceAuditRequest
-  ): Promise<ChorusListWorkspaceAuditReply> {
-    return this.service.workspaceServiceListWorkspaceAudit(request)
   }
 }
 
