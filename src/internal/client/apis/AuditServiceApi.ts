@@ -13,15 +13,60 @@
  */
 
 import * as runtime from '../runtime'
-import type { ChorusListAuditEntriesReply, RpcStatus } from '../models/index'
+import type { ChorusListAuditReply, RpcStatus } from '../models/index'
 import {
-  ChorusListAuditEntriesReplyFromJSON,
-  ChorusListAuditEntriesReplyToJSON,
+  ChorusListAuditReplyFromJSON,
+  ChorusListAuditReplyToJSON,
   RpcStatusFromJSON,
   RpcStatusToJSON
 } from '../models/index'
 
-export interface AuditServiceListAuditEntriesRequest {
+export interface AuditServiceListPlatformAuditRequest {
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterUserId?: string
+  filterWorkspaceId?: string
+  filterWorkbenchId?: string
+  filterAction?: string
+  filterFromTime?: Date
+  filterToTime?: Date
+}
+
+export interface AuditServiceListUserAuditRequest {
+  id: string
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterUserId?: string
+  filterWorkspaceId?: string
+  filterWorkbenchId?: string
+  filterAction?: string
+  filterFromTime?: Date
+  filterToTime?: Date
+}
+
+export interface AuditServiceListWorkbenchAuditRequest {
+  id: string
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterUserId?: string
+  filterWorkspaceId?: string
+  filterWorkbenchId?: string
+  filterAction?: string
+  filterFromTime?: Date
+  filterToTime?: Date
+}
+
+export interface AuditServiceListWorkspaceAuditRequest {
+  id: string
   paginationOffset?: number
   paginationLimit?: number
   paginationSortOrder?: string
@@ -40,13 +85,13 @@ export interface AuditServiceListAuditEntriesRequest {
  */
 export class AuditServiceApi extends runtime.BaseAPI {
   /**
-   * This endpoint returns a list of audit entries
-   * List audit entries
+   * This endpoint returns a list of platform audit entries
+   * List platform audit entries
    */
-  async auditServiceListAuditEntriesRaw(
-    requestParameters: AuditServiceListAuditEntriesRequest,
+  async auditServiceListPlatformAuditRaw(
+    requestParameters: AuditServiceListPlatformAuditRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusListAuditEntriesReply>> {
+  ): Promise<runtime.ApiResponse<ChorusListAuditReply>> {
     const queryParameters: any = {}
 
     if (requestParameters.paginationOffset !== undefined) {
@@ -119,19 +164,346 @@ export class AuditServiceApi extends runtime.BaseAPI {
     )
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusListAuditEntriesReplyFromJSON(jsonValue)
+      ChorusListAuditReplyFromJSON(jsonValue)
     )
   }
 
   /**
-   * This endpoint returns a list of audit entries
-   * List audit entries
+   * This endpoint returns a list of platform audit entries
+   * List platform audit entries
    */
-  async auditServiceListAuditEntries(
-    requestParameters: AuditServiceListAuditEntriesRequest = {},
+  async auditServiceListPlatformAudit(
+    requestParameters: AuditServiceListPlatformAuditRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusListAuditEntriesReply> {
-    const response = await this.auditServiceListAuditEntriesRaw(
+  ): Promise<ChorusListAuditReply> {
+    const response = await this.auditServiceListPlatformAuditRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific user
+   * List user audit entries
+   */
+  async auditServiceListUserAuditRaw(
+    requestParameters: AuditServiceListUserAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListAuditReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling auditServiceListUserAudit.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
+    }
+
+    if (requestParameters.filterWorkspaceId !== undefined) {
+      queryParameters['filter.workspaceId'] =
+        requestParameters.filterWorkspaceId
+    }
+
+    if (requestParameters.filterWorkbenchId !== undefined) {
+      queryParameters['filter.workbenchId'] =
+        requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterAction !== undefined) {
+      queryParameters['filter.action'] = requestParameters.filterAction
+    }
+
+    if (requestParameters.filterFromTime !== undefined) {
+      queryParameters['filter.fromTime'] = (
+        requestParameters.filterFromTime as any
+      ).toISOString()
+    }
+
+    if (requestParameters.filterToTime !== undefined) {
+      queryParameters['filter.toTime'] = (
+        requestParameters.filterToTime as any
+      ).toISOString()
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/audit/users/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListAuditReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific user
+   * List user audit entries
+   */
+  async auditServiceListUserAudit(
+    requestParameters: AuditServiceListUserAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListAuditReply> {
+    const response = await this.auditServiceListUserAuditRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific workbench
+   * List workbench audit entries
+   */
+  async auditServiceListWorkbenchAuditRaw(
+    requestParameters: AuditServiceListWorkbenchAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListAuditReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling auditServiceListWorkbenchAudit.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
+    }
+
+    if (requestParameters.filterWorkspaceId !== undefined) {
+      queryParameters['filter.workspaceId'] =
+        requestParameters.filterWorkspaceId
+    }
+
+    if (requestParameters.filterWorkbenchId !== undefined) {
+      queryParameters['filter.workbenchId'] =
+        requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterAction !== undefined) {
+      queryParameters['filter.action'] = requestParameters.filterAction
+    }
+
+    if (requestParameters.filterFromTime !== undefined) {
+      queryParameters['filter.fromTime'] = (
+        requestParameters.filterFromTime as any
+      ).toISOString()
+    }
+
+    if (requestParameters.filterToTime !== undefined) {
+      queryParameters['filter.toTime'] = (
+        requestParameters.filterToTime as any
+      ).toISOString()
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/audit/workbenches/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListAuditReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific workbench
+   * List workbench audit entries
+   */
+  async auditServiceListWorkbenchAudit(
+    requestParameters: AuditServiceListWorkbenchAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListAuditReply> {
+    const response = await this.auditServiceListWorkbenchAuditRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific workspace
+   * List workspace audit entries
+   */
+  async auditServiceListWorkspaceAuditRaw(
+    requestParameters: AuditServiceListWorkspaceAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListAuditReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling auditServiceListWorkspaceAudit.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
+    }
+
+    if (requestParameters.filterWorkspaceId !== undefined) {
+      queryParameters['filter.workspaceId'] =
+        requestParameters.filterWorkspaceId
+    }
+
+    if (requestParameters.filterWorkbenchId !== undefined) {
+      queryParameters['filter.workbenchId'] =
+        requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterAction !== undefined) {
+      queryParameters['filter.action'] = requestParameters.filterAction
+    }
+
+    if (requestParameters.filterFromTime !== undefined) {
+      queryParameters['filter.fromTime'] = (
+        requestParameters.filterFromTime as any
+      ).toISOString()
+    }
+
+    if (requestParameters.filterToTime !== undefined) {
+      queryParameters['filter.toTime'] = (
+        requestParameters.filterToTime as any
+      ).toISOString()
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/audit/workspaces/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListAuditReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns audit entries for a specific workspace
+   * List workspace audit entries
+   */
+  async auditServiceListWorkspaceAudit(
+    requestParameters: AuditServiceListWorkspaceAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListAuditReply> {
+    const response = await this.auditServiceListWorkspaceAuditRaw(
       requestParameters,
       initOverrides
     )
