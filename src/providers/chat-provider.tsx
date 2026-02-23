@@ -20,6 +20,8 @@ interface ChatContextValue {
   messages: UIMessage[]
   sendMessage: (options: { text: string }) => void
   status: string
+  error: Error | undefined
+  clearError: () => void
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null)
@@ -30,7 +32,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Read persisted messages once on mount (no subscription — getState avoids re-renders)
   const initialMessages = useRef<UIMessage[]>(useChatStore.getState().messages)
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, error, clearError } = useChat({
     messages:
       initialMessages.current.length > 0 ? initialMessages.current : undefined,
     transport: new DefaultChatTransport({ api: '/api/chat' }),
@@ -58,7 +60,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ChatContext.Provider
-      value={{ messages: messages as UIMessage[], sendMessage, status }}
+      value={{ messages: messages as UIMessage[], sendMessage, status, error, clearError }}
     >
       {children}
     </ChatContext.Provider>
