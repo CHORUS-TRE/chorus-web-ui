@@ -1,3 +1,10 @@
+# [1.37.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.36.2...v1.37.0) (2026-02-23)
+
+
+### Features
+
+* add audit admin page and workspace audit tab ([#194](https://github.com/CHORUS-TRE/chorus-web-ui/issues/194)) ([8d638f5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8d638f5f99395aa1904b1f9e18888aee62a8f1c6))
+
 ## [1.36.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.36.1...v1.36.2) (2026-02-18)
 
 
