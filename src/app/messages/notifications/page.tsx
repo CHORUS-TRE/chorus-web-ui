@@ -73,12 +73,11 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <div className="w-full">
+      <div className="container mx-auto p-6">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Bell className="h-9 w-9" />
+          <h1 className="text-3xl font-semibold text-muted-foreground">
             Notifications
-          </h2>
+          </h1>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"

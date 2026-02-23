@@ -177,17 +177,17 @@ function SidebarContent({
         <Separator className="my-2" />
 
         <Link
-          href="/notifications"
+          href="/messages"
           variant="underline"
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-            isActive('/notifications')
+            isActive('/messages')
               ? 'bg-primary/20 text-primary'
               : 'text-muted-foreground'
           )}
         >
           <Bell className="h-4 w-4" />
-          Notifications
+          Messages
           {unreadNotificationsCount !== undefined &&
             unreadNotificationsCount > 0 && (
               <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">

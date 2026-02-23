@@ -3,12 +3,10 @@
 import { formatDistanceToNow } from 'date-fns'
 import {
   AppWindow,
-  ArrowRight,
   CircleGauge,
   CirclePlus,
   Clock,
   Cpu,
-  DatabaseZap,
   LaptopMinimal,
   Package
 } from 'lucide-react'
@@ -23,8 +21,6 @@ import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import { Badge } from '~/components/ui/badge'
-import { WorkbenchStatus } from '~/domain/model'
 import { listApprovalRequests } from '~/view-model/approval-request-view-model'
 
 export default function CHORUSDashboard() {
@@ -81,6 +77,8 @@ export default function CHORUSDashboard() {
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
+
+      {/* <LayoutTabs /> */}
 
       <div className="w-full space-y-6">
         <section>
@@ -318,7 +316,7 @@ export default function CHORUSDashboard() {
                                 className="session-link block w-full"
                                 variant="rounded"
                               >
-                                <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
+                                <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 text-muted-foreground transition-all hover:border-muted/30 hover:bg-muted/50">
                                   <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
                                   <div className="min-w-0 flex-1">
                                     <p className="text-sm font-semibold text-muted-foreground hover:text-accent">

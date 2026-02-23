@@ -61,13 +61,25 @@ function WelcomeCard({ onPrompt }: { onPrompt: (text: string) => void }) {
 
 function friendlyError(error: Error): string {
   const msg = error.message.toLowerCase()
-  if (msg.includes('api-key') || msg.includes('api key') || msg.includes('x-api-key')) {
+  if (
+    msg.includes('api-key') ||
+    msg.includes('api key') ||
+    msg.includes('x-api-key')
+  ) {
     return 'The AI service API key is invalid or missing. Contact your administrator.'
   }
-  if (msg.includes('rate limit') || msg.includes('too many requests') || msg.includes('429')) {
+  if (
+    msg.includes('rate limit') ||
+    msg.includes('too many requests') ||
+    msg.includes('429')
+  ) {
     return 'Too many requests. Please wait a moment and try again.'
   }
-  if (msg.includes('network') || msg.includes('fetch') || msg.includes('econnrefused')) {
+  if (
+    msg.includes('network') ||
+    msg.includes('fetch') ||
+    msg.includes('econnrefused')
+  ) {
     return 'Unable to reach the assistant. Check your connection.'
   }
   return 'Something went wrong. Please try again.'
@@ -145,7 +157,10 @@ export default function RightSidebar() {
           <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
             <p className="flex-1">{friendlyError(error)}</p>
-            <button onClick={clearError} className="text-destructive/60 hover:text-destructive">
+            <button
+              onClick={clearError}
+              className="text-destructive/60 hover:text-destructive"
+            >
               <X className="h-3 w-3" />
             </button>
           </div>

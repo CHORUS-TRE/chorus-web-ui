@@ -105,7 +105,7 @@ export default function Layout({
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="sessions">Sessions</TabsTrigger>
             <TabsTrigger value="data">Data</TabsTrigger>
-            <TabsTrigger value="requests">Data Requests</TabsTrigger>
+            {/* <TabsTrigger value="requests">Data Requests</TabsTrigger> */}
             <TabsTrigger value="users">Members</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>

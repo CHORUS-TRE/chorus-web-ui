@@ -60,7 +60,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ChatContext.Provider
-      value={{ messages: messages as UIMessage[], sendMessage, status, error, clearError }}
+      value={{
+        messages: messages as UIMessage[],
+        sendMessage,
+        status,
+        error,
+        clearError
+      }}
     >
       {children}
     </ChatContext.Provider>

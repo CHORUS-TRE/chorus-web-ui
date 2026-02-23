@@ -40,10 +40,8 @@ export default function RequestsPage() {
       }
     }
 
-    if (workspaceId) {
-      fetchData(workspaceId)
-    }
-  }, [workspaceId])
+    fetchData(workspaceId)
+  }, [])
 
   if (isLoading || !currentUser) {
     return <LoadingOverlay isLoading={true} />
