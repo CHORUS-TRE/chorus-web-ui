@@ -21,6 +21,7 @@ import type {
   ChorusCreateDataTransferRequestReply,
   ChorusCreateDataTransferRequestRequest,
   ChorusDeleteApprovalRequestReply,
+  ChorusDownloadApprovalRequestFileReply,
   ChorusGetApprovalRequestReply,
   ChorusListApprovalRequestsReply,
   RpcStatus
@@ -40,6 +41,8 @@ import {
   ChorusCreateDataTransferRequestRequestToJSON,
   ChorusDeleteApprovalRequestReplyFromJSON,
   ChorusDeleteApprovalRequestReplyToJSON,
+  ChorusDownloadApprovalRequestFileReplyFromJSON,
+  ChorusDownloadApprovalRequestFileReplyToJSON,
   ChorusGetApprovalRequestReplyFromJSON,
   ChorusGetApprovalRequestReplyToJSON,
   ChorusListApprovalRequestsReplyFromJSON,
@@ -63,6 +66,11 @@ export interface ApprovalRequestServiceCreateDataTransferRequestRequest {
 
 export interface ApprovalRequestServiceDeleteApprovalRequestRequest {
   id: string
+}
+
+export interface ApprovalRequestServiceDownloadApprovalRequestFileRequest {
+  id: string
+  path: string
 }
 
 export interface ApprovalRequestServiceGetApprovalRequestRequest {
@@ -337,6 +345,79 @@ export class ApprovalRequestServiceApi extends runtime.BaseAPI {
       requestParameters,
       initOverrides
     )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint downloads a file from an approved data extraction request. Only the creator of the request can download files.
+   * Download a file from an approved data extraction request
+   */
+  async approvalRequestServiceDownloadApprovalRequestFileRaw(
+    requestParameters: ApprovalRequestServiceDownloadApprovalRequestFileRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusDownloadApprovalRequestFileReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling approvalRequestServiceDownloadApprovalRequestFile.'
+      )
+    }
+
+    if (
+      requestParameters.path === null ||
+      requestParameters.path === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'path',
+        'Required parameter requestParameters.path was null or undefined when calling approvalRequestServiceDownloadApprovalRequestFile.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/approval-requests/{id}/files/{path}`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'path'}}`,
+            encodeURIComponent(String(requestParameters.path))
+          ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusDownloadApprovalRequestFileReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint downloads a file from an approved data extraction request. Only the creator of the request can download files.
+   * Download a file from an approved data extraction request
+   */
+  async approvalRequestServiceDownloadApprovalRequestFile(
+    requestParameters: ApprovalRequestServiceDownloadApprovalRequestFileRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusDownloadApprovalRequestFileReply> {
+    const response =
+      await this.approvalRequestServiceDownloadApprovalRequestFileRaw(
+        requestParameters,
+        initOverrides
+      )
     return await response.value()
   }
 
