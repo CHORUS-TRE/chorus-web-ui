@@ -13,6 +13,7 @@ interface AuthenticationRepository {
     data: AuthenticationOAuthRedirectRequest
   ) => Promise<Result<string>>
   logout: () => Promise<Result<string>>
+  refreshToken: () => Promise<Result<string>>
 }
 
 export type { AuthenticationRepository }

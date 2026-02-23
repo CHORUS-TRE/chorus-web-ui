@@ -4,22 +4,27 @@ export enum AppInstanceStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   DELETED = 'deleted',
-  UNKNOWN = ''
+  UNKNOWN = 'unknown'
 }
 
-export enum K8sAppInstanceStatus {
+export enum K8sAppInstanceState {
   RUNNING = 'Running',
   STOPPED = 'Stopped',
   KILLED = 'Killed',
   UNKNOWN = ''
 }
 
-export enum K8sAppInstanceState {
-  UNKNOWN = '',
+export enum K8sAppInstanceStatus {
   RUNNING = 'Running',
   COMPLETE = 'Complete',
   PROGRESSING = 'Progressing',
-  FAILED = 'Failed'
+  FAILED = 'Failed',
+  STOPPING = 'Stopping',
+  STOPPED = 'Stopped',
+  KILLING = 'Killing',
+  KILLED = 'Killed',
+  UNKNOWN = 'Unknown',
+  EMPTY = ''
 }
 
 export const AppInstanceSchema = z.object({
@@ -27,10 +32,12 @@ export const AppInstanceSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
   appId: z.string(),
+  name: z.string().optional(),
   workspaceId: z.string(),
   workbenchId: z.string(),
   status: z.nativeEnum(AppInstanceStatus),
   k8sStatus: z.nativeEnum(K8sAppInstanceStatus).optional(),
+  k8sMessage: z.string().optional(),
   k8sState: z.nativeEnum(K8sAppInstanceState).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),

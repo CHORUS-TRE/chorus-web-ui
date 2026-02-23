@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { workspaceManageUserRole } from '@/view-model/workspace-view-model'
+import { useAppState } from '@/stores/app-state-store'
+import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import {
   Dialog,
@@ -32,10 +33,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
+import { getWorkspaceRoles } from '~/config/permissions'
 import { Result } from '~/domain/model'
 import { User } from '~/domain/model/user'
-import { useAppState } from '~/providers/app-state-provider'
-import { getWorkspaceRoles } from '~/utils/schema-roles'
+import { listUsers } from '~/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'
 
@@ -57,7 +58,8 @@ export function AddUserToWorkspaceDialog({
   onUserAdded: () => void
   children?: React.ReactNode
 }) {
-  const { users, workspaces } = useAppState()
+  const { workspaces } = useAppState()
+  const [users, setUsers] = useState<User[]>([])
   const workspace = workspaces?.find(
     (workspace) => workspace.id === workspaceId
   )
@@ -80,7 +82,7 @@ export function AddUserToWorkspaceDialog({
   })
 
   const [state, formAction] = useActionState(
-    workspaceManageUserRole,
+    workspaceAddUserRole,
     {} as Result<User>
   )
 
@@ -109,6 +111,17 @@ export function AddUserToWorkspaceDialog({
       onUserAdded()
     }
   }, [state, onUserAdded, form])
+
+  useEffect(() => {
+    async function loadUsers() {
+      const result = await listUsers({ filterSearch: '' })
+      if (result.data) {
+        setUsers(result.data)
+      }
+    }
+
+    loadUsers()
+  }, [workspaceId])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -214,7 +227,7 @@ export function AddUserToWorkspaceDialog({
               </Button>
               <Button
                 type="submit"
-                className="bg-accent text-black hover:bg-accent/80"
+                className="bg-accent text-accent-foreground hover:bg-accent/80"
               >
                 Add Role
               </Button>

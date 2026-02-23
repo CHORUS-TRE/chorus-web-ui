@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { listUsers } from '@/view-model/user-view-model'
 import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
@@ -16,16 +16,18 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { User } from '~/domain/model/user'
+import { useAuthorization } from '~/providers/authorization-provider'
 
 export function UserTable() {
   const [users, setUsers] = useState<User[]>([])
   const [userCollapsed, setUserCollapsed] = useState<boolean[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const { can, PERMISSIONS } = useAuthorization()
 
-  const handleUserChange = () => {
+  const handleUserChange = useCallback(() => {
     setRefreshKey((oldKey) => oldKey + 1)
-  }
+  }, [])
 
   const toggleUserCollapse = (index: number) => {
     const newCollapsed = users.map(() => true)
@@ -48,7 +50,9 @@ export function UserTable() {
         setError(result.error || 'Failed to load users.')
       }
     }
-    loadUsers()
+    if ((can(PERMISSIONS.listUsers), { workspace: '*' })) {
+      loadUsers()
+    }
   }, [refreshKey])
 
   if (error) {
@@ -62,7 +66,7 @@ export function UserTable() {
 
   return (
     <Table
-      className="text-white"
+      className="text-foreground"
       aria-label={`User management table with ${users.length} users`}
     >
       <caption className="sr-only">
@@ -71,18 +75,37 @@ export function UserTable() {
       </caption>
       <TableHeader>
         <TableRow>
-          <TableHead scope="col"></TableHead>
-          <TableHead scope="col">Name</TableHead>
-          <TableHead scope="col">Username</TableHead>
-          <TableHead scope="col">Roles</TableHead>
-          <TableHead scope="col">Workspace</TableHead>
-          <TableHead scope="col">Workbench</TableHead>
-          <TableHead scope="col">User</TableHead>
-          <TableHead scope="col">Status</TableHead>
-          <TableHead scope="col">Actions</TableHead>
+          <TableHead scope="col" className="text-muted-foreground"></TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            ID
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Name
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Username
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Roles
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Workspace
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Workbench
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            User
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Status
+          </TableHead>
+          <TableHead scope="col" className="text-muted-foreground">
+            Actions
+          </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="text-foreground">
         {users.map((user, userIndex) =>
           userCollapsed[userIndex] ? (
             <TableRow key={user.id}>
@@ -94,6 +117,7 @@ export function UserTable() {
               >
                 {userCollapsed[userIndex] ? '▸' : '▾'}
               </TableCell>
+              <TableCell>{user.id}</TableCell>
               <TableCell>
                 {user.firstName} {user.lastName}
               </TableCell>
@@ -132,6 +156,7 @@ export function UserTable() {
                 >
                   {userCollapsed[userIndex] ? '▸' : '▾'}
                 </TableCell>
+                <TableCell>{user.id}</TableCell>
                 <TableCell>
                   {user.firstName} {user.lastName}
                 </TableCell>
@@ -169,6 +194,7 @@ export function UserTable() {
                       : ''
                   }
                 >
+                  <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>
                   <TableCell className="p-2"></TableCell>

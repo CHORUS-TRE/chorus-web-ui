@@ -6,4 +6,5 @@ interface MatomoTagManagerEvent {
 
 interface Window {
   _mtm: MatomoTagManagerEvent[]
+  _paq?: unknown[]
 }

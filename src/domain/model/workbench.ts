@@ -50,10 +50,15 @@ export const WorkbenchSchema = z.object({
   shortName: z.string().optional(),
   description: z.string().optional(),
   status: z.nativeEnum(WorkbenchStatus).optional(),
+  serverPodStatus: z.preprocess(
+    (val) => (val === '' ? WorkbenchServerPodStatus.UNKNOWN : val),
+    z.nativeEnum(WorkbenchServerPodStatus).optional()
+  ),
+  serverPodMessage: z.string().optional(),
   k8sStatus: z.nativeEnum(K8sWorkbenchStatus).optional(),
   initialResolutionWidth: z.number().optional(),
   initialResolutionHeight: z.number().optional(),
-  appInsanceIds: z.array(z.string()).optional(),
+  appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
@@ -72,8 +77,16 @@ export const WorkbenchCreateSchema = z.object({
 
 export const WorkbenchEditFormSchema = WorkbenchCreateSchema
 
-export const WorkbenchUpdateSchema = WorkbenchCreateSchema.extend({
-  id: z.string()
+export const WorkbenchUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Name is required'),
+  description: z.string().optional(),
+  status: z.nativeEnum(WorkbenchStatus).optional(),
+  tenantId: z.string().optional(),
+  userId: z.string().optional(),
+  workspaceId: z.string().optional(),
+  initialResolutionWidth: z.number().optional(),
+  initialResolutionHeight: z.number().optional()
 })
 
 export type Workbench = z.infer<typeof WorkbenchSchema>

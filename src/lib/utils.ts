@@ -32,3 +32,27 @@ export function formatFileSize(bytes?: number): string {
 
   return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
 }
+
+/**
+ * Parses Kubernetes scheduling error messages to extract concise status information.
+ * Example input: "Scheduling: Unschedulable - 0/1 nodes are available: 1 Insufficient cpu..."
+ * Example output: "0/1 nodes available: Insufficient cpu"
+ */
+export function parseK8sInsufficientResourceMessage(
+  message: string | undefined
+): string | null {
+  if (!message) return null
+
+  // Match pattern: "X/Y nodes are available: Z Insufficient [resource]"
+  const match = message.match(
+    /(\d+\/\d+)\s+nodes?\s+are\s+available:\s+\d+\s+Insufficient\s+(\w+)/i
+  )
+
+  if (match) {
+    const [, nodeRatio, resource] = match
+    return `${nodeRatio} nodes available: Insufficient ${resource.toLowerCase()}`
+  }
+
+  // Fallback: return the original message if pattern doesn't match
+  return message
+}

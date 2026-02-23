@@ -1,258 +1,463 @@
 'use client'
 
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  Row,
+  SortingState,
+  useReactTable
+} from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
-import { EllipsisVerticalIcon } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
 import { Link } from '@/components/link'
-import { useAppState } from '@/providers/app-state-provider'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
+import { Card, CardContent, CardFooter } from '~/components/card'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow as TableRowComponent
+  TableRow
 } from '~/components/ui/table'
-import { Workbench } from '~/domain/model'
+import { WorkbenchServerPodStatus } from '~/domain/model'
+import { App, AppInstance, User, Workbench, Workspace } from '~/domain/model'
 
-import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
 
-export default function WorkbenchTable({
-  workspaceId,
-  title,
-  description
+const ActionCell = ({
+  row,
+  onEdit,
+  onDelete
 }: {
-  workspaceId: string
-  title?: string
-  description?: string
-  onUpdate?: (id: string) => void
-}) {
-  const {
-    workbenches,
-    refreshWorkbenches,
-    appInstances,
-    apps,
-    workspaces,
-    users
-  } = useAppState()
-
-  const filteredWorkbenches = workbenches?.filter(
-    (w) => w.workspaceId === workspaceId
-  )
-
-  const TableHeads = () => (
-    <>
-      {/* <TableHead className="text-white">
-        <span className="sr-only">Session</span>
-      </TableHead> */}
-      <TableHead className="text-foreground">Session</TableHead>
-      <TableHead className="text-foreground">Running Apps</TableHead>
-      <TableHead className="hidden text-foreground md:table-cell">
-        Created
-      </TableHead>
-      <TableHead className="text-foreground">Status</TableHead>
-      <TableHead className="text-foreground" colSpan={2}>
-        <span>Actions</span>
-      </TableHead>
-    </>
-  )
-
-  const TableRow = ({ workbench }: { workbench?: Workbench }) => {
-    const [open, setOpen] = useState(false)
-    const [deleteOpen, setDeleteOpen] = useState(false)
-
-    return (
-      <>
-        {workbench && open && (
-          <WorkbenchUpdateForm
-            workbench={workbench}
-            state={[open, setOpen]}
-            onSuccess={() => {
-              refreshWorkbenches()
-              toast({
-                title: 'Success!',
-                description: 'Session updated successfully'
-              })
-            }}
-          />
-        )}
-
-        {deleteOpen && (
-          <WorkbenchDeleteForm
-            id={workbench?.id}
-            state={[deleteOpen, setDeleteOpen]}
-            onSuccess={() => {
-              setTimeout(() => {
-                refreshWorkbenches()
-              }, 2000)
-              toast({
-                title: 'Success!',
-                description: `Session ${workbench?.name} in ${
-                  workspaces?.find((w) => w.id === workspaceId)?.name
-                } was deleted`,
-                variant: 'default'
-              })
-            }}
-          />
-        )}
-
-        <TableRowComponent className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
-          {/* <TableCell className="p-1" align="center">
-            <MonitorPlay className="h-4 w-4" />
-          </TableCell> */}
-          <TableCell className="p-1 font-semibold">
-            <Link
-              href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
-              className="nav-link-base nav-link-hover [&.active]:nav-link-active"
-            >
-              {workbench?.name}
-            </Link>
-          </TableCell>
-          <TableCell className="hidden p-1 md:table-cell">
-            {(() => {
-              const filteredInstances =
-                appInstances?.filter(
-                  (instance) => workbench?.id === instance.workbenchId
-                ) || []
-              if (filteredInstances.length === 0) {
-                return workbench?.name || ''
-              }
-              return filteredInstances.map((instance, index, array) => {
-                const appName =
-                  apps?.find((app) => app.id === instance.appId)?.name || ''
-                const isLast = index === array.length - 1
-
-                return (
-                  <React.Fragment key={`app-instance-${instance.id}`}>
-                    {appName}
-                    {!isLast && ', '}
-                  </React.Fragment>
-                )
-              })
-            })()}
-          </TableCell>
-          <TableCell
-            className="hidden p-1 md:table-cell"
-            title={`${workbench?.createdAt?.toLocaleDateString()} by ${users?.find((user) => user.id === workbench?.userId)?.firstName} ${users?.find((user) => user.id === workbench?.userId)?.lastName}`}
-          >
-            {workbench &&
-              formatDistanceToNow(workbench?.createdAt ?? new Date())}{' '}
-            ago, by{' '}
-            {users?.find((user) => user.id === workbench?.userId)?.firstName}{' '}
-            {users?.find((user) => user.id === workbench?.userId)?.lastName}
-          </TableCell>
-          <TableCell className="p-1">
-            <Badge variant="outline">{workbench?.status}</Badge>
-          </TableCell>
-          <TableCell className="p-1"></TableCell>
-          <TableCell className="p-1">
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  aria-haspopup="true"
-                  variant="ghost"
-                  className="text-muted ring-0"
-                >
-                  <EllipsisVerticalIcon className="h-4 w-4" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-elevated">
-                {/* <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setOpen(true)
-                  }}
-                >
-                  Edit
-                </DropdownMenuItem> */}
-                <DropdownMenuItem
-                  onClick={() => setDeleteOpen(true)}
-                  className="text-red-500 focus:text-red-500"
-                >
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TableCell>
-        </TableRowComponent>
-      </>
-    )
-  }
-
-  const CardContainer = ({
-    workbenches,
-    title,
-    description
-  }: {
-    workbenches?: Workbench[]
-    title?: string
-    description?: string
-  }) => (
-    <Card
-      variant="glass"
-      className="flex h-full flex-col justify-between duration-300"
-    >
-      {title && (
-        <CardHeader className="pb-4">
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-      )}
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRowComponent className="hover:bg-background/80">
-              <TableHeads />
-            </TableRowComponent>
-          </TableHeader>
-          <TableBody>
-            {workbenches?.map((w) => (
-              <TableRow key={`workbench-table-${w.id}`} workbench={w} />
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-      <CardFooter>
-        <div className="text-xs text-muted">
-          Showing <strong>1-{workbenches?.length}</strong> of{' '}
-          <strong>{workbenches?.length}</strong> apps
-        </div>
-      </CardFooter>
-    </Card>
-  )
+  row: Row<Workbench>
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
+}) => {
+  const workbench = row.original
 
   return (
-    <div className="mb-4 grid flex-1 items-start gap-4">
-      <div className="flex items-center justify-end">
-        <WorkbenchCreateForm workspaceId={workspaceId} />
-      </div>
-      <CardContainer
-        workbenches={filteredWorkbenches}
-        title={title}
-        description={description}
-      />
+    <div className="flex justify-end gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => workbench.id && onEdit(workbench.id)}
+        className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+      >
+        <Pencil className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-destructive/60 hover:bg-destructive/20 hover:text-destructive"
+        onClick={() => workbench.id && onDelete(workbench.id)}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
     </div>
+  )
+}
+const WorkbenchK8sStatusBadge = ({
+  workbench
+}: {
+  workbench: Workbench
+  refreshKey?: number
+}) => {
+  const currentStatus = workbench.serverPodStatus
+
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        'font-mono text-[10px] uppercase',
+        currentStatus === WorkbenchServerPodStatus.READY
+          ? 'border-green-500/20 bg-green-500/10 text-green-500'
+          : currentStatus === WorkbenchServerPodStatus.FAILED
+            ? 'border-red-500/20 bg-red-500/10 text-red-500'
+            : 'border-muted bg-muted/20 text-muted-foreground'
+      )}
+    >
+      {currentStatus || 'Unknown'}
+    </Badge>
+  )
+}
+
+const WorkbenchK8sMessage = ({
+  workbench
+}: {
+  workbench: Workbench
+  refreshKey?: number
+}) => {
+  const currentMessage = workbench.serverPodMessage
+
+  return (
+    <div
+      className="max-w-[200px] truncate text-xs text-muted-foreground"
+      title={currentMessage}
+    >
+      {currentMessage || '-'}
+    </div>
+  )
+}
+
+export const columns = (
+  apps: App[] | undefined,
+  users: User[] | undefined,
+  workspaces: Workspace[] | undefined,
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+  appInstances: AppInstance[] | undefined,
+  refreshKey?: number
+): ColumnDef<Workbench>[] => [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    cell: ({ row }) => (
+      <div
+        className="max-w-[100px] truncate font-mono text-xs"
+        title={row.original.id}
+      >
+        {row.original.id}
+      </div>
+    )
+  },
+  {
+    accessorKey: 'name',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-accent/60 hover:text-accent"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Session
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const workbench = row.original
+      return (
+        <Link
+          href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
+          className="nav-link-base nav-link-hover [&.active]:nav-link-active"
+        >
+          {workbench?.name}
+        </Link>
+      )
+    }
+  },
+  {
+    id: 'workspace',
+    header: 'Workspace',
+    cell: ({ row }) => {
+      const workbench = row.original
+      const workspace = workspaces?.find((w) => w.id === workbench?.workspaceId)
+      return workspace?.name || '-'
+    }
+  },
+  {
+    id: 'owner',
+    header: 'Owner',
+    cell: ({ row }) => {
+      const workbench = row.original
+      const workbenchUsers = users?.filter((user) =>
+        user.rolesWithContext?.some(
+          (role) => role.context.workbench === workbench.id
+        )
+      )
+      return (
+        <div className="text-xs">
+          {workbenchUsers && workbenchUsers.length > 0
+            ? workbenchUsers
+                .map((u) => `${u.firstName} ${u.lastName}`)
+                .join(', ')
+            : '-'}
+        </div>
+      )
+    }
+  },
+  {
+    id: 'apps',
+    header: 'Apps',
+    cell: ({ row }) => {
+      const workbench = row.original
+      return (
+        appInstances
+          ?.filter(
+            (instance) => workbench?.workspaceId === instance.workspaceId
+          )
+          ?.filter((instance) => workbench.id === instance.workbenchId)
+          .map(
+            (instance) =>
+              apps?.find((app) => app.id === instance.appId)?.name || ''
+          )
+          .join(', ') || 'No app started'
+      )
+    }
+  },
+  {
+    id: 'k8sStatus',
+    header: () => (
+      <div className="text-foreground-muted text-center">Status</div>
+    ),
+    cell: ({ row }) => {
+      const workbench = row.original
+      return (
+        <div className="text-center">
+          <WorkbenchK8sStatusBadge
+            key={`${workbench.id}-status-${refreshKey}`}
+            workbench={workbench}
+            refreshKey={refreshKey}
+          />
+        </div>
+      )
+    }
+  },
+  {
+    id: 'k8sMessage',
+    header: 'Message',
+    cell: ({ row }) => {
+      const workbench = row.original
+      return (
+        <WorkbenchK8sMessage
+          key={`${workbench.id}-msg-${refreshKey}`}
+          workbench={workbench}
+          refreshKey={refreshKey}
+        />
+      )
+    }
+  },
+  {
+    accessorKey: 'createdAt',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-accent/60 hover:text-accent"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Created
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const workbench = row.original
+      const date = workbench.createdAt
+        ? new Date(workbench.createdAt)
+        : new Date()
+      return (
+        <div title={date.toLocaleDateString()}>
+          {formatDistanceToNow(date)} ago
+        </div>
+      )
+    }
+  },
+  {
+    id: 'actions',
+    cell: (props) => (
+      <ActionCell {...props} onEdit={onEdit} onDelete={onDelete} />
+    )
+  }
+]
+
+export default function WorkbenchTable({
+  workbenches,
+  refreshKey
+}: {
+  workbenches: Workbench[] | undefined
+  refreshKey?: number
+}) {
+  const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
+  const [users, setUsers] = useState<User[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [activeEditId, setActiveEditId] = useState<string | null>(null)
+  const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
+
+  const closeEdit = useCallback(() => setActiveEditId(null), [])
+  const closeDelete = useCallback(() => setActiveDeleteId(null), [])
+
+  const activeEditWorkbench = useMemo(
+    () => workbenches?.find((w) => w.id === activeEditId),
+    [workbenches, activeEditId]
+  )
+  const activeDeleteWorkbench = useMemo(
+    () => workbenches?.find((w) => w.id === activeDeleteId),
+    [workbenches, activeDeleteId]
+  )
+
+  const loadAllUsers = useCallback(async () => {
+    if (!workbenches || workbenches.length === 0) {
+      setUsers([])
+      return
+    }
+
+    setLoadingUsers(true)
+    const workbenchIds =
+      workbenches?.map((wb) => wb.id).filter((id): id is string => !!id) || []
+    try {
+      const result = await listUsers({ filterWorkbenchIDs: workbenchIds })
+      if (result.data) {
+        setUsers(result.data as User[])
+      }
+    } catch (error) {
+      console.error('Failed to load workspace members', error)
+    } finally {
+      setLoadingUsers(false)
+    }
+  }, [workbenches])
+
+  useEffect(() => {
+    loadAllUsers()
+  }, [loadAllUsers, refreshKey])
+
+  const [sorting, setSorting] = useState<SortingState>([])
+  const data = workbenches
+
+  const tableColumns = React.useMemo(
+    () =>
+      columns(
+        apps,
+        users,
+        workspaces,
+        setActiveEditId,
+        setActiveDeleteId,
+        appInstances,
+        refreshKey
+      ),
+    [apps, users, workspaces, appInstances, refreshKey]
+  )
+
+  const table = useReactTable({
+    data: data ?? [],
+    columns: tableColumns,
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting
+    }
+  })
+
+  return (
+    <>
+      {/* Render dialogs outside table so they survive row re-renders */}
+      {activeEditWorkbench && (
+        <WorkbenchUpdateForm
+          workbench={activeEditWorkbench}
+          state={[!!activeEditId, closeEdit]}
+          onSuccess={() => {
+            refreshWorkbenches()
+            closeEdit()
+            toast({
+              title: 'Success!',
+              description: 'Session updated successfully'
+            })
+          }}
+        />
+      )}
+      <WorkbenchDeleteForm
+        id={activeDeleteWorkbench?.id}
+        state={[!!activeDeleteId, closeDelete]}
+        onSuccess={() => {
+          closeDelete()
+          setTimeout(() => {
+            refreshWorkbenches()
+          }, 2000)
+          toast({
+            title: 'Success!',
+            description: `Session ${activeDeleteWorkbench?.name} in ${
+              workspaces?.find(
+                (w) => w.id === activeDeleteWorkbench?.workspaceId
+              )?.name
+            } was deleted`,
+            variant: 'default'
+          })
+        }}
+      />
+      <div className="mb-4 grid flex-1 items-start gap-4">
+        <div className="flex items-center justify-end"></div>
+        <Card
+          variant="glass"
+          className="flex h-full flex-col justify-between duration-300"
+        >
+          <CardContent>
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow
+                    key={headerGroup.id}
+                    className="hover:bg-background/80"
+                  >
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className="text-muted-foreground"
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className="p-1">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={table.getAllColumns().length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+          <CardFooter>
+            <div className="text-xs text-muted-foreground">
+              Showing <strong>1-{data?.length}</strong> of{' '}
+              <strong>{data?.length}</strong> sessions
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </>
   )
 }

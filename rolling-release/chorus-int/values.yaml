@@ -1,0 +1,29 @@
+image:
+  repository: harbor.int.chorus-tre.ch/chorus/web-ui
+
+env:
+  - name: NEXT_PUBLIC_APP_URL
+    value: https://int.chorus-tre.ch
+  - name: NEXT_PUBLIC_API_URL
+    value: https://backend.int.chorus-tre.ch
+  - name: NEXT_PUBLIC_API_SUFFIX
+    value: /api/rest/v1
+  - name: NEXT_PUBLIC_MATOMO_URL
+    value: https://makoto.int.chorus-tre.ch
+  - name: NEXT_PUBLIC_MATOMO_CONTAINER_ID
+    value: 8JI99voW
+  - name: NEXT_PUBLIC_MATOMO_SITE_ID
+    value: "1"
+  - name: NEXT_PUBLIC_SESSION_READY_DELAY_MS
+    value: "500"
+
+ingress:
+  hosts:
+    - host: int.chorus-tre.ch
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+  - hosts:
+    - int.chorus-tre.ch
+    secretName: web-ui-tls

@@ -14,30 +14,58 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusAbortWorkspaceFileUploadReply,
+  ChorusCompleteWorkspaceFileUploadReply,
   ChorusCreateWorkspaceFileReply,
   ChorusDeleteWorkspaceFileReply,
   ChorusGetWorkspaceFileReply,
+  ChorusInitiateWorkspaceFileUploadReply,
   ChorusListWorkspaceFilesReply,
   ChorusUpdateWorkspaceFileReply,
+  ChorusUploadWorkspaceFilePartReply,
   ChorusWorkspaceFile,
+  ChorusWorkspaceFilePart,
   RpcStatus
 } from '../models/index'
 import {
+  ChorusAbortWorkspaceFileUploadReplyFromJSON,
+  ChorusAbortWorkspaceFileUploadReplyToJSON,
+  ChorusCompleteWorkspaceFileUploadReplyFromJSON,
+  ChorusCompleteWorkspaceFileUploadReplyToJSON,
   ChorusCreateWorkspaceFileReplyFromJSON,
   ChorusCreateWorkspaceFileReplyToJSON,
   ChorusDeleteWorkspaceFileReplyFromJSON,
   ChorusDeleteWorkspaceFileReplyToJSON,
   ChorusGetWorkspaceFileReplyFromJSON,
   ChorusGetWorkspaceFileReplyToJSON,
+  ChorusInitiateWorkspaceFileUploadReplyFromJSON,
+  ChorusInitiateWorkspaceFileUploadReplyToJSON,
   ChorusListWorkspaceFilesReplyFromJSON,
   ChorusListWorkspaceFilesReplyToJSON,
   ChorusUpdateWorkspaceFileReplyFromJSON,
   ChorusUpdateWorkspaceFileReplyToJSON,
+  ChorusUploadWorkspaceFilePartReplyFromJSON,
+  ChorusUploadWorkspaceFilePartReplyToJSON,
   ChorusWorkspaceFileFromJSON,
   ChorusWorkspaceFileToJSON,
+  ChorusWorkspaceFilePartFromJSON,
+  ChorusWorkspaceFilePartToJSON,
   RpcStatusFromJSON,
   RpcStatusToJSON
 } from '../models/index'
+
+export interface WorkspaceFileServiceAbortWorkspaceFileUploadRequest {
+  workspaceId: string
+  path: string
+  uploadId: string
+}
+
+export interface WorkspaceFileServiceCompleteWorkspaceFileUploadRequest {
+  workspaceId: string
+  path: string
+  uploadId: string
+  parts: Array<ChorusWorkspaceFilePart>
+}
 
 export interface WorkspaceFileServiceCreateWorkspaceFileRequest {
   workspaceId: string
@@ -54,6 +82,12 @@ export interface WorkspaceFileServiceGetWorkspaceFileRequest {
   path: string
 }
 
+export interface WorkspaceFileServiceInitiateWorkspaceFileUploadRequest {
+  workspaceId: string
+  path: string
+  file: ChorusWorkspaceFile
+}
+
 export interface WorkspaceFileServiceListWorkspaceFilesRequest {
   workspaceId: string
   path: string
@@ -65,10 +99,209 @@ export interface WorkspaceFileServiceUpdateWorkspaceFileRequest {
   file: ChorusWorkspaceFile
 }
 
+export interface WorkspaceFileServiceUploadWorkspaceFilePartRequest {
+  workspaceId: string
+  path: string
+  uploadId: string
+  part: ChorusWorkspaceFilePart
+}
+
 /**
  *
  */
 export class WorkspaceFileServiceApi extends runtime.BaseAPI {
+  /**
+   * This endpoint aborts a multipart upload for a file in a workspace
+   * Abort a multipart upload for a file in a workspace
+   */
+  async workspaceFileServiceAbortWorkspaceFileUploadRaw(
+    requestParameters: WorkspaceFileServiceAbortWorkspaceFileUploadRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusAbortWorkspaceFileUploadReply>> {
+    if (
+      requestParameters.workspaceId === null ||
+      requestParameters.workspaceId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'workspaceId',
+        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceFileServiceAbortWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.path === null ||
+      requestParameters.path === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'path',
+        'Required parameter requestParameters.path was null or undefined when calling workspaceFileServiceAbortWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.uploadId === null ||
+      requestParameters.uploadId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'uploadId',
+        'Required parameter requestParameters.uploadId was null or undefined when calling workspaceFileServiceAbortWorkspaceFileUpload.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}/upload/{uploadId}`
+          .replace(
+            `{${'workspaceId'}}`,
+            encodeURIComponent(String(requestParameters.workspaceId))
+          )
+          .replace(
+            `{${'path'}}`,
+            encodeURIComponent(String(requestParameters.path))
+          )
+          .replace(
+            `{${'uploadId'}}`,
+            encodeURIComponent(String(requestParameters.uploadId))
+          ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusAbortWorkspaceFileUploadReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint aborts a multipart upload for a file in a workspace
+   * Abort a multipart upload for a file in a workspace
+   */
+  async workspaceFileServiceAbortWorkspaceFileUpload(
+    requestParameters: WorkspaceFileServiceAbortWorkspaceFileUploadRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusAbortWorkspaceFileUploadReply> {
+    const response = await this.workspaceFileServiceAbortWorkspaceFileUploadRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint completes a multipart upload for a file in a workspace
+   * Complete a multipart upload for a file in a workspace
+   */
+  async workspaceFileServiceCompleteWorkspaceFileUploadRaw(
+    requestParameters: WorkspaceFileServiceCompleteWorkspaceFileUploadRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusCompleteWorkspaceFileUploadReply>> {
+    if (
+      requestParameters.workspaceId === null ||
+      requestParameters.workspaceId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'workspaceId',
+        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceFileServiceCompleteWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.path === null ||
+      requestParameters.path === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'path',
+        'Required parameter requestParameters.path was null or undefined when calling workspaceFileServiceCompleteWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.uploadId === null ||
+      requestParameters.uploadId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'uploadId',
+        'Required parameter requestParameters.uploadId was null or undefined when calling workspaceFileServiceCompleteWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.parts === null ||
+      requestParameters.parts === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'parts',
+        'Required parameter requestParameters.parts was null or undefined when calling workspaceFileServiceCompleteWorkspaceFileUpload.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}/upload/{uploadId}/complete`
+          .replace(
+            `{${'workspaceId'}}`,
+            encodeURIComponent(String(requestParameters.workspaceId))
+          )
+          .replace(
+            `{${'path'}}`,
+            encodeURIComponent(String(requestParameters.path))
+          )
+          .replace(
+            `{${'uploadId'}}`,
+            encodeURIComponent(String(requestParameters.uploadId))
+          ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: requestParameters.parts.map(ChorusWorkspaceFilePartToJSON)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusCompleteWorkspaceFileUploadReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint completes a multipart upload for a file in a workspace
+   * Complete a multipart upload for a file in a workspace
+   */
+  async workspaceFileServiceCompleteWorkspaceFileUpload(
+    requestParameters: WorkspaceFileServiceCompleteWorkspaceFileUploadRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusCompleteWorkspaceFileUploadReply> {
+    const response =
+      await this.workspaceFileServiceCompleteWorkspaceFileUploadRaw(
+        requestParameters,
+        initOverrides
+      )
+    return await response.value()
+  }
+
   /**
    * This endpoint creates a file in a workspace at the specified path
    * Create a file in a workspace
@@ -293,6 +526,95 @@ export class WorkspaceFileServiceApi extends runtime.BaseAPI {
   }
 
   /**
+   * This endpoint initiates a multipart upload for a file in a workspace
+   * Initiate a multipart upload for a file in a workspace
+   */
+  async workspaceFileServiceInitiateWorkspaceFileUploadRaw(
+    requestParameters: WorkspaceFileServiceInitiateWorkspaceFileUploadRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusInitiateWorkspaceFileUploadReply>> {
+    if (
+      requestParameters.workspaceId === null ||
+      requestParameters.workspaceId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'workspaceId',
+        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceFileServiceInitiateWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.path === null ||
+      requestParameters.path === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'path',
+        'Required parameter requestParameters.path was null or undefined when calling workspaceFileServiceInitiateWorkspaceFileUpload.'
+      )
+    }
+
+    if (
+      requestParameters.file === null ||
+      requestParameters.file === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'file',
+        'Required parameter requestParameters.file was null or undefined when calling workspaceFileServiceInitiateWorkspaceFileUpload.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}/upload`
+          .replace(
+            `{${'workspaceId'}}`,
+            encodeURIComponent(String(requestParameters.workspaceId))
+          )
+          .replace(
+            `{${'path'}}`,
+            encodeURIComponent(String(requestParameters.path))
+          ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ChorusWorkspaceFileToJSON(requestParameters.file)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusInitiateWorkspaceFileUploadReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint initiates a multipart upload for a file in a workspace
+   * Initiate a multipart upload for a file in a workspace
+   */
+  async workspaceFileServiceInitiateWorkspaceFileUpload(
+    requestParameters: WorkspaceFileServiceInitiateWorkspaceFileUploadRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusInitiateWorkspaceFileUploadReply> {
+    const response =
+      await this.workspaceFileServiceInitiateWorkspaceFileUploadRaw(
+        requestParameters,
+        initOverrides
+      )
+    return await response.value()
+  }
+
+  /**
    * This endpoint lists all files at given path within a workspace
    * List files in a workspace at a specified path
    */
@@ -449,6 +771,108 @@ export class WorkspaceFileServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusUpdateWorkspaceFileReply> {
     const response = await this.workspaceFileServiceUpdateWorkspaceFileRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint uploads a part of a file in a workspace
+   * Upload a part of a file in a workspace
+   */
+  async workspaceFileServiceUploadWorkspaceFilePartRaw(
+    requestParameters: WorkspaceFileServiceUploadWorkspaceFilePartRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusUploadWorkspaceFilePartReply>> {
+    if (
+      requestParameters.workspaceId === null ||
+      requestParameters.workspaceId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'workspaceId',
+        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceFileServiceUploadWorkspaceFilePart.'
+      )
+    }
+
+    if (
+      requestParameters.path === null ||
+      requestParameters.path === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'path',
+        'Required parameter requestParameters.path was null or undefined when calling workspaceFileServiceUploadWorkspaceFilePart.'
+      )
+    }
+
+    if (
+      requestParameters.uploadId === null ||
+      requestParameters.uploadId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'uploadId',
+        'Required parameter requestParameters.uploadId was null or undefined when calling workspaceFileServiceUploadWorkspaceFilePart.'
+      )
+    }
+
+    if (
+      requestParameters.part === null ||
+      requestParameters.part === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'part',
+        'Required parameter requestParameters.part was null or undefined when calling workspaceFileServiceUploadWorkspaceFilePart.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{workspaceId}/file/{path}/upload/{uploadId}`
+          .replace(
+            `{${'workspaceId'}}`,
+            encodeURIComponent(String(requestParameters.workspaceId))
+          )
+          .replace(
+            `{${'path'}}`,
+            encodeURIComponent(String(requestParameters.path))
+          )
+          .replace(
+            `{${'uploadId'}}`,
+            encodeURIComponent(String(requestParameters.uploadId))
+          ),
+        method: 'PUT',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ChorusWorkspaceFilePartToJSON(requestParameters.part)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusUploadWorkspaceFilePartReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint uploads a part of a file in a workspace
+   * Upload a part of a file in a workspace
+   */
+  async workspaceFileServiceUploadWorkspaceFilePart(
+    requestParameters: WorkspaceFileServiceUploadWorkspaceFilePartRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusUploadWorkspaceFilePartReply> {
+    const response = await this.workspaceFileServiceUploadWorkspaceFilePartRaw(
       requestParameters,
       initOverrides
     )

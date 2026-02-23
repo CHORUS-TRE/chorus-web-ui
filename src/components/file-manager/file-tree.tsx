@@ -4,6 +4,7 @@ import {
   Archive,
   ChevronDown,
   ChevronRight,
+  Download,
   File,
   FileAudio,
   FileCode,
@@ -96,6 +97,8 @@ interface FileTreeProps {
   onMoveItem: (itemId: string, newParentId: string) => void
   getChildren: (parentId: string | null) => FileSystemItem[]
   onExpandFolder?: (folderId: string) => void
+  onDownload: (itemId: string) => void
+  basketItems?: string[]
 }
 
 interface TreeNodeProps extends FileTreeProps {
@@ -151,7 +154,7 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
     <div>
       <div
         className={cn(
-          'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-accent',
+          'group flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium text-muted text-muted-foreground hover:text-accent',
           isSelected && 'text-accent',
           isCurrent && ''
         )}
@@ -163,7 +166,7 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
         onDrop={handleDrop}
       >
         <div
-          className="flex h-4 w-4 items-center justify-center"
+          className="flex h-4 w-4 items-center justify-center text-muted-foreground"
           onClick={handleToggle}
         >
           {item.type === 'folder' &&
@@ -189,6 +192,23 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
             })()
           )}
           <span className="truncate">{item.name}</span>
+          {item.type !== 'folder' && (
+            <button
+              className={cn(
+                'ml-auto transition-opacity hover:text-accent group-hover:opacity-100',
+                props.basketItems?.includes(item.id)
+                  ? 'text-accent opacity-100'
+                  : 'opacity-0'
+              )}
+              onClick={(e) => {
+                e.stopPropagation()
+                props.onDownload(item.id)
+              }}
+              title="Add to basket"
+            >
+              <Download className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
       {isExpanded && (

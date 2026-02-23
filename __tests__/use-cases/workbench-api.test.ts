@@ -161,7 +161,7 @@ describe('WorkbenchUseCases', () => {
       Promise.resolve({
         json: () =>
           Promise.resolve({
-            result: { workbenchs: [MOCK_API_RESPONSE] }
+            result: { workbenches: [MOCK_API_RESPONSE] }
           }),
         status: 200,
         ok: true
@@ -176,9 +176,9 @@ describe('WorkbenchUseCases', () => {
     const response = await useCase.execute()
     expect(response.error).toBeUndefined()
 
-    const workbenchs = response.data
-    expect(workbenchs).toBeDefined()
-    expect(workbenchs).toMatchObject([MOCK_WORKBENCH_RESULT])
+    const workbenches = response.data
+    expect(workbenches).toBeDefined()
+    expect(workbenches).toMatchObject([MOCK_WORKBENCH_RESULT])
   })
 })
 
@@ -213,7 +213,7 @@ describe('WorkbenchDataSourceImpl', () => {
 
       // Verify that correct path and method are used
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0]
-      expect(url).toContain('/workbenchs')
+      expect(url).toContain('/workbenches')
       expect(options.method).toBe('POST')
     })
 
@@ -256,7 +256,7 @@ describe('WorkbenchDataSourceImpl', () => {
 
       // Verify that correct path and method are used
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0]
-      expect(url).toContain('/workbenchs/1')
+      expect(url).toContain('/workbenches/1')
       // Check if method is GET or undefined (default is GET)
       const getMethod = options?.method || 'GET'
       expect(getMethod).toBe('GET')
@@ -299,7 +299,7 @@ describe('WorkbenchDataSourceImpl', () => {
 
       // Verify that correct path and method are used
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0]
-      expect(url).toContain('/workbenchs/1')
+      expect(url).toContain('/workbenches/1')
       expect(options.method).toBe('DELETE')
     })
 
@@ -326,7 +326,7 @@ describe('WorkbenchDataSourceImpl', () => {
         Promise.resolve({
           json: () =>
             Promise.resolve({
-              result: { workbenchs: [MOCK_API_RESPONSE] }
+              result: { workbenches: [MOCK_API_RESPONSE] }
             }),
           status: 200,
           ok: true
@@ -335,12 +335,12 @@ describe('WorkbenchDataSourceImpl', () => {
 
       const result = await dataSource.list()
 
-      expect(result).toEqual({ result: { workbenchs: [MOCK_API_RESPONSE] } })
+      expect(result).toEqual({ result: { workbenches: [MOCK_API_RESPONSE] } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0]
-      expect(url).toContain('/workbenchs')
+      expect(url).toContain('/workbenches')
       // Check if method is GET or undefined (default is GET)
       const getMethod = options?.method || 'GET'
       expect(getMethod).toBe('GET')
@@ -405,12 +405,12 @@ describe('WorkbenchDataSourceImpl', () => {
       // Verify update request
       const [updateUrl, updateOptions] = (global.fetch as jest.Mock).mock
         .calls[0]
-      expect(updateUrl).toContain('/workbenchs')
+      expect(updateUrl).toContain('/workbenches')
       expect(updateOptions.method).toBe('PUT')
 
       // Verify get request
       const [getUrl, getOptions] = (global.fetch as jest.Mock).mock.calls[1]
-      expect(getUrl).toContain('/workbenchs/1')
+      expect(getUrl).toContain('/workbenches/1')
       // Check if method is GET or undefined (default is GET)
       const getMethod = getOptions?.method || 'GET'
       expect(getMethod).toBe('GET')

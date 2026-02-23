@@ -17,7 +17,8 @@ interface AuthenticationDataSource {
   handleOAuthRedirect: (
     data: AuthenticationOAuthRedirectRequest
   ) => Promise<string>
-  logout: () => Promise<void>
+  logout: () => Promise<string | undefined>
+  refreshToken: () => Promise<string>
 }
 
 export type { AuthenticationDataSource }
@@ -143,13 +144,38 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
     }
   }
 
-  async logout(): Promise<void> {
-    const response = await this.service.authenticationServiceLogout({
-      body: {}
-    })
+  async logout(): Promise<string | undefined> {
+    try {
+      const response = await this.service.authenticationServiceLogout({
+        body: {}
+      })
 
-    if (!response) {
-      throw new Error('Failed to logout')
+      if (!response) {
+        throw new Error('Failed to logout')
+      }
+
+      return response.redirectURL
+    } catch (error) {
+      console.error('Error logging out:', error)
+      throw error
+    }
+  }
+
+  async refreshToken(): Promise<string> {
+    try {
+      const response = await this.service.authenticationServiceRefreshToken({
+        body: {}
+      })
+
+      const token = response.result?.token
+      if (!token) {
+        throw new Error('Failed to refresh token')
+      }
+
+      return token
+    } catch (error) {
+      console.error('Error refreshing token:', error)
+      throw error
     }
   }
 }

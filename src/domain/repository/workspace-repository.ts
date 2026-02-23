@@ -12,7 +12,7 @@ export interface WorkspaceRepository {
   update: (workspace: WorkspaceUpdatetype) => Promise<Result<Workspace>>
   delete: (id: string) => Promise<Result<string>>
   get: (id: string) => Promise<Result<Workspace>>
-  manageUserRole: (
+  addUserRole: (
     workspaceId: string,
     userId: string,
     roleName: string

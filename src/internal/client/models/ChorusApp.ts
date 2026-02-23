@@ -132,7 +132,25 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
+  kioskConfigJWTURL?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  kioskConfigJWTOIDCClientID?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
   iconURL?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  iconBackgroundColor?: string
   /**
    *
    * @type {Date}
@@ -198,7 +216,16 @@ export function ChorusAppFromJSONTyped(
     kioskConfigURL: !exists(json, 'kioskConfigURL')
       ? undefined
       : json['kioskConfigURL'],
+    kioskConfigJWTURL: !exists(json, 'kioskConfigJWTURL')
+      ? undefined
+      : json['kioskConfigJWTURL'],
+    kioskConfigJWTOIDCClientID: !exists(json, 'kioskConfigJWTOIDCClientID')
+      ? undefined
+      : json['kioskConfigJWTOIDCClientID'],
     iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
+    iconBackgroundColor: !exists(json, 'iconBackgroundColor')
+      ? undefined
+      : json['iconBackgroundColor'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -234,7 +261,10 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     maxEphemeralStorage: value.maxEphemeralStorage,
     minEphemeralStorage: value.minEphemeralStorage,
     kioskConfigURL: value.kioskConfigURL,
+    kioskConfigJWTURL: value.kioskConfigJWTURL,
+    kioskConfigJWTOIDCClientID: value.kioskConfigJWTOIDCClientID,
     iconURL: value.iconURL,
+    iconBackgroundColor: value.iconBackgroundColor,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:

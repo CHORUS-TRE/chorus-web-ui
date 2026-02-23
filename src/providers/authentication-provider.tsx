@@ -17,8 +17,6 @@ import { login, logout } from '@/view-model/authentication-view-model'
 import { userMe } from '@/view-model/user-view-model'
 import { workspaceList } from '@/view-model/workspace-view-model'
 
-import { useAppState } from './app-state-provider'
-
 type AuthContextType = {
   user: User | undefined
   refreshUser: () => Promise<void>
@@ -43,16 +41,17 @@ export const AuthenticationProvider = ({
   const [user, setUser] = useState<User>()
   const [isLoading, setIsLoading] = useState(true)
   const refreshInterval = useRef<NodeJS.Timeout | undefined>(undefined)
-  const { setBackground } = useAppState()
 
   const handleLogout = useCallback(async () => {
     if (user) {
       await logout()
+      setTimeout(() => {
+        setUser(undefined)
+      }, 300)
     }
     setIsLoading(false)
-    setBackground(undefined)
-    setUser(undefined)
-  }, [setBackground, user])
+    // Note: IframeCacheProvider automatically clears cache when user becomes undefined
+  }, [user])
 
   const refreshUser = useCallback(async () => {
     try {
@@ -69,14 +68,24 @@ export const AuthenticationProvider = ({
         nextUser = { ...nextUser, workspaceId: isMain.id }
       }
 
-      setUser(nextUser)
+      // Only update state if user data actually changed,
+      // to avoid unnecessary re-renders that cascade into form resets
+      setUser((prev) => {
+        if (prev && JSON.stringify(prev) === JSON.stringify(nextUser)) {
+          return prev
+        }
+        return nextUser
+      })
 
       setIsLoading(false)
     } catch (error) {
       console.error(error)
-      handleLogout()
+      if (user) {
+        handleLogout()
+      }
+      setIsLoading(false)
     }
-  }, [setUser, handleLogout])
+  }, [user, handleLogout])
 
   useEffect(() => {
     if (!user) {

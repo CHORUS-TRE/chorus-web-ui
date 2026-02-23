@@ -1,18 +1,26 @@
 import {
   WorkspaceFileCreateType,
+  WorkspaceFilePart,
   WorkspaceFileUpdateType
 } from '~/domain/model'
 import {
+  ChorusAbortWorkspaceFileUploadReply,
+  ChorusCompleteWorkspaceFileUploadReply,
   ChorusCreateWorkspaceFileReply,
   ChorusDeleteWorkspaceFileReply,
   ChorusGetWorkspaceFileReply,
+  ChorusInitiateWorkspaceFileUploadReply,
   ChorusListWorkspaceFilesReply,
   ChorusUpdateWorkspaceFileReply,
+  ChorusUploadWorkspaceFilePartReply,
   Configuration,
   WorkspaceFileServiceApi
 } from '~/internal/client'
 
-import { toChorusWorkspaceFile } from './workspace-file-mapper'
+import {
+  toChorusWorkspaceFile,
+  toChorusWorkspaceFilePart
+} from './workspace-file-mapper'
 
 interface WorkspaceFileDataSource {
   create: (
@@ -36,6 +44,28 @@ interface WorkspaceFileDataSource {
     workspaceId: string,
     path: string
   ) => Promise<ChorusDeleteWorkspaceFileReply>
+  initUpload: (
+    workspaceId: string,
+    path: string,
+    file: WorkspaceFileCreateType
+  ) => Promise<ChorusInitiateWorkspaceFileUploadReply>
+  uploadPart: (
+    workspaceId: string,
+    path: string,
+    uploadId: string,
+    part: WorkspaceFilePart
+  ) => Promise<ChorusUploadWorkspaceFilePartReply>
+  completeUpload: (
+    workspaceId: string,
+    path: string,
+    uploadId: string,
+    parts: WorkspaceFilePart[]
+  ) => Promise<ChorusCompleteWorkspaceFileUploadReply>
+  abortUpload: (
+    workspaceId: string,
+    path: string,
+    uploadId: string
+  ) => Promise<ChorusAbortWorkspaceFileUploadReply>
 }
 
 export type { WorkspaceFileDataSource }
@@ -99,6 +129,59 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     return this.service.workspaceFileServiceDeleteWorkspaceFile({
       workspaceId,
       path
+    })
+  }
+
+  initUpload(
+    workspaceId: string,
+    path: string,
+    file: WorkspaceFileCreateType
+  ): Promise<ChorusInitiateWorkspaceFileUploadReply> {
+    return this.service.workspaceFileServiceInitiateWorkspaceFileUpload({
+      workspaceId,
+      path,
+      file
+    })
+  }
+
+  uploadPart(
+    workspaceId: string,
+    path: string,
+    uploadId: string,
+    part: WorkspaceFilePart
+  ): Promise<ChorusUploadWorkspaceFilePartReply> {
+    const chorusPart = toChorusWorkspaceFilePart(part)
+    return this.service.workspaceFileServiceUploadWorkspaceFilePart({
+      workspaceId,
+      path,
+      uploadId,
+      part: chorusPart
+    })
+  }
+
+  completeUpload(
+    workspaceId: string,
+    path: string,
+    uploadId: string,
+    parts: WorkspaceFilePart[]
+  ): Promise<ChorusCompleteWorkspaceFileUploadReply> {
+    return this.service.workspaceFileServiceCompleteWorkspaceFileUpload({
+      workspaceId,
+      path,
+      uploadId,
+      parts: parts.map(toChorusWorkspaceFilePart)
+    })
+  }
+
+  abortUpload(
+    workspaceId: string,
+    path: string,
+    uploadId: string
+  ): Promise<ChorusAbortWorkspaceFileUploadReply> {
+    return this.service.workspaceFileServiceAbortWorkspaceFileUpload({
+      workspaceId,
+      path,
+      uploadId
     })
   }
 }

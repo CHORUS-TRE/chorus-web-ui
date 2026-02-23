@@ -1,30 +1,30 @@
 'use client'
 
 import {
+  Building2,
+  CircleHelp,
   Database,
   GaugeCircle,
-  HelpCircle,
-  Home,
+  Globe,
   LaptopMinimal,
   Package,
-  Settings,
   Store
 } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { Link } from '@/components/link'
+import { Separator } from '@/components/ui/separator'
+import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
-import { useAppState } from '~/providers/app-state-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { useInstanceConfig } from '~/hooks/use-instance-config'
+import { useIframeCache } from '~/providers/iframe-cache-provider'
 
-interface LeftSidebarProps {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  isHovered: boolean
-  onHoverStart: () => void
-  onHoverEnd: () => void
-}
+import { Button } from './button'
 
+// All navigation items (for external use like mobile nav, page titles)
+// TODO: make it dynamic based on the instance config
 export const navItems = [
   {
     label: 'Dashboard',
@@ -33,24 +33,19 @@ export const navItems = [
     exact: true
   },
   {
-    label: 'My Workspace',
-    icon: Home,
-    href: '/workspaces'
-  },
-  {
     label: 'Workspaces',
     icon: Package,
     href: '/workspaces'
   },
   {
-    label: 'Sessions',
-    icon: LaptopMinimal,
-    href: '#' // Note: This route might need adjustment based on actual routing
+    label: 'Centers',
+    icon: Building2,
+    href: '/workspaces'
   },
   {
-    label: 'Data',
-    icon: Database,
-    href: '/data'
+    label: 'Sessions',
+    icon: LaptopMinimal,
+    href: '/sessions'
   },
   {
     label: 'App Store',
@@ -58,101 +53,207 @@ export const navItems = [
     href: '/app-store'
   },
   {
-    label: 'Settings',
-    icon: Settings,
-    href: '/admin'
-  },
-  {
-    label: 'Session 234',
-    icon: Settings,
-    href: '/workspaces/195/sessions/234'
-  },
-  {
-    label: 'Help',
-    icon: HelpCircle,
-    href: '#'
+    label: 'Services',
+    icon: Globe,
+    href: '/app-store?tab=services'
   }
 ]
 
-export function LeftSidebar({
-  isOpen,
-  setIsOpen,
-  isHovered,
-  onHoverStart,
-  onHoverEnd
-}: LeftSidebarProps) {
-  const pathname = usePathname()
-  const { showRightSidebar, toggleRightSidebar } = useAppState()
+/**
+ * Shared sidebar content - used by both floating and fixed sidebars
+ */
+function SidebarContent({
+  pathname,
+  searchParams
+}: {
+  pathname: string
+  searchParams: URLSearchParams
+}) {
+  const router = useRouter()
+  const { isAdmin } = useAuthorization()
+  const currentTab = searchParams.get('tab')
+  const instanceConfig = useInstanceConfig()
+  const { externalWebApps } = useIframeCache()
+
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href
+    if (href.includes('?')) {
+      const basePath = href.split('?')[0]
+      return pathname === basePath || pathname.startsWith(basePath + '/')
+    }
+    return pathname === href || pathname.startsWith(href + '/')
+  }
+
+  const isSessionPage = isSessionPath(pathname)
+
   return (
     <>
-      {/* Floating sidebar when hovering and closed */}
-      {!isOpen && isHovered && (
-        <div
-          className="fixed left-0 top-[110px] z-40 h-[calc(100vh-110px)] w-80 duration-300 animate-in slide-in-from-left"
-          onMouseEnter={onHoverStart}
-          onMouseLeave={onHoverEnd}
-        >
-          <div className="glass-surface flex h-full flex-col gap-2 rounded-r-2xl border border-muted/40 p-4 shadow-2xl">
-            <nav className="flex flex-col gap-1">
-              {navItems.map((item) => {
-                const isActive = item.exact
-                  ? pathname === item.href
-                  : pathname.startsWith(item.href)
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    variant="underline"
-                    className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                      isActive
-                        ? 'bg-accent/20 text-accent'
-                        : 'text-muted-foreground'
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                )
-              })}
-            </nav>
-          </div>
-        </div>
-      )}
-
-      {/* Regular sidebar when open - slides in/out */}
-      <div
-        className={cn(
-          'glass-surface flex h-full flex-col gap-2 rounded-2xl border border-muted/40 p-4 transition-transform duration-300 ease-in-out',
-          !isOpen && !isHovered ? '-translate-x-full' : 'translate-x-0'
-        )}
-      >
-        <nav className="flex flex-col gap-1">
-          {navItems.map((item) => {
-            const isActive = item.exact
-              ? pathname === item.href
-              : pathname.startsWith(item.href)
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                variant="underline"
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                  isActive
-                    ? 'bg-accent/20 text-accent'
-                    : 'text-muted-foreground'
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            )
-          })}
-        </nav>
+      {/* Header with title */}
+      <div className="sticky top-0 z-[100] flex h-11 items-center border-b border-muted/50 px-2">
+        <span className="px-4 text-xs font-semibold uppercase text-muted-foreground/70">
+          Navigation
+        </span>
       </div>
+
+      {/* Main navigation */}
+      <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
+        {/* Dashboard */}
+        <Link
+          href="/"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/', true)
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <GaugeCircle className="h-4 w-4" />
+          Dashboard
+        </Link>
+
+        {/* Workspaces */}
+        <Link
+          href="/workspaces"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/workspaces')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Package className="h-3.5 w-3.5" />
+          Workspaces
+        </Link>
+
+        {/* Sessions */}
+        <Link
+          href="/sessions"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/sessions')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <LaptopMinimal className="h-4 w-4" />
+          Sessions
+        </Link>
+
+        {/* Data */}
+        <Link
+          href="/data"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/data')
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Database className="h-4 w-4" />
+          Data
+        </Link>
+
+        {/* App Store */}
+        <Link
+          href="/app-store"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            isActive('/app-store') && currentTab !== 'services'
+              ? 'bg-primary/20 text-primary'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Store className="h-4 w-4" />
+          App Store
+        </Link>
+
+        {instanceConfig.sidebarWebapps.length > 0 && (
+          <>
+            <Separator className="my-2" />
+            <div className="sticky top-0 z-[100] flex h-11 items-center px-2">
+              <span className="text-xs font-semibold uppercase text-muted-foreground/70">
+                Links
+              </span>
+            </div>
+          </>
+        )}
+
+        {instanceConfig.sidebarWebapps.map((webappId) => {
+          const webapp = externalWebApps.find((w) => w.id === webappId)
+          if (!webapp) return null
+
+          const href = `/sessions/${webapp.id}`
+          const isLinkActive = isActive(href)
+
+          return (
+            <Link
+              key={webapp.id}
+              href={href}
+              variant="underline"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                isLinkActive
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-muted-foreground'
+              )}
+            >
+              {webapp.iconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={webapp.iconUrl}
+                  alt=""
+                  className="h-4 w-4 object-contain"
+                />
+              ) : (
+                <CircleHelp className="h-4 w-4" />
+              )}
+              {webapp.name}
+            </Link>
+          )
+        })}
+
+        <div className="flex-1" />
+
+        {/* Admin */}
+        {isAdmin && (
+          <>
+            <Separator />
+            <Link
+              href="/admin"
+              variant="underline"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                pathname.includes('/admin') || isActive('/admin')
+                  ? 'bg-primary/20 text-primary'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Globe className="h-4 w-4" />
+              Admin
+            </Link>
+          </>
+        )}
+      </nav>
     </>
+  )
+}
+
+export function LeftSidebar() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  return (
+    <div
+      className={cn(
+        'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
+      )}
+    >
+      <SidebarContent pathname={pathname} searchParams={searchParams} />
+    </div>
   )
 }

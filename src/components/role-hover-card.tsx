@@ -17,7 +17,7 @@ import {
   getPermissionDescription,
   getRoleDescription,
   getRolePermissions
-} from '~/utils/schema-roles'
+} from '~/config/permissions'
 
 export function RoleHoverCard({
   roleName,

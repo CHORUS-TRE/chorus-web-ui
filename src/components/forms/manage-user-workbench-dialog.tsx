@@ -3,7 +3,9 @@
 import { Plus, Trash2, UserPlus } from 'lucide-react'
 import { startTransition, useActionState } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { z } from 'zod'
 
+import { deleteUserRole } from '@/view-model/user-view-model'
 import { workbenchAddUserRole } from '@/view-model/workbench-view-model'
 import { Button } from '~/components/button'
 import {
@@ -29,29 +31,33 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
+import { getWorkbenchRoles } from '~/config/permissions'
 import { Result } from '~/domain/model'
-import type { Role, User } from '~/domain/model/user'
-import { useAppState } from '~/providers/app-state-provider'
-import { getWorkbenchRoles } from '~/utils/schema-roles'
+import { Role, User } from '~/domain/model/user'
+import { useAppState } from '~/stores/app-state-store'
 
 import { toast } from '../hooks/use-toast'
 
-// Removed unused AddUserToWorkbenchSchema (validation handled server-side)
+const AddUserToWorkbenchSchema = z.object({
+  userId: z.string().min(1, 'Please select a user'),
+  roleName: z.string().min(1, 'Please select a role'),
+  workbenchId: z.string().min(1, 'Please select a workbench')
+})
 
-// Removed unused AddUserFormData type
+type AddUserFormData = z.infer<typeof AddUserToWorkbenchSchema>
 
 export function ManageUserWorkbenchDialog({
-  userId,
+  user,
   workspaceId,
   onUserAdded,
   children
 }: {
-  userId?: string
+  user?: User
   workspaceId: string
   onUserAdded: () => void
   children?: React.ReactNode
 }) {
-  const { users, workbenches } = useAppState()
+  const { workbenches } = useAppState()
 
   const [open, setOpen] = useState(false)
   const [isRemoving, setIsRemoving] = useState<string | null>(null)
@@ -59,9 +65,8 @@ export function ManageUserWorkbenchDialog({
   const [selectedWorkbench, setSelectedWorkbench] = useState<string>('')
 
   // Get the current user and their workbench roles
-  const currentUser = useMemo(() => {
-    return users?.find((user) => user.id === userId)
-  }, [users, userId])
+  const currentUser = user
+  const userId = user?.id
 
   // Get user's workbench roles for this workspace
   const currentWorkbenchRoles = useMemo(() => {
@@ -94,19 +99,28 @@ export function ManageUserWorkbenchDialog({
   // Handle remove role action
   const handleRemoveRole = useCallback(
     async (role: Role) => {
-      if (!role.context.workbench) return
+      if (!role.id || !userId) return
 
       setIsRemoving(role.id)
-      // TODO: Implement remove role API call
-      toast({
-        title: 'Role Removed',
-        description: `Removed ${role.name} from workbench.`,
-        variant: 'default'
-      })
+      const result = await deleteUserRole(userId, role.id)
+
+      if (result.error) {
+        toast({
+          title: 'Error removing role',
+          description: result.error,
+          variant: 'destructive'
+        })
+      } else {
+        toast({
+          title: 'Role Removed',
+          description: `Removed ${role.name} from workbench.`,
+          variant: 'default'
+        })
+        onUserAdded()
+      }
       setIsRemoving(null)
-      onUserAdded()
     },
-    [onUserAdded]
+    [userId, onUserAdded]
   )
 
   // Handle add role action
@@ -172,7 +186,7 @@ export function ManageUserWorkbenchDialog({
         {children ? (
           children
         ) : (
-          <Button variant="accent-filled">
+          <Button variant="accent-ring">
             <UserPlus className="mr-2 h-4 w-4" />
             Manage Workbench Roles
           </Button>

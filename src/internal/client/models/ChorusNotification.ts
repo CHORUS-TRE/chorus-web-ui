@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusNotificationContent } from './ChorusNotificationContent'
+import {
+  ChorusNotificationContentFromJSON,
+  ChorusNotificationContentFromJSONTyped,
+  ChorusNotificationContentToJSON
+} from './ChorusNotificationContent'
+
 /**
  *
  * @export
@@ -36,7 +43,19 @@ export interface ChorusNotification {
    * @type {string}
    * @memberof ChorusNotification
    */
+  userId?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusNotification
+   */
   message?: string
+  /**
+   *
+   * @type {ChorusNotificationContent}
+   * @memberof ChorusNotification
+   */
+  content?: ChorusNotificationContent
   /**
    *
    * @type {Date}
@@ -74,7 +93,11 @@ export function ChorusNotificationFromJSONTyped(
   return {
     id: !exists(json, 'id') ? undefined : json['id'],
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
+    userId: !exists(json, 'userId') ? undefined : json['userId'],
     message: !exists(json, 'message') ? undefined : json['message'],
+    content: !exists(json, 'content')
+      ? undefined
+      : ChorusNotificationContentFromJSON(json['content']),
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -94,7 +117,9 @@ export function ChorusNotificationToJSON(
   return {
     id: value.id,
     tenantId: value.tenantId,
+    userId: value.userId,
     message: value.message,
+    content: ChorusNotificationContentToJSON(value.content),
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     readAt: value.readAt === undefined ? undefined : value.readAt.toISOString()

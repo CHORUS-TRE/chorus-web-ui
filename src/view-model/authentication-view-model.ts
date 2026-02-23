@@ -1,5 +1,6 @@
 'use client'
 
+import router from 'next/router'
 import { env } from 'next-runtime-env'
 
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source'
@@ -9,8 +10,10 @@ import {
   AuthenticationGetOAuthUrl,
   AuthenticationLogin,
   AuthenticationLogout,
-  AuthenticationOAuthRedirect
+  AuthenticationOAuthRedirect,
+  AuthenticationRefreshToken
 } from '@/domain/use-cases'
+import { Analytics } from '@/lib/analytics/service'
 import {
   AuthenticationMode,
   AuthenticationOAuthRedirectRequest,
@@ -49,6 +52,8 @@ export async function login(
       error: 'Something went wrong, please try again'
     }
 
+  Analytics.Auth.loginSuccess()
+
   return {
     ...prevState,
     data: login.data
@@ -74,13 +79,33 @@ export async function logout() {
     const repository = await getRepository()
     const useCase = new AuthenticationLogout(repository)
 
+    Analytics.Auth.logout()
+
     const result = await useCase.execute()
 
     if (result.error) {
       console.error('Error during logout:', result.error)
+      return {
+        error: result.error
+      }
+    }
+
+    if (!result.data) {
+      router.push('/')
+    }
+
+    if (result.data) {
+      window.location.href = result.data
+    }
+
+    return {
+      data: result.data
     }
   } catch (error) {
     console.error('Error during logout:', error)
+    return {
+      error: 'Failed to logout'
+    }
   }
 }
 
@@ -112,11 +137,24 @@ export async function handleOAuthRedirect(
       return { error: 'No token received' }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
+    // TODO: Remove this after testing
+    // await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
 
     return response
   } catch (error) {
     console.error('Error handling OAuth redirect:', error)
     return { error: 'Failed to handle OAuth redirect' }
+  }
+}
+
+export async function refreshToken(): Promise<Result<string>> {
+  try {
+    const repository = await getRepository()
+    const useCase = new AuthenticationRefreshToken(repository)
+
+    return await useCase.execute()
+  } catch (error) {
+    console.error('Error refreshing token:', error)
+    return { error: 'Failed to refresh token' }
   }
 }

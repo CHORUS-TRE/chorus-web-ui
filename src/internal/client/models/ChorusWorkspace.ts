@@ -72,7 +72,7 @@ export interface ChorusWorkspace {
    * @type {Array<string>}
    * @memberof ChorusWorkspace
    */
-  appInsanceIds?: Array<string>
+  appInstanceIds?: Array<string>
   /**
    *
    * @type {Array<string>}
@@ -122,9 +122,9 @@ export function ChorusWorkspaceFromJSONTyped(
     description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
     isMain: !exists(json, 'isMain') ? undefined : json['isMain'],
-    appInsanceIds: !exists(json, 'appInsanceIds')
+    appInstanceIds: !exists(json, 'appInstanceIds')
       ? undefined
-      : json['appInsanceIds'],
+      : json['appInstanceIds'],
     appInstances: !exists(json, 'appInstances')
       ? undefined
       : json['appInstances'],
@@ -153,7 +153,7 @@ export function ChorusWorkspaceToJSON(value?: ChorusWorkspace | null): any {
     description: value.description,
     status: value.status,
     isMain: value.isMain,
-    appInsanceIds: value.appInsanceIds,
+    appInstanceIds: value.appInstanceIds,
     appInstances: value.appInstances,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),

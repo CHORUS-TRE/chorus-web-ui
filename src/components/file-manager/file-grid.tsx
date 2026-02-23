@@ -1,5 +1,6 @@
 import {
   Archive,
+  Download,
   File,
   FileText,
   Folder,
@@ -11,6 +12,7 @@ import {
 import type React from 'react'
 import { useState } from 'react'
 
+import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
 import {
   formatDate as formatDateUtil,
@@ -25,11 +27,13 @@ interface FileGridProps {
   onSelectItem: (itemId: string, multiSelect?: boolean) => void
   onNavigateToFolder: (folderId: string) => void
   onMoveItem: (itemId: string, newParentId: string) => void
+  onDownload: (itemId: string) => void
+  basketItems?: string[]
 }
 
 function getFileIcon(item: FileSystemItem) {
   if (item.type === 'folder') {
-    return <Folder className="h-5 w-5 text-gray-400" />
+    return <Folder className="h-4 w-4 text-muted-foreground" />
   }
 
   const ext = item.extension?.toLowerCase()
@@ -38,29 +42,29 @@ function getFileIcon(item: FileSystemItem) {
     case 'doc':
     case 'docx':
     case 'txt':
-      return <FileText className="h-5 w-5 text-blue-500" />
+      return <FileText className="h-4 w-4 text-blue-500" />
     case 'jpg':
     case 'jpeg':
     case 'png':
     case 'gif':
     case 'svg':
-      return <ImageIcon className="h-5 w-5 text-green-500" />
+      return <ImageIcon className="h-4 w-4 text-green-500" />
     case 'mp4':
     case 'avi':
     case 'mov':
-      return <Video className="h-5 w-5 text-purple-500" />
+      return <Video className="h-4 w-4 text-purple-500" />
     case 'mp3':
     case 'wav':
     case 'flac':
-      return <Music className="h-5 w-5 text-pink-500" />
+      return <Music className="h-4 w-4 text-pink-500" />
     case 'zip':
     case 'rar':
     case '7z':
-      return <Archive className="h-5 w-5 text-orange-500" />
+      return <Archive className="h-4 w-4 text-orange-500" />
     case 'drawio':
-      return <FileText className="h-5 w-5 text-orange-500" />
+      return <FileText className="h-4 w-4 text-orange-500" />
     default:
-      return <File className="h-5 w-5 text-muted-foreground" />
+      return <File className="h-4 w-4 text-muted-foreground" />
   }
 }
 
@@ -70,7 +74,9 @@ export function FileGrid({
   viewMode,
   onSelectItem,
   onNavigateToFolder,
-  onMoveItem
+  onMoveItem,
+  onDownload,
+  basketItems = []
 }: FileGridProps) {
   const [dragOverItem, setDragOverItem] = useState<string | null>(null)
 
@@ -115,7 +121,7 @@ export function FileGrid({
           <div
             key={item.id}
             className={cn(
-              'flex cursor-pointer flex-col items-center rounded-lg border border-muted/40 bg-background/60 p-3 transition-colors hover:bg-muted/50',
+              'group flex cursor-pointer flex-col items-center rounded-lg border border-muted/40 bg-background/60 p-3 transition-colors hover:bg-muted/50',
               selectedItems.includes(item.id) && 'border-accent bg-accent/10',
               dragOverItem === item.id && 'border-accent bg-accent/20'
             )}
@@ -126,7 +132,27 @@ export function FileGrid({
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, item)}
           >
-            <div className="mb-2">{getFileIcon(item)}</div>
+            <div className="relative mb-2">
+              {getFileIcon(item)}
+              {item.type !== 'folder' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    'absolute -right-1 -top-1 h-6 w-6 rounded-full bg-background/80 p-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100',
+                    basketItems.includes(item.id)
+                      ? 'bg-accent text-accent-foreground opacity-100'
+                      : 'opacity-0'
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDownload(item.id)
+                  }}
+                >
+                  <Download className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
             <span
               className="w-full truncate text-center text-sm"
               title={item.name}
@@ -143,9 +169,8 @@ export function FileGrid({
     <div className="overflow-auto">
       <div className="min-w-full">
         {/* Header */}
-        <div className="grid grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 text-sm font-medium">
+        <div className="grid grid-cols-12 gap-4 border-b border-muted/40 bg-background/60 p-4 text-sm font-medium text-muted-foreground">
           <div className="col-span-5">Name</div>
-          <div className="col-span-2">Owner</div>
           <div className="col-span-3">Last opened</div>
           <div className="col-span-2">File size</div>
         </div>
@@ -169,19 +194,28 @@ export function FileGrid({
             >
               <div className="col-span-5 flex min-w-0 items-center gap-3">
                 {getFileIcon(item)}
-                <span className="truncate">{item.name}</span>
+                <span className="truncate text-sm">{item.name}</span>
               </div>
-              <div className="text-sm/80 col-span-2 flex items-center">
-                {item.owner}
-              </div>
-              <div className="text-sm/80 col-span-3 flex items-center">
-                {formatDateUtil(item.modifiedAt.toISOString())}
-              </div>
-              <div className="text-sm/80 col-span-2 flex items-center justify-between">
+              <div className="col-span-3 flex items-center text-sm">{}</div>
+              <div className="col-span-2 flex items-center justify-between text-sm">
                 <span>{formatFileSizeUtil(item.size)}</span>
-                <button className="rounded p-1 hover:bg-muted">
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
+                {item.type !== 'folder' && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      'h-8 w-8 p-0',
+                      basketItems.includes(item.id) &&
+                        'bg-accent/20 text-accent'
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDownload(item.id)
+                    }}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </div>
           ))}

@@ -1,17 +1,18 @@
 'use client'
 
-import { CircleGauge, PanelLeftOpen } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { ChevronRight } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Header } from '@/components/header'
-import { Link } from '@/components/link'
+import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
-import { useAppState } from '@/providers/app-state-provider'
-import { Button } from '~/components/button'
+import { useFullscreenContext } from '@/providers/fullscreen-provider'
+import { useAppState } from '@/stores/app-state-store'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import GettingStartedCard from '~/components/getting-started-card'
-import { LeftSidebar, navItems } from '~/components/left-sidebar'
+import { LeftSidebar } from '~/components/left-sidebar'
 import RightSidebar from '~/components/right-sidebar'
 import { steps } from '~/lib/tours'
 
@@ -19,73 +20,134 @@ interface MainLayoutProps {
   children: React.ReactNode
 }
 
-export function AuthenticatedApp({ children }: MainLayoutProps) {
-  const { background, showRightSidebar } = useAppState()
-  const router = useRouter()
+function AuthenticatedAppContent({ children }: MainLayoutProps) {
+  const { showRightSidebar, showLeftSidebar } = useUserPreferences()
   const pathname = usePathname()
+  const { isFullscreen } = useFullscreenContext()
 
-  // Persist sidebar state in localStorage
-  const [leftSidebarOpen, setLeftSidebarOpen] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('leftSidebarOpen')
-      return saved !== null ? JSON.parse(saved) : true
+  const isSessionPage = useMemo(() => isSessionPath(pathname), [pathname])
+
+  // Left sidebar visibility for immersive mode (edge hover)
+  const [leftSidebarVisible, setLeftSidebarVisible] = useState(false)
+  const leftHideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Ref for content-main element to measure its position
+  const contentMainRef = useRef<HTMLDivElement>(null)
+  const setContentRect = useAppState((state) => state.setContentRect)
+
+  // Update content rect on resize
+  const updateContentRect = useCallback(() => {
+    if (contentMainRef.current) {
+      setContentRect(contentMainRef.current.getBoundingClientRect())
     }
-    return true
-  })
+  }, [setContentRect])
 
-  const [leftSidebarHovered, setLeftSidebarHovered] = React.useState(false)
-  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  // ResizeObserver to track content-main element size and position
+  useEffect(() => {
+    const element = contentMainRef.current
+    if (!element) return
 
-  // Save to localStorage when state changes
-  React.useEffect(() => {
-    localStorage.setItem('leftSidebarOpen', JSON.stringify(leftSidebarOpen))
-  }, [leftSidebarOpen])
+    // Initial measurement
+    updateContentRect()
 
-  const isSessionPage = useMemo(() => {
-    const sessionPageRegex = /^\/workspaces\/[^/]+\/sessions\/[^/]+$/
-    return sessionPageRegex.test(pathname)
-  }, [pathname])
+    // Observe resize
+    const resizeObserver = new ResizeObserver(() => {
+      updateContentRect()
+    })
+    resizeObserver.observe(element)
 
-  const handleHoverStart = () => {
-    if (!leftSidebarOpen) {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current)
-        hoverTimeoutRef.current = null
-      }
-      setLeftSidebarHovered(true)
+    // Also listen to window resize for position changes
+    window.addEventListener('resize', updateContentRect)
+
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', updateContentRect)
     }
-  }
+  }, [updateContentRect])
 
-  const handleHoverEnd = () => {
-    if (!leftSidebarOpen) {
-      hoverTimeoutRef.current = setTimeout(() => {
-        setLeftSidebarHovered(false)
-      }, 200)
-    }
-  }
-
-  const pageTitle = React.useMemo(() => {
-    const item = navItems.find((item) =>
-      item.exact ? pathname === item.href : pathname.startsWith(item.href)
-    )
-    return item?.label || 'Dashboard'
-  }, [pathname])
-
-  // Keyboard shortcut: Ctrl+B to toggle sidebar
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-        e.preventDefault()
-        setLeftSidebarOpen((prev: boolean) => !prev)
-      }
+  // Reset left sidebar visibility when leaving iframe page
+  useEffect(() => {
+    if (!isSessionPage) {
+      setLeftSidebarVisible(false)
+      if (leftHideTimeoutRef.current) clearTimeout(leftHideTimeoutRef.current)
     }
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      if (leftHideTimeoutRef.current) clearTimeout(leftHideTimeoutRef.current)
+    }
+  }, [isSessionPage, pathname])
+
+  // On first arrival to session page, briefly show the left sidebar then hide
+  useEffect(() => {
+    if (isSessionPage) {
+      setLeftSidebarVisible(true)
+      leftHideTimeoutRef.current = setTimeout(() => {
+        setLeftSidebarVisible(false)
+      }, 2000)
+    }
   }, [])
 
+  // Left sidebar controls (edge hover)
+  const showLeftSidebarHandler = useCallback(() => {
+    if (leftHideTimeoutRef.current) {
+      clearTimeout(leftHideTimeoutRef.current)
+      leftHideTimeoutRef.current = null
+    }
+    setLeftSidebarVisible(true)
+  }, [])
+
+  const hideLeftSidebarHandler = useCallback(() => {
+    if (!isSessionPage) return
+    if (leftHideTimeoutRef.current) clearTimeout(leftHideTimeoutRef.current)
+    leftHideTimeoutRef.current = setTimeout(() => {
+      setLeftSidebarVisible(false)
+    }, 100) // 100ms delay before hiding
+  }, [isSessionPage])
+
+  // Right sidebar resizing
+  const [rightSidebarWidth, setRightSidebarWidth] = useState(320)
+  const [isResizing, setIsResizing] = useState(false)
+
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsResizing(true)
+  }, [])
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false)
+  }, [])
+
+  const resize = useCallback(
+    (e: MouseEvent) => {
+      if (isResizing) {
+        const newWidth = window.innerWidth - e.clientX
+        if (newWidth >= 200 && newWidth <= 800) {
+          setRightSidebarWidth(newWidth)
+        }
+      }
+    },
+    [isResizing]
+  )
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener('mousemove', resize)
+      window.addEventListener('mouseup', stopResizing)
+    } else {
+      window.removeEventListener('mousemove', resize)
+      window.removeEventListener('mouseup', stopResizing)
+    }
+    return () => {
+      window.removeEventListener('mousemove', resize)
+      window.removeEventListener('mouseup', stopResizing)
+    }
+  }, [isResizing, resize, stopResizing])
+
   return (
-    <>
+    <div
+      id="authenticated-app"
+      className={cn(isResizing && 'cursor-col-resize select-none')}
+    >
       <NextStepProvider>
         <NextStep
           steps={steps}
@@ -98,232 +160,160 @@ export function AuthenticatedApp({ children }: MainLayoutProps) {
             <Header />
           </div>
 
-          {background?.sessionId && (
-            <Link
-              href={`/workspaces/${background.workspaceId}/sessions/${background?.sessionId}`}
-              passHref
+          {/* Left edge trigger zone - shows left sidebar when hovered */}
+          {isSessionPage && !isFullscreen && (
+            <div
+              className="fixed left-0 top-11 z-30 flex h-[calc(100vh-44px)] items-center justify-center text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+              style={{ width: 15 }}
+              onMouseEnter={showLeftSidebarHandler}
             >
-              <div
-                className="fixed left-0 top-11 z-30 h-full w-full cursor-pointer bg-slate-700 bg-opacity-70 text-muted transition-all duration-300 hover:bg-opacity-10 hover:text-accent"
-                id="iframe-overlay "
-              />
-            </Link>
+              <ChevronRight className="h-5 w-5 text-accent" />
+            </div>
           )}
 
-          {/* Session page layout - full screen with sidebar overlay */}
-          {background?.sessionId && isSessionPage ? (
+          {/* Fixed sidebars for iframe pages - positioned at screen edges */}
+          {isSessionPage && !isFullscreen && (
             <>
-              {/* Content takes full screen */}
-              <div className="fixed inset-0 top-11 z-20">{children}</div>
-
-              {/* Left Sidebar - overlay on top */}
+              {/* Left Sidebar - fixed at left edge, controlled by edge hover */}
               <div
                 className={cn(
-                  'fixed left-4 top-16 z-50 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] overflow-hidden transition-all duration-300 ease-in-out',
-                  leftSidebarOpen ? 'block' : 'hidden'
+                  'fixed left-3 top-16 z-40 h-[calc(100vh-5rem)] w-[240px] overflow-hidden transition-transform duration-300 ease-in-out',
+                  leftSidebarVisible && showLeftSidebar
+                    ? 'translate-x-0'
+                    : 'pointer-events-none -translate-x-[calc(100%+12px)]'
                 )}
+                onMouseEnter={showLeftSidebarHandler}
+                onMouseLeave={hideLeftSidebarHandler}
               >
-                <LeftSidebar
-                  isOpen={leftSidebarOpen}
-                  setIsOpen={setLeftSidebarOpen}
-                  isHovered={false}
-                  onHoverStart={handleHoverStart}
-                  onHoverEnd={handleHoverEnd}
-                />
+                <LeftSidebar />
               </div>
 
-              {/* Sidebar toggle button - fixed position */}
-              <div className="fixed left-4 top-14 z-50">
-                <div
-                  className="relative"
-                  onMouseEnter={handleHoverStart}
-                  onMouseLeave={handleHoverEnd}
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-                    className="h-8 w-8 bg-background/80 backdrop-blur-sm"
-                  >
-                    <PanelLeftOpen
-                      className={`h-4 w-4 transition-transform duration-300 ${leftSidebarOpen ? 'rotate-180' : ''}`}
-                    />
-                  </Button>
-                  {/* Hover sidebar overlay - appears when sidebar is closed and button is hovered */}
-                  {!leftSidebarOpen && leftSidebarHovered && (
-                    <div className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[240px]">
-                      <div
-                        className="glass-surface flex max-h-[calc(100vh-12rem)] flex-col gap-2 overflow-hidden rounded-2xl border border-secondary p-4 shadow-2xl"
-                        onMouseEnter={handleHoverStart}
-                        onMouseLeave={handleHoverEnd}
-                      >
-                        <nav className="flex flex-col gap-1">
-                          {navItems.map((item) => {
-                            const isActive = item.exact
-                              ? pathname === item.href
-                              : pathname.startsWith(item.href)
-
-                            return (
-                              <Link
-                                key={item.href}
-                                href={item.href}
-                                variant="underline"
-                                className={cn(
-                                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                                  isActive
-                                    ? 'bg-accent/20 text-accent'
-                                    : 'text-muted-foreground'
-                                )}
-                                onClick={() => {
-                                  setLeftSidebarHovered(false)
-                                }}
-                              >
-                                <item.icon className="h-4 w-4" />
-                                {item.label}
-                              </Link>
-                            )
-                          })}
-                        </nav>
-                      </div>
-                    </div>
-                  )}
+              {/* Right Sidebar - fixed at right edge, controlled by header button only */}
+              <div
+                className={cn(
+                  'fixed right-4 top-16 z-30 h-[calc(100vh-5rem)] overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                  showRightSidebar
+                    ? 'translate-x-0 opacity-100'
+                    : 'pointer-events-none translate-x-full opacity-0',
+                  isResizing && 'duration-0'
+                )}
+                style={{ width: showRightSidebar ? rightSidebarWidth : 0 }}
+                id="right-sidebar-immersive"
+              >
+                {/* Resize Handle */}
+                {showRightSidebar && (
+                  <div
+                    className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
+                    onMouseDown={startResizing}
+                  />
+                )}
+                <div className="h-full w-full overflow-hidden">
+                  <RightSidebar />
                 </div>
               </div>
             </>
-          ) : (
-            <>
-              {/* Normal layout container with flexbox - sidebar and content side by side */}
-              <div className="fixed inset-0 top-12 z-30 p-4">
+          )}
+
+          {/* Main Layout Container - only for non-iframe pages */}
+          {!isSessionPage && (
+            <div className="fixed inset-0 top-12 z-30 p-4 transition-all duration-300 ease-in-out">
+              <div
+                className={cn(
+                  'flex h-full w-full',
+                  'flex-row',
+                  !isFullscreen
+                    ? 'xl:justify-start 2xl:justify-start'
+                    : 'xl:justify-center 2xl:justify-center'
+                )}
+              >
+                {/* Left Sidebar */}
                 <div
                   className={cn(
-                    'flex h-full w-full',
-                    'flex-row',
-                    // Desktop: center content if sidebar closed, otherwise align to left
-                    leftSidebarOpen
-                      ? 'xl:justify-start 2xl:justify-start'
-                      : 'xl:justify-center 2xl:justify-center'
+                    'h-[calc(100vh-2.75rem-1rem-16px)] flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out',
+                    !isFullscreen && showLeftSidebar
+                      ? 'mr-2 w-[240px] translate-x-0 opacity-100'
+                      : 'mr-0 w-0 -translate-x-full opacity-0'
                   )}
                 >
-                  {/* Left Sidebar - in flex flow */}
+                  <LeftSidebar />
+                </div>
+
+                {/* Content container */}
+                <div
+                  className={cn(
+                    'flex h-full items-start gap-2',
+                    'w-full',
+                    isFullscreen ? 'w-full' : 'xl:w-[80vw] 2xl:w-[80vw]'
+                  )}
+                >
+                  {/* Main Content */}
                   <div
+                    id="content"
                     className={cn(
-                      'mr-2 h-[calc(100vh-2.75rem-1rem-16px)] w-[240px] flex-shrink-0 overflow-hidden',
-                      leftSidebarOpen ? 'block' : 'hidden' // TODO: delay the sidebar hiding
+                      'relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
+                      showRightSidebar && !isFullscreen
+                        ? 'min-w-0 flex-1'
+                        : 'w-full'
                     )}
                   >
-                    <LeftSidebar
-                      isOpen={leftSidebarOpen}
-                      setIsOpen={setLeftSidebarOpen}
-                      isHovered={false}
-                      onHoverStart={handleHoverStart}
-                      onHoverEnd={handleHoverEnd}
-                    />
+                    <div
+                      id="content-main"
+                      ref={contentMainRef}
+                      className="flex-1 overflow-auto bg-contrast-background/50 px-8 py-4 backdrop-blur-md"
+                    >
+                      {children}
+                    </div>
                   </div>
 
-                  {/* Content container */}
+                  {/* Right Sidebar */}
                   <div
                     className={cn(
-                      'flex h-full items-start gap-2',
-                      // Mobile: content takes full width
-                      'w-full',
-                      // Desktop (>= xl): logic based on sidebar state
-                      leftSidebarOpen
-                        ? 'xl:min-w-[300px] xl:flex-1 2xl:w-[80vw] 2xl:flex-none'
-                        : 'xl:w-[80vw] 2xl:w-[80vw]'
+                      'relative h-full overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                      !isFullscreen && showRightSidebar
+                        ? 'flex-shrink-0 translate-x-0 opacity-100'
+                        : 'w-0 translate-x-full opacity-0',
+                      isResizing && 'duration-0'
                     )}
+                    style={{
+                      width:
+                        !isFullscreen && showRightSidebar
+                          ? rightSidebarWidth
+                          : 0
+                    }}
+                    id="right-sidebar"
                   >
-                    {/* Main Content */}
-                    <div
-                      id="content"
-                      className={cn(
-                        'glass-surface relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
-                        // Adjust width when right sidebar is visible
-                        showRightSidebar ? 'min-w-0 flex-1' : 'w-full'
-                      )}
-                    >
-                      <div className="glass-surface sticky top-0 z-[100] flex items-center gap-4 border-b border-muted/50 p-2">
-                        <div
-                          className="relative"
-                          onMouseEnter={handleHoverStart}
-                          onMouseLeave={handleHoverEnd}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-                            className="h-8 w-8"
-                          >
-                            <PanelLeftOpen
-                              className={`h-4 w-4 transition-transform duration-300 ${leftSidebarOpen ? 'rotate-180' : ''}`}
-                            />
-                          </Button>
-                          {/* Hover sidebar overlay - appears when sidebar is closed and button is hovered */}
-                          {!leftSidebarOpen && leftSidebarHovered && (
-                            <div className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[240px]">
-                              <div
-                                className="glass-surface flex max-h-[calc(100vh-12rem)] flex-col gap-2 overflow-hidden rounded-2xl border border-muted/40 p-4 shadow-2xl"
-                                onMouseEnter={handleHoverStart}
-                                onMouseLeave={handleHoverEnd}
-                              >
-                                <nav className="flex flex-col gap-1">
-                                  {navItems.map((item) => {
-                                    const isActive = item.exact
-                                      ? pathname === item.href
-                                      : pathname.startsWith(item.href)
-
-                                    return (
-                                      <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        variant="underline"
-                                        className={cn(
-                                          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
-                                          isActive
-                                            ? 'bg-accent/20 text-accent'
-                                            : 'text-muted-foreground'
-                                        )}
-                                        onClick={() => {
-                                          setLeftSidebarHovered(false)
-                                        }}
-                                      >
-                                        <item.icon className="h-4 w-4" />
-                                        {item.label}
-                                      </Link>
-                                    )
-                                  })}
-                                </nav>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <h1 className="flex items-center gap-2 text-lg font-semibold">
-                          <CircleGauge className="h-4 w-4" />
-                          {pageTitle}
-                        </h1>
-                      </div>
-
-                      <div className="flex-1 overflow-auto px-8 py-4">
-                        {children}
-                      </div>
-                    </div>
-
-                    {/* Right Sidebar */}
-                    <div
-                      className={cn(
-                        'glass-surface h-full overflow-hidden rounded-2xl border border-muted/40 p-4 transition-all duration-300 ease-in-out',
-                        showRightSidebar ? 'w-[240px] flex-shrink-0' : 'hidden'
-                      )}
-                      id="right-sidebar"
-                    >
+                    {/* Resize Handle */}
+                    {showRightSidebar && !isFullscreen && (
+                      <div
+                        className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
+                        onMouseDown={startResizing}
+                      />
+                    )}
+                    <div className="h-full w-full overflow-hidden">
                       <RightSidebar />
                     </div>
                   </div>
                 </div>
               </div>
-            </>
+            </div>
+          )}
+
+          {/* Content area for iframe pages */}
+          {isSessionPage && (
+            <div
+              id="content-main"
+              ref={contentMainRef}
+              className="pointer-events-none fixed inset-0 top-12 z-30"
+            >
+              {children}
+            </div>
           )}
         </NextStep>
       </NextStepProvider>
-    </>
+    </div>
   )
+}
+
+export function AuthenticatedApp({ children }: MainLayoutProps) {
+  return <AuthenticatedAppContent>{children}</AuthenticatedAppContent>
 }

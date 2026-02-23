@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           disabled={disabled}
           type={type}
           size={size}
-          className={`h-8 w-8 bg-transparent text-muted hover:bg-transparent hover:text-accent ${className || ''}`}
+          className={`bg-transparent text-muted hover:bg-transparent hover:text-accent ${className || ''}`}
           ref={ref}
           {...props}
         >

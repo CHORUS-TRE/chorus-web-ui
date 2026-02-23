@@ -2,6 +2,7 @@
 
 import { env } from 'next-runtime-env'
 
+import { Analytics } from '@/lib/analytics/service'
 import { AppInstanceDataSourceImpl } from '~/data/data-source'
 import { AppInstanceRepositoryImpl } from '~/data/repository'
 import { Result } from '~/domain/model'
@@ -40,9 +41,11 @@ export async function createAppInstance(
       workbenchId: formData.get('workbenchId') as string,
       status: formData.get('status') as string
     }
+    Analytics.AppInstance.launchStart(raw.appId)
 
     const validation = AppInstanceCreateSchema.safeParse(raw)
     if (!validation.success) {
+      Analytics.AppInstance.launchError(raw.appId, 'Validation error')
       return {
         ...prevState,
         issues: validation.error.issues
@@ -52,13 +55,19 @@ export async function createAppInstance(
     const result = await useCase.execute(validation.data)
 
     if (result.error) {
+      Analytics.AppInstance.launchError(raw.appId, result.error)
       return { ...prevState, error: result.error }
     }
+    Analytics.AppInstance.launchSuccess(raw.appId)
     return {
       ...prevState,
       data: result.data
     }
   } catch (error) {
+    Analytics.AppInstance.launchError(
+      formData.get('appId') as string,
+      error instanceof Error ? error.message : String(error)
+    )
     return {
       ...prevState,
       error: error instanceof Error ? error.message : String(error)

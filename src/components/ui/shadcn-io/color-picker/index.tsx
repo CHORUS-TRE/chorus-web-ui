@@ -16,7 +16,7 @@ import {
   useState
 } from 'react'
 
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 import {
   Select,
@@ -317,7 +317,7 @@ export type ColorPickerOutputProps = ComponentProps<typeof SelectTrigger>
 const formats = ['hex', 'rgb', 'css', 'hsl']
 
 export const ColorPickerOutput = ({
-  className,
+  className: _className,
   ...props
 }: ColorPickerOutputProps) => {
   const { mode, setMode } = useColorPicker()
@@ -348,7 +348,7 @@ const PercentageInput = ({ className, ...props }: PercentageInputProps) => {
         type="text"
         {...props}
         className={cn(
-          'h-8 w-[3.25rem] rounded-l-none bg-secondary px-2 text-xs shadow-none',
+          'h-8 w-[3.25rem] rounded-l-none bg-background px-2 text-xs shadow-none',
           className
         )}
       />
@@ -380,7 +380,7 @@ export const ColorPickerFormat = ({
         {...props}
       >
         <Input
-          className="h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none"
+          className="h-8 rounded-r-none bg-background px-2 text-xs shadow-none"
           readOnly
           type="text"
           value={hex}
@@ -407,7 +407,7 @@ export const ColorPickerFormat = ({
         {rgb.map((value, index) => (
           <Input
             className={cn(
-              'h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none',
+              'h-8 rounded-r-none bg-background px-2 text-xs shadow-none',
               index && 'rounded-l-none',
               className
             )}
@@ -431,7 +431,7 @@ export const ColorPickerFormat = ({
     return (
       <div className={cn('w-full rounded-md shadow-sm', className)} {...props}>
         <Input
-          className="h-8 w-full bg-secondary px-2 text-xs shadow-none"
+          className="h-8 w-full bg-background px-2 text-xs shadow-none"
           readOnly
           type="text"
           value={`rgba(${rgb.join(', ')}, ${alpha}%)`}
@@ -458,7 +458,7 @@ export const ColorPickerFormat = ({
         {hsl.map((value, index) => (
           <Input
             className={cn(
-              'h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none',
+              'h-8 rounded-r-none bg-background px-2 text-xs shadow-none',
               index && 'rounded-l-none',
               className
             )}

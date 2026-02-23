@@ -5,13 +5,15 @@ import {
 } from '@/domain/model/user'
 import {
   ChorusCreateUserReply,
+  ChorusCreateUserRoleReply,
   ChorusDeleteUserReply,
   ChorusGetUserMeReply,
   ChorusGetUserReply,
   ChorusListUsersReply,
   ChorusUpdateUserReply,
   Configuration,
-  UserServiceApi
+  UserServiceApi,
+  UserServiceListUsersRequest
 } from '~/internal/client'
 
 import { toChorusUser, toChorusUserUpdate } from './user-mapper'
@@ -19,11 +21,13 @@ import { toChorusUser, toChorusUserUpdate } from './user-mapper'
 interface UserDataSource {
   me: () => Promise<ChorusGetUserMeReply>
   create: (user: UserCreateType) => Promise<ChorusCreateUserReply>
-  createRole: (userRole: UserRoleCreateType) => Promise<ChorusCreateUserReply>
+  createRole: (
+    userRole: UserRoleCreateType
+  ) => Promise<ChorusCreateUserRoleReply>
   deleteRole: (userId: string, roleId: string) => Promise<ChorusCreateUserReply>
   get: (id: string) => Promise<ChorusGetUserReply>
   delete: (id: string) => Promise<ChorusDeleteUserReply>
-  list: () => Promise<ChorusListUsersReply>
+  list: (filters: UserServiceListUsersRequest) => Promise<ChorusListUsersReply>
   update: (user: UserUpdateType) => Promise<ChorusUpdateUserReply>
 }
 
@@ -45,17 +49,22 @@ class UserApiDataSourceImpl implements UserDataSource {
     return this.service.userServiceCreateUser({
       body: {
         ...chorusUser,
-        roles: ['admin'],
         status: 'active'
       }
     })
   }
 
-  createRole(userRole: UserRoleCreateType): Promise<ChorusCreateUserReply> {
+  async createRole(
+    userRole: UserRoleCreateType
+  ): Promise<ChorusCreateUserRoleReply> {
     return this.service.userServiceCreateUserRole({
       userId: userRole.userId,
       body: {
-        role: userRole.role
+        role: {
+          id: userRole.role.id,
+          name: userRole.role.name,
+          context: userRole.role.context
+        }
       }
     })
   }
@@ -79,14 +88,17 @@ class UserApiDataSourceImpl implements UserDataSource {
     return this.service.userServiceDeleteUser({ id })
   }
 
-  list(): Promise<ChorusListUsersReply> {
-    return this.service.userServiceListUsers()
+  list(filters: UserServiceListUsersRequest): Promise<ChorusListUsersReply> {
+    return this.service.userServiceListUsers(filters)
   }
 
   update(user: UserUpdateType): Promise<ChorusUpdateUserReply> {
     const chorusUser = toChorusUserUpdate(user)
     return this.service.userServiceUpdateUser({
-      body: chorusUser
+      body: {
+        ...chorusUser,
+        status: 'active'
+      }
     })
   }
 }

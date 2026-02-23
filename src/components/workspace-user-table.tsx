@@ -7,6 +7,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from '@/components/link'
 import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
+import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
+import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
+import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
+import { WorkspaceUserDeleteDialog } from '~/components/forms/workspace-user-delete-dialog'
+import { toast } from '~/components/hooks/use-toast'
+import { Badge } from '~/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -14,21 +20,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
-import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
-import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
-import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
-import { toast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
+} from '~/components/ui/card'
 import {
   Table,
   TableBody,
@@ -38,6 +30,7 @@ import {
   TableRow as TableRowComponent
 } from '~/components/ui/table'
 import { Role, User } from '~/domain/model/user'
+import { useAuthorization } from '~/providers/authorization-provider'
 
 export default function WorkspaceUserTable({
   workspaceId,
@@ -52,10 +45,11 @@ export default function WorkspaceUserTable({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+  const { can, PERMISSIONS } = useAuthorization()
 
   const loadUsers = useCallback(async () => {
     setLoading(true)
-    const result = await listUsers()
+    const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
     if (result.data) {
       // Filter users who have roles in this workspace
       const workspaceUsers = result.data.filter((user) =>
@@ -123,34 +117,83 @@ export default function WorkspaceUserTable({
     return (
       <TableRowComponent className="card-glass transition-colors hover:bg-background/80">
         <TableCell className="p-1 font-semibold">
-          <Link
-            href={`/users/${user.id}`}
-            className="nav-link-base nav-link-hover [&.active]:nav-link-active"
-          >
-            {user.firstName} {user.lastName}
-          </Link>
+          {user.firstName} {user.lastName}
         </TableCell>
         <TableCell className="w-48 text-wrap p-1">{user.username}</TableCell>
         <TableCell className="p-1">
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             {workspaceRoles
               .filter((role) => role.name.startsWith('Workspace'))
               .map((role, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {role.name}
-                </Badge>
+                <ManageUserWorkspaceDialog
+                  key={index}
+                  user={user}
+                  workspaceId={workspaceId}
+                  onUserAdded={handleUserChange}
+                >
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer text-xs hover:bg-accent hover:text-accent-foreground"
+                  >
+                    {role.name}
+                  </Badge>
+                </ManageUserWorkspaceDialog>
               ))}
+            {can(PERMISSIONS.manageUsersInWorkspace, {
+              workspace: workspaceId
+            }) && (
+              <ManageUserWorkspaceDialog
+                user={user}
+                workspaceId={workspaceId}
+                onUserAdded={handleUserChange}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+              </ManageUserWorkspaceDialog>
+            )}
           </div>
         </TableCell>
         <TableCell className="p-1">
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             {workspaceRoles
               .filter((role) => role.name.startsWith('Workbench'))
               .map((role, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {role.name} - {role.context.workbench}
-                </Badge>
+                <ManageUserWorkbenchDialog
+                  key={index}
+                  user={user}
+                  workspaceId={workspaceId}
+                  onUserAdded={handleUserChange}
+                >
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer text-xs hover:bg-accent hover:text-accent-foreground"
+                  >
+                    {role.name} - {role.context.workbench}
+                  </Badge>
+                </ManageUserWorkbenchDialog>
               ))}
+            {can(PERMISSIONS.manageUsersInWorkspace, {
+              workspace: workspaceId
+            }) && (
+              <ManageUserWorkbenchDialog
+                user={user}
+                workspaceId={workspaceId}
+                onUserAdded={handleUserChange}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+              </ManageUserWorkbenchDialog>
+            )}
           </div>
         </TableCell>
         <TableCell className="hidden p-1 md:table-cell">
@@ -166,56 +209,23 @@ export default function WorkspaceUserTable({
           ago
         </TableCell>
         <TableCell className="p-1">
-          {
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <ManageUserWorkspaceDialog
-                  userId={user.id}
-                  workspaceId={workspaceId}
-                  onUserAdded={handleUserChange}
-                >
-                  <DropdownMenuItem
-                    onSelect={(e) => e.preventDefault()}
-                    className="flex items-center gap-2"
-                  >
-                    <Pencil className="h-4 w-4 text-muted-foreground" />
-                    Workspace Role
-                  </DropdownMenuItem>
-                </ManageUserWorkspaceDialog>
-                <ManageUserWorkbenchDialog
-                  userId={user.id}
-                  workspaceId={workspaceId}
-                  onUserAdded={handleUserChange}
-                >
-                  <DropdownMenuItem
-                    onSelect={(e) => e.preventDefault()}
-                    className="flex items-center gap-2"
-                  >
-                    <Pencil className="h-4 w-4 text-muted-foreground" />
-                    Sessions Roles
-                  </DropdownMenuItem>
-                </ManageUserWorkbenchDialog>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setDeletingUserId(user.id)
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                  Remove User
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          }
+          <div className="flex items-center gap-1">
+            {can(PERMISSIONS.manageUsersInWorkspace, {
+              workspace: workspaceId
+            }) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={(e) => {
+                  e.preventDefault()
+                  setDeletingUserId(user.id)
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </TableCell>
       </TableRowComponent>
     )
@@ -231,17 +241,13 @@ export default function WorkspaceUserTable({
     description?: string
   }) => (
     <Card className="card-glass flex h-full flex-col justify-between rounded-2xl duration-300">
-      {title && (
+      {(title || description) && (
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="mb-1">{title}</CardTitle>
               <CardDescription>{description}</CardDescription>
             </div>
-            <AddUserToWorkspaceDialog
-              workspaceId={workspaceId}
-              onUserAdded={handleUserChange}
-            />
           </div>
         </CardHeader>
       )}
@@ -290,8 +296,9 @@ export default function WorkspaceUserTable({
     <div className="mb-4 grid flex-1 items-start gap-4">
       {/* Delete User Dialog */}
       {deletingUserId && (
-        <UserDeleteDialog
+        <WorkspaceUserDeleteDialog
           userId={deletingUserId}
+          workspaceId={workspaceId}
           open={!!deletingUserId}
           onOpenChange={(open) => {
             if (!open) setDeletingUserId(null)
@@ -303,7 +310,7 @@ export default function WorkspaceUserTable({
         />
       )}
 
-      <CardContainer users={users} title={title} description={description} />
+      <CardContainer users={users} title="" description="" />
     </div>
   )
 }

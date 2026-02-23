@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
-import { Result } from '@/domain/model'
 import {
+  Role,
+  RoleSchema,
   User,
   UserCreateType,
   UserRoleCreateType,
@@ -10,6 +11,8 @@ import {
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
 import { workspaceList } from '@/view-model/workspace-view-model'
+import { Result } from '~/domain/model'
+import { UserServiceListUsersRequest } from '~/internal/client'
 
 import { UserDataSource } from '../data-source'
 
@@ -47,16 +50,16 @@ export class UserRepositoryImpl implements UserRepository {
   async createRole(userRole: UserRoleCreateType): Promise<Result<User>> {
     try {
       const response = await this.dataSource.createRole(userRole)
-      const userResult = UserSchema.safeParse(response?.result?.user)
+      const roleResult = UserSchema.safeParse(response?.result?.user)
 
-      if (!userResult.success) {
+      if (!roleResult.success) {
         return {
           error: 'API response validation failed',
-          issues: userResult.error.issues
+          issues: roleResult.error.issues
         }
       }
 
-      return { data: userResult.data }
+      return { data: roleResult.data ?? undefined }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
@@ -94,14 +97,6 @@ export class UserRepositoryImpl implements UserRepository {
           error: 'API response validation failed',
           issues: userResult.error.issues
         }
-      }
-
-      const workspaces = await workspaceList()
-      const isMain = workspaces?.data?.find(
-        (w) => w.isMain && w.userId === userResult.data.id
-      )
-      if (isMain) {
-        userResult.data.workspaceId = isMain.id
       }
 
       return { data: userResult.data }
@@ -151,9 +146,11 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  async list(): Promise<Result<User[]>> {
+  async list(
+    filters: UserServiceListUsersRequest = {}
+  ): Promise<Result<User[]>> {
     try {
-      const response = await this.dataSource.list()
+      const response = await this.dataSource.list(filters)
       const usersResult = z.array(UserSchema).safeParse(response.result?.users)
 
       if (!usersResult.success) {
@@ -173,13 +170,14 @@ export class UserRepositoryImpl implements UserRepository {
 
   async update(user: UserUpdateType): Promise<Result<User>> {
     try {
+      // throw new Error('Not implemented')
       const response = await this.dataSource.update(user)
-      const userResult = UserSchema.safeParse(response.result)
+      const userResult = UserSchema.safeParse(response.result?.user)
 
       if (!userResult.success) {
         return {
           error: 'API response validation failed',
-          issues: userResult.error.issues
+          issues: userResult.error?.issues
         }
       }
       return { data: userResult.data }

@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react'
 
-import { K8sWorkbenchStatus } from '@/domain/model'
+import { WorkbenchServerPodStatus } from '@/domain/model'
 import { getWorkbench } from '@/view-model/workbench-view-model'
 
-const POLLING_INTERVAL = 3000
+const POLLING_INTERVAL = 500
 const TIMEOUT = 30 * 1000
 
 export function useWorkbenchStatus(workbenchId?: string) {
-  const [status, setStatus] = useState<K8sWorkbenchStatus | string | null>(null)
+  const [response, setResponse] = useState<{
+    data?: {
+      status?: WorkbenchServerPodStatus
+      message?: string
+    }
+    error?: string
+  }>({})
 
   useEffect(() => {
     if (!workbenchId) {
@@ -18,16 +24,22 @@ export function useWorkbenchStatus(workbenchId?: string) {
       const result = await getWorkbench(workbenchId)
 
       if (result.error) {
-        setStatus(result.error)
+        setResponse({ error: result.error })
         clearInterval(intervalId)
         clearTimeout(timeoutId)
         return
       }
 
       if (result.data) {
-        setStatus(result.data.k8sStatus || null)
+        setResponse({
+          data: {
+            status:
+              result.data.serverPodStatus || WorkbenchServerPodStatus.UNKNOWN,
+            message: result.data.serverPodMessage
+          }
+        })
 
-        if (result.data.k8sStatus === K8sWorkbenchStatus.RUNNING) {
+        if (result.data.serverPodStatus === WorkbenchServerPodStatus.READY) {
           clearInterval(intervalId)
           clearTimeout(timeoutId)
         }
@@ -48,5 +60,5 @@ export function useWorkbenchStatus(workbenchId?: string) {
     }
   }, [workbenchId])
 
-  return { status }
+  return { ...response }
 }

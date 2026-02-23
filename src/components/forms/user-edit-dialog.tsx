@@ -1,15 +1,18 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Pencil } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
-import { useActionState } from 'react'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { ControllerRenderProps } from 'react-hook-form'
+import { Pencil, Trash2 } from 'lucide-react'
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { updateUser } from '@/view-model/user-view-model'
+import { deleteUserRole, updateUser } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
 import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
 import { Badge } from '~/components/ui/badge'
@@ -38,105 +41,209 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { Result } from '~/domain/model'
-import {
-  User,
-  UserUpdateSchema as BaseUserUpdateSchema
-} from '~/domain/model/user'
+import { Role, User, UserUpdateSchema } from '~/domain/model/user'
 
 import { toast } from '../hooks/use-toast'
-
-const UserUpdateSchema = BaseUserUpdateSchema.extend({
-  rolesWithContext: z.array(
-    z.object({
-      name: z.string(),
-      context: z.record(z.string(), z.string())
-    })
-  )
-})
 
 type FormData = z.infer<typeof UserUpdateSchema>
 
 export function UserEditDialog({
   user,
   onUserUpdated,
-  open,
-  onOpenChange
+  isControlled = false
 }: {
   user: User
   onUserUpdated: () => void
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  isControlled?: boolean
 }) {
-  const [internalOpen, setInternalOpen] = useState(false)
-  const isControlled = open !== undefined
-  const dialogOpen = isControlled ? open : internalOpen
-  const setDialogOpen = isControlled ? onOpenChange! : setInternalOpen
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [internalUser, setInternalUser] = useState(user)
+  const [hasBeenModified, setHasBeenModified] = useState(false)
+  const prevDialogOpenRef = useRef(false)
 
-  type UserEditValues = {
-    id: string
-    firstName: string
-    lastName: string
-    username: string
-    password: string
-    rolesWithContext: { name: string; context: Record<string, string> }[]
-  }
+  // Only sync user prop to internalUser when dialog transitions from closed to open,
+  // not when user prop changes due to polling while dialog is open
+  useEffect(() => {
+    const wasOpen = prevDialogOpenRef.current
+    prevDialogOpenRef.current = dialogOpen
+
+    if (dialogOpen && !wasOpen) {
+      setInternalUser(user)
+      setHasBeenModified(false)
+    }
+  }, [dialogOpen, user])
 
   const form = useForm<FormData>({
     resolver: zodResolver(UserUpdateSchema),
     defaultValues: {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user.username,
+      id: internalUser.id,
+      firstName: internalUser.firstName,
+      lastName: internalUser.lastName,
+      username: internalUser.username,
       password: '',
-      rolesWithContext: user.rolesWithContext || []
+      rolesWithContext: internalUser.rolesWithContext || []
     }
   })
 
+  useEffect(() => {
+    form.reset({
+      id: internalUser.id,
+      firstName: internalUser.firstName,
+      lastName: internalUser.lastName,
+      username: internalUser.username,
+      password: '',
+      rolesWithContext: internalUser.rolesWithContext || []
+    })
+  }, [internalUser, form])
+
+  const { fields, remove } = useFieldArray({
+    control: form.control,
+    name: 'rolesWithContext'
+  })
+
   const [state, formAction] = useActionState(updateUser, {} as Result<User>)
+  const [isDeletingRole, setIsDeletingRole] = useState<string | null>(null)
 
   useEffect(() => {
-    if (state.error) {
-      toast({
-        title: 'Error updating user',
-        description: state.error,
-        variant: 'destructive'
-      })
-    } else if (state.data) {
-      toast({
-        title: 'Success',
-        description: 'User updated successfully.'
-      })
-      onUserUpdated()
+    if (state?.error || state?.issues) {
+      // Display validation errors in toast
+      if (state.issues && state.issues.length > 0) {
+        const errorMessages = state.issues
+          .map((issue) => {
+            const path = issue.path.join('.')
+            return path ? `${path}: ${issue.message}` : issue.message
+          })
+          .join('\n')
+
+        toast({
+          title: 'Validation Error',
+          description: errorMessages,
+          variant: 'destructive'
+        })
+      } else if (state.error) {
+        toast({
+          title: 'Error updating user',
+          description: state.error,
+          variant: 'destructive'
+        })
+      }
+    } else if (state?.data) {
       setDialogOpen(false)
     }
-  }, [state, onUserUpdated, setDialogOpen])
+  }, [state])
 
-  const onSubmit = (data: FormData) => {
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((v) => formData.append(key, JSON.stringify(v)))
-      } else {
-        formData.append(key, String(value || ''))
-      }
-    })
-    formAction(formData)
+  const handleRoleAdded = (updatedUser: User) => {
+    setInternalUser(updatedUser)
+    setHasBeenModified(true)
   }
 
-  const removeRoleWithIndex = (
-    field: ControllerRenderProps<UserEditValues, 'rolesWithContext'>,
-    index: number
-  ) => {
-    return () => {
-      const newRoles = field.value ? [...field.value] : []
-      newRoles.splice(index, 1)
-      field.onChange(newRoles)
+  const handleRemoveRole = async (role: Role, index: number) => {
+    if (!role.id && !role.name) {
+      // If role doesn't have an ID or name, just remove it from the form
+      remove(index)
+      return
     }
+
+    // The role from the form has a UUID (generated by react-hook-form)
+    // We need to find the corresponding role in internalUser.rolesWithContext
+    // which has the numeric ID returned by the API
+    let roleIdentifier: string | undefined
+
+    if (role.id && /^\d+$/.test(role.id)) {
+      // If role.id is already numeric, use it directly
+      roleIdentifier = role.id
+    } else {
+      // Find the matching role in internalUser.rolesWithContext by comparing name and context
+      const matchingRole = internalUser.rolesWithContext?.find((r) => {
+        // Compare role name
+        if (r.name !== role.name) return false
+
+        // Compare context (all keys and values must match)
+        const roleContext = role.context || {}
+        const rContext = r.context || {}
+
+        // Check if all keys in role.context exist in r.context with same values
+        const roleContextKeys = Object.keys(roleContext)
+        const rContextKeys = Object.keys(rContext)
+
+        if (roleContextKeys.length !== rContextKeys.length) return false
+
+        return roleContextKeys.every(
+          (key) => roleContext[key] === rContext[key]
+        )
+      })
+
+      if (matchingRole?.id && /^\d+$/.test(matchingRole.id)) {
+        roleIdentifier = matchingRole.id
+      }
+    }
+
+    if (!roleIdentifier) {
+      toast({
+        title: 'Error deleting role',
+        description:
+          'Could not find numeric role ID. The role may not be persisted yet.',
+        variant: 'destructive'
+      })
+      return
+    }
+
+    setIsDeletingRole(role.id || role.name || '')
+    try {
+      const result: Result<User> = await deleteUserRole(
+        internalUser.id,
+        roleIdentifier
+      )
+
+      if (result && 'error' in result && result.error) {
+        toast({
+          title: 'Error deleting role',
+          description: result.error,
+          variant: 'destructive'
+        })
+      } else if (result && 'data' in result && result.data) {
+        // Update internal user with the updated data from server
+        setInternalUser(result.data)
+        setHasBeenModified(true)
+        toast({
+          title: 'Role deleted',
+          description: 'Role has been successfully removed',
+          variant: 'default'
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Error deleting role',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive'
+      })
+    } finally {
+      setIsDeletingRole(null)
+    }
+  }
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setDialogOpen(isOpen)
+    if (!isOpen && hasBeenModified) {
+      onUserUpdated()
+    }
+  }
+
+  const onSubmit = (data: z.infer<typeof UserUpdateSchema>) => {
+    const formData = new FormData()
+    formData.append('id', data.id)
+    formData.append('username', data.username)
+    formData.append('firstName', data.firstName)
+    formData.append('lastName', data.lastName)
+    formData.append('password', data.password)
+
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       {!isControlled && (
         <DialogTrigger asChild>
           <Button
@@ -214,21 +321,25 @@ export function UserEditDialog({
             <FormField
               control={form.control}
               name="rolesWithContext"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
-                  <FormLabel>
-                    Roles <CreateUserRoleDialog userId={user.id} />
+                  <FormLabel className="flex items-center justify-between gap-2">
+                    Roles ({fields.length}){' '}
+                    <CreateUserRoleDialog
+                      userId={internalUser.id}
+                      onRoleAdded={handleRoleAdded}
+                    />
                   </FormLabel>
                   <FormControl>
-                    <Table
-                      className=""
-                      aria-label={`User roles management table with ${field?.value?.length} roles`}
-                    >
-                      <caption className="sr-only">
-                        User roles management table showing roles and available
-                        actions. Use arrow keys to navigate.
-                      </caption>
-                      <div className="max-h-60 overflow-auto">
+                    <div className="max-h-60 overflow-auto">
+                      <Table
+                        className=""
+                        aria-label={`User roles management table with ${fields.length} role${fields.length !== 1 ? 's' : ''}`}
+                      >
+                        <caption className="sr-only">
+                          User roles management table showing roles and
+                          available actions. Use arrow keys to navigate.
+                        </caption>
                         <TableHeader>
                           <TableRow>
                             <TableHead scope="col">Role</TableHead>
@@ -239,11 +350,8 @@ export function UserEditDialog({
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {field.value?.map((r, i) => (
-                            <TableRow
-                              key={`role-row-${r.name}-${i}`}
-                              className="border-muted/50"
-                            >
+                          {fields.map((r, i) => (
+                            <TableRow key={r.id} className="border-muted/50">
                               <TableCell className="p-2">
                                 <Badge key={`role-badge-${r.name}-${i}`}>
                                   {r.name}
@@ -283,20 +391,20 @@ export function UserEditDialog({
                                 <Button
                                   variant="ghost"
                                   aria-label="Delete role"
-                                  onClick={removeRoleWithIndex(field, i)}
+                                  onClick={() => handleRemoveRole(r, i)}
+                                  disabled={isDeletingRole === (r.id || r.name)}
                                 >
                                   <Trash2
                                     className="h-4 w-4"
                                     aria-hidden="true"
                                   />
-                                  <span className="sr-only">Delete role</span>
                                 </Button>
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
-                      </div>
-                    </Table>
+                      </Table>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
