@@ -3,7 +3,6 @@
 import { formatDistanceToNow } from 'date-fns'
 import {
   AppWindow,
-  ArrowRight,
   CircleGauge,
   CirclePlus,
   Clock,
