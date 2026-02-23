@@ -1,6 +1,7 @@
 export type * from './app-instance-repository'
 export type * from './app-repository'
 export * from './approval-request-repository'
+export type * from './audit-repository'
 export type * from './authentication-repository'
 export type * from './dev-store-repository'
 export * from './notification-repository'

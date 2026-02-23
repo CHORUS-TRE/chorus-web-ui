@@ -9,6 +9,7 @@ import {
   LayoutGrid,
   Package,
   Palette,
+  ScrollText,
   Settings,
   Settings2,
   Shield,
@@ -154,6 +155,16 @@ const AdminPage = () => {
             icon={FileCheck}
             value={approvalRequests?.length || 0}
             description="Pending Approvals"
+          />
+        )}
+
+        {can(PERMISSIONS.auditPlatform) && (
+          <StatCard
+            href="/admin/audit"
+            title="Audit"
+            icon={ScrollText}
+            value=""
+            description="Platform audit log"
           />
         )}
 

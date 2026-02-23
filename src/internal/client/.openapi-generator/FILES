@@ -112,8 +112,8 @@ models/ChorusListApprovalRequestsReply.ts
 models/ChorusListApprovalRequestsResult.ts
 models/ChorusListAppsReply.ts
 models/ChorusListAppsResult.ts
-models/ChorusListAuditEntriesReply.ts
-models/ChorusListAuditEntriesResult.ts
+models/ChorusListAuditReply.ts
+models/ChorusListAuditResult.ts
 models/ChorusListEntriesReply.ts
 models/ChorusListEntriesResult.ts
 models/ChorusListPermissionsReply.ts

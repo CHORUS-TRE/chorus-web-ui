@@ -53,6 +53,11 @@ export function AdminTabs() {
       authorized: can(PERMISSIONS.listWorkspaces, { workspace: '*' })
     },
     {
+      href: '/admin/audit',
+      label: 'Audit',
+      authorized: can(PERMISSIONS.auditPlatform, {})
+    },
+    {
       href: '/admin/configuration',
       label: 'Configuration',
       authorized: can(PERMISSIONS.setPlatformSettings, {})
