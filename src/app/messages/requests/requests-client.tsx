@@ -485,9 +485,9 @@ function RequestsDataTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -673,12 +673,12 @@ export default function RequestsClient({
         prev.map((req) =>
           req.id === selectedRequest.id
             ? {
-                ...req,
-                status:
-                  activeAction === 'approve'
-                    ? ApprovalRequestStatus.APPROVED
-                    : ApprovalRequestStatus.REJECTED
-              }
+              ...req,
+              status:
+                activeAction === 'approve'
+                  ? ApprovalRequestStatus.APPROVED
+                  : ApprovalRequestStatus.REJECTED
+            }
             : req
         )
       )
