@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  AlertCircle,
   ArrowDownToLine,
   ArrowRightLeft,
   ArrowUpFromLine,
@@ -10,8 +9,6 @@ import {
   Clock,
   Download,
   File,
-  FileCheck,
-  Timer,
   XCircle
 } from 'lucide-react'
 import * as React from 'react'
@@ -21,23 +18,30 @@ import {
   ApprovalRequestStatus,
   ApprovalRequestType
 } from '@/domain/model/approval-request'
+import {
+  downloadRequestFiles,
+  formatBytes,
+  getFiles,
+  getTotalSize
+} from '@/lib/approval-request-utils'
 import { Button } from '~/components/button'
 import { Badge } from '~/components/ui/badge'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle
+  CardHeader
 } from '~/components/ui/card'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible'
-import { Progress } from '~/components/ui/progress'
 import { Separator } from '~/components/ui/separator'
+import { useToast } from '~/components/hooks/use-toast'
+
+import { StatusBadge } from './_components/status-badge'
+import { TypeBadge } from './_components/type-badge'
 
 export interface FileRequestCardProps {
   request: ApprovalRequest
@@ -45,7 +49,6 @@ export interface FileRequestCardProps {
   showApprovalActions: boolean
   onApprove?: () => void
   onReject?: () => void
-  onDownload?: (downloadLink: string) => void
 }
 
 export const FileRequestCard = React.memo(function FileRequestCard({
@@ -53,130 +56,43 @@ export const FileRequestCard = React.memo(function FileRequestCard({
   currentUser,
   showApprovalActions,
   onApprove,
-  onReject,
-  onDownload
+  onReject
 }: FileRequestCardProps) {
   const [isExpanded, setIsExpanded] = React.useState(false)
-  const [timeRemaining, setTimeRemaining] = React.useState<string | null>(null)
+  const [isDownloading, setIsDownloading] = React.useState(false)
+  const { toast } = useToast()
 
-  // Calculate time remaining for approved downloads (mocked for now as we don't have downloadExpiresAt in model)
-  React.useEffect(() => {
-    if (
-      request.status === ApprovalRequestStatus.APPROVED &&
-      request.type === ApprovalRequestType.DATA_EXTRACTION
-    ) {
-      // Mock expiry for now
-      const expiresAt = new Date(
-        request.approvedAt || request.updatedAt || new Date()
-      )
-      expiresAt.setHours(expiresAt.getHours() + 24)
+  const files = getFiles(request)
+  const totalSize = getTotalSize(request)
 
-      const interval = setInterval(() => {
-        const now = new Date()
-        const diff = expiresAt.getTime() - now.getTime()
+  const isApprovedExtraction =
+    request.status === ApprovalRequestStatus.APPROVED &&
+    request.type === ApprovalRequestType.DATA_EXTRACTION &&
+    request.requesterId === currentUser.id
 
-        if (diff <= 0) {
-          setTimeRemaining('Expired')
-          clearInterval(interval)
-        } else {
-          const hours = Math.floor(diff / (1000 * 60 * 60))
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-          setTimeRemaining(`${hours}h ${minutes}m`)
-        }
-      }, 60000)
-
-      return () => clearInterval(interval)
-    }
-  }, [request.status, request.type, request.approvedAt, request.updatedAt])
-
-  const getMovementTypeIcon = (type?: ApprovalRequestType) => {
-    switch (type) {
-      case ApprovalRequestType.DATA_EXTRACTION:
-        return <ArrowDownToLine className="h-4 w-4" aria-hidden="true" />
-      case ApprovalRequestType.DATA_TRANSFER:
-        return <ArrowRightLeft className="h-4 w-4" aria-hidden="true" />
-      default:
-        return <ArrowUpFromLine className="h-4 w-4" aria-hidden="true" />
-    }
+  const handleDownload = async () => {
+    if (!request.id) return
+    setIsDownloading(true)
+    await downloadRequestFiles(request.id, files, (fileName) => {
+      toast({
+        variant: 'destructive',
+        title: 'Download failed',
+        description: `Failed to download ${fileName}`
+      })
+    })
+    setIsDownloading(false)
   }
-
-  const getStatusBadge = (status?: ApprovalRequestStatus) => {
-    const configs = {
-      [ApprovalRequestStatus.PENDING]: {
-        variant: 'secondary' as const,
-        icon: Clock,
-        label: 'Pending'
-      },
-      [ApprovalRequestStatus.APPROVED]: {
-        variant: 'outline' as const,
-        icon: CheckCircle2,
-        label: 'Approved'
-      },
-      [ApprovalRequestStatus.REJECTED]: {
-        variant: 'outline' as const,
-        icon: XCircle,
-        label: 'Rejected'
-      },
-      [ApprovalRequestStatus.CANCELLED]: {
-        variant: 'secondary' as const,
-        icon: XCircle,
-        label: 'Cancelled'
-      },
-      [ApprovalRequestStatus.UNSPECIFIED]: {
-        variant: 'secondary' as const,
-        icon: AlertCircle,
-        label: 'Unknown'
-      }
-    }
-
-    const config = status
-      ? configs[status]
-      : configs[ApprovalRequestStatus.UNSPECIFIED]
-    const Icon = config.icon
-
-    return (
-      <Badge
-        variant={config.variant}
-        className="flex h-5 w-fit items-center gap-1 rounded-md px-1.5 text-[10px] font-bold uppercase tracking-tight"
-      >
-        <Icon className="h-2.5 w-2.5" aria-hidden="true" />
-        {config.label}
-      </Badge>
-    )
-  }
-
-  const formatBytes = (bytesStr?: string): string => {
-    const bytes = parseInt(bytesStr || '0')
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
-  }
-
-  const files =
-    request.dataExtraction?.files || request.dataTransfer?.files || []
-  const totalSize = files.reduce((acc, f) => acc + parseInt(f.size || '0'), 0)
-  const readableType =
-    request.type?.replace('APPROVAL_REQUEST_TYPE_', '').toLowerCase() ||
-    'unknown'
 
   return (
-    <Card className={`border-muted/20 bg-muted/50`}>
+    <Card className="border-muted/20 bg-muted/50">
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <Badge
-                variant="secondary"
-                className="flex h-5 items-center gap-1 rounded-md px-1.5 text-[10px] font-bold uppercase tracking-tight"
-              >
-                {getMovementTypeIcon(request.type)}
-                <span>{readableType}</span>
-              </Badge>
-              {getStatusBadge(request.status)}
+              <TypeBadge type={request.type} />
+              <StatusBadge status={request.status} />
             </div>
-            <CardDescription className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Requested by{' '}
               <span className="font-semibold text-muted-foreground">
                 {request.requesterId === currentUser?.id
@@ -184,17 +100,8 @@ export const FileRequestCard = React.memo(function FileRequestCard({
                   : request.requesterId}
               </span>{' '}
               on {request.createdAt?.toLocaleDateString()}
-            </CardDescription>
+            </p>
           </div>
-
-          {request.status === ApprovalRequestStatus.APPROVED &&
-            timeRemaining &&
-            request.type === ApprovalRequestType.DATA_EXTRACTION && (
-              <div className="flex items-center gap-1 rounded-md bg-muted/20 px-1.5 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">
-                <Clock className="h-2.5 w-2.5" aria-hidden="true" />
-                <span>{timeRemaining}</span>
-              </div>
-            )}
         </div>
       </CardHeader>
 
@@ -259,7 +166,7 @@ export const FileRequestCard = React.memo(function FileRequestCard({
             <div className="custom-scrollbar max-h-[200px] space-y-2 overflow-y-auto pr-2">
               {files.map((file, idx) => (
                 <div
-                  key={file.id || idx}
+                  key={file.sourcePath || idx}
                   className="flex items-center justify-between rounded-lg border border-muted/10 bg-muted/5 p-3 text-xs transition-colors hover:bg-muted/10"
                 >
                   <div className="flex items-center gap-3">
@@ -269,23 +176,16 @@ export const FileRequestCard = React.memo(function FileRequestCard({
                     <div>
                       <div
                         className="truncate font-bold text-muted-foreground"
-                        title={file.name || file.id?.split('/').pop()}
+                        title={file.sourcePath?.split('/').pop()}
                       >
-                        {file.name ||
-                          file.id?.split('/').pop() ||
-                          'Unnamed File'}
+                        {file.sourcePath?.split('/').pop() || 'Unnamed File'}
                       </div>
                       <div className="max-w-[200px] truncate text-[10px] text-muted-foreground">
-                        {file.id}
+                        {file.sourcePath}
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold">{formatBytes(file.size)}</div>
-                    <div className="text-[10px] text-muted-foreground">
-                      {file.mimeType}
-                    </div>
-                  </div>
+                  <div className="font-bold">{formatBytes(file.size)}</div>
                 </div>
               ))}
             </div>
@@ -295,18 +195,16 @@ export const FileRequestCard = React.memo(function FileRequestCard({
         {request.approvedById && (
           <div className="pt-2">
             <Separator className="mb-4 bg-muted/20" />
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground">
-                  Reviewed by{' '}
-                  <strong className="text-foreground">
-                    {request.approvedById}
-                  </strong>
-                </span>
-                <span className="text-muted-foreground">
-                  {request.approvedAt?.toLocaleDateString()}
-                </span>
-              </div>
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-muted-foreground">
+                Reviewed by{' '}
+                <strong className="text-foreground">
+                  {request.approvedById}
+                </strong>
+              </span>
+              <span className="text-muted-foreground">
+                {request.approvedAt?.toLocaleDateString()}
+              </span>
             </div>
           </div>
         )}
@@ -334,19 +232,17 @@ export const FileRequestCard = React.memo(function FileRequestCard({
             </div>
           )}
 
-        {request.status === ApprovalRequestStatus.APPROVED &&
-          request.type === ApprovalRequestType.DATA_EXTRACTION &&
-          request.requesterId === currentUser.id && (
-            <Button
-              size="sm"
-              onClick={() => onDownload?.('mock-link')}
-              className="h-8 w-full rounded-lg text-xs"
-              disabled={timeRemaining === 'Expired'}
-            >
-              <Download className="mr-2 h-3 w-3" />
-              Download Secured Files
-            </Button>
-          )}
+        {isApprovedExtraction && (
+          <Button
+            size="sm"
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="h-8 w-full rounded-lg text-xs"
+          >
+            <Download className="mr-2 h-3 w-3" />
+            {isDownloading ? 'Downloading…' : 'Download Secured Files'}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   )

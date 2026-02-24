@@ -13,9 +13,6 @@ import {
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
 import {
-  AlertCircle,
-  ArrowDownToLine,
-  ArrowRightLeft,
   ArrowUpDown,
   CheckCircle2,
   ChevronLeft,
@@ -23,11 +20,9 @@ import {
   Clock,
   Download,
   File,
-  Inbox,
   LayoutGrid,
   List,
   Search,
-  Send,
   XCircle
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -35,12 +30,16 @@ import * as React from 'react'
 
 import {
   ApprovalRequest,
-  ApprovalRequestFile,
   ApprovalRequestStatus,
   ApprovalRequestType
 } from '@/domain/model/approval-request'
 import { WorkspaceWithDev } from '@/domain/model/workspace'
-import { cn } from '@/lib/utils'
+import {
+  downloadRequestFiles,
+  formatBytes,
+  getFiles,
+  getTotalSize
+} from '@/lib/approval-request-utils'
 import { useAppState } from '@/stores/app-state-store'
 import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
 import { Button } from '~/components/button'
@@ -58,13 +57,6 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle
-} from '~/components/ui/sheet'
-import {
   Table,
   TableBody,
   TableCell,
@@ -75,6 +67,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Textarea } from '~/components/ui/textarea'
 
+import { StatusBadge } from './_components/status-badge'
+import { TypeBadge } from './_components/type-badge'
 import { FileRequestCard } from './file-request-card'
 
 export interface RequestsClientProps {
@@ -83,204 +77,14 @@ export interface RequestsClientProps {
   workspaceId: string
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatBytes(bytesStr?: string): string {
-  const bytes = parseInt(bytesStr || '0')
-  if (bytes === 0) return '—'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return (bytes / Math.pow(k, i)).toFixed(1) + '\u202f' + sizes[i]
-}
-
-function getTotalSize(req: ApprovalRequest): number {
-  const files = req.dataExtraction?.files || req.dataTransfer?.files || []
-  return files.reduce((acc, f) => acc + parseInt(f.size || '0'), 0)
-}
-
-function getFiles(req: ApprovalRequest): ApprovalRequestFile[] {
-  return req.dataExtraction?.files || req.dataTransfer?.files || []
-}
-
-// ─── Status Badge ─────────────────────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<
-  ApprovalRequestStatus,
-  { icon: React.ElementType; label: string; className: string }
-> = {
-  [ApprovalRequestStatus.PENDING]: {
-    icon: Clock,
-    label: 'Pending',
-    className: 'text-amber-500'
-  },
-  [ApprovalRequestStatus.APPROVED]: {
-    icon: CheckCircle2,
-    label: 'Approved',
-    className: 'text-green-500'
-  },
-  [ApprovalRequestStatus.REJECTED]: {
-    icon: XCircle,
-    label: 'Rejected',
-    className: 'text-red-500'
-  },
-  [ApprovalRequestStatus.CANCELLED]: {
-    icon: XCircle,
-    label: 'Cancelled',
-    className: 'text-muted-foreground'
-  },
-  [ApprovalRequestStatus.UNSPECIFIED]: {
-    icon: AlertCircle,
-    label: 'Unknown',
-    className: 'text-muted-foreground'
-  }
-}
-
-function StatusBadge({ status }: { status?: ApprovalRequestStatus }) {
-  const cfg =
-    status && STATUS_CONFIG[status]
-      ? STATUS_CONFIG[status]
-      : STATUS_CONFIG[ApprovalRequestStatus.UNSPECIFIED]
-  const Icon = cfg.icon
-  return (
-    <Badge
-      variant="outline"
-      className="border-foreground-muted/20 bg-foreground-muted/10 flex h-5 w-fit items-center gap-1 rounded-md px-1.5 text-[9px] font-bold uppercase"
-    >
-      <Icon className={cn('h-2.5 w-2.5', cfg.className)} />
-      <span className="text-gray-400">{cfg.label}</span>
-    </Badge>
-  )
-}
-
-// ─── Type Badge ───────────────────────────────────────────────────────────────
-
-function TypeBadge({ type }: { type?: ApprovalRequestType }) {
-  const isExtraction = type === ApprovalRequestType.DATA_EXTRACTION
-  const label = isExtraction ? 'Extraction' : 'Transfer'
-  return (
-    <Badge
-      variant="outline"
-      className="border-foreground-muted/20 bg-foreground-muted/10 flex h-5 w-fit items-center gap-1 rounded-md px-1.5 text-[9px] font-bold uppercase text-gray-400"
-    >
-      {isExtraction ? (
-        <ArrowDownToLine className="h-2.5 w-2.5" />
-      ) : (
-        <ArrowRightLeft className="h-2.5 w-2.5" />
-      )}
-      {label}
-    </Badge>
-  )
-}
-
-// ─── File Manifest Sheet ──────────────────────────────────────────────────────
-
-function FileManifestSheet({
-  request,
-  open,
-  onOpenChange
-}: {
-  request: ApprovalRequest | null
-  open: boolean
-  onOpenChange: (v: boolean) => void
-}) {
-  if (!request) return null
-  const files = getFiles(request)
-  const totalSize = getTotalSize(request)
-
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[420px] sm:w-[560px]">
-        <SheetHeader className="pb-4">
-          <SheetTitle className="text-base font-bold">
-            {request.title || 'Request Details'}
-          </SheetTitle>
-          <SheetDescription className="text-xs italic">
-            &quot;{request.description || 'No justification provided.'}&quot;
-          </SheetDescription>
-        </SheetHeader>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-3 rounded-xl border border-muted/20 bg-muted/5 p-3">
-            <div className="space-y-1">
-              <div className="text-[9px] font-bold uppercase text-muted-foreground">
-                Type
-              </div>
-              <TypeBadge type={request.type} />
-            </div>
-            <div className="space-y-1">
-              <div className="text-[9px] font-bold uppercase text-muted-foreground">
-                Status
-              </div>
-              <StatusBadge status={request.status} />
-            </div>
-            <div className="space-y-1">
-              <div className="text-[9px] font-bold uppercase text-muted-foreground">
-                Payload
-              </div>
-              <div className="text-sm font-bold">
-                {formatBytes(totalSize.toString())}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Manifest — {files.length} file{files.length !== 1 ? 's' : ''}
-            </div>
-            <div className="custom-scrollbar max-h-[480px] space-y-2 overflow-y-auto pr-1">
-              {files.length === 0 ? (
-                <div className="py-8 text-center text-sm text-muted-foreground">
-                  No files attached
-                </div>
-              ) : (
-                files.map((file, idx) => (
-                  <div
-                    key={file.id || idx}
-                    className="flex items-center justify-between rounded-lg border border-muted/10 bg-muted/5 p-3 text-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-md bg-background p-1.5 shadow-sm">
-                        <File className="h-3.5 w-3.5 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <div
-                          className="max-w-[240px] truncate font-semibold"
-                          title={file.name}
-                        >
-                          {file.name || file.id?.split('/').pop() || 'Unnamed'}
-                        </div>
-                        <div className="max-w-[240px] truncate text-[10px] text-muted-foreground">
-                          {file.mimeType || '—'}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="font-mono text-xs font-bold">
-                      {formatBytes(file.size)}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {request.approvedById && (
-            <div className="rounded-lg border border-muted/20 bg-muted/5 p-3 text-xs text-muted-foreground">
-              Reviewed by{' '}
-              <strong className="text-foreground">
-                {request.approvedById}
-              </strong>
-              {request.approvedAt &&
-                ` on ${request.approvedAt.toLocaleDateString()}`}
-            </div>
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
 // ─── Column Definitions ───────────────────────────────────────────────────────
+
+const STATUS_FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: ApprovalRequestStatus.PENDING, label: 'Pending', icon: Clock },
+  { id: ApprovalRequestStatus.APPROVED, label: 'Approved', icon: CheckCircle2 },
+  { id: ApprovalRequestStatus.REJECTED, label: 'Rejected', icon: XCircle }
+] as const
 
 function makeColumns(
   currentUser: { id: string; name: string; permissions: { approve: boolean } },
@@ -288,7 +92,8 @@ function makeColumns(
   workspaces: WorkspaceWithDev[] | undefined,
   onApprove: (req: ApprovalRequest) => void,
   onReject: (req: ApprovalRequest) => void,
-  onViewDetails: (req: ApprovalRequest) => void
+  onViewDetails: (req: ApprovalRequest) => void,
+  onDownload: (req: ApprovalRequest) => void
 ): ColumnDef<ApprovalRequest>[] {
   const resolveWorkspace = (id?: string) => workspaces?.find((w) => w.id === id)
 
@@ -395,14 +200,11 @@ function makeColumns(
     {
       id: 'files',
       header: 'Files',
-      cell: ({ row }) => {
-        const count = getFiles(row.original).length
-        return (
-          <span className="font-mono text-sm font-bold tabular-nums text-muted-foreground">
-            {count}
-          </span>
-        )
-      }
+      cell: ({ row }) => (
+        <span className="font-mono text-sm font-bold tabular-nums text-muted-foreground">
+          {getFiles(row.original).length}
+        </span>
+      )
     },
     {
       id: 'size',
@@ -445,10 +247,7 @@ function makeColumns(
         if (!date)
           return <span className="text-xs text-muted-foreground">—</span>
         return (
-          <span
-            title={date.toLocaleString()}
-            className="text-xs text-muted-foreground"
-          >
+          <span title={date.toLocaleString()} className="text-xs text-muted-foreground">
             {formatDistanceToNow(date, { addSuffix: true })}
           </span>
         )
@@ -493,9 +292,7 @@ function makeColumns(
                 size="sm"
                 variant="outline"
                 className="h-7 rounded-lg px-2 text-xs"
-                onClick={() => {
-                  /* TODO: wire up download link */
-                }}
+                onClick={() => onDownload(req)}
               >
                 <Download className="mr-1 h-3.5 w-3.5" />
                 Download
@@ -507,19 +304,6 @@ function makeColumns(
     }
   ]
 }
-
-// ─── Status Filter Bar ────────────────────────────────────────────────────────
-
-const STATUS_FILTERS = [
-  { id: 'all', label: 'All' },
-  { id: ApprovalRequestStatus.PENDING, label: 'Pending', icon: Clock },
-  {
-    id: ApprovalRequestStatus.APPROVED,
-    label: 'Approved',
-    icon: CheckCircle2
-  },
-  { id: ApprovalRequestStatus.REJECTED, label: 'Rejected', icon: XCircle }
-] as const
 
 // ─── Data Table ───────────────────────────────────────────────────────────────
 
@@ -539,24 +323,37 @@ function RequestsDataTable({
   onReject: (req: ApprovalRequest) => void
 }) {
   const { workspaces } = useAppState()
+  const router = useRouter()
+  const { toast } = useToast()
 
   const [viewMode, setViewMode] = React.useState<ViewMode>('table')
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'createdAt', desc: true }
   ])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = React.useState('')
   const [statusFilter, setStatusFilter] = React.useState<string>('all')
-  const [detailsRequest, setDetailsRequest] =
-    React.useState<ApprovalRequest | null>(null)
-  const [detailsOpen, setDetailsOpen] = React.useState(false)
 
-  const handleViewDetails = React.useCallback((req: ApprovalRequest) => {
-    setDetailsRequest(req)
-    setDetailsOpen(true)
-  }, [])
+  const handleViewDetails = React.useCallback(
+    (req: ApprovalRequest) => {
+      if (req.id) router.push(`/messages/requests/${req.id}`)
+    },
+    [router]
+  )
+
+  const handleDownload = React.useCallback(
+    async (req: ApprovalRequest) => {
+      if (!req.id) return
+      await downloadRequestFiles(req.id, getFiles(req), (fileName) => {
+        toast({
+          variant: 'destructive',
+          title: 'Download failed',
+          description: `Failed to download ${fileName}`
+        })
+      })
+    },
+    [toast]
+  )
 
   const handleStatusFilter = (id: string) => {
     setStatusFilter(id)
@@ -575,16 +372,10 @@ function RequestsDataTable({
         workspaces,
         onApprove,
         onReject,
-        handleViewDetails
+        handleViewDetails,
+        handleDownload
       ),
-    [
-      currentUser,
-      showApprovalActions,
-      workspaces,
-      onApprove,
-      onReject,
-      handleViewDetails
-    ]
+    [currentUser, showApprovalActions, workspaces, onApprove, onReject, handleViewDetails, handleDownload]
   )
 
   const table = useReactTable({
@@ -602,9 +393,7 @@ function RequestsDataTable({
     initialState: { pagination: { pageSize: 20 } }
   })
 
-  // Paginated rows (table view)
   const rows = table.getRowModel().rows
-  // All filtered rows — used by card view (no pagination)
   const filteredRows = table.getFilteredRowModel().rows
   const totalFiltered = filteredRows.length
   const { pageIndex, pageSize } = table.getState().pagination
@@ -612,206 +401,186 @@ function RequestsDataTable({
   const to = Math.min((pageIndex + 1) * pageSize, totalFiltered)
 
   return (
-    <>
-      <FileManifestSheet
-        request={detailsRequest}
-        open={detailsOpen}
-        onOpenChange={setDetailsOpen}
-      />
-
-      <Card variant="glass" className="flex flex-col">
-        {/* Toolbar */}
-        <CardHeader className="pb-3 pt-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            {/* Left: search + status filters */}
-            <div className="flex flex-1 flex-wrap items-center gap-2">
-              <div className="relative w-56">
-                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search title or description…"
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  className="h-8 rounded-lg pl-8 text-xs"
-                />
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {STATUS_FILTERS.map((f) => {
-                  const Icon = 'icon' in f ? f.icon : null
-                  return (
-                    <Button
-                      key={f.id}
-                      variant="ghost"
-                      size="sm"
-                      className={`h-7 rounded-lg px-2 text-xs font-medium hover:underline ${statusFilter === f.id ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
-                      onClick={() => handleStatusFilter(f.id)}
-                    >
-                      {Icon && <Icon className="h-3 w-3" />}
-                      {f.label}
-                    </Button>
-                  )
-                })}
-              </div>
+    <Card variant="glass" className="flex flex-col">
+      {/* Toolbar */}
+      <CardHeader className="pb-3 pt-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-1 flex-wrap items-center gap-2">
+            <div className="relative w-56">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search title or description…"
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="h-8 rounded-lg pl-8 text-xs"
+              />
             </div>
-
-            {/* Right: view-mode toggle */}
-            <div className="flex items-center gap-0.5 rounded-lg border border-muted/20 bg-muted/10 p-0.5">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-6 w-6 rounded-md ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
-                onClick={() => setViewMode('table')}
-                title="Table view"
-              >
-                <List className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-6 w-6 rounded-md ${viewMode === 'cards' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
-                onClick={() => setViewMode('cards')}
-                title="Card view"
-              >
-                <LayoutGrid className="h-3.5 w-3.5" />
-              </Button>
+            <div className="flex flex-wrap gap-1.5">
+              {STATUS_FILTERS.map((f) => {
+                const Icon = 'icon' in f ? f.icon : null
+                return (
+                  <Button
+                    key={f.id}
+                    variant="ghost"
+                    size="sm"
+                    className={`h-7 rounded-lg px-2 text-xs font-medium hover:underline ${statusFilter === f.id ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+                    onClick={() => handleStatusFilter(f.id)}
+                  >
+                    {Icon && <Icon className="h-3 w-3" />}
+                    {f.label}
+                  </Button>
+                )
+              })}
             </div>
           </div>
-        </CardHeader>
 
-        {/* Table view */}
-        {viewMode === 'table' && (
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((hg) => (
-                  <TableRow key={hg.id} className="hover:bg-transparent">
-                    {hg.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className="h-9 px-3 text-muted-foreground"
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
+          <div className="flex items-center gap-0.5 rounded-lg border border-muted/20 bg-muted/10 p-0.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-6 w-6 rounded-md ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+              onClick={() => setViewMode('table')}
+              title="Table view"
+            >
+              <List className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-6 w-6 rounded-md ${viewMode === 'cards' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+              onClick={() => setViewMode('cards')}
+              title="Card view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+
+      {/* Table view */}
+      {viewMode === 'table' && (
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id} className="hover:bg-transparent">
+                  {hg.headers.map((header) => (
+                    <TableHead key={header.id} className="h-9 px-3 text-muted-foreground">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center text-sm text-muted-foreground"
+                  >
+                    No requests match your filters.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="border-muted/20 transition-colors hover:bg-muted/10"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="px-3 py-2">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {rows.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-32 text-center text-sm text-muted-foreground"
-                    >
-                      No requests match your filters.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className="border-muted/20 transition-colors hover:bg-muted/10"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="px-3 py-2">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        )}
-
-        {/* Card view — uses the same filtered rows from the table instance */}
-        {viewMode === 'cards' && (
-          <CardContent className="pt-2">
-            {filteredRows.length === 0 ? (
-              <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-                No requests match your filters.
-              </div>
-            ) : (
-              <div className="grid gap-4 xl:grid-cols-3">
-                {filteredRows.map((row) => (
-                  <FileRequestCard
-                    key={row.id}
-                    request={row.original}
-                    currentUser={currentUser}
-                    showApprovalActions={
-                      showApprovalActions &&
-                      row.original.status === ApprovalRequestStatus.PENDING
-                    }
-                    onApprove={() => onApprove(row.original)}
-                    onReject={() => onReject(row.original)}
-                  />
-                ))}
-              </div>
-            )}
-          </CardContent>
-        )}
-
-        {/* Footer / Pagination (table view only) */}
-        {viewMode === 'table' && (
-          <CardFooter className="justify-between py-3 text-xs text-muted-foreground">
-            <span>
-              {totalFiltered === 0 ? (
-                'No results'
-              ) : (
-                <>
-                  Showing{' '}
-                  <strong>
-                    {from}–{to}
-                  </strong>{' '}
-                  of <strong>{totalFiltered}</strong>
-                </>
+                ))
               )}
-            </span>
-            {table.getPageCount() > 1 && (
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="px-1 tabular-nums">
-                  {pageIndex + 1} / {table.getPageCount()}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </CardFooter>
-        )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      )}
 
-        {/* Card view footer — simple count */}
-        {viewMode === 'cards' && totalFiltered > 0 && (
-          <CardFooter className="py-3 text-xs text-muted-foreground">
-            <strong>{totalFiltered}</strong>&nbsp;request
-            {totalFiltered !== 1 ? 's' : ''}
-          </CardFooter>
-        )}
-      </Card>
-    </>
+      {/* Card view */}
+      {viewMode === 'cards' && (
+        <CardContent className="pt-2">
+          {filteredRows.length === 0 ? (
+            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+              No requests match your filters.
+            </div>
+          ) : (
+            <div className="grid gap-4 xl:grid-cols-3">
+              {filteredRows.map((row) => (
+                <FileRequestCard
+                  key={row.id}
+                  request={row.original}
+                  currentUser={currentUser}
+                  showApprovalActions={
+                    showApprovalActions &&
+                    row.original.status === ApprovalRequestStatus.PENDING
+                  }
+                  onApprove={() => onApprove(row.original)}
+                  onReject={() => onReject(row.original)}
+                />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      )}
+
+      {/* Footer */}
+      {viewMode === 'table' && (
+        <CardFooter className="justify-between py-3 text-xs text-muted-foreground">
+          <span>
+            {totalFiltered === 0 ? (
+              'No results'
+            ) : (
+              <>
+                Showing{' '}
+                <strong>
+                  {from}–{to}
+                </strong>{' '}
+                of <strong>{totalFiltered}</strong>
+              </>
+            )}
+          </span>
+          {table.getPageCount() > 1 && (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="px-1 tabular-nums">
+                {pageIndex + 1} / {table.getPageCount()}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </CardFooter>
+      )}
+
+      {viewMode === 'cards' && totalFiltered > 0 && (
+        <CardFooter className="py-3 text-xs text-muted-foreground">
+          <strong>{totalFiltered}</strong>&nbsp;request
+          {totalFiltered !== 1 ? 's' : ''}
+        </CardFooter>
+      )}
+    </Card>
   )
 }
 
@@ -822,15 +591,11 @@ export default function RequestsClient({
   currentUser,
   workspaceId: _workspaceId
 }: RequestsClientProps) {
-  const [requests, setRequests] =
-    React.useState<ApprovalRequest[]>(initialRequests)
-  const [selectedRequest, setSelectedRequest] =
-    React.useState<ApprovalRequest | null>(null)
+  const [requests, setRequests] = React.useState<ApprovalRequest[]>(initialRequests)
+  const [selectedRequest, setSelectedRequest] = React.useState<ApprovalRequest | null>(null)
   const [reviewNotes, setReviewNotes] = React.useState('')
   const [isReviewDialogOpen, setIsReviewDialogOpen] = React.useState(false)
-  const [activeAction, setActiveAction] = React.useState<
-    'approve' | 'reject' | null
-  >(null)
+  const [activeAction, setActiveAction] = React.useState<'approve' | 'reject' | null>(null)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -842,8 +607,7 @@ export default function RequestsClient({
   const requestsToApprove = React.useMemo(
     () =>
       requests.filter(
-        (req) =>
-          req.requesterId !== currentUser.id && currentUser.permissions.approve
+        (req) => req.requesterId !== currentUser.id && currentUser.permissions.approve
       ),
     [requests, currentUser]
   )
@@ -905,14 +669,17 @@ export default function RequestsClient({
     }
   }
 
-  const totalPayloadDisplay = selectedRequest
-    ? formatBytes(getTotalSize(selectedRequest).toString())
-    : '—'
+  const closeDialog = () => {
+    setIsReviewDialogOpen(false)
+    setSelectedRequest(null)
+    setReviewNotes('')
+    setActiveAction(null)
+  }
 
   return (
     <div className="space-y-4">
       <Tabs defaultValue="outbox" className="w-full">
-        <TabsList className="">
+        <TabsList>
           <TabsTrigger
             value="outbox"
             className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
@@ -1004,7 +771,9 @@ export default function RequestsClient({
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">
                     Total Payload
                   </span>
-                  <div className="text-sm font-bold">{totalPayloadDisplay}</div>
+                  <div className="text-sm font-bold">
+                    {formatBytes(getTotalSize(selectedRequest).toString())}
+                  </div>
                 </div>
               </div>
 
@@ -1041,11 +810,7 @@ export default function RequestsClient({
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              onClick={() => {
-                setIsReviewDialogOpen(false)
-                setSelectedRequest(null)
-                setReviewNotes('')
-              }}
+              onClick={closeDialog}
               className="h-11 rounded-xl"
             >
               Cancel
@@ -1055,9 +820,7 @@ export default function RequestsClient({
               onClick={handleRequestAction}
               className="h-11 min-w-[160px] rounded-xl"
             >
-              {activeAction === 'approve'
-                ? 'Confirm Approval'
-                : 'Confirm Rejection'}
+              {activeAction === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
             </Button>
           </DialogFooter>
         </DialogContent>

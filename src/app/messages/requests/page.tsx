@@ -5,9 +5,7 @@ import * as React from 'react'
 
 import { LoadingOverlay } from '@/components/loading-overlay'
 import { ApprovalRequest } from '@/domain/model/approval-request'
-import { User } from '@/domain/model/user'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
-import { userMe } from '@/view-model/user-view-model'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 import RequestsClient from './requests-client'
