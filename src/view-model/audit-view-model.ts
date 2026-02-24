@@ -4,7 +4,7 @@ import { env } from 'next-runtime-env'
 
 import { AuditDataSourceImpl } from '~/data/data-source'
 import { AuditRepositoryImpl } from '~/data/repository/audit-repository-impl'
-import { AuditEntry, Result } from '~/domain/model'
+import { AuditEntry, AuditListPlatformParams, Result } from '~/domain/model'
 import { AuditListPlatform } from '~/domain/use-cases/audit/audit-list-platform'
 import { AuditListUser } from '~/domain/use-cases/audit/audit-list-user'
 import { AuditListWorkbench } from '~/domain/use-cases/audit/audit-list-workbench'
@@ -15,10 +15,12 @@ const getRepository = async () => {
   return new AuditRepositoryImpl(dataSource)
 }
 
-export async function listPlatform(): Promise<Result<AuditEntry[]>> {
+export async function listPlatform(
+  params?: AuditListPlatformParams
+): Promise<Result<AuditEntry[]>> {
   const repository = await getRepository()
   const useCase = new AuditListPlatform(repository)
-  return await useCase.execute()
+  return await useCase.execute(params)
 }
 
 export async function listWorkspace(

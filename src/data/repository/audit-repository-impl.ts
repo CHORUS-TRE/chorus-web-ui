@@ -1,5 +1,10 @@
 import { AuditDataSource } from '~/data/data-source'
-import { AuditEntry, AuditEntrySchema, Result } from '~/domain/model'
+import {
+  AuditEntry,
+  AuditEntrySchema,
+  AuditListPlatformParams,
+  Result
+} from '~/domain/model'
 import { AuditRepository } from '~/domain/repository'
 import { ChorusListAuditReply } from '~/internal/client'
 
@@ -20,9 +25,11 @@ export class AuditRepositoryImpl implements AuditRepository {
     return { data: entries }
   }
 
-  async listPlatform(): Promise<Result<AuditEntry[]>> {
+  async listPlatform(
+    params?: AuditListPlatformParams
+  ): Promise<Result<AuditEntry[]>> {
     try {
-      const response = await this.dataSource.listPlatform({})
+      const response = await this.dataSource.listPlatform({ ...params })
       return this.parseEntries(response)
     } catch (error) {
       console.error('Error listing platform audit', error)

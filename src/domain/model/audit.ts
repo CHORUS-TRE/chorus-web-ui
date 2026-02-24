@@ -16,3 +16,17 @@ export const AuditEntrySchema = z.object({
 export const AuditEntryListSchema = z.array(AuditEntrySchema)
 
 export type AuditEntry = z.infer<typeof AuditEntrySchema>
+
+export interface AuditListPlatformParams {
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterUserId?: string
+  filterWorkspaceId?: string
+  filterWorkbenchId?: string
+  filterAction?: string
+  filterFromTime?: Date
+  filterToTime?: Date
+}

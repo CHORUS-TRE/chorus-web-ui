@@ -1,8 +1,8 @@
-import { AuditEntry, Result } from '@/domain/model'
+import { AuditEntry, AuditListPlatformParams, Result } from '@/domain/model'
 import { AuditRepository } from '@/domain/repository'
 
 export interface AuditListPlatformUseCase {
-  execute(): Promise<Result<AuditEntry[]>>
+  execute(params?: AuditListPlatformParams): Promise<Result<AuditEntry[]>>
 }
 
 export class AuditListPlatform implements AuditListPlatformUseCase {
@@ -12,7 +12,9 @@ export class AuditListPlatform implements AuditListPlatformUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<Result<AuditEntry[]>> {
-    return await this.repository.listPlatform()
+  async execute(
+    params?: AuditListPlatformParams
+  ): Promise<Result<AuditEntry[]>> {
+    return await this.repository.listPlatform(params)
   }
 }
