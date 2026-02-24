@@ -387,7 +387,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                 Recent Activity
               </Link>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
               Latest actions in your project workspace
             </CardDescription>
           </CardHeader>
@@ -417,7 +417,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                       >
                         <div className="mt-2 h-2 w-2 rounded-full bg-primary"></div>
                         <div className="flex-1">
-                          <p className="text-xs text-foreground">
+                          <p className="text-foreground-muted text-xs">
                             {entry.description ||
                               entry.action ||
                               'Unknown action'}

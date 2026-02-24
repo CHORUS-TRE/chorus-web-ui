@@ -11,6 +11,7 @@ import {
   Package
 } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
@@ -41,6 +42,8 @@ export default function CHORUSDashboard() {
       setPendingApprovals(res.data?.length || 0)
     })
   }, [])
+
+  const router = useRouter()
 
   const workspaceList =
     workspaces?.filter(
@@ -84,7 +87,11 @@ export default function CHORUSDashboard() {
         <section>
           <h3 className="mb-3 font-semibold">Activity Overview</h3>
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            <Card variant="default">
+            <Card
+              variant="default"
+              onClick={() => router.push('/workspaces')}
+              className="cursor-pointer"
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-secondary">
                   Total Workspaces
@@ -105,7 +112,11 @@ export default function CHORUSDashboard() {
               </CardContent>
             </Card>
 
-            <Card variant="default">
+            <Card
+              variant="default"
+              onClick={() => router.push('/sessions')}
+              className="cursor-pointer"
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-secondary">
                   Active Sessions
@@ -147,10 +158,14 @@ export default function CHORUSDashboard() {
               </CardContent>
             </Card>
 
-            <Card variant="default">
+            <Card
+              variant="default"
+              onClick={() => router.push('/messages/requests')}
+              className="cursor-pointer"
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-secondary">
-                  Pending Approval
+                  Data Requests
                 </CardTitle>
               </CardHeader>
               <CardContent>

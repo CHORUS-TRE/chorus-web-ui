@@ -247,7 +247,10 @@ function makeColumns(
         if (!date)
           return <span className="text-xs text-muted-foreground">—</span>
         return (
-          <span title={date.toLocaleString()} className="text-xs text-muted-foreground">
+          <span
+            title={date.toLocaleString()}
+            className="text-xs text-muted-foreground"
+          >
             {formatDistanceToNow(date, { addSuffix: true })}
           </span>
         )
@@ -330,7 +333,9 @@ function RequestsDataTable({
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'createdAt', desc: true }
   ])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  )
   const [globalFilter, setGlobalFilter] = React.useState('')
   const [statusFilter, setStatusFilter] = React.useState<string>('all')
 
@@ -375,7 +380,15 @@ function RequestsDataTable({
         handleViewDetails,
         handleDownload
       ),
-    [currentUser, showApprovalActions, workspaces, onApprove, onReject, handleViewDetails, handleDownload]
+    [
+      currentUser,
+      showApprovalActions,
+      workspaces,
+      onApprove,
+      onReject,
+      handleViewDetails,
+      handleDownload
+    ]
   )
 
   const table = useReactTable({
@@ -465,10 +478,16 @@ function RequestsDataTable({
               {table.getHeaderGroups().map((hg) => (
                 <TableRow key={hg.id} className="hover:bg-transparent">
                   {hg.headers.map((header) => (
-                    <TableHead key={header.id} className="h-9 px-3 text-muted-foreground">
+                    <TableHead
+                      key={header.id}
+                      className="h-9 px-3 text-muted-foreground"
+                    >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -492,7 +511,10 @@ function RequestsDataTable({
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="px-3 py-2">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -591,11 +613,15 @@ export default function RequestsClient({
   currentUser,
   workspaceId: _workspaceId
 }: RequestsClientProps) {
-  const [requests, setRequests] = React.useState<ApprovalRequest[]>(initialRequests)
-  const [selectedRequest, setSelectedRequest] = React.useState<ApprovalRequest | null>(null)
+  const [requests, setRequests] =
+    React.useState<ApprovalRequest[]>(initialRequests)
+  const [selectedRequest, setSelectedRequest] =
+    React.useState<ApprovalRequest | null>(null)
   const [reviewNotes, setReviewNotes] = React.useState('')
   const [isReviewDialogOpen, setIsReviewDialogOpen] = React.useState(false)
-  const [activeAction, setActiveAction] = React.useState<'approve' | 'reject' | null>(null)
+  const [activeAction, setActiveAction] = React.useState<
+    'approve' | 'reject' | null
+  >(null)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -607,7 +633,8 @@ export default function RequestsClient({
   const requestsToApprove = React.useMemo(
     () =>
       requests.filter(
-        (req) => req.requesterId !== currentUser.id && currentUser.permissions.approve
+        (req) =>
+          req.requesterId !== currentUser.id && currentUser.permissions.approve
       ),
     [requests, currentUser]
   )
@@ -820,7 +847,9 @@ export default function RequestsClient({
               onClick={handleRequestAction}
               className="h-11 min-w-[160px] rounded-xl"
             >
-              {activeAction === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
+              {activeAction === 'approve'
+                ? 'Confirm Approval'
+                : 'Confirm Rejection'}
             </Button>
           </DialogFooter>
         </DialogContent>

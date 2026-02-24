@@ -25,20 +25,15 @@ import {
   getTotalSize
 } from '@/lib/approval-request-utils'
 import { Button } from '~/components/button'
+import { useToast } from '~/components/hooks/use-toast'
 import { Badge } from '~/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader
-} from '~/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '~/components/ui/card'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible'
 import { Separator } from '~/components/ui/separator'
-import { useToast } from '~/components/hooks/use-toast'
 
 import { StatusBadge } from './_components/status-badge'
 import { TypeBadge } from './_components/type-badge'

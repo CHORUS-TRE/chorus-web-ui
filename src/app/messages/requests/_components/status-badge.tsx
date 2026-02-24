@@ -1,13 +1,6 @@
-import {
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  XCircle
-} from 'lucide-react'
+import { AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react'
 
-import {
-  ApprovalRequestStatus
-} from '@/domain/model/approval-request'
+import { ApprovalRequestStatus } from '@/domain/model/approval-request'
 import { cn } from '@/lib/utils'
 import { Badge } from '~/components/ui/badge'
 
@@ -75,7 +68,12 @@ export function StatusBadge({
       variant="outline"
       className="border-foreground-muted/20 bg-foreground-muted/10 flex h-5 w-fit items-center gap-1 rounded-md px-1.5 text-[9px] font-bold uppercase"
     >
-      <Icon className={cn('h-2.5 w-2.5', cfg.colorClass.split(' ').find(c => c.startsWith('text-')))} />
+      <Icon
+        className={cn(
+          'h-2.5 w-2.5',
+          cfg.colorClass.split(' ').find((c) => c.startsWith('text-'))
+        )}
+      />
       <span className="text-gray-400">{cfg.label}</span>
     </Badge>
   )
