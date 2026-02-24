@@ -7,7 +7,6 @@ import {
   Clock,
   Eye,
   EyeOff,
-  Filter,
   MoreVertical,
   Trash2
 } from 'lucide-react'
@@ -16,7 +15,6 @@ import React, { useMemo, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
-import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -33,17 +31,14 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { markNotificationsAsRead } from '@/view-model/notification-view-model'
-import { useAuthentication } from '~/providers/authentication-provider'
 import { useAppState } from '~/stores/app-state-store'
 
 export default function NotificationsPage() {
-  const { user } = useAuthentication()
   const {
     notifications,
     refreshNotifications,
     refreshUnreadNotificationsCount
   } = useAppState()
-  const { userId } = (useParams() ?? {}) as { userId?: string }
 
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
 
@@ -73,12 +68,11 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <div className="w-full">
+      <div className="container mx-auto p-6">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Bell className="h-9 w-9" />
+          <h1 className="text-3xl font-semibold text-muted-foreground">
             Notifications
-          </h2>
+          </h1>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -131,15 +125,14 @@ export default function NotificationsPage() {
                   <div
                     key={notification.id || index}
                     className={`group relative flex gap-4 px-6 py-4 transition-colors hover:bg-muted/30 ${
-                      !notification.readAt ? 'bg-primary/5' : ''
+                      !notification.readAt
+                        ? 'bg-primary/5'
+                        : 'text-muted-foreground'
                     }`}
                   >
-                    {!notification.readAt && (
-                      <div className="absolute left-0 top-0 h-full w-1 bg-primary" />
-                    )}
                     <div className="mt-1">
                       <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                        className={`flex h-5 w-5 items-center justify-center rounded-full ${
                           notification.content?.approvalRequestNotification
                             ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30'
                             : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30'
@@ -176,7 +169,7 @@ export default function NotificationsPage() {
                       <div className="flex items-center gap-2 pt-1">
                         {notification.content?.approvalRequestNotification && (
                           <Link
-                            href={`/approvals/${notification.content.approvalRequestNotification.approvalRequestId}`}
+                            href={`/messages/requests/${notification.content.approvalRequestNotification.approvalRequestId}`}
                           >
                             <Button variant="outline" size="xs">
                               View Request

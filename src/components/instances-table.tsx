@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { Rocket, TrashIcon } from 'lucide-react'
+import { AppWindow, TrashIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
@@ -94,7 +94,7 @@ export default function InstancesTable({
     <Card variant="glass" className="flex h-full flex-col justify-between">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
-          <Rocket className="h-5 w-5 text-muted-foreground" />
+          <AppWindow className="h-5 w-5 text-muted-foreground" />
           <CardTitle>{title}</CardTitle>
         </div>
         <CardDescription>{description}</CardDescription>

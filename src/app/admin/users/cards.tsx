@@ -45,7 +45,7 @@ export default function UserSettingsPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h2 className="flex items-center gap-3 text-3xl font-bold tracking-tight">
+        <h2 className="flex items-center gap-3 text-3xl font-semibold tracking-tight text-muted-foreground">
           <User className="h-8 w-8" />
           User Settings
         </h2>

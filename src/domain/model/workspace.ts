@@ -49,7 +49,6 @@ export const WorkspaceUpdateSchema = WorkspaceCreateSchema.extend({
 export const WorkspaceDevSchema = z.object({
   // DevStore fields
   image: z.union([z.any(), z.null()]).optional(),
-  tag: z.enum(['center', 'project']).default('project'),
   config: WorkspaceConfigSchema.optional(),
 
   // Computed fields (UI)
@@ -67,7 +66,6 @@ export const WorkspaceWithDevSchema = WorkspaceSchema.extend({
 // Schema for validating DevStore fields from forms
 export const WorkspaceDevFormSchema = z.object({
   image: z.union([z.any(), z.null()]).optional(),
-  tag: z.enum(['center', 'project']).optional(),
   descriptionMarkdown: z.string().optional(),
   network: NetworkPolicyEnum.optional(),
   allowCopyPaste: z.boolean().optional(),

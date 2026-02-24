@@ -4,12 +4,14 @@ import {
   ApprovalRequestServiceCreateDataExtractionRequestRequest,
   ApprovalRequestServiceCreateDataTransferRequestRequest,
   ApprovalRequestServiceDeleteApprovalRequestRequest,
+  ApprovalRequestServiceDownloadApprovalRequestFileRequest,
   ApprovalRequestServiceGetApprovalRequestRequest,
   ApprovalRequestServiceListApprovalRequestsRequest,
   ChorusApproveApprovalRequestReply,
   ChorusCreateDataExtractionRequestReply,
   ChorusCreateDataTransferRequestReply,
   ChorusDeleteApprovalRequestReply,
+  ChorusDownloadApprovalRequestFileReply,
   ChorusGetApprovalRequestReply,
   ChorusListApprovalRequestsReply,
   Configuration
@@ -34,6 +36,9 @@ export interface ApprovalRequestDataSource {
   list(
     params: ApprovalRequestServiceListApprovalRequestsRequest
   ): Promise<ChorusListApprovalRequestsReply>
+  downloadFile(
+    params: ApprovalRequestServiceDownloadApprovalRequestFileRequest
+  ): Promise<ChorusDownloadApprovalRequestFileReply>
 }
 
 export class ApprovalRequestApiDataSourceImpl
@@ -85,5 +90,13 @@ export class ApprovalRequestApiDataSourceImpl
     params: ApprovalRequestServiceListApprovalRequestsRequest
   ): Promise<ChorusListApprovalRequestsReply> {
     return this.service.approvalRequestServiceListApprovalRequests(params)
+  }
+
+  downloadFile(
+    params: ApprovalRequestServiceDownloadApprovalRequestFileRequest
+  ): Promise<ChorusDownloadApprovalRequestFileReply> {
+    return this.service.approvalRequestServiceDownloadApprovalRequestFile(
+      params
+    )
   }
 }

@@ -55,7 +55,7 @@ export default function UserRegisterForm() {
       <div className="grid h-full w-full gap-2 p-8">
         <div className="gap-4 text-center">
           <h2>Create an account</h2>
-          <h5 className="text-muted">
+          <h5 className="text-muted-foreground">
             Enter your username below to create your account
           </h5>
         </div>
@@ -74,7 +74,7 @@ export default function UserRegisterForm() {
                 name="firstName"
                 defaultValue={state.data?.firstName}
                 required
-                className="border border-muted/40 bg-background"
+                className="border border-muted/40 bg-background text-muted-foreground"
                 autoComplete="given-name"
               />
               <div className="text-xs text-red-500">
@@ -94,7 +94,7 @@ export default function UserRegisterForm() {
                 name="lastName"
                 required
                 defaultValue={state.data?.lastName}
-                className="border border-muted/40 bg-background"
+                className="border border-muted/40 bg-background text-muted-foreground"
                 autoComplete="family-name"
               />
               <div className="text-xs text-red-500">
@@ -107,7 +107,7 @@ export default function UserRegisterForm() {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="username" className="">
-              username
+              Username
             </Label>
             <Input
               disabled={isPending}
@@ -116,7 +116,7 @@ export default function UserRegisterForm() {
               name="username"
               defaultValue={state.data?.username}
               required
-              className="border border-muted/40 bg-background"
+              className="border border-muted/40 bg-background text-muted-foreground"
               autoComplete="username"
             />
             <div className="text-xs text-red-500">
@@ -135,10 +135,10 @@ export default function UserRegisterForm() {
               type="password"
               name="password"
               required
-              className="border border-muted/40 bg-background"
+              className="border border-muted/40 bg-background text-muted-foreground"
               autoComplete="new-password"
             />
-            <p className="text-xs text-muted">
+            <p className="text-xs text-muted-foreground">
               Password must be at least 8 characters long
             </p>
             <div className="text-xs text-red-500">
@@ -158,7 +158,7 @@ export default function UserRegisterForm() {
         Already have an account?{' '}
         <Link
           href="/"
-          className="text-muted underline hover:text-accent"
+          className="text-muted text-muted-foreground underline hover:text-accent"
           prefetch={false}
         >
           Login

@@ -15,10 +15,9 @@ export enum ApprovalRequestType {
 }
 
 export const ApprovalRequestFileSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().optional(),
-  size: z.string().optional(),
-  mimeType: z.string().optional()
+  sourcePath: z.string().optional(),
+  destinationPath: z.string().optional(),
+  size: z.string().optional()
 })
 
 export const DataExtractionDetailsSchema = z.object({
@@ -46,7 +45,9 @@ export const ApprovalRequestSchema = z.object({
   approvedById: z.string().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  approvedAt: z.date().optional()
+  approvedAt: z.date().optional(),
+  autoApproved: z.boolean().optional(),
+  approvalMessage: z.string().optional()
 })
 
 export const CreateDataExtractionRequestSchema = z.object({

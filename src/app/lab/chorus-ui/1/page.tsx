@@ -256,7 +256,7 @@ export default function ChorusApp() {
     }
 
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4 dark:from-background dark:via-background dark:to-background">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader className="space-y-1 text-center">
             <div className="mb-4 flex justify-center">
@@ -401,7 +401,7 @@ export default function ChorusApp() {
     const unreadCount = notifications.filter((n) => !n.read).length
 
     return (
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between border-b border-border bg-card p-4">
         <div className="max-w-xl flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
@@ -837,7 +837,7 @@ export default function ChorusApp() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen bg-background">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar />

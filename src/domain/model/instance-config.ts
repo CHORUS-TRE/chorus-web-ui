@@ -13,15 +13,6 @@ export const INSTANCE_CONFIG_KEYS = {
   SIDEBAR_WEBAPPS: 'instance.sidebar_webapps'
 } as const
 
-// Tag configuration for workspace types
-export const InstanceTagSchema = z.object({
-  id: z.string(),
-  label: z.string(),
-  display: z.boolean().default(true)
-})
-
-export type InstanceTag = z.infer<typeof InstanceTagSchema>
-
 // Logo configuration (light and dark variants)
 export const InstanceLogoSchema = z.object({
   light: z.string().nullable().optional(),
@@ -72,10 +63,6 @@ export const InstanceConfigSchema = z.object({
     .string()
     .default('Your One-Stop Shop for Data, Applications, and AI'),
   website: z.string().default('https://www.chorus-tre.ch/en/'),
-  tags: z.array(InstanceTagSchema).default([
-    { id: 'project', label: 'Workspace', display: true },
-    { id: 'center', label: 'Center', display: true }
-  ]),
   logo: InstanceLogoSchema.nullable().optional(),
   theme: InstanceThemeSchema.nullable().optional(),
   limits: InstanceLimitsSchema.nullable().optional(),
@@ -91,10 +78,6 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
     'A secure, open-source platform revolutionizing collaborative medical research and AI development.',
   tagline: 'Your One-Stop Shop for Data, Applications, and AI',
   website: 'https://www.chorus-tre.ch/en/',
-  tags: [
-    { id: 'project', label: 'Workspace', display: true },
-    { id: 'center', label: 'Center', display: true }
-  ],
   logo: null,
   theme: null,
   limits: {

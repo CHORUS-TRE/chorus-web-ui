@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Header } from '@/components/header'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
+import { ChatProvider } from '@/providers/chat-provider'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
@@ -315,5 +316,9 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 }
 
 export function AuthenticatedApp({ children }: MainLayoutProps) {
-  return <AuthenticatedAppContent>{children}</AuthenticatedAppContent>
+  return (
+    <ChatProvider>
+      <AuthenticatedAppContent>{children}</AuthenticatedAppContent>
+    </ChatProvider>
+  )
 }

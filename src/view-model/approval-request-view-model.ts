@@ -10,10 +10,12 @@ import {
   CreateDataExtractionRequest,
   CreateDataTransferRequest
 } from '@/domain/model/approval-request'
+import { DownloadFileResult } from '@/domain/repository/approval-request-repository'
 import { ApproveApprovalRequest } from '@/domain/use-cases/approval-request/approve-approval-request'
 import { CreateDataExtractionRequestUseCase } from '@/domain/use-cases/approval-request/create-data-extraction-request'
 import { CreateDataTransferRequestUseCase } from '@/domain/use-cases/approval-request/create-data-transfer-request'
 import { DeleteApprovalRequest } from '@/domain/use-cases/approval-request/delete-approval-request'
+import { DownloadApprovalRequestFile } from '@/domain/use-cases/approval-request/download-approval-request-file'
 import { GetApprovalRequest } from '@/domain/use-cases/approval-request/get-approval-request'
 import { ListApprovalRequests } from '@/domain/use-cases/approval-request/list-approval-requests'
 import { ApprovalRequestServiceListApprovalRequestsRequest } from '@/internal/client'
@@ -69,4 +71,13 @@ export async function listApprovalRequests(
   const repository = await getRepository()
   const useCase = new ListApprovalRequests(repository)
   return await useCase.execute(params)
+}
+
+export async function downloadApprovalRequestFile(
+  requestId: string,
+  filePath: string
+): Promise<Result<DownloadFileResult>> {
+  const repository = await getRepository()
+  const useCase = new DownloadApprovalRequestFile(repository)
+  return await useCase.execute(requestId, filePath)
 }

@@ -28,7 +28,6 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
-import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
 
@@ -44,8 +43,7 @@ export function Header() {
     apps,
     appInstances,
     refreshAppInstances,
-    refreshWorkbenches,
-    unreadNotificationsCount
+    refreshWorkbenches
   } = useAppState()
   const instanceLogo = useInstanceLogo()
   const {
@@ -71,7 +69,6 @@ export function Header() {
   const { theme } = useTheme()
   const defaultLogo = theme === 'light' ? logoBlack : logoWhite
   const logo = theme === 'light' ? instanceLogo?.light : instanceLogo?.dark
-  const { toggleRightSidebar } = useUserPreferences()
   const pathname = usePathname()
 
   // Track launching apps for the current session
@@ -177,34 +174,7 @@ export function Header() {
         </div>
 
         {/* Right: Actions & User Profile */}
-        <div className="flex shrink-0 items-center justify-end gap-2">
-          {user && (
-            <button
-              onClick={() => toggleRightSidebar()}
-              className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
-              title="Help"
-            >
-              <HelpCircle className="h-4 w-4 text-muted-foreground" />
-            </button>
-          )}
-
-          {user && (
-            <button
-              onClick={() => router.push(`/notifications`)}
-              className="group relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted/30"
-              title="Notifications"
-            >
-              <Bell className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
-              {unreadNotificationsCount !== undefined &&
-                unreadNotificationsCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
-                    {unreadNotificationsCount > 99
-                      ? '99+'
-                      : unreadNotificationsCount}
-                  </span>
-                )}
-            </button>
-          )}
+        <div className="shrink-0">
           <UserProfileSection />
         </div>
 

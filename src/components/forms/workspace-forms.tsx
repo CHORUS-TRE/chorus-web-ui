@@ -85,7 +85,6 @@ const WorkspaceFormSchema = z.object({
   id: z.string().optional(), // Only for update
 
   // General config
-  tag: z.enum(['center', 'project']).optional(),
   image: z.any().optional(),
   descriptionMarkdown: z.string().optional(),
 
@@ -159,7 +158,6 @@ export function WorkspaceCreateForm({
       tenantId: '1',
       userId: userId || '',
       isMain: false,
-      tag: 'project',
       descriptionMarkdown: '',
       network: 'closed',
       allowCopyPaste: false,
@@ -402,7 +400,6 @@ export function WorkspaceUpdateForm({
       isMain: workspace?.isMain || false,
       tenantId: '1',
       userId: workspace?.userId || '',
-      tag: workspace?.dev?.tag,
       descriptionMarkdown: existingConfig?.descriptionMarkdown || '',
       network: existingConfig?.security?.network || 'closed',
       allowCopyPaste: existingConfig?.security?.allowCopyPaste || false,
@@ -441,7 +438,6 @@ export function WorkspaceUpdateForm({
         isMain: workspace.isMain || false,
         tenantId: '1',
         userId: workspace.userId || '',
-        tag: workspace.dev?.tag,
         descriptionMarkdown: config?.descriptionMarkdown || '',
         network: config?.security?.network || 'closed',
         allowCopyPaste: config?.security?.allowCopyPaste || false,
@@ -674,28 +670,6 @@ function GeneralTabContent({
               <FormDescription>
                 Supports Markdown formatting for rich documentation
               </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="tag"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select workspace type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="project">Project</SelectItem>
-                  <SelectItem value="center">Center</SelectItem>
-                </SelectContent>
-              </Select>
               <FormMessage />
             </FormItem>
           )}

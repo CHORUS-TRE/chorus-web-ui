@@ -5,8 +5,6 @@ import { persist } from 'zustand/middleware'
 
 interface WorkspaceFilters {
   showMyWorkspaces: boolean
-  showCenter: boolean
-  showProject: boolean
 }
 
 interface UserPreferencesState {
@@ -59,9 +57,7 @@ interface UserPreferencesState {
 
 const defaultPreferences = {
   workspaceFilters: {
-    showMyWorkspaces: true,
-    showCenter: false,
-    showProject: true
+    showMyWorkspaces: true
   },
   workspaceSearchQuery: '',
   sessionSearchQuery: '',

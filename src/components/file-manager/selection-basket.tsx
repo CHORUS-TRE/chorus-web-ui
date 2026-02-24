@@ -28,8 +28,17 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
+import { useAppState } from '~/stores/app-state-store'
 import type { FileSystemItem } from '~/types/file-system'
 
 interface SelectionBasketProps {
@@ -57,6 +66,8 @@ export function SelectionBasket({
   >(null)
   const [requestJustification, setRequestJustification] = React.useState('')
   const [targetWorkspaceId, setTargetWorkspaceId] = React.useState('')
+  const [isCustomWorkspaceId, setIsCustomWorkspaceId] = React.useState(false)
+  const { workspaces } = useAppState()
 
   const totalSize = React.useMemo(() => {
     return selectedItems.reduce((acc, item) => acc + (item.size || 0), 0)
@@ -94,11 +105,7 @@ export function SelectionBasket({
       <div className="p-2 pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
-            <ShoppingBasket
-              className="text-foreground-muted h-5 w-5"
-              aria-hidden="true"
-            />
-            Selection Basket
+            Selected Files
           </CardTitle>
           <Badge className="rounded-full px-2">{selectedItems.length}</Badge>
         </div>
@@ -113,6 +120,12 @@ export function SelectionBasket({
       <CardContent className="flex flex-1 flex-col p-2 pt-0">
         <ScrollArea className="flex-1 pr-4">
           <div className="mt-2 space-y-1">
+            {selectedItems.length === 0 && (
+              <div className="mt-8 p-6 text-center text-sm text-muted-foreground">
+                Select the files you would like to download or transfer to
+                another workspace.
+              </div>
+            )}
             {selectedItems.map((item) => (
               <div
                 key={item.id}
@@ -201,15 +214,43 @@ export function SelectionBasket({
                   htmlFor="target-workspace"
                   className="text-sm font-semibold"
                 >
-                  Target Workspace ID
+                  Target Workspace
                 </Label>
-                <Input
-                  id="target-workspace"
-                  placeholder="e.g. workspace-alpha-99"
-                  value={targetWorkspaceId}
-                  onChange={(e) => setTargetWorkspaceId(e.target.value)}
-                  className="bg-muted/20"
-                />
+                <Select
+                  value={isCustomWorkspaceId ? '__custom__' : targetWorkspaceId}
+                  onValueChange={(val) => {
+                    if (val === '__custom__') {
+                      setIsCustomWorkspaceId(true)
+                      setTargetWorkspaceId('')
+                    } else {
+                      setIsCustomWorkspaceId(false)
+                      setTargetWorkspaceId(val)
+                    }
+                  }}
+                >
+                  <SelectTrigger className="bg-muted/20">
+                    <SelectValue placeholder="Select a workspace…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {workspaces?.map((ws) => (
+                      <SelectItem key={ws.id} value={ws.id}>
+                        {ws.name} — {ws.id}
+                      </SelectItem>
+                    ))}
+                    <SelectSeparator />
+                    <SelectItem value="__custom__">Custom ID…</SelectItem>
+                  </SelectContent>
+                </Select>
+                {isCustomWorkspaceId && (
+                  <Input
+                    id="target-workspace"
+                    placeholder="Enter workspace ID"
+                    value={targetWorkspaceId}
+                    onChange={(e) => setTargetWorkspaceId(e.target.value)}
+                    className="mt-2 bg-muted/20"
+                    autoFocus
+                  />
+                )}
               </div>
             )}
 

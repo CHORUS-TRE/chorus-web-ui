@@ -173,10 +173,3 @@ export async function setWorkspaceImage(
 ): Promise<Result<DevStoreEntry>> {
   return putWorkspaceEntry(workspaceId, { key: 'image', value: image })
 }
-
-export async function setWorkspaceTag(
-  workspaceId: string,
-  tag: 'center' | 'project'
-): Promise<Result<DevStoreEntry>> {
-  return putWorkspaceEntry(workspaceId, { key: 'tag', value: tag })
-}

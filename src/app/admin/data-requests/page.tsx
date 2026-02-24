@@ -14,27 +14,19 @@ export default function AdminDataRequestsPage() {
   }, [refreshApprovalRequests])
 
   return (
-    <>
-      <div className="w-full">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-              <FileCheck className="h-9 w-9" />
-              Data Requests Management
-            </h2>
-            <div className="">
-              <p className="text-sm text-muted-foreground">
-                Review and manage all data extraction and transfer requests
-                initiated by users.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="container mx-auto p-6">
+      <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
+        <FileCheck className="h-9 w-9" />
+        Data Requests Management
+      </h1>
+      <p className="mb-8 text-muted-foreground">
+        Review and manage all data extraction and transfer requests initiated by
+        users.
+      </p>
 
-      <div className="mt-6 w-full">
+      <div className="w-full">
         <ApprovalRequestsTable requests={approvalRequests} />
       </div>
-    </>
+    </div>
   )
 }

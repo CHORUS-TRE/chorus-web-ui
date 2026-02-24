@@ -1,11 +1,11 @@
 'use client'
 
 import {
+  AppWindow,
   CheckCircle2,
   LaptopMinimal,
   Loader2,
   Maximize,
-  Rocket,
   Settings,
   Trash2,
   UserPlus,
@@ -159,7 +159,7 @@ function AppInstanceStatusRow({
   const appName =
     apps?.find((a) => a.id === instance.appId)?.name || instance.name || 'App'
   const appIcon =
-    apps?.find((a) => a.id === instance.appId)?.iconURL || 'Rocket'
+    apps?.find((a) => a.id === instance.appId)?.iconURL || 'AppWindow'
 
   const currentStatus = statusData?.status || instance.k8sStatus
   const currentMessage = statusData?.message || instance.k8sMessage
@@ -173,7 +173,7 @@ function AppInstanceStatusRow({
             {appIcon ? (
               <img src={appIcon} alt={appName} className="h-3 w-3" />
             ) : (
-              <Rocket className="h-3 w-3 text-[#88b04b]" />
+              <AppWindow className="h-3 w-3 text-[#88b04b]" />
             )}
           </div>
           <div className="min-w-0">
@@ -324,7 +324,7 @@ export function SessionPill({
             }
             className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent transition-all hover:bg-accent hover:text-black/80"
           >
-            <Rocket className="h-4 w-4" style={{ color: 'inherit' }} />
+            <AppWindow className="h-4 w-4" style={{ color: 'inherit' }} />
             Launch an app
           </button>
 

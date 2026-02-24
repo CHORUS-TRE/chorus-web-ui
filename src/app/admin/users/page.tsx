@@ -9,28 +9,15 @@ const UserManagementPage = () => {
   const [refreshKey] = useState(0)
 
   return (
-    <>
-      <div className="w-full">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-              <Users className="h-9 w-9" />
-              Users&apos; Management
-            </h2>
-            <div className="">
-              <p className="text-sm text-muted-foreground">
-                Manage users in the system.
-              </p>
-            </div>
-          </div>
-          {/* <UserCreateDialog onUserCreated={handleUserCreated} /> */}
-        </div>
-      </div>
+    <div className="container mx-auto p-6">
+      <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
+        <Users className="h-9 w-9" />
+        Users&apos; Management
+      </h1>
+      <p className="mb-8 text-muted-foreground">Manage users in the system.</p>
 
-      <div className="w-full">
-        <UserTable key={refreshKey} />
-      </div>
-    </>
+      <UserTable key={refreshKey} />
+    </div>
   )
 }
 

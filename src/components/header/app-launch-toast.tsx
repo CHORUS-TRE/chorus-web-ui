@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2, Loader2, Rocket, XCircle } from 'lucide-react'
+import { AppWindow, CheckCircle2, Loader2, Rocket, XCircle } from 'lucide-react'
 
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
 import { K8sAppInstanceStatus } from '@/domain/model'
@@ -60,7 +60,7 @@ export function AppLaunchToastContent({
         ) : isFailed || error ? (
           <XCircle className="h-7 w-7 text-red-500" />
         ) : (
-          <Rocket className="h-7 w-7 animate-pulse text-accent" />
+          <AppWindow className="h-7 w-7 animate-pulse text-accent" />
         )}
       </div>
       <div className="min-w-0 flex-1">

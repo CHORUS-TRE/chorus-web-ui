@@ -208,7 +208,7 @@ export default function ChorusClientApp() {
   // Login Screen
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4 dark:from-background dark:via-background dark:to-background">
         <Card className="w-full max-w-md shadow-2xl">
           <CardHeader className="space-y-3 pb-6 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600">
@@ -266,9 +266,9 @@ export default function ChorusClientApp() {
 
   // Main App UI
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
-      <div className="flex w-64 flex-col border-r border-slate-200 bg-white">
+      <div className="flex w-64 flex-col border-r border-border bg-card">
         <div className="border-b border-slate-200 p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
@@ -379,7 +379,7 @@ export default function ChorusClientApp() {
       {/* Main Content */}
       <div className="flex flex-1 flex-col">
         {/* Header */}
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-4">
+        <header className="flex items-center justify-between border-b border-border bg-card px-8 py-4">
           <div>
             <h2 className="text-2xl font-bold capitalize text-slate-900">
               {currentView}

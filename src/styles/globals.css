@@ -77,7 +77,7 @@
     --muted: 0 0% 24%; /* Medium dark for muted backgrounds */
     --muted-foreground: 0 0% 72%; /* Medium-light text on dark */
 
-    --accent: 78 100% 64%; /* Bright lime accent for dark mode */
+    --accent: 229 100% 64%; /* Bright lime accent for dark mode */
     --accent-foreground: 0 0% 10%; /* Very dark text on lime surfaces */
     --accent-background: 78 100% 64%; /* Bright lime */
 
@@ -188,6 +188,11 @@
 
   .nav-link-active {
     @apply text-foreground underline decoration-accent decoration-[0.14rem] underline-offset-[0.3rem];
+  }
+
+  /* Prevent text-decoration inheritance from propagating to inline children like badges */
+  .nav-link-active .no-underline-inherit {
+    @apply inline-block no-underline;
   }
 
   /* Interactive States */

@@ -6,7 +6,7 @@ const AuthenticatedApp = React.lazy(() =>
     default: mod.AuthenticatedApp
   }))
 )
-import { Package, ShieldAlert } from 'lucide-react'
+import { Package, ShieldAlert, SlidersHorizontal } from 'lucide-react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
@@ -42,7 +42,7 @@ export default function Layout({
             <>
               <div className="flex items-center justify-between gap-3">
                 <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
-                  <Package className="h-9 w-9" />
+                  <SlidersHorizontal className="h-9 w-9" />
                   Admin
                 </h2>
               </div>

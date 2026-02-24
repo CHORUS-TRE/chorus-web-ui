@@ -47,9 +47,6 @@ export default function WorkspacesGrid({
 
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
 
-  const isCenter = (workspace: WorkspaceWithDev) =>
-    workspace.dev?.tag === 'center'
-
   // Find the active workspace for dialogs, using a stable lookup
   const activeUpdateWorkspace = useMemo(
     () => workspaces?.find((w) => w.id === activeUpdateId),
@@ -75,7 +72,7 @@ export default function WorkspacesGrid({
               key={`workspace-grid-${workspace.id}`}
               className="group relative"
             >
-              <Card className="relative flex h-48 flex-col overflow-hidden border-none bg-contrast-background/70 backdrop-blur-sm">
+              <Card className="relative flex flex-col overflow-hidden border-none bg-contrast-background/70 backdrop-blur-sm">
                 {/* Content layer */}
                 <Link
                   href={`/workspaces/${workspace.id}`}
@@ -94,8 +91,6 @@ export default function WorkspacesGrid({
                           height={64}
                           className="h-16 w-16 object-cover"
                         />
-                      ) : isCenter(workspace) ? (
-                        <Building2 className="h-8 w-8 text-muted-foreground" />
                       ) : workspace.isMain ? (
                         <HomeIcon className="h-8 w-8 text-muted-foreground" />
                       ) : (
@@ -130,7 +125,7 @@ export default function WorkspacesGrid({
                             <span>{workspace?.dev?.workbenchCount || 0}</span>
                           </span>
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-[10px] font-semibold text-muted-foreground">
                           Created {formatDistanceToNow(workspace.createdAt)} ago
                         </span>
                       </div>

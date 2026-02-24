@@ -159,7 +159,7 @@ export default function ClinicalResearchDashboard() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">

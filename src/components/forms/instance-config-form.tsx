@@ -64,7 +64,6 @@ export function InstanceConfigForm() {
       headline: instanceConfig.headline,
       tagline: instanceConfig.tagline,
       website: instanceConfig.website,
-      tags: instanceConfig.tags,
       maxWorkspacesPerUser:
         instanceConfig.limits?.maxWorkspacesPerUser?.toString() ?? '',
       maxSessionsPerUser:
@@ -73,11 +72,6 @@ export function InstanceConfigForm() {
         instanceConfig.limits?.maxAppInstancesPerUser?.toString() ?? '',
       sidebarWebapps: instanceConfig.sidebarWebapps
     }
-  })
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'tags'
   })
 
   const isInitializedRef = useRef(false)
@@ -92,7 +86,6 @@ export function InstanceConfigForm() {
         headline: instanceConfig.headline,
         tagline: instanceConfig.tagline,
         website: instanceConfig.website,
-        tags: instanceConfig.tags,
         maxWorkspacesPerUser:
           instanceConfig.limits?.maxWorkspacesPerUser?.toString() ?? '',
         maxSessionsPerUser:
@@ -112,7 +105,6 @@ export function InstanceConfigForm() {
         setInstanceHeadline,
         setInstanceTagline,
         setInstanceWebsite,
-        setInstanceTags,
         setInstanceLimits,
         setInstanceSidebarWebapps
       } = useDevStoreCache.getState()
@@ -136,7 +128,6 @@ export function InstanceConfigForm() {
         setInstanceHeadline(data.headline),
         setInstanceTagline(data.tagline),
         setInstanceWebsite(data.website),
-        setInstanceTags(data.tags),
         setInstanceLimits(parsedLimits),
         data.sidebarWebapps
           ? setInstanceSidebarWebapps(data.sidebarWebapps)
@@ -166,14 +157,7 @@ export function InstanceConfigForm() {
 
   async function handleReset() {
     try {
-      const {
-        deleteGlobal,
-        setInstanceName,
-        setInstanceHeadline,
-        setInstanceTagline,
-        setInstanceWebsite,
-        setInstanceTags
-      } = useDevStoreCache.getState()
+      const { deleteGlobal } = useDevStoreCache.getState()
 
       // Delete all custom values to reset to defaults
       await Promise.all([
@@ -296,101 +280,6 @@ export function InstanceConfigForm() {
                   </FormItem>
                 )}
               />
-            </div>
-
-            {/* Workspace Tags */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium">Workspace Types</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Define the types/tags available for workspaces
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => append({ id: '', label: '', display: true })}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Tag
-                </Button>
-              </div>
-
-              <div className="space-y-3">
-                {fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-start gap-3 rounded-lg border p-3"
-                  >
-                    <div className="grid flex-1 grid-cols-3 gap-3">
-                      <FormField
-                        control={form.control}
-                        name={`tags.${index}.id`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">ID</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="project"
-                                className="h-8"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name={`tags.${index}.label`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">Label</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Project"
-                                className="h-8"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name={`tags.${index}.display`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel className="text-xs">Display</FormLabel>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="mt-6 h-8 w-8 text-destructive hover:text-destructive"
-                      onClick={() => remove(index)}
-                      disabled={fields.length <= 1}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* Sidebar Navigation */}

@@ -25,11 +25,21 @@ export function Toolbar({
   return (
     <div className="flex items-center justify-between border-muted/40 pb-4">
       <div className="flex items-center gap-3 pr-4">
-        <Button onClick={onCreateFolder} variant="accent-filled" size="sm">
+        <Button
+          onClick={onCreateFolder}
+          variant="ghost"
+          size="sm"
+          className="text-accent decoration-[0.14rem] underline-offset-[0.3rem] hover:underline"
+        >
           <Plus className="h-4 w-4" />
           New folder
         </Button>
-        <Button onClick={onImport} variant="accent-filled" size="sm">
+        <Button
+          onClick={onImport}
+          variant="ghost"
+          size="sm"
+          className="text-accent decoration-[0.14rem] underline-offset-[0.3rem] hover:underline"
+        >
           <Upload className="h-4 w-4" />
           Import
         </Button>
@@ -48,7 +58,7 @@ export function Toolbar({
           />
         </div> */}
 
-        <div className="grid grid-flow-col grid-rows-1 gap-4">
+        {/* <div className="grid grid-flow-col grid-rows-1 gap-4">
           <div className="flex items-center justify-end gap-0">
             <Button
               variant="ghost"
@@ -69,7 +79,7 @@ export function Toolbar({
               <List />
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

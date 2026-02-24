@@ -2,16 +2,16 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import {
-  ArrowRight,
+  AppWindow,
   CircleGauge,
   CirclePlus,
   Clock,
   Cpu,
-  DatabaseZap,
   LaptopMinimal,
   Package
 } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
@@ -22,8 +22,6 @@ import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import { Badge } from '~/components/ui/badge'
-import { WorkbenchStatus } from '~/domain/model'
 import { listApprovalRequests } from '~/view-model/approval-request-view-model'
 
 export default function CHORUSDashboard() {
@@ -44,6 +42,8 @@ export default function CHORUSDashboard() {
       setPendingApprovals(res.data?.length || 0)
     })
   }, [])
+
+  const router = useRouter()
 
   const workspaceList =
     workspaces?.filter(
@@ -71,21 +71,27 @@ export default function CHORUSDashboard() {
 
   return (
     <>
-      <div className="w-full">
-        <h2 className="mb-2 flex w-full flex-row items-center gap-3 text-start">
+      <div className="mb-8 w-full">
+        <h2 className="mb-2 mt-5 flex w-full flex-row items-center gap-3 text-start">
           <CircleGauge className="h-9 w-9" />
           Dashboard
         </h2>
-        <h3 className="mb-4 text-sm italic text-muted-foreground">
+        <h3 className="mb-2 text-sm italic text-muted-foreground">
           Welcome, {user?.firstName || ''} {user?.lastName || ''}
         </h3>
       </div>
+
+      {/* <LayoutTabs /> */}
 
       <div className="w-full space-y-6">
         <section>
           <h3 className="mb-3 font-semibold">Activity Overview</h3>
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            <Card variant="default">
+            <Card
+              variant="default"
+              onClick={() => router.push('/workspaces')}
+              className="cursor-pointer"
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-secondary">
                   Total Workspaces
@@ -93,7 +99,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {workspaceList?.length}
                     {workspaceLimits.max != null && (
                       <span className="text-3xl font-normal text-muted-foreground">
@@ -106,7 +112,11 @@ export default function CHORUSDashboard() {
               </CardContent>
             </Card>
 
-            <Card variant="default">
+            <Card
+              variant="default"
+              onClick={() => router.push('/sessions')}
+              className="cursor-pointer"
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-secondary">
                   Active Sessions
@@ -114,7 +124,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {workbenchesList?.length}
                     {sessionLimits.max != null && (
                       <span className="text-3xl font-normal text-muted-foreground">
@@ -135,7 +145,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {appInstancesList?.length}
                     {appInstanceLimits.max != null && (
                       <span className="text-3xl font-normal text-muted-foreground">
@@ -143,20 +153,24 @@ export default function CHORUSDashboard() {
                       </span>
                     )}
                   </span>
-                  <LaptopMinimal className="h-8 w-8 text-secondary" />
+                  <AppWindow className="h-8 w-8 text-secondary" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card variant="default">
+            <Card
+              variant="default"
+              onClick={() => router.push('/messages/requests')}
+              className="cursor-pointer"
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-secondary">
-                  Pending Approval
+                  Data Requests
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-secondary">
+                  <span className="text-3xl font-semibold text-muted-foreground text-secondary">
                     {pendingApprovals}
                   </span>
                   <Clock className="h-8 w-8 text-secondary" />
@@ -172,7 +186,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-purple-600">
+                  <span className="text-3xl font-semibold text-muted-foreground text-purple-600">
                     {'73%'}
                   </span>
                   <Cpu className="h-8 w-8 text-purple-600" />
@@ -188,7 +202,7 @@ export default function CHORUSDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-gray-600">
+                  <span className="text-3xl font-semibold text-muted-foreground text-gray-600">
                     {'85%'}
                   </span>
                   <DatabaseZap className="h-8 w-8 text-gray-600" />
@@ -204,18 +218,24 @@ export default function CHORUSDashboard() {
             <Card variant="glass">
               <CardHeader className="flex flex-col gap-2">
                 <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-base sm:text-lg">
-                    <Package className="h-5 w-5" />
-                    Workspaces
-                  </div>
                   <Link
                     href="/workspaces"
                     className="flex items-center gap-1 text-sm"
-                    variant="nav"
                   >
-                    View all
-                    <ArrowRight className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-base sm:text-lg">
+                      <Package className="h-5 w-5" />
+                      Workspaces
+                    </div>
                   </Link>
+                  {can(PERMISSIONS.createWorkspace) && (
+                    <Button
+                      onClick={() => setCreateOpen(true)}
+                      variant="accent-filled"
+                    >
+                      <CirclePlus className="h-4 w-4" />
+                      Create Workspace
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-3 gap-6 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
@@ -269,7 +289,7 @@ export default function CHORUSDashboard() {
                             <h4 className="font-semibold text-muted-foreground">
                               {workspace.name}
                             </h4>
-                            <p className="mt-1 text-xs text-muted-foreground">
+                            <p className="mt-2 text-[10px] font-medium text-muted-foreground">
                               Created{' '}
                               {formatDistanceToNow(
                                 workspace?.createdAt || new Date()
@@ -283,7 +303,7 @@ export default function CHORUSDashboard() {
                       {/* Sessions under this workspace */}
                       {workspaceSessions && workspaceSessions.length > 0 && (
                         <div className="space-y-2 px-4 pb-4">
-                          <div className="text-md flex items-center gap-2 pt-2">
+                          <div className="flex items-center gap-2 pt-2 text-sm font-semibold text-muted-foreground">
                             <LaptopMinimal className="h-4 w-4" />
                             {workspaceSessions.length}{' '}
                             {workspaceSessions.length === 1
@@ -311,16 +331,16 @@ export default function CHORUSDashboard() {
                                 className="session-link block w-full"
                                 variant="rounded"
                               >
-                                <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 transition-all hover:border-muted/30 hover:bg-muted/50">
+                                <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 text-muted-foreground transition-all hover:border-muted/30 hover:bg-muted/50">
                                   <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
                                   <div className="min-w-0 flex-1">
-                                    <p className="mb-1 text-sm font-medium">
+                                    <p className="text-sm font-semibold text-muted-foreground hover:text-accent">
                                       {workbench.name}
                                     </p>
-                                    <p className="text-[10px] text-muted-foreground">
+                                    <p className="text-[12px] text-muted-foreground">
                                       {sessionAppNames}
                                     </p>
-                                    <p className="text-[12px] text-muted-foreground">
+                                    <p className="mt-2 text-[10px] font-medium text-muted-foreground">
                                       Created{' '}
                                       {formatDistanceToNow(
                                         workbench.createdAt || new Date()
