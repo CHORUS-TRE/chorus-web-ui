@@ -364,7 +364,7 @@ export default function ArchitectureDashboard() {
   ]
 
   return (
-    <div className="glass min-h-screen p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <header className="glass-elevated mb-8 rounded-lg p-6 shadow-lg">
@@ -406,7 +406,7 @@ export default function ArchitectureDashboard() {
 
         {/* Main Navigation Tabs */}
         <Tabs defaultValue="context" className="space-y-6">
-          <TabsList className="grid h-auto w-full grid-cols-4 bg-white p-2 shadow-md">
+          <TabsList className="grid h-auto w-full grid-cols-4 bg-card p-2 shadow-md">
             {architectureLevels.map((level) => {
               const Icon = level.icon
               return (
