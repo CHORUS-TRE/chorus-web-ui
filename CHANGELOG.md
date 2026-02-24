@@ -1,3 +1,20 @@
+# [1.38.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.37.0...v1.38.0) (2026-02-24)
+
+
+### Bug Fixes
+
+* backgrounds colors ([a02b1a3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a02b1a39c6799388f15729409184ee8de1ba0d98))
+* chat error messages & positionning ([345f075](https://github.com/CHORUS-TRE/chorus-web-ui/commit/345f0755d2f55bbdaed2b25b8856d9a4916d64ee))
+* layout ([c40f21d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c40f21dc4b88ae08861411c741f8bf0d3bbca553))
+
+
+### Features
+
+* add audit admin page and workspace audit tab ([#194](https://github.com/CHORUS-TRE/chorus-web-ui/issues/194)) ([e4042f2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e4042f2abe9deea66cc4816bfa11d108da9eceb2))
+* add audit admin page and workspace audit tab ([#194](https://github.com/CHORUS-TRE/chorus-web-ui/issues/194)) ([8d7e6b2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8d7e6b20e262af2391c95ae58fd97b3e7beeaced))
+* claude ai ([bf1b33f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bf1b33f64ee4fde835a9cbae0ea56b67f8fc31ac))
+* requests layouts ([126468b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/126468b01d556519095e9210fb7025db342029cd))
+
 # [1.37.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.36.2...v1.37.0) (2026-02-23)
 
 
