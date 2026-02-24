@@ -8,7 +8,10 @@ import {
   CreateDataExtractionRequest,
   CreateDataTransferRequest
 } from '@/domain/model/approval-request'
-import { ApprovalRequestRepository } from '@/domain/repository/approval-request-repository'
+import {
+  ApprovalRequestRepository,
+  DownloadFileResult
+} from '@/domain/repository/approval-request-repository'
 import { ApprovalRequestServiceListApprovalRequestsRequest } from '@/internal/client'
 
 import { ApprovalRequestDataSource } from '../data-source'
@@ -152,6 +155,34 @@ export class ApprovalRequestRepositoryImpl
       }
 
       return { data: approvalRequestsResult.data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async downloadFile(
+    requestId: string,
+    filePath: string
+  ): Promise<Result<DownloadFileResult>> {
+    try {
+      const response = await this.dataSource.downloadFile({
+        id: requestId,
+        path: filePath
+      })
+
+      const result = response.result
+      if (!result?.content) {
+        return { error: 'No file content returned from API' }
+      }
+
+      return {
+        data: {
+          content: result.content,
+          fileName: result.file?.sourcePath?.split('/').pop()
+        }
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

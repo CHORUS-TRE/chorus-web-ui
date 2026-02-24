@@ -8,6 +8,11 @@ import {
   CreateDataTransferRequest
 } from '../model/approval-request'
 
+export interface DownloadFileResult {
+  content: string // base64-encoded file content
+  fileName?: string // derived from sourcePath
+}
+
 export interface ApprovalRequestRepository {
   approve(action: ApproveApprovalRequestAction): Promise<Result<void>>
   createDataExtraction(
@@ -21,4 +26,8 @@ export interface ApprovalRequestRepository {
   list(
     params?: ApprovalRequestServiceListApprovalRequestsRequest
   ): Promise<Result<ApprovalRequest[]>>
+  downloadFile(
+    requestId: string,
+    filePath: string
+  ): Promise<Result<DownloadFileResult>>
 }
