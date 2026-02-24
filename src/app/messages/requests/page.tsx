@@ -8,30 +8,26 @@ import { ApprovalRequest } from '@/domain/model/approval-request'
 import { User } from '@/domain/model/user'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 import { userMe } from '@/view-model/user-view-model'
+import { useAuthentication } from '~/providers/authentication-provider'
 
 import RequestsClient from './requests-client'
 
 export default function RequestsPage() {
+  const { user } = useAuthentication()
   const { workspaceId } = useParams() as { workspaceId: string }
   const [requests, setRequests] = React.useState<ApprovalRequest[]>([])
-  const [currentUser, setCurrentUser] = React.useState<User | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     async function fetchData(id: string) {
       setIsLoading(true)
       try {
-        const [requestsRes, userRes] = await Promise.all([
-          // listApprovalRequests({ filterSourceWorkspaceId: id }),
-          listApprovalRequests({}),
-          userMe()
-        ])
+        const requestsRes = await listApprovalRequests({
+          filterSourceWorkspaceId: id
+        })
 
         if (requestsRes.data) {
           setRequests(requestsRes.data)
-        }
-        if (userRes?.data) {
-          setCurrentUser(userRes.data)
         }
       } catch (error) {
         console.error('Failed to fetch requests data:', error)
@@ -43,15 +39,15 @@ export default function RequestsPage() {
     fetchData(workspaceId)
   }, [])
 
-  if (isLoading || !currentUser) {
+  if (isLoading || !user) {
     return <LoadingOverlay isLoading={true} />
   }
 
   // Map backend user to the simplified format RequestsClient expects
   // In the real app, we might check workspace roles for 'approve' permission
   const mappedUser = {
-    id: currentUser.id,
-    name: `${currentUser.firstName} ${currentUser.lastName}`,
+    id: user.id,
+    name: `${user.firstName} ${user.lastName}`,
     permissions: {
       // Mocking approval permission for now based on if user has ANY role
       // In a real implementation, we would check for a specific governance role

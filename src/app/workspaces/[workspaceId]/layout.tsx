@@ -1,17 +1,15 @@
 'use client'
 
-import { Bell, Home, PackageOpen, Settings } from 'lucide-react'
+import { Home, PackageOpen } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
 import { WorkspaceUpdateForm } from '~/components/forms/workspace-forms'
 import { toast } from '~/components/hooks/use-toast'
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { mockNotifications } from '~/data/data-source/mock-data/notifications'
 
 export default function Layout({
   children
@@ -105,7 +103,6 @@ export default function Layout({
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="sessions">Sessions</TabsTrigger>
             <TabsTrigger value="data">Data</TabsTrigger>
-            {/* <TabsTrigger value="requests">Data Requests</TabsTrigger> */}
             <TabsTrigger value="users">Members</TabsTrigger>
             <TabsTrigger value="audit">Audit</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>

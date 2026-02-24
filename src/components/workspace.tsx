@@ -1,25 +1,16 @@
 import { ResponsiveLine } from '@nivo/line'
 import {
   Activity,
-  AlertCircle,
   ArrowRight,
-  BarChart3,
-  Bell,
-  CheckCircle,
   CircleGauge,
   Database,
-  FileDown,
-  FileText,
   Folder,
   Footprints,
   LaptopMinimal,
-  MessageSquare,
-  Plus,
-  Settings,
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import {
@@ -32,21 +23,17 @@ import {
 } from '@/components/card'
 import { Link } from '@/components/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { mockRecentActivity } from '@/data/data-source/chorus-api/mock-data/activity'
-import { mockNotifications } from '@/data/data-source/chorus-api/mock-data/notifications'
+import { AuditEntry } from '@/domain/model/audit'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { formatFileSize } from '@/utils/format-file-size'
 import { useFileSystem } from '~/hooks/use-file-system'
+import { listWorkspace as listWorkspaceAudit } from '~/view-model/audit-view-model'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
-import {
-  WorkspaceDeleteForm,
-  WorkspaceUpdateForm
-} from './forms/workspace-forms'
+import { WorkspaceUpdateForm } from './forms/workspace-forms'
 import { toast } from './hooks/use-toast'
 import { ChartContainer } from './ui/chart'
-import { Progress } from './ui/progress'
 import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
 
@@ -85,14 +72,28 @@ function SimpleBarChart({
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
-  const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [openEdit, setOpenEdit] = useState(false)
   const { workbenches, refreshWorkspaces, workspaces, refreshWorkbenches } =
     useAppStateStore()
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
+  const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([])
 
   const rootChildren = getChildren('root')
+
+  useEffect(() => {
+    async function fetchAudit() {
+      try {
+        const result = await listWorkspaceAudit(workspaceId)
+        if (result.data) {
+          setAuditEntries(result.data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch audit entries:', err)
+      }
+    }
+    fetchAudit()
+  }, [workspaceId])
   const workspace = workspaces?.find((w) => w.id === workspaceId)
 
   return (
@@ -346,7 +347,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         )}
 
         {/* Quick Actions */}
-        <Card className="glass-surface demo-effect">
+        {/* <Card className="glass-surface demo-effect">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
@@ -376,12 +377,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               Contact Support
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
 
-        <Card className="demo-effect flex h-full flex-col">
+        <Card className="flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
-              <Link href={'#'} variant="flex">
+              <Link href={`/workspaces/${workspaceId}/audit`} variant="flex">
                 <Activity className="h-6 w-6" />
                 Recent Activity
               </Link>
@@ -392,72 +393,56 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {mockRecentActivity.map((activity, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3 border-b pb-3 last:border-0"
-                >
-                  <div className="mt-2 h-2 w-2 rounded-full bg-primary"></div>
-                  <div className="flex-1">
-                    <p className="text-xs text-foreground">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {activity.user} • {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/*  Notifications Card */}
-        <Card className="demo-effect flex h-full flex-col">
-          <CardHeader className="mb-0 w-full">
-            <CardTitle className="mb-1 flex items-center gap-3">
-              <Link
-                href={`/workspaces/${workspaceId}/notifications`}
-                variant="flex"
-              >
-                <Bell className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-                <span id="sessions-card-title" className="">
-                  <span className="sr-only">Notifications</span>
-                  Notifications
-                </span>
-              </Link>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 text-muted-foreground">
-              {mockNotifications.map((notif, index) => (
-                <div key={index} className="rounded-lg p-1">
-                  <div className="flex items-start gap-2">
-                    {notif.type === 'warning' && (
-                      <AlertCircle className="mt-0.5 h-4 w-4 text-orange-600" />
-                    )}
-                    {notif.type === 'success' && (
-                      <CheckCircle className="mt-0.5 h-4 w-4 text-green-600" />
-                    )}
-                    {notif.type === 'info' && (
-                      <Bell className="mt-0.5 h-4 w-4 text-blue-600" />
-                    )}
-                    <div className="flex-1">
-                      <p className="text-xs text-foreground">{notif.message}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {notif.time}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              {auditEntries.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  No recent activity.
+                </p>
+              ) : (
+                <>
+                  {[...auditEntries]
+                    .sort((a, b) => {
+                      const ta = a.createdAt
+                        ? new Date(a.createdAt).getTime()
+                        : 0
+                      const tb = b.createdAt
+                        ? new Date(b.createdAt).getTime()
+                        : 0
+                      return tb - ta
+                    })
+                    .slice(0, 3)
+                    .map((entry, index) => (
+                      <div
+                        key={entry.id || index}
+                        className="flex items-start gap-3 border-b pb-3 last:border-0"
+                      >
+                        <div className="mt-2 h-2 w-2 rounded-full bg-primary"></div>
+                        <div className="flex-1">
+                          <p className="text-xs text-foreground">
+                            {entry.description ||
+                              entry.action ||
+                              'Unknown action'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {entry.username || 'System'}
+                            {entry.createdAt &&
+                              ` • ${new Date(entry.createdAt).toLocaleString()}`}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  <p className="pt-1 text-[10px] text-muted-foreground">
+                    Showing {Math.min(3, auditEntries.length)} of{' '}
+                    {auditEntries.length}
+                  </p>
+                </>
+              )}
             </div>
           </CardContent>
           <div className="flex-grow" />
           <CardFooter className="flex items-end justify-start">
             <Button
               variant="accent-filled"
-              onClick={() =>
-                router.push(`/workspaces/${workspaceId}/notifications`)
-              }
+              onClick={() => router.push(`/workspaces/${workspaceId}/audit`)}
             >
               <ArrowRight className="h-4 w-4" />
               View All

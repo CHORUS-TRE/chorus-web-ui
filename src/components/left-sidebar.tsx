@@ -190,7 +190,7 @@ function SidebarContent({
           Messages
           {unreadNotificationsCount !== undefined &&
             unreadNotificationsCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+              <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
                 {unreadNotificationsCount > 99
                   ? '99+'
                   : unreadNotificationsCount}
