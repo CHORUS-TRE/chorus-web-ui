@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 export const AuditEntrySchema = z.object({
-  id: z.string(),
-  actorid: z.string(),
-  actorUsername: z.string(),
+  id: z.string().optional(),
+  actorid: z.string().optional(),
+  actorUsername: z.string().optional(),
   correlationId: z.string().optional(),
   action: z.string().optional(),
   workspaceId: z.string().optional(),
