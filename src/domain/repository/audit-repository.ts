@@ -2,6 +2,7 @@ import { AuditEntry, Result } from '@/domain/model'
 
 interface AuditRepository {
   listPlatform: () => Promise<Result<AuditEntry[]>>
+  listActor: (actorId: string) => Promise<Result<AuditEntry[]>>
   listWorkspace: (workspaceId: string) => Promise<Result<AuditEntry[]>>
   listWorkbench: (workbenchId: string) => Promise<Result<AuditEntry[]>>
   listUser: (userId: string) => Promise<Result<AuditEntry[]>>
