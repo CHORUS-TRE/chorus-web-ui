@@ -35,15 +35,15 @@ const baseAppSchema = z.object({
     .string()
     .optional()
     .refine(
-      (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
-      'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
+      (val) => !val || /^\d+(\.\d+)?(Mi|Gi|M|G)$/.test(val),
+      'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
     ),
   maxEphemeralStorage: z
     .string()
     .optional()
     .refine(
-      (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
-      'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
+      (val) => !val || /^\d+(\.\d+)?(Mi|Gi|M|G)$/.test(val),
+      'Must be a number followed by Mi, Gi, M, or G (e.g., 128Mi, 1Gi)'
     ),
   kioskConfigURL: z
     .string()
