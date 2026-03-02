@@ -30,13 +30,13 @@ export interface ChorusAuditEntry {
    * @type {string}
    * @memberof ChorusAuditEntry
    */
-  userId?: string
+  actorId?: string
   /**
    *
    * @type {string}
    * @memberof ChorusAuditEntry
    */
-  username?: string
+  actorUsername?: string
   /**
    *
    * @type {string}
@@ -61,6 +61,12 @@ export interface ChorusAuditEntry {
    * @memberof ChorusAuditEntry
    */
   workbenchId?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAuditEntry
+   */
+  userId?: string
   /**
    *
    * @type {string}
@@ -103,14 +109,17 @@ export function ChorusAuditEntryFromJSONTyped(
   }
   return {
     id: !exists(json, 'id') ? undefined : json['id'],
-    userId: !exists(json, 'userId') ? undefined : json['userId'],
-    username: !exists(json, 'username') ? undefined : json['username'],
+    actorId: !exists(json, 'actorId') ? undefined : json['actorId'],
+    actorUsername: !exists(json, 'actorUsername')
+      ? undefined
+      : json['actorUsername'],
     correlationId: !exists(json, 'correlationId')
       ? undefined
       : json['correlationId'],
     action: !exists(json, 'action') ? undefined : json['action'],
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
     workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
+    userId: !exists(json, 'userId') ? undefined : json['userId'],
     description: !exists(json, 'description') ? undefined : json['description'],
     details: !exists(json, 'details') ? undefined : json['details'],
     createdAt: !exists(json, 'createdAt')
@@ -128,12 +137,13 @@ export function ChorusAuditEntryToJSON(value?: ChorusAuditEntry | null): any {
   }
   return {
     id: value.id,
-    userId: value.userId,
-    username: value.username,
+    actorId: value.actorId,
+    actorUsername: value.actorUsername,
     correlationId: value.correlationId,
     action: value.action,
     workspaceId: value.workspaceId,
     workbenchId: value.workbenchId,
+    userId: value.userId,
     description: value.description,
     details: value.details,
     createdAt:

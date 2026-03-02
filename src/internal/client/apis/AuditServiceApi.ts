@@ -21,15 +21,32 @@ import {
   RpcStatusToJSON
 } from '../models/index'
 
+export interface AuditServiceListActorAuditRequest {
+  id: string
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
+  filterActorId?: string
+  filterWorkspaceId?: string
+  filterWorkbenchId?: string
+  filterUserId?: string
+  filterAction?: string
+  filterFromTime?: Date
+  filterToTime?: Date
+}
+
 export interface AuditServiceListPlatformAuditRequest {
   paginationOffset?: number
   paginationLimit?: number
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
-  filterUserId?: string
+  filterActorId?: string
   filterWorkspaceId?: string
   filterWorkbenchId?: string
+  filterUserId?: string
   filterAction?: string
   filterFromTime?: Date
   filterToTime?: Date
@@ -42,9 +59,10 @@ export interface AuditServiceListUserAuditRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
-  filterUserId?: string
+  filterActorId?: string
   filterWorkspaceId?: string
   filterWorkbenchId?: string
+  filterUserId?: string
   filterAction?: string
   filterFromTime?: Date
   filterToTime?: Date
@@ -57,9 +75,10 @@ export interface AuditServiceListWorkbenchAuditRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
-  filterUserId?: string
+  filterActorId?: string
   filterWorkspaceId?: string
   filterWorkbenchId?: string
+  filterUserId?: string
   filterAction?: string
   filterFromTime?: Date
   filterToTime?: Date
@@ -72,9 +91,10 @@ export interface AuditServiceListWorkspaceAuditRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
-  filterUserId?: string
+  filterActorId?: string
   filterWorkspaceId?: string
   filterWorkbenchId?: string
+  filterUserId?: string
   filterAction?: string
   filterFromTime?: Date
   filterToTime?: Date
@@ -84,6 +104,119 @@ export interface AuditServiceListWorkspaceAuditRequest {
  *
  */
 export class AuditServiceApi extends runtime.BaseAPI {
+  /**
+   * This endpoint returns audit entries for actions performed by a specific user
+   * List audit entries by actor
+   */
+  async auditServiceListActorAuditRaw(
+    requestParameters: AuditServiceListActorAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListAuditReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling auditServiceListActorAudit.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.filterActorId !== undefined) {
+      queryParameters['filter.actorId'] = requestParameters.filterActorId
+    }
+
+    if (requestParameters.filterWorkspaceId !== undefined) {
+      queryParameters['filter.workspaceId'] =
+        requestParameters.filterWorkspaceId
+    }
+
+    if (requestParameters.filterWorkbenchId !== undefined) {
+      queryParameters['filter.workbenchId'] =
+        requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
+    }
+
+    if (requestParameters.filterAction !== undefined) {
+      queryParameters['filter.action'] = requestParameters.filterAction
+    }
+
+    if (requestParameters.filterFromTime !== undefined) {
+      queryParameters['filter.fromTime'] = (
+        requestParameters.filterFromTime as any
+      ).toISOString()
+    }
+
+    if (requestParameters.filterToTime !== undefined) {
+      queryParameters['filter.toTime'] = (
+        requestParameters.filterToTime as any
+      ).toISOString()
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/audit/actors/{id}`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListAuditReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns audit entries for actions performed by a specific user
+   * List audit entries by actor
+   */
+  async auditServiceListActorAudit(
+    requestParameters: AuditServiceListActorAuditRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListAuditReply> {
+    const response = await this.auditServiceListActorAuditRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
   /**
    * This endpoint returns a list of platform audit entries
    * List platform audit entries
@@ -116,8 +249,8 @@ export class AuditServiceApi extends runtime.BaseAPI {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
     }
 
-    if (requestParameters.filterUserId !== undefined) {
-      queryParameters['filter.userId'] = requestParameters.filterUserId
+    if (requestParameters.filterActorId !== undefined) {
+      queryParameters['filter.actorId'] = requestParameters.filterActorId
     }
 
     if (requestParameters.filterWorkspaceId !== undefined) {
@@ -128,6 +261,10 @@ export class AuditServiceApi extends runtime.BaseAPI {
     if (requestParameters.filterWorkbenchId !== undefined) {
       queryParameters['filter.workbenchId'] =
         requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
     }
 
     if (requestParameters.filterAction !== undefined) {
@@ -184,8 +321,8 @@ export class AuditServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint returns audit entries for a specific user
-   * List user audit entries
+   * This endpoint returns audit entries where the specified user was acted upon
+   * List audit entries about a user
    */
   async auditServiceListUserAuditRaw(
     requestParameters: AuditServiceListUserAuditRequest,
@@ -222,8 +359,8 @@ export class AuditServiceApi extends runtime.BaseAPI {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
     }
 
-    if (requestParameters.filterUserId !== undefined) {
-      queryParameters['filter.userId'] = requestParameters.filterUserId
+    if (requestParameters.filterActorId !== undefined) {
+      queryParameters['filter.actorId'] = requestParameters.filterActorId
     }
 
     if (requestParameters.filterWorkspaceId !== undefined) {
@@ -234,6 +371,10 @@ export class AuditServiceApi extends runtime.BaseAPI {
     if (requestParameters.filterWorkbenchId !== undefined) {
       queryParameters['filter.workbenchId'] =
         requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
     }
 
     if (requestParameters.filterAction !== undefined) {
@@ -278,8 +419,8 @@ export class AuditServiceApi extends runtime.BaseAPI {
   }
 
   /**
-   * This endpoint returns audit entries for a specific user
-   * List user audit entries
+   * This endpoint returns audit entries where the specified user was acted upon
+   * List audit entries about a user
    */
   async auditServiceListUserAudit(
     requestParameters: AuditServiceListUserAuditRequest,
@@ -331,8 +472,8 @@ export class AuditServiceApi extends runtime.BaseAPI {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
     }
 
-    if (requestParameters.filterUserId !== undefined) {
-      queryParameters['filter.userId'] = requestParameters.filterUserId
+    if (requestParameters.filterActorId !== undefined) {
+      queryParameters['filter.actorId'] = requestParameters.filterActorId
     }
 
     if (requestParameters.filterWorkspaceId !== undefined) {
@@ -343,6 +484,10 @@ export class AuditServiceApi extends runtime.BaseAPI {
     if (requestParameters.filterWorkbenchId !== undefined) {
       queryParameters['filter.workbenchId'] =
         requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
     }
 
     if (requestParameters.filterAction !== undefined) {
@@ -440,8 +585,8 @@ export class AuditServiceApi extends runtime.BaseAPI {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
     }
 
-    if (requestParameters.filterUserId !== undefined) {
-      queryParameters['filter.userId'] = requestParameters.filterUserId
+    if (requestParameters.filterActorId !== undefined) {
+      queryParameters['filter.actorId'] = requestParameters.filterActorId
     }
 
     if (requestParameters.filterWorkspaceId !== undefined) {
@@ -452,6 +597,10 @@ export class AuditServiceApi extends runtime.BaseAPI {
     if (requestParameters.filterWorkbenchId !== undefined) {
       queryParameters['filter.workbenchId'] =
         requestParameters.filterWorkbenchId
+    }
+
+    if (requestParameters.filterUserId !== undefined) {
+      queryParameters['filter.userId'] = requestParameters.filterUserId
     }
 
     if (requestParameters.filterAction !== undefined) {
