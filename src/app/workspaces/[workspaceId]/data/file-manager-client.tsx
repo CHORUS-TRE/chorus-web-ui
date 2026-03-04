@@ -10,7 +10,6 @@ import { FileGrid } from '~/components/file-manager/file-grid'
 import { FileTree } from '~/components/file-manager/file-tree'
 import { SelectionBasket } from '~/components/file-manager/selection-basket'
 import { Toolbar } from '~/components/file-manager/toolbar'
-import { UploadProgress } from '~/components/file-manager/upload-progress'
 import { toast } from '~/components/hooks/use-toast'
 import {
   Dialog,
@@ -46,7 +45,6 @@ export default function FileManagerClient({
     renameItem,
     createFolder,
     importFile,
-    abortMultipartUpload,
     downloadFile,
     setSearch,
     toggleViewMode,
@@ -210,16 +208,6 @@ export default function FileManagerClient({
 
   return (
     <div className="flex h-full flex-col gap-2 overflow-hidden">
-      <div className="w-64">
-        {Object.values(state.uploads).map((upload) => (
-          <UploadProgress
-            key={upload.id}
-            upload={upload}
-            onUploadCancel={abortMultipartUpload}
-          />
-        ))}
-      </div>
-
       {/* Main Content */}
       <div className="card-glass flex flex-1 overflow-hidden bg-card">
         {/* Sidebar */}
