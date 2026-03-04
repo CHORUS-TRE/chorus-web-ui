@@ -18,6 +18,7 @@ import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { DynamicThemeApplicator } from '~/components/dynamic-theme-applicator'
+import { UploadPanel } from '~/components/file-manager/upload-panel'
 import IframeCacheRenderer from '~/components/iframe-cache-renderer'
 import { IframeCleanupDialog } from '~/components/iframe-cleanup-dialog'
 import { IframeDebugPanel } from '~/components/iframe-debug-panel'
@@ -81,6 +82,7 @@ export default async function RootLayout({
             <AuthenticationProvider>
               <AuthorizationProvider>
                 <AppStateInitializer />
+                <UploadPanel />
                 <FullscreenProvider>
                   <IframeCacheProvider>
                     {children}
