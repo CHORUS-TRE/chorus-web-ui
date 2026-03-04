@@ -13,6 +13,7 @@ import {
   WorkspaceWithDev
 } from '@/domain/model'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
+import type { FileSystemUploadItem } from '@/types/file-system'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
@@ -33,6 +34,7 @@ export type AppStateStore = {
   notifications: Notification[] | undefined
   approvalRequests: ApprovalRequest[] | undefined
   unreadNotificationsCount: number | undefined
+  uploads: Record<string, FileSystemUploadItem> | undefined
 
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
@@ -45,6 +47,11 @@ export type AppStateStore = {
   stopNotificationsPolling: () => void
   clearState: () => void
   initialize: (user?: User) => Promise<void>
+  addUpload: (upload: FileSystemUploadItem) => void
+  updateUpload: (uploadId: string, patch: Partial<FileSystemUploadItem>) => void
+  removeUpload: (uploadId: string) => void
+  markUploadCancelled: (uploadId: string) => void
+  hasActiveUploads: () => boolean
 
   contentRect: DOMRect | null
   setContentRect: (rect: DOMRect | null) => void
@@ -74,6 +81,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   notifications: undefined,
   approvalRequests: undefined,
   unreadNotificationsCount: undefined,
+  uploads: undefined,
   notificationsPollingInterval: null,
 
   refreshWorkspaces: async () => {
@@ -268,7 +276,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       appInstances: undefined,
       notifications: undefined,
       approvalRequests: undefined,
-      unreadNotificationsCount: undefined
+      unreadNotificationsCount: undefined,
+      uploads: undefined
     })
     const { clearUserData } = useDevStoreCache.getState()
     clearUserData()
@@ -289,6 +298,49 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     ])
 
     get().startNotificationsPolling()
+  },
+
+  addUpload: (upload) => {
+    set((state) => ({
+      uploads: { ...state.uploads, [upload.id]: upload }
+    }))
+  },
+
+  updateUpload: (uploadId, patch) => {
+    set((state) => {
+      const existing = state.uploads?.[uploadId]
+      if (!existing) return state
+      return {
+        uploads: { ...state.uploads, [uploadId]: { ...existing, ...patch } }
+      }
+    })
+  },
+
+  removeUpload: (uploadId) => {
+    set((state) => {
+      if (!state.uploads) return state
+      const { [uploadId]: _, ...rest } = state.uploads
+      return { uploads: rest }
+    })
+  },
+
+  markUploadCancelled: (uploadId) => {
+    set((state) => {
+      const existing = state.uploads?.[uploadId]
+      if (!existing) return state
+      return {
+        uploads: {
+          ...state.uploads,
+          [uploadId]: { ...existing, cancelled: true }
+        }
+      }
+    })
+  },
+
+  hasActiveUploads: () => {
+    return Object.values(get().uploads ?? {}).some(
+      (u) => !u.cancelled && u.uploadedParts < u.totalParts
+    )
   },
 
   contentRect: null,
