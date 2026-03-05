@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { toast } from '~/components/hooks/use-toast'
 import { WorkspaceFilePart } from '~/domain/model/workspace-file'
+import { useAppStateStore } from '~/stores/app-state-store'
 import type { FileSystemItem, FileSystemState } from '~/types/file-system'
 import { mapWorkspaceFilesToFileSystem } from '~/utils/file-system-mapper'
 import {
@@ -66,13 +67,14 @@ const readFileContent = (file: File): Promise<string> => {
 // Helper function for retry logic with exponential backoff
 const retryWithBackoff = async <T>(
   fn: () => Promise<T>,
+  shouldAbort?: () => boolean,
   retries = RETRY_CONFIG.maxRetries,
   delay = RETRY_CONFIG.initialDelay
 ): Promise<T> => {
   try {
     return await fn()
   } catch (error) {
-    if (retries === 0) {
+    if (retries === 0 || shouldAbort?.()) {
       throw error
     }
 
@@ -84,14 +86,13 @@ const retryWithBackoff = async <T>(
       RETRY_CONFIG.maxDelay
     )
 
-    return retryWithBackoff(fn, retries - 1, nextDelay)
+    return retryWithBackoff(fn, shouldAbort, retries - 1, nextDelay)
   }
 }
 
 export function useFileSystem(workspaceId?: string) {
   const [state, setState] = useState<FileSystemState>({
     items: {},
-    uploads: {},
     selectedItems: [],
     basketItems: [],
     currentFolderId: 'root',
@@ -468,57 +469,6 @@ export function useFileSystem(workspaceId?: string) {
     [workspaceId, state.items, state.currentFolderId, fetchWorkspaceFiles]
   )
 
-  const importFile = useCallback(
-    async (parentId: string, file: File) => {
-      if (!workspaceId) {
-        console.error('No workspace ID provided for file import')
-        return
-      }
-
-      const parentItem = state.items[parentId]
-      const parentPath = parentItem?.path || ''
-      const filePath = parentPath ? `${parentPath}/${file.name}` : file.name
-
-      toast({
-        title: 'Uploading file...',
-        description: `Uploading ${file.name}`,
-        variant: 'default'
-      })
-
-      try {
-        if (file.size > IMPORT_FILE_SIZE_THRESHOLD) {
-          console.info('Using multipart upload for file:', file.name, file.size)
-          await importFileMultipart(file, filePath)
-        } else {
-          console.info('Using direct upload for file:', file.name, file.size)
-          await importFileDirect(file, filePath)
-        }
-
-        // Refresh the current folder to show the new file
-        const currentFolder = state.items[state.currentFolderId || 'root']
-        const currentPath = currentFolder?.path || filePath
-        await fetchWorkspaceFiles(workspaceId, currentPath, true)
-
-        toast({
-          title: 'File uploaded',
-          description: `${file.name} has been uploaded successfully`,
-          variant: 'default'
-        })
-      } catch (err) {
-        console.error('Error importing file:', err)
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to import file'
-        setError(errorMessage)
-        toast({
-          title: 'File upload failed',
-          description: errorMessage,
-          variant: 'destructive'
-        })
-      }
-    },
-    [workspaceId, state.items, state.currentFolderId, fetchWorkspaceFiles]
-  )
-
   const importFileDirect = useCallback(
     async (file: File, filePath: string) => {
       if (!workspaceId) {
@@ -543,217 +493,220 @@ export function useFileSystem(workspaceId?: string) {
   )
 
   const importFileMultipart = useCallback(
-    async (file: File, filePath: string) => {
+    async (file: File, filePath: string): Promise<boolean> => {
       if (!workspaceId) {
         throw new Error('No workspace ID provided for file import')
       }
 
+      const store = useAppStateStore.getState()
+
       // Initiate multipart upload
-      try {
-        const initResult = await workspaceFileInitUpload(
+      const initResult = await workspaceFileInitUpload(workspaceId, filePath, {
+        name: file.name,
+        path: filePath,
+        isDirectory: false,
+        mimeType: file.type,
+        size: file.size.toString()
+      })
+
+      if (initResult.error) {
+        throw new Error(
+          'Failed to initiate multipart upload: ' + initResult.error
+        )
+      }
+
+      if (!initResult.data) {
+        throw new Error('No data returned from multipart upload initiation')
+      }
+
+      const uploadId = initResult.data.uploadId
+      const chunkSize = initResult.data.partSize
+      const totalChunks = initResult.data.totalParts
+      const startTime = Date.now()
+
+      // Add upload to global store
+      store.addUpload({
+        id: uploadId,
+        workspaceId: workspaceId,
+        filePath: filePath,
+        fileName: file.name,
+        fileSize: file.size,
+        partSize: chunkSize,
+        totalParts: totalChunks,
+        uploadedParts: 0,
+        uploadedBytes: 0,
+        startTime: startTime,
+        lastUpdateTime: startTime,
+        speeds: [],
+        cancelled: false
+      })
+
+      const isCancelled = () =>
+        useAppStateStore.getState().uploads?.[uploadId]?.cancelled || false
+
+      const handleCancel = async (): Promise<boolean> => {
+        if (!isCancelled()) return false
+
+        console.info('Upload cancelled by user:', file.name)
+        try {
+          await workspaceFileAbortUpload(workspaceId, filePath, uploadId)
+        } catch (err) {
+          console.error('Failed to abort upload on server:', err)
+        }
+        useAppStateStore.getState().removeUpload(uploadId)
+        toast({
+          title: 'Upload cancelled',
+          description: `${file.name} upload was cancelled`,
+          variant: 'default'
+        })
+        return true
+      }
+
+      const uploadedParts: Array<WorkspaceFilePart> = []
+
+      // Upload chunks sequentially
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        if (await handleCancel()) return false
+
+        const start = chunkIndex * chunkSize
+        const end = Math.min(start + chunkSize, file.size)
+        const actualChunkSize = end - start
+        const partStartTime = Date.now()
+
+        const chunkContent = await readFileChunk(file, start, end)
+
+        let partResult
+        try {
+          partResult = await retryWithBackoff(
+            () =>
+              workspaceFileUploadPart(workspaceId, filePath, uploadId, {
+                partNumber: (chunkIndex + 1).toString(),
+                data: chunkContent
+              }),
+            isCancelled
+          )
+        } catch {
+          if (await handleCancel()) return false
+          throw new Error(`Failed to upload part ${chunkIndex + 1}`)
+        }
+
+        if (partResult.error) {
+          throw new Error(
+            `Failed to upload part ${chunkIndex + 1}: ${partResult.error}`
+          )
+        }
+
+        if (!partResult.data) {
+          throw new Error(
+            `No data returned from uploading part ${chunkIndex + 1}`
+          )
+        }
+
+        uploadedParts.push({
+          partNumber: (chunkIndex + 1).toString(),
+          etag: partResult.data.etag
+        })
+
+        // Calculate upload speed
+        const partEndTime = Date.now()
+        const partDuration = (partEndTime - partStartTime) / 1000
+        const partSpeed = actualChunkSize / partDuration // bytes per second
+
+        // Update global store
+        const currentUpload = useAppStateStore.getState().uploads?.[uploadId]
+        if (currentUpload) {
+          const newSpeeds = [...currentUpload.speeds, partSpeed].slice(-5) // Keep last 5 speeds
+          useAppStateStore.getState().updateUpload(uploadId, {
+            uploadedParts: currentUpload.uploadedParts + 1,
+            uploadedBytes: currentUpload.uploadedBytes + actualChunkSize,
+            lastUpdateTime: partEndTime,
+            speeds: newSpeeds
+          })
+        }
+      }
+
+      // Check for abort before completing upload
+      if (await handleCancel()) return false
+
+      // Complete multipart upload
+      const completeResult = await retryWithBackoff(() =>
+        workspaceFileCompleteUpload(
           workspaceId,
           filePath,
-          {
-            name: file.name,
-            path: filePath,
-            isDirectory: false,
-            mimeType: file.type,
-            size: file.size.toString()
-          }
+          uploadId,
+          uploadedParts
         )
+      )
 
-        if (initResult.error) {
-          throw new Error(
-            'Failed to initiate multipart upload: ' + initResult.error
-          )
+      if (completeResult.error) {
+        throw new Error(
+          'Failed to complete multipart upload: ' + completeResult.error
+        )
+      }
+
+      // Remove completed upload from store
+      useAppStateStore.getState().removeUpload(uploadId)
+
+      return true
+    },
+    [workspaceId]
+  )
+
+  const importFile = useCallback(
+    async (parentId: string, file: File) => {
+      if (!workspaceId) {
+        console.error('No workspace ID provided for file import')
+        return
+      }
+
+      const parentItem = state.items[parentId]
+      const parentPath = parentItem?.path || ''
+      const filePath = parentPath ? `${parentPath}/${file.name}` : file.name
+
+      try {
+        if (file.size > IMPORT_FILE_SIZE_THRESHOLD) {
+          console.info('Using multipart upload for file:', file.name, file.size)
+          const completed = await importFileMultipart(file, filePath)
+          if (!completed) return
+        } else {
+          console.info('Using direct upload for file:', file.name, file.size)
+          await importFileDirect(file, filePath)
         }
 
-        if (!initResult.data) {
-          throw new Error('No data returned from multipart upload initiation')
-        }
-
-        const uploadId = initResult.data.uploadId
-        const chunkSize = initResult.data.partSize
-        const totalChunks = initResult.data.totalParts
-        const startTime = Date.now()
-
-        // Update local state
-        setState((prev) => ({
-          ...prev,
-          uploads: {
-            ...prev.uploads,
-            [uploadId]: {
-              id: uploadId,
-              filePath: filePath,
-              fileName: file.name,
-              fileSize: file.size,
-              partSize: chunkSize,
-              totalParts: totalChunks,
-              uploadedParts: 0,
-              uploadedBytes: 0,
-              startTime: startTime,
-              lastUpdateTime: startTime,
-              speeds: [],
-              aborted: false
-            }
-          }
-        }))
-
-        const uploadedParts: Array<WorkspaceFilePart> = []
-
-        // Upload chunks sequentially
-        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-          // Check for abort
-          let isAborted = false
-          setState((prev) => {
-            isAborted = prev.uploads[uploadId]?.aborted || false
-            return prev
-          })
-          if (isAborted) {
-            throw new Error('Upload aborted by user')
-          }
-
-          const start = chunkIndex * chunkSize
-          const end = Math.min(start + chunkSize, file.size)
-          const actualChunkSize = end - start
-          const partStartTime = Date.now()
-
-          const chunkContent = await readFileChunk(file, start, end)
-
-          const partResult = await retryWithBackoff(() =>
-            workspaceFileUploadPart(workspaceId, filePath, uploadId, {
-              partNumber: (chunkIndex + 1).toString(),
-              data: chunkContent
-            })
-          )
-
-          if (partResult.error) {
-            throw new Error(
-              `Failed to upload part ${chunkIndex + 1}: ${partResult.error}`
-            )
-          }
-
-          if (!partResult.data) {
-            throw new Error(
-              `No data returned from uploading part ${chunkIndex + 1}`
-            )
-          }
-
-          uploadedParts.push({
-            partNumber: (chunkIndex + 1).toString(),
-            etag: partResult.data.etag
-          })
-
-          // Calculate upload speed
-          const partEndTime = Date.now()
-          const partDuration = (partEndTime - partStartTime) / 1000
-          const partSpeed = actualChunkSize / partDuration // bytes per second
-
-          // Update local state
-          setState((prev) => {
-            const existingUpload = prev.uploads[uploadId]
-            const newSpeeds = [...existingUpload.speeds, partSpeed].slice(-5) // Keep last 5 speeds
-
-            return {
-              ...prev,
-              uploads: {
-                ...prev.uploads,
-                [uploadId]: {
-                  ...existingUpload,
-                  uploadedParts: existingUpload.uploadedParts + 1,
-                  uploadedBytes: existingUpload.uploadedBytes + actualChunkSize,
-                  lastUpdateTime: partEndTime,
-                  speeds: newSpeeds
-                }
-              }
-            }
-          })
-        }
-
-        // Check for abort before completing upload
-        let isAborted = false
-        setState((prev) => {
-          isAborted = prev.uploads[uploadId]?.aborted || false
-          return prev
+        toast({
+          title: 'File uploaded',
+          description: `${file.name} has been uploaded successfully`,
+          variant: 'default'
         })
-        if (isAborted) {
-          throw new Error('Upload aborted by user')
-        }
 
-        // Complete multipart upload
-        const completeResult = await retryWithBackoff(() =>
-          workspaceFileCompleteUpload(
-            workspaceId,
-            filePath,
-            uploadId,
-            uploadedParts
-          )
-        )
-
-        if (completeResult.error) {
-          throw new Error(
-            'Failed to complete multipart upload: ' + completeResult.error
-          )
-        }
+        // Refresh the current folder to show the new file
+        const currentFolder = state.items[state.currentFolderId || 'root']
+        const currentPath = currentFolder?.path || parentPath
+        await fetchWorkspaceFiles(workspaceId, currentPath, true)
       } catch (err) {
-        throw err
+        console.error('Error importing file:', err)
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to import file'
+        toast({
+          title: 'File upload failed',
+          description: errorMessage,
+          variant: 'destructive'
+        })
       }
     },
     [
       workspaceId,
       state.items,
       state.currentFolderId,
-      state.uploads,
-      fetchWorkspaceFiles
+      fetchWorkspaceFiles,
+      importFileMultipart,
+      importFileDirect
     ]
   )
 
-  const abortMultipartUpload = useCallback(
-    async (uploadId: string) => {
-      if (!workspaceId) {
-        console.error('No workspace ID provided for aborting upload')
-        return
-      }
-
-      const uploadItem = state.uploads[uploadId]
-      if (!uploadItem) {
-        console.error('Upload item not found:', uploadId)
-        return
-      }
-
-      // Update local state
-      setState((prev) => ({
-        ...prev,
-        uploads: {
-          ...prev.uploads,
-          [uploadId]: {
-            ...prev.uploads[uploadId],
-            aborted: true
-          }
-        }
-      }))
-
-      try {
-        const result = await workspaceFileAbortUpload(
-          workspaceId,
-          uploadItem.filePath,
-          uploadId
-        )
-
-        if (result.error) {
-          console.error('Failed to abort multipart upload:', result.error)
-          setError(result.error)
-          return
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to abort upload'
-        console.error('Error aborting upload:', errorMessage)
-        setError(errorMessage)
-      }
-    },
-    [workspaceId, state.uploads]
-  )
+  const cancelMultipartUpload = useCallback((uploadId: string) => {
+    useAppStateStore.getState().markUploadCancelled(uploadId)
+  }, [])
 
   const toggleViewMode = useCallback(() => {
     setState((prev) => ({
@@ -878,7 +831,7 @@ export function useFileSystem(workspaceId?: string) {
     renameItem,
     createFolder,
     importFile,
-    abortMultipartUpload,
+    cancelMultipartUpload,
     downloadFile,
     setSearch,
     toggleViewMode,

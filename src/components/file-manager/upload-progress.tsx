@@ -5,6 +5,8 @@ import { X } from 'lucide-react'
 import { Button } from '~/components/button'
 import { FileSystemUploadItem } from '~/types/file-system'
 
+const STATS_UPDATE_INTERVAL = 500 // In ms
+
 interface UploadProgressProps {
   upload: FileSystemUploadItem
   onUploadCancel: (uploadId: string) => void
@@ -16,7 +18,13 @@ interface UploadStats {
   estimatedTimeRemaining: string
 }
 
+// Cache last calculated stats to avoid expensive calculations on every render
+const lastStats = new Map<string, { stats: UploadStats; time: number }>()
+
 const calculateUploadStats = (upload: FileSystemUploadItem): UploadStats => {
+  const prev = lastStats.get(upload.id)
+  if (prev && Date.now() - prev.time < STATS_UPDATE_INTERVAL) return prev.stats
+
   const percentage = (upload.uploadedBytes / upload.fileSize) * 100
 
   const avgSpeed =
@@ -50,11 +58,13 @@ const calculateUploadStats = (upload: FileSystemUploadItem): UploadStats => {
   const remainingBytes = upload.fileSize - upload.uploadedBytes
   const estimatedTimeRemaining = avgSpeed > 0 ? remainingBytes / avgSpeed : 0
 
-  return {
+  const stats = {
     percentage: Math.min(percentage, 100),
     speed: formatSpeed(avgSpeed),
     estimatedTimeRemaining: formatTime(estimatedTimeRemaining)
   }
+  lastStats.set(upload.id, { stats, time: Date.now() })
+  return stats
 }
 
 export function UploadProgress({
@@ -71,7 +81,7 @@ export function UploadProgress({
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span>{stats.percentage.toFixed(0)}%</span>
-          {!upload.aborted && upload.uploadedParts < upload.totalParts && (
+          {!upload.cancelled && upload.uploadedParts < upload.totalParts && (
             <Button
               variant="link"
               size="sm"

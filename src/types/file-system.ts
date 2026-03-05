@@ -13,6 +13,7 @@ export interface FileSystemItem {
 
 export interface FileSystemUploadItem {
   id: string
+  workspaceId: string
   filePath: string
   fileName: string
   fileSize: number
@@ -23,12 +24,11 @@ export interface FileSystemUploadItem {
   startTime: number
   lastUpdateTime: number
   speeds: number[]
-  aborted: boolean
+  cancelled: boolean
 }
 
 export interface FileSystemState {
   items: Record<string, FileSystemItem>
-  uploads: Record<string, FileSystemUploadItem>
   selectedItems: string[]
   basketItems: string[]
   currentFolderId: string | null
