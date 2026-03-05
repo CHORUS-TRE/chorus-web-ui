@@ -423,7 +423,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                               'Unknown action'}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {entry.username || 'System'}
+                            {entry.actorUsername || 'System'}
                             {entry.createdAt &&
                               ` • ${new Date(entry.createdAt).toLocaleString()}`}
                           </p>
