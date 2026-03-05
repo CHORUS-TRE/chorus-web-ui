@@ -20,67 +20,67 @@ import { exists, mapValues } from '../runtime'
  */
 export interface ChorusAuditEntry {
   /**
-   *
+   * Unique identifier of the audit entry.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   id?: string
   /**
-   *
+   * ID of the user who performed the action.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   actorId?: string
   /**
-   *
+   * Username of the user who performed the action.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   actorUsername?: string
   /**
-   *
+   * Correlation ID to trace the request across services.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   correlationId?: string
   /**
-   *
+   * The type of action performed (e.g. CreateUser, DeleteWorkspace).
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   action?: string
   /**
-   *
+   * ID of the workspace related to this action, if applicable.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   workspaceId?: string
   /**
-   *
+   * ID of the workbench related to this action, if applicable.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   workbenchId?: string
   /**
-   *
+   * ID of the user targeted by this action, if applicable.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   userId?: string
   /**
-   *
+   * Human-readable description of what happened.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   description?: string
   /**
-   *
+   * Additional key-value metadata about the action.
    * @type {{ [key: string]: string; }}
    * @memberof ChorusAuditEntry
    */
   details?: { [key: string]: string }
   /**
-   *
+   * Timestamp when the action occurred.
    * @type {Date}
    * @memberof ChorusAuditEntry
    */

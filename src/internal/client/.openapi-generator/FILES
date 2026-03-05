@@ -68,6 +68,7 @@ models/ChorusCredentials.ts
 models/ChorusDataExtractionDetails.ts
 models/ChorusDataTransferDetails.ts
 models/ChorusDeleteAppInstanceReply.ts
+models/ChorusDeleteAppInstanceResult.ts
 models/ChorusDeleteAppReply.ts
 models/ChorusDeleteApprovalRequestReply.ts
 models/ChorusDeleteEntryReply.ts
@@ -75,6 +76,7 @@ models/ChorusDeleteUserReply.ts
 models/ChorusDeleteUserRoleReply.ts
 models/ChorusDeleteUserRoleResult.ts
 models/ChorusDeleteWorkbenchReply.ts
+models/ChorusDeleteWorkbenchResult.ts
 models/ChorusDeleteWorkspaceFileReply.ts
 models/ChorusDeleteWorkspaceReply.ts
 models/ChorusDownloadApprovalRequestFileReply.ts

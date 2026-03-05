@@ -106,7 +106,7 @@ export interface AuditServiceListWorkspaceAuditRequest {
 export class AuditServiceApi extends runtime.BaseAPI {
   /**
    * This endpoint returns audit entries for actions performed by a specific user
-   * List audit entries by actor
+   * List audit entries for actions performed by a specific user (actor)
    */
   async auditServiceListActorAuditRaw(
     requestParameters: AuditServiceListActorAuditRequest,
@@ -204,7 +204,7 @@ export class AuditServiceApi extends runtime.BaseAPI {
 
   /**
    * This endpoint returns audit entries for actions performed by a specific user
-   * List audit entries by actor
+   * List audit entries for actions performed by a specific user (actor)
    */
   async auditServiceListActorAudit(
     requestParameters: AuditServiceListActorAuditRequest,
@@ -322,7 +322,7 @@ export class AuditServiceApi extends runtime.BaseAPI {
 
   /**
    * This endpoint returns audit entries where the specified user was acted upon
-   * List audit entries about a user
+   * List audit entries for actions performed on a specific user
    */
   async auditServiceListUserAuditRaw(
     requestParameters: AuditServiceListUserAuditRequest,
@@ -420,7 +420,7 @@ export class AuditServiceApi extends runtime.BaseAPI {
 
   /**
    * This endpoint returns audit entries where the specified user was acted upon
-   * List audit entries about a user
+   * List audit entries for actions performed on a specific user
    */
   async auditServiceListUserAudit(
     requestParameters: AuditServiceListUserAuditRequest,

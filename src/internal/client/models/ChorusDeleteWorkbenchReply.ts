@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusDeleteWorkbenchResult } from './ChorusDeleteWorkbenchResult'
+import {
+  ChorusDeleteWorkbenchResultFromJSON,
+  ChorusDeleteWorkbenchResultFromJSONTyped,
+  ChorusDeleteWorkbenchResultToJSON
+} from './ChorusDeleteWorkbenchResult'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusDeleteWorkbenchReply {
   /**
    *
-   * @type {object}
+   * @type {ChorusDeleteWorkbenchResult}
    * @memberof ChorusDeleteWorkbenchReply
    */
-  result?: object
+  result?: ChorusDeleteWorkbenchResult
 }
 
 /**
@@ -50,7 +57,9 @@ export function ChorusDeleteWorkbenchReplyFromJSONTyped(
     return json
   }
   return {
-    result: !exists(json, 'result') ? undefined : json['result']
+    result: !exists(json, 'result')
+      ? undefined
+      : ChorusDeleteWorkbenchResultFromJSON(json['result'])
   }
 }
 
@@ -64,6 +73,6 @@ export function ChorusDeleteWorkbenchReplyToJSON(
     return null
   }
   return {
-    result: value.result
+    result: ChorusDeleteWorkbenchResultToJSON(value.result)
   }
 }
