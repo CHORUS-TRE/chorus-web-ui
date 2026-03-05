@@ -1,3 +1,16 @@
+# [1.39.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.38.0...v1.39.0) (2026-03-05)
+
+
+### Features
+
+* add upload management methods to AppStateStore ([2f49df6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2f49df6844b95afd22d275206afd036aee6f073a))
+* add UploadPanel component for managing active file uploads ([fab3ae2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fab3ae2781135e446f13a656b6663cfc942cd20e))
+* add useUploadWarning hook to manage before unload warning for active uploads ([b1abf1d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b1abf1d1c22c23fa40c6ebe4e165bfe8502f236e))
+* add workspaceId to FileSystemUploadItem and rename aborted to cancelled ([e8b819a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e8b819ae499a6a5337070c3444c0ad7c45d54bd4))
+* improve file upload process with cancellation support and state management ([5753c15](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5753c15c95ccf38e4ff40850f305d8bbb5958a2d))
+* improve upload progress component ([2e87dd0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2e87dd014fff53d540036d4c8047bd252648da13))
+* integrate useUploadWarning hook in AppStateInitializer for upload management ([34f4b2b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/34f4b2b90b377ac688d0cd2fa54b109f422bd4f8))
+
 # [1.38.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.37.0...v1.38.0) (2026-02-24)
 
 
