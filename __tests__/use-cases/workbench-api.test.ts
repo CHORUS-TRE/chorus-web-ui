@@ -35,7 +35,8 @@ const MOCK_API_CREATE = {
   appId: '3',
   workspaceId: '4',
   name: 'not yet implemented',
-  description: 'not yet implemented'
+  description: 'not yet implemented',
+  status: 'active'
 } as WorkbenchCreateType
 
 const MOCK_API_UPDATE = {
