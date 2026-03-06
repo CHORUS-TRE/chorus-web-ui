@@ -1,3 +1,20 @@
+# [1.40.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.39.0...v1.40.0) (2026-03-06)
+
+
+### Bug Fixes
+
+* update username reference to actorUsername in audit entry display ([a419e80](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a419e808158d19c56947968f5d6cb20b1e762dbd))
+
+
+### Features
+
+* add latest swagger specs and generate protos ([9c21cad](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9c21cadb49305a4be318bef95669a4bd513bf023))
+* add listActor functionality to audit module ([ed34b35](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ed34b3551167315ed02e20c566980b035b1eeeb7))
+* add status field to MOCK_API_CREATE ([7c2d012](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7c2d012512c54389afbf01c86d9bb64a0ad3a7a4))
+* make id, actorid, and actorUsername fields optional ([07c3fbb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/07c3fbb8c459e2cfaf7aa8b38da4d37ce23f8882))
+* rename 'User' to 'Actor' and update related fields in audit table ([b13f7bd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b13f7bd8842ccf8c242ae26603af227d650316b0))
+* update audit API with actorid field ([b3fef04](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b3fef040fb0e26d41eeeca10d83085a3efdf9ac2))
+
 # [1.39.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.38.0...v1.39.0) (2026-03-05)
 
 
