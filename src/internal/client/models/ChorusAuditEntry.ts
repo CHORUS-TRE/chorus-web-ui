@@ -20,61 +20,67 @@ import { exists, mapValues } from '../runtime'
  */
 export interface ChorusAuditEntry {
   /**
-   *
+   * Unique identifier of the audit entry.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   id?: string
   /**
-   *
+   * ID of the user who performed the action.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
-  userId?: string
+  actorId?: string
   /**
-   *
+   * Username of the user who performed the action.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
-  username?: string
+  actorUsername?: string
   /**
-   *
+   * Correlation ID to trace the request across services.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   correlationId?: string
   /**
-   *
+   * The type of action performed (e.g. CreateUser, DeleteWorkspace).
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   action?: string
   /**
-   *
+   * ID of the workspace related to this action, if applicable.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   workspaceId?: string
   /**
-   *
+   * ID of the workbench related to this action, if applicable.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   workbenchId?: string
   /**
-   *
+   * ID of the user targeted by this action, if applicable.
+   * @type {string}
+   * @memberof ChorusAuditEntry
+   */
+  userId?: string
+  /**
+   * Human-readable description of what happened.
    * @type {string}
    * @memberof ChorusAuditEntry
    */
   description?: string
   /**
-   *
+   * Additional key-value metadata about the action.
    * @type {{ [key: string]: string; }}
    * @memberof ChorusAuditEntry
    */
   details?: { [key: string]: string }
   /**
-   *
+   * Timestamp when the action occurred.
    * @type {Date}
    * @memberof ChorusAuditEntry
    */
@@ -103,14 +109,17 @@ export function ChorusAuditEntryFromJSONTyped(
   }
   return {
     id: !exists(json, 'id') ? undefined : json['id'],
-    userId: !exists(json, 'userId') ? undefined : json['userId'],
-    username: !exists(json, 'username') ? undefined : json['username'],
+    actorId: !exists(json, 'actorId') ? undefined : json['actorId'],
+    actorUsername: !exists(json, 'actorUsername')
+      ? undefined
+      : json['actorUsername'],
     correlationId: !exists(json, 'correlationId')
       ? undefined
       : json['correlationId'],
     action: !exists(json, 'action') ? undefined : json['action'],
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
     workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
+    userId: !exists(json, 'userId') ? undefined : json['userId'],
     description: !exists(json, 'description') ? undefined : json['description'],
     details: !exists(json, 'details') ? undefined : json['details'],
     createdAt: !exists(json, 'createdAt')
@@ -128,12 +137,13 @@ export function ChorusAuditEntryToJSON(value?: ChorusAuditEntry | null): any {
   }
   return {
     id: value.id,
-    userId: value.userId,
-    username: value.username,
+    actorId: value.actorId,
+    actorUsername: value.actorUsername,
     correlationId: value.correlationId,
     action: value.action,
     workspaceId: value.workspaceId,
     workbenchId: value.workbenchId,
+    userId: value.userId,
     description: value.description,
     details: value.details,
     createdAt:

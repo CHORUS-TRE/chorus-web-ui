@@ -30,6 +30,16 @@ export class AuditRepositoryImpl implements AuditRepository {
     }
   }
 
+  async listActor(actorId: string): Promise<Result<AuditEntry[]>> {
+    try {
+      const response = await this.dataSource.listActor({ id: actorId })
+      return this.parseEntries(response)
+    } catch (error) {
+      console.error('Error listing actor audit', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
   async listWorkspace(workspaceId: string): Promise<Result<AuditEntry[]>> {
     try {
       const response = await this.dataSource.listWorkspace({ id: workspaceId })

@@ -35,7 +35,8 @@ const MOCK_API_CREATE = {
   appId: '3',
   workspaceId: '4',
   name: 'not yet implemented',
-  description: 'not yet implemented'
+  description: 'not yet implemented',
+  status: 'active'
 } as WorkbenchCreateType
 
 const MOCK_API_UPDATE = {
@@ -285,7 +286,7 @@ describe('WorkbenchDataSourceImpl', () => {
         Promise.resolve({
           json: () =>
             Promise.resolve({
-              result: { success: true }
+              result: { workbench: MOCK_API_RESPONSE }
             }),
           status: 200,
           ok: true
@@ -294,7 +295,7 @@ describe('WorkbenchDataSourceImpl', () => {
 
       const result = await dataSource.delete('1')
 
-      expect(result).toEqual({ result: { success: true } })
+      expect(result).toEqual({ result: { workbench: MOCK_API_RESPONSE } })
       expect(global.fetch).toHaveBeenCalledTimes(1)
 
       // Verify that correct path and method are used

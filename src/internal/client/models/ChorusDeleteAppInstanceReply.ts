@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusDeleteAppInstanceResult } from './ChorusDeleteAppInstanceResult'
+import {
+  ChorusDeleteAppInstanceResultFromJSON,
+  ChorusDeleteAppInstanceResultFromJSONTyped,
+  ChorusDeleteAppInstanceResultToJSON
+} from './ChorusDeleteAppInstanceResult'
+
 /**
  *
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime'
 export interface ChorusDeleteAppInstanceReply {
   /**
    *
-   * @type {object}
+   * @type {ChorusDeleteAppInstanceResult}
    * @memberof ChorusDeleteAppInstanceReply
    */
-  result?: object
+  result?: ChorusDeleteAppInstanceResult
 }
 
 /**
@@ -50,7 +57,9 @@ export function ChorusDeleteAppInstanceReplyFromJSONTyped(
     return json
   }
   return {
-    result: !exists(json, 'result') ? undefined : json['result']
+    result: !exists(json, 'result')
+      ? undefined
+      : ChorusDeleteAppInstanceResultFromJSON(json['result'])
   }
 }
 
@@ -64,6 +73,6 @@ export function ChorusDeleteAppInstanceReplyToJSON(
     return null
   }
   return {
-    result: value.result
+    result: ChorusDeleteAppInstanceResultToJSON(value.result)
   }
 }

@@ -24,7 +24,7 @@ export interface ChorusAuditFilter {
    * @type {string}
    * @memberof ChorusAuditFilter
    */
-  userId?: string
+  actorId?: string
   /**
    *
    * @type {string}
@@ -37,6 +37,12 @@ export interface ChorusAuditFilter {
    * @memberof ChorusAuditFilter
    */
   workbenchId?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAuditFilter
+   */
+  userId?: string
   /**
    *
    * @type {string}
@@ -78,9 +84,10 @@ export function ChorusAuditFilterFromJSONTyped(
     return json
   }
   return {
-    userId: !exists(json, 'userId') ? undefined : json['userId'],
+    actorId: !exists(json, 'actorId') ? undefined : json['actorId'],
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
     workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
+    userId: !exists(json, 'userId') ? undefined : json['userId'],
     action: !exists(json, 'action') ? undefined : json['action'],
     fromTime: !exists(json, 'fromTime')
       ? undefined
@@ -97,9 +104,10 @@ export function ChorusAuditFilterToJSON(value?: ChorusAuditFilter | null): any {
     return null
   }
   return {
-    userId: value.userId,
+    actorId: value.actorId,
     workspaceId: value.workspaceId,
     workbenchId: value.workbenchId,
+    userId: value.userId,
     action: value.action,
     fromTime:
       value.fromTime === undefined ? undefined : value.fromTime.toISOString(),

@@ -1,5 +1,6 @@
 import {
   AuditServiceApi,
+  AuditServiceListActorAuditRequest,
   AuditServiceListPlatformAuditRequest,
   AuditServiceListUserAuditRequest,
   AuditServiceListWorkbenchAuditRequest,
@@ -11,6 +12,9 @@ import {
 interface AuditDataSource {
   listPlatform: (
     request: AuditServiceListPlatformAuditRequest
+  ) => Promise<ChorusListAuditReply>
+  listActor: (
+    request: AuditServiceListActorAuditRequest
   ) => Promise<ChorusListAuditReply>
   listWorkspace: (
     request: AuditServiceListWorkspaceAuditRequest
@@ -40,6 +44,12 @@ export class AuditDataSourceImpl implements AuditDataSource {
     request: AuditServiceListPlatformAuditRequest
   ): Promise<ChorusListAuditReply> {
     return this.client.auditServiceListPlatformAudit(request)
+  }
+
+  listActor(
+    request: AuditServiceListActorAuditRequest
+  ): Promise<ChorusListAuditReply> {
+    return this.client.auditServiceListActorAudit(request)
   }
 
   listWorkspace(
