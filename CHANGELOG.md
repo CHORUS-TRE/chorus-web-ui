@@ -1,3 +1,10 @@
+# [1.41.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.40.0...v1.41.0) (2026-03-09)
+
+
+### Features
+
+* unified inbox replacing separate notifications and requests pages ([51062c3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/51062c3ab596117d8a3b0b3aafaa970bb00bb011))
+
 # [1.40.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.39.0...v1.40.0) (2026-03-06)
 
 
