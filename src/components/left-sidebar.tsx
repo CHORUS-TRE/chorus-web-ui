@@ -199,7 +199,10 @@ function SidebarContent({
         </Link>
 
         <Link
-          onClick={() => toggleRightSidebar()}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleRightSidebar()
+          }}
           href="#"
           variant="underline"
           className={cn(

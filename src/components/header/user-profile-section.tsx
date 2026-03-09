@@ -163,11 +163,11 @@ export function UserProfileSection() {
 
           <DropdownMenuItem asChild>
             <Link
-              href={`/notifications`}
+              href={`/messages`}
               className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
             >
               <Bell className="h-4 w-4" />
-              Notifications
+              Messages
               {unreadNotificationsCount !== undefined &&
                 unreadNotificationsCount > 0 && (
                   <Badge

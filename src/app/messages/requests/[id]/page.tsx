@@ -21,6 +21,7 @@ import {
   ApprovalRequestType
 } from '@/domain/model/approval-request'
 import {
+  canApproveRequest,
   downloadRequestFiles,
   formatBytes,
   getFiles,
@@ -111,8 +112,7 @@ export default function RequestDetailPage() {
   const totalSize = getTotalSize(request)
   const isExtraction = request.type === ApprovalRequestType.DATA_EXTRACTION
   const isPending = request.status === ApprovalRequestStatus.PENDING
-  // TODO: derive from user workspace roles (rolesWithContext)
-  const isApprover = true
+  const isApprover = canApproveRequest(user.rolesWithContext, request)
   const isOwner = user.id === request.requesterId
   const canDownload =
     isOwner && isExtraction && request.status === ApprovalRequestStatus.APPROVED

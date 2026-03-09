@@ -2,7 +2,38 @@ import {
   ApprovalRequest,
   ApprovalRequestFile
 } from '@/domain/model/approval-request'
+import { Role } from '@/domain/model/user'
 import { downloadApprovalRequestFile } from '@/view-model/approval-request-view-model'
+
+const APPROVER_ROLES = ['WorkspaceDataManager', 'SuperAdmin']
+
+export function getSourceWorkspaceId(
+  request: ApprovalRequest
+): string | undefined {
+  return (
+    request.dataExtraction?.sourceWorkspaceId ||
+    request.dataTransfer?.sourceWorkspaceId
+  )
+}
+
+export function canApproveRequest(
+  userRoles: Role[] | undefined,
+  request: ApprovalRequest
+): boolean {
+  if (!userRoles || userRoles.length === 0) return false
+
+  const sourceWorkspaceId = getSourceWorkspaceId(request)
+
+  return userRoles.some((role) => {
+    if (!APPROVER_ROLES.includes(role.name)) return false
+    // SuperAdmin with wildcard context can approve anything
+    if (role.context.workspace === '*') return true
+    // WorkspaceAdmin must match the request's source workspace
+    if (sourceWorkspaceId && role.context.workspace === sourceWorkspaceId)
+      return true
+    return false
+  })
+}
 
 export function formatBytes(bytesStr?: string): string {
   const bytes = parseInt(bytesStr || '0')
