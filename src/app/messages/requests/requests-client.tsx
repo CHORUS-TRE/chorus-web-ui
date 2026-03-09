@@ -485,9 +485,9 @@ function RequestsDataTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -634,9 +634,10 @@ export default function RequestsClient({
     () =>
       requests.filter(
         (req) =>
-          req.requesterId !== currentUser.id && currentUser.permissions.approve
+          req.approverIds?.includes(currentUser.id) &&
+          req.requesterId !== currentUser.id
       ),
-    [requests, currentUser]
+    [requests, currentUser.id]
   )
 
   const pendingInboxCount = requestsToApprove.filter(
@@ -673,12 +674,12 @@ export default function RequestsClient({
         prev.map((req) =>
           req.id === selectedRequest.id
             ? {
-              ...req,
-              status:
-                activeAction === 'approve'
-                  ? ApprovalRequestStatus.APPROVED
-                  : ApprovalRequestStatus.REJECTED
-            }
+                ...req,
+                status:
+                  activeAction === 'approve'
+                    ? ApprovalRequestStatus.APPROVED
+                    : ApprovalRequestStatus.REJECTED
+              }
             : req
         )
       )
@@ -722,7 +723,7 @@ export default function RequestsClient({
             )}
           </TabsTrigger>
 
-          {currentUser.permissions.approve && (
+          {requestsToApprove.length > 0 && (
             <TabsTrigger
               value="inbox"
               className="relative px-4 pb-3 pt-2 font-semibold text-muted-foreground"
@@ -750,7 +751,7 @@ export default function RequestsClient({
           />
         </TabsContent>
 
-        {currentUser.permissions.approve && (
+        {requestsToApprove.length > 0 && (
           <TabsContent value="inbox" className="mt-2">
             <RequestsDataTable
               data={requestsToApprove}

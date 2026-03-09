@@ -127,7 +127,19 @@ export const useUserPreferences = create<UserPreferencesState>()(
       resetPreferences: () => set(defaultPreferences)
     }),
     {
-      name: 'user-preferences' // localStorage key
+      name: 'user-preferences', // localStorage key
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        if (version === 0) {
+          const state = persistedState as Record<string, unknown>
+          return {
+            ...state,
+            showRightSidebar: true,
+            showLeftSidebar: true
+          }
+        }
+        return persistedState as UserPreferencesState
+      }
     }
   )
 )

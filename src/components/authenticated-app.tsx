@@ -232,7 +232,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   className={cn(
                     'h-[calc(100vh-2.75rem-1rem-16px)] flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out',
                     !isFullscreen && showLeftSidebar
-                      ? 'mr-2 w-[240px] translate-x-0 opacity-100'
+                      ? 'mr-2 w-[240px] min-w-[240px] translate-x-0 opacity-100'
                       : 'mr-0 w-0 -translate-x-full opacity-0'
                   )}
                 >
@@ -243,8 +243,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                 <div
                   className={cn(
                     'flex h-full items-start gap-2',
-                    'w-full',
-                    isFullscreen ? 'w-full' : 'xl:w-[80vw] 2xl:w-[80vw]'
+                    isFullscreen ? 'w-full' : 'min-w-0 flex-1'
                   )}
                 >
                   {/* Main Content */}
@@ -277,6 +276,10 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                     )}
                     style={{
                       width:
+                        !isFullscreen && showRightSidebar
+                          ? rightSidebarWidth
+                          : 0,
+                      minWidth:
                         !isFullscreen && showRightSidebar
                           ? rightSidebarWidth
                           : 0

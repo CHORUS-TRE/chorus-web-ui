@@ -85,6 +85,7 @@ export default async function RootLayout({
                 <UploadPanel />
                 <FullscreenProvider>
                   <IframeCacheProvider>
+                    {/* Loads either authenticated-app or Login  */}
                     {children}
                     <IframeCacheRenderer />
                     <IframeCleanupDialog />

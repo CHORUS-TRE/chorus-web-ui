@@ -143,8 +143,8 @@ const columns: ColumnDef<AuditEntry>[] = [
       <span className="text-xs text-muted-foreground">
         {row.original.createdAt
           ? formatDistanceToNow(new Date(row.original.createdAt), {
-            addSuffix: true
-          })
+              addSuffix: true
+            })
           : '-'}
       </span>
     ),
@@ -227,9 +227,9 @@ export default function AuditTable({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -263,7 +263,7 @@ export default function AuditTable({
                         >
                           <pre className="max-h-[300px] overflow-auto rounded-md bg-muted/40 p-3 font-mono text-xs">
                             {entry.details &&
-                              Object.keys(entry.details).length > 0
+                            Object.keys(entry.details).length > 0
                               ? JSON.stringify(entry.details, null, 2)
                               : 'No details available.'}
                           </pre>
@@ -296,7 +296,7 @@ export default function AuditTable({
             –
             {Math.min(
               (table.getState().pagination.pageIndex + 1) *
-              table.getState().pagination.pageSize,
+                table.getState().pagination.pageSize,
               table.getFilteredRowModel().rows.length
             )}
           </strong>{' '}
