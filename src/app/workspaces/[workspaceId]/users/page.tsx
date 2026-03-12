@@ -22,6 +22,8 @@ export default function UsersPage() {
   const { showUsersTable, toggleUsersView } = useUserPreferences()
 
   const loadUsers = useCallback(async () => {
+    // Small delay to allow backend replication after mutations
+    await new Promise((resolve) => setTimeout(resolve, 300))
     const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
     if (result.data) {
       // Filter users who have roles in this workspace

@@ -96,7 +96,10 @@ export async function getUser(id: string) {
 export async function listUsers(filters: UserServiceListUsersRequest = {}) {
   const userRepository = await getRepository()
   const useCase = new UserList(userRepository)
-  return await useCase.execute(filters)
+  const result = await useCase.execute({
+    ...filters
+  })
+  return result
 }
 
 export async function deleteUser(id: string) {

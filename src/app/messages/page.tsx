@@ -4,7 +4,10 @@ import { CheckCircle2, ChevronLeft, ChevronRight, XCircle } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
 
-import { ApprovalRequest } from '@/domain/model/approval-request'
+import {
+  ApprovalRequest,
+  ApprovalRequestStatus
+} from '@/domain/model/approval-request'
 import {
   canApproveRequest,
   downloadRequestFiles,
@@ -40,7 +43,7 @@ export default function MessagesPage() {
 
   // URL-driven state
   const activeTab = (searchParams.get('tab') as InboxTab) || 'inbox'
-  const activeFilter = (searchParams.get('filter') as InboxFilter) || 'all'
+  const activeFilter = (searchParams.get('filter') as InboxFilter) || 'unread'
   const [searchQuery, setSearchQuery] = React.useState('')
 
   // Pagination
@@ -67,6 +70,21 @@ export default function MessagesPage() {
     searchQuery
   )
 
+  // Compute counts for each filter (without search query)
+  const filterCounts = React.useMemo(() => {
+    const items = activeTab === 'inbox' ? inboxItems : outboxItems
+    return {
+      all: items.length,
+      pending: items.filter((i) => i.status === ApprovalRequestStatus.PENDING)
+        .length,
+      approved: items.filter((i) => i.status === ApprovalRequestStatus.APPROVED)
+        .length,
+      rejected: items.filter((i) => i.status === ApprovalRequestStatus.REJECTED)
+        .length,
+      unread: items.filter((i) => !i.isRead).length
+    }
+  }, [inboxItems, outboxItems, activeTab])
+
   const totalFiltered = filteredItems.length
   const totalPages = Math.ceil(totalFiltered / PAGE_SIZE)
   const paginatedItems = filteredItems.slice(
@@ -88,11 +106,7 @@ export default function MessagesPage() {
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString())
     for (const [key, value] of Object.entries(updates)) {
-      if (
-        value === null ||
-        (key === 'filter' && value === 'all') ||
-        (key === 'tab' && value === 'inbox')
-      ) {
+      if (value === null) {
         params.delete(key)
       } else {
         params.set(key, value)
@@ -223,6 +237,7 @@ export default function MessagesPage() {
         onFilterChange={handleFilterChange}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        filterCounts={filterCounts}
       />
 
       {/* Bulk action bar */}
