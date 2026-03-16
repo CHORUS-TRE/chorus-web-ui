@@ -7,8 +7,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { deleteUserRole, listUsers } from '@/view-model/user-view-model'
-import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
+import { listUsers } from '@/view-model/user-view-model'
+import {
+  workspaceAddUserRole,
+  workspaceRemoveUserRole
+} from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import {
   Dialog,
@@ -130,22 +133,12 @@ export function ManageUserWorkspaceDialog({
       e.preventDefault()
       if (!userId) return
 
-      // Find the role ID for the selected role name
-      const roleToRemove = currentWorkspaceRoles.find(
-        (r) => r.name === selectedRoleName
-      )
-      if (!roleToRemove?.id) {
-        toast({
-          title: 'Error',
-          description: 'Role not found',
-          variant: 'destructive'
-        })
-        setIsRemoving(false)
-        return
-      }
-
       setIsRemoving(true)
-      const result = await deleteUserRole(userId, roleToRemove.id)
+      const result = await workspaceRemoveUserRole(
+        workspaceId,
+        userId,
+        selectedRoleName
+      )
 
       if (result.error) {
         toast({
@@ -164,7 +157,7 @@ export function ManageUserWorkspaceDialog({
       }
       setIsRemoving(false)
     },
-    [userId, currentWorkspaceRoles, selectedRoleName, onUserAdded, form]
+    [userId, workspaceId, selectedRoleName, onUserAdded, form]
   )
 
   useEffect(() => {

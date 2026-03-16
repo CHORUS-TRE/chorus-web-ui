@@ -6,6 +6,7 @@ import {
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
+  ChorusRemoveUserRoleInWorkspaceReply,
   ChorusUpdateWorkspaceReply,
   Configuration,
   WorkspaceServiceApi,
@@ -29,6 +30,11 @@ interface WorkspaceDataSource {
     userId: string,
     body: WorkspaceServiceManageUserRoleInWorkspaceBody
   ) => Promise<ChorusManageUserRoleInWorkspaceReply>
+  removeUserRole: (
+    workspaceId: string,
+    userId: string,
+    roleName: string
+  ) => Promise<ChorusRemoveUserRoleInWorkspaceReply>
   removeUserFromWorkspace: (
     workspaceId: string,
     userId: string
@@ -83,6 +89,18 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
       id: workspaceId,
       userId,
       body
+    })
+  }
+
+  removeUserRole(
+    workspaceId: string,
+    userId: string,
+    roleName: string
+  ): Promise<ChorusRemoveUserRoleInWorkspaceReply> {
+    return this.service.workspaceServiceRemoveUserRoleInWorkspace({
+      id: workspaceId,
+      userId,
+      roleName
     })
   }
 

@@ -145,6 +145,40 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
+  async removeUserRole(
+    workspaceId: string,
+    userId: string,
+    roleName: string
+  ): Promise<Result<User>> {
+    try {
+      const response = await this.dataSource.removeUserRole(
+        workspaceId,
+        userId,
+        roleName
+      )
+
+      if (!response.result?.workspace) {
+        return { error: 'Error removing user role from workspace' }
+      }
+
+      return {
+        data: {
+          id: userId,
+          firstName: '',
+          lastName: '',
+          username: '',
+          source: '',
+          status: '',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      }
+    } catch (error) {
+      console.error('Error removing user role from workspace', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
   async removeUserFromWorkspace(
     workspaceId: string,
     userId: string

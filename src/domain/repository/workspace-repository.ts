@@ -17,4 +17,9 @@ export interface WorkspaceRepository {
     userId: string,
     roleName: string
   ) => Promise<Result<User>>
+  removeUserRole: (
+    workspaceId: string,
+    userId: string,
+    roleName: string
+  ) => Promise<Result<User>>
 }

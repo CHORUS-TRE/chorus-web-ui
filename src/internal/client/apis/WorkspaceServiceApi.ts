@@ -20,6 +20,7 @@ import type {
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
+  ChorusRemoveUserRoleInWorkspaceReply,
   ChorusUpdateWorkspaceReply,
   ChorusWorkspace,
   RpcStatus,
@@ -38,6 +39,8 @@ import {
   ChorusManageUserRoleInWorkspaceReplyToJSON,
   ChorusRemoveUserFromWorkspaceReplyFromJSON,
   ChorusRemoveUserFromWorkspaceReplyToJSON,
+  ChorusRemoveUserRoleInWorkspaceReplyFromJSON,
+  ChorusRemoveUserRoleInWorkspaceReplyToJSON,
   ChorusUpdateWorkspaceReplyFromJSON,
   ChorusUpdateWorkspaceReplyToJSON,
   ChorusWorkspaceFromJSON,
@@ -78,6 +81,12 @@ export interface WorkspaceServiceManageUserRoleInWorkspaceRequest {
 export interface WorkspaceServiceRemoveUserFromWorkspaceRequest {
   id: string
   userId: string
+}
+
+export interface WorkspaceServiceRemoveUserRoleInWorkspaceRequest {
+  id: string
+  userId: string
+  roleName: string
 }
 
 export interface WorkspaceServiceUpdateWorkspaceRequest {
@@ -489,6 +498,92 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusRemoveUserFromWorkspaceReply> {
     const response = await this.workspaceServiceRemoveUserFromWorkspaceRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint removes a user\'s role in a workspace
+   * Remove a user\'s role in a workspace
+   */
+  async workspaceServiceRemoveUserRoleInWorkspaceRaw(
+    requestParameters: WorkspaceServiceRemoveUserRoleInWorkspaceRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusRemoveUserRoleInWorkspaceReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workspaceServiceRemoveUserRoleInWorkspace.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workspaceServiceRemoveUserRoleInWorkspace.'
+      )
+    }
+
+    if (
+      requestParameters.roleName === null ||
+      requestParameters.roleName === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'roleName',
+        'Required parameter requestParameters.roleName was null or undefined when calling workspaceServiceRemoveUserRoleInWorkspace.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{id}/user/{userId}/role/{roleName}`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          )
+          .replace(
+            `{${'roleName'}}`,
+            encodeURIComponent(String(requestParameters.roleName))
+          ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusRemoveUserRoleInWorkspaceReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint removes a user\'s role in a workspace
+   * Remove a user\'s role in a workspace
+   */
+  async workspaceServiceRemoveUserRoleInWorkspace(
+    requestParameters: WorkspaceServiceRemoveUserRoleInWorkspaceRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusRemoveUserRoleInWorkspaceReply> {
+    const response = await this.workspaceServiceRemoveUserRoleInWorkspaceRaw(
       requestParameters,
       initOverrides
     )
