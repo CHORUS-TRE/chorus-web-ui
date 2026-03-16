@@ -130,7 +130,7 @@ export function AppStoreView() {
     if (selectedCategory === 'all') {
       return [...internalApps, ...webApps]
     }
-    if (selectedCategory === 'webapps') {
+    if (selectedCategory === 'horus') {
       return webApps
     }
     return internalApps
@@ -144,7 +144,7 @@ export function AppStoreView() {
           <h3 className="mb-2 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
             Applications
           </h3>
-          {CATEGORIES.filter((c) => c.id !== 'chuv' && c.id !== 'webapps').map(
+          {CATEGORIES.filter((c) => c.id !== 'chuv' && c.id !== 'horus').map(
             (cat) => (
               <button
                 key={cat.id}
@@ -167,23 +167,21 @@ export function AppStoreView() {
           <h3 className="mb-2 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
             Services
           </h3>
-          {CATEGORIES.filter((c) => c.id === 'chuv' || c.id === 'webapps').map(
-            (cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={cn(
-                  'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
-                  selectedCategory === cat.id
-                    ? 'bg-primary/20 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'
-                )}
-              >
-                {cat.icon}
-                {cat.label}
-              </button>
-            )
-          )}
+          {CATEGORIES.filter((c) => c.id === 'horus').map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={cn(
+                'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
+                selectedCategory === cat.id
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'
+              )}
+            >
+              {cat.icon}
+              {cat.label}
+            </button>
+          ))}
         </div>
       </aside>
 

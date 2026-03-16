@@ -2,12 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Globe, Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { Button } from '~/components/button'
+import { Checkbox } from '~/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -52,7 +53,8 @@ const WebAppFormSchema = z.object({
         /^data:image\/[a-zA-Z]+;base64,/.test(val),
       'Must be a valid URL or base64 image'
     )
-    .optional()
+    .optional(),
+  openInNewTab: z.boolean().optional()
 })
 
 type WebAppFormValues = z.infer<typeof WebAppFormSchema>
@@ -60,11 +62,13 @@ type WebAppFormValues = z.infer<typeof WebAppFormSchema>
 interface WebAppCreateDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  initialEditingWebappId?: string
 }
 
 export function WebAppCreateDialog({
   open,
-  onOpenChange
+  onOpenChange,
+  initialEditingWebappId
 }: WebAppCreateDialogProps) {
   const {
     externalWebApps,
@@ -88,16 +92,35 @@ export function WebAppCreateDialog({
       name: '',
       url: '',
       description: '',
-      iconUrl: ''
+      iconUrl: '',
+      openInNewTab: false
     }
   })
+
+  // Auto-select webapp for editing if initialEditingWebappId is provided
+  useEffect(() => {
+    if (open) {
+      if (initialEditingWebappId) {
+        const webapp = externalWebApps.find(
+          (app) => app.id === initialEditingWebappId
+        )
+        if (webapp) {
+          handleEdit(webapp)
+        }
+      } else {
+        // Reset form when opening without an initialEditingWebappId
+        resetForm()
+      }
+    }
+  }, [open, initialEditingWebappId, externalWebApps])
 
   const resetForm = () => {
     form.reset({
       name: '',
       url: '',
       description: '',
-      iconUrl: ''
+      iconUrl: '',
+      openInNewTab: false
     })
     setEditingWebApp(null)
   }
@@ -108,7 +131,8 @@ export function WebAppCreateDialog({
       name: webapp.name,
       url: webapp.url,
       description: webapp.description || '',
-      iconUrl: webapp.iconUrl || ''
+      iconUrl: webapp.iconUrl || '',
+      openInNewTab: webapp.openInNewTab || false
     })
   }
 
@@ -138,7 +162,8 @@ export function WebAppCreateDialog({
           name: data.name,
           url: data.url,
           description: data.description,
-          iconUrl: data.iconUrl
+          iconUrl: data.iconUrl,
+          openInNewTab: data.openInNewTab
         }
         await updateExternalWebApp(webapp)
       } else {
@@ -161,7 +186,8 @@ export function WebAppCreateDialog({
           name: data.name,
           url: data.url,
           description: data.description,
-          iconUrl: data.iconUrl
+          iconUrl: data.iconUrl,
+          openInNewTab: data.openInNewTab
         }
         await addExternalWebApp(webapp)
       }
@@ -181,7 +207,7 @@ export function WebAppCreateDialog({
               <Globe className="h-5 w-5" />
               Manage Services
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-muted-foreground">
               Add external web applications that can be loaded in iframes.
             </DialogDescription>
           </DialogHeader>
@@ -225,7 +251,7 @@ export function WebAppCreateDialog({
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
+                        <FormDescription className="text-muted-foreground">
                           The URL must allow embedding in an iframe
                         </FormDescription>
                         <FormMessage />
@@ -242,7 +268,7 @@ export function WebAppCreateDialog({
                         <FormControl>
                           <Textarea
                             placeholder="A brief description of this web app"
-                            className="resize-none"
+                            className="resize-none text-muted-foreground"
                             rows={2}
                             {...field}
                           />
@@ -264,10 +290,31 @@ export function WebAppCreateDialog({
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
+                        <FormDescription className="text-muted-foreground">
                           URL to an icon image (optional)
                         </FormDescription>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="openInNewTab"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Open in new tab</FormLabel>
+                          <FormDescription className="text-muted-foreground">
+                            Open link with target=&quot;_blank&quot;
+                          </FormDescription>
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -329,7 +376,7 @@ export function WebAppCreateDialog({
                             className="h-8 w-8"
                             onClick={() => handleEdit(webapp)}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="h-4 w-4 text-muted-foreground" />
                           </Button>
                           <Button
                             variant="ghost"
