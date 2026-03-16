@@ -34,20 +34,31 @@ import { useAuthorization } from '~/providers/authorization-provider'
 
 export default function WorkspaceUserTable({
   workspaceId,
+  users: propUsers,
+  onUpdate,
   title = 'Workspace Members',
   description = 'Manage users and their roles in this workspace'
 }: {
   workspaceId: string
+  users?: User[]
+  onUpdate?: (user?: User) => void
   title?: string
   description?: string
 }) {
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const { can, PERMISSIONS } = useAuthorization()
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+
+  // Use prop users if provided, otherwise use internal state (for backward compatibility)
+  const [internalUsers, setInternalUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(!propUsers)
+  const [error, setError] = useState<string | null>(null)
+
+  const users = propUsers ?? internalUsers
 
   const loadUsers = useCallback(async () => {
+    // Only load if users aren't provided as props
+    if (propUsers) return
+
     setLoading(true)
     const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
     if (result.data) {
@@ -57,7 +68,7 @@ export default function WorkspaceUserTable({
           (role) => role.context.workspace === workspaceId
         )
       )
-      setUsers(workspaceUsers)
+      setInternalUsers(workspaceUsers)
       setError(null)
     } else {
       setError(result.error || 'Failed to load workspace members')
@@ -68,17 +79,26 @@ export default function WorkspaceUserTable({
       })
     }
     setLoading(false)
-  }, [workspaceId])
+  }, [workspaceId, propUsers])
 
   useEffect(() => {
-    if (workspaceId) {
+    if (workspaceId && !propUsers) {
       loadUsers()
     }
-  }, [workspaceId, loadUsers])
+  }, [workspaceId, loadUsers, propUsers])
 
-  const handleUserChange = useCallback(() => {
-    loadUsers()
-  }, [loadUsers])
+  const handleUserChange = useCallback(
+    (user?: User) => {
+      // If using prop users and onUpdate callback, notify parent
+      if (propUsers && onUpdate) {
+        onUpdate(user)
+      } else {
+        // Otherwise load internally
+        loadUsers()
+      }
+    },
+    [propUsers, onUpdate, loadUsers]
+  )
 
   const getWorkspaceRoles = (user: User) => {
     return (

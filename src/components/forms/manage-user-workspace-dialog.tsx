@@ -56,7 +56,7 @@ export function ManageUserWorkspaceDialog({
 }: {
   user?: User
   workspaceId: string
-  onUserAdded: () => void
+  onUserAdded: (user?: User) => void
   children?: React.ReactNode
 }) {
   const { workspaces } = useAppState()
@@ -204,7 +204,8 @@ export function ManageUserWorkspaceDialog({
       })
       setOpen(false)
       form.reset()
-      onUserAdded()
+      // Pass the current user object for optimistic update, background refresh will sync roles
+      onUserAdded(currentUser)
     }
   }, [state, onUserAdded, form, actionMode])
 
