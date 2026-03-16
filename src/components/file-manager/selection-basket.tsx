@@ -7,6 +7,7 @@ import {
   Trash2,
   X
 } from 'lucide-react'
+import { useParams } from 'next/navigation'
 import * as React from 'react'
 
 import { Button } from '~/components/button'
@@ -67,6 +68,8 @@ export function SelectionBasket({
   const [requestJustification, setRequestJustification] = React.useState('')
   const [targetWorkspaceId, setTargetWorkspaceId] = React.useState('')
   const [isCustomWorkspaceId, setIsCustomWorkspaceId] = React.useState(false)
+  const params = useParams<{ workspaceId: string }>()
+  const workspaceId = params?.workspaceId
   const { workspaces } = useAppState()
 
   const totalSize = React.useMemo(() => {
@@ -231,12 +234,14 @@ export function SelectionBasket({
                   <SelectTrigger className="bg-muted/20">
                     <SelectValue placeholder="Select a workspace…" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {workspaces?.map((ws) => (
-                      <SelectItem key={ws.id} value={ws.id}>
-                        {ws.name} — {ws.id}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="bg-background/65 text-muted-foreground backdrop-blur-xl">
+                    {workspaces
+                      ?.filter((ws) => ws.id !== workspaceId)
+                      .map((ws) => (
+                        <SelectItem key={ws.id} value={ws.id}>
+                          {ws.name} — {ws.id}
+                        </SelectItem>
+                      ))}
                     <SelectSeparator />
                     <SelectItem value="__custom__">Custom ID…</SelectItem>
                   </SelectContent>
