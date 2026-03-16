@@ -25,6 +25,12 @@ export interface ChorusApprovalRequestNotification {
    * @memberof ChorusApprovalRequestNotification
    */
   approvalRequestId?: string
+  /**
+   *
+   * @type {boolean}
+   * @memberof ChorusApprovalRequestNotification
+   */
+  autoapproved?: boolean
 }
 
 /**
@@ -54,7 +60,10 @@ export function ChorusApprovalRequestNotificationFromJSONTyped(
   return {
     approvalRequestId: !exists(json, 'approvalRequestId')
       ? undefined
-      : json['approvalRequestId']
+      : json['approvalRequestId'],
+    autoapproved: !exists(json, 'autoapproved')
+      ? undefined
+      : json['autoapproved']
   }
 }
 
@@ -68,6 +77,7 @@ export function ChorusApprovalRequestNotificationToJSON(
     return null
   }
   return {
-    approvalRequestId: value.approvalRequestId
+    approvalRequestId: value.approvalRequestId,
+    autoapproved: value.autoapproved
   }
 }
