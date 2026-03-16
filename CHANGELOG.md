@@ -1,3 +1,17 @@
+# [1.42.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.41.0...v1.42.0) (2026-03-16)
+
+
+### Bug Fixes
+
+* layout ([fad6759](https://github.com/CHORUS-TRE/chorus-web-ui/commit/fad6759fa9fb687da7ad78694c04a1d835b83867))
+* user add / delete refresh ([abe0166](https://github.com/CHORUS-TRE/chorus-web-ui/commit/abe0166260ee25d864ac4a0d4329fd08811bd5f3))
+* webapp category and _blank ([7d61435](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7d614359edabb39acb3d7f3b685640127b0b82f7))
+
+
+### Features
+
+* remove role ([b741937](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b7419379ab12944a28c3b13c4417fb19be8f97ea))
+
 # [1.41.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.40.0...v1.41.0) (2026-03-09)
 
 
