@@ -65,7 +65,7 @@ export function UserDeleteDialog({
       <AlertDialogContent className="bg-background">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-muted-foreground">
             This action cannot be undone. This will permanently delete the user
             account.
           </AlertDialogDescription>

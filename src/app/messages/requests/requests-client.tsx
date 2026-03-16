@@ -713,14 +713,7 @@ export default function RequestsClient({
             className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
           >
             My Requests
-            {myRequests.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="no-underline-inherit ml-2 border-none border-transparent px-1.5 py-0 text-[10px]"
-              >
-                {myRequests.length}
-              </Badge>
-            )}
+            {myRequests.length > 0 && ` (${myRequests.length})`}
           </TabsTrigger>
 
           {requestsToApprove.length > 0 && (

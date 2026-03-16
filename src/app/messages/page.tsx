@@ -74,7 +74,6 @@ export default function MessagesPage() {
   const filterCounts = React.useMemo(() => {
     const items = activeTab === 'inbox' ? inboxItems : outboxItems
     return {
-      all: items.length,
       pending: items.filter((i) => i.status === ApprovalRequestStatus.PENDING)
         .length,
       approved: items.filter((i) => i.status === ApprovalRequestStatus.APPROVED)
@@ -137,8 +136,13 @@ export default function MessagesPage() {
     const item = inboxItems.find((i) => i.id === id)
     if (item?.kind === 'notification') {
       await markNotificationsAsRead([id])
-      await refreshNotifications()
-      await refreshUnreadNotificationsCount()
+      // Wait for backend to process, then refresh
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      await Promise.all([
+        refreshNotifications(),
+        refreshUnreadNotificationsCount(),
+        refetchRequests()
+      ])
     }
   }
 
@@ -149,8 +153,13 @@ export default function MessagesPage() {
       .filter(Boolean)
     if (unreadNotifIds.length > 0) {
       await markNotificationsAsRead(unreadNotifIds)
-      await refreshNotifications()
-      await refreshUnreadNotificationsCount()
+      // Wait for backend to process, then refresh
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      await Promise.all([
+        refreshNotifications(),
+        refreshUnreadNotificationsCount(),
+        refetchRequests()
+      ])
     }
   }
 

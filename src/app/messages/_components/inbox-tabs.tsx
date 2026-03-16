@@ -28,14 +28,7 @@ export function InboxTabs({
           className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
         >
           Inbox
-          {inboxCount > 0 && (
-            <Badge
-              variant="secondary"
-              className="no-underline-inherit ml-2 border-none border-transparent px-1.5 py-0 text-[10px]"
-            >
-              {inboxCount}
-            </Badge>
-          )}
+          {inboxCount > 0 && ` (${inboxCount})`}
           {inboxUnreadCount > 0 && (
             <Badge
               variant="destructive"
@@ -51,14 +44,7 @@ export function InboxTabs({
           className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
         >
           Outbox
-          {outboxCount > 0 && (
-            <Badge
-              variant="secondary"
-              className="no-underline-inherit ml-2 border-none border-transparent px-1.5 py-0 text-[10px]"
-            >
-              {outboxCount}
-            </Badge>
-          )}
+          {outboxCount > 0 && ` (${outboxCount})`}
         </TabsTrigger>
       </TabsList>
     </Tabs>

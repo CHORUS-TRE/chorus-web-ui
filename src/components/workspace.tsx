@@ -288,6 +288,12 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
             <CardContent>
               <ScrollArea className="mb-2 flex max-h-40 flex-col overflow-y-auto pr-2">
                 <div className="grid gap-1">
+                  {workspace?.dev?.members?.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      No members found
+                    </p>
+                  )}
+
                   {workspace?.dev?.members
                     ?.filter((member) =>
                       member.rolesWithContext?.some(
@@ -297,13 +303,15 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                       )
                     )
                     .map((member) => {
-                      const roleInWorkspace = member.rolesWithContext?.find(
+                      const rolesInWorkspace = member.rolesWithContext?.filter(
                         (role) => role.context.workspace === workspaceId
                       )
-                      let roleName = roleInWorkspace?.name
-                      if (roleName?.startsWith('Workspace')) {
-                        roleName = roleName.replace('Workspace', '').trim()
-                      }
+                      const roleNames = rolesInWorkspace?.map((role) => {
+                        if (role.name.startsWith('Workspace')) {
+                          return role.name.replace('Workspace', '').trim()
+                        }
+                        return role.name
+                      })
 
                       return (
                         <div
@@ -322,9 +330,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
                               </p>
                             </div>
                           </div>
-                          {roleName && (
+                          {roleNames && (
                             <p className="text-xs text-muted-foreground">
-                              {roleName}
+                              {roleNames.join(', ')}
                             </p>
                           )}
                         </div>
