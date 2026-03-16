@@ -177,6 +177,26 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       PERMISSIONS.downloadFilesFromWorkspace
     ]
   },
+  WorkspaceDataManager: {
+    name: 'WorkspaceDataManager',
+    description:
+      'This role allows a user to manage workspace data and approve requests',
+    inheritsFrom: ['WorkspaceMaintainer'],
+    attributes: { workspace: 'x' },
+    permissions: [
+      PERMISSIONS.uploadFilesToWorkspace,
+      PERMISSIONS.modifyFilesInWorkspace,
+      PERMISSIONS.downloadFilesFromWorkspace,
+      PERMISSIONS.searchUsers,
+      PERMISSIONS.listWorkbenches,
+      PERMISSIONS.getWorkbench,
+      PERMISSIONS.updateWorkbench,
+      PERMISSIONS.createAppInstance,
+      PERMISSIONS.getAppInstance,
+      PERMISSIONS.updateAppInstance,
+      PERMISSIONS.deleteAppInstance
+    ]
+  },
   WorkspaceAdmin: {
     name: 'WorkspaceAdmin',
     description: 'This role allows a user full permissions over a workspace',
@@ -290,7 +310,7 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
       'PlatformSettingsManager',
       'PlateformUserManager',
       'AppStoreAdmin',
-      'WorkspaceAdmin',
+      'WorkspaceDataManager',
       'WorkbenchAdmin',
       'Healthchecker'
     ],

@@ -613,6 +613,14 @@ export const IframeCacheProvider = ({
         ? `${new URL(webapp.url).origin}${subpath.startsWith('/') ? '' : '/'}${subpath}`
         : webapp.url
 
+      // If openInNewTab is set, open directly in a new tab
+      if (webapp.openInNewTab) {
+        window.open(targetUrl, '_blank', 'noopener,noreferrer')
+        // Add to recent list
+        addToRecentWebApps(webappId, webapp.name)
+        return
+      }
+
       // Check if already cached
       const existing = cacheRef.current.get(webappId)
       if (existing) {

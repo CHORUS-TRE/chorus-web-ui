@@ -42,6 +42,37 @@ export default function UsersPage() {
     }
   }, [workspaceId])
 
+  // Refresh in background after backend has time to process
+  const refreshAfterDelay = useCallback(() => {
+    setTimeout(() => {
+      loadUsers()
+    }, 2000)
+  }, [loadUsers])
+
+  // Optimistic add: immediately add user to local state
+  const handleUserAdded = useCallback(
+    (user?: User) => {
+      if (user) {
+        setUsers((prev) => [...prev, user])
+      }
+      refreshAfterDelay()
+    },
+    [refreshAfterDelay]
+  )
+
+  // Optimistic update: update user in local state or refresh
+  const handleUserUpdated = useCallback(
+    (updatedUser?: User) => {
+      if (updatedUser) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+        )
+      }
+      refreshAfterDelay()
+    },
+    [refreshAfterDelay]
+  )
+
   useEffect(() => {
     if (workspaceId) {
       loadUsers()
@@ -96,7 +127,7 @@ export default function UsersPage() {
             </div>
             <AddUserToWorkspaceDialog
               workspaceId={workspaceId}
-              onUserAdded={loadUsers}
+              onUserAdded={handleUserAdded}
             />
           </div>
         </div>
@@ -106,6 +137,8 @@ export default function UsersPage() {
             workspaceId={workspaceId}
             title=""
             description=""
+            users={users}
+            onUpdate={handleUserUpdated}
           />
         ) : (
           <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
@@ -114,7 +147,7 @@ export default function UsersPage() {
                 key={user.id}
                 user={user}
                 workspaceId={workspaceId}
-                onUpdate={loadUsers}
+                onUpdate={handleUserUpdated}
               />
             ))}
           </div>

@@ -28,6 +28,9 @@ export default function AdminAppStorePage() {
 
   const [showAppDialog, setShowAppDialog] = useState(false)
   const [showWebAppDialog, setShowWebAppDialog] = useState(false)
+  const [editingWebappId, setEditingWebappId] = useState<string | undefined>(
+    undefined
+  )
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
   const handleDeleteApp = async (id: string) => {
@@ -196,12 +199,8 @@ export default function AdminAppStorePage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            // Since WebAppCreateDialog handles editing via state inside it,
-                            // we might want to reconsider how to trigger Edit in a separate page.
-                            // But for now, let's stick to the user's request of going to a page or using common patterns.
-                            // If user said "go to admin/app-store/app/[id]", maybe they want the same for webapps?
-                            // For now I'll use the id for webapps too.
-                            router.push(`/admin/app-store/webapp/${webapp.id}`)
+                            setEditingWebappId(webapp.id)
+                            setShowWebAppDialog(true)
                           }}
                         >
                           <Pencil className="h-4 w-4 text-muted-foreground" />
@@ -243,7 +242,13 @@ export default function AdminAppStorePage() {
 
       <WebAppCreateDialog
         open={showWebAppDialog}
-        onOpenChange={setShowWebAppDialog}
+        onOpenChange={(open) => {
+          setShowWebAppDialog(open)
+          if (!open) {
+            setEditingWebappId(undefined)
+          }
+        }}
+        initialEditingWebappId={editingWebappId}
       />
     </div>
   )

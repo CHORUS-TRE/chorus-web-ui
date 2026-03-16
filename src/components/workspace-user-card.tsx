@@ -42,10 +42,6 @@ export function WorkspaceUserCard({
     )
   }, [user.rolesWithContext, workspaceId])
 
-  const primaryRole =
-    workspaceRoles.find((r) => r.name.startsWith('Workspace')) ||
-    workspaceRoles[0]
-
   const userPermissions = useMemo(() => {
     return getPermissionsForUser(user, { workspace: workspaceId })
   }, [user, workspaceId, getPermissionsForUser])
@@ -103,27 +99,38 @@ export function WorkspaceUserCard({
         </div>
 
         <div className="mt-4">
-          {can(PERMISSIONS.manageUsersInWorkspace, {
-            workspace: workspaceId
-          }) ? (
-            <ManageUserWorkspaceDialog
-              user={user}
-              workspaceId={workspaceId}
-              onUserAdded={onUpdate}
-            >
-              <div
-                className={`inline-flex cursor-pointer items-center gap-2 rounded-md bg-slate-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-600 hover:bg-opacity-80 active:scale-95`}
-              >
-                {primaryRole?.name.replace('Workspace', 'Workspace ')}
+          <div className="flex flex-wrap gap-2">
+            {workspaceRoles.map((role, index) => (
+              <div key={role.id || index}>
+                {can(PERMISSIONS.manageUsersInWorkspace, {
+                  workspace: workspaceId
+                }) ? (
+                  <ManageUserWorkspaceDialog
+                    user={user}
+                    workspaceId={workspaceId}
+                    onUserAdded={onUpdate}
+                  >
+                    <div
+                      className={`inline-flex cursor-pointer items-center gap-2 rounded-md bg-slate-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-600 hover:bg-opacity-80 active:scale-95`}
+                    >
+                      {role.name.replace('Workspace', 'Workspace ')}
+                    </div>
+                  </ManageUserWorkspaceDialog>
+                ) : (
+                  <div
+                    className={`inline-flex items-center gap-2 rounded-md bg-slate-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm`}
+                  >
+                    {role.name.replace('Workspace', 'Workspace ')}
+                  </div>
+                )}
               </div>
-            </ManageUserWorkspaceDialog>
-          ) : (
-            <div
-              className={`inline-flex cursor-pointer items-center gap-2 rounded-md bg-slate-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-600 hover:bg-opacity-80 active:scale-95`}
-            >
-              {primaryRole?.name.replace('Workspace', 'Workspace ')}
-            </div>
-          )}
+            ))}
+            {workspaceRoles.length === 0 && (
+              <div className="text-xs text-muted-foreground">
+                No workspace roles
+              </div>
+            )}
+          </div>
         </div>
       </CardHeader>
 

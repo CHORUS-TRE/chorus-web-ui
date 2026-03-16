@@ -28,7 +28,7 @@ export interface InboxItem {
 }
 
 export type InboxTab = 'inbox' | 'outbox'
-export type InboxFilter = 'all' | 'pending' | 'approved' | 'rejected' | 'unread'
+export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread'
 
 function notificationToInboxItem(n: Notification): InboxItem {
   return {
@@ -86,10 +86,15 @@ export function useInboxData(userId: string) {
   }, [fetchRequests])
 
   const inboxItems = React.useMemo(() => {
-    const notifItems = (notifications || []).map(notificationToInboxItem)
+    // Only include unread notifications
+    const unreadNotifs = (notifications || []).filter((n) => !n.readAt)
+    const notifItems = unreadNotifs.map(notificationToInboxItem)
+
+    // Include all requests where user is an approver
     const inboxRequests = requests.filter((req) =>
       req.approverIds?.includes(userId)
     )
+
     const requestItems = inboxRequests.map(requestToInboxItem)
     return [...notifItems, ...requestItems].sort(
       (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
@@ -117,7 +122,7 @@ export function filterInboxItems(
   filter: InboxFilter,
   searchQuery: string
 ): InboxItem[] {
-  let filtered = items
+  let filtered: InboxItem[] = []
 
   switch (filter) {
     case 'pending':

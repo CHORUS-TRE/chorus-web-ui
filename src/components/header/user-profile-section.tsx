@@ -82,7 +82,7 @@ export function UserProfileSection() {
               {user.firstName} {user.lastName}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              @{user.username}
+              @{user.username} (id: {user.id})
             </p>
             <Link
               href={`/settings/profile`}

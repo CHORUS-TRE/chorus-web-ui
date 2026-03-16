@@ -150,6 +150,8 @@ models/ChorusRemoveUserFromWorkbenchReply.ts
 models/ChorusRemoveUserFromWorkbenchResult.ts
 models/ChorusRemoveUserFromWorkspaceReply.ts
 models/ChorusRemoveUserFromWorkspaceResult.ts
+models/ChorusRemoveUserRoleInWorkspaceReply.ts
+models/ChorusRemoveUserRoleInWorkspaceResult.ts
 models/ChorusResetPasswordReply.ts
 models/ChorusResetTotpReply.ts
 models/ChorusResetTotpRequest.ts

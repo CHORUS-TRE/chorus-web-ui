@@ -7,8 +7,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { deleteUserRole, listUsers } from '@/view-model/user-view-model'
-import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
+import { listUsers } from '@/view-model/user-view-model'
+import {
+  workspaceAddUserRole,
+  workspaceRemoveUserRole
+} from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
 import {
   Dialog,
@@ -56,7 +59,7 @@ export function ManageUserWorkspaceDialog({
 }: {
   user?: User
   workspaceId: string
-  onUserAdded: () => void
+  onUserAdded: (user?: User) => void
   children?: React.ReactNode
 }) {
   const { workspaces } = useAppState()
@@ -82,6 +85,11 @@ export function ManageUserWorkspaceDialog({
     )
   }, [currentUser, workspaceId])
 
+  const currentRoleNames = useMemo(
+    () => currentWorkspaceRoles.map((r) => r.name),
+    [currentWorkspaceRoles]
+  )
+
   const currentRoleName = currentWorkspaceRoles[0]?.name || ''
 
   // Available roles for workspace members from schema
@@ -106,13 +114,13 @@ export function ManageUserWorkspaceDialog({
     }
   }, [open, userId, currentRoleName, form])
 
-  // Determine action mode based on current role and selected role
+  // Determine action mode based on whether selected role is already assigned
   const selectedRoleName = form.watch('roleName')
   const actionMode: ActionMode = useMemo(() => {
-    if (!currentRoleName) return 'add'
-    if (selectedRoleName === currentRoleName) return 'remove'
+    if (currentRoleNames.length === 0) return 'add'
+    if (currentRoleNames.includes(selectedRoleName)) return 'remove'
     return 'update'
-  }, [currentRoleName, selectedRoleName])
+  }, [currentRoleNames, selectedRoleName])
 
   const [state, formAction] = useActionState(
     workspaceAddUserRole,
@@ -123,10 +131,14 @@ export function ManageUserWorkspaceDialog({
   const handleRemoveRole = useCallback(
     async (e: React.MouseEvent) => {
       e.preventDefault()
-      if (!userId || !currentWorkspaceRoles[0]?.id) return
+      if (!userId) return
 
       setIsRemoving(true)
-      const result = await deleteUserRole(userId, currentWorkspaceRoles[0].id)
+      const result = await workspaceRemoveUserRole(
+        workspaceId,
+        userId,
+        selectedRoleName
+      )
 
       if (result.error) {
         toast({
@@ -145,7 +157,7 @@ export function ManageUserWorkspaceDialog({
       }
       setIsRemoving(false)
     },
-    [userId, currentWorkspaceRoles, onUserAdded, form]
+    [userId, workspaceId, selectedRoleName, onUserAdded, form]
   )
 
   useEffect(() => {
@@ -185,7 +197,8 @@ export function ManageUserWorkspaceDialog({
       })
       setOpen(false)
       form.reset()
-      onUserAdded()
+      // Pass the current user object for optimistic update, background refresh will sync roles
+      onUserAdded(currentUser)
     }
   }, [state, onUserAdded, form, actionMode])
 

@@ -20,6 +20,7 @@ import {
   ApprovalRequestStatus,
   ApprovalRequestType
 } from '@/domain/model/approval-request'
+import { User } from '@/domain/model/user'
 import {
   canApproveRequest,
   downloadRequestFiles,
@@ -27,10 +28,12 @@ import {
   getFiles,
   getTotalSize
 } from '@/lib/approval-request-utils'
+import { useAppState } from '@/stores/app-state-store'
 import {
   approveApprovalRequest,
   getApprovalRequest
 } from '@/view-model/approval-request-view-model'
+import { listUsers } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
 import { useToast } from '~/components/hooks/use-toast'
@@ -68,8 +71,11 @@ export default function RequestDetailPage() {
   const router = useRouter()
   const { toast } = useToast()
   const { user } = useAuthentication()
+  const { workspaces } = useAppState()
 
   const [request, setRequest] = React.useState<ApprovalRequest | null>(null)
+  const [requester, setRequester] = React.useState<User | null>(null)
+  const [approver, setApprover] = React.useState<User | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
   const [reviewNotes, setReviewNotes] = React.useState('')
   const [isSubmitting, setIsSubmitting] = React.useState(false)
@@ -80,7 +86,40 @@ export default function RequestDetailPage() {
       setIsLoading(true)
       try {
         const reqRes = await getApprovalRequest(id)
-        if (reqRes.data) setRequest(reqRes.data)
+        if (reqRes.data) {
+          const requestData = reqRes.data
+          setRequest(requestData)
+
+          // Get workspace ID from the request
+          const workspaceId =
+            requestData.dataExtraction?.sourceWorkspaceId ||
+            requestData.dataTransfer?.sourceWorkspaceId
+
+          if (workspaceId) {
+            // Fetch all users from the workspace
+            const usersRes = await listUsers({
+              filterWorkspaceIDs: [workspaceId]
+            })
+
+            if (usersRes.data) {
+              // Find requester from the list
+              if (requestData.requesterId) {
+                const requesterUser = usersRes.data.find(
+                  (u) => u.id === requestData.requesterId
+                )
+                if (requesterUser) setRequester(requesterUser)
+              }
+
+              // Find approver from the list
+              if (requestData.approvedById) {
+                const approverUser = usersRes.data.find(
+                  (u) => u.id === requestData.approvedById
+                )
+                if (approverUser) setApprover(approverUser)
+              }
+            }
+          }
+        }
       } catch (err) {
         console.error('Failed to fetch request detail:', err)
       } finally {
@@ -231,32 +270,60 @@ export default function RequestDetailPage() {
               <div className="flex items-center gap-1.5 text-sm">
                 <User2 className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="truncate">
-                  {isOwner ? 'Me' : (request.requesterId ?? '—')}
+                  {isOwner
+                    ? 'Me'
+                    : (requester?.username ?? request.requesterId ?? '—')}
                 </span>
               </div>
             </MetaField>
 
             {request.dataTransfer?.destinationWorkspaceId && (
               <MetaField label="Destination">
-                <span className="truncate font-mono text-xs">
-                  {request.dataTransfer.destinationWorkspaceId}
-                </span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="truncate text-sm">
+                    {workspaces?.find(
+                      (ws) =>
+                        ws.id === request.dataTransfer?.destinationWorkspaceId
+                    )?.name ?? 'Unknown workspace'}
+                  </span>
+                  <span className="truncate font-mono text-[10px] text-muted-foreground">
+                    id: {request.dataTransfer.destinationWorkspaceId}
+                  </span>
+                </div>
               </MetaField>
             )}
 
-            {request.approvedById && (
+            {(request.approvedById || request.autoApproved) && (
               <MetaField label="Reviewed by">
-                <span className="truncate">{request.approvedById}</span>
+                <span className="truncate">
+                  {request.autoApproved
+                    ? 'Auto-approved'
+                    : (approver?.username ?? request.approvedById ?? '—')}
+                </span>
               </MetaField>
             )}
 
             {request.approvedAt && (
               <MetaField label="Reviewed">
-                <span className="text-muted-foreground">
-                  {formatDistanceToNow(new Date(request.approvedAt), {
-                    addSuffix: true
-                  })}
-                </span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-muted-foreground">
+                    {formatDistanceToNow(new Date(request.approvedAt), {
+                      addSuffix: true
+                    })}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground/70">
+                    {new Date(request.approvedAt).toLocaleDateString(
+                      undefined,
+                      {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }
+                    )}
+                  </span>
+                </div>
               </MetaField>
             )}
           </CardContent>

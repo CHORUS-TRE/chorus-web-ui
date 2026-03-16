@@ -24,7 +24,7 @@ export const CATEGORIES = [
   { id: 'security', label: 'Security', icon: <Shield className="h-4 w-4" /> },
   { id: 'neuro', label: 'Neuroscience', icon: <Brain className="h-4 w-4" /> },
   { id: 'chuv', label: 'CHUV', icon: <Hospital className="h-4 w-4" /> },
-  { id: 'webapps', label: 'Web Apps', icon: <Globe className="h-4 w-4" /> }
+  { id: 'horus', label: 'Horus', icon: <Globe className="h-4 w-4" /> }
 ]
 
 export const filterApps = (
@@ -87,7 +87,7 @@ export const filterApps = (
           name.includes('trc')
         )
       if (selectedCategory === 'chuv') return name.includes('horus')
-      if (selectedCategory === 'webapps') {
+      if (selectedCategory === 'horus') {
         return false
       }
       return false

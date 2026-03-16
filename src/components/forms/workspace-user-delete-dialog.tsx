@@ -70,7 +70,7 @@ export function WorkspaceUserDeleteDialog({
       <AlertDialogContent className="bg-background">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-muted-foreground">
             This will permanently remove the user from the workspace.
           </AlertDialogDescription>
         </AlertDialogHeader>

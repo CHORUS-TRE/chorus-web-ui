@@ -303,13 +303,13 @@ export function AppCreateDialog({
             <Link
               href="#"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              className="inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted text-muted-foreground transition-colors hover:border-b-2 hover:border-accent hover:text-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
               prefetch={false}
             >
               {showAdvanced ? 'Hide Advanced Settings' : 'Advanced Settings'}
             </Link>
           </div>
-          <DialogDescription className="text-muted">
+          <DialogDescription className="text-muted-foreground">
             Add a new application to the store
           </DialogDescription>
         </DialogHeader>
@@ -333,7 +333,7 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="Enter app name"
-                          className="bg-background placeholder:text-muted"
+                          className="bg-background placeholder:text-muted-foreground"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -351,7 +351,7 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="Enter description"
-                          className="bg-background placeholder:text-muted"
+                          className="bg-background placeholder:text-muted-foreground"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -382,7 +382,7 @@ export function AppCreateDialog({
                         <Input
                           {...field}
                           placeholder="e.g., docker.io"
-                          className="bg-background placeholder:text-muted"
+                          className="bg-background placeholder:text-muted-foreground"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -401,7 +401,7 @@ export function AppCreateDialog({
                           <Input
                             {...field}
                             placeholder="e.g., nginx"
-                            className="bg-background placeholder:text-muted"
+                            className="bg-background placeholder:text-muted-foreground"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -419,7 +419,7 @@ export function AppCreateDialog({
                           <Input
                             {...field}
                             placeholder="e.g., latest"
-                            className="bg-background placeholder:text-muted"
+                            className="bg-background placeholder:text-muted-foreground"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -441,7 +441,7 @@ export function AppCreateDialog({
                           <Input
                             {...field}
                             placeholder="Enter kiosk config URL"
-                            className="bg-background placeholder:text-muted"
+                            className="bg-background placeholder:text-muted-foreground"
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />
@@ -494,7 +494,7 @@ export function AppCreateDialog({
                               }
                             }}
                           >
-                            <SelectTrigger className="bg-background placeholder:text-muted">
+                            <SelectTrigger className="bg-background placeholder:text-muted-foreground">
                               <SelectValue placeholder="Select a preset" />
                             </SelectTrigger>
                             <SelectContent>
@@ -538,7 +538,7 @@ export function AppCreateDialog({
                             <Input
                               {...field}
                               placeholder="e.g., 64m"
-                              className="bg-background placeholder:text-muted"
+                              className="bg-background placeholder:text-muted-foreground"
                             />
                           </FormControl>
                           <FormMessage className="text-destructive" />
@@ -559,7 +559,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background placeholder:text-muted"
+                                className="bg-background placeholder:text-muted-foreground"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -579,7 +579,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background placeholder:text-muted"
+                                className="bg-background placeholder:text-muted-foreground"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -599,7 +599,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1"
-                                className="bg-background placeholder:text-muted"
+                                className="bg-background placeholder:text-muted-foreground"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -617,7 +617,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2"
-                                className="bg-background placeholder:text-muted"
+                                className="bg-background placeholder:text-muted-foreground"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -637,7 +637,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 1Gi"
-                                className="bg-background placeholder:text-muted"
+                                className="bg-background placeholder:text-muted-foreground"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />
@@ -655,7 +655,7 @@ export function AppCreateDialog({
                               <Input
                                 {...field}
                                 placeholder="e.g., 2Gi"
-                                className="bg-background placeholder:text-muted"
+                                className="bg-background placeholder:text-muted-foreground"
                               />
                             </FormControl>
                             <FormMessage className="text-destructive" />

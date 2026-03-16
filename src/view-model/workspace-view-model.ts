@@ -577,6 +577,27 @@ export async function workspaceAddUserRole(
   }
 }
 
+export async function workspaceRemoveUserRole(
+  workspaceId: string,
+  userId: string,
+  roleName: string
+): Promise<Result<User>> {
+  try {
+    const repository = await getRepository()
+
+    if (!workspaceId || !userId || !roleName) {
+      return {
+        error: 'Missing required fields: workspaceId, userId, or roleName'
+      }
+    }
+
+    return await repository.removeUserRole(workspaceId, userId, roleName)
+  } catch (error) {
+    console.error('Error removing user role from workspace', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
 export async function workspaceRemoveUserFromWorkspace(
   prevState: Result<User>,
   formData: FormData

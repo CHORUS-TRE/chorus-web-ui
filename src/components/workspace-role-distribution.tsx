@@ -43,7 +43,7 @@ export function WorkspaceRoleDistribution({
   if (distribution.length === 0) return null
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mb-4 flex flex-col gap-4">
       <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
         <Shield className="h-4 w-4" />
         Role Distribution

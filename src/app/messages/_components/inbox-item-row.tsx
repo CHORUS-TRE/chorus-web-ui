@@ -19,7 +19,6 @@ import { Notification } from '@/domain/model/notification'
 import { Role } from '@/domain/model/user'
 import { canApproveRequest } from '@/lib/approval-request-utils'
 import { Button } from '~/components/button'
-import { Checkbox } from '~/components/ui/checkbox'
 
 import type { InboxItem } from '../_hooks/use-inbox-data'
 import { StatusBadge } from '../requests/_components/status-badge'
@@ -27,8 +26,6 @@ import { StatusBadge } from '../requests/_components/status-badge'
 interface InboxItemRowProps {
   item: InboxItem
   userRoles?: Role[]
-  selected: boolean
-  onSelect: (id: string, checked: boolean) => void
   onMarkAsRead?: (id: string) => void
   onApprove?: (request: ApprovalRequest) => void
   onReject?: (request: ApprovalRequest) => void
@@ -62,8 +59,6 @@ function ItemIcon({ kind }: { kind: InboxItem['kind'] }) {
 export function InboxItemRow({
   item,
   userRoles,
-  selected,
-  onSelect,
   onMarkAsRead,
   onApprove,
   onReject,
@@ -92,15 +87,8 @@ export function InboxItemRow({
 
   return (
     <div className="flex items-start justify-between rounded-xl border border-muted/20 bg-card p-4 transition-colors hover:bg-muted/10">
-      {/* Left: checkbox + icon + content */}
+      {/* Left: icon + content */}
       <div className="flex min-w-0 gap-3">
-        <div className="flex flex-shrink-0 items-start pt-1">
-          <Checkbox
-            checked={selected}
-            onCheckedChange={(checked) => onSelect(item.id, !!checked)}
-          />
-        </div>
-
         <ItemIcon kind={item.kind} />
 
         <div className="min-w-0">

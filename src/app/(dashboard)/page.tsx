@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Link } from '@/components/link'
@@ -22,11 +22,18 @@ import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
 import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import { listApprovalRequests } from '~/view-model/approval-request-view-model'
 
 export default function CHORUSDashboard() {
-  const { workspaces, refreshWorkspaces, workbenches, appInstances, apps } =
-    useAppStateStore()
+  const {
+    workspaces,
+    refreshWorkspaces,
+    workbenches,
+    appInstances,
+    apps,
+    notifications,
+    unreadNotificationsCount,
+    approvalRequests
+  } = useAppStateStore()
   const { user } = useAuthentication()
   const [createOpen, setCreateOpen] = useState(false)
   const { can, PERMISSIONS } = useAuthorization()
@@ -35,13 +42,22 @@ export default function CHORUSDashboard() {
     sessions: sessionLimits,
     appInstances: appInstanceLimits
   } = useInstanceLimits(user?.id)
-  const [pendingApprovals, setPendingApprovals] = useState(0)
 
-  useEffect(() => {
-    listApprovalRequests({}).then((res) => {
-      setPendingApprovals(res.data?.length || 0)
-    })
-  }, [])
+  // Filter for pending approval requests where user is an approver
+  const pendingApprovals = React.useMemo(() => {
+    if (!approvalRequests || !user?.id) return 0
+    return approvalRequests.filter(
+      (req) =>
+        req.status === 'APPROVAL_REQUEST_STATUS_PENDING' &&
+        req.approverIds?.includes(user.id)
+    ).length
+  }, [approvalRequests, user?.id])
+
+  // Get unread notifications
+  const unreadNotifications = React.useMemo(() => {
+    if (!notifications) return []
+    return notifications.filter((n) => !n.readAt).slice(0, 5) // Show max 5
+  }, [notifications])
 
   const router = useRouter()
 
@@ -213,7 +229,7 @@ export default function CHORUSDashboard() {
         </section>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-2">
             <h3 className="mb-3 font-semibold">My Workspaces & Sessions</h3>
             <Card variant="glass">
               <CardHeader className="flex flex-col gap-2">
@@ -222,7 +238,7 @@ export default function CHORUSDashboard() {
                     href="/workspaces"
                     className="flex items-center gap-1 text-sm"
                   >
-                    <div className="flex items-center gap-2 text-base sm:text-lg">
+                    <div className="flex items-center gap-2 text-base underline underline-offset-[0.3rem] sm:text-lg">
                       <Package className="h-5 w-5" />
                       Workspaces
                     </div>
@@ -360,6 +376,76 @@ export default function CHORUSDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          <div className="lg:col-span-1">
+            <h3 className="mb-3 font-semibold">Messages</h3>
+            <Card variant="glass">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <Link
+                    href="/messages"
+                    className="flex items-center gap-2 text-base underline underline-offset-[0.3rem] sm:text-lg"
+                  >
+                    <Clock className="h-5 w-5" />
+                    Inbox
+                  </Link>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Recent unread notifications */}
+                {unreadNotifications.length > 0 ? (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Recent
+                    </h4>
+                    <div className="space-y-1">
+                      {unreadNotifications.map((notification) => (
+                        <Link
+                          variant="plain"
+                          key={notification.id}
+                          href={
+                            notification.content?.approvalRequestNotification
+                              ?.approvalRequestId
+                              ? `/messages/requests/${notification.content.approvalRequestNotification.approvalRequestId}`
+                              : '/messages'
+                          }
+                          className="block rounded-lg border border-muted/10 bg-muted/20 p-2 transition-colors hover:bg-muted/50"
+                        >
+                          <div className="flex items-start gap-2">
+                            <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
+                            <div className="min-w-0 flex-1">
+                              <p className="line-clamp-2 text-xs font-medium text-muted-foreground">
+                                {notification.message}
+                              </p>
+                              {notification.createdAt && (
+                                <p className="text-[10px] text-muted-foreground/70">
+                                  {formatDistanceToNow(
+                                    new Date(notification.createdAt),
+                                    { addSuffix: true }
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Clock className="mb-3 h-10 w-10 text-muted-foreground/30" />
+                    <p className="text-sm text-muted-foreground">
+                      No unread messages
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground/70">
+                      You&apos;re all caught up!
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
           {createOpen && (
             <WorkspaceCreateForm
               state={[createOpen, setCreateOpen]}

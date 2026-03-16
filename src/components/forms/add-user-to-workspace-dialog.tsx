@@ -55,7 +55,7 @@ export function AddUserToWorkspaceDialog({
 }: {
   userId?: string
   workspaceId: string
-  onUserAdded: () => void
+  onUserAdded: (user?: User) => void
   children?: React.ReactNode
 }) {
   const { workspaces } = useAppState()
@@ -108,7 +108,9 @@ export function AddUserToWorkspaceDialog({
       })
       setOpen(false)
       form.reset()
-      onUserAdded()
+      // Find the full user object from our users list for optimistic update
+      const addedUser = users.find((u) => u.id === state.data?.id)
+      onUserAdded(addedUser || state.data)
     }
   }, [state, onUserAdded, form])
 

@@ -5,14 +5,13 @@ import { Search } from 'lucide-react'
 import { Button } from '~/components/button'
 import { Input } from '~/components/ui/input'
 
-export type InboxFilter = 'all' | 'pending' | 'approved' | 'rejected' | 'unread'
+export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread'
 
 const FILTER_OPTIONS: { id: InboxFilter; label: string }[] = [
-  { id: 'all', label: 'All' },
+  { id: 'unread', label: 'Unread' },
   { id: 'pending', label: 'Pending' },
   { id: 'approved', label: 'Approved' },
-  { id: 'rejected', label: 'Rejected' },
-  { id: 'unread', label: 'Unread' }
+  { id: 'rejected', label: 'Rejected' }
 ]
 
 interface InboxFiltersProps {
@@ -20,13 +19,20 @@ interface InboxFiltersProps {
   onFilterChange: (filter: InboxFilter) => void
   searchQuery: string
   onSearchChange: (query: string) => void
+  filterCounts?: {
+    pending: number
+    approved: number
+    rejected: number
+    unread: number
+  }
 }
 
 export function InboxFilters({
   activeFilter,
   onFilterChange,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  filterCounts
 }: InboxFiltersProps) {
   return (
     <div className="space-y-3">
@@ -44,6 +50,7 @@ export function InboxFilters({
             onClick={() => onFilterChange(opt.id)}
           >
             {opt.label}
+            {filterCounts && ` (${filterCounts[opt.id]})`}
           </Button>
         ))}
       </div>

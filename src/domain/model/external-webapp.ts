@@ -25,7 +25,8 @@ export const ExternalWebAppSchema = z.object({
         /^data:image\/[a-zA-Z]+;base64,/.test(val),
       'Must be a valid URL or base64 image'
     )
-    .optional()
+    .optional(),
+  openInNewTab: z.boolean().optional()
 })
 
 export type ExternalWebApp = z.infer<typeof ExternalWebAppSchema>
