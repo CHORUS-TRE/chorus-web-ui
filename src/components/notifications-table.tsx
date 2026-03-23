@@ -25,8 +25,8 @@ import {
 
 export default function NotificationsTable({
   notifications,
-  title = 'System Notifications',
-  description = 'Detailed list of all system notifications and alerts.'
+  title,
+  description
 }: {
   notifications: Notification[] | undefined
   title?: string
@@ -50,13 +50,15 @@ export default function NotificationsTable({
 
   return (
     <Card variant="glass" className="flex h-full flex-col justify-between">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-2">
-          <Bell className="h-5 w-5 text-muted-foreground" />
-          <CardTitle>{title}</CardTitle>
-        </div>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
+      {title && (
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2">
+            <Bell className="h-5 w-5 text-muted-foreground" />
+            <CardTitle>{title}</CardTitle>
+          </div>
+          {description && <CardDescription>{description}</CardDescription>}
+        </CardHeader>
+      )}
       <CardContent className="mt-4">
         <Table>
           <TableHeader>

@@ -11,6 +11,7 @@ import {
   LaptopMinimal,
   MessageSquare,
   Package,
+  Plus,
   SlidersHorizontal,
   Store
 } from 'lucide-react'
@@ -216,6 +217,25 @@ function SidebarContent({
           <HelpCircle className="h-4 w-4" />
           Help
         </Link>
+
+        {/* <Separator className="my-2" />
+
+        <div className="sticky top-0 z-[100] flex h-11 items-center border-b border-muted/50 px-2">
+          <span className="px-4 text-xs font-semibold uppercase text-muted-foreground/70">
+            Quick actions
+          </span>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-0.5 px-4 py-4">
+          <Button
+            variant="accent-filled"
+            className="w-full justify-start gap-3"
+            onClick={() => router.push('/sessions')}
+          >
+            <Plus className="h-4 w-4" />
+            Create session
+          </Button>
+        </nav> */}
 
         {instanceConfig.sidebarWebapps.length > 0 && (
           <>

@@ -29,8 +29,8 @@ import {
 
 export default function ApprovalRequestsTable({
   requests,
-  title = 'Data Requests',
-  description = 'Manage all data extraction and transfer requests.'
+  title,
+  description
 }: {
   requests: ApprovalRequest[] | undefined
   title?: string
@@ -70,13 +70,15 @@ export default function ApprovalRequestsTable({
 
   return (
     <Card variant="glass" className="flex h-full flex-col justify-between">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-2">
-          <FileCheck className="h-5 w-5 text-muted-foreground" />
-          <CardTitle>{title}</CardTitle>
-        </div>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
+      {title && (
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2">
+            <FileCheck className="h-5 w-5 text-muted-foreground" />
+            <CardTitle>{title}</CardTitle>
+          </div>
+          {description && <CardDescription>{description}</CardDescription>}
+        </CardHeader>
+      )}
       <CardContent className="mt-4">
         <Table>
           <TableHeader>

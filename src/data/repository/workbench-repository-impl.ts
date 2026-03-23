@@ -126,7 +126,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
         }
       })
 
-      if (response.result?.workbench !== undefined) {
+      if (!response.result?.workbench) {
         return { error: 'Error managing user role' }
       }
 
@@ -161,7 +161,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
         userId
       )
 
-      if (response.result?.workbench !== undefined) {
+      if (!response.result?.workbench) {
         return { error: 'Error managing user role' }
       }
 

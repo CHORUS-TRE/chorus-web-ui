@@ -23,6 +23,11 @@ export function AdminTabs() {
       authorized: can(PERMISSIONS.listUsers, { user: '*' })
     },
     {
+      href: '/admin/authorization',
+      label: 'Authorization',
+      authorized: can(PERMISSIONS.manageUserRoles, { user: '*' })
+    },
+    {
       href: '/admin/workspaces',
       label: 'Workspaces',
       authorized: can(PERMISSIONS.listWorkspaces, { workspace: '*' })
@@ -73,8 +78,16 @@ export function AdminTabs() {
     router.push(value)
   }
 
+  // Resolve active tab: match nested routes (e.g., /admin/authorization/roles → /admin/authorization)
+  const activeTab =
+    routes.find(
+      (r) =>
+        r.href !== '/admin' &&
+        (pathname === r.href || pathname.startsWith(r.href + '/'))
+    )?.href || pathname
+
   return (
-    <Tabs value={pathname} onValueChange={handleTabChange} className="mb-4">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-4">
       <TabsList>
         {routes.map(
           (route) =>

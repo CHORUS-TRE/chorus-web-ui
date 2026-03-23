@@ -1,43 +1,52 @@
 'use client'
 
-import { formatDistanceToNow } from 'date-fns'
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { Trash2 } from 'lucide-react'
+import React, { useCallback, useEffect, useState } from 'react'
 
-import { Link } from '@/components/link'
 import { listUsers } from '@/view-model/user-view-model'
+import {
+  workspaceAddUserRole,
+  workspaceRemoveUserRole
+} from '@/view-model/workspace-view-model'
 import { Button } from '~/components/button'
-import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
-import { ManageUserWorkbenchDialog } from '~/components/forms/manage-user-workbench-dialog'
-import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
 import { WorkspaceUserDeleteDialog } from '~/components/forms/workspace-user-delete-dialog'
 import { toast } from '~/components/hooks/use-toast'
+import { PermissionMatrix } from '~/components/permission-matrix'
 import { Badge } from '~/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
+import { Checkbox } from '~/components/ui/checkbox'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow as TableRowComponent
+  TableRow
 } from '~/components/ui/table'
-import { Role, User } from '~/domain/model/user'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip'
+import { ROLE_DEFINITIONS } from '~/config/permissions'
+import { User } from '~/domain/model/user'
+import { cn } from '~/lib/utils'
+import { useAuthentication } from '~/providers/authentication-provider'
 import { useAuthorization } from '~/providers/authorization-provider'
+
+const WORKSPACE_ROLE_COLUMNS = [
+  'WorkspaceGuest',
+  'WorkspaceMember',
+  'WorkspaceMaintainer',
+  'WorkspacePI',
+  'WorkspaceDataManager',
+  'WorkspaceAdmin'
+]
 
 export default function WorkspaceUserTable({
   workspaceId,
   users: propUsers,
-  onUpdate,
-  title = 'Workspace Members',
-  description = 'Manage users and their roles in this workspace'
+  onUpdate
 }: {
   workspaceId: string
   users?: User[]
@@ -46,275 +55,123 @@ export default function WorkspaceUserTable({
   description?: string
 }) {
   const { can, PERMISSIONS } = useAuthorization()
+  const { user: currentUser } = useAuthentication()
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
-
-  // Use prop users if provided, otherwise use internal state (for backward compatibility)
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
+  const [pendingCell, setPendingCell] = useState<string | null>(null)
   const [internalUsers, setInternalUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(!propUsers)
-  const [error, setError] = useState<string | null>(null)
 
   const users = propUsers ?? internalUsers
+  const canManage = can(PERMISSIONS.manageUsersInWorkspace, {
+    workspace: workspaceId
+  })
 
   const loadUsers = useCallback(async () => {
-    // Only load if users aren't provided as props
     if (propUsers) return
-
     setLoading(true)
     const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
     if (result.data) {
-      // Filter users who have roles in this workspace
-      const workspaceUsers = result.data.filter((user) =>
-        user.rolesWithContext?.some(
-          (role) => role.context.workspace === workspaceId
+      setInternalUsers(
+        result.data.filter((u) =>
+          u.rolesWithContext?.some((r) => r.context.workspace === workspaceId)
         )
       )
-      setInternalUsers(workspaceUsers)
-      setError(null)
-    } else {
-      setError(result.error || 'Failed to load workspace members')
-      toast({
-        title: 'Error',
-        description: result.error || 'Failed to load workspace members',
-        variant: 'destructive'
-      })
     }
     setLoading(false)
   }, [workspaceId, propUsers])
 
   useEffect(() => {
-    if (workspaceId && !propUsers) {
-      loadUsers()
-    }
+    if (workspaceId && !propUsers) loadUsers()
   }, [workspaceId, loadUsers, propUsers])
 
-  const handleUserChange = useCallback(
+  const notify = useCallback(
     (user?: User) => {
-      // If using prop users and onUpdate callback, notify parent
-      if (propUsers && onUpdate) {
-        onUpdate(user)
-      } else {
-        // Otherwise load internally
-        loadUsers()
-      }
+      if (propUsers && onUpdate) onUpdate(user)
+      else loadUsers()
     },
     [propUsers, onUpdate, loadUsers]
   )
 
-  const getWorkspaceRoles = (user: User) => {
-    return (
-      user.rolesWithContext?.filter(
-        (role) => role.context.workspace === workspaceId
-      ) || []
+  // Return all workspace roles for this user in this workspace
+  const getUserWorkspaceRoles = (user: User) =>
+    (user.rolesWithContext || []).filter(
+      (r) =>
+        r.context.workspace === workspaceId && r.name.startsWith('Workspace')
     )
-  }
 
-  const TableHeads = () => (
-    <>
-      <TableHead className="text-foreground">Name</TableHead>
-      <TableHead className="text-foreground">Username</TableHead>
-      <TableHead className="text-foreground">Workspace Roles</TableHead>
-      <TableHead className="text-foreground">Sessions Roles</TableHead>
-      <TableHead className="hidden text-foreground md:table-cell">
-        Status
-      </TableHead>
-      <TableHead className="hidden text-foreground md:table-cell">
-        Joined
-      </TableHead>
-      <TableHead className="text-foreground">
-        <span className="sr-only">Actions</span>
-      </TableHead>
-    </>
-  )
+  const handleRoleToggle = async (
+    user: User,
+    roleName: string,
+    currentRoles: ReturnType<typeof getUserWorkspaceRoles>
+  ) => {
+    const cellKey = `${user.id}-${roleName}`
+    setPendingCell(cellKey)
 
-  const TableRow = ({ user }: { user: User }) => {
-    const workspaceRoles = getWorkspaceRoles(user).reduce((acc, role) => {
-      if (!acc.some((r) => r.name === role.name)) {
-        acc.push(role)
+    const isCurrentlyChecked = currentRoles.some((r) => r.name === roleName)
+
+    try {
+      if (isCurrentlyChecked) {
+        const result = await workspaceRemoveUserRole(
+          workspaceId,
+          user.id,
+          roleName
+        )
+        if (result.error) {
+          toast({
+            title: 'Failed to remove role',
+            description: result.error,
+            variant: 'destructive'
+          })
+          return
+        }
+      } else {
+        const fd = new FormData()
+        fd.append('workspaceId', workspaceId)
+        fd.append('userId', user.id)
+        fd.append('roleName', roleName)
+        const result = await workspaceAddUserRole({} as never, fd)
+        if (result.error) {
+          toast({
+            title: 'Failed to add role',
+            description: result.error,
+            variant: 'destructive'
+          })
+          return
+        }
       }
-      return acc
-    }, [] as Role[])
 
-    return (
-      <TableRowComponent className="card-glass transition-colors hover:bg-background/80">
-        <TableCell className="p-1 font-semibold">
-          {user.firstName} {user.lastName}
-        </TableCell>
-        <TableCell className="w-48 text-wrap p-1">{user.username}</TableCell>
-        <TableCell className="p-1">
-          <div className="flex flex-wrap items-center gap-1">
-            {workspaceRoles
-              .filter((role) => role.name.startsWith('Workspace'))
-              .map((role, index) => (
-                <ManageUserWorkspaceDialog
-                  key={index}
-                  user={user}
-                  workspaceId={workspaceId}
-                  onUserAdded={handleUserChange}
-                >
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer text-xs hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {role.name}
-                  </Badge>
-                </ManageUserWorkspaceDialog>
-              ))}
-            {can(PERMISSIONS.manageUsersInWorkspace, {
-              workspace: workspaceId
-            }) && (
-              <ManageUserWorkspaceDialog
-                user={user}
-                workspaceId={workspaceId}
-                onUserAdded={handleUserChange}
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </Button>
-              </ManageUserWorkspaceDialog>
-            )}
-          </div>
-        </TableCell>
-        <TableCell className="p-1">
-          <div className="flex flex-wrap items-center gap-1">
-            {workspaceRoles
-              .filter((role) => role.name.startsWith('Workbench'))
-              .map((role, index) => (
-                <ManageUserWorkbenchDialog
-                  key={index}
-                  user={user}
-                  workspaceId={workspaceId}
-                  onUserAdded={handleUserChange}
-                >
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer text-xs hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {role.name} - {role.context.workbench}
-                  </Badge>
-                </ManageUserWorkbenchDialog>
-              ))}
-            {can(PERMISSIONS.manageUsersInWorkspace, {
-              workspace: workspaceId
-            }) && (
-              <ManageUserWorkbenchDialog
-                user={user}
-                workspaceId={workspaceId}
-                onUserAdded={handleUserChange}
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </Button>
-              </ManageUserWorkbenchDialog>
-            )}
-          </div>
-        </TableCell>
-        <TableCell className="hidden p-1 md:table-cell">
-          <Badge variant={user.status === 'active' ? 'default' : 'destructive'}>
-            {user.status}
-          </Badge>
-        </TableCell>
-        <TableCell
-          className="hidden p-1 md:table-cell"
-          title={user.createdAt?.toLocaleDateString()}
-        >
-          {user.createdAt && formatDistanceToNow(user.createdAt ?? new Date())}{' '}
-          ago
-        </TableCell>
-        <TableCell className="p-1">
-          <div className="flex items-center gap-1">
-            {can(PERMISSIONS.manageUsersInWorkspace, {
-              workspace: workspaceId
-            }) && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                onClick={(e) => {
-                  e.preventDefault()
-                  setDeletingUserId(user.id)
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        </TableCell>
-      </TableRowComponent>
-    )
+      const updatedRoles = isCurrentlyChecked
+        ? (user.rolesWithContext || []).filter(
+            (r) => !(r.name === roleName && r.context.workspace === workspaceId)
+          )
+        : [
+            ...(user.rolesWithContext || []),
+            { name: roleName, context: { workspace: workspaceId } }
+          ]
+      const updatedUser: User = { ...user, rolesWithContext: updatedRoles }
+      toast({ title: 'Role updated' })
+      notify(updatedUser)
+    } finally {
+      setPendingCell(null)
+    }
   }
 
-  const CardContainer = ({
-    users,
-    title,
-    description
-  }: {
-    users: User[]
-    title?: string
-    description?: string
-  }) => (
-    <Card className="card-glass flex h-full flex-col justify-between rounded-2xl duration-300">
-      {(title || description) && (
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="mb-1">{title}</CardTitle>
-              <CardDescription>{description}</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-      )}
-      <CardContent>
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted">Loading workspace members...</div>
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-destructive">{error}</div>
-          </div>
-        ) : users.length === 0 ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted">No members found in this workspace</div>
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRowComponent className="hover:bg-background/80">
-                <TableHeads />
-              </TableRowComponent>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow key={`workspace-user-${user.id}`} user={user} />
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-      <CardFooter>
-        <div className="text-xs">
-          Showing <strong>{users.length}</strong> workspace member
-          {users.length !== 1 ? 's' : ''}
-        </div>
-      </CardFooter>
-    </Card>
-  )
+  if (!workspaceId) return null
 
-  if (!workspaceId) {
-    return null
-  }
+  // Sort: current user first
+  const sortedUsers = currentUser
+    ? [...users].sort((a, b) => {
+        if (a.id === currentUser.id) return -1
+        if (b.id === currentUser.id) return 1
+        return 0
+      })
+    : users
+
+  const colSpan = WORKSPACE_ROLE_COLUMNS.length + 3 // expand + name + status + roles + actions
 
   return (
-    <div className="mb-4 grid flex-1 items-start gap-4">
-      {/* Delete User Dialog */}
+    <div>
       {deletingUserId && (
         <WorkspaceUserDeleteDialog
           userId={deletingUserId}
@@ -324,13 +181,189 @@ export default function WorkspaceUserTable({
             if (!open) setDeletingUserId(null)
           }}
           onUserDeleted={() => {
-            handleUserChange()
+            notify()
             setDeletingUserId(null)
           }}
         />
       )}
 
-      <CardContainer users={users} title="" description="" />
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-8 bg-background" />
+              <TableHead className="sticky left-8 z-10 min-w-[180px] bg-background text-muted-foreground">
+                Name
+              </TableHead>
+              <TableHead className="w-24 text-muted-foreground">
+                Status
+              </TableHead>
+              <TooltipProvider delayDuration={200}>
+                {WORKSPACE_ROLE_COLUMNS.map((role) => (
+                  <Tooltip key={role}>
+                    <TooltipTrigger asChild>
+                      <TableHead className="min-w-[90px] cursor-default text-center text-xs text-muted-foreground">
+                        {role.replace('Workspace', '')}
+                      </TableHead>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs">
+                      {ROLE_DEFINITIONS[role]?.description}
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </TooltipProvider>
+              <TableHead className="w-20 text-muted-foreground">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={colSpan}
+                  className="py-8 text-center text-sm text-muted-foreground"
+                >
+                  Loading…
+                </TableCell>
+              </TableRow>
+            ) : sortedUsers.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={colSpan}
+                  className="py-8 text-center text-sm text-muted-foreground"
+                >
+                  No members found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedUsers.map((user) => {
+                const isMe = user.id === currentUser?.id
+                const isExpanded = expandedUserId === user.id
+                const wsRoles = getUserWorkspaceRoles(user)
+                const wsRoleNames = wsRoles.map((r) => r.name)
+
+                return (
+                  <React.Fragment key={user.id}>
+                    <TableRow
+                      className={cn(
+                        'cursor-pointer hover:bg-accent/5',
+                        isMe && 'bg-primary/5'
+                      )}
+                      onClick={() =>
+                        setExpandedUserId(isExpanded ? null : user.id)
+                      }
+                    >
+                      {/* Expand toggle */}
+                      <TableCell className="w-8 text-center text-muted-foreground">
+                        {isExpanded ? '▾' : '▸'}
+                      </TableCell>
+
+                      {/* Name + username stacked */}
+                      <TableCell className="sticky left-8 z-10 bg-inherit">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={cn(
+                              'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
+                              isMe
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-primary/10 text-primary'
+                            )}
+                          >
+                            {user.firstName?.[0]}
+                            {user.lastName?.[0]}
+                          </div>
+                          <div>
+                            <p className="flex items-center gap-1.5 text-sm font-medium">
+                              {user.firstName} {user.lastName}
+                              {isMe && (
+                                <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                  you
+                                </span>
+                              )}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {user.username}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+
+                      {/* Status */}
+                      <TableCell>
+                        {user.status && (
+                          <Badge
+                            variant={
+                              user.status === 'active' ? 'default' : 'secondary'
+                            }
+                            className="text-xs"
+                          >
+                            {user.status}
+                          </Badge>
+                        )}
+                      </TableCell>
+
+                      {/* Role checkboxes — unique per workspace (radio-style) */}
+                      {WORKSPACE_ROLE_COLUMNS.map((roleName) => {
+                        const isChecked = wsRoleNames.includes(roleName)
+                        const cellKey = `${user.id}-${roleName}`
+                        const isPending = pendingCell === cellKey
+                        return (
+                          <TableCell
+                            key={roleName}
+                            className="text-center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Checkbox
+                              checked={isChecked}
+                              disabled={!canManage || isPending}
+                              onCheckedChange={() =>
+                                handleRoleToggle(user, roleName, wsRoles)
+                              }
+                              className="mx-auto"
+                            />
+                          </TableCell>
+                        )
+                      })}
+
+                      {/* Actions */}
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-1">
+                          {canManage && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              onClick={() => setDeletingUserId(user.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+
+                    {/* Expanded: permission matrix */}
+                    {isExpanded && (
+                      <TableRow>
+                        <TableCell />
+                        <TableCell colSpan={colSpan - 1}>
+                          <div className="rounded-lg border border-muted/40 bg-accent/5 p-4">
+                            <PermissionMatrix
+                              roleNames={wsRoleNames}
+                              scopeFilter="workspace"
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                )
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }

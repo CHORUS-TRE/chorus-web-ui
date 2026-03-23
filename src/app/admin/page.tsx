@@ -90,10 +90,20 @@ const AdminPage = () => {
             icon={Users}
             value={users?.length || 0}
             description="Registered Users"
+          />
+        )}
+
+        {can(PERMISSIONS.manageUserRoles) && (
+          <StatCard
+            href="/admin/authorization/roles"
+            title="Authorization"
+            icon={Shield}
+            value={roleCount}
+            description="System Roles Defined"
           >
             <div className="mt-4 flex items-center text-xs text-muted-foreground">
-              <Shield className="mr-1 h-3 w-3" />
-              {roleCount} System Roles Defined
+              <Users className="mr-1 h-3 w-3" />
+              {users?.length || 0} Users
             </div>
           </StatCard>
         )}

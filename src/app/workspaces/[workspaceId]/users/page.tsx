@@ -7,18 +7,21 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '~/components/button'
 import { AddUserToWorkspaceDialog } from '~/components/forms/add-user-to-workspace-dialog'
 import { toast } from '~/components/hooks/use-toast'
+import { SessionMembersSection } from '~/components/session-members-section'
 import { WorkspaceRoleDistribution } from '~/components/workspace-role-distribution'
 import { WorkspaceUserCard } from '~/components/workspace-user-card'
 import WorkspaceUserTable from '~/components/workspace-user-table'
-import { Role, User } from '~/domain/model/user'
+import { User } from '~/domain/model/user'
+import { Workbench } from '~/domain/model/workbench'
 import { useUserPreferences } from '~/stores/user-preferences-store'
 import { listUsers } from '~/view-model/user-view-model'
+import { workbenchList } from '~/view-model/workbench-view-model'
 
 export default function UsersPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
   const [users, setUsers] = useState<User[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [workbenches, setWorkbenches] = useState<Workbench[]>([])
   const { showUsersTable, toggleUsersView } = useUserPreferences()
 
   const loadUsers = useCallback(async () => {
@@ -31,9 +34,7 @@ export default function UsersPage() {
         )
       )
       setUsers(workspaceUsers)
-      setError(null)
     } else {
-      setError(result.error || 'Failed to load workspace members')
       toast({
         title: 'Error',
         description: result.error || 'Failed to load workspace members',
@@ -74,9 +75,11 @@ export default function UsersPage() {
   )
 
   useEffect(() => {
-    if (workspaceId) {
-      loadUsers()
-    }
+    if (!workspaceId) return
+    loadUsers()
+    workbenchList().then((result) => {
+      if (result.data) setWorkbenches(result.data)
+    })
   }, [workspaceId])
 
   if (!workspaceId) {
@@ -93,8 +96,6 @@ export default function UsersPage() {
           Manage users and their roles in this workspace
         </p>
       </div>
-
-      <WorkspaceRoleDistribution users={users} workspaceId={workspaceId} />
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-border/50 pb-4">
@@ -153,6 +154,14 @@ export default function UsersPage() {
           </div>
         )}
       </div>
+
+      {/* Session Members */}
+      <SessionMembersSection
+        workspaceId={workspaceId}
+        workbenches={workbenches}
+        users={users}
+        onUpdate={loadUsers}
+      />
     </div>
   )
 }

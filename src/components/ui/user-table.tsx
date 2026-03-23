@@ -75,7 +75,6 @@ export function UserTable() {
       </caption>
       <TableHeader>
         <TableRow>
-          <TableHead scope="col" className="text-muted-foreground"></TableHead>
           <TableHead scope="col" className="text-muted-foreground">
             ID
           </TableHead>
@@ -89,15 +88,6 @@ export function UserTable() {
             Roles
           </TableHead>
           <TableHead scope="col" className="text-muted-foreground">
-            Workspace
-          </TableHead>
-          <TableHead scope="col" className="text-muted-foreground">
-            Workbench
-          </TableHead>
-          <TableHead scope="col" className="text-muted-foreground">
-            User
-          </TableHead>
-          <TableHead scope="col" className="text-muted-foreground">
             Status
           </TableHead>
           <TableHead scope="col" className="text-muted-foreground">
@@ -106,128 +96,34 @@ export function UserTable() {
         </TableRow>
       </TableHeader>
       <TableBody className="text-foreground">
-        {users.map((user, userIndex) =>
-          userCollapsed[userIndex] ? (
-            <TableRow key={user.id}>
-              <TableCell
-                onClick={() => {
-                  toggleUserCollapse(userIndex)
-                }}
-                className="cursor-pointer"
-              >
-                {userCollapsed[userIndex] ? '▸' : '▾'}
-              </TableCell>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>
-                {user.firstName} {user.lastName}
-              </TableCell>
-              <TableCell>{user.username}</TableCell>
-              <TableCell>
-                <Badge>{user.rolesWithContext?.length}</Badge>
-                <div className="flex space-x-1"></div>
-              </TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
+        {users.map((user, userIndex) => (
+          <TableRow key={user.id}>
+            <TableCell>{user.id}</TableCell>
+            <TableCell>
+              {user.firstName} {user.lastName}
+            </TableCell>
+            <TableCell>{user.username}</TableCell>
+            <TableCell>
+              <Badge>{user.rolesWithContext?.length}</Badge>
+              <div className="flex space-x-1"></div>
+            </TableCell>
 
-              <TableCell>
-                <Badge
-                  variant={user.status === 'active' ? 'default' : 'destructive'}
-                >
-                  {user.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <UserEditDialog user={user} onUserUpdated={handleUserChange} />
-                <UserDeleteDialog
-                  userId={user.id}
-                  onUserDeleted={handleUserChange}
-                />
-              </TableCell>
-            </TableRow>
-          ) : (
-            <>
-              <TableRow key={user.id} className="border-muted/50">
-                <TableCell
-                  onClick={() => {
-                    toggleUserCollapse(userIndex)
-                  }}
-                  className="cursor-pointer"
-                >
-                  {userCollapsed[userIndex] ? '▸' : '▾'}
-                </TableCell>
-                <TableCell>{user.id}</TableCell>
-                <TableCell>
-                  {user.firstName} {user.lastName}
-                </TableCell>
-                <TableCell>{user.username}</TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      user.status === 'active' ? 'default' : 'destructive'
-                    }
-                  >
-                    {user.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <UserEditDialog
-                    user={user}
-                    onUserUpdated={handleUserChange}
-                  />
-                  <UserDeleteDialog
-                    userId={user.id}
-                    onUserDeleted={handleUserChange}
-                  />
-                </TableCell>
-              </TableRow>
-              {user.rolesWithContext?.map((role, roleIndex) => (
-                <TableRow
-                  key={`${user.id}-${role.name}-${roleIndex}`}
-                  className={
-                    roleIndex != (user.rolesWithContext?.length || 0) - 1
-                      ? 'border-muted/50'
-                      : ''
-                  }
-                >
-                  <TableCell className="p-2"></TableCell>
-                  <TableCell className="p-2"></TableCell>
-                  <TableCell className="p-2"></TableCell>
-                  <TableCell className="p-2"></TableCell>
-                  <TableCell className="p-2">
-                    <Badge>{role.name}</Badge>
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {role?.context?.workspace ? (
-                      <Badge className="bg-red-400">
-                        {role?.context?.workspace}
-                      </Badge>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {role?.context?.workbench ? (
-                      <Badge className="bg-orange-400">
-                        {role?.context?.workbench}
-                      </Badge>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {role?.context?.user ? (
-                      <Badge className="bg-yellow-400">
-                        {role?.context?.user}
-                      </Badge>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="p-2" colSpan={4}></TableCell>
-                </TableRow>
-              ))}
-            </>
-          )
-        )}
+            <TableCell>
+              <Badge
+                variant={user.status === 'active' ? 'default' : 'destructive'}
+              >
+                {user.status}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <UserEditDialog user={user} onUserUpdated={handleUserChange} />
+              <UserDeleteDialog
+                userId={user.id}
+                onUserDeleted={handleUserChange}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   )

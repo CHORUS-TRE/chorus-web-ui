@@ -2,7 +2,7 @@
 
 import { ShieldCheck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import { useMemo } from 'react'
 
 import { Button } from '~/components/button'
 import {
@@ -12,11 +12,27 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/card'
+import { getRoleScope, RoleBadge } from '~/components/role-badge'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserSettingsPage() {
-  const {} = useAuthentication()
+  const { user } = useAuthentication()
   const router = useRouter()
+
+  const roles = useMemo(() => user?.rolesWithContext || [], [user])
+
+  const platformRoles = useMemo(
+    () => roles.filter((r) => getRoleScope(r.name) === 'platform'),
+    [roles]
+  )
+  const workspaceRoles = useMemo(
+    () => roles.filter((r) => getRoleScope(r.name) === 'workspace'),
+    [roles]
+  )
+  const sessionRoles = useMemo(
+    () => roles.filter((r) => getRoleScope(r.name) === 'session'),
+    [roles]
+  )
 
   const settings = [
     {
@@ -36,7 +52,7 @@ export default function UserSettingsPage() {
   ]
 
   return (
-    <div className="container mx-auto py-4">
+    <div className="container mx-auto space-y-6 py-4">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {settings.map((setting) => (
           <Card

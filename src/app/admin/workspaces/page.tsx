@@ -30,8 +30,6 @@ export default function AdminWorkspacesPage() {
         workspaces={workspaces}
         user={user}
         onUpdate={refreshWorkspaces}
-        title="All Workspaces"
-        description="List of all workspaces created on the platform."
       />
     </div>
   )

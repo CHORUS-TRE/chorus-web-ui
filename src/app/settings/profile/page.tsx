@@ -7,32 +7,25 @@ import {
   Crown,
   Key,
   LaptopMinimal,
-  Settings,
   Shield,
   User,
   XCircle
 } from 'lucide-react'
+import { useMemo } from 'react'
 
 import { Button } from '@/components/button'
+import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { Link } from '@/components/link'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Role } from '@/domain/model'
-import { useAppState } from '@/stores/app-state-store'
-import { RoleHoverCard } from '~/components/role-hover-card'
+import { getRoleScope, RoleBadge } from '~/components/role-badge'
 import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function UserProfile() {
-  const { user } = useAuthentication()
-  const { workspaces } = useAppState()
+  const { user, refreshUser } = useAuthentication()
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -60,30 +53,27 @@ export default function UserProfile() {
     }
   }
 
-  const groupRolesByWorkspace = () => {
-    if (!user?.rolesWithContext || user?.rolesWithContext.length === 0) {
-      return {}
-    }
-
-    const groups: Record<string, Record<string, Role[]>> = {}
-
-    user?.rolesWithContext.forEach((role) => {
-      const workspaceId = role.context.workspace || 'undefined'
-      const roleName = role.name
-
-      if (!groups[workspaceId]) {
-        groups[workspaceId] = {}
-      }
-
-      if (!groups[workspaceId][roleName]) {
-        groups[workspaceId][roleName] = []
-      }
-
-      groups[workspaceId][roleName].push(role)
-    })
-
-    return groups
-  }
+  const platformRoles = useMemo(
+    () =>
+      (user?.rolesWithContext || []).filter(
+        (r) => getRoleScope(r.name) === 'platform'
+      ),
+    [user]
+  )
+  const workspaceRoles = useMemo(
+    () =>
+      (user?.rolesWithContext || []).filter(
+        (r) => getRoleScope(r.name) === 'workspace'
+      ),
+    [user]
+  )
+  const sessionRoles = useMemo(
+    () =>
+      (user?.rolesWithContext || []).filter(
+        (r) => getRoleScope(r.name) === 'session'
+      ),
+    [user]
+  )
 
   return (
     <>
@@ -248,10 +238,9 @@ export default function UserProfile() {
           <Card className="card-glass flex flex-col rounded-2xl">
             <CardContent className="pt-6">
               <div className="flex flex-wrap gap-3">
-                <Button variant="outline" disabled>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Edit Profile
-                </Button>
+                {user && (
+                  <UserEditDialog user={user} onUserUpdated={refreshUser} />
+                )}
                 <Button variant="outline" disabled>
                   <Key className="mr-2 h-4 w-4" />
                   Change Password
@@ -271,172 +260,62 @@ export default function UserProfile() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {(() => {
-                const groupedRoles = groupRolesByWorkspace()
-                const globalRoles = groupedRoles['undefined']
-                const workspaceRoleEntries = Object.entries(
-                  groupedRoles
-                ).filter(([wsId]) => wsId !== 'undefined')
-
-                if (!globalRoles && workspaceRoleEntries.length === 0) {
-                  return (
-                    <p className="text-muted-foreground">No roles assigned</p>
-                  )
-                }
-
-                return (
-                  <div className="space-y-6">
-                    {globalRoles && (
+              {(platformRoles.length > 0 ||
+                workspaceRoles.length > 0 ||
+                sessionRoles.length > 0) && (
+                <>
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-semibold text-muted-foreground">
+                      By Scope
+                    </h5>
+                    {platformRoles.length > 0 && (
                       <div>
-                        <div className="flex items-center gap-2">
-                          <Crown className="h-5 w-5 text-purple-400" />
-                          <h5 className="text-base font-semibold">
-                            Global Roles
-                          </h5>
-                        </div>
-                        <div className="mt-3 space-y-3 pl-7">
-                          {Object.entries(globalRoles).map(
-                            ([roleName, roleInstances]) => (
-                              <RoleHoverCard key={roleName} roleName={roleName}>
-                                <div className="flex cursor-help items-center gap-2">
-                                  <Shield className="h-4 w-4" />
-                                  <h6 className="text-sm font-medium">
-                                    {roleName}
-                                  </h6>
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {roleInstances.length}
-                                  </Badge>
-                                </div>
-                              </RoleHoverCard>
-                            )
-                          )}
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-blue-400">
+                          Platform
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {platformRoles.map((role, i) => (
+                            <RoleBadge
+                              key={role.id ?? `${role.name}-${i}`}
+                              role={role}
+                            />
+                          ))}
                         </div>
                       </div>
                     )}
-
-                    {workspaceRoleEntries.length > 0 && (
+                    {workspaceRoles.length > 0 && (
                       <div>
-                        <div className="flex items-center gap-2">
-                          <AppWindow className="h-5 w-5 text-muted-foreground" />
-                          <h5 className="text-base font-semibold">
-                            Workspace Roles
-                          </h5>
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-red-400">
+                          Workspace
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {workspaceRoles.map((role, i) => (
+                            <RoleBadge
+                              key={role.id ?? `${role.name}-${i}`}
+                              role={role}
+                            />
+                          ))}
                         </div>
-                        <Accordion
-                          type="multiple"
-                          className="mt-2 w-full"
-                          defaultValue={
-                            workspaceRoleEntries.length === 1
-                              ? [workspaceRoleEntries[0][0]]
-                              : []
-                          }
-                        >
-                          {workspaceRoleEntries.map(([workspaceId, roles]) => {
-                            const workspace = workspaces?.find(
-                              (w) => w.id === workspaceId
-                            )
-                            const totalRoles =
-                              Object.values(roles).flat().length
-
-                            return (
-                              <AccordionItem
-                                key={workspaceId}
-                                value={workspaceId}
-                              >
-                                <AccordionTrigger>
-                                  <div className="flex flex-1 items-center justify-between pr-4">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm font-medium">
-                                        {workspace?.name || 'Workspace'}
-                                      </span>
-                                      <span className="font-mono text-xs text-muted-foreground">
-                                        (id: {workspaceId})
-                                      </span>
-                                    </div>
-                                    <Badge
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {totalRoles}{' '}
-                                      {totalRoles > 1 ? 'roles' : 'role'}
-                                    </Badge>
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div className="space-y-4 pl-2">
-                                    {Object.entries(roles).map(
-                                      ([roleName, roleInstances]) => (
-                                        <div
-                                          key={roleName}
-                                          className="space-y-2"
-                                        >
-                                          <RoleHoverCard roleName={roleName}>
-                                            <div className="flex cursor-help items-center gap-2">
-                                              {roleName.includes(
-                                                'Workspace'
-                                              ) ? (
-                                                <AppWindow className="h-4 w-4 text-muted-foreground" />
-                                              ) : (
-                                                <LaptopMinimal className="h-4 w-4 text-muted-foreground" />
-                                              )}
-                                              <h6 className="text-sm font-medium">
-                                                {roleName}
-                                              </h6>
-                                              <Badge
-                                                variant="outline"
-                                                className="text-xs"
-                                              >
-                                                {roleInstances.length}
-                                              </Badge>
-                                            </div>
-                                          </RoleHoverCard>
-
-                                          {roleName.includes('Workbench') ? (
-                                            <div className="ml-6 grid grid-cols-2 gap-2 pt-1 md:grid-cols-3 lg:grid-cols-4">
-                                              {roleInstances.map(
-                                                (role, index) => (
-                                                  <Link
-                                                    key={index}
-                                                    href={`/workspaces/${role.context.workspace}/sessions/${role.context.workbench}`}
-                                                    className="group"
-                                                  >
-                                                    <div className="truncate rounded-md border p-2 transition-colors hover:border-accent hover:bg-accent/10">
-                                                      <div className="flex items-center gap-2">
-                                                        <LaptopMinimal className="h-3 w-3 flex-shrink-0" />
-                                                        <span className="truncate text-xs">
-                                                          {
-                                                            role.context
-                                                              .workbench
-                                                          }
-                                                        </span>
-                                                      </div>
-                                                    </div>
-                                                  </Link>
-                                                )
-                                              )}
-                                            </div>
-                                          ) : (
-                                            <div className="ml-6 text-xs text-muted-foreground">
-                                              Applies to the entire workspace.
-                                            </div>
-                                          )}
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            )
-                          })}
-                        </Accordion>
+                      </div>
+                    )}
+                    {sessionRoles.length > 0 && (
+                      <div>
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-orange-400">
+                          Session
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {sessionRoles.map((role, i) => (
+                            <RoleBadge
+                              key={role.id ?? `${role.name}-${i}`}
+                              role={role}
+                            />
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
-                )
-              })()}
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
