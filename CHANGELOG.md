@@ -1,3 +1,10 @@
+# [1.43.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.42.0...v1.43.0) (2026-03-23)
+
+
+### Features
+
+* authorization tables ([97d2697](https://github.com/CHORUS-TRE/chorus-web-ui/commit/97d2697f3d708c6b71f8c9847026059b11f8a075))
+
 # [1.42.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.41.0...v1.42.0) (2026-03-16)
 
 
