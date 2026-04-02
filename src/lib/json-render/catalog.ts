@@ -115,27 +115,36 @@ const WorkspacePickerItem = {
 } satisfies ComponentDefinition
 
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Action param schemas — exported so handlers can parse + type-check at runtime
+// ---------------------------------------------------------------------------
+
+export const fetchWorkspaceStatusParams = z.object({
+  workspaceId: z
+    .string()
+    .nullable()
+    .describe('Workspace ID to load, or null to list all workspaces')
+})
+export type FetchWorkspaceStatusParams = z.infer<typeof fetchWorkspaceStatusParams>
+
+export const selectWorkspaceParams = z.object({
+  workspaceId: z.string().describe('The workspace ID the user selected from the picker')
+})
+export type SelectWorkspaceParams = z.infer<typeof selectWorkspaceParams>
+
+// ---------------------------------------------------------------------------
 // Full catalog — shadcn base + Chorus custom components
 // ---------------------------------------------------------------------------
 
 export const chorusCatalog = defineCatalog(schema, {
   actions: {
     fetchWorkspaceStatus: {
-      params: z.object({
-        workspaceId: z
-          .string()
-          .nullable()
-          .describe('Workspace ID to load, or null to list all workspaces')
-      }),
+      params: fetchWorkspaceStatusParams,
       description:
         'Load workspace status from the platform API. Sets state: loading, workspace, workspaces, approvals, appInstances, error.'
     },
     selectWorkspace: {
-      params: z.object({
-        workspaceId: z
-          .string()
-          .describe('The workspace ID the user selected from the picker')
-      }),
+      params: selectWorkspaceParams,
       description:
         'Set the selected workspace ID. Clears current workspace data. A watch binding on /selectedId then re-fires fetchWorkspaceStatus.'
     }

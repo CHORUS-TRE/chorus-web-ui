@@ -3,6 +3,10 @@
 import { type Spec } from '@json-render/core'
 
 import { type StateAwareHandler } from '@/components/chat/artifacts/dynamic-ui-renderer'
+import {
+  fetchWorkspaceStatusParams,
+  selectWorkspaceParams
+} from '@/lib/json-render/catalog'
 import { listAppInstances } from '~/view-model/app-instance-view-model'
 import { listApprovalRequests } from '~/view-model/approval-request-view-model'
 import {
@@ -256,12 +260,12 @@ export function buildWorkspaceStatusSpec(workspaceId: string | null): Spec {
 
 export const workspaceStatusHandlers: Record<string, StateAwareHandler> = {
   fetchWorkspaceStatus: async (
-    params: Record<string, unknown>,
+    rawParams: Record<string, unknown>,
     setState: (path: string, value: unknown) => void
   ) => {
     setState('/loading', true)
     setState('/error', null)
-    const workspaceId = params.workspaceId as string | null
+    const { workspaceId } = fetchWorkspaceStatusParams.parse(rawParams)
 
     try {
       if (workspaceId) {
@@ -339,12 +343,13 @@ export const workspaceStatusHandlers: Record<string, StateAwareHandler> = {
   },
 
   selectWorkspace: (
-    params: Record<string, unknown>,
+    rawParams: Record<string, unknown>,
     setState: (path: string, value: unknown) => void
   ) => {
+    const { workspaceId } = selectWorkspaceParams.parse(rawParams)
     setState('/workspace', null)
     setState('/workspaces', null)
-    setState('/selectedId', params.workspaceId as string)
+    setState('/selectedId', workspaceId)
     // watch on /selectedId fires fetchWorkspaceStatus automatically
   }
 }
