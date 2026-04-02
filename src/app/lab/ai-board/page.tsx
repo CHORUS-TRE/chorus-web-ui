@@ -3,7 +3,6 @@
 import 'react-grid-layout/css/styles.css'
 
 import { type Spec } from '@json-render/core'
-import { JSONUIProvider, Renderer } from '@json-render/react'
 import {
   Check,
   Edit3,
@@ -22,8 +21,11 @@ import {
   useContainerWidth
 } from 'react-grid-layout'
 
-import { WorkspaceStatusWidget } from '@/components/chat/artifacts/workspace-status-widget'
-import { chorusRegistry } from '@/lib/json-render/registry'
+import { DynamicUIRenderer } from '@/components/chat/artifacts/dynamic-ui-renderer'
+import {
+  buildWorkspaceStatusSpec,
+  workspaceStatusHandlers
+} from '@/lib/json-render/specs/workspace-status.spec'
 import { cn } from '@/lib/utils'
 import {
   Board,
@@ -374,11 +376,12 @@ function WidgetCard({
       {/* Widget content */}
       <div className="flex-1 overflow-auto p-3">
         {previewContent.kind === 'workspace-status' ? (
-          <WorkspaceStatusWidget workspaceId={previewContent.workspaceId} />
+          <DynamicUIRenderer
+            spec={buildWorkspaceStatusSpec(previewContent.workspaceId)}
+            handlers={workspaceStatusHandlers}
+          />
         ) : (
-          <JSONUIProvider registry={chorusRegistry}>
-            <Renderer spec={previewContent.spec} registry={chorusRegistry} />
-          </JSONUIProvider>
+          <DynamicUIRenderer spec={previewContent.spec} />
         )}
       </div>
 
