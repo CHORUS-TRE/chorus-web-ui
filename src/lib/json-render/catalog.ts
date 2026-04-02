@@ -75,8 +75,13 @@ const DataLoader = {
 
 const StatusBadge = {
   props: z.object({
-    status: z.string().describe('Status value: active | inactive | deleted or any string'),
-    label: z.string().nullable().describe('Override display label. Defaults to the status value.')
+    status: z
+      .string()
+      .describe('Status value: active | inactive | deleted or any string'),
+    label: z
+      .string()
+      .nullable()
+      .describe('Override display label. Defaults to the status value.')
   }),
   description:
     'Colored status pill. active → emerald, inactive → amber, deleted → red. Unknown statuses render in neutral muted style.'
@@ -97,7 +102,9 @@ const SearchResultItem = {
 
 const WorkspacePickerItem = {
   props: z.object({
-    id: z.string().describe('Workspace ID — passed to selectWorkspace action on click'),
+    id: z
+      .string()
+      .describe('Workspace ID — passed to selectWorkspace action on click'),
     name: z.string().describe('Workspace display name'),
     status: z.string().describe('Workspace status'),
     memberCount: z.number().describe('Number of members'),
@@ -156,7 +163,7 @@ export const chorusCatalog = defineCatalog(schema, {
     DataLoader,
     StatusBadge,
     SearchResultItem,
-    WorkspacePickerItem,
+    WorkspacePickerItem
   }
 })
 
