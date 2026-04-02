@@ -13,12 +13,18 @@ export type StateAwareHandler = (
 
 interface DynamicUIRendererProps {
   spec: Spec
+  /**
+   * Action handlers for this spec. Must be referentially stable (wrap in useMemo
+   * at the call site) to avoid unnecessary re-registration on every render.
+   */
   handlers?: Record<string, StateAwareHandler>
 }
 
 export function DynamicUIRenderer({ spec, handlers }: DynamicUIRendererProps) {
   const store = useMemo(
     () => createStateStore(spec.state ?? {}),
+    // Store is intentionally created once on mount — spec.state seeds initial state only.
+    // Use a `key` prop on the parent to force remount when a completely new spec is needed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
@@ -35,7 +41,11 @@ export function DynamicUIRenderer({ spec, handlers }: DynamicUIRendererProps) {
   }, [handlers, store])
 
   return (
-    <JSONUIProvider registry={chorusRegistry} store={store} handlers={jrHandlers}>
+    <JSONUIProvider
+      registry={chorusRegistry}
+      store={store}
+      handlers={jrHandlers}
+    >
       <Renderer spec={spec} registry={chorusRegistry} />
     </JSONUIProvider>
   )
