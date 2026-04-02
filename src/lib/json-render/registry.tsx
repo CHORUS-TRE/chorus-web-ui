@@ -21,7 +21,7 @@ import {
   User,
   Users
 } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -222,5 +222,112 @@ export const chorusRegistry: ComponentRegistry = {
         {children}
       </div>
     )
-  }
+  },
+
+  // Chorus: DataLoader
+  DataLoader: ({ emit }: ComponentRenderProps) => {
+    useEffect(() => {
+      if (emit) emit('load', {})
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    return null
+  },
+
+  // Chorus: StatusBadge
+  StatusBadge: ({
+    element
+  }: ComponentRenderProps<{ status: string; label?: string }>) => {
+    const { status, label } = element.props
+    const variantClass: Record<string, string> = {
+      active: 'bg-emerald-500/10 text-emerald-500',
+      inactive: 'bg-amber-500/10 text-amber-500',
+      deleted: 'bg-red-500/10 text-red-500'
+    }
+    const cls = variantClass[status] ?? 'bg-muted text-muted-foreground'
+    return (
+      <span
+        className={cn(
+          'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium',
+          cls
+        )}
+      >
+        {label ?? status}
+      </span>
+    )
+  },
+
+  // Chorus: SearchResultItem
+  SearchResultItem: ({
+    element
+  }: ComponentRenderProps<{
+    title: string
+    collection: string
+    passage: string
+    document: string
+  }>) => {
+    const { title, collection, passage, document } = element.props
+    const COLLECTION_LABELS: Record<string, string> = {
+      bpr: 'BPR QMS',
+      dsi: 'DSI',
+      chorus: 'Chorus',
+      all: 'All Collections'
+    }
+    return (
+      <div className="space-y-1 rounded-lg border border-muted/30 p-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="text-xs font-medium">{title}</span>
+          </div>
+          <span className="shrink-0 rounded-full border px-1.5 py-0.5 text-[10px]">
+            {COLLECTION_LABELS[collection] ?? collection}
+          </span>
+        </div>
+        <p className="line-clamp-3 text-xs text-muted-foreground">{passage}</p>
+        <p className="text-[10px] text-muted-foreground/60">{document}</p>
+      </div>
+    )
+  },
+
+  // Chorus: WorkspacePickerItem
+  WorkspacePickerItem: ({
+    element,
+    emit
+  }: ComponentRenderProps<{
+    id: string
+    name: string
+    status: string
+    memberCount: number
+    workbenchCount: number
+  }>) => {
+    const { id, name, status, memberCount, workbenchCount } = element.props
+    const variantClass: Record<string, string> = {
+      active: 'bg-emerald-500/10 text-emerald-500',
+      inactive: 'bg-amber-500/10 text-amber-500',
+      deleted: 'bg-red-500/10 text-red-500'
+    }
+    const cls = variantClass[status] ?? 'bg-muted text-muted-foreground'
+    return (
+      <button
+        type="button"
+        onClick={() => emit?.('click', { workspaceId: id })}
+        className="flex w-full items-center justify-between rounded-lg border border-muted/30 px-3 py-2 text-left text-xs transition-colors hover:border-primary/40 hover:bg-primary/5"
+      >
+        <div className="flex flex-col gap-0.5">
+          <span className="font-medium">{name}</span>
+          <span className="text-muted-foreground">
+            {memberCount} members · {workbenchCount} sessions
+          </span>
+        </div>
+        <span
+          className={cn(
+            'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium',
+            cls
+          )}
+        >
+          {status}
+        </span>
+      </button>
+    )
+  },
 }
