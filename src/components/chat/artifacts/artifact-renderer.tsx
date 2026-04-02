@@ -28,9 +28,7 @@ export function ArtifactRenderer({ artifact }: { artifact: ChatArtifact }) {
     case 'study-setup-wizard':
       return (
         <StudySetupWizard
-          studyType={
-            (artifact.data as { studyType?: string | null }).studyType
-          }
+          studyType={(artifact.data as { studyType?: string | null }).studyType}
           suggestedName={
             (artifact.data as { suggestedName?: string | null }).suggestedName
           }
