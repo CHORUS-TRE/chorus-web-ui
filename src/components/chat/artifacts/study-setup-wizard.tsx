@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { render } from '@json-render/next'
 import {
   Brain,
   ChartBar,
@@ -15,9 +16,6 @@ import {
   Settings,
   TestTubes
 } from 'lucide-react'
-
-import { render } from "@json-render/next"
-
 import React, { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -182,9 +180,9 @@ export function StudySetupWizard({
       name: suggestedName ?? '',
       shortName: suggestedName
         ? suggestedName
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '')
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
         : '',
       description: context ?? ''
     }

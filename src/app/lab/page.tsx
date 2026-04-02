@@ -6,7 +6,8 @@ import {
   FileText,
   FlaskConical,
   Layers,
-  PackageOpen
+  PackageOpen,
+  Sparkles
 } from 'lucide-react'
 
 import { Link } from '@/components/link'
@@ -68,6 +69,18 @@ export default function SandboxPage() {
           description: 'Manage clinical studies',
           href: '/lab/footprint',
           icon: PackageOpen
+        },
+        {
+          title: 'Json Render Test',
+          description: 'Test json render',
+          href: '/lab/test-json-render',
+          icon: PackageOpen
+        },
+        {
+          title: 'AI Board',
+          description: 'Generate custom widgets with AI',
+          href: '/lab/ai-board',
+          icon: Sparkles
         }
       ]
     }
@@ -112,20 +125,14 @@ export default function SandboxPage() {
             const IconComponent = item.icon
 
             const ConditionalLink = ({
-              key,
               href,
               children
             }: {
-              key: string
               href?: string
               children: React.ReactNode
             }) =>
               !item.children ? (
-                <Link
-                  key={key}
-                  href={href as string}
-                  className="group text-muted"
-                >
+                <Link href={href as string} className="group text-muted">
                   {children}
                 </Link>
               ) : (
