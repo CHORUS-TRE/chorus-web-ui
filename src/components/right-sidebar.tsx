@@ -16,9 +16,16 @@ import { ChatMessage, TypingIndicator } from './chat/chat-message'
 const Owl = createLucideIcon('Owl', owl)
 
 const QUICK_PROMPTS = [
-  { label: 'Create a workspace', prompt: 'I want to create a new workspace' },
-  { label: 'My workspaces', prompt: 'Show me my workspaces' },
-  { label: 'Active sessions', prompt: 'Show me my active sessions' }
+  {
+    label: 'Start a new study',
+    prompt: 'I want to start a new research study'
+  },
+  {
+    label: 'Extract data',
+    prompt: 'I need to extract clinical data from the CDW'
+  },
+  { label: 'My study status', prompt: 'Show me my workspace status' },
+  { label: 'Regulatory help', prompt: 'What approvals do I need for my study?' }
 ]
 
 function WelcomeCard({ onPrompt }: { onPrompt: (text: string) => void }) {

@@ -23,6 +23,7 @@ import {
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
+import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
@@ -30,6 +31,7 @@ import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
+import { useUserPreferences } from '~/stores/user-preferences-store'
 
 import { RecentTabs } from './recent-tabs'
 import { SessionPill } from './session-pill'
@@ -62,6 +64,7 @@ export function Header() {
   const [updateOpen, setUpdateOpen] = useState(false)
   const [updateSessionId, setUpdateSessionId] = useState<string | null>(null)
   const [showAboutDialog, setShowAboutDialog] = useState(false)
+  const { toggleRightSidebar } = useUserPreferences()
 
   const currentWorkbench = workbenches?.find(
     (w) => w.id === background?.sessionId
@@ -174,7 +177,21 @@ export function Header() {
         </div>
 
         {/* Right: Actions & User Profile */}
-        <div className="shrink-0">
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            onClick={(e) => {
+              e.preventDefault()
+              toggleRightSidebar()
+            }}
+            href="#"
+            variant="underline"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent'
+            )}
+            title="Help"
+          >
+            <HelpCircle className="h-4 w-4" />
+          </Link>
           <UserProfileSection />
         </div>
 

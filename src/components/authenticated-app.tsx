@@ -105,8 +105,12 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
     }, 100) // 100ms delay before hiding
   }, [isSessionPage])
 
-  // Right sidebar resizing
-  const [rightSidebarWidth, setRightSidebarWidth] = useState(320)
+  // Right sidebar resizing (width persisted in localStorage)
+  const [rightSidebarWidth, setRightSidebarWidth] = useState(() => {
+    if (typeof window === 'undefined') return 320
+    const saved = localStorage.getItem('chorus-chat-sidebar-width')
+    return saved ? Number(saved) : 320
+  })
   const [isResizing, setIsResizing] = useState(false)
 
   const startResizing = useCallback((e: React.MouseEvent) => {
@@ -116,7 +120,8 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 
   const stopResizing = useCallback(() => {
     setIsResizing(false)
-  }, [])
+    localStorage.setItem('chorus-chat-sidebar-width', String(rightSidebarWidth))
+  }, [rightSidebarWidth])
 
   const resize = useCallback(
     (e: MouseEvent) => {
