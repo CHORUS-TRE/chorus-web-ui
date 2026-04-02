@@ -1,15 +1,16 @@
 'use client'
 
-import { type Spec } from '@json-render/core'
-
+import { buildSearchResultsSpec } from '@/lib/json-render/specs/search-results.spec'
+import { buildWorkflowSpec } from '@/lib/json-render/specs/workflow.spec'
+import {
+  buildWorkspaceStatusSpec,
+  workspaceStatusHandlers
+} from '@/lib/json-render/specs/workspace-status.spec'
 import { ChatArtifact } from '@/stores/chat-store'
 
 import { DynamicUIRenderer } from './dynamic-ui-renderer'
-import { JsonRenderWorkflow } from './json-render-prototype'
-import { SearchResultsRenderer } from './search-results-renderer'
 import { StudySetupWizard } from './study-setup-wizard'
 import { WizardArtifact } from './wizard-artifact'
-import { WorkspaceStatusWidget } from './workspace-status-widget'
 
 export function ArtifactRenderer({ artifact }: { artifact: ChatArtifact }) {
   switch (artifact.type) {
@@ -27,7 +28,9 @@ export function ArtifactRenderer({ artifact }: { artifact: ChatArtifact }) {
     case 'study-setup-wizard':
       return (
         <StudySetupWizard
-          studyType={(artifact.data as { studyType?: string | null }).studyType}
+          studyType={
+            (artifact.data as { studyType?: string | null }).studyType
+          }
           suggestedName={
             (artifact.data as { suggestedName?: string | null }).suggestedName
           }
@@ -55,25 +58,29 @@ export function ArtifactRenderer({ artifact }: { artifact: ChatArtifact }) {
         currentStep: number
       }
       return (
-        <JsonRenderWorkflow
-          title={data.title}
-          steps={data.steps}
-          currentStep={data.currentStep}
+        <DynamicUIRenderer
+          spec={buildWorkflowSpec(data.title, data.steps, data.currentStep)}
         />
       )
     }
 
-    case 'workspace-status':
+    case 'workspace-status': {
+      const { workspaceId } = artifact.data as { workspaceId: string | null }
       return (
-        <WorkspaceStatusWidget
-          workspaceId={
-            (artifact.data as { workspaceId: string | null }).workspaceId
-          }
+        <DynamicUIRenderer
+          spec={buildWorkspaceStatusSpec(workspaceId)}
+          handlers={workspaceStatusHandlers}
         />
       )
+    }
 
     case 'dynamic-ui':
-      return <DynamicUIRenderer spec={(artifact.data as { spec: Spec }).spec} />
+      return (
+        <DynamicUIRenderer
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          spec={(artifact.data as { spec: any }).spec}
+        />
+      )
 
     case 'search-results': {
       const data = artifact.data as {
@@ -83,12 +90,12 @@ export function ArtifactRenderer({ artifact }: { artifact: ChatArtifact }) {
           passage: string
           document: string
           title: string
-          collection: string
+          collection: 'bpr' | 'dsi' | 'chorus' | 'all'
           score: number
         }[]
         error?: string
       }
-      return <SearchResultsRenderer {...data} />
+      return <DynamicUIRenderer spec={buildSearchResultsSpec(data)} />
     }
 
     default:
