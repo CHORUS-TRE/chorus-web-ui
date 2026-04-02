@@ -36,6 +36,19 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   'check-circle': CheckCircle
 }
 
+const COLLECTION_LABELS: Record<string, string> = {
+  bpr: 'BPR QMS',
+  dsi: 'DSI',
+  chorus: 'Chorus',
+  all: 'All Collections'
+}
+
+const STATUS_VARIANT_CLASS: Record<string, string> = {
+  active: 'bg-emerald-500/10 text-emerald-500',
+  inactive: 'bg-amber-500/10 text-amber-500',
+  deleted: 'bg-red-500/10 text-red-500'
+}
+
 interface WorkflowHeaderProps {
   title: string
   currentStep: number
@@ -238,12 +251,7 @@ export const chorusRegistry: ComponentRegistry = {
     element
   }: ComponentRenderProps<{ status: string; label?: string }>) => {
     const { status, label } = element.props
-    const variantClass: Record<string, string> = {
-      active: 'bg-emerald-500/10 text-emerald-500',
-      inactive: 'bg-amber-500/10 text-amber-500',
-      deleted: 'bg-red-500/10 text-red-500'
-    }
-    const cls = variantClass[status] ?? 'bg-muted text-muted-foreground'
+    const cls = STATUS_VARIANT_CLASS[status] ?? 'bg-muted text-muted-foreground'
     return (
       <span
         className={cn(
@@ -266,12 +274,6 @@ export const chorusRegistry: ComponentRegistry = {
     document: string
   }>) => {
     const { title, collection, passage, document } = element.props
-    const COLLECTION_LABELS: Record<string, string> = {
-      bpr: 'BPR QMS',
-      dsi: 'DSI',
-      chorus: 'Chorus',
-      all: 'All Collections'
-    }
     return (
       <div className="space-y-1 rounded-lg border border-muted/30 p-3">
         <div className="flex items-start justify-between gap-2">
@@ -301,12 +303,7 @@ export const chorusRegistry: ComponentRegistry = {
     workbenchCount: number
   }>) => {
     const { id, name, status, memberCount, workbenchCount } = element.props
-    const variantClass: Record<string, string> = {
-      active: 'bg-emerald-500/10 text-emerald-500',
-      inactive: 'bg-amber-500/10 text-amber-500',
-      deleted: 'bg-red-500/10 text-red-500'
-    }
-    const cls = variantClass[status] ?? 'bg-muted text-muted-foreground'
+    const cls = STATUS_VARIANT_CLASS[status] ?? 'bg-muted text-muted-foreground'
     return (
       <button
         type="button"
@@ -329,5 +326,5 @@ export const chorusRegistry: ComponentRegistry = {
         </span>
       </button>
     )
-  },
+  }
 }
