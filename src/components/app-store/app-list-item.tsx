@@ -64,6 +64,13 @@ export function SessionAppListItem({ app, onLaunch }: SessionAppListItemProps) {
             v{app.dockerImageTag}
           </span>
         )}
+        {'groupedVersions' in app &&
+          app.groupedVersions &&
+          app.groupedVersions.length > 0 && (
+            <span className="hidden rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary sm:inline-block">
+              +{app.groupedVersions.length}
+            </span>
+          )}
         <Button
           onClick={onLaunch}
           size="sm"
