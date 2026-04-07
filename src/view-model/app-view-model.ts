@@ -33,11 +33,11 @@ export async function appGet(id: string): Promise<Result<App>> {
   }
 }
 
-export async function appList(): Promise<Result<App[]>> {
+export async function appList(options?: { disableGrouping?: boolean }): Promise<Result<App[]>> {
   const repository = await getRepository()
   const useCase = new AppList(repository)
 
-  return await useCase.execute()
+  return await useCase.execute(options)
 }
 
 export async function appCreate(

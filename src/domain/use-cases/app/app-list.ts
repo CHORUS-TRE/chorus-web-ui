@@ -2,7 +2,7 @@ import { App, Result } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
 export interface AppListUseCase {
-  execute(): Promise<Result<App[]>>
+  execute(options?: { disableGrouping?: boolean }): Promise<Result<App[]>>
 }
 
 export class AppList implements AppListUseCase {
@@ -12,7 +12,7 @@ export class AppList implements AppListUseCase {
     this.repository = repository
   }
 
-  async execute(): Promise<Result<App[]>> {
-    return await this.repository.list()
+  async execute(options?: { disableGrouping?: boolean }): Promise<Result<App[]>> {
+    return await this.repository.list(options)
   }
 }
