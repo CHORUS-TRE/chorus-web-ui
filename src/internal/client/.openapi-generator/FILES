@@ -20,6 +20,7 @@ models/ChorusAbortWorkspaceFileUploadReply.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
 models/ChorusAppInstanceFilter.ts
+models/ChorusAppVersion.ts
 models/ChorusApprovalRequest.ts
 models/ChorusApprovalRequestFile.ts
 models/ChorusApprovalRequestFilter.ts
@@ -43,6 +44,8 @@ models/ChorusBulkCreateAppsReply.ts
 models/ChorusBulkCreateAppsRequest.ts
 models/ChorusCompleteWorkspaceFileUploadReply.ts
 models/ChorusCompleteWorkspaceFileUploadResult.ts
+models/ChorusCountMyApprovalRequestsReply.ts
+models/ChorusCountMyApprovalRequestsResult.ts
 models/ChorusCountUnreadNotificationsReply.ts
 models/ChorusCreateAppInstanceReply.ts
 models/ChorusCreateAppInstanceResult.ts

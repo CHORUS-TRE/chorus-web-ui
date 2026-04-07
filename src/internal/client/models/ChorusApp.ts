@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusAppVersion } from './ChorusAppVersion'
+import {
+  ChorusAppVersionFromJSON,
+  ChorusAppVersionFromJSONTyped,
+  ChorusAppVersionToJSON
+} from './ChorusAppVersion'
+
 /**
  *
  * @export
@@ -48,12 +55,6 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
-  prettyName?: string
-  /**
-   *
-   * @type {string}
-   * @memberof ChorusApp
-   */
   description?: string
   /**
    *
@@ -79,6 +80,12 @@ export interface ChorusApp {
    * @memberof ChorusApp
    */
   dockerImageTag?: string
+  /**
+   *
+   * @type {Array<ChorusAppVersion>}
+   * @memberof ChorusApp
+   */
+  groupedVersions?: Array<ChorusAppVersion>
   /**
    *
    * @type {string}
@@ -190,7 +197,6 @@ export function ChorusAppFromJSONTyped(
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
     userId: !exists(json, 'userId') ? undefined : json['userId'],
     name: !exists(json, 'name') ? undefined : json['name'],
-    prettyName: !exists(json, 'prettyName') ? undefined : json['prettyName'],
     description: !exists(json, 'description') ? undefined : json['description'],
     status: !exists(json, 'status') ? undefined : json['status'],
     dockerImageRegistry: !exists(json, 'dockerImageRegistry')
@@ -202,6 +208,9 @@ export function ChorusAppFromJSONTyped(
     dockerImageTag: !exists(json, 'dockerImageTag')
       ? undefined
       : json['dockerImageTag'],
+    groupedVersions: !exists(json, 'groupedVersions')
+      ? undefined
+      : (json['groupedVersions'] as Array<any>).map(ChorusAppVersionFromJSON),
     shmSize: !exists(json, 'shmSize') ? undefined : json['shmSize'],
     maxCPU: !exists(json, 'maxCPU') ? undefined : json['maxCPU'],
     minCPU: !exists(json, 'minCPU') ? undefined : json['minCPU'],
@@ -247,12 +256,15 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     tenantId: value.tenantId,
     userId: value.userId,
     name: value.name,
-    prettyName: value.prettyName,
     description: value.description,
     status: value.status,
     dockerImageRegistry: value.dockerImageRegistry,
     dockerImageName: value.dockerImageName,
     dockerImageTag: value.dockerImageTag,
+    groupedVersions:
+      value.groupedVersions === undefined
+        ? undefined
+        : (value.groupedVersions as Array<any>).map(ChorusAppVersionToJSON),
     shmSize: value.shmSize,
     maxCPU: value.maxCPU,
     minCPU: value.minCPU,

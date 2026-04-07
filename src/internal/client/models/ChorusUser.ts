@@ -104,6 +104,18 @@ export interface ChorusUser {
    * @memberof ChorusUser
    */
   updatedAt?: Date
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusUser
+   */
+  email?: string
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ChorusUser
+   */
+  namespaces?: Array<string>
 }
 
 /**
@@ -147,7 +159,9 @@ export function ChorusUserFromJSONTyped(
       : new Date(json['createdAt']),
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
-      : new Date(json['updatedAt'])
+      : new Date(json['updatedAt']),
+    email: !exists(json, 'email') ? undefined : json['email'],
+    namespaces: !exists(json, 'namespaces') ? undefined : json['namespaces']
   }
 }
 
@@ -176,6 +190,8 @@ export function ChorusUserToJSON(value?: ChorusUser | null): any {
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+    email: value.email,
+    namespaces: value.namespaces
   }
 }

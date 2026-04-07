@@ -108,6 +108,8 @@ export interface UserServiceListUsersRequest {
   filterWorkspaceIDs?: Array<string>
   filterWorkbenchIDs?: Array<string>
   filterSearch?: string
+  filterFromMainSource?: boolean
+  filterWithNamespaces?: boolean
 }
 
 export interface UserServiceResetPasswordRequest {
@@ -598,6 +600,16 @@ export class UserServiceApi extends runtime.BaseAPI {
 
     if (requestParameters.filterSearch !== undefined) {
       queryParameters['filter.search'] = requestParameters.filterSearch
+    }
+
+    if (requestParameters.filterFromMainSource !== undefined) {
+      queryParameters['filter.fromMainSource'] =
+        requestParameters.filterFromMainSource
+    }
+
+    if (requestParameters.filterWithNamespaces !== undefined) {
+      queryParameters['filter.withNamespaces'] =
+        requestParameters.filterWithNamespaces
     }
 
     const headerParameters: runtime.HTTPHeaders = {}

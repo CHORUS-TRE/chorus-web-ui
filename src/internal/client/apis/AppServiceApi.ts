@@ -67,6 +67,7 @@ export interface AppServiceListAppsRequest {
   paginationSortOrder?: string
   paginationSortType?: string
   paginationQuery?: Array<string>
+  disableGrouping?: boolean
 }
 
 export interface AppServiceUpdateAppRequest {
@@ -341,6 +342,10 @@ export class AppServiceApi extends runtime.BaseAPI {
 
     if (requestParameters.paginationQuery) {
       queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    if (requestParameters.disableGrouping !== undefined) {
+      queryParameters['disableGrouping'] = requestParameters.disableGrouping
     }
 
     const headerParameters: runtime.HTTPHeaders = {}
