@@ -12,7 +12,9 @@ export class AppList implements AppListUseCase {
     this.repository = repository
   }
 
-  async execute(options?: { disableGrouping?: boolean }): Promise<Result<App[]>> {
+  async execute(options?: {
+    disableGrouping?: boolean
+  }): Promise<Result<App[]>> {
     return await this.repository.list(options)
   }
 }

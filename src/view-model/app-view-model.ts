@@ -72,7 +72,9 @@ export async function appUpdate(
     const repository = await getRepository()
     const useCase = new AppUpdate(repository)
 
-    const app = Object.fromEntries(formData.entries()) as unknown as AppUpdateType
+    const app = Object.fromEntries(
+      formData.entries()
+    ) as unknown as AppUpdateType
 
     const validation = AppUpdateSchema.safeParse(app)
     if (!validation.success) {

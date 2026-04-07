@@ -4098,6 +4098,11 @@ body {
   padding-bottom: 2rem;
 }
 
+.py-px {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
 .pb-0 {
   padding-bottom: 0px;
 }

@@ -106,7 +106,9 @@ describe('App model — groupedVersions', () => {
       groupedVersions: [{ id: '2', dockerImageTag: '1.1.0' }]
     })
     expect(result.success).toBe(true)
-    expect(result.data?.groupedVersions).toEqual([{ id: '2', dockerImageTag: '1.1.0' }])
+    expect(result.data?.groupedVersions).toEqual([
+      { id: '2', dockerImageTag: '1.1.0' }
+    ])
   })
 
   test('groupedVersions defaults to undefined when absent', () => {

@@ -95,7 +95,12 @@ const baseAppSchema = z.object({
     )
     .optional(),
   groupedVersions: z
-    .array(z.object({ id: z.string().optional(), dockerImageTag: z.string().optional() }))
+    .array(
+      z.object({
+        id: z.string().optional(),
+        dockerImageTag: z.string().optional()
+      })
+    )
     .optional()
 })
 
