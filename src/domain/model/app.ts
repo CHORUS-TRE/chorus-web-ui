@@ -93,6 +93,9 @@ const baseAppSchema = z.object({
         /^data:image\/[a-zA-Z]+;base64,/.test(val),
       'Must be a valid URL or base64 image'
     )
+    .optional(),
+  groupedVersions: z
+    .array(z.object({ id: z.string().optional(), dockerImageTag: z.string().optional() }))
     .optional()
 })
 

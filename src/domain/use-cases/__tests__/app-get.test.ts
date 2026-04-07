@@ -27,7 +27,6 @@ describe('AppGet UseCase', () => {
     tenantId: 'tenant-1',
     userId: 'owner-1',
     name: 'Test App',
-    prettyName: 'Test Application',
     description: 'A test application',
     dockerImageName: 'test-image',
     dockerImageTag: 'latest',
@@ -91,5 +90,36 @@ describe('AppGet UseCase', () => {
     // Act & Assert
     await expect(useCase.execute('1')).rejects.toThrow('Network error')
     expect(repository.get).toHaveBeenCalledWith('1')
+  })
+})
+
+describe('App model — groupedVersions', () => {
+  test('groupedVersions is optional and parsed correctly', () => {
+    const { AppSchema } = require('../../../domain/model/app')
+    const result = AppSchema.safeParse({
+      id: '1',
+      tenantId: 'tenant-1',
+      userId: 'owner-1',
+      name: 'Test App',
+      dockerImageName: 'test-image',
+      dockerImageTag: 'latest',
+      groupedVersions: [{ id: '2', dockerImageTag: '1.1.0' }]
+    })
+    expect(result.success).toBe(true)
+    expect(result.data?.groupedVersions).toEqual([{ id: '2', dockerImageTag: '1.1.0' }])
+  })
+
+  test('groupedVersions defaults to undefined when absent', () => {
+    const { AppSchema } = require('../../../domain/model/app')
+    const result = AppSchema.safeParse({
+      id: '1',
+      tenantId: 'tenant-1',
+      userId: 'owner-1',
+      name: 'Test App',
+      dockerImageName: 'test-image',
+      dockerImageTag: 'latest'
+    })
+    expect(result.success).toBe(true)
+    expect(result.data?.groupedVersions).toBeUndefined()
   })
 })
