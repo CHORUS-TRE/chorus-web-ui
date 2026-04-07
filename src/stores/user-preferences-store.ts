@@ -65,7 +65,7 @@ const defaultPreferences = {
   showWorkspacesTable: false,
   showUsersTable: false,
   showLeftSidebar: true,
-  showRightSidebar: true,
+  showRightSidebar: false,
   sessionsViewMode: 'grid' as const,
   showAppStoreHero: true,
   hasSeenGettingStartedTour: false

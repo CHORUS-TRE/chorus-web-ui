@@ -23,11 +23,11 @@ import {
 
 import { DynamicUIRenderer } from '@/components/chat/artifacts/dynamic-ui-renderer'
 import { buildSearchResultsSpec } from '@/lib/json-render/specs/search-results.spec'
+import { buildWorkflowSpec } from '@/lib/json-render/specs/workflow.spec'
 import {
   buildWorkspaceStatusSpec,
   workspaceStatusHandlers
 } from '@/lib/json-render/specs/workspace-status.spec'
-import { buildWorkflowSpec } from '@/lib/json-render/specs/workflow.spec'
 import { cn } from '@/lib/utils'
 import {
   Board,
@@ -144,7 +144,9 @@ async function generateWidget(prompt: string): Promise<WidgetContent> {
         spec = buildSearchResultsSpec({
           query: (output.query as string) ?? '',
           collection: (output.collection as string) ?? 'all',
-          results: ((output.results as unknown[]) ?? []) as Parameters<typeof buildSearchResultsSpec>[0]['results'],
+          results: ((output.results as unknown[]) ?? []) as Parameters<
+            typeof buildSearchResultsSpec
+          >[0]['results'],
           error: output.error as string | undefined
         })
       }

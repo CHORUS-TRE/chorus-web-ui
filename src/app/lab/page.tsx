@@ -36,7 +36,7 @@ export default function SandboxPage() {
   }> = [
     {
       title: 'AI generated web pages',
-      description: 'AI Generated web pages for the CHORUS platform',
+      description: 'Demo for the CHORUS platform',
       icon: FileText,
       status: 'Demo',
       children: [
@@ -68,12 +68,6 @@ export default function SandboxPage() {
           title: 'Footprint',
           description: 'Manage clinical studies',
           href: '/lab/footprint',
-          icon: PackageOpen
-        },
-        {
-          title: 'Json Render Test',
-          description: 'Test json render',
-          href: '/lab/test-json-render',
           icon: PackageOpen
         },
         {
@@ -115,7 +109,7 @@ export default function SandboxPage() {
       <div className="w-full">
         <div className="mb-6">
           <h3 className="mb-0 text-lg font-semibold">Development Lab</h3>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground">
             Experimental features and development tools for the CHORUS platform
           </p>
         </div>
@@ -132,7 +126,10 @@ export default function SandboxPage() {
               children: React.ReactNode
             }) =>
               !item.children ? (
-                <Link href={href as string} className="group text-muted">
+                <Link
+                  href={href as string}
+                  className="group text-muted-foreground"
+                >
                   {children}
                 </Link>
               ) : (
@@ -148,7 +145,7 @@ export default function SandboxPage() {
                         <div className="rounded-lg bg-accent/20 p-2">
                           <IconComponent className="h-5 w-5" />
                         </div>
-                        <CardTitle className="text-muted transition-colors group-hover:text-accent">
+                        <CardTitle className="text-muted-foreground transition-colors group-hover:text-accent">
                           {item?.title}
                         </CardTitle>
                       </div>
@@ -161,17 +158,13 @@ export default function SandboxPage() {
                   </CardHeader>
                   <CardContent>
                     <CardDescription className="justify-start">
-                      <p className="mb-2 text-muted-foreground">
-                        {item?.description}
-                      </p>
-
                       {item.children &&
                         item.children.map((child) => (
                           <div key={child.title}>
                             <Link
                               key={child.title}
                               href={child.href}
-                              className=""
+                              className="ml-4 text-xs"
                             >
                               {child.title}
                             </Link>
