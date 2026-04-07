@@ -1,6 +1,6 @@
 'use client'
 
-import { createStateStore, type Spec } from '@json-render/core'
+import { createStateStore, type Spec, type UIElement } from '@json-render/core'
 import { JSONUIProvider, Renderer } from '@json-render/react'
 import { useMemo } from 'react'
 
@@ -20,10 +20,21 @@ interface DynamicUIRendererProps {
   handlers?: Record<string, StateAwareHandler>
 }
 
-function DynamicUIRendererInner({
-  spec,
-  handlers
-}: DynamicUIRendererProps) {
+/**
+ * Guard against stale localStorage specs that may have null element.props.
+ * @json-render/react calls Object.entries(element.props) internally, which
+ * throws on null.
+ */
+function sanitizeSpec(spec: Spec): Spec {
+  const sanitized: Record<string, UIElement> = {}
+  for (const [id, el] of Object.entries(spec.elements)) {
+    sanitized[id] = el.props == null ? { ...el, props: {} } : el
+  }
+  return { ...spec, elements: sanitized }
+}
+
+function DynamicUIRendererInner({ spec, handlers }: DynamicUIRendererProps) {
+  const safeSpec = useMemo(() => sanitizeSpec(spec), [spec])
   const store = useMemo(
     () => createStateStore(spec.state ?? {}),
     // Store is intentionally created once on mount — spec.state seeds initial state only.
@@ -49,7 +60,7 @@ function DynamicUIRendererInner({
       store={store}
       handlers={jrHandlers}
     >
-      <Renderer spec={spec} registry={chorusRegistry} />
+      <Renderer spec={safeSpec} registry={chorusRegistry} />
     </JSONUIProvider>
   )
 }

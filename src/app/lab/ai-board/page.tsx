@@ -22,10 +22,12 @@ import {
 } from 'react-grid-layout'
 
 import { DynamicUIRenderer } from '@/components/chat/artifacts/dynamic-ui-renderer'
+import { buildSearchResultsSpec } from '@/lib/json-render/specs/search-results.spec'
 import {
   buildWorkspaceStatusSpec,
   workspaceStatusHandlers
 } from '@/lib/json-render/specs/workspace-status.spec'
+import { buildWorkflowSpec } from '@/lib/json-render/specs/workflow.spec'
 import { cn } from '@/lib/utils'
 import {
   Board,
@@ -120,6 +122,31 @@ async function generateWidget(prompt: string): Promise<WidgetContent> {
       ) {
         const found = findSpec(output)
         if (found) spec = found
+      }
+
+      // showWorkflow was called — build a workflow widget
+      if (
+        event.type === 'tool-output-available' &&
+        output?.type === 'workflow'
+      ) {
+        spec = buildWorkflowSpec(
+          (output.title as string) ?? '',
+          (output.steps as Parameters<typeof buildWorkflowSpec>[1]) ?? [],
+          (output.currentStep as number) ?? 0
+        )
+      }
+
+      // searchDocumentation was called — build a search-results widget
+      if (
+        event.type === 'tool-output-available' &&
+        output?.type === 'search-results'
+      ) {
+        spec = buildSearchResultsSpec({
+          query: (output.query as string) ?? '',
+          collection: (output.collection as string) ?? 'all',
+          results: ((output.results as unknown[]) ?? []) as Parameters<typeof buildSearchResultsSpec>[0]['results'],
+          error: output.error as string | undefined
+        })
       }
     } catch {
       // not JSON

@@ -122,13 +122,17 @@ const WorkspacePickerItem = {
 export const fetchWorkspaceStatusParams = z.object({
   workspaceId: z
     .string()
-    .nullable()
-    .describe('Workspace ID to load, or null to list all workspaces')
+    .nullish()
+    .describe('Workspace ID to load, or null/undefined to list all workspaces')
 })
-export type FetchWorkspaceStatusParams = z.infer<typeof fetchWorkspaceStatusParams>
+export type FetchWorkspaceStatusParams = z.infer<
+  typeof fetchWorkspaceStatusParams
+>
 
 export const selectWorkspaceParams = z.object({
-  workspaceId: z.string().describe('The workspace ID the user selected from the picker')
+  workspaceId: z
+    .string()
+    .describe('The workspace ID the user selected from the picker')
 })
 export type SelectWorkspaceParams = z.infer<typeof selectWorkspaceParams>
 
