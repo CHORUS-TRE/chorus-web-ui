@@ -1,3 +1,24 @@
+# [1.44.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.43.0...v1.44.0) (2026-04-07)
+
+
+### Bug Fixes
+
+* guard DynamicUIRenderer against null/undefined spec.elements ([713e50e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/713e50eeb05e1f5b3f6838f19b1023f9de5df80e))
+* parse action params with Zod schema in workspace-status handlers ([f85eb41](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f85eb411faaaf34920029a1415e7534780316c72))
+
+
+### Features
+
+* add DataLoader, StatusBadge, SearchResultItem, WorkspacePickerItem and action definitions to chorus catalog ([0b3537b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0b3537bc4478ccdf4a1bfa03b7c0f319d3a8a1a4))
+* add workflow spec builder ([ecca688](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ecca688c4fb6a3c1939c3be57135225bcd132cc3))
+* add workspace-status spec builder and action handlers ([cb383a8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cb383a8dea683ca69d681abc02ba7b06a0c7ddb2))
+* consolidate UI rendering ([8c9cae2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8c9cae2cb8976b729e1d7d20d2c0b79b149fe164))
+* extend DynamicUIRenderer with internal store and state-aware handlers ([6e7319e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6e7319e1a3db6b1cb948ba5604e825a629c68dfc))
+* implement AI agent orchestrator with knowledge base, playbooks, and tool-driven workflow support ([8184f3e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8184f3e06089d5241515febc65fd3599782ea607))
+* implement AI-driven agent orchestrator, dynamic UI rendering system, and assistant knowledge base for study workflows ([0f8699c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0f8699c2f11135033078f3b9ac1bcbe1975183c6))
+* implement DataLoader, StatusBadge, SearchResultItem, WorkspacePickerItem in chorus registry ([4c6a77f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4c6a77f43522bdf061daba41e794fa8e1b642af8))
+* route workflow, workspace-status, search-results artifacts through DynamicUIRenderer spec builders ([ee62222](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ee62222b8a84ef890927983aa59db92876debffb))
+
 # [1.43.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.42.0...v1.43.0) (2026-03-23)
 
 
