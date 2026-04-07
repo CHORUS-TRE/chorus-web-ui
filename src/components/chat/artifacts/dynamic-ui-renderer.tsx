@@ -20,7 +20,10 @@ interface DynamicUIRendererProps {
   handlers?: Record<string, StateAwareHandler>
 }
 
-export function DynamicUIRenderer({ spec, handlers }: DynamicUIRendererProps) {
+function DynamicUIRendererInner({
+  spec,
+  handlers
+}: DynamicUIRendererProps) {
   const store = useMemo(
     () => createStateStore(spec.state ?? {}),
     // Store is intentionally created once on mount — spec.state seeds initial state only.
@@ -49,4 +52,9 @@ export function DynamicUIRenderer({ spec, handlers }: DynamicUIRendererProps) {
       <Renderer spec={spec} registry={chorusRegistry} />
     </JSONUIProvider>
   )
+}
+
+export function DynamicUIRenderer({ spec, handlers }: DynamicUIRendererProps) {
+  if (!spec?.elements) return null
+  return <DynamicUIRendererInner spec={spec} handlers={handlers} />
 }
