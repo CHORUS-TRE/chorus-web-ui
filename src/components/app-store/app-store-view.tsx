@@ -47,30 +47,55 @@ export function AppStoreView() {
   const { workspaceId: paramWorkspaceId, sessionId: paramSessionId } =
     useParams()
   const [showStartSessionDialog, setShowStartSessionDialog] = useState(false)
+  const [showVersionDialog, setShowVersionDialog] = useState(false)
   const [pendingApp, setPendingApp] = useState<App | null>(null)
+  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(
+    null
+  )
   const pathname = usePathname()
   const isSessionPage = useMemo(() => isSessionPath(pathname), [pathname])
 
-  // Handler to show session picker with the selected app
-  const handleAppClickWithoutSession = (app: App) => {
-    setPendingApp(app)
-    setShowStartSessionDialog(true)
+  // Unified entry point for all app clicks
+  const handleAppClick = (app: App) => {
+    if ((app.groupedVersions?.length ?? 0) > 0) {
+      setPendingApp(app)
+      setShowVersionDialog(true)
+    } else if (isSessionPage) {
+      handleLaunchApp(app)
+    } else {
+      setPendingApp(app)
+      setShowStartSessionDialog(true)
+    }
+  }
+
+  // After a version is chosen from the version dialog
+  const handleVersionSelected = (versionId: string | null) => {
+    setSelectedVersionId(versionId)
+    setShowVersionDialog(false)
+    if (isSessionPage) {
+      handleLaunchApp(pendingApp!, undefined, undefined, versionId)
+      setPendingApp(null)
+    } else {
+      setShowStartSessionDialog(true)
+    }
   }
 
   // Handler when a session is selected from the dialog
   const handleSessionSelected = (sessionId: string, workspaceId: string) => {
     if (pendingApp) {
-      handleLaunchApp(pendingApp, sessionId, workspaceId)
+      handleLaunchApp(pendingApp, sessionId, workspaceId, selectedVersionId)
     }
     setShowStartSessionDialog(false)
     setPendingApp(null)
+    setSelectedVersionId(null)
   }
 
   // Helper to handle app launch (unified for all view modes)
   const handleLaunchApp = async (
     app: App,
     sessionId = paramSessionId || background?.sessionId,
-    workspaceId = paramWorkspaceId || background?.workspaceId
+    workspaceId = paramWorkspaceId || background?.workspaceId,
+    versionId?: string | null
   ) => {
     if (!sessionId || !workspaceId) return
 
@@ -84,7 +109,7 @@ export function AppStoreView() {
     }
 
     const formData = new FormData()
-    formData.append('appId', app.id)
+    formData.append('appId', versionId ?? app.id)
     formData.append('tenantId', '1')
     formData.append('userId', user?.id || '')
     formData.append('workspaceId', workspaceId as string)
@@ -241,11 +266,7 @@ export function AppStoreView() {
                 // Web apps are distinguished by having a 'url' property instead of 'dockerImageName'
                 const isWebApp = 'url' in item
                 const action = () =>
-                  isWebApp
-                    ? openWebApp(item.id)
-                    : isSessionPage
-                      ? handleLaunchApp(item as App)
-                      : handleAppClickWithoutSession(item as App)
+                  isWebApp ? openWebApp(item.id) : handleAppClick(item as App)
 
                 return viewMode === 'icons' ? (
                   <SessionAppIcon
@@ -276,6 +297,43 @@ export function AppStoreView() {
           )}
         </div>
       </div>
+      <Dialog
+        open={showVersionDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowVersionDialog(false)
+            setPendingApp(null)
+          }
+        }}
+      >
+        <DialogContent className="bg-background">
+          <DialogHeader>
+            <DialogTitle>Choose a version</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-2 pt-2">
+            <button
+              className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-muted/10"
+              onClick={() => handleVersionSelected(null)}
+            >
+              <span className="font-medium">Base version</span>
+              <span className="ml-2 text-xs text-muted-foreground">
+                {pendingApp?.dockerImageTag}
+              </span>
+            </button>
+            {pendingApp?.groupedVersions?.map((v) =>
+              v.id ? (
+                <button
+                  key={v.id}
+                  className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-muted/10"
+                  onClick={() => handleVersionSelected(v.id!)}
+                >
+                  <span className="font-medium">{v.dockerImageTag}</span>
+                </button>
+              ) : null
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={showStartSessionDialog}
         onOpenChange={setShowStartSessionDialog}

@@ -97,11 +97,12 @@ const baseAppSchema = z.object({
   groupedVersions: z
     .array(
       z.object({
-        id: z.string().optional(),
-        dockerImageTag: z.string().optional()
+        id: z.string().optional().nullable(),
+        dockerImageTag: z.string().optional().nullable()
       })
     )
     .optional()
+    .nullable()
 })
 
 export const AppSchema = baseAppSchema.superRefine((data, ctx) => {
