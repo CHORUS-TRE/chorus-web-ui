@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { render } from '@json-render/next'
 import {
   Brain,
   ChartBar,

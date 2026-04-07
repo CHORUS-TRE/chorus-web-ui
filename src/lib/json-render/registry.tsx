@@ -240,7 +240,7 @@ export const chorusRegistry: ComponentRegistry = {
   // Chorus: DataLoader
   DataLoader: ({ emit }: ComponentRenderProps) => {
     useEffect(() => {
-      if (emit) emit('load', {})
+      if (emit) emit('load')
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return null
@@ -302,12 +302,12 @@ export const chorusRegistry: ComponentRegistry = {
     memberCount: number
     workbenchCount: number
   }>) => {
-    const { id, name, status, memberCount, workbenchCount } = element.props
+    const { name, status, memberCount, workbenchCount } = element.props
     const cls = STATUS_VARIANT_CLASS[status] ?? 'bg-muted text-muted-foreground'
     return (
       <button
         type="button"
-        onClick={() => emit?.('click', { workspaceId: id })}
+        onClick={() => emit?.('click')}
         className="flex w-full items-center justify-between rounded-lg border border-muted/30 px-3 py-2 text-left text-xs transition-colors hover:border-primary/40 hover:bg-primary/5"
       >
         <div className="flex flex-col gap-0.5">
