@@ -68,7 +68,8 @@ export function SessionAppListItem({ app, onLaunch }: SessionAppListItemProps) {
           app.groupedVersions &&
           app.groupedVersions.length > 0 && (
             <span className="hidden rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary sm:inline-block">
-              +{app.groupedVersions.length}
+              {/* +1 for the base version (API guarantees groupedVersions never includes the current version) */}
+              {app.groupedVersions.length + 1}v
             </span>
           )}
         <Button

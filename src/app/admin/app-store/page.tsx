@@ -1,13 +1,12 @@
 'use client'
 
-import { LayoutGrid, Pencil, Plus, Store, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Store, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { toast } from '@/components/hooks/use-toast'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { useAppState } from '@/stores/app-state-store'
-import { appDelete } from '@/view-model/app-view-model'
+import { appDelete, appList } from '@/view-model/app-view-model'
 import { Button } from '~/components/button'
 import { AppCreateDialog } from '~/components/forms/app-create-dialog'
 import { WebAppCreateDialog } from '~/components/forms/webapp-create-dialog'
@@ -20,18 +19,32 @@ import {
   TableRow
 } from '~/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { App } from '~/domain/model'
 
 export default function AdminAppStorePage() {
   const router = useRouter()
-  const { apps, refreshApps } = useAppState()
   const { externalWebApps, removeExternalWebApp } = useIframeCache()
 
+  const [apps, setApps] = useState<App[] | undefined>(undefined)
   const [showAppDialog, setShowAppDialog] = useState(false)
   const [showWebAppDialog, setShowWebAppDialog] = useState(false)
   const [editingWebappId, setEditingWebappId] = useState<string | undefined>(
     undefined
   )
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+
+  const fetchApps = async () => {
+    const result = await appList({ disableGrouping: true })
+    if (result.error) {
+      toast({ title: result.error, variant: 'destructive' })
+      return
+    }
+    setApps(result.data)
+  }
+
+  useEffect(() => {
+    fetchApps()
+  }, [])
 
   const handleDeleteApp = async (id: string) => {
     if (!confirm('Are you sure you want to delete this application?')) return
@@ -50,7 +63,7 @@ export default function AdminAppStorePage() {
           title: 'App deleted',
           description: 'The application has been removed.'
         })
-        await refreshApps()
+        await fetchApps()
       }
     } finally {
       setIsDeleting(null)
@@ -123,7 +136,7 @@ export default function AdminAppStorePage() {
                 {apps?.map((app) => (
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">{app.name}</TableCell>
-                    <TableCell>{app.dockerImageTag || '1.0.0'}</TableCell>
+                    <TableCell>{app.dockerImageTag || '—'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
@@ -148,13 +161,23 @@ export default function AdminAppStorePage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {!apps?.length && (
+                {apps !== undefined && !apps.length && (
                   <TableRow>
                     <TableCell
-                      colSpan={4}
+                      colSpan={3}
                       className="h-24 text-center text-muted-foreground"
                     >
                       No applications found.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {apps === undefined && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={3}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      Loading…
                     </TableCell>
                   </TableRow>
                 )}
@@ -237,7 +260,7 @@ export default function AdminAppStorePage() {
       <AppCreateDialog
         open={showAppDialog}
         onOpenChange={setShowAppDialog}
-        onSuccess={refreshApps}
+        onSuccess={() => fetchApps()}
       />
 
       <WebAppCreateDialog
