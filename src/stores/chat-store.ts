@@ -3,7 +3,13 @@
 import { UIMessage } from 'ai'
 import { create } from 'zustand'
 
-export type ArtifactType = 'wizard'
+export type ArtifactType =
+  | 'wizard'
+  | 'study-setup-wizard'
+  | 'workflow'
+  | 'workspace-status'
+  | 'dynamic-ui'
+  | 'search-results'
 
 export interface ChatArtifact {
   type: ArtifactType

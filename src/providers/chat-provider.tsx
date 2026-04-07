@@ -2,19 +2,9 @@
 
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, UIMessage } from 'ai'
-import { useRouter } from 'next/navigation'
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 
 import { useChatStore } from '@/stores/chat-store'
-
-const PAGE_ROUTES: Record<string, string> = {
-  dashboard: '/',
-  workspaces: '/workspaces',
-  sessions: '/sessions',
-  'app-store': '/app-store',
-  data: '/data',
-  messages: '/messages'
-}
 
 interface ChatContextValue {
   messages: UIMessage[]
@@ -27,8 +17,6 @@ interface ChatContextValue {
 const ChatContext = createContext<ChatContextValue | null>(null)
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-
   // Read persisted messages once on mount (no subscription — getState avoids re-renders)
   const initialMessages = useRef<UIMessage[]>(useChatStore.getState().messages)
 
@@ -36,20 +24,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     messages:
       initialMessages.current.length > 0 ? initialMessages.current : undefined,
     transport: new DefaultChatTransport({ api: '/api/chat' }),
-    onFinish: ({ message }: { message: UIMessage }) => {
-      for (const part of message.parts) {
-        if (
-          part.type === 'tool-navigateTo' &&
-          'state' in part &&
-          part.state === 'output-available' &&
-          'output' in part
-        ) {
-          const output = part.output as { page?: string }
-          if (output.page && PAGE_ROUTES[output.page]) {
-            router.push(PAGE_ROUTES[output.page])
-          }
-        }
-      }
+    onFinish: () => {
+      // Tool outputs are handled by the artifact renderers in ChatMessage
     }
   })
 

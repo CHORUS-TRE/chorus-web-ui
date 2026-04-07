@@ -15,12 +15,6 @@ interface ChatInputProps {
   placeholder?: string
 }
 
-const QUICK_PROMPTS = [
-  { label: 'My workspaces', prompt: 'Show me my workspaces' },
-  { label: 'Active sessions', prompt: 'Show my active sessions' },
-  { label: 'New workspace', prompt: 'Create a new workspace' }
-]
-
 export function ChatInput({
   value,
   onChange,
@@ -46,23 +40,6 @@ export function ChatInput({
 
   return (
     <div className="space-y-2 p-3">
-      {/* Quick prompts */}
-      <div className="no-scrollbar flex gap-1.5 overflow-x-auto pb-0.5">
-        {QUICK_PROMPTS.map((q) => (
-          <button
-            key={q.label}
-            onClick={() => {
-              onChange(q.prompt)
-              setTimeout(onSubmit, 0)
-            }}
-            disabled={disabled}
-            className="flex-shrink-0 rounded-full border border-muted/40 bg-muted/10 px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-muted/60 hover:bg-muted/20 hover:text-foreground disabled:opacity-40"
-          >
-            {q.label}
-          </button>
-        ))}
-      </div>
-
       {/* Input row */}
       <div className="flex items-end gap-2 rounded-xl border border-muted/40 bg-background/40 px-3 py-2 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20">
         <textarea
