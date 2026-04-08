@@ -1,3 +1,15 @@
+# [1.46.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.45.1...v1.46.0) (2026-04-08)
+
+
+### Bug Fixes
+
+* update dependency paths in Dockerfile to support pnpm symlink structure ([db82ed3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/db82ed327fcc7dbf6710dcd68fd68463a671593e))
+
+
+### Features
+
+* add user filtering, display user email and namespaces ([bd0d8df](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bd0d8df343f80533e8ba4e29811288297f35215e))
+
 ## [1.45.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.45.0...v1.45.1) (2026-04-08)
 
 # [1.45.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.44.0...v1.45.0) (2026-04-08)
