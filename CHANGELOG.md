@@ -1,3 +1,12 @@
+# [1.47.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.46.1...v1.47.0) (2026-04-08)
+
+
+### Features
+
+* **approval-requests:** add server-side filters, count endpoint, and sidebar badge ([614e59c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/614e59c2e9d139efca8190581f458531ce5a3f7f))
+* display application version in left sidebar footer ([83e40b7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/83e40b71ea76ce7d403fefe169de5f9e59ea490c))
+* enable hex input in color picker and apply UI styling updates to tables and role badges ([1f9c04c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1f9c04cbc6336bf17ad1efd7e0ec4b40734df457))
+
 ## [1.46.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.46.0...v1.46.1) (2026-04-08)
 
 # [1.46.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.45.1...v1.46.0) (2026-04-08)
