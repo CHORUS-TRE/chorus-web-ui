@@ -19,12 +19,11 @@ RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
 
 ENV NODE_ENV=production
 
-# Prepare a minimal node_modules with only the external packages that
-# standalone output references via pnpm store paths but doesn't fully copy.
-RUN mkdir -p /ext && \
-    cd node_modules/.pnpm && \
+# Merge native/external packages into standalone output (resolves pnpm symlinks)
+# so the final image has complete dependencies at the paths Next.js expects.
+RUN cd node_modules/.pnpm && \
     for pkg in @tobilu+qmd* node-llama-cpp* better-sqlite3*; do \
-      [ -d "$pkg" ] && cp -rL "$pkg" /ext/"$pkg"; \
+      [ -d "$pkg" ] && cp -rL "$pkg" /app/.next/standalone/node_modules/.pnpm/"$pkg"; \
     done
 
 FROM gcr.io/distroless/nodejs22-debian12
@@ -34,9 +33,6 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone .
 COPY --from=builder /app/.next/static .next/static
-
-# Restore pnpm store paths for native/external packages
-COPY --from=builder /ext/ ./node_modules/.pnpm/
 
 EXPOSE 3000
 ENV HOSTNAME=0.0.0.0

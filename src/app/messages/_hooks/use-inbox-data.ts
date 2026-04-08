@@ -64,22 +64,29 @@ function requestToInboxItem(req: ApprovalRequest): InboxItem {
 
 export function useInboxData(userId: string) {
   const { notifications } = useAppState()
-  const [requests, setRequests] = React.useState<ApprovalRequest[]>([])
+  const [inboxRequests, setInboxRequests] = React.useState<ApprovalRequest[]>(
+    []
+  )
+  const [outboxRequests, setOutboxRequests] = React.useState<
+    ApprovalRequest[]
+  >([])
   const [isLoadingRequests, setIsLoadingRequests] = React.useState(true)
 
   const fetchRequests = React.useCallback(async () => {
     setIsLoadingRequests(true)
     try {
-      const result = await listApprovalRequests()
-      if (result.data) {
-        setRequests(result.data)
-      }
+      const [inboxResult, outboxResult] = await Promise.all([
+        listApprovalRequests({ filterApproverId: userId }),
+        listApprovalRequests({ filterRequesterId: userId })
+      ])
+      if (inboxResult.data) setInboxRequests(inboxResult.data)
+      if (outboxResult.data) setOutboxRequests(outboxResult.data)
     } catch (error) {
       console.error('Failed to fetch approval requests:', error)
     } finally {
       setIsLoadingRequests(false)
     }
-  }, [])
+  }, [userId])
 
   React.useEffect(() => {
     fetchRequests()
@@ -90,28 +97,22 @@ export function useInboxData(userId: string) {
     const unreadNotifs = (notifications || []).filter((n) => !n.readAt)
     const notifItems = unreadNotifs.map(notificationToInboxItem)
 
-    // Include all requests where user is an approver
-    const inboxRequests = requests.filter((req) =>
-      req.approverIds?.includes(userId)
-    )
-
     const requestItems = inboxRequests.map(requestToInboxItem)
     return [...notifItems, ...requestItems].sort(
       (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
     )
-  }, [notifications, requests, userId])
+  }, [notifications, inboxRequests])
 
   const outboxItems = React.useMemo(() => {
-    const outboxRequests = requests.filter((req) => req.requesterId === userId)
     return outboxRequests
       .map(requestToInboxItem)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-  }, [requests, userId])
+  }, [outboxRequests])
 
   return {
     inboxItems,
     outboxItems,
-    requests,
+    requests: [...inboxRequests, ...outboxRequests],
     isLoading: isLoadingRequests,
     refetchRequests: fetchRequests
   }

@@ -6,6 +6,7 @@ import { ApprovalRequestRepositoryImpl } from '@/data/repository'
 import { Result } from '@/domain/model'
 import {
   ApprovalRequest,
+  ApprovalRequestCount,
   ApproveApprovalRequestAction,
   CreateDataExtractionRequest,
   CreateDataTransferRequest
@@ -25,6 +26,13 @@ const getRepository = async () => {
     env('NEXT_PUBLIC_API_URL') || ''
   )
   return new ApprovalRequestRepositoryImpl(dataSource)
+}
+
+export async function countMyApprovalRequests(): Promise<
+  Result<ApprovalRequestCount>
+> {
+  const repository = await getRepository()
+  return await repository.countMine()
 }
 
 export async function approveApprovalRequest(

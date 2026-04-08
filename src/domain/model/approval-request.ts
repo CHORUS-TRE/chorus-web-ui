@@ -81,6 +81,15 @@ export type CreateDataExtractionRequest = z.infer<
 export type CreateDataTransferRequest = z.infer<
   typeof CreateDataTransferRequestSchema
 >
+export const ApprovalRequestCountSchema = z.object({
+  total: z.number(),
+  totalApprover: z.number(),
+  totalRequester: z.number(),
+  countByStatus: z.record(z.string(), z.number()).optional(),
+  countByType: z.record(z.string(), z.number()).optional()
+})
+
+export type ApprovalRequestCount = z.infer<typeof ApprovalRequestCountSchema>
 export type ApproveApprovalRequestAction = z.infer<
   typeof ApproveApprovalRequestSchema
 >
