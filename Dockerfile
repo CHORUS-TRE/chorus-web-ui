@@ -19,13 +19,6 @@ RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
 
 ENV NODE_ENV=production
 
-# Merge native/external packages into standalone output (resolves pnpm symlinks)
-# so the final image has complete dependencies at the paths Next.js expects.
-RUN cd node_modules/.pnpm && \
-    for pkg in @tobilu+qmd* node-llama-cpp* better-sqlite3*; do \
-      [ -d "$pkg" ] && cp -rL "$pkg" /app/.next/standalone/node_modules/.pnpm/"$pkg"; \
-    done
-
 FROM gcr.io/distroless/nodejs22-debian12
 
 WORKDIR /app
