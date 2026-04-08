@@ -65,7 +65,7 @@ export default function InstancesTable({
 
     return (
       <>
-        <TableCell className="text-center">
+        <TableCell className="p-2 text-center">
           <Badge
             variant="outline"
             className={cn(
@@ -81,7 +81,7 @@ export default function InstancesTable({
           </Badge>
         </TableCell>
         <TableCell
-          className="max-w-[200px] truncate text-xs text-muted-foreground"
+          className="max-w-[200px] truncate p-2 text-xs text-muted-foreground"
           title={currentMessage}
         >
           {currentMessage || '-'}
@@ -105,28 +105,28 @@ export default function InstancesTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 ID
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 App
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Workspace
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Session
               </TableHead>
-              <TableHead className="text-center font-semibold text-foreground">
+              <TableHead className="p-2 text-center font-semibold text-foreground">
                 Status
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Message
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Created
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Actions
               </TableHead>
             </TableRow>
@@ -142,23 +142,23 @@ export default function InstancesTable({
                   )
                 }
               >
-                <TableCell className="max-w-[100px] truncate font-mono text-xs">
+                <TableCell className="max-w-[100px] truncate p-2 font-mono text-xs">
                   {instance.id}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="p-2 font-medium">
                   {instance.name || getAppName(instance.appId)}
                 </TableCell>
-                <TableCell className="max-w-[150px] truncate">
+                <TableCell className="max-w-[150px] truncate p-2">
                   {getWorkspaceName(instance.workspaceId)}
                 </TableCell>
-                <TableCell className="max-w-[150px] truncate">
+                <TableCell className="max-w-[150px] truncate p-2">
                   {getWorkbenchName(instance.workbenchId)}
                 </TableCell>
                 <AppInstanceK8sStatusCell
                   key={`${instance.id}-${refreshKey}`}
                   instance={instance}
                 />
-                <TableCell className="text-xs text-muted-foreground">
+                <TableCell className="p-2 text-xs text-muted-foreground">
                   {instance.createdAt
                     ? formatDistanceToNow(new Date(instance.createdAt), {
                         addSuffix: true
@@ -166,7 +166,7 @@ export default function InstancesTable({
                     : '-'}
                 </TableCell>
                 <TableCell
-                  className="text-xs text-muted-foreground"
+                  className="p-2 text-xs text-muted-foreground"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {instance.workspaceId &&

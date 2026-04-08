@@ -90,7 +90,7 @@ function SessionStatusSection({
       <div className="space-y-2">
         <div className="group/session flex items-center justify-between">
           <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-muted">
               <LaptopMinimal className="h-3 w-3 text-[#88b04b]" />
             </div>
             <div className="min-w-0">
@@ -116,7 +116,7 @@ function SessionStatusSection({
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 opacity-75 transition-opacity hover:bg-white/5 group-hover/session:opacity-100"
+              className="h-6 w-6 opacity-75 transition-opacity hover:bg-muted group-hover/session:opacity-100"
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete(sessionId)
@@ -129,7 +129,7 @@ function SessionStatusSection({
         </div>
         {/* Progress Bar */}
         {!isRunning && (
-          <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-border/50">
             <div
               className={cn(
                 'h-full transition-all duration-1000',
@@ -169,7 +169,7 @@ function AppInstanceStatusRow({
     <div className="space-y-2">
       <div className="group/app flex items-center justify-between">
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#2a2d3a]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-muted">
             {appIcon ? (
               <img src={appIcon} alt={appName} className="h-3 w-3" />
             ) : (
@@ -199,7 +199,7 @@ function AppInstanceStatusRow({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 opacity-90 transition-opacity hover:bg-white/5 group-hover/app:opacity-100"
+            className="h-6 w-6 opacity-90 transition-opacity hover:bg-muted group-hover/app:opacity-100"
             onClick={(e) => {
               e.stopPropagation()
               onClose(instance.id, appName)
@@ -211,7 +211,7 @@ function AppInstanceStatusRow({
       </div>
       {/* Progress Bar */}
       {!isRunning && (
-        <div className="h-1 w-full overflow-hidden rounded-full bg-white/5">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-border/50">
           <div
             className={cn(
               'h-full transition-all duration-1000',
@@ -279,7 +279,7 @@ export function SessionPill({
     const appsRunning = getSessionApps(sessionId)
 
     return (
-      <div className="flex min-w-[260px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-[#1a1b23] shadow-2xl">
+      <div className="flex min-w-[260px] flex-col overflow-hidden rounded-2xl border border-border bg-popover shadow-2xl">
         <SessionStatusSection
           sessionId={sessionId}
           workbenches={workbenches}
@@ -312,7 +312,7 @@ export function SessionPill({
           )}
         </div>
 
-        <div className="h-px bg-white/5" />
+        <div className="h-px bg-border/50" />
 
         {/* Actions Section */}
         <div className="space-y-0.5 p-1.5">
@@ -322,7 +322,7 @@ export function SessionPill({
                 `/workspaces/${session.workspaceId}/sessions/${sessionId}/app-store`
               )
             }
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent transition-all hover:bg-accent hover:text-black/80"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent transition-all hover:bg-accent hover:text-accent-foreground"
           >
             <AppWindow className="h-4 w-4" style={{ color: 'inherit' }} />
             Launch an app
@@ -332,7 +332,7 @@ export function SessionPill({
             onClick={() =>
               router.push(`/workspaces/${session.workspaceId}/users`)
             }
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-black/80"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-accent-foreground"
           >
             <UserPlus className="h-4 w-4" style={{ color: 'inherit' }} />
             Add Member
@@ -340,7 +340,7 @@ export function SessionPill({
 
           <button
             onClick={() => onUpdateSession(sessionId)}
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-black/80"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-accent-foreground"
           >
             <Settings className="h-4 w-4" style={{ color: 'inherit' }} />
             Settings
@@ -349,7 +349,7 @@ export function SessionPill({
           <button
             onClick={toggleFullscreen}
             disabled
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-black/80 disabled:opacity-40"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-accent-foreground disabled:opacity-40"
           >
             <Maximize className="h-4 w-4" style={{ color: 'inherit' }} />
             Fullscreen
@@ -357,7 +357,7 @@ export function SessionPill({
         </div>
 
         {/* Delete Section */}
-        <div className="mt-auto border-t border-white/5 bg-red-500/5 p-1.5">
+        <div className="mt-auto border-t border-border bg-red-500/5 p-1.5">
           <button
             onClick={() => onDeleteSession(sessionId)}
             className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
@@ -371,7 +371,7 @@ export function SessionPill({
   }
 
   return (
-    <div className="group/pill relative flex h-9 items-center shadow-lg backdrop-blur-md">
+    <div className="group/pill relative flex h-9 items-center backdrop-blur-md">
       {/* Left: Logo + Session Name & Status */}
       <div className="flex items-center gap-1.5 pr-2">
         {launchingApps.length > 0 ? (
@@ -381,13 +381,13 @@ export function SessionPill({
         )}
       </div>
       <div className="flex min-w-0 flex-col justify-center">
-        <p className="truncate text-[13px] font-bold leading-tight text-white">
+        <p className="truncate text-[13px] font-bold leading-tight text-foreground">
           {sessionName}
         </p>
       </div>
 
       {/* Vertical Separator */}
-      <div className="ml-2 h-5 w-px bg-white/50" />
+      <div className="ml-2 h-5 w-px bg-foreground/30" />
 
       {/* Right: MENU Trigger via NavigationMenu */}
       <NavigationMenu className="z-50">
@@ -405,7 +405,7 @@ export function SessionPill({
 
       {/* Floating app launch status panel */}
       {visibleLaunchingApps.length > 0 && (
-        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[260px] space-y-1.5 rounded-2xl border border-white/5 bg-[#1a1b23] p-3 shadow-2xl">
+        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[260px] space-y-1.5 rounded-2xl border border-border bg-popover p-3 shadow-2xl">
           {visibleLaunchingApps.map((instance) => (
             <AppLaunchToastContent
               key={instance.id}

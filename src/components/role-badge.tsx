@@ -17,9 +17,9 @@ import { useAppState } from '~/stores/app-state-store'
 type RoleScope = 'platform' | 'workspace' | 'session'
 
 const scopeColors: Record<RoleScope, string> = {
-  workspace: 'border-red-400',
-  session: 'border-orange-400',
-  platform: 'border-blue-400'
+  platform: 'border-primary text-primary',
+  workspace: 'border-secondary text-secondary',
+  session: 'border-accent text-accent'
 }
 
 function getRoleScope(roleName: string): RoleScope {

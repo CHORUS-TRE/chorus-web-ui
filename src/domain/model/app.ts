@@ -102,7 +102,9 @@ const baseAppSchema = z.object({
       })
     )
     .optional()
-    .nullable()
+    .nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 })
 
 export const AppSchema = baseAppSchema.superRefine((data, ctx) => {

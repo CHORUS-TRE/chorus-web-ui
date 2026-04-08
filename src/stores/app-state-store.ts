@@ -239,10 +239,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   refreshPendingApprovalRequestsCount: async () => {
     const result = await countMyApprovalRequests()
     if (result.error) {
-      console.error(
-        'Failed to refresh approval requests count:',
-        result.error
-      )
+      console.error('Failed to refresh approval requests count:', result.error)
       return
     }
     if (result.data) {

@@ -193,10 +193,10 @@ function SidebarContent({
           <Bell className="h-4 w-4" />
           Messages
           {messagesBadgeCount > 0 && (
-              <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
-                {messagesBadgeCount > 99 ? '99+' : messagesBadgeCount}
-              </span>
-            )}
+            <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+              {messagesBadgeCount > 99 ? '99+' : messagesBadgeCount}
+            </span>
+          )}
         </Link>
 
         <Link

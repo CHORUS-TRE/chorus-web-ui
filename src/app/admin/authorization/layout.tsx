@@ -1,6 +1,6 @@
 'use client'
 
-import { KeyRound, Shield, Users } from 'lucide-react'
+import { Shield, Users } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -8,12 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 
 const routes = [
   { href: '/admin/authorization/roles', label: 'Roles', icon: Shield },
-  { href: '/admin/authorization/users', label: 'Users', icon: Users },
-  {
-    href: '/admin/authorization/permissions',
-    label: 'Permissions',
-    icon: KeyRound
-  }
+  { href: '/admin/authorization/users', label: 'Users', icon: Users }
 ]
 
 export default function AuthorizationLayout({

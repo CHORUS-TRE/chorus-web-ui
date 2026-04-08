@@ -48,21 +48,21 @@ function getRoleScope(
 }
 
 const scopeColors: Record<Scope, string> = {
-  platform: 'border-blue-500 text-blue-400',
-  workspace: 'border-red-500 text-red-400',
-  session: 'border-orange-500 text-orange-400'
+  platform: 'border-primary text-primary',
+  workspace: 'border-secondary text-secondary',
+  session: 'border-accent text-accent'
 }
 
 const scopeActiveBg: Record<Scope, string> = {
-  platform: 'bg-blue-600 text-white border-blue-600',
-  workspace: 'bg-red-600 text-white border-red-600',
-  session: 'bg-orange-600 text-white border-orange-600'
+  platform: 'bg-primary text-primary-foreground border-primary',
+  workspace: 'bg-secondary text-secondary-foreground border-secondary',
+  session: 'bg-accent text-accent-foreground border-accent'
 }
 
 const contextBadgeColors: Record<Scope, string> = {
-  platform: 'bg-blue-500/20 text-blue-300',
-  workspace: 'bg-red-500/20 text-red-300',
-  session: 'bg-orange-500/20 text-orange-300'
+  platform: 'bg-primary/20 text-primary',
+  workspace: 'bg-secondary/20 text-secondary',
+  session: 'bg-accent/20 text-accent'
 }
 
 export default function AuthorizationUsersPage() {
@@ -209,7 +209,7 @@ export default function AuthorizationUsersPage() {
                   <Tooltip key={name}>
                     <TooltipTrigger asChild>
                       <TableHead className="min-w-[110px] cursor-default text-center text-xs text-muted-foreground">
-                        {name}
+                        {def.displayName ?? name}
                       </TableHead>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs text-xs">
@@ -218,9 +218,11 @@ export default function AuthorizationUsersPage() {
                   </Tooltip>
                 ))}
               </TooltipProvider>
-              <TableHead className="w-24 text-muted-foreground">
-                Actions
-              </TableHead>
+              {scope !== 'platform' && (
+                <TableHead className="w-24 text-muted-foreground">
+                  Actions
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -360,12 +362,14 @@ export default function AuthorizationUsersPage() {
                     })}
 
                     {/* Actions */}
-                    <TableCell onClick={(e) => e.stopPropagation()}>
-                      <CreateUserRoleDialog
-                        userId={user.id}
-                        onRoleAdded={refresh}
-                      />
-                    </TableCell>
+                    {scope !== 'platform' && (
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <CreateUserRoleDialog
+                          userId={user.id}
+                          onRoleAdded={refresh}
+                        />
+                      </TableCell>
+                    )}
                   </TableRow>
 
                   {/* Expanded: permission matrix */}

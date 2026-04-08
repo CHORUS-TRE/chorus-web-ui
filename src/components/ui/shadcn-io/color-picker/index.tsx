@@ -359,13 +359,69 @@ const PercentageInput = ({ className, ...props }: PercentageInputProps) => {
   )
 }
 
+/**
+ * A hex color input that shows the current hex value from sliders
+ * but allows the user to type a new value and commit it on blur/Enter.
+ */
+const HexInput = ({
+  hex,
+  onCommit
+}: {
+  hex: string
+  onCommit: (value: string) => void
+}) => {
+  const [localValue, setLocalValue] = useState(hex)
+  const [isFocused, setIsFocused] = useState(false)
+
+  // Sync from parent when not focused
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalValue(hex)
+    }
+  }, [hex, isFocused])
+
+  const commit = () => {
+    onCommit(localValue)
+  }
+
+  return (
+    <Input
+      className="h-8 rounded-r-none bg-background px-2 text-xs shadow-none"
+      type="text"
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => {
+        setIsFocused(false)
+        commit()
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          commit()
+          ;(e.target as HTMLInputElement).blur()
+        }
+      }}
+    />
+  )
+}
+
 export type ColorPickerFormatProps = HTMLAttributes<HTMLDivElement>
 
 export const ColorPickerFormat = ({
   className,
   ...props
 }: ColorPickerFormatProps) => {
-  const { hue, saturation, lightness, alpha, mode } = useColorPicker()
+  const {
+    hue,
+    saturation,
+    lightness,
+    alpha,
+    mode,
+    setHue,
+    setSaturation,
+    setLightness,
+    setAlpha
+  } = useColorPicker()
   const color = Color.hsl(hue, saturation, lightness, alpha / 100)
 
   if (mode === 'hex') {
@@ -379,11 +435,20 @@ export const ColorPickerFormat = ({
         )}
         {...props}
       >
-        <Input
-          className="h-8 rounded-r-none bg-background px-2 text-xs shadow-none"
-          readOnly
-          type="text"
-          value={hex}
+        <HexInput
+          hex={hex}
+          onCommit={(val) => {
+            try {
+              const parsed = Color(val.startsWith('#') ? val : `#${val}`)
+              const [h, s, l] = parsed.hsl().array()
+              setHue(h)
+              setSaturation(s)
+              setLightness(l)
+              setAlpha(parsed.alpha() * 100)
+            } catch {
+              // ignore invalid color
+            }
+          }}
         />
         <PercentageInput value={alpha} />
       </div>

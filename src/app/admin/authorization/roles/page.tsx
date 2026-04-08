@@ -13,7 +13,7 @@ import {
 import { ROLE_DEFINITIONS, type RoleDefinition } from '~/config/permissions'
 import { cn } from '~/lib/utils'
 
-type Scope = 'all' | 'platform' | 'workspace' | 'session'
+type Scope = 'platform' | 'workspace' | 'session'
 
 function getRoleScope(
   def: RoleDefinition
@@ -52,28 +52,44 @@ function getInheritanceChain(roleName: string): string[] {
 }
 
 const scopeLabels: Record<Scope, string> = {
-  all: 'All',
   platform: 'Platform',
   workspace: 'Workspace',
   session: 'Session'
 }
 
 const scopeBadgeColors: Record<string, string> = {
-  all: 'bg-gray-400 text-white',
-  platform: 'bg-blue-400 text-white',
-  workspace: 'bg-red-400 text-white',
-  session: 'bg-orange-400 text-white'
+  platform: 'bg-primary text-primary-foreground',
+  workspace: 'bg-secondary text-secondary-foreground',
+  session: 'bg-accent text-accent-foreground'
 }
 
 const scopeBadgeBorders: Record<string, string> = {
-  platform: 'border-blue-400',
-  workspace: 'border-red-400',
-  session: 'border-orange-400'
+  platform: 'border-primary text-primary',
+  workspace: 'border-secondary text-secondary',
+  session: 'border-accent text-accent'
+}
+
+const scopeSelectedRole: Record<string, string> = {
+  platform: 'bg-primary/20 text-primary',
+  workspace: 'bg-secondary/20 text-secondary',
+  session: 'bg-accent/20 text-accent'
+}
+
+const scopeHoverRole: Record<string, string> = {
+  platform: 'hover:bg-primary/10',
+  workspace: 'hover:bg-secondary/10',
+  session: 'hover:bg-accent/10'
+}
+
+const scopeTextColor: Record<string, string> = {
+  platform: 'text-primary',
+  workspace: 'text-secondary',
+  session: 'text-accent'
 }
 
 export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState<string>('WorkspaceMember')
-  const [scopeFilter, setScopeFilter] = useState<Scope>('all')
+  const [scopeFilter, setScopeFilter] = useState<Scope>('platform')
 
   const groupedRoles = useMemo(() => {
     const groups: Record<string, { name: string; def: RoleDefinition }[]> = {
@@ -91,7 +107,6 @@ export default function RolesPage() {
   }, [])
 
   const visibleGroups = useMemo(() => {
-    if (scopeFilter === 'all') return groupedRoles
     return { [scopeFilter]: groupedRoles[scopeFilter] || [] }
   }, [scopeFilter, groupedRoles])
 
@@ -132,7 +147,12 @@ export default function RolesPage() {
         <div className="w-64 flex-shrink-0 overflow-y-auto rounded-lg border bg-card p-2 shadow-sm">
           {Object.entries(visibleGroups).map(([scope, roles]) => (
             <div key={scope}>
-              <p className="mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+              <p
+                className={cn(
+                  'mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider',
+                  scopeTextColor[scope] || 'text-muted-foreground/70'
+                )}
+              >
                 {scope} roles
               </p>
               {roles.map(({ name, def }) => (
@@ -144,11 +164,11 @@ export default function RolesPage() {
                         className={cn(
                           'flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
                           selectedRole === name
-                            ? 'bg-primary/20 text-primary'
-                            : 'text-foreground hover:bg-accent/10'
+                            ? scopeSelectedRole[scopeFilter]
+                            : `text-foreground ${scopeHoverRole[scopeFilter]}`
                         )}
                       >
-                        {name}
+                        {def.displayName ?? name}
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="right" className="max-w-xs text-xs">
@@ -167,7 +187,14 @@ export default function RolesPage() {
             {/* Header */}
             <div className="mb-4 space-y-1">
               <div className="flex items-start gap-4">
-                <h2 className="text-lg font-semibold">{selectedRole}</h2>
+                <h2
+                  className={cn(
+                    'text-lg font-semibold',
+                    scopeTextColor[selectedScope]
+                  )}
+                >
+                  {selectedDef.displayName ?? selectedRole}
+                </h2>
                 <Badge
                   variant="outline"
                   className={cn(scopeBadgeBorders[selectedScope], 'mt-1')}
@@ -192,21 +219,26 @@ export default function RolesPage() {
                     <button
                       onClick={() => {
                         setSelectedRole(parent)
-                        // Adjust scope filter if needed
+                        // Adjust scope filter to match parent's scope
                         const parentDef = ROLE_DEFINITIONS[parent]
                         if (parentDef) {
                           const parentScope = getRoleScope(parentDef)
-                          if (
-                            scopeFilter !== 'all' &&
-                            scopeFilter !== parentScope
-                          ) {
-                            setScopeFilter('all')
+                          if (scopeFilter !== parentScope) {
+                            setScopeFilter(parentScope)
                           }
                         }
                       }}
-                      className="rounded px-1 py-0.5 font-medium text-primary hover:bg-primary/10"
+                      className={cn(
+                        'rounded px-1 py-0.5 font-medium',
+                        (() => {
+                          const ps = ROLE_DEFINITIONS[parent]
+                            ? getRoleScope(ROLE_DEFINITIONS[parent])
+                            : 'platform'
+                          return `${scopeTextColor[ps]} ${scopeHoverRole[ps]}`
+                        })()
+                      )}
                     >
-                      {parent}
+                      {ROLE_DEFINITIONS[parent]?.displayName ?? parent}
                     </button>
                   </span>
                 ))}
