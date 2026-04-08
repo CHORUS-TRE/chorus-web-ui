@@ -29,6 +29,13 @@ const config = {
   turbopack: {},
   serverExternalPackages: ['@tobilu/qmd', 'node-llama-cpp', 'better-sqlite3'],
   output: 'standalone',
+  outputFileTracingIncludes: {
+    '/api/*': [
+      './node_modules/@tobilu/qmd/**',
+      './node_modules/node-llama-cpp/**',
+      './node_modules/better-sqlite3/**'
+    ]
+  },
   logging: {
     fetches: {
       fullUrl: true
