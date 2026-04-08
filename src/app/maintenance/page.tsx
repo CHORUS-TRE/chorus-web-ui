@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 
 export default function MaintenancePage() {
@@ -9,6 +11,7 @@ export default function MaintenancePage() {
         width={128}
         height={128}
         className="mb-4"
+        unoptimized
       />
       <p className="text-sm text-muted">
         We are currently performing maintenance on the system. Please check back

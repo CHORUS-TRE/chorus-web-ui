@@ -16,8 +16,12 @@ env:
     value: "1"
   - name: NEXT_PUBLIC_SESSION_READY_DELAY_MS
     value: "500"
-  - name: ANTHROPIC_API_KEY
-    value: 
+  - name: OPENAI_API_BASE_URL
+    value: https://gemma.artefact.ch/v1
+  - name: OPENAI_API_KEY
+    value: AEubpd2D03B+AIX8xiEQas5lTJA9wDarky7UhVybNVA=
+  - name: OPENAI_API_MODEL
+    value: unsloth/gemma-4-E2B-it-GGUF:Q8_0
 
 ingress:
   hosts:

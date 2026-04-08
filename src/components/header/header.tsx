@@ -128,6 +128,7 @@ export function Header() {
               className="aspect-auto cursor-pointer"
               id="logo"
               priority
+              unoptimized
             />
             {logo && (
               <Image
@@ -138,6 +139,7 @@ export function Header() {
                 className="ml-4 aspect-[80/33] cursor-pointer"
                 id="logo"
                 priority
+                unoptimized
               />
             )}
           </Link>

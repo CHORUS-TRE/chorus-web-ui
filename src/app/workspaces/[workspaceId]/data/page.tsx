@@ -1,13 +1,11 @@
+'use client'
+
+import { useParams } from 'next/navigation'
+
 import FileManagerClient from './file-manager-client'
 
-interface FileManagerProps {
-  params: Promise<{
-    workspaceId: string
-  }>
-}
-
-export default async function FileManager({ params }: FileManagerProps) {
-  const { workspaceId } = await params
+export default function FileManager() {
+  const { workspaceId } = useParams<{ workspaceId: string }>()
 
   return (
     <div className="container mx-auto p-6">

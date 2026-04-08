@@ -25,6 +25,7 @@ export default function AppStoreHero() {
                   height={760}
                   className="h-auto w-full"
                   priority
+                  unoptimized
                 />
               </div>
               <div className="mx-auto max-w-2xl lg:mx-0">
