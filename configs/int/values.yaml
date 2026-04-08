@@ -1,6 +1,0 @@
-ingress:
-  enabled: true
-  host: "web-ui.dip-dev.thehip.app"
-
-service:
-  port: 80
