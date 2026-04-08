@@ -1,3 +1,21 @@
+# [1.45.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.44.0...v1.45.0) (2026-04-08)
+
+
+### Bug Fixes
+
+* add scripts/ to .dockerignore allowlist for CI build ([59f36f6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/59f36f68d748038969e6409bda3cf007227e6352))
+* resolve TS type error in appCreate/appUpdate from FormData cast ([5ad1cac](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5ad1cac6e4bc3b0c0a05e94c30f1107b454fef99))
+* skip missing collection paths in build-index script ([5737d20](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5737d20d7d700db5c5b9dbdab7863ad5ba6958e2))
+
+
+### Features
+
+* add groupedVersions to App domain model ([d6ed59d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d6ed59dd62993cb8dfd8e415276ec0d00f422fb9))
+* admin app store uses disableGrouping fetch ([499262b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/499262ba189d190519899b815d503afa3aa1f31e))
+* **app-store:** fix null groupedVersions crash and add version selector at launch ([7caa83a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7caa83aa5da2f5e7536b8714849d9ff5d9a4e1c1))
+* show version count badge in session app store ([bdd2761](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bdd2761f2b1b0455321da48251586753922dda8e))
+* thread disableGrouping through app data layer ([1bbc027](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1bbc02727b740464ea298b969d57950c605590b5))
+
 # [1.44.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.43.0...v1.44.0) (2026-04-07)
 
 
