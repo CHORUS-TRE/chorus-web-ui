@@ -67,9 +67,9 @@ export function useInboxData(userId: string) {
   const [inboxRequests, setInboxRequests] = React.useState<ApprovalRequest[]>(
     []
   )
-  const [outboxRequests, setOutboxRequests] = React.useState<
-    ApprovalRequest[]
-  >([])
+  const [outboxRequests, setOutboxRequests] = React.useState<ApprovalRequest[]>(
+    []
+  )
   const [isLoadingRequests, setIsLoadingRequests] = React.useState(true)
 
   const fetchRequests = React.useCallback(async () => {

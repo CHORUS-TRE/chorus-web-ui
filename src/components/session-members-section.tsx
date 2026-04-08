@@ -159,7 +159,10 @@ export function SessionMembersSection({
           <Tooltip key={role}>
             <TooltipTrigger asChild>
               <TableHead className="min-w-[90px] cursor-default text-center text-xs text-muted-foreground">
-                {role.replace('Workbench', '')}
+                {(ROLE_DEFINITIONS[role]?.displayName ?? role).replace(
+                  /^(Session|Workbench)/,
+                  ''
+                )}
               </TableHead>
             </TooltipTrigger>
             <TooltipContent className="max-w-xs text-xs">
