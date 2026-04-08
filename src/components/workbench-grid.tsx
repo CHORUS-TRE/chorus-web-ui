@@ -71,7 +71,10 @@ export default function WorkbenchGrid({
                   className={`group/card relative flex h-40 flex-col overflow-hidden border-none`}
                 >
                   {/* Background */}
-                  <div className="absolute inset-0" />
+                  <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: "url('/cover-sm.png')" }}
+                  />
 
                   {/* Glass overlay */}
                   <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />

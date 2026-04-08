@@ -1,11 +1,12 @@
 'use client'
 
+import { formatDistanceToNow } from 'date-fns'
 import { Plus } from 'lucide-react'
 import Image from 'next/image'
 
-import { cn } from '@/lib/utils'
 import { Button } from '~/components/button'
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
+import { TableCell, TableRow } from '~/components/ui/table'
 import { App, ExternalWebApp } from '~/domain/model'
 
 interface SessionAppListItemProps {
@@ -14,29 +15,22 @@ interface SessionAppListItemProps {
 }
 
 export function SessionAppListItem({ app, onLaunch }: SessionAppListItemProps) {
+  const iconSrc =
+    'iconURL' in app ? app.iconURL : 'iconUrl' in app ? app.iconUrl : null
+
+  const createdAt = 'createdAt' in app ? (app as App).createdAt : undefined
+  const updatedAt = 'updatedAt' in app ? (app as App).updatedAt : undefined
+
   return (
-    <div className="group pointer-events-auto flex items-center justify-between rounded-xl border border-muted/10 bg-contrast-background/10 p-2 backdrop-blur-md transition-all duration-300 hover:bg-contrast-background/20">
-      <div className="flex min-w-0 items-center gap-3">
-        {/* Icon */}
-        <div className="relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-lg border border-muted/10 bg-background/40 p-1.5 transition-transform group-hover:scale-105">
-          {(
-            'iconURL' in app
-              ? app.iconURL
-              : 'iconUrl' in app
-                ? app.iconUrl
-                : null
-          ) ? (
+    <TableRow className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+      <TableCell className="w-[50px] p-2">
+        <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-lg border border-muted/10 bg-background/40 p-1">
+          {iconSrc ? (
             <Image
-              src={
-                ('iconURL' in app
-                  ? app.iconURL
-                  : 'iconUrl' in app
-                    ? app.iconUrl
-                    : '') as string
-              }
+              src={iconSrc as string}
               alt={app.name || 'App icon'}
               fill
-              className="object-contain p-1"
+              className="object-contain p-0.5"
             />
           ) : (
             <Avatar className="h-full w-full">
@@ -46,34 +40,36 @@ export function SessionAppListItem({ app, onLaunch }: SessionAppListItemProps) {
             </Avatar>
           )}
         </div>
-
-        {/* Info */}
-        <div className="flex min-w-0 flex-col">
-          <h3 className="truncate text-xs font-bold text-foreground transition-colors group-hover:text-primary">
-            {app.name}
-          </h3>
-          <p className="text-[11px] text-muted-foreground">
-            {app.description || 'No description available.'}
-          </p>
-        </div>
-      </div>
-
-      <div className="flex flex-shrink-0 items-center justify-end gap-4 pr-8">
-        {'dockerImageTag' in app && app.dockerImageTag && (
-          <span className="hidden rounded-full bg-muted/20 px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground sm:inline-block">
-            v{app.dockerImageTag}
+      </TableCell>
+      <TableCell className="p-2 font-medium">{app.name}</TableCell>
+      <TableCell className="max-w-[250px] truncate p-2 text-sm text-muted-foreground">
+        {app.description || '—'}
+      </TableCell>
+      <TableCell className="p-2 text-sm">
+        {'dockerImageTag' in app && app.dockerImageTag ? (
+          <span className="rounded-full bg-muted/20 px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+            {app.dockerImageTag}
           </span>
+        ) : (
+          <span className="text-muted-foreground">—</span>
         )}
-        {'groupedVersions' in app &&
-          app.groupedVersions &&
-          app.groupedVersions.length > 0 && (
-            <span className="hidden rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary sm:inline-block">
-              {/* +1 for the base version (API guarantees groupedVersions never includes the current version) */}
-              {app.groupedVersions.length + 1}v
-            </span>
-          )}
+      </TableCell>
+      <TableCell className="p-2 text-xs text-muted-foreground">
+        {createdAt
+          ? formatDistanceToNow(new Date(createdAt), { addSuffix: true })
+          : '—'}
+      </TableCell>
+      <TableCell className="p-2 text-xs text-muted-foreground">
+        {updatedAt
+          ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true })
+          : '—'}
+      </TableCell>
+      <TableCell className="p-2 text-right">
         <Button
-          onClick={onLaunch}
+          onClick={(e) => {
+            e.stopPropagation()
+            onLaunch()
+          }}
           size="sm"
           variant="ghost"
           className="h-7 rounded-lg px-2 text-[10px] text-accent transition-all hover:bg-primary/10 hover:text-primary active:scale-95"
@@ -81,7 +77,7 @@ export function SessionAppListItem({ app, onLaunch }: SessionAppListItemProps) {
           <Plus className="mr-1 h-3 w-3" />
           Launch
         </Button>
-      </div>
-    </div>
+      </TableCell>
+    </TableRow>
   )
 }
