@@ -7,8 +7,6 @@ import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
 import { UserEditDialog } from '~/components/forms/user-edit-dialog'
 import { toast } from '~/components/hooks/use-toast'
 import { Badge } from '~/components/ui/badge'
-import { Label } from '~/components/ui/label'
-import { Switch } from '~/components/ui/switch'
 import {
   Table,
   TableBody,
@@ -25,7 +23,6 @@ export function UserTable() {
   const [userCollapsed, setUserCollapsed] = useState<boolean[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
-  const [mainSourceOnly, setMainSourceOnly] = useState(false)
   const { can, PERMISSIONS } = useAuthorization()
 
   const handleUserChange = useCallback(() => {
@@ -41,8 +38,7 @@ export function UserTable() {
   useEffect(() => {
     async function loadUsers() {
       const result = await listUsers({
-        filterWithNamespaces: true,
-        ...(mainSourceOnly && { filterFromMainSource: true })
+        filterWithNamespaces: true
       })
       if (result.data) {
         setUsers(result.data)
@@ -59,7 +55,7 @@ export function UserTable() {
     if ((can(PERMISSIONS.listUsers), { workspace: '*' })) {
       loadUsers()
     }
-  }, [refreshKey, mainSourceOnly])
+  }, [refreshKey])
 
   if (error) {
     return (
@@ -72,17 +68,8 @@ export function UserTable() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center gap-2">
-        <Switch
-          id="main-source-filter"
-          checked={mainSourceOnly}
-          onCheckedChange={setMainSourceOnly}
-        />
-        <Label htmlFor="main-source-filter">Main OIDC source only</Label>
-      </div>
-
       <Table
-        className="text-foreground"
+        className="table-fixed text-foreground"
         aria-label={`User management table with ${users.length} users`}
       >
         <caption className="sr-only">
@@ -91,28 +78,31 @@ export function UserTable() {
         </caption>
         <TableHeader>
           <TableRow>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-12 p-2 text-muted-foreground">
               ID
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-36 p-2 text-muted-foreground">
               Name
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-28 p-2 text-muted-foreground">
               Username
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-40 p-2 text-muted-foreground">
               Email
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-24 p-2 text-muted-foreground">
+              Source
+            </TableHead>
+            <TableHead scope="col" className="p-2 text-muted-foreground">
               Namespaces
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-16 p-2 text-muted-foreground">
               Roles
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-20 p-2 text-muted-foreground">
               Status
             </TableHead>
-            <TableHead scope="col" className="text-muted-foreground">
+            <TableHead scope="col" className="w-24 p-2 text-muted-foreground">
               Actions
             </TableHead>
           </TableRow>
@@ -120,15 +110,18 @@ export function UserTable() {
         <TableBody className="text-foreground">
           {users.map((user, userIndex) => (
             <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>
+              <TableCell className="p-2">{user.id}</TableCell>
+              <TableCell className="truncate p-2">
                 {user.firstName} {user.lastName}
               </TableCell>
-              <TableCell>{user.username}</TableCell>
-              <TableCell>{user.email || '—'}</TableCell>
-              <TableCell>
+              <TableCell className="truncate p-2">{user.username}</TableCell>
+              <TableCell className="truncate p-2">
+                {user.email || '—'}
+              </TableCell>
+              <TableCell className="p-2">{user.source || '—'}</TableCell>
+              <TableCell className="p-2">
                 {user.namespaces && user.namespaces.length > 0 ? (
-                  <div className="max-h-20 max-w-96 overflow-y-auto">
+                  <div className="max-h-20 overflow-y-auto">
                     <div className="flex flex-wrap gap-1">
                       {user.namespaces
                         .sort((a, b) => a.localeCompare(b))
@@ -143,19 +136,17 @@ export function UserTable() {
                   '—'
                 )}
               </TableCell>
-              <TableCell>
+              <TableCell className="p-2">
                 <Badge>{user.rolesWithContext?.length}</Badge>
-                <div className="flex space-x-1"></div>
               </TableCell>
-
-              <TableCell>
+              <TableCell className="p-2">
                 <Badge
                   variant={user.status === 'active' ? 'default' : 'destructive'}
                 >
                   {user.status}
                 </Badge>
               </TableCell>
-              <TableCell>
+              <TableCell className="p-2">
                 <UserEditDialog user={user} onUserUpdated={handleUserChange} />
                 <UserDeleteDialog
                   userId={user.id}
