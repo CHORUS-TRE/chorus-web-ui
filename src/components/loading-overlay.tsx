@@ -56,6 +56,7 @@ export function LoadingOverlay({
             className="aspect-auto"
             id="logo"
             priority
+            unoptimized
           />
         </div>
         <p className="max-w-md text-sm text-muted">{message}</p>

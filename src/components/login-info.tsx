@@ -41,6 +41,7 @@ export default function LoginInfo() {
             height={180}
             className="mb-12 aspect-[80/33] h-24 w-auto max-w-full"
             priority
+            unoptimized
           />
         )}
 
@@ -51,6 +52,7 @@ export default function LoginInfo() {
           height={180}
           className={`mb-12 h-36 w-auto ${customLogo ? 'hidden' : 'max-w-full'} `}
           priority
+          unoptimized
         />
 
         <div className="text-center">

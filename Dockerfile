@@ -19,6 +19,12 @@ RUN --mount=type=cache,id=pnpm,target=/tmp/pnpm-store \
 
 ENV NODE_ENV=production
 
+# Dereference pnpm symlinks for native packages so standalone output is self-contained
+RUN mkdir -p .ext_modules/@tobilu && \
+    cp -rL node_modules/@tobilu/qmd .ext_modules/@tobilu/qmd && \
+    cp -rL node_modules/node-llama-cpp .ext_modules/node-llama-cpp && \
+    cp -rL node_modules/better-sqlite3 .ext_modules/better-sqlite3
+
 FROM gcr.io/distroless/nodejs22-debian12
 
 WORKDIR /app
@@ -26,6 +32,10 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone .
 COPY --from=builder /app/.next/static .next/static
+
+# Copy native/binary packages not fully captured by standalone output.
+# A flat copy is created in the builder stage to dereference pnpm symlinks.
+COPY --from=builder /app/.ext_modules/ ./node_modules/
 
 EXPOSE 3000
 ENV HOSTNAME=0.0.0.0

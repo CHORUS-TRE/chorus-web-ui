@@ -145,6 +145,7 @@ export default function LoginForm() {
               className="aspect-auto"
               id="logo"
               priority
+              unoptimized
             />
           </div>
         ) : (
