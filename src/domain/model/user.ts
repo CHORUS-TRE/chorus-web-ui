@@ -20,6 +20,8 @@ export const UserSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   passwordChanged: z.boolean().optional(),
+  email: z.string().optional(),
+  namespaces: z.array(z.string()).optional(),
 
   // webui extra fields
   workspaceId: z.string().optional()

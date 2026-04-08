@@ -26,6 +26,7 @@ export const WorkspaceSchema = z.object({
   isMain: z.boolean().optional(),
   appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
+  namespace: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date()
 })

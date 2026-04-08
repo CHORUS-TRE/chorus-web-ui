@@ -102,9 +102,7 @@ function WorkspaceTableRow({
       <TableCell className="p-1 text-center">
         {workspace?.dev?.workbenchCount || 0}
       </TableCell>
-      {/* <TableCell className="p-1">
-        {workspace?.files || 0}
-      </TableCell> */}
+      <TableCell className="p-1">{workspace?.namespace || '—'}</TableCell>
       <TableCell className="p-1">
         {workspace?.createdAt
           ? new Date(workspace.createdAt).toLocaleDateString('en-US', {
@@ -212,6 +210,9 @@ export default function WorkspaceTable({
                 </TableHead>
                 <TableHead className="text-center font-semibold text-foreground">
                   Sessions
+                </TableHead>
+                <TableHead className="font-semibold text-foreground">
+                  Namespace
                 </TableHead>
                 <TableHead className="font-semibold text-foreground">
                   Created
