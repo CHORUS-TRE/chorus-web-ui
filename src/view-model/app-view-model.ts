@@ -33,18 +33,24 @@ export async function appGet(id: string): Promise<Result<App>> {
   }
 }
 
-export async function appList(): Promise<Result<App[]>> {
-  const repository = await getRepository()
-  const useCase = new AppList(repository)
-
-  return await useCase.execute()
+export async function appList(options?: {
+  disableGrouping?: boolean
+}): Promise<Result<App[]>> {
+  try {
+    const repository = await getRepository()
+    const useCase = new AppList(repository)
+    return await useCase.execute(options)
+  } catch (error) {
+    console.error('Error listing apps', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
 }
 
 export async function appCreate(
   prevState: Result<App>,
   formData: FormData
 ): Promise<Result<App>> {
-  const app = Object.fromEntries(formData.entries()) as AppCreateType
+  const app = Object.fromEntries(formData.entries()) as unknown as AppCreateType
 
   const validation = AppCreateSchema.safeParse(app)
 
@@ -55,7 +61,7 @@ export async function appCreate(
   const repository = await getRepository()
   const useCase = new AppCreateUseCase(repository)
 
-  return await useCase.execute(app)
+  return await useCase.execute(validation.data)
 }
 
 export async function appUpdate(
@@ -66,16 +72,16 @@ export async function appUpdate(
     const repository = await getRepository()
     const useCase = new AppUpdate(repository)
 
-    const app: AppUpdateType = Object.fromEntries(
+    const app = Object.fromEntries(
       formData.entries()
-    ) as AppUpdateType
+    ) as unknown as AppUpdateType
 
     const validation = AppUpdateSchema.safeParse(app)
     if (!validation.success) {
       return { issues: validation.error.issues }
     }
 
-    return await useCase.execute(app)
+    return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating app', error)
     return { error: error instanceof Error ? error.message : String(error) }

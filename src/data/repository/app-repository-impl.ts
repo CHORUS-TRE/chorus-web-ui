@@ -29,9 +29,9 @@ export class AppRepositoryImpl implements AppRepository {
     }
   }
 
-  async list(): Promise<Result<App[]>> {
+  async list(options?: { disableGrouping?: boolean }): Promise<Result<App[]>> {
     try {
-      const response = await this.dataSource.list({})
+      const response = await this.dataSource.list(options ?? {})
 
       if (!response.result?.apps) return { error: 'Error listing apps' }
 

@@ -66,9 +66,19 @@ export function SessionAppIcon({
       </div>
 
       {/* Label */}
-      <span className="line-clamp-2 max-w-[84px] text-center text-[11px] font-medium text-foreground/90 drop-shadow-sm transition-colors group-hover:text-primary">
-        {app.name}
-      </span>
+      <div className="flex flex-col items-center gap-0.5">
+        <span className="line-clamp-2 max-w-[84px] text-center text-[11px] font-medium text-foreground/90 drop-shadow-sm transition-colors group-hover:text-primary">
+          {app.name}
+        </span>
+        {'groupedVersions' in app &&
+          app.groupedVersions &&
+          app.groupedVersions.length > 0 && (
+            <span className="rounded-full bg-muted/30 px-1.5 py-px text-[9px] font-semibold text-muted-foreground">
+              {/* +1 for the base version (API guarantees groupedVersions never includes the current version) */}
+              {app.groupedVersions.length + 1}v
+            </span>
+          )}
+      </div>
     </div>
   )
 }

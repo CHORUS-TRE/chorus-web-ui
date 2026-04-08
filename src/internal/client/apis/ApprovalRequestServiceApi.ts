@@ -16,6 +16,7 @@ import * as runtime from '../runtime'
 import type {
   ApprovalRequestServiceApproveApprovalRequestBody,
   ChorusApproveApprovalRequestReply,
+  ChorusCountMyApprovalRequestsReply,
   ChorusCreateDataExtractionRequestReply,
   ChorusCreateDataExtractionRequestRequest,
   ChorusCreateDataTransferRequestReply,
@@ -31,6 +32,8 @@ import {
   ApprovalRequestServiceApproveApprovalRequestBodyToJSON,
   ChorusApproveApprovalRequestReplyFromJSON,
   ChorusApproveApprovalRequestReplyToJSON,
+  ChorusCountMyApprovalRequestsReplyFromJSON,
+  ChorusCountMyApprovalRequestsReplyToJSON,
   ChorusCreateDataExtractionRequestReplyFromJSON,
   ChorusCreateDataExtractionRequestReplyToJSON,
   ChorusCreateDataExtractionRequestRequestFromJSON,
@@ -87,6 +90,8 @@ export interface ApprovalRequestServiceListApprovalRequestsRequest {
   filterTypesIn?: Array<ApprovalRequestServiceListApprovalRequestsFilterTypesInEnum>
   filterSourceWorkspaceId?: string
   filterPendingApproval?: boolean
+  filterApproverId?: string
+  filterRequesterId?: string
 }
 
 /**
@@ -162,6 +167,49 @@ export class ApprovalRequestServiceApi extends runtime.BaseAPI {
       requestParameters,
       initOverrides
     )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns the count of approval requests for the current user
+   * Count my approval requests
+   */
+  async approvalRequestServiceCountMyApprovalRequestsRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusCountMyApprovalRequestsReply>> {
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/approval-requests/mine/count`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusCountMyApprovalRequestsReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns the count of approval requests for the current user
+   * Count my approval requests
+   */
+  async approvalRequestServiceCountMyApprovalRequests(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusCountMyApprovalRequestsReply> {
+    const response =
+      await this.approvalRequestServiceCountMyApprovalRequestsRaw(initOverrides)
     return await response.value()
   }
 
@@ -526,6 +574,15 @@ export class ApprovalRequestServiceApi extends runtime.BaseAPI {
     if (requestParameters.filterPendingApproval !== undefined) {
       queryParameters['filter.pendingApproval'] =
         requestParameters.filterPendingApproval
+    }
+
+    if (requestParameters.filterApproverId !== undefined) {
+      queryParameters['filter.approverId'] = requestParameters.filterApproverId
+    }
+
+    if (requestParameters.filterRequesterId !== undefined) {
+      queryParameters['filter.requesterId'] =
+        requestParameters.filterRequesterId
     }
 
     const headerParameters: runtime.HTTPHeaders = {}

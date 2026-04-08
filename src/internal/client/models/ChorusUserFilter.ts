@@ -43,6 +43,18 @@ export interface ChorusUserFilter {
    * @memberof ChorusUserFilter
    */
   search?: string
+  /**
+   *
+   * @type {boolean}
+   * @memberof ChorusUserFilter
+   */
+  fromMainSource?: boolean
+  /**
+   *
+   * @type {boolean}
+   * @memberof ChorusUserFilter
+   */
+  withNamespaces?: boolean
 }
 
 /**
@@ -73,7 +85,13 @@ export function ChorusUserFilterFromJSONTyped(
     workbenchIDs: !exists(json, 'workbenchIDs')
       ? undefined
       : json['workbenchIDs'],
-    search: !exists(json, 'search') ? undefined : json['search']
+    search: !exists(json, 'search') ? undefined : json['search'],
+    fromMainSource: !exists(json, 'fromMainSource')
+      ? undefined
+      : json['fromMainSource'],
+    withNamespaces: !exists(json, 'withNamespaces')
+      ? undefined
+      : json['withNamespaces']
   }
 }
 
@@ -88,6 +106,8 @@ export function ChorusUserFilterToJSON(value?: ChorusUserFilter | null): any {
     idsIn: value.idsIn,
     workspaceIDs: value.workspaceIDs,
     workbenchIDs: value.workbenchIDs,
-    search: value.search
+    search: value.search,
+    fromMainSource: value.fromMainSource,
+    withNamespaces: value.withNamespaces
   }
 }

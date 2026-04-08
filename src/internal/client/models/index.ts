@@ -1,11 +1,12 @@
 /* tslint:disable */
-
+/* eslint-disable */
 export * from './ApprovalRequestServiceApproveApprovalRequestBody'
 export * from './AuthenticationServiceAuthenticateOauthRedirectBody'
 export * from './ChorusAbortWorkspaceFileUploadReply'
 export * from './ChorusApp'
 export * from './ChorusAppInstance'
 export * from './ChorusAppInstanceFilter'
+export * from './ChorusAppVersion'
 export * from './ChorusApprovalRequest'
 export * from './ChorusApprovalRequestFile'
 export * from './ChorusApprovalRequestFilter'
@@ -29,6 +30,8 @@ export * from './ChorusBulkCreateAppsReply'
 export * from './ChorusBulkCreateAppsRequest'
 export * from './ChorusCompleteWorkspaceFileUploadReply'
 export * from './ChorusCompleteWorkspaceFileUploadResult'
+export * from './ChorusCountMyApprovalRequestsReply'
+export * from './ChorusCountMyApprovalRequestsResult'
 export * from './ChorusCountUnreadNotificationsReply'
 export * from './ChorusCreateAppInstanceReply'
 export * from './ChorusCreateAppInstanceResult'

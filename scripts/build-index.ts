@@ -48,17 +48,25 @@ async function main() {
   console.log('Building qmd index...')
   console.log(`  Database: ${DB_PATH}`)
 
-  // Ensure output directory exists
   const fs = await import('node:fs')
+
+  // Ensure output directory exists
   const dbDir = path.dirname(DB_PATH)
   if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true })
   }
 
-  // Create store with all collections
+  // Create store with available collections only (skip missing paths)
   const collectionsConfig: Record<string, { path: string; pattern: string }> =
     {}
-  for (const col of COLLECTIONS) {
+  const availableCollections = COLLECTIONS.filter((col) => {
+    if (!fs.existsSync(col.path)) {
+      console.log(`  Skipping ${col.id}: path not found (${col.path})`)
+      return false
+    }
+    return true
+  })
+  for (const col of availableCollections) {
     collectionsConfig[col.id] = { path: col.path, pattern: col.pattern }
   }
 
@@ -67,8 +75,8 @@ async function main() {
     config: { collections: collectionsConfig }
   })
 
-  // Add context for each collection
-  for (const col of COLLECTIONS) {
+  // Add context for each available collection
+  for (const col of availableCollections) {
     console.log(`  Adding context for ${col.id}: ${col.name}`)
     await store.addContext(col.id, '', col.context)
   }

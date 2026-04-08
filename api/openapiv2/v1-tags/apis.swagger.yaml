@@ -357,6 +357,16 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: filter.approverId
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: filter.requesterId
+          in: query
+          required: false
+          type: string
+          format: uint64
       tags:
         - ApprovalRequestService
   /api/rest/v1/approval-requests/data-extraction:
@@ -437,6 +447,40 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/chorusCreateDataTransferRequestRequest'
+      tags:
+        - ApprovalRequestService
+  /api/rest/v1/approval-requests/mine/count:
+    get:
+      summary: Count my approval requests
+      description: This endpoint returns the count of approval requests for the current user
+      operationId: ApprovalRequestService_CountMyApprovalRequests
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/chorusCountMyApprovalRequestsReply'
+        "400":
+          description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
+          schema: {}
+        "401":
+          description: 'Unauthorized: indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource'
+          schema: {}
+        "403":
+          description: 'Forbidden: indicates that the server understands the request but refuses to authorize it'
+          schema: {}
+        "404":
+          description: 'Not Found: indicates that the server cannot find the requested resource'
+          schema: {}
+        "500":
+          description: 'Internal Server Error: indicates that the server encountered an unexpected condition that prevented it from fulfilling the request'
+          schema: {}
+        "503":
+          description: 'Service Unavailable: indicates that the server is not ready to handle the request.'
+          schema: {}
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
       tags:
         - ApprovalRequestService
   /api/rest/v1/approval-requests/{id}:
@@ -672,6 +716,10 @@ paths:
           x-example:
             - user_id=9999
             - status=STATUS_CREATED,STATUS_CLOSED
+        - name: disableGrouping
+          in: query
+          required: false
+          type: boolean
       tags:
         - AppService
     post:
@@ -2565,6 +2613,14 @@ paths:
           in: query
           required: false
           type: string
+        - name: filter.fromMainSource
+          in: query
+          required: false
+          type: boolean
+        - name: filter.withNamespaces
+          in: query
+          required: false
+          type: boolean
       tags:
         - UserService
     post:
@@ -4543,8 +4599,6 @@ definitions:
         format: uint64
       name:
         type: string
-      prettyName:
-        type: string
       description:
         type: string
       status:
@@ -4555,6 +4609,11 @@ definitions:
         type: string
       dockerImageTag:
         type: string
+      groupedVersions:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/chorusAppVersion'
       shmSize:
         type: string
       maxCPU:
@@ -4634,6 +4693,14 @@ definitions:
         items:
           type: string
           format: uint64
+  chorusAppVersion:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      dockerImageTag:
+        type: string
   chorusApprovalRequest:
     type: object
     properties:
@@ -4705,6 +4772,12 @@ definitions:
         format: uint64
       pendingApproval:
         type: boolean
+      approverId:
+        type: string
+        format: uint64
+      requesterId:
+        type: string
+        format: uint64
   chorusApprovalRequestNotification:
     type: object
     properties:
@@ -4898,6 +4971,33 @@ definitions:
     properties:
       file:
         $ref: '#/definitions/chorusWorkspaceFile'
+  chorusCountMyApprovalRequestsReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusCountMyApprovalRequestsResult'
+  chorusCountMyApprovalRequestsResult:
+    type: object
+    properties:
+      total:
+        type: string
+        format: uint64
+      totalApprover:
+        type: string
+        format: uint64
+      totalRequester:
+        type: string
+        format: uint64
+      countByStatus:
+        type: object
+        additionalProperties:
+          type: string
+          format: uint64
+      countByType:
+        type: object
+        additionalProperties:
+          type: string
+          format: uint64
   chorusCountUnreadNotificationsReply:
     type: object
     properties:
@@ -5803,6 +5903,12 @@ definitions:
       updatedAt:
         type: string
         format: date-time
+      email:
+        type: string
+      namespaces:
+        type: array
+        items:
+          type: string
   chorusUserFilter:
     type: object
     properties:
@@ -5823,6 +5929,10 @@ definitions:
           format: uint64
       search:
         type: string
+      fromMainSource:
+        type: boolean
+      withNamespaces:
+        type: boolean
   chorusWorkbench:
     type: object
     properties:
@@ -5910,6 +6020,8 @@ definitions:
       updatedAt:
         type: string
         format: date-time
+      namespace:
+        type: string
   chorusWorkspaceFile:
     type: object
     properties:

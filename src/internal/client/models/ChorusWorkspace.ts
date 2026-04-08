@@ -91,6 +91,12 @@ export interface ChorusWorkspace {
    * @memberof ChorusWorkspace
    */
   updatedAt?: Date
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  namespace?: string
 }
 
 /**
@@ -133,7 +139,8 @@ export function ChorusWorkspaceFromJSONTyped(
       : new Date(json['createdAt']),
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
-      : new Date(json['updatedAt'])
+      : new Date(json['updatedAt']),
+    namespace: !exists(json, 'namespace') ? undefined : json['namespace']
   }
 }
 
@@ -158,6 +165,7 @@ export function ChorusWorkspaceToJSON(value?: ChorusWorkspace | null): any {
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+    namespace: value.namespace
   }
 }

@@ -93,7 +93,16 @@ const baseAppSchema = z.object({
         /^data:image\/[a-zA-Z]+;base64,/.test(val),
       'Must be a valid URL or base64 image'
     )
+    .optional(),
+  groupedVersions: z
+    .array(
+      z.object({
+        id: z.string().optional().nullable(),
+        dockerImageTag: z.string().optional().nullable()
+      })
+    )
     .optional()
+    .nullable()
 })
 
 export const AppSchema = baseAppSchema.superRefine((data, ctx) => {
