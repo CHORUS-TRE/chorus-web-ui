@@ -3,12 +3,16 @@
 import { formatDistanceToNow } from 'date-fns'
 import { FileCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
   ApprovalRequestType
 } from '@/domain/model/approval-request'
+import { User } from '@/domain/model/user'
+import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 import {
   Card,
   CardContent,
@@ -37,6 +41,42 @@ export default function ApprovalRequestsTable({
   description?: string
 }) {
   const router = useRouter()
+  const { workspaces } = useAppState()
+  const [usersMap, setUsersMap] = useState<Map<string, User>>(new Map())
+
+  useEffect(() => {
+    async function fetchUsers() {
+      const result = await listUsers()
+      if (result.data) {
+        const map = new Map<string, User>()
+        result.data.forEach((u) => {
+          if (u.id) map.set(u.id, u)
+        })
+        setUsersMap(map)
+      }
+    }
+    fetchUsers()
+  }, [])
+
+  const getWorkspaceName = useCallback(
+    (request: ApprovalRequest) => {
+      const wsId =
+        request.dataExtraction?.sourceWorkspaceId ||
+        request.dataTransfer?.sourceWorkspaceId
+      if (!wsId) return '—'
+      return workspaces?.find((w) => w.id === wsId)?.name || wsId
+    },
+    [workspaces]
+  )
+
+  const getRequesterUsername = useCallback(
+    (requesterId: string | undefined) => {
+      if (!requesterId) return '—'
+      const user = usersMap.get(requesterId)
+      return user?.username || requesterId
+    },
+    [usersMap]
+  )
 
   const getStatusBadge = (status: ApprovalRequestStatus | undefined) => {
     switch (status) {
@@ -83,22 +123,25 @@ export default function ApprovalRequestsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 ID
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Title
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Type
               </TableHead>
-              <TableHead className="text-center font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
+                Workspace
+              </TableHead>
+              <TableHead className="p-2 text-center font-semibold text-foreground">
                 Status
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Requester
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
+              <TableHead className="p-2 font-semibold text-foreground">
                 Created
               </TableHead>
             </TableRow>
@@ -112,22 +155,25 @@ export default function ApprovalRequestsTable({
                   router.push(`/admin/data-requests/${request.id}`)
                 }
               >
-                <TableCell className="max-w-[100px] truncate font-mono text-xs">
+                <TableCell className="max-w-[100px] truncate p-2 font-mono text-xs">
                   {request.id}
                 </TableCell>
-                <TableCell className="max-w-[200px] truncate font-medium">
+                <TableCell className="max-w-[200px] truncate p-2 font-medium">
                   {request.title || 'Untitled Request'}
                 </TableCell>
-                <TableCell>
+                <TableCell className="p-2">
                   <span className="text-sm">{getTypeLabel(request.type)}</span>
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="max-w-[150px] truncate p-2 text-sm">
+                  {getWorkspaceName(request)}
+                </TableCell>
+                <TableCell className="p-2 text-center">
                   {getStatusBadge(request.status)}
                 </TableCell>
-                <TableCell className="font-mono text-xs">
-                  {request.requesterId || '-'}
+                <TableCell className="p-2 text-sm">
+                  {getRequesterUsername(request.requesterId)}
                 </TableCell>
-                <TableCell className="text-xs text-muted-foreground">
+                <TableCell className="p-2 text-xs text-muted-foreground">
                   {request.createdAt
                     ? formatDistanceToNow(new Date(request.createdAt), {
                         addSuffix: true
@@ -139,7 +185,7 @@ export default function ApprovalRequestsTable({
             {(!requests || requests.length === 0) && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="h-24 text-center text-muted-foreground"
                 >
                   No data requests found.

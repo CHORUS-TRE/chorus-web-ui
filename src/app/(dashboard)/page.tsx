@@ -354,9 +354,16 @@ export default function CHORUSDashboard() {
                                   className="session-link block w-full"
                                   variant="rounded"
                                 >
-                                  <div className="flex w-full items-center gap-3 rounded-xl border border-muted/10 bg-muted/30 p-3 text-muted-foreground transition-all hover:border-muted/30 hover:bg-muted/50">
-                                    <LaptopMinimal className="text-foreground-muted h-10 w-10 flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
+                                  <div className="relative flex w-full items-center gap-3 overflow-hidden rounded-xl border border-muted/10 p-3 text-muted-foreground transition-all hover:border-muted/30">
+                                    <div
+                                      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                                      style={{
+                                        backgroundImage: "url('/cover-sm.png')"
+                                      }}
+                                    />
+                                    <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />
+                                    <LaptopMinimal className="text-foreground-muted relative h-10 w-10 flex-shrink-0" />
+                                    <div className="relative min-w-0 flex-1">
                                       <p className="text-sm font-semibold text-muted-foreground hover:text-accent">
                                         {workbench.name}
                                       </p>

@@ -37,9 +37,7 @@ export function UserTable() {
 
   useEffect(() => {
     async function loadUsers() {
-      const result = await listUsers({
-        filterWithNamespaces: true
-      })
+      const result = await listUsers()
       if (result.data) {
         setUsers(result.data)
         setUserCollapsed(result.data.map(() => true))
@@ -93,9 +91,6 @@ export function UserTable() {
             <TableHead scope="col" className="w-24 p-2 text-muted-foreground">
               Source
             </TableHead>
-            <TableHead scope="col" className="p-2 text-muted-foreground">
-              Namespaces
-            </TableHead>
             <TableHead scope="col" className="w-16 p-2 text-muted-foreground">
               Roles
             </TableHead>
@@ -119,23 +114,6 @@ export function UserTable() {
                 {user.email || '—'}
               </TableCell>
               <TableCell className="p-2">{user.source || '—'}</TableCell>
-              <TableCell className="p-2">
-                {user.namespaces && user.namespaces.length > 0 ? (
-                  <div className="max-h-20 overflow-y-auto">
-                    <div className="flex flex-wrap gap-1">
-                      {user.namespaces
-                        .sort((a, b) => a.localeCompare(b))
-                        .map((ns) => (
-                          <Badge key={ns} variant="outline">
-                            {ns}
-                          </Badge>
-                        ))}
-                    </div>
-                  </div>
-                ) : (
-                  '—'
-                )}
-              </TableCell>
               <TableCell className="p-2">
                 <Badge>{user.rolesWithContext?.length}</Badge>
               </TableCell>

@@ -28,6 +28,7 @@ import { useIframeCache } from '~/providers/iframe-cache-provider'
 import { useAppState } from '~/stores/app-state-store'
 import { useUserPreferences } from '~/stores/user-preferences-store'
 
+import packageInfo from '../../package.json'
 import { Button } from './button'
 
 // All navigation items (for external use like mobile nav, page titles)
@@ -76,7 +77,10 @@ function SidebarContent({
   const currentTab = searchParams.get('tab')
   const instanceConfig = useInstanceConfig()
   const { externalWebApps } = useIframeCache()
-  const { unreadNotificationsCount } = useAppState()
+  const { unreadNotificationsCount, pendingApprovalRequestsCount } =
+    useAppState()
+  const messagesBadgeCount =
+    (unreadNotificationsCount ?? 0) + (pendingApprovalRequestsCount ?? 0)
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -189,14 +193,11 @@ function SidebarContent({
         >
           <Bell className="h-4 w-4" />
           Messages
-          {unreadNotificationsCount !== undefined &&
-            unreadNotificationsCount > 0 && (
-              <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
-                {unreadNotificationsCount > 99
-                  ? '99+'
-                  : unreadNotificationsCount}
-              </span>
-            )}
+          {messagesBadgeCount > 0 && (
+            <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-contrast-background">
+              {messagesBadgeCount > 99 ? '99+' : messagesBadgeCount}
+            </span>
+          )}
         </Link>
 
         <Link
@@ -280,6 +281,10 @@ function SidebarContent({
         })}
 
         <div className="flex-1" />
+
+        <p className="px-3 text-right text-[10px] text-muted-foreground/50">
+          v{packageInfo.version}
+        </p>
 
         {/* Admin */}
         {isAdmin && (

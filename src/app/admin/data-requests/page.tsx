@@ -7,11 +7,13 @@ import ApprovalRequestsTable from '@/components/approval-requests-table'
 import { useAppState } from '@/stores/app-state-store'
 
 export default function AdminDataRequestsPage() {
-  const { approvalRequests, refreshApprovalRequests } = useAppState()
+  const { approvalRequests, refreshApprovalRequests, refreshWorkspaces } =
+    useAppState()
 
   useEffect(() => {
     refreshApprovalRequests()
-  }, [refreshApprovalRequests])
+    refreshWorkspaces()
+  }, [refreshApprovalRequests, refreshWorkspaces])
 
   return (
     <div className="container mx-auto p-6">

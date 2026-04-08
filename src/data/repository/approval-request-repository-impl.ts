@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { Result } from '@/domain/model'
 import {
   ApprovalRequest,
+  ApprovalRequestCount,
   ApprovalRequestSchema,
   ApproveApprovalRequestAction,
   CreateDataExtractionRequest,
@@ -35,6 +36,43 @@ export class ApprovalRequestRepositoryImpl
         }
       })
       return { data: undefined }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async countMine(): Promise<Result<ApprovalRequestCount>> {
+    try {
+      const response = await this.dataSource.countMine()
+      const result = response.result
+      if (!result) {
+        return { error: 'API response validation failed' }
+      }
+      return {
+        data: {
+          total: Number(result.total || '0'),
+          totalApprover: Number(result.totalApprover || '0'),
+          totalRequester: Number(result.totalRequester || '0'),
+          countByStatus: result.countByStatus
+            ? Object.fromEntries(
+                Object.entries(result.countByStatus).map(([k, v]) => [
+                  k,
+                  Number(v)
+                ])
+              )
+            : undefined,
+          countByType: result.countByType
+            ? Object.fromEntries(
+                Object.entries(result.countByType).map(([k, v]) => [
+                  k,
+                  Number(v)
+                ])
+              )
+            : undefined
+        }
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

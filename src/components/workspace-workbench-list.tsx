@@ -155,14 +155,20 @@ export function WorkspaceWorkbenchList({
               onKeyDown={handleKeyDown}
               className={`group relative flex ${
                 size === 'small' ? 'h-24' : 'h-32'
-              } flex-col justify-between overflow-hidden rounded-lg border border-transparent bg-muted/90 p-3 transition-all duration-200 hover:border-accent hover:bg-accent/5 ${
+              } flex-col justify-between overflow-hidden rounded-lg border border-transparent p-3 transition-all duration-200 hover:border-accent ${
                 userId === user?.id
                   ? 'cursor-pointer hover:shadow-md'
                   : 'cursor-default opacity-70'
               }`}
             >
+              {/* Background image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: "url('/cover-sm.png')" }}
+              />
+              <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />
               {/* Active indicator */}
-              <div className="flex items-center justify-between">
+              <div className="relative flex items-center justify-between">
                 <span
                   className={`truncate font-medium text-foreground ${size === 'small' ? 'text-sm' : 'text-base'}`}
                 >
@@ -178,7 +184,7 @@ export function WorkspaceWorkbenchList({
               </div>
 
               {/* App info */}
-              <div className="mt-auto pt-2 text-muted-foreground">
+              <div className="relative mt-auto pt-2 text-muted-foreground">
                 <div
                   className={`w-full truncate ${size === 'small' ? 'text-xs' : 'text-sm'}`}
                 >

@@ -93,6 +93,7 @@ export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
 export interface RoleDefinition {
   name: string
+  displayName?: string
   description: string
   inheritsFrom?: string[]
   permissions: Permission[]
@@ -149,7 +150,7 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
   },
   WorkspaceMember: {
     name: 'WorkspaceMember',
-    description: 'This role allows a user to create workbenches in a workspace',
+    description: 'This role allows a user to create sessions in a workspace',
     inheritsFrom: ['WorkspaceGuest'],
     attributes: { workspace: 'x' },
     permissions: [PERMISSIONS.createWorkbench, PERMISSIONS.listFilesInWorkspace]
@@ -220,7 +221,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
   // Workbench roles
   WorkbenchViewer: {
     name: 'WorkbenchViewer',
-    description: 'This role allows a user to audit (read only) a workbench',
+    displayName: 'SessionViewer',
+    description: 'This role allows a user to audit (read only) a session',
     inheritsFrom: ['Authenticated'],
     attributes: { workbench: 'x', workspace: 'x' },
     permissions: [
@@ -233,8 +235,9 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
   },
   WorkbenchMember: {
     name: 'WorkbenchMember',
+    displayName: 'SessionMember',
     description:
-      'This role allows a user to manage app instances in a workbench and update the workbench',
+      'This role allows a user to manage app instances in a session and update the session',
     inheritsFrom: ['WorkbenchViewer'],
     attributes: { workbench: 'x', workspace: 'x' },
     permissions: [
@@ -247,7 +250,8 @@ export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
   },
   WorkbenchAdmin: {
     name: 'WorkbenchAdmin',
-    description: 'This role allows a user to manage a workbench',
+    displayName: 'SessionAdmin',
+    description: 'This role allows a user to manage a session',
     inheritsFrom: ['WorkbenchMember'],
     attributes: { workbench: 'x', workspace: 'x' },
     permissions: [
@@ -329,13 +333,13 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   [PERMISSIONS.deleteAppInstance]: 'Remove app instances',
 
   // WorkbenchService
-  [PERMISSIONS.listWorkbenches]: 'View list of workbenches',
-  [PERMISSIONS.createWorkbench]: 'Create new workbenches',
-  [PERMISSIONS.updateWorkbench]: 'Modify workbench settings',
-  [PERMISSIONS.getWorkbench]: 'View workbench details',
-  [PERMISSIONS.streamWorkbench]: 'Stream workbench sessions',
-  [PERMISSIONS.deleteWorkbench]: 'Remove workbenches',
-  [PERMISSIONS.manageUsersInWorkbench]: 'Add/remove users from workbenches',
+  [PERMISSIONS.listWorkbenches]: 'View list of sessions',
+  [PERMISSIONS.createWorkbench]: 'Create new sessions',
+  [PERMISSIONS.updateWorkbench]: 'Modify session settings',
+  [PERMISSIONS.getWorkbench]: 'View session details',
+  [PERMISSIONS.streamWorkbench]: 'Stream session sessions',
+  [PERMISSIONS.deleteWorkbench]: 'Remove sessions',
+  [PERMISSIONS.manageUsersInWorkbench]: 'Add/remove users from sessions',
 
   // WorkspaceService
   [PERMISSIONS.listWorkspaces]: 'View list of workspaces',
@@ -411,7 +415,7 @@ export const getWorkspaceRoles = (): Role[] => {
     .map((role) => ({ ...role, id: role.name, context: role.attributes || {} }))
 }
 
-// Get roles that are relevant for workbench context
+// Get roles that are relevant for session context
 export const getWorkbenchRoles = (): Role[] => {
   return Object.values(ROLE_DEFINITIONS)
     .filter((role) => role.name.startsWith('Workbench'))

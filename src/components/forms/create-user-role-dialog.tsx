@@ -36,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { getAllRoles } from '~/config/permissions'
+import { getAllRoles, ROLE_DEFINITIONS } from '~/config/permissions'
 import { Result } from '~/domain/model'
 import { Role, User } from '~/domain/model/user'
 import { createUserRole } from '~/view-model/user-view-model'
@@ -110,7 +110,11 @@ export function CreateUserRoleDialog({
   }, [state, onRoleAdded, form, setOpen])
 
   const roleOptions = useMemo(
-    () => roles.map((r) => ({ id: r.id ?? r.name, label: r.name })),
+    () =>
+      roles.map((r) => ({
+        id: r.id ?? r.name,
+        label: ROLE_DEFINITIONS[r.name]?.displayName ?? r.name
+      })),
     [roles]
   )
 

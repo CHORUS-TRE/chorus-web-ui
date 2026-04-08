@@ -16,7 +16,10 @@ import { useDevStoreCache } from '@/stores/dev-store-cache'
 import type { FileSystemUploadItem } from '@/types/file-system'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
-import { listApprovalRequests } from '@/view-model/approval-request-view-model'
+import {
+  countMyApprovalRequests,
+  listApprovalRequests
+} from '@/view-model/approval-request-view-model'
 import { refreshToken } from '@/view-model/authentication-view-model'
 import {
   countUnreadNotifications,
@@ -33,6 +36,7 @@ export type AppStateStore = {
   appInstances: AppInstance[] | undefined
   notifications: Notification[] | undefined
   approvalRequests: ApprovalRequest[] | undefined
+  pendingApprovalRequestsCount: number | undefined
   unreadNotificationsCount: number | undefined
   uploads: Record<string, FileSystemUploadItem> | undefined
 
@@ -42,6 +46,7 @@ export type AppStateStore = {
   refreshAppInstances: () => Promise<void>
   refreshNotifications: () => Promise<void>
   refreshApprovalRequests: () => Promise<void>
+  refreshPendingApprovalRequestsCount: () => Promise<void>
   refreshUnreadNotificationsCount: () => Promise<void>
   startNotificationsPolling: (intervalMs?: number) => void
   stopNotificationsPolling: () => void
@@ -80,6 +85,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   appInstances: undefined,
   notifications: undefined,
   approvalRequests: undefined,
+  pendingApprovalRequestsCount: undefined,
   unreadNotificationsCount: undefined,
   uploads: undefined,
   notificationsPollingInterval: null,
@@ -230,6 +236,21 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
+  refreshPendingApprovalRequestsCount: async () => {
+    const result = await countMyApprovalRequests()
+    if (result.error) {
+      console.error('Failed to refresh approval requests count:', result.error)
+      return
+    }
+    if (result.data) {
+      const pending =
+        result.data.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING'] ?? 0
+      if (pending !== get().pendingApprovalRequestsCount) {
+        set({ pendingApprovalRequestsCount: pending })
+      }
+    }
+  },
+
   refreshUnreadNotificationsCount: async () => {
     const result = await countUnreadNotifications()
     if (result.error) {
@@ -251,9 +272,11 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
 
     // Initial fetch
     refreshNotifications()
+    get().refreshPendingApprovalRequestsCount()
 
     const interval = setInterval(() => {
       refreshNotifications()
+      get().refreshPendingApprovalRequestsCount()
     }, intervalMs)
 
     set({ notificationsPollingInterval: interval })
@@ -276,6 +299,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       appInstances: undefined,
       notifications: undefined,
       approvalRequests: undefined,
+      pendingApprovalRequestsCount: undefined,
       unreadNotificationsCount: undefined,
       uploads: undefined
     })

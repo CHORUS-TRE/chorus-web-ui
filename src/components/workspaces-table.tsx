@@ -66,7 +66,7 @@ function WorkspaceTableRow({
       className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
       onClick={() => router.push(`/workspaces/${workspace?.id}`)}
     >
-      <TableCell className="p-1">
+      <TableCell className="p-2">
         <div
           className="relative h-8 w-8 overflow-hidden rounded-md"
           style={{ background: getCardGradient(workspace?.name || '') }}
@@ -81,7 +81,7 @@ function WorkspaceTableRow({
           )}
         </div>
       </TableCell>
-      <TableCell className="w-52 max-w-52 p-1 font-semibold">
+      <TableCell className="p-2font-semibold w-52 max-w-52">
         <div className="inline-flex gap-x-2">
           {workspace?.isMain && <HomeIcon className="h-4 w-4 text-muted" />}
           <span
@@ -91,19 +91,16 @@ function WorkspaceTableRow({
           </span>
         </div>
       </TableCell>
-      <TableCell className="p-1 text-center">
-        {workspace?.dev?.owner || workspace?.dev?.owner || '-'}
-      </TableCell>
-      <TableCell className="p-1 text-center">
+      <TableCell className="p-2">{workspace?.dev?.owner || '-'}</TableCell>
+      <TableCell className="p-2">
         {workspace?.dev?.members
           ?.map((member) => `${member.firstName} ${member.lastName}`)
           ?.join(', ')}
       </TableCell>
-      <TableCell className="p-1 text-center">
+      <TableCell className="p-2">
         {workspace?.dev?.workbenchCount || 0}
       </TableCell>
-      <TableCell className="p-1">{workspace?.namespace || '—'}</TableCell>
-      <TableCell className="p-1">
+      <TableCell className="p-2">
         {workspace?.createdAt
           ? new Date(workspace.createdAt).toLocaleDateString('en-US', {
               month: 'short',
@@ -112,7 +109,7 @@ function WorkspaceTableRow({
             })
           : '-'}
       </TableCell>
-      <TableCell className="p-1" onClick={(e) => e.stopPropagation()}>
+      <TableCell className="p-2" onClick={(e) => e.stopPropagation()}>
         {workspace?.id &&
           can(PERMISSIONS.updateWorkspace, {
             workspace: workspace?.id
@@ -198,26 +195,23 @@ export default function WorkspaceTable({
           <Table>
             <TableHeader>
               <TableRowComponent>
-                <TableHead className="w-[50px]"></TableHead>
-                <TableHead className="font-semibold text-foreground">
+                <TableHead className="w-[50px] p-2"></TableHead>
+                <TableHead className="p-2 font-semibold text-foreground">
                   Workspace
                 </TableHead>
-                <TableHead className="text-center font-semibold text-foreground">
+                <TableHead className="p-2 font-semibold text-foreground">
                   Owner
                 </TableHead>
-                <TableHead className="text-center font-semibold text-foreground">
+                <TableHead className="p-2 font-semibold text-foreground">
                   Members
                 </TableHead>
-                <TableHead className="text-center font-semibold text-foreground">
+                <TableHead className="p-2 font-semibold text-foreground">
                   Sessions
                 </TableHead>
-                <TableHead className="font-semibold text-foreground">
-                  Namespace
-                </TableHead>
-                <TableHead className="font-semibold text-foreground">
+                <TableHead className="p-2 font-semibold text-foreground">
                   Created
                 </TableHead>
-                <TableHead>
+                <TableHead className="p-2">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRowComponent>

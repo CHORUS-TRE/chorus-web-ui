@@ -20,6 +20,13 @@ import {
   DialogTitle
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table'
 import { App, AppInstanceStatus, ExternalWebApp } from '~/domain/model'
 
 import { SessionAppIcon } from './app-icon'
@@ -253,37 +260,65 @@ export function AppStoreView() {
 
         <div className="custom-scrollbar pointer-events-auto mt-0 flex-1 overflow-auto pr-2 pt-2">
           {filteredItems.length > 0 ? (
-            <div
-              className={cn(
-                'grid pb-8',
-                viewMode === 'icons'
-                  ? 'grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-8'
-                  : 'grid-cols-1 gap-2'
-              )}
-            >
-              {filteredItems.map((item) => {
-                // Determine if this is an external web app or internal app
-                // Web apps are distinguished by having a 'url' property instead of 'dockerImageName'
-                const isWebApp = 'url' in item
-                const action = () =>
-                  isWebApp ? openWebApp(item.id) : handleAppClick(item as App)
-
-                return viewMode === 'icons' ? (
-                  <SessionAppIcon
-                    key={item.id}
-                    app={item as App | ExternalWebApp}
-                    onClick={action}
-                    onLaunch={action}
-                  />
-                ) : (
-                  <SessionAppListItem
-                    key={item.id}
-                    app={item as App | ExternalWebApp}
-                    onLaunch={action}
-                  />
-                )
-              })}
-            </div>
+            viewMode === 'icons' ? (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-8 pb-8">
+                {filteredItems.map((item) => {
+                  const isWebApp = 'url' in item
+                  const action = () =>
+                    isWebApp ? openWebApp(item.id) : handleAppClick(item as App)
+                  return (
+                    <SessionAppIcon
+                      key={item.id}
+                      app={item as App | ExternalWebApp}
+                      onClick={action}
+                      onLaunch={action}
+                    />
+                  )
+                })}
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[50px] p-2" />
+                    <TableHead className="p-2 font-semibold text-foreground">
+                      Name
+                    </TableHead>
+                    <TableHead className="p-2 font-semibold text-foreground">
+                      Description
+                    </TableHead>
+                    <TableHead className="p-2 font-semibold text-foreground">
+                      Version
+                    </TableHead>
+                    <TableHead className="p-2 font-semibold text-foreground">
+                      Created
+                    </TableHead>
+                    <TableHead className="p-2 font-semibold text-foreground">
+                      Updated
+                    </TableHead>
+                    <TableHead className="p-2 text-right font-semibold text-foreground">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredItems.map((item) => {
+                    const isWebApp = 'url' in item
+                    const action = () =>
+                      isWebApp
+                        ? openWebApp(item.id)
+                        : handleAppClick(item as App)
+                    return (
+                      <SessionAppListItem
+                        key={item.id}
+                        app={item as App | ExternalWebApp}
+                        onLaunch={action}
+                      />
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            )
           ) : (
             <div className="flex h-64 flex-col items-center justify-center text-center">
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted/10">

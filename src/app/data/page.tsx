@@ -2,7 +2,6 @@
 
 import { Database, Package } from 'lucide-react'
 
-import { Link } from '@/components/link'
 import { useAppState } from '@/stores/app-state-store'
 import { StatCard } from '~/components/dashboard/stat-card'
 import {
@@ -17,24 +16,6 @@ export default function DataPage() {
   const { workspaces } = useAppState()
   const { user } = useAuthentication()
 
-  const publicChuvData = [
-    {
-      id: 'clinical-trials',
-      name: 'CHUV Clinical Trials (public)',
-      href: '#'
-    },
-    {
-      id: 'publications',
-      name: 'CHUV Publications (open access)',
-      href: '#'
-    },
-    {
-      id: 'biostats',
-      name: 'Aggregated Biostatistics (de-identified)',
-      href: '#'
-    }
-  ]
-
   return (
     <>
       <div className="w-full">
@@ -48,7 +29,7 @@ export default function DataPage() {
 
       <Accordion
         type="multiple"
-        defaultValue={['my-workspaces-data', 'public-chuv-data']}
+        defaultValue={['my-workspaces-data']}
         className="w-full"
       >
         <AccordionItem value="my-workspaces-data" className="border-b-0">
@@ -86,32 +67,6 @@ export default function DataPage() {
               ).length && (
                 <div className="text-muted">No workspaces found.</div>
               )}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="public-chuv-data" className="border-b-0">
-          <AccordionTrigger className="text-muted hover:text-accent hover:no-underline [&>svg]:text-muted [&>svg]:opacity-100">
-            <div className="text-lg font-semibold">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Database className="h-6 w-6" />
-                <div>Public CHUV Data</div>
-              </div>
-              <p className="text-sm font-normal text-muted-foreground">
-                Explore publicly available CHUV datasets
-              </p>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent className="border-b-0">
-            <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
-              {publicChuvData.map((d) => (
-                <StatCard
-                  key={`public-data-${d.id}`}
-                  href={d.href}
-                  title={d.name}
-                  description="Explore"
-                />
-              ))}
             </div>
           </AccordionContent>
         </AccordionItem>

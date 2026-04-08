@@ -3,6 +3,7 @@ import { ApprovalRequestServiceListApprovalRequestsRequest } from '@/internal/cl
 import { Result } from '../model'
 import {
   ApprovalRequest,
+  ApprovalRequestCount,
   ApproveApprovalRequestAction,
   CreateDataExtractionRequest,
   CreateDataTransferRequest
@@ -15,6 +16,7 @@ export interface DownloadFileResult {
 
 export interface ApprovalRequestRepository {
   approve(action: ApproveApprovalRequestAction): Promise<Result<void>>
+  countMine(): Promise<Result<ApprovalRequestCount>>
   createDataExtraction(
     request: CreateDataExtractionRequest
   ): Promise<Result<ApprovalRequest>>

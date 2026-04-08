@@ -270,7 +270,7 @@ export default function UserProfile() {
                     </h5>
                     {platformRoles.length > 0 && (
                       <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-blue-400">
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-primary">
                           Platform
                         </p>
                         <div className="flex flex-wrap gap-2">
@@ -285,7 +285,7 @@ export default function UserProfile() {
                     )}
                     {workspaceRoles.length > 0 && (
                       <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-red-400">
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-secondary">
                           Workspace
                         </p>
                         <div className="flex flex-wrap gap-2">
@@ -300,7 +300,7 @@ export default function UserProfile() {
                     )}
                     {sessionRoles.length > 0 && (
                       <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-orange-400">
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-accent">
                           Session
                         </p>
                         <div className="flex flex-wrap gap-2">

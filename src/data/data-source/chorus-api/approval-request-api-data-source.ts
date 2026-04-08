@@ -8,6 +8,7 @@ import {
   ApprovalRequestServiceGetApprovalRequestRequest,
   ApprovalRequestServiceListApprovalRequestsRequest,
   ChorusApproveApprovalRequestReply,
+  ChorusCountMyApprovalRequestsReply,
   ChorusCreateDataExtractionRequestReply,
   ChorusCreateDataTransferRequestReply,
   ChorusDeleteApprovalRequestReply,
@@ -21,6 +22,7 @@ export interface ApprovalRequestDataSource {
   approve(
     params: ApprovalRequestServiceApproveApprovalRequestRequest
   ): Promise<ChorusApproveApprovalRequestReply>
+  countMine(): Promise<ChorusCountMyApprovalRequestsReply>
   createDataExtraction(
     params: ApprovalRequestServiceCreateDataExtractionRequestRequest
   ): Promise<ChorusCreateDataExtractionRequestReply>
@@ -58,6 +60,10 @@ export class ApprovalRequestApiDataSourceImpl
     params: ApprovalRequestServiceApproveApprovalRequestRequest
   ): Promise<ChorusApproveApprovalRequestReply> {
     return this.service.approvalRequestServiceApproveApprovalRequest(params)
+  }
+
+  countMine(): Promise<ChorusCountMyApprovalRequestsReply> {
+    return this.service.approvalRequestServiceCountMyApprovalRequests()
   }
 
   createDataExtraction(
