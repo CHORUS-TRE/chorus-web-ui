@@ -22,8 +22,8 @@ ENV NODE_ENV=production
 # Dereference pnpm symlinks for native packages so standalone output is self-contained
 RUN mkdir -p .ext_modules/@tobilu && \
     cp -rL node_modules/@tobilu/qmd .ext_modules/@tobilu/qmd && \
-    cp -rL node_modules/node-llama-cpp .ext_modules/node-llama-cpp && \
-    cp -rL node_modules/better-sqlite3 .ext_modules/better-sqlite3
+    cp -rL node_modules/.pnpm/node-llama-cpp*/node_modules/node-llama-cpp .ext_modules/node-llama-cpp && \
+    cp -rL node_modules/.pnpm/better-sqlite3*/node_modules/better-sqlite3 .ext_modules/better-sqlite3
 
 FROM gcr.io/distroless/nodejs22-debian12
 

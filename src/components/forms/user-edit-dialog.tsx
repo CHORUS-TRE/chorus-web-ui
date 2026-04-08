@@ -14,6 +14,7 @@ import { z } from 'zod'
 
 import { updateUser } from '@/view-model/user-view-model'
 import { Button } from '~/components/button'
+import { Badge } from '~/components/ui/badge'
 import {
   Dialog,
   DialogContent,
@@ -154,6 +155,31 @@ export function UserEditDialog({
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>
+        <div className="space-y-2 border-b pb-4">
+          <div>
+            <p className="text-sm font-medium">Email</p>
+            <p className="text-sm text-muted-foreground">
+              {internalUser.email || '—'}
+            </p>
+          </div>
+          {internalUser.namespaces !== undefined && (
+            <div>
+              <p className="text-sm font-medium">Namespaces</p>
+              {internalUser.namespaces.length > 0 ? (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {internalUser.namespaces.map((ns) => (
+                    <Badge key={ns} variant="outline">
+                      {ns}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">—</p>
+              )}
+            </div>
+          )}
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('id')} />
