@@ -28,6 +28,7 @@ import { useIframeCache } from '~/providers/iframe-cache-provider'
 import { useAppState } from '~/stores/app-state-store'
 import { useUserPreferences } from '~/stores/user-preferences-store'
 
+import packageInfo from '../../package.json'
 import { Button } from './button'
 
 // All navigation items (for external use like mobile nav, page titles)
@@ -280,6 +281,10 @@ function SidebarContent({
         })}
 
         <div className="flex-1" />
+
+        <p className="px-3 text-right text-[10px] text-muted-foreground/50">
+          v{packageInfo.version}
+        </p>
 
         {/* Admin */}
         {isAdmin && (
