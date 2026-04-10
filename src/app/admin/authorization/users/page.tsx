@@ -49,19 +49,19 @@ function getRoleScope(
 
 const scopeColors: Record<Scope, string> = {
   platform: 'border-primary text-primary',
-  workspace: 'border-secondary text-secondary',
+  workspace: 'border-muted-foreground text-muted-foreground',
   session: 'border-accent text-accent'
 }
 
 const scopeActiveBg: Record<Scope, string> = {
   platform: 'bg-primary text-primary-foreground border-primary',
-  workspace: 'bg-secondary text-secondary-foreground border-secondary',
+  workspace: 'bg-muted text-foreground border-muted',
   session: 'bg-accent text-accent-foreground border-accent'
 }
 
 const contextBadgeColors: Record<Scope, string> = {
   platform: 'bg-primary/20 text-primary',
-  workspace: 'bg-secondary/20 text-secondary',
+  workspace: 'bg-muted/20 text-muted-foreground',
   session: 'bg-accent/20 text-accent'
 }
 

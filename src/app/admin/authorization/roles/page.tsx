@@ -59,31 +59,31 @@ const scopeLabels: Record<Scope, string> = {
 
 const scopeBadgeColors: Record<string, string> = {
   platform: 'bg-primary text-primary-foreground',
-  workspace: 'bg-secondary text-secondary-foreground',
+  workspace: 'bg-muted text-foreground',
   session: 'bg-accent text-accent-foreground'
 }
 
 const scopeBadgeBorders: Record<string, string> = {
   platform: 'border-primary text-primary',
-  workspace: 'border-secondary text-secondary',
+  workspace: 'border-muted-foreground text-muted-foreground',
   session: 'border-accent text-accent'
 }
 
 const scopeSelectedRole: Record<string, string> = {
   platform: 'bg-primary/20 text-primary',
-  workspace: 'bg-secondary/20 text-secondary',
+  workspace: 'bg-muted/20 text-muted-foreground',
   session: 'bg-accent/20 text-accent'
 }
 
 const scopeHoverRole: Record<string, string> = {
   platform: 'hover:bg-primary/10',
-  workspace: 'hover:bg-secondary/10',
+  workspace: 'hover:bg-muted/10',
   session: 'hover:bg-accent/10'
 }
 
 const scopeTextColor: Record<string, string> = {
   platform: 'text-primary',
-  workspace: 'text-secondary',
+  workspace: 'text-muted-foreground',
   session: 'text-accent'
 }
 

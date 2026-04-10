@@ -18,7 +18,7 @@ type RoleScope = 'platform' | 'workspace' | 'session'
 
 const scopeColors: Record<RoleScope, string> = {
   platform: 'border-primary text-primary',
-  workspace: 'border-secondary text-secondary',
+  workspace: 'border-muted-foreground text-muted-foreground',
   session: 'border-accent text-accent'
 }
 
