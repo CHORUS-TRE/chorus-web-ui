@@ -109,8 +109,7 @@ export function InboxItemRow({
             {showApprovalActions && (
               <>
                 <Button
-                  size="sm"
-                  className="h-7 rounded-md px-3 text-xs"
+                  size="xs"
                   onClick={() => onApprove?.(request)}
                 >
                   <CheckCircle2 className="mr-1 h-3 w-3" />
@@ -118,8 +117,7 @@ export function InboxItemRow({
                 </Button>
                 <Button
                   variant="destructive"
-                  size="sm"
-                  className="h-7 rounded-md px-3 text-xs"
+                  size="xs"
                   onClick={() => onReject?.(request)}
                 >
                   <XCircle className="mr-1 h-3 w-3" />
@@ -131,8 +129,7 @@ export function InboxItemRow({
             {isOwnApprovedExtraction && onDownload && (
               <Button
                 variant="outline"
-                size="sm"
-                className="h-7 rounded-md px-3 text-xs"
+                size="xs"
                 onClick={() => onDownload(request)}
               >
                 <Download className="mr-1 h-3 w-3" />
@@ -143,8 +140,8 @@ export function InboxItemRow({
             {isRequest && onViewRequest && request?.id && (
               <Button
                 variant="outline"
-                size="sm"
-                className="h-7 rounded-md border-muted/30 px-3 text-xs text-muted-foreground"
+                size="xs"
+                className="border-muted/30 text-muted-foreground"
                 onClick={() => onViewRequest(request.id!)}
               >
                 View details
@@ -154,8 +151,8 @@ export function InboxItemRow({
             {approvalRequestId && onViewRequest && (
               <Button
                 variant="outline"
-                size="sm"
-                className="h-7 rounded-md border-muted/30 px-3 text-xs text-muted-foreground"
+                size="xs"
+                className="border-muted/30 text-muted-foreground"
                 onClick={() => onViewRequest(approvalRequestId)}
               >
                 View Request
@@ -165,8 +162,8 @@ export function InboxItemRow({
             {!item.isRead && onMarkAsRead && item.id && (
               <Button
                 variant="ghost"
-                size="sm"
-                className="h-7 rounded-md px-3 text-xs text-muted-foreground"
+                size="xs"
+                className="text-muted-foreground"
                 onClick={() => onMarkAsRead(item.id)}
               >
                 Mark as read
