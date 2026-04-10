@@ -136,11 +136,11 @@ export function WorkspaceUserCard({
 
       <CardContent className="px-6 pb-6 pt-0">
         <div
-          className={`rounded-xl border border-border/50 bg-background/30 transition-all duration-300 ${isPermissionsOpen ? 'ring-2 ring-lime-500/30' : ''}`}
+          className={`rounded-xl border border-border/50 bg-background/30 transition-all duration-300 ${isPermissionsOpen ? 'ring-2 ring-accent/30' : ''}`}
         >
           <button
             onClick={() => setIsPermissionsOpen(!isPermissionsOpen)}
-            className={`flex w-full items-center justify-between p-4 text-sm font-bold transition-colors hover:bg-accent/50 ${isPermissionsOpen ? 'bg-lime-500/20 text-foreground' : 'text-muted-foreground'}`}
+            className={`flex w-full items-center justify-between p-4 text-sm font-bold transition-colors hover:bg-accent/15 ${isPermissionsOpen ? 'bg-accent/15 text-accent' : 'text-muted-foreground'}`}
           >
             <div className="flex items-center gap-2">Permissions</div>
             {isPermissionsOpen ? (

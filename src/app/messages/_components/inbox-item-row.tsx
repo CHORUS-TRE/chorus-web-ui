@@ -37,19 +37,19 @@ function ItemIcon({ kind }: { kind: InboxItem['kind'] }) {
   switch (kind) {
     case 'notification':
       return (
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Bell className="h-4 w-4" />
         </div>
       )
     case 'extraction_request':
       return (
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/30">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
           <ArrowDownToLine className="h-4 w-4" />
         </div>
       )
     case 'transfer_request':
       return (
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/30">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <ArrowRightLeft className="h-4 w-4" />
         </div>
       )
@@ -96,7 +96,7 @@ export function InboxItemRow({
             className={`text-sm ${!item.isRead ? 'font-bold' : 'font-medium'}`}
           >
             {!item.isRead && (
-              <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-blue-500" />
+              <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-primary" />
             )}
             {item.title}
           </p>
@@ -108,10 +108,7 @@ export function InboxItemRow({
           <div className="mt-2 flex items-center gap-1.5">
             {showApprovalActions && (
               <>
-                <Button
-                  size="xs"
-                  onClick={() => onApprove?.(request)}
-                >
+                <Button size="xs" onClick={() => onApprove?.(request)}>
                   <CheckCircle2 className="mr-1 h-3 w-3" />
                   Approve
                 </Button>
