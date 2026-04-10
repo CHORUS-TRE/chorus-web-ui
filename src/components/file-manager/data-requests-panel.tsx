@@ -158,7 +158,7 @@ export function DataRequestsPanel({
       </Card>
 
       <Tabs defaultValue="outbox" className="w-full">
-        <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl bg-muted/20 p-1.5 lg:w-[400px]">
+        <TabsList className="grid h-12 w-full grid-cols-2 rounded-lg bg-muted/20 p-1.5 lg:w-[400px]">
           <TabsTrigger
             value="outbox"
             className="flex items-center gap-2 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm"
@@ -276,7 +276,7 @@ export function DataRequestsPanel({
 
           {selectedRequest && (
             <div className="space-y-6 py-4">
-              <div className="grid grid-cols-2 gap-4 rounded-xl border border-muted/20 bg-muted/10 p-4">
+              <div className="grid grid-cols-2 gap-4 rounded-lg border border-muted/20 bg-muted/10 p-4">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">
                     Manifest Type
@@ -299,7 +299,7 @@ export function DataRequestsPanel({
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Applicant Justification
                 </Label>
-                <div className="rounded-xl border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
+                <div className="rounded-md border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
                   &quot;{selectedRequest.justification}&quot;
                 </div>
               </div>
@@ -319,7 +319,7 @@ export function DataRequestsPanel({
                   placeholder="Record relevant details for the security audit log..."
                   value={reviewNotes}
                   onChange={(e) => setReviewNotes(e.target.value)}
-                  className="min-h-[100px] resize-none rounded-xl bg-muted/20"
+                  className="min-h-[100px] resize-none rounded-md bg-muted/20"
                 />
               </div>
             </div>

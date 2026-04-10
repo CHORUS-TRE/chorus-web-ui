@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
-import { Link } from '@/components/ui/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardTitle } from '@/components/ui/card'
@@ -15,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Link } from '@/components/ui/link'
 import { Workbench } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'

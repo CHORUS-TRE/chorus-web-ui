@@ -2710,11 +2710,6 @@ body {
   border-bottom-right-radius: 0px;
 }
 
-.rounded-t-2xl {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-}
-
 .rounded-t-lg {
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
@@ -2896,11 +2891,6 @@ body {
 .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
-
-.border-gray-400 {
-  --tw-border-opacity: 1;
-  border-color: rgb(156 163 175 / var(--tw-border-opacity, 1));
 }
 
 .border-gray-700 {
@@ -5489,11 +5479,6 @@ nav li {
   background-color: transparent;
 }
 
-.file\:bg-white::file-selector-button {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-}
-
 .file\:text-sm::file-selector-button {
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -7608,6 +7593,10 @@ nav li {
 
 .\[\&\.active\]\:border-accent.active {
   border-color: hsl(var(--accent));
+}
+
+.\[\&\.active\]\:text-foreground.active {
+  color: hsl(var(--foreground));
 }
 
 .\[\&\.active\]\:text-white.active {

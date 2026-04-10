@@ -131,7 +131,7 @@ const LogoUploadForm = () => {
             <img
               src={lightLogo}
               alt="Light logo preview"
-              className="mt-2 h-10 w-auto rounded bg-gray-200 p-2"
+              className="mt-2 h-10 w-auto rounded bg-muted p-2"
             />
           )}
         </div>

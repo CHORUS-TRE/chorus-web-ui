@@ -20,7 +20,7 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
   return (
     <div
       style={{
-        backgroundColor: 'white',
+        backgroundColor: 'hsl(var(--background))',
         borderRadius: '0.5rem',
         boxShadow:
           '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
@@ -80,8 +80,8 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
             style={{
               padding: '0.5rem 1rem',
               fontWeight: '500',
-              color: '#4B5563',
-              backgroundColor: '#F3F4F6',
+              color: 'hsl(var(--muted-foreground))',
+              backgroundColor: 'hsl(var(--muted))',
               borderRadius: '0.375rem',
               cursor: 'pointer',
               display: step.showControls ? 'block' : 'none'
@@ -91,7 +91,7 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
             Previous
           </button>
         )}
-        <span style={{ color: '#6B7280', whiteSpace: 'nowrap' }}>
+        <span style={{ color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>
           {/* {currentStep + 1} of {totalSteps} */}
         </span>
         {currentStep === totalSteps - 1 ? (
@@ -110,8 +110,8 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
             style={{
               padding: '0.5rem 1rem',
               fontWeight: '500',
-              color: 'white',
-              backgroundColor: '#2563EB',
+              color: 'hsl(var(--primary-foreground))',
+              backgroundColor: 'hsl(var(--primary))',
               borderRadius: '0.375rem',
               cursor: 'pointer',
               display: step.showControls ? 'block' : 'none'
@@ -139,8 +139,8 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
             width: '100%',
             padding: '0.5rem 1rem',
             fontWeight: '500',
-            color: '#4B5563',
-            backgroundColor: '#F3F4F6',
+            color: 'hsl(var(--muted-foreground))',
+            backgroundColor: 'hsl(var(--muted))',
             borderRadius: '0.375rem',
             cursor: 'pointer',
             display: step.showSkip ? 'block' : 'none'

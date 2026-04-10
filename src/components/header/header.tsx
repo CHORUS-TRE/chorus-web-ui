@@ -10,7 +10,6 @@ import { useMemo, useState } from 'react'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
 import { toast } from '@/components/hooks/use-toast'
-import { Link } from '@/components/ui/link'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,6 +20,7 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { AppBreadcrumb } from '@/components/ui/app-breadcrumb'
+import { Link } from '@/components/ui/link'
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'

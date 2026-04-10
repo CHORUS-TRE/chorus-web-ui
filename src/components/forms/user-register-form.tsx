@@ -5,10 +5,10 @@ import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
-import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
 import { Result, User } from '@/domain/model'
 import { createUser } from '@/view-model/user-view-model'
@@ -77,7 +77,7 @@ export default function UserRegisterForm() {
                 className="border border-muted/40 bg-background text-muted-foreground"
                 autoComplete="given-name"
               />
-              <div className="text-xs text-red-500">
+              <div className="text-xs text-destructive">
                 {
                   state.issues?.find((e) => e.path.includes('firstName'))
                     ?.message
@@ -97,7 +97,7 @@ export default function UserRegisterForm() {
                 className="border border-muted/40 bg-background text-muted-foreground"
                 autoComplete="family-name"
               />
-              <div className="text-xs text-red-500">
+              <div className="text-xs text-destructive">
                 {
                   state.issues?.find((e) => e.path.includes('lastName'))
                     ?.message
@@ -119,7 +119,7 @@ export default function UserRegisterForm() {
               className="border border-muted/40 bg-background text-muted-foreground"
               autoComplete="username"
             />
-            <div className="text-xs text-red-500">
+            <div className="text-xs text-destructive">
               {state.issues?.find((e) => e.path.includes('username'))?.message}
             </div>
           </div>
@@ -141,7 +141,7 @@ export default function UserRegisterForm() {
             <p className="text-xs text-muted-foreground">
               Password must be at least 8 characters long
             </p>
-            <div className="text-xs text-red-500">
+            <div className="text-xs text-destructive">
               {state.issues?.find((e) => e.path.includes('password'))?.message}
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function UserRegisterForm() {
       <p aria-live="polite" className="sr-only" role="status">
         {state.error}
       </p>
-      {state.error && <p className="text-red-500">{state.error}</p>}
+      {state.error && <p className="text-destructive">{state.error}</p>}
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}

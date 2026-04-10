@@ -7,7 +7,6 @@ import { z } from 'zod'
 
 import { PRESETS, type Presets } from '@/components/forms/app-create-dialog'
 import { ImageUploadField } from '@/components/forms/image-upload-field'
-import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -25,6 +24,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Link } from '@/components/ui/link'
 import {
   Select,
   SelectContent,
@@ -153,11 +153,11 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       >
         <DialogHeader>
           <div className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-white">Edit App Details</DialogTitle>
+            <DialogTitle className="text-foreground">Edit App Details</DialogTitle>
             <Link
               href="#"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-white"
+              className="inline-flex w-max items-center justify-center border-b-2 border-accent bg-transparent text-sm text-muted transition-colors hover:border-b-2 hover:border-accent hover:text-accent data-[active]:border-b-2 data-[active]:border-accent data-[state=open]:border-accent [&.active]:border-b-2 [&.active]:border-accent [&.active]:text-foreground"
               prefetch={false}
             >
               {showAdvanced ? 'Hide Advanced Settings' : 'Advanced Settings'}
@@ -184,7 +184,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Name</FormLabel>
+                      <FormLabel className="text-foreground">Name</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -202,7 +202,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Description</FormLabel>
+                      <FormLabel className="text-foreground">Description</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -232,7 +232,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                   name="dockerImageRegistry"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">
+                      <FormLabel className="text-foreground">
                         Docker Image Registry
                       </FormLabel>
                       <FormControl>
@@ -253,7 +253,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                     name="dockerImageName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">
+                        <FormLabel className="text-foreground">
                           Docker Image
                         </FormLabel>
                         <FormControl>
@@ -273,7 +273,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                     name="dockerImageTag"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">Image Tag</FormLabel>
+                        <FormLabel className="text-foreground">Image Tag</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -289,13 +289,13 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
               </div>
 
               {showAdvanced && (
-                <div className="space-y-4 border-l border-gray-400 pl-8">
+                <div className="space-y-4 border-l border-border pl-8">
                   <FormField
                     control={form.control}
                     name="kioskConfigURL"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">
+                        <FormLabel className="text-foreground">
                           Kiosk Config URL
                         </FormLabel>
                         <FormControl>
@@ -310,13 +310,13 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                     )}
                   />
 
-                  <div className="space-y-4 rounded-md border border-gray-400 p-4">
+                  <div className="space-y-4 rounded-md border border-border p-4">
                     <FormField
                       control={form.control}
                       name="preset"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">
+                          <FormLabel className="text-foreground">
                             Resource Preset
                           </FormLabel>
                           <Select
@@ -396,7 +396,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                       name="shmSize"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">
+                          <FormLabel className="text-foreground">
                             Shared Memory Size
                           </FormLabel>
                           <FormControl>
@@ -417,7 +417,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         name="minEphemeralStorage"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="text-foreground">
                               Min Ephemeral Storage
                             </FormLabel>
                             <FormControl>
@@ -437,7 +437,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         name="maxEphemeralStorage"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="text-foreground">
                               Max Ephemeral Storage
                             </FormLabel>
                             <FormControl>
@@ -459,7 +459,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         name="minCPU"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="text-foreground">
                               Min CPU
                             </FormLabel>
                             <FormControl>
@@ -479,7 +479,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         name="maxCPU"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="text-foreground">
                               Max CPU
                             </FormLabel>
                             <FormControl>
@@ -501,7 +501,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         name="minMemory"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="text-foreground">
                               Min Memory
                             </FormLabel>
                             <FormControl>
@@ -521,7 +521,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                         name="maxMemory"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">
+                            <FormLabel className="text-foreground">
                               Max Memory
                             </FormLabel>
                             <FormControl>

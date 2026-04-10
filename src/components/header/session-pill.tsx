@@ -279,7 +279,7 @@ export function SessionPill({
     const appsRunning = getSessionApps(sessionId)
 
     return (
-      <div className="flex min-w-[260px] flex-col overflow-hidden rounded-2xl border border-border bg-popover shadow-2xl">
+      <div className="flex min-w-[260px] flex-col overflow-hidden rounded-lg border border-border bg-popover shadow-md">
         <SessionStatusSection
           sessionId={sessionId}
           workbenches={workbenches}
@@ -405,7 +405,7 @@ export function SessionPill({
 
       {/* Floating app launch status panel */}
       {visibleLaunchingApps.length > 0 && (
-        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[260px] space-y-1.5 rounded-2xl border border-border bg-popover p-3 shadow-2xl">
+        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[260px] space-y-1.5 rounded-lg border border-border bg-popover p-3 shadow-md">
           {visibleLaunchingApps.map((instance) => (
             <AppLaunchToastContent
               key={instance.id}

@@ -15,9 +15,9 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
-import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Link } from '@/components/ui/link'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
@@ -209,10 +209,10 @@ export default function CHORUSDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground text-purple-600">
+                      <span className="text-3xl font-semibold text-primary">
                         {'73%'}
                       </span>
-                      <Cpu className="h-8 w-8 text-purple-600" />
+                      <Cpu className="h-8 w-8 text-primary" />
                     </div>
                   </CardContent>
                 </Card>
@@ -285,13 +285,13 @@ export default function CHORUSDashboard() {
                     return (
                       <div
                         key={workspace.id}
-                        className="group/workspace relative w-full rounded-2xl border border-muted/40 bg-card/50 text-card-foreground shadow-sm transition-all duration-300 hover:border-accent has-[.session-link:hover]:border-muted/40"
+                        className="group/workspace relative w-full rounded-lg border border-muted/40 bg-card/50 text-card-foreground shadow-sm transition-all duration-300 hover:border-accent has-[.session-link:hover]:border-muted/40"
                       >
                         {/* Workspace link as a separate clickable area */}
                         <Link
                           href={`/workspaces/${workspace.id}`}
                           variant="plain"
-                          className="flex w-full cursor-pointer rounded-t-2xl p-4 transition-colors hover:bg-muted/10"
+                          className="flex w-full cursor-pointer rounded-t-lg p-4 transition-colors hover:bg-muted/10"
                         >
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-3">
@@ -426,7 +426,7 @@ export default function CHORUSDashboard() {
                           className="block rounded-lg border border-muted/10 bg-muted/20 p-2 transition-colors hover:bg-muted/50"
                         >
                           <div className="flex items-start gap-2">
-                            <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
+                            <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
                             <div className="min-w-0 flex-1">
                               <p className="line-clamp-2 text-xs font-medium text-muted-foreground">
                                 {notification.message}

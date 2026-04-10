@@ -317,7 +317,7 @@ export function LeftSidebar() {
   return (
     <div
       className={cn(
-        'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
+        'flex h-full flex-col overflow-y-auto rounded-lg border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
       )}
     >
       <SidebarContent pathname={pathname} searchParams={searchParams} />

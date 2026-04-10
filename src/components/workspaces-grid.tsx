@@ -15,7 +15,6 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
-import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
 import {
@@ -24,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Link } from '@/components/ui/link'
 import { User, WorkspaceWithDev } from '@/domain/model'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'

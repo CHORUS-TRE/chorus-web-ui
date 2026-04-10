@@ -14,12 +14,12 @@ import {
 import { useMemo } from 'react'
 
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
-import { Link } from '@/components/ui/link'
 import { getRoleScope, RoleBadge } from '@/components/role-badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
 import { Role } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'

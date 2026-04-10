@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { ImageUploadField } from '@/components/forms/image-upload-field'
-import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,6 +23,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Link } from '@/components/ui/link'
 import {
   Select,
   SelectContent,
@@ -367,7 +367,7 @@ export function AppCreateDialog({
                       value={field.value || ''}
                       onChange={field.onChange}
                       error={formState.errors.iconURL?.message}
-                      className="file:bg-white"
+                      className="file:bg-background"
                     />
                   )}
                 />
@@ -430,7 +430,7 @@ export function AppCreateDialog({
               </div>
 
               {showAdvanced && (
-                <div className="space-y-4 border-l border-gray-400 pl-8">
+                <div className="space-y-4 border-l border-border pl-8">
                   <FormField
                     control={form.control}
                     name="kioskConfigURL"
@@ -449,7 +449,7 @@ export function AppCreateDialog({
                     )}
                   />
 
-                  <div className="space-y-4 rounded-md border border-gray-400 p-4">
+                  <div className="space-y-4 rounded-md border border-border p-4">
                     <FormField
                       control={form.control}
                       name="preset"

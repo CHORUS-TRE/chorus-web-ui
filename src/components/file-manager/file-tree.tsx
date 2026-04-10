@@ -179,15 +179,15 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
         <div className="flex min-w-0 flex-1 items-center gap-1">
           {item.type === 'folder' ? (
             isExpanded ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0 text-gray-400" />
+              <FolderOpen className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
             ) : (
-              <Folder className="h-4 w-4 flex-shrink-0 text-gray-400" />
+              <Folder className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
             )
           ) : (
             (() => {
               const FileIcon = getFileIcon(item.extension)
               return (
-                <FileIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
+                <FileIcon className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
               )
             })()
           )}

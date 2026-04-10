@@ -57,7 +57,7 @@ export function UserDeleteDialog({
       {!isControlled && (
         <AlertDialogTrigger asChild>
           <Button variant="ghost" aria-label="Delete user">
-            <Trash2 className="h-4 w-4 text-red-400" aria-hidden="true" />
+            <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
             <span className="sr-only">Delete user</span>
           </Button>
         </AlertDialogTrigger>

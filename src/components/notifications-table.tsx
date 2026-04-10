@@ -126,7 +126,7 @@ export default function NotificationsTable({
                     variant={isRead(notification) ? 'outline' : 'default'}
                     className={
                       !isRead(notification)
-                        ? 'bg-blue-600 hover:bg-blue-700'
+                        ? 'bg-primary hover:bg-primary/90'
                         : ''
                     }
                   >
