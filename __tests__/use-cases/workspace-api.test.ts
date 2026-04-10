@@ -3,17 +3,17 @@
  */
 import '@testing-library/jest-dom'
 
-import { WorkspaceDataSourceImpl } from '~/data/data-source/chorus-api/workspace-data-source'
-import { WorkspaceRepositoryImpl } from '~/data/repository/workspace-repository-impl'
+import { WorkspaceDataSourceImpl } from '@/data/data-source/chorus-api/workspace-data-source'
+import { WorkspaceRepositoryImpl } from '@/data/repository/workspace-repository-impl'
 import {
   Workspace,
   WorkspaceCreateType,
   WorkspaceUpdatetype
-} from '~/domain/model/'
-import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
-import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
-import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
-import { ChorusWorkspace as ChorusWorkspaceApi } from '~/internal/client'
+} from '@/domain/model/'
+import { WorkspaceCreate } from '@/domain/use-cases/workspace/workspace-create'
+import { WorkspaceGet } from '@/domain/use-cases/workspace/workspace-get'
+import { WorkspacesList } from '@/domain/use-cases/workspace/workspaces-list'
+import { ChorusWorkspace as ChorusWorkspaceApi } from '@/internal/client'
 
 const MOCK_API_RESPONSE = {
   id: '1',

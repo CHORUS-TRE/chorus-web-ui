@@ -4,18 +4,18 @@
 
 import '@testing-library/jest-dom'
 
-import { WorkbenchDataSourceImpl } from '~/data/data-source/chorus-api/workbench-data-source'
-import { WorkbenchRepositoryImpl } from '~/data/repository/workbench-repository-impl'
+import { WorkbenchDataSourceImpl } from '@/data/data-source/chorus-api/workbench-data-source'
+import { WorkbenchRepositoryImpl } from '@/data/repository/workbench-repository-impl'
 import {
   Workbench,
   WorkbenchCreateType,
   WorkbenchUpdateType
-} from '~/domain/model'
-import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
-import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
-import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
-import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
-import { ChorusAppInstance as ChorusAppInstanceApi } from '~/internal/client'
+} from '@/domain/model'
+import { WorkbenchCreate } from '@/domain/use-cases/workbench/workbench-create'
+import { WorkbenchDelete } from '@/domain/use-cases/workbench/workbench-delete'
+import { WorkbenchGet } from '@/domain/use-cases/workbench/workbench-get'
+import { WorkbenchList } from '@/domain/use-cases/workbench/workbench-list'
+import { ChorusAppInstance as ChorusAppInstanceApi } from '@/internal/client'
 
 const MOCK_API_RESPONSE = {
   id: '1',
