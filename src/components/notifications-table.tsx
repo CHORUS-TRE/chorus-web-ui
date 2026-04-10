@@ -105,7 +105,7 @@ export default function NotificationsTable({
             {notifications?.map((notification) => (
               <TableRow
                 key={notification.id}
-                className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                className="border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
               >
                 <TableCell className="max-w-[100px] truncate p-2 font-mono text-xs">
                   {notification.id}

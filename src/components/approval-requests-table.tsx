@@ -150,7 +150,7 @@ export default function ApprovalRequestsTable({
             {requests?.map((request) => (
               <TableRow
                 key={request.id}
-                className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                 onClick={() =>
                   router.push(`/admin/data-requests/${request.id}`)
                 }

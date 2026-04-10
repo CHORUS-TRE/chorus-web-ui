@@ -63,7 +63,7 @@ function WorkspaceTableRow({
 
   return (
     <TableRowComponent
-      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
       onClick={() => router.push(`/workspaces/${workspace?.id}`)}
     >
       <TableCell className="p-2">
@@ -121,7 +121,7 @@ function WorkspaceTableRow({
                   e.preventDefault()
                   onEditClick(workspace.id!)
                 }}
-                className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+                className="text-muted-foreground/60 hover:bg-muted/10 hover:text-muted-foreground"
               >
                 <PencilIcon className="h-4 w-4" />
               </Button>

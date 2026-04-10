@@ -53,7 +53,7 @@ const ActionCell = ({
         variant="ghost"
         size="icon"
         onClick={() => workbench.id && onEdit(workbench.id)}
-        className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+        className="text-muted-foreground/60 hover:bg-muted/10 hover:text-muted-foreground"
       >
         <Pencil className="h-4 w-4" />
       </Button>
@@ -399,7 +399,7 @@ export default function WorkbenchTable({
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
                     key={headerGroup.id}
-                    className="hover:bg-background/80"
+                    className="hover:bg-muted/10"
                   >
                     {headerGroup.headers.map((header) => {
                       return (
@@ -425,7 +425,7 @@ export default function WorkbenchTable({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && 'selected'}
-                      className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="p-1">

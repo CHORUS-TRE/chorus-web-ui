@@ -138,7 +138,7 @@ export default function AdminAppStorePage() {
                   {apps?.map((app) => (
                     <TableRow
                       key={app.id}
-                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                     >
                       <TableCell className="p-2 font-medium">
                         {app.name}
@@ -229,7 +229,7 @@ export default function AdminAppStorePage() {
                   {externalWebApps.map((webapp) => (
                     <TableRow
                       key={webapp.id}
-                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                     >
                       <TableCell className="p-2 font-medium">
                         {webapp.name}

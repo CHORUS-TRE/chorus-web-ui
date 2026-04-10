@@ -236,7 +236,7 @@ export default function AuthorizationUsersPage() {
                 <React.Fragment key={user.id}>
                   <TableRow
                     className={cn(
-                      'cursor-pointer hover:bg-accent/5',
+                      'cursor-pointer hover:bg-muted/10',
                       isMe && 'bg-primary/5'
                     )}
                     onClick={() =>

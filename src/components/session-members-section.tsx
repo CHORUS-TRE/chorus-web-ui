@@ -208,7 +208,7 @@ export function SessionMembersSection({
                         <TableRow
                           key={user.id}
                           className={cn(
-                            'hover:bg-accent/5',
+                            'hover:bg-muted/10',
                             isMe && 'bg-primary/5'
                           )}
                         >

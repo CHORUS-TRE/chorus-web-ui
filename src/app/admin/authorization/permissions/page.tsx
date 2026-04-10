@@ -332,7 +332,7 @@ export default function PermissionsPage() {
                 {group.permissions.map((perm) => (
                   <tr
                     key={perm.key}
-                    className="border-b border-muted/20 hover:bg-accent/5"
+                    className="border-b border-muted/20 hover:bg-muted/10"
                   >
                     <td className="sticky left-0 z-10 bg-background px-4 py-2.5">
                       <TooltipProvider delayDuration={200}>
