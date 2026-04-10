@@ -30,7 +30,13 @@ export default defineConfig([
       'react-hooks/set-state-in-effect': 'off',
       'react-hooks/immutability': 'off',
       'react-hooks/purity': 'off',
-      'react-hooks/static-components': 'off'
+      'react-hooks/static-components': 'off',
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['~/*'],
+          message: 'Use @/ instead of ~/. The ~/ alias has been removed.'
+        }]
+      }]
     }
   },
   {
