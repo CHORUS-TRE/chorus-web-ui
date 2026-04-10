@@ -67,10 +67,10 @@ Use semantic tokens only — no Tailwind palette colors (`text-blue-600`) or hex
 
 | Token | Purpose |
 |-------|---------|
-| `primary` / `primary-foreground` | Brand blue |
-| `accent` / `accent-foreground` | Lime accent |
-| `secondary` | Cyan |
-| `muted` / `muted-foreground` | De-emphasized |
+| `primary` / `primary-foreground` | Brand blue — structural, identity |
+| `accent` / `accent-foreground` | Lime — CTAs, active states, attention |
+| `secondary` | Aliased to muted (legacy — do not use directly) |
+| `muted` / `muted-foreground` | De-emphasized surfaces & text |
 | `destructive` | Error/delete |
 | `border`, `input`, `ring` | Borders, inputs, focus |
 | `background` / `foreground` | Page bg/text |
@@ -93,12 +93,22 @@ Use semantic tokens only — no Tailwind palette colors (`text-blue-600`) or hex
 
 ## Interactive States
 
-| Pattern | Class | Usage |
-|---------|-------|-------|
-| Row hover | `hover:bg-accent/5` | Table rows, list items |
-| Button hover | `hover:bg-accent/10` | Clickable elements |
-| Active/selected | `bg-primary/20 text-primary` | Active nav, selected |
-| Disabled | `text-muted-foreground/40` | Disabled items |
+See `color-behavior-spec.md` for full rules. Summary:
+
+| Element | Hover | Active/Selected |
+|---------|-------|-----------------|
+| Link (body) | `text-accent` | — |
+| Link (nav/sidebar) | `text-accent` | `bg-accent/15 text-accent` |
+| Row | `hover:bg-muted/10` | `bg-accent/10 text-accent` |
+| Card (clickable) | `hover:border-accent/40` | — |
+| Tab/filter (active) | — | `bg-accent text-accent-foreground` |
+| Disabled | `opacity-50 pointer-events-none` | — |
+
+**Rules:**
+- Links: text color shift only on hover. No background change.
+- Rows: subtle muted background on hover. No text/border change.
+- Cards: border tint on hover. No background/shadow change.
+- Active = lime accent everywhere (sidebar, nav, filters, tabs).
 
 ## Glassmorphism
 
