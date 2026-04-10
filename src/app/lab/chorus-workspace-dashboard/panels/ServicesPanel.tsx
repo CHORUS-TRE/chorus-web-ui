@@ -101,7 +101,7 @@ const ServiceCard = React.memo(function ServiceCard({
           variant: 'secondary' as const,
           icon: Square,
           label: 'Stopped',
-          color: 'text-gray-600'
+          color: 'text-muted-foreground'
         }
       case 'error':
         return {
@@ -273,7 +273,10 @@ export function ServicesPanel({
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <Square className="h-4 w-4 text-gray-600" aria-hidden="true" />
+              <Square
+                className="h-4 w-4 text-muted-foreground"
+                aria-hidden="true"
+              />
               Stopped
             </CardTitle>
           </CardHeader>
