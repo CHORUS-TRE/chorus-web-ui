@@ -11,13 +11,13 @@ import {
 import Image from 'next/image'
 import { useCallback, useMemo, useState } from 'react'
 
-import { Card, CardTitle } from '@/components/ui/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
 import { Link } from '@/components/link'
 import { Button } from '@/components/ui/button'
+import { Card, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,

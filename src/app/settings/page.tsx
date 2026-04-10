@@ -4,6 +4,8 @@ import { ShieldCheck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 
+import { getRoleScope, RoleBadge } from '@/components/role-badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -11,8 +13,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { getRoleScope, RoleBadge } from '@/components/role-badge'
-import { Button } from '@/components/ui/button'
 import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserSettingsPage() {

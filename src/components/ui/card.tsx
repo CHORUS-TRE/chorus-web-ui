@@ -104,10 +104,10 @@ CardAction.displayName = 'CardAction'
 export {
   Card,
   CardAction,
-  cardVariants,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
+  cardVariants
 }

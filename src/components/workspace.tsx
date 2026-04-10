@@ -12,6 +12,9 @@ import {
 import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
+import { Link } from '@/components/link'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -20,9 +23,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Link } from '@/components/link'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import { AuditEntry } from '@/domain/model/audit'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { useAuthentication } from '@/providers/authentication-provider'

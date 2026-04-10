@@ -10,6 +10,7 @@ import {
   Sparkles
 } from 'lucide-react'
 
+import { Link } from '@/components/link'
 import {
   Card,
   CardContent,
@@ -17,7 +18,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Link } from '@/components/link'
 
 export default function SandboxPage() {
   const sandboxItems: Array<{

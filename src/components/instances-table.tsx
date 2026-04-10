@@ -4,6 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { AppWindow, TrashIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -12,8 +14,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
