@@ -195,13 +195,13 @@
     @apply inline-block no-underline;
   }
 
-  /* Interactive States */
+  /* Interactive States — see color-behavior-spec.md §4 */
   .interactive-hover {
-    @apply transition-colors hover:bg-accent/10 hover:text-accent;
+    @apply transition-colors hover:bg-muted/10;
   }
 
   .interactive-item {
-    @apply flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 backdrop-blur-sm transition-colors hover:bg-accent-foreground hover:text-background;
+    @apply flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 backdrop-blur-sm transition-colors hover:bg-muted/10;
   }
 
   /* Card Variants */
