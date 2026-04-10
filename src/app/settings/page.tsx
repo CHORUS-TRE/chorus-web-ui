@@ -57,7 +57,7 @@ export default function UserSettingsPage() {
         {settings.map((setting) => (
           <Card
             key={setting.id}
-            className="cursor-pointer transition-colors hover:bg-muted/50"
+            className="cursor-pointer transition-colors hover:bg-accent/10"
             onClick={() => router.push(setting.href)}
           >
             <CardHeader>

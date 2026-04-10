@@ -185,7 +185,7 @@ export function AppStoreView() {
                   'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
                   selectedCategory === cat.id
                     ? 'bg-primary/20 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'
+                    : 'text-muted-foreground hover:bg-accent/10 hover:text-foreground'
                 )}
               >
                 {cat.icon}
@@ -347,7 +347,7 @@ export function AppStoreView() {
           </DialogHeader>
           <div className="flex flex-col gap-2 pt-2">
             <button
-              className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-muted/10"
+              className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-accent/10"
               onClick={() => handleVersionSelected(null)}
             >
               <span className="font-medium">Base version</span>
@@ -359,7 +359,7 @@ export function AppStoreView() {
               v.id ? (
                 <button
                   key={v.id}
-                  className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-muted/10"
+                  className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-accent/10"
                   onClick={() => handleVersionSelected(v.id!)}
                 >
                   <span className="font-medium">{v.dockerImageTag}</span>
