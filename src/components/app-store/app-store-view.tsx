@@ -184,8 +184,8 @@ export function AppStoreView() {
                 className={cn(
                   'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
                   selectedCategory === cat.id
-                    ? 'bg-primary/20 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:bg-accent/10 hover:text-foreground'
+                    ? 'bg-accent/15 text-accent'
+                    : 'text-muted-foreground hover:text-accent'
                 )}
               >
                 {cat.icon}
@@ -206,8 +206,8 @@ export function AppStoreView() {
               className={cn(
                 'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
                 selectedCategory === cat.id
-                  ? 'bg-primary/20 text-primary shadow-sm'
-                  : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'
+                  ? 'bg-accent/15 text-accent'
+                  : 'text-muted-foreground hover:text-accent'
               )}
             >
               {cat.icon}

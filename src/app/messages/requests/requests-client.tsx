@@ -436,7 +436,7 @@ function RequestsDataTable({
                     key={f.id}
                     variant="ghost"
                     size="sm"
-                    className={`h-7 rounded-lg px-2 text-xs font-medium hover:underline ${statusFilter === f.id ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+                    className={`h-7 rounded-lg px-2 text-xs font-medium hover:underline ${statusFilter === f.id ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`}
                     onClick={() => handleStatusFilter(f.id)}
                   >
                     {Icon && <Icon className="h-3 w-3" />}
@@ -451,7 +451,7 @@ function RequestsDataTable({
             <Button
               variant="ghost"
               size="icon"
-              className={`h-6 w-6 rounded-md ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+              className={`h-6 w-6 rounded-md ${viewMode === 'table' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`}
               onClick={() => setViewMode('table')}
               title="Table view"
             >
@@ -460,7 +460,7 @@ function RequestsDataTable({
             <Button
               variant="ghost"
               size="icon"
-              className={`h-6 w-6 rounded-md ${viewMode === 'cards' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+              className={`h-6 w-6 rounded-md ${viewMode === 'cards' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`}
               onClick={() => setViewMode('cards')}
               title="Card view"
             >

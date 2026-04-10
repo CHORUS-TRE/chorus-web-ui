@@ -188,7 +188,7 @@ export function Header() {
             href="#"
             variant="underline"
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent'
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent'
             )}
             title="Help"
           >
