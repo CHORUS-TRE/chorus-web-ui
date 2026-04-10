@@ -110,9 +110,9 @@ function SidebarContent({
           href="/"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/', true)
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -125,9 +125,9 @@ function SidebarContent({
           href="/workspaces"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/workspaces')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -140,9 +140,9 @@ function SidebarContent({
           href="/sessions"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/sessions')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -155,9 +155,9 @@ function SidebarContent({
           href="/data"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/data')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -170,9 +170,9 @@ function SidebarContent({
           href="/app-store"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/app-store') && currentTab !== 'services'
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -185,9 +185,9 @@ function SidebarContent({
           href="/messages"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/messages')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -208,7 +208,7 @@ function SidebarContent({
           href="#"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent'
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent'
           )}
           title="Help"
         >
@@ -259,9 +259,9 @@ function SidebarContent({
               href={href}
               variant="underline"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
                 isLinkActive
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-accent/15 text-accent'
                   : 'text-muted-foreground'
               )}
             >
@@ -294,9 +294,9 @@ function SidebarContent({
               href="/admin"
               variant="underline"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
                 pathname.includes('/admin') || isActive('/admin')
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-accent/15 text-accent'
                   : 'text-muted-foreground'
               )}
             >
