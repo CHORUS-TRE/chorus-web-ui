@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'

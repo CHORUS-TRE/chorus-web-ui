@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
 import { toast } from '@/components/hooks/use-toast'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import {
   AlertDialog,
   AlertDialogCancel,

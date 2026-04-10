@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import React, { useMemo } from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { useInstanceConfig } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'

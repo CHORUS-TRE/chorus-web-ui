@@ -18,7 +18,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
 import { useInstanceConfig } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'

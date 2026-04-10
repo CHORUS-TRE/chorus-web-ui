@@ -7,7 +7,7 @@ import { z } from 'zod'
 
 import { PRESETS, type Presets } from '@/components/forms/app-create-dialog'
 import { ImageUploadField } from '@/components/forms/image-upload-field'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

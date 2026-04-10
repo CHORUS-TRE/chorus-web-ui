@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardTitle } from '@/components/ui/card'

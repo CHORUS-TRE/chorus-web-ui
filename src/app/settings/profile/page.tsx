@@ -14,7 +14,7 @@ import {
 import { useMemo } from 'react'
 
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { getRoleScope, RoleBadge } from '@/components/role-badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'

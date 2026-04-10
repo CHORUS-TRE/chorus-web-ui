@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {

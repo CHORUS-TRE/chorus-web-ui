@@ -5952,10 +5952,6 @@ nav li {
   color: rgb(79 70 229 / var(--tw-text-opacity, 1));
 }
 
-.hover\:text-inherit:hover {
-  color: inherit;
-}
-
 .hover\:text-muted:hover {
   color: hsl(var(--muted));
 }
@@ -7612,15 +7608,6 @@ nav li {
 
 .\[\&\.active\]\:border-accent.active {
   border-color: hsl(var(--accent));
-}
-
-.\[\&\.active\]\:text-black.active {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
-}
-
-.\[\&\.active\]\:text-foreground.active {
-  color: hsl(var(--foreground));
 }
 
 .\[\&\.active\]\:text-white.active {

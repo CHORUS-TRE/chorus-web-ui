@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { WorkbenchServerPodStatus } from '@/domain/model'
 import { useIframeCache } from '@/providers/iframe-cache-provider'

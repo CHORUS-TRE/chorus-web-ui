@@ -15,7 +15,7 @@ import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
 import {

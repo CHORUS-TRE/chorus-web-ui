@@ -10,7 +10,7 @@ import {
   Sparkles
 } from 'lucide-react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import {
   Card,
   CardContent,

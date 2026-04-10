@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'

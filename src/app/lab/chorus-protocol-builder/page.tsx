@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import {
