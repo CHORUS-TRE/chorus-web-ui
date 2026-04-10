@@ -285,7 +285,7 @@ export default function UserProfile() {
                     )}
                     {workspaceRoles.length > 0 && (
                       <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-secondary">
+                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                           Workspace
                         </p>
                         <div className="flex flex-wrap gap-2">

@@ -110,13 +110,13 @@ export default function CHORUSDashboard() {
                   className="cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-secondary">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
                       Total Workspaces
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground text-secondary">
+                      <span className="text-3xl font-semibold text-muted-foreground">
                         {workspaceList?.length}
                         {workspaceLimits.max != null && (
                           <span className="text-3xl font-normal text-muted-foreground">
@@ -124,7 +124,7 @@ export default function CHORUSDashboard() {
                           </span>
                         )}
                       </span>
-                      <Package className="h-8 w-8 text-secondary" />
+                      <Package className="h-8 w-8 text-muted-foreground" />
                     </div>
                   </CardContent>
                 </Card>
@@ -135,13 +135,13 @@ export default function CHORUSDashboard() {
                   className="cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-secondary">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
                       Active Sessions
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground text-secondary">
+                      <span className="text-3xl font-semibold text-muted-foreground">
                         {workbenchesList?.length}
                         {sessionLimits.max != null && (
                           <span className="text-3xl font-normal text-muted-foreground">
@@ -149,7 +149,7 @@ export default function CHORUSDashboard() {
                           </span>
                         )}
                       </span>
-                      <LaptopMinimal className="h-8 w-8 text-secondary" />
+                      <LaptopMinimal className="h-8 w-8 text-muted-foreground" />
                     </div>
                   </CardContent>
                 </Card>
@@ -159,13 +159,13 @@ export default function CHORUSDashboard() {
                   className="transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-secondary">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
                       Active Apps
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground text-secondary">
+                      <span className="text-3xl font-semibold text-muted-foreground">
                         {appInstancesList?.length}
                         {appInstanceLimits.max != null && (
                           <span className="text-3xl font-normal text-muted-foreground">
@@ -173,7 +173,7 @@ export default function CHORUSDashboard() {
                           </span>
                         )}
                       </span>
-                      <AppWindow className="h-8 w-8 text-secondary" />
+                      <AppWindow className="h-8 w-8 text-muted-foreground" />
                     </div>
                   </CardContent>
                 </Card>
@@ -184,16 +184,16 @@ export default function CHORUSDashboard() {
                   className="cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-secondary">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
                       Data Requests
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground text-secondary">
+                      <span className="text-3xl font-semibold text-muted-foreground">
                         {pendingApprovals}
                       </span>
-                      <Clock className="h-8 w-8 text-secondary" />
+                      <Clock className="h-8 w-8 text-muted-foreground" />
                     </div>
                   </CardContent>
                 </Card>
