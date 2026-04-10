@@ -12,7 +12,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/card'
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,

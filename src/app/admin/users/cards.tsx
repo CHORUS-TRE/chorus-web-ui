@@ -4,14 +4,14 @@ import { Bell, ShieldCheck, User } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/card'
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserSettingsPage() {

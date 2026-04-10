@@ -2,7 +2,6 @@
 
 import { Trash2 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import { deleteUser } from '@/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'

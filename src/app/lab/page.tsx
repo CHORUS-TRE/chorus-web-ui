@@ -16,7 +16,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/card'
+} from '@/components/ui/card'
 import { Link } from '@/components/link'
 
 export default function SandboxPage() {

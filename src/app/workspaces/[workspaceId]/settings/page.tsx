@@ -4,11 +4,11 @@ import { Settings } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,

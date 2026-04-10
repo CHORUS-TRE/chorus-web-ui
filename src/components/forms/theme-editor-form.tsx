@@ -7,14 +7,14 @@ import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/card'
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Form, FormField, FormLabel } from '@/components/ui/form'
 import {
   Popover,

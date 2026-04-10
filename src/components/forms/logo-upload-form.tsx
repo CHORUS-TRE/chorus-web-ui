@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/card'
+} from '@/components/ui/card'
 import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useInstanceLogo } from '@/hooks/use-instance-config'

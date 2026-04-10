@@ -3,11 +3,11 @@
 import { Trash2 } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { PermissionMatrix } from '@/components/permission-matrix'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,

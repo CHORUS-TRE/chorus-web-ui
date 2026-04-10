@@ -4,11 +4,11 @@ import { Pencil, Plus, Store, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/card'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { AppCreateDialog } from '@/components/forms/app-create-dialog'
 import { WebAppCreateDialog } from '@/components/forms/webapp-create-dialog'
 import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,

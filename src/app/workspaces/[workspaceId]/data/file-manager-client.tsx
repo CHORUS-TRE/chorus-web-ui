@@ -3,7 +3,6 @@
 import { CirclePlus, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { ActionBar } from '@/components/file-manager/action-bar'
 import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import { FileGrid } from '@/components/file-manager/file-grid'
@@ -11,6 +10,7 @@ import { FileTree } from '@/components/file-manager/file-tree'
 import { SelectionBasket } from '@/components/file-manager/selection-basket'
 import { Toolbar } from '@/components/file-manager/toolbar'
 import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,

@@ -20,7 +20,6 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -28,8 +27,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/card'
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Table,

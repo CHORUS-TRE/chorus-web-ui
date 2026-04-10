@@ -4,8 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { Plus } from 'lucide-react'
 import Image from 'next/image'
 
-import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { App, ExternalWebApp } from '@/domain/model'
 

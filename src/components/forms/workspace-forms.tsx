@@ -25,7 +25,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Card, CardContent } from '@/components/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'

@@ -13,12 +13,12 @@ import {
 } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { Link } from '@/components/link'
 import { getRoleScope, RoleBadge } from '@/components/role-badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Role } from '@/domain/model'
