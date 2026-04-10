@@ -20,8 +20,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
-import { AuditEntry } from '@/domain/model'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Card,
   CardContent,
@@ -29,9 +28,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
-import { Input } from '~/components/ui/input'
+} from '@/components/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -39,7 +38,8 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
+import { AuditEntry } from '@/domain/model'
 
 // ─── Column Definitions ───────────────────────────────────────────────────────
 

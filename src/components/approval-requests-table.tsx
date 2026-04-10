@@ -6,22 +6,14 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
 import {
-  ApprovalRequest,
-  ApprovalRequestStatus,
-  ApprovalRequestType
-} from '@/domain/model/approval-request'
-import { User } from '@/domain/model/user'
-import { useAppState } from '@/stores/app-state-store'
-import { listUsers } from '@/view-model/user-view-model'
-import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
+} from '@/components/card'
+import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -29,7 +21,15 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
+import {
+  ApprovalRequest,
+  ApprovalRequestStatus,
+  ApprovalRequestType
+} from '@/domain/model/approval-request'
+import { User } from '@/domain/model/user'
+import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 
 export default function ApprovalRequestsTable({
   requests,

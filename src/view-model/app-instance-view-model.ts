@@ -2,20 +2,20 @@
 
 import { env } from 'next-runtime-env'
 
-import { Analytics } from '@/lib/analytics/service'
-import { AppInstanceDataSourceImpl } from '~/data/data-source'
-import { AppInstanceRepositoryImpl } from '~/data/repository'
-import { Result } from '~/domain/model'
+import { AppInstanceDataSourceImpl } from '@/data/data-source'
+import { AppInstanceRepositoryImpl } from '@/data/repository'
+import { Result } from '@/domain/model'
 import {
   AppInstance,
   AppInstanceCreateSchema,
   AppInstanceUpdateSchema
-} from '~/domain/model/app-instance'
-import { AppInstanceCreate } from '~/domain/use-cases/app-instance/app-instance-create'
-import { AppInstanceDelete } from '~/domain/use-cases/app-instance/app-instance-delete'
-import { AppInstanceGet } from '~/domain/use-cases/app-instance/app-instance-get'
-import { AppInstanceList } from '~/domain/use-cases/app-instance/app-instance-list'
-import { AppInstanceUpdate } from '~/domain/use-cases/app-instance/app-instance-update'
+} from '@/domain/model/app-instance'
+import { AppInstanceCreate } from '@/domain/use-cases/app-instance/app-instance-create'
+import { AppInstanceDelete } from '@/domain/use-cases/app-instance/app-instance-delete'
+import { AppInstanceGet } from '@/domain/use-cases/app-instance/app-instance-get'
+import { AppInstanceList } from '@/domain/use-cases/app-instance/app-instance-list'
+import { AppInstanceUpdate } from '@/domain/use-cases/app-instance/app-instance-update'
+import { Analytics } from '@/lib/analytics/service'
 
 const getRepository = async () => {
   const dataSource = new AppInstanceDataSourceImpl(

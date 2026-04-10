@@ -3,8 +3,8 @@ import {
   WorkspaceFileCreateType,
   WorkspaceFilePart,
   WorkspaceFileUpdateType
-} from '~/domain/model/workspace-file'
-import { ChorusWorkspaceFile, ChorusWorkspaceFilePart } from '~/internal/client'
+} from '@/domain/model/workspace-file'
+import { ChorusWorkspaceFile, ChorusWorkspaceFilePart } from '@/internal/client'
 
 /**
  * Maps domain workspace file types to API types

@@ -20,6 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { AppBreadcrumb } from '@/components/ui/app-breadcrumb'
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
@@ -29,9 +30,8 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
-import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
-import { useUserPreferences } from '~/stores/user-preferences-store'
 
 import { RecentTabs } from './recent-tabs'
 import { SessionPill } from './session-pill'

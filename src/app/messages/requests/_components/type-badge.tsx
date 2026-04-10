@@ -1,7 +1,7 @@
 import { ArrowDownToLine, ArrowRightLeft } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { ApprovalRequestType } from '@/domain/model/approval-request'
-import { Badge } from '~/components/ui/badge'
 
 export function TypeBadge({ type }: { type?: ApprovalRequestType }) {
   const isExtraction = type === ApprovalRequestType.DATA_EXTRACTION

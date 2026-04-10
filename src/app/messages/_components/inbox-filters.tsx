@@ -2,8 +2,8 @@
 
 import { Search } from 'lucide-react'
 
-import { Button } from '~/components/button'
-import { Input } from '~/components/ui/input'
+import { Button } from '@/components/button'
+import { Input } from '@/components/ui/input'
 
 export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread'
 

@@ -2,16 +2,16 @@
 
 import { useMemo, useState } from 'react'
 
-import { PermissionMatrix } from '~/components/permission-matrix'
-import { Badge } from '~/components/ui/badge'
+import { PermissionMatrix } from '@/components/permission-matrix'
+import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
-import { ROLE_DEFINITIONS, type RoleDefinition } from '~/config/permissions'
-import { cn } from '~/lib/utils'
+} from '@/components/ui/tooltip'
+import { ROLE_DEFINITIONS, type RoleDefinition } from '@/config/permissions'
+import { cn } from '@/lib/utils'
 
 type Scope = 'platform' | 'workspace' | 'session'
 

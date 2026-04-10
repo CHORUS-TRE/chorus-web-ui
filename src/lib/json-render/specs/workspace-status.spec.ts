@@ -7,12 +7,12 @@ import {
   fetchWorkspaceStatusParams,
   selectWorkspaceParams
 } from '@/lib/json-render/catalog'
-import { listAppInstances } from '~/view-model/app-instance-view-model'
-import { listApprovalRequests } from '~/view-model/approval-request-view-model'
+import { listAppInstances } from '@/view-model/app-instance-view-model'
+import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 import {
   workspaceGetWithDev,
   workspaceListWithDev
-} from '~/view-model/workspace-view-model'
+} from '@/view-model/workspace-view-model'
 
 // ---------------------------------------------------------------------------
 // Spec builder

@@ -3,12 +3,12 @@
 import { Search } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
-import { toast } from '~/components/hooks/use-toast'
-import { PermissionMatrix } from '~/components/permission-matrix'
-import { Badge } from '~/components/ui/badge'
-import { Checkbox } from '~/components/ui/checkbox'
-import { Input } from '~/components/ui/input'
+import { CreateUserRoleDialog } from '@/components/forms/create-user-role-dialog'
+import { toast } from '@/components/hooks/use-toast'
+import { PermissionMatrix } from '@/components/permission-matrix'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -16,19 +16,19 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
-import { ROLE_DEFINITIONS, type RoleDefinition } from '~/config/permissions'
-import { User } from '~/domain/model/user'
-import { cn } from '~/lib/utils'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAppState } from '~/stores/app-state-store'
-import { deleteUserRole, listUsers } from '~/view-model/user-view-model'
+} from '@/components/ui/tooltip'
+import { ROLE_DEFINITIONS, type RoleDefinition } from '@/config/permissions'
+import { User } from '@/domain/model/user'
+import { cn } from '@/lib/utils'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
+import { deleteUserRole, listUsers } from '@/view-model/user-view-model'
 
 type Scope = 'platform' | 'workspace' | 'session'
 

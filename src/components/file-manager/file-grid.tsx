@@ -12,13 +12,13 @@ import {
 import type React from 'react'
 import { useState } from 'react'
 
-import { Button } from '~/components/ui/button'
-import { cn } from '~/lib/utils'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import {
   formatDate as formatDateUtil,
   formatFileSize as formatFileSizeUtil
-} from '~/lib/utils'
-import type { FileSystemItem } from '~/types/file-system'
+} from '@/lib/utils'
+import type { FileSystemItem } from '@/types/file-system'
 
 interface FileGridProps {
   items: FileSystemItem[]

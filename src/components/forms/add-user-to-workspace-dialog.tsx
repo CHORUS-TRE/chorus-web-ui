@@ -7,9 +7,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useAppState } from '@/stores/app-state-store'
-import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Dialog,
   DialogContent,
@@ -17,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -25,18 +23,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
+} from '@/components/ui/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { getWorkspaceRoles } from '~/config/permissions'
-import { Result } from '~/domain/model'
-import { User } from '~/domain/model/user'
-import { listUsers } from '~/view-model/user-view-model'
+} from '@/components/ui/select'
+import { getWorkspaceRoles } from '@/config/permissions'
+import { Result } from '@/domain/model'
+import { User } from '@/domain/model/user'
+import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
+import { workspaceAddUserRole } from '@/view-model/workspace-view-model'
 
 import { toast } from '../hooks/use-toast'
 

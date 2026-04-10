@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function SettingsTabs() {
   const pathname = usePathname()

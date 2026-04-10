@@ -19,9 +19,9 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { USER_CONFIG_KEYS } from '@/domain/model/user-config'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
-import { USER_CONFIG_KEYS } from '~/domain/model/user-config'
-import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function PrivacySettingsPage() {
   const {} = useAuthentication()

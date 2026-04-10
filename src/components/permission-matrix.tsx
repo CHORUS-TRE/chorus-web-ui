@@ -2,21 +2,21 @@
 
 import { useMemo } from 'react'
 
-import { Checkbox } from '~/components/ui/checkbox'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
+} from '@/components/ui/tooltip'
 import {
   getRolePermissions,
   type Permission,
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS,
   ROLE_DEFINITIONS
-} from '~/config/permissions'
-import { cn } from '~/lib/utils'
+} from '@/config/permissions'
+import { cn } from '@/lib/utils'
 
 type Scope = 'workspace' | 'session' | 'platform'
 

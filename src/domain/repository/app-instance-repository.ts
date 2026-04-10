@@ -3,7 +3,7 @@ import {
   AppInstanceCreateType,
   AppInstanceUpdateType,
   Result
-} from '~/domain/model'
+} from '@/domain/model'
 
 interface AppInstanceRepository {
   create: (appInstance: AppInstanceCreateType) => Promise<Result<AppInstance>>

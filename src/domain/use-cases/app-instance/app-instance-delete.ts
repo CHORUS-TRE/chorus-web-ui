@@ -1,5 +1,5 @@
-import { Result } from '~/domain/model'
-import { AppInstanceRepository } from '~/domain/repository'
+import { Result } from '@/domain/model'
+import { AppInstanceRepository } from '@/domain/repository'
 
 export class AppInstanceDelete {
   constructor(private readonly repository: AppInstanceRepository) {}

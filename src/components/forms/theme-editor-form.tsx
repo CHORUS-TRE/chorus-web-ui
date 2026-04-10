@@ -7,21 +7,20 @@ import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useInstanceTheme } from '@/hooks/use-instance-theme'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Form, FormField, FormLabel } from '~/components/ui/form'
+} from '@/components/card'
+import { Form, FormField, FormLabel } from '@/components/ui/form'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-} from '~/components/ui/popover'
+} from '@/components/ui/popover'
 import {
   ColorPicker,
   ColorPickerAlpha,
@@ -29,8 +28,9 @@ import {
   ColorPickerFormat,
   ColorPickerHue,
   ColorPickerOutput
-} from '~/components/ui/shadcn-io/color-picker'
-import { useDevStoreCache } from '~/stores/dev-store-cache'
+} from '@/components/ui/shadcn-io/color-picker'
+import { useInstanceTheme } from '@/hooks/use-instance-theme'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 
 import { toast } from '../hooks/use-toast'
 

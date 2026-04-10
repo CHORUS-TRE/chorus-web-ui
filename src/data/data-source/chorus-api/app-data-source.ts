@@ -7,8 +7,8 @@ import {
   ChorusGetAppReply,
   ChorusListAppsReply,
   ChorusUpdateAppReply
-} from '~/internal/client'
-import { Configuration } from '~/internal/client'
+} from '@/internal/client'
+import { Configuration } from '@/internal/client'
 
 import { toChorusApp, toChorusAppUpdate } from './app-mapper'
 

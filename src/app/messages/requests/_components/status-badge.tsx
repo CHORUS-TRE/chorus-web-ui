@@ -1,8 +1,8 @@
 import { AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { ApprovalRequestStatus } from '@/domain/model/approval-request'
 import { cn } from '@/lib/utils'
-import { Badge } from '~/components/ui/badge'
 
 export const STATUS_CONFIG: Record<
   ApprovalRequestStatus,

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { toast } from '~/components/hooks/use-toast'
-import { WorkspaceFilePart } from '~/domain/model/workspace-file'
-import { useAppStateStore } from '~/stores/app-state-store'
-import type { FileSystemItem, FileSystemState } from '~/types/file-system'
-import { mapWorkspaceFilesToFileSystem } from '~/utils/file-system-mapper'
+import { toast } from '@/components/hooks/use-toast'
+import { WorkspaceFilePart } from '@/domain/model/workspace-file'
+import { useAppStateStore } from '@/stores/app-state-store'
+import type { FileSystemItem, FileSystemState } from '@/types/file-system'
+import { mapWorkspaceFilesToFileSystem } from '@/utils/file-system-mapper'
 import {
   workspaceFileAbortUpload,
   workspaceFileCompleteUpload,
@@ -15,7 +15,7 @@ import {
   workspaceFileList,
   workspaceFileUpdate,
   workspaceFileUploadPart
-} from '~/view-model/workspace-file-view-model'
+} from '@/view-model/workspace-file-view-model'
 
 const IMPORT_FILE_SIZE_THRESHOLD = 5 * 1024 * 1024 // 5MB
 

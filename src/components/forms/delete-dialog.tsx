@@ -3,7 +3,7 @@
 import { Loader2 } from 'lucide-react'
 import React from 'react'
 
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 
 export interface DeleteDialogProps {
   open: boolean

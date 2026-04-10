@@ -4,16 +4,16 @@ import { CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
 
+import { Button } from '@/components/button'
+import { useToast } from '@/components/hooks/use-toast'
 import {
   ApprovalRequest,
   ApprovalRequestStatus
 } from '@/domain/model/approval-request'
 import { downloadRequestFiles, getFiles } from '@/lib/approval-request-utils'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import { markNotificationsAsRead } from '@/view-model/notification-view-model'
-import { Button } from '~/components/button'
-import { useToast } from '~/components/hooks/use-toast'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAppState } from '~/stores/app-state-store'
 
 import { ApprovalDialog } from './_components/approval-dialog'
 import { InboxEmptyState } from './_components/inbox-empty-state'

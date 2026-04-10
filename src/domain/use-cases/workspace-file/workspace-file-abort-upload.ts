@@ -1,5 +1,5 @@
-import { Result } from '~/domain/model'
-import { WorkspaceFileRepository } from '~/domain/repository/workspace-file-repository'
+import { Result } from '@/domain/model'
+import { WorkspaceFileRepository } from '@/domain/repository/workspace-file-repository'
 
 export interface WorkspaceFileAbortUploadUseCase {
   execute(

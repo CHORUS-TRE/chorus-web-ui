@@ -4,16 +4,16 @@ import { ShieldCheck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { getRoleScope, RoleBadge } from '~/components/role-badge'
-import { useAuthentication } from '~/providers/authentication-provider'
+} from '@/components/card'
+import { getRoleScope, RoleBadge } from '@/components/role-badge'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserSettingsPage() {
   const { user } = useAuthentication()

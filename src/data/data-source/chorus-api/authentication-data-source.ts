@@ -6,9 +6,9 @@ import {
   AuthenticationOpenID,
   AuthenticationRequest
 } from '@/domain/model'
+import { Configuration } from '@/internal/client'
 import { AuthenticationServiceApi } from '@/internal/client/apis'
 import { ChorusAuthenticationMode } from '@/internal/client/models'
-import { Configuration } from '~/internal/client'
 
 interface AuthenticationDataSource {
   login: (data: AuthenticationRequest) => Promise<string>

@@ -2,19 +2,19 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useInstanceLogo } from '@/hooks/use-instance-config'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { toast } from '~/components/hooks/use-toast'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { useDevStoreCache } from '~/stores/dev-store-cache'
+} from '@/components/card'
+import { toast } from '@/components/hooks/use-toast'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useInstanceLogo } from '@/hooks/use-instance-config'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 
 const LogoUploadForm = () => {
   const instanceLogo = useInstanceLogo()

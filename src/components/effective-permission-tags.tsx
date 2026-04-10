@@ -2,14 +2,14 @@
 
 import { useMemo } from 'react'
 
-import { Badge } from '~/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 import {
   getRolePermissions,
   type Permission,
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS
-} from '~/config/permissions'
-import { cn } from '~/lib/utils'
+} from '@/config/permissions'
+import { cn } from '@/lib/utils'
 
 /** Category groupings for human-friendly display */
 const PERMISSION_CATEGORIES: Record<string, Permission[]> = {

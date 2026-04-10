@@ -5,13 +5,13 @@ import { redirect } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
+import { Button } from '@/components/button'
 import { Link } from '@/components/link'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Result, User } from '@/domain/model'
 import { createUser } from '@/view-model/user-view-model'
-import { Button } from '~/components/button'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { Separator } from '~/components/ui/separator'
-import { Result, User } from '~/domain/model'
 
 const initialState: Result<User> = {
   data: undefined,

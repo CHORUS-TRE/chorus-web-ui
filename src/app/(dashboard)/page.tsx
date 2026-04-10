@@ -15,13 +15,13 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { Button } from '@/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/card'
+import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { Link } from '@/components/link'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
-import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
 
 export default function CHORUSDashboard() {
   const {

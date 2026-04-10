@@ -1,10 +1,10 @@
-import { Result } from '~/domain/model'
+import { Result } from '@/domain/model'
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
   WorkspaceFileUpdateType
-} from '~/domain/model/workspace-file'
+} from '@/domain/model/workspace-file'
 
 export interface WorkspaceFileRepository {
   create: (

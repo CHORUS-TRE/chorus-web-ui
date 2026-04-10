@@ -5,18 +5,17 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Button } from '@/components/button'
+import { PRESETS, type Presets } from '@/components/forms/app-create-dialog'
+import { ImageUploadField } from '@/components/forms/image-upload-field'
 import { Link } from '@/components/link'
-import { appUpdate } from '@/view-model/app-view-model'
-import { Button } from '~/components/button'
-import { PRESETS, type Presets } from '~/components/forms/app-create-dialog'
-import { ImageUploadField } from '~/components/forms/image-upload-field'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -24,16 +23,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { App, AppState, AppUpdateSchema, Result } from '~/domain/model'
+} from '@/components/ui/select'
+import { App, AppState, AppUpdateSchema, Result } from '@/domain/model'
+import { appUpdate } from '@/view-model/app-view-model'
 
 import { toast } from '../hooks/use-toast'
 

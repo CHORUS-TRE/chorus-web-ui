@@ -2,7 +2,7 @@ import {
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '@/domain/model/workspace'
-import { ChorusWorkspace } from '~/internal/client'
+import { ChorusWorkspace } from '@/internal/client'
 
 export const toChorusWorkspace = (
   workspace: WorkspaceCreateType

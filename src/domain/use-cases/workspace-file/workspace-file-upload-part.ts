@@ -1,6 +1,6 @@
-import { Result } from '~/domain/model'
-import { WorkspaceFilePart } from '~/domain/model/workspace-file'
-import { WorkspaceFileRepository } from '~/domain/repository'
+import { Result } from '@/domain/model'
+import { WorkspaceFilePart } from '@/domain/model/workspace-file'
+import { WorkspaceFileRepository } from '@/domain/repository'
 
 export interface WorkspaceFileUploadPartUseCase {
   execute(

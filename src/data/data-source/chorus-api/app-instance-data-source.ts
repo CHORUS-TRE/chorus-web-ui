@@ -10,7 +10,7 @@ import {
   ChorusListAppInstancesReply,
   ChorusUpdateAppInstanceReply,
   Configuration
-} from '~/internal/client'
+} from '@/internal/client'
 
 import {
   toChorusAppInstance,

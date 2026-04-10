@@ -7,7 +7,7 @@ import {
   AuditServiceListWorkspaceAuditRequest,
   ChorusListAuditReply,
   Configuration
-} from '~/internal/client'
+} from '@/internal/client'
 
 interface AuditDataSource {
   listPlatform: (

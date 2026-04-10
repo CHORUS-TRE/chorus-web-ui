@@ -2,8 +2,25 @@ import { LayoutGrid, List, Search } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
+import { Button } from '@/components/button'
+import { toast } from '@/components/hooks/use-toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import { WorkspaceWorkbenchList } from '@/components/workspace-workbench-list'
 import { CATEGORIES, filterApps } from '@/config/app-store'
+import { App, AppInstanceStatus, ExternalWebApp } from '@/domain/model'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
@@ -11,23 +28,6 @@ import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
-import { Button } from '~/components/button'
-import { toast } from '~/components/hooks/use-toast'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
-import { App, AppInstanceStatus, ExternalWebApp } from '~/domain/model'
 
 import { SessionAppIcon } from './app-icon'
 import { SessionAppListItem } from './app-list-item'

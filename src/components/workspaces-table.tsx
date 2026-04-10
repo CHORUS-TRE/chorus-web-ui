@@ -7,11 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useCallback, useMemo, useState } from 'react'
 
-import { User, WorkspaceWithDev } from '@/domain/model'
-import { useInstanceTheme } from '@/hooks/use-instance-theme'
-import { useAuthorization } from '@/providers/authorization-provider'
-import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Card,
   CardContent,
@@ -19,7 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
+} from '@/components/card'
 import {
   Table,
   TableBody,
@@ -27,8 +23,12 @@ import {
   TableHead,
   TableHeader,
   TableRow as TableRowComponent
-} from '~/components/ui/table'
-import { getGradient } from '~/domain/utils/gradient'
+} from '@/components/ui/table'
+import { User, WorkspaceWithDev } from '@/domain/model'
+import { getGradient } from '@/domain/utils/gradient'
+import { useInstanceTheme } from '@/hooks/use-instance-theme'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { useAppState } from '@/stores/app-state-store'
 
 import {
   WorkspaceDeleteForm,

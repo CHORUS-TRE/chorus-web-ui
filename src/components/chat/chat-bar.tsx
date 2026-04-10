@@ -13,9 +13,9 @@ import {
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/stores/chat-store'
-import { Button } from '~/components/ui/button'
 
 import { ChatInput } from './chat-input'
 import { ChatMessage, TypingIndicator } from './chat-message'

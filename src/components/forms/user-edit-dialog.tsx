@@ -12,16 +12,15 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { updateUser } from '@/view-model/user-view-model'
-import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
+import { Button } from '@/components/button'
+import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -29,10 +28,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { Result } from '~/domain/model'
-import { User, UserUpdateSchema } from '~/domain/model/user'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Result } from '@/domain/model'
+import { User, UserUpdateSchema } from '@/domain/model/user'
+import { updateUser } from '@/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'
 

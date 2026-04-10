@@ -11,6 +11,7 @@ import {
 import Image from 'next/image'
 import { useCallback, useMemo, useState } from 'react'
 
+import { Button } from '@/components/button'
 import { Card, CardTitle } from '@/components/card'
 import {
   WorkspaceDeleteForm,
@@ -26,7 +27,6 @@ import {
 import { User, WorkspaceWithDev } from '@/domain/model'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
 
 import { toast } from './hooks/use-toast'
 

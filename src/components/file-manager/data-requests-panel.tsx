@@ -3,9 +3,9 @@
 import { CheckCircle2, Clock, Inbox, Send, XCircle } from 'lucide-react'
 import * as React from 'react'
 
-import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Button } from '@/components/button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Label } from '~/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { Textarea } from '~/components/ui/textarea'
-import type { DataMovementRequest, RequestStatus } from '~/types/data-requests'
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+import type { DataMovementRequest, RequestStatus } from '@/types/data-requests'
 
 import { FileRequestCard } from './file-request-card'
 

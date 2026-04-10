@@ -3,16 +3,16 @@
 import { Copy, Download, Edit3, Move, Share2, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import type { FileSystemItem } from '~/types/file-system'
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import type { FileSystemItem } from '@/types/file-system'
 
 interface ActionBarProps {
   selectedItems: FileSystemItem[]

@@ -3,21 +3,21 @@
 import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { Input } from '~/components/ui/input'
+import { Input } from '@/components/ui/input'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
+} from '@/components/ui/tooltip'
 import {
   getRolePermissions,
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS,
   ROLE_DEFINITIONS,
   type RoleDefinition
-} from '~/config/permissions'
-import { cn } from '~/lib/utils'
+} from '@/config/permissions'
+import { cn } from '@/lib/utils'
 
 type Scope = 'platform' | 'workspace' | 'session'
 

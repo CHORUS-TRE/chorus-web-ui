@@ -2,14 +2,14 @@
 
 import { env } from 'next-runtime-env'
 
-import { AuditDataSourceImpl } from '~/data/data-source'
-import { AuditRepositoryImpl } from '~/data/repository/audit-repository-impl'
-import { AuditEntry, Result } from '~/domain/model'
-import { AuditListActor } from '~/domain/use-cases/audit/audit-list-actor'
-import { AuditListPlatform } from '~/domain/use-cases/audit/audit-list-platform'
-import { AuditListUser } from '~/domain/use-cases/audit/audit-list-user'
-import { AuditListWorkbench } from '~/domain/use-cases/audit/audit-list-workbench'
-import { AuditListWorkspace } from '~/domain/use-cases/audit/audit-list-workspace'
+import { AuditDataSourceImpl } from '@/data/data-source'
+import { AuditRepositoryImpl } from '@/data/repository/audit-repository-impl'
+import { AuditEntry, Result } from '@/domain/model'
+import { AuditListActor } from '@/domain/use-cases/audit/audit-list-actor'
+import { AuditListPlatform } from '@/domain/use-cases/audit/audit-list-platform'
+import { AuditListUser } from '@/domain/use-cases/audit/audit-list-user'
+import { AuditListWorkbench } from '@/domain/use-cases/audit/audit-list-workbench'
+import { AuditListWorkspace } from '@/domain/use-cases/audit/audit-list-workspace'
 
 const getRepository = async () => {
   const dataSource = new AuditDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')

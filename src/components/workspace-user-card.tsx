@@ -9,14 +9,14 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+import { Button } from '@/components/button'
 import { Card, CardContent, CardHeader } from '@/components/card'
-import { Button } from '~/components/button'
-import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
-import { WorkspaceUserDeleteDialog } from '~/components/forms/workspace-user-delete-dialog'
-import { Badge } from '~/components/ui/badge'
-import { WORKSPACE_PERMISSIONS_DISPLAY } from '~/config/permissions'
-import { User } from '~/domain/model/user'
-import { useAuthorization } from '~/providers/authorization-provider'
+import { ManageUserWorkspaceDialog } from '@/components/forms/manage-user-workspace-dialog'
+import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
+import { Badge } from '@/components/ui/badge'
+import { WORKSPACE_PERMISSIONS_DISPLAY } from '@/config/permissions'
+import { User } from '@/domain/model/user'
+import { useAuthorization } from '@/providers/authorization-provider'
 
 export function WorkspaceUserCard({
   user,

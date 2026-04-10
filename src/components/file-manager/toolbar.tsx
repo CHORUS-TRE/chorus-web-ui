@@ -2,8 +2,8 @@
 
 import { LayoutGrid, List, Plus, Search, Upload } from 'lucide-react'
 
-import { Button } from '~/components/button'
-import { Input } from '~/components/ui/input'
+import { Button } from '@/components/button'
+import { Input } from '@/components/ui/input'
 
 interface ToolbarProps {
   viewMode: 'list' | 'grid'

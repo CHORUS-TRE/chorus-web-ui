@@ -23,18 +23,18 @@ import {
 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
-import { useToast } from '~/components/hooks/use-toast'
+import { useToast } from '@/components/hooks/use-toast'
 // Removed unused Alert imports
-import { Avatar, AvatarFallback } from '~/components/ui/avatar'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -42,7 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,11 +50,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { Textarea } from '~/components/ui/textarea'
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 
 // Mock API base URL - replace with actual API (unused in demo)
 

@@ -4,7 +4,7 @@ import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface StatCardProps {
   href: string

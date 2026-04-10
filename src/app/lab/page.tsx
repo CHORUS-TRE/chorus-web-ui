@@ -10,14 +10,14 @@ import {
   Sparkles
 } from 'lucide-react'
 
-import { Link } from '@/components/link'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
+} from '@/components/card'
+import { Link } from '@/components/link'
 
 export default function SandboxPage() {
   const sandboxItems: Array<{

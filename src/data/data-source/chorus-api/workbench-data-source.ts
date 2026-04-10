@@ -3,7 +3,7 @@ import { env } from 'next-runtime-env'
 import {
   WorkbenchCreateType,
   WorkbenchUpdateType
-} from '~/domain/model/workbench'
+} from '@/domain/model/workbench'
 import {
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
@@ -15,9 +15,9 @@ import {
   Configuration,
   WorkbenchServiceApi,
   WorkbenchServiceManageUserRoleInWorkbenchBody
-} from '~/internal/client'
+} from '@/internal/client'
 
-// import { BaseAPI } from '~/internal/client/runtime'
+// import { BaseAPI } from '@/internal/client/runtime'
 import { toChorusWorkbench, toChorusWorkbenchUpdate } from './workbench-mapper'
 
 interface WorkbenchDataSource {

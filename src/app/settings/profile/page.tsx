@@ -16,13 +16,13 @@ import { useMemo } from 'react'
 import { Button } from '@/components/button'
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { Link } from '@/components/link'
+import { getRoleScope, RoleBadge } from '@/components/role-badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Role } from '@/domain/model'
-import { getRoleScope, RoleBadge } from '~/components/role-badge'
-import { useAuthentication } from '~/providers/authentication-provider'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserProfile() {
   const { user, refreshUser } = useAuthentication()

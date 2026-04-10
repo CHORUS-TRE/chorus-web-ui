@@ -2,8 +2,7 @@
 
 import { Trash2 } from 'lucide-react'
 
-import { workspaceRemoveUserFromWorkspace } from '@/view-model/workspace-view-model'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-} from '~/components/ui/alert-dialog'
+} from '@/components/ui/alert-dialog'
+import { workspaceRemoveUserFromWorkspace } from '@/view-model/workspace-view-model'
 
 import { toast } from '../hooks/use-toast'
 

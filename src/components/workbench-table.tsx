@@ -14,13 +14,10 @@ import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
+import { Button } from '@/components/button'
+import { Card, CardContent, CardFooter } from '@/components/card'
 import { Link } from '@/components/link'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
-import { useAppState } from '@/stores/app-state-store'
-import { listUsers } from '@/view-model/user-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter } from '~/components/card'
 import {
   Table,
   TableBody,
@@ -28,9 +25,12 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
-import { WorkbenchServerPodStatus } from '~/domain/model'
-import { App, AppInstance, User, Workbench, Workspace } from '~/domain/model'
+} from '@/components/ui/table'
+import { WorkbenchServerPodStatus } from '@/domain/model'
+import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
+import { cn } from '@/lib/utils'
+import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'

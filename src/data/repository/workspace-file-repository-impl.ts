@@ -1,16 +1,16 @@
-import { WorkspaceFileDataSource } from '~/data/data-source/chorus-api/workspace-file-data-source'
+import { WorkspaceFileDataSource } from '@/data/data-source/chorus-api/workspace-file-data-source'
 import {
   fromChorusWorkspaceFile,
   fromChorusWorkspaceFilePart
-} from '~/data/data-source/chorus-api/workspace-file-mapper'
-import { Result } from '~/domain/model'
+} from '@/data/data-source/chorus-api/workspace-file-mapper'
+import { Result } from '@/domain/model'
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
   WorkspaceFileUpdateType
-} from '~/domain/model/workspace-file'
-import { WorkspaceFileRepository } from '~/domain/repository/workspace-file-repository'
+} from '@/domain/model/workspace-file'
+import { WorkspaceFileRepository } from '@/domain/repository/workspace-file-repository'
 
 export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
   private dataSource: WorkspaceFileDataSource

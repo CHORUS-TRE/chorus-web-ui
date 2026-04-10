@@ -18,8 +18,8 @@ import {
 import type React from 'react'
 import { useState } from 'react'
 
-import { cn } from '~/lib/utils'
-import type { FileSystemItem } from '~/types/file-system'
+import { cn } from '@/lib/utils'
+import type { FileSystemItem } from '@/types/file-system'
 
 // Helper function to get file icon based on extension
 function getFileIcon(extension?: string) {

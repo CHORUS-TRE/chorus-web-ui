@@ -14,7 +14,14 @@ import {
 import { useParams, useRouter } from 'next/navigation'
 import * as React from 'react'
 
+import { Button } from '@/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/card'
+import { useToast } from '@/components/hooks/use-toast'
 import { LoadingOverlay } from '@/components/loading-overlay'
+import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -28,20 +35,13 @@ import {
   getFiles,
   getTotalSize
 } from '@/lib/approval-request-utils'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import {
   approveApprovalRequest,
   getApprovalRequest
 } from '@/view-model/approval-request-view-model'
 import { listUsers } from '@/view-model/user-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
-import { useToast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import { Label } from '~/components/ui/label'
-import { Separator } from '~/components/ui/separator'
-import { Textarea } from '~/components/ui/textarea'
-import { useAuthentication } from '~/providers/authentication-provider'
 
 import { StatusBadge } from '../_components/status-badge'
 

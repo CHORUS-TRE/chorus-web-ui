@@ -4,15 +4,15 @@ import { Bell, ShieldCheck, User } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { useAuthentication } from '~/providers/authentication-provider'
+} from '@/components/card'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserSettingsPage() {
   const { user } = useAuthentication()

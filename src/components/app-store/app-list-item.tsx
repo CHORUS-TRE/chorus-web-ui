@@ -4,10 +4,10 @@ import { formatDistanceToNow } from 'date-fns'
 import { Plus } from 'lucide-react'
 import Image from 'next/image'
 
-import { Button } from '~/components/button'
-import { Avatar, AvatarFallback } from '~/components/ui/avatar'
-import { TableCell, TableRow } from '~/components/ui/table'
-import { App, ExternalWebApp } from '~/domain/model'
+import { Button } from '@/components/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { App, ExternalWebApp } from '@/domain/model'
 
 interface SessionAppListItemProps {
   app: App | ExternalWebApp

@@ -5,10 +5,10 @@ import { UIMessage } from 'ai'
 import { AlertCircle, CircleX, createLucideIcon, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/button'
 import { cn } from '@/lib/utils'
 import { useChatContext } from '@/providers/chat-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { Button } from '~/components/button'
 
 import { ChatInput } from './chat/chat-input'
 import { ChatMessage, TypingIndicator } from './chat/chat-message'

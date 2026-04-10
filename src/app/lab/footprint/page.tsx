@@ -14,17 +14,17 @@ import {
 } from 'lucide-react'
 import React from 'react'
 
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
-import { Badge } from '~/components/ui/badge'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
-import { Progress } from '~/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+} from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function EnvironmentalDashboard() {
   // Environmental data from the file

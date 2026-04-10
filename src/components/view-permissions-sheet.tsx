@@ -3,8 +3,8 @@
 import { Eye } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '~/components/button'
-import { PermissionMatrix } from '~/components/permission-matrix'
+import { Button } from '@/components/button'
+import { PermissionMatrix } from '@/components/permission-matrix'
 import {
   Sheet,
   SheetContent,
@@ -12,7 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger
-} from '~/components/ui/sheet'
+} from '@/components/ui/sheet'
 
 interface ViewPermissionsSheetProps {
   userName: string

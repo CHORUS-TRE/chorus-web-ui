@@ -5,8 +5,8 @@ import React, { useMemo } from 'react'
 
 import { Link } from '@/components/link'
 import { useInstanceConfig } from '@/hooks/use-instance-config'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { useAuthentication } from '~/providers/authentication-provider'
 
 import {
   Breadcrumb,

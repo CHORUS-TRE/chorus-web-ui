@@ -4,20 +4,20 @@ import { Settings } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { useAuthorization } from '@/providers/authorization-provider'
-import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
-} from '~/components/forms/workspace-forms'
+} from '@/components/forms/workspace-forms'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '@/components/ui/card'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { useAppState } from '@/stores/app-state-store'
 
 export default function WorkspaceSettingsPage() {
   const params = useParams<{ workspaceId: string }>()

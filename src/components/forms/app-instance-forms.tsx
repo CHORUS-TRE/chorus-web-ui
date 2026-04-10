@@ -23,10 +23,10 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { AppInstance, Result } from '@/domain/model'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
-import { AppInstance, Result } from '~/domain/model'
 
 import { toast } from '../hooks/use-toast'
 

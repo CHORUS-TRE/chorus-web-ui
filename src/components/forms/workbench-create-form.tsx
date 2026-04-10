@@ -14,6 +14,8 @@ import {
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
+import { Button } from '@/components/button'
+import { Card, CardContent, CardFooter } from '@/components/card'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -22,6 +24,15 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -39,17 +50,6 @@ import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { workbenchCreate } from '@/view-model/workbench-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter } from '~/components/card'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
 
 import { toast } from '../hooks/use-toast'
 import { Textarea } from '../ui/textarea'

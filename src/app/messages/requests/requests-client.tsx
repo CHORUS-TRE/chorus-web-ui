@@ -28,6 +28,30 @@ import {
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 
+import { Button } from '@/components/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/card'
+import { useToast } from '@/components/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -42,30 +66,6 @@ import {
 } from '@/lib/approval-request-utils'
 import { useAppState } from '@/stores/app-state-store'
 import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter, CardHeader } from '~/components/card'
-import { useToast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { Textarea } from '~/components/ui/textarea'
 
 import { StatusBadge } from './_components/status-badge'
 import { TypeBadge } from './_components/type-badge'

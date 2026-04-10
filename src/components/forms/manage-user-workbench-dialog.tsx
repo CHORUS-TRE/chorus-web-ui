@@ -5,9 +5,7 @@ import { startTransition, useActionState } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 
-import { deleteUserRole } from '@/view-model/user-view-model'
-import { workbenchAddUserRole } from '@/view-model/workbench-view-model'
-import { Button } from '~/components/button'
+import { Button } from '@/components/button'
 import {
   Dialog,
   DialogContent,
@@ -15,14 +13,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -30,11 +28,13 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
-import { getWorkbenchRoles } from '~/config/permissions'
-import { Result } from '~/domain/model'
-import { Role, User } from '~/domain/model/user'
-import { useAppState } from '~/stores/app-state-store'
+} from '@/components/ui/table'
+import { getWorkbenchRoles } from '@/config/permissions'
+import { Result } from '@/domain/model'
+import { Role, User } from '@/domain/model/user'
+import { useAppState } from '@/stores/app-state-store'
+import { deleteUserRole } from '@/view-model/user-view-model'
+import { workbenchAddUserRole } from '@/view-model/workbench-view-model'
 
 import { toast } from '../hooks/use-toast'
 

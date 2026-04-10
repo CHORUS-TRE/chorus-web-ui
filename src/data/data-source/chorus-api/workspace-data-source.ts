@@ -1,4 +1,4 @@
-import { WorkspaceCreateType, WorkspaceUpdatetype } from '~/domain/model'
+import { WorkspaceCreateType, WorkspaceUpdatetype } from '@/domain/model'
 import {
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
@@ -11,7 +11,7 @@ import {
   Configuration,
   WorkspaceServiceApi,
   WorkspaceServiceManageUserRoleInWorkspaceBody
-} from '~/internal/client'
+} from '@/internal/client'
 
 import { toChorusWorkspace, toChorusWorkspaceUpdate } from './workspace-mapper'
 

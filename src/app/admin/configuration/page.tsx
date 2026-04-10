@@ -2,7 +2,7 @@
 
 import { Settings2, ShieldAlert } from 'lucide-react'
 
-import { InstanceConfigForm } from '~/components/forms/instance-config-form'
+import { InstanceConfigForm } from '@/components/forms/instance-config-form'
 
 const ConfigurationPage = () => {
   return (

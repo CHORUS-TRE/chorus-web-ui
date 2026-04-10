@@ -3,11 +3,8 @@
 import { CheckCircle2, XCircle } from 'lucide-react'
 import * as React from 'react'
 
-import { ApprovalRequest } from '@/domain/model/approval-request'
-import { formatBytes, getTotalSize } from '@/lib/approval-request-utils'
-import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
-import { Button } from '~/components/button'
-import { useToast } from '~/components/hooks/use-toast'
+import { Button } from '@/components/button'
+import { useToast } from '@/components/hooks/use-toast'
 import {
   Dialog,
   DialogContent,
@@ -15,9 +12,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Label } from '~/components/ui/label'
-import { Textarea } from '~/components/ui/textarea'
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { ApprovalRequest } from '@/domain/model/approval-request'
+import { formatBytes, getTotalSize } from '@/lib/approval-request-utils'
+import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
 
 import { TypeBadge } from '../requests/_components/type-badge'
 

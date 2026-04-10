@@ -3,8 +3,8 @@
 import { ArrowUp, Paperclip } from 'lucide-react'
 import { type KeyboardEvent, useRef } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Button } from '~/components/ui/button'
 
 interface ChatInputProps {
   value: string

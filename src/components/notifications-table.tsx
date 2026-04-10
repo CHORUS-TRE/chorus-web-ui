@@ -4,9 +4,6 @@ import { formatDistanceToNow } from 'date-fns'
 import { Bell } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { Notification } from '@/domain/model'
-import { User } from '@/domain/model/user'
-import { listUsers } from '@/view-model/user-view-model'
 import {
   Card,
   CardContent,
@@ -14,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
+} from '@/components/card'
+import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -23,7 +20,10 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
+import { Notification } from '@/domain/model'
+import { User } from '@/domain/model/user'
+import { listUsers } from '@/view-model/user-view-model'
 
 export default function NotificationsTable({
   notifications,

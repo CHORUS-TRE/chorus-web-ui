@@ -3,17 +3,12 @@
 import { Trash2 } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { listUsers } from '@/view-model/user-view-model'
-import {
-  workspaceAddUserRole,
-  workspaceRemoveUserRole
-} from '@/view-model/workspace-view-model'
-import { Button } from '~/components/button'
-import { WorkspaceUserDeleteDialog } from '~/components/forms/workspace-user-delete-dialog'
-import { toast } from '~/components/hooks/use-toast'
-import { PermissionMatrix } from '~/components/permission-matrix'
-import { Badge } from '~/components/ui/badge'
-import { Checkbox } from '~/components/ui/checkbox'
+import { Button } from '@/components/button'
+import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
+import { toast } from '@/components/hooks/use-toast'
+import { PermissionMatrix } from '@/components/permission-matrix'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -21,18 +16,23 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '~/config/permissions'
-import { User } from '~/domain/model/user'
-import { cn } from '~/lib/utils'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAuthorization } from '~/providers/authorization-provider'
+} from '@/components/ui/tooltip'
+import { ROLE_DEFINITIONS } from '@/config/permissions'
+import { User } from '@/domain/model/user'
+import { cn } from '@/lib/utils'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { listUsers } from '@/view-model/user-view-model'
+import {
+  workspaceAddUserRole,
+  workspaceRemoveUserRole
+} from '@/view-model/workspace-view-model'
 
 const WORKSPACE_ROLE_COLUMNS = [
   'WorkspaceGuest',

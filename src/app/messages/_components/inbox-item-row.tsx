@@ -10,6 +10,7 @@ import {
   XCircle
 } from 'lucide-react'
 
+import { Button } from '@/components/button'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -18,7 +19,6 @@ import {
 import { Notification } from '@/domain/model/notification'
 import { Role } from '@/domain/model/user'
 import { canApproveRequest } from '@/lib/approval-request-utils'
-import { Button } from '~/components/button'
 
 import type { InboxItem } from '../_hooks/use-inbox-data'
 import { StatusBadge } from '../requests/_components/status-badge'

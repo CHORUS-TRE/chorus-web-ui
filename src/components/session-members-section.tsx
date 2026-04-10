@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from 'react'
 
-import { toast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import { Checkbox } from '~/components/ui/checkbox'
+import { toast } from '@/components/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -12,23 +12,23 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '~/config/permissions'
-import { User } from '~/domain/model/user'
-import { Workbench } from '~/domain/model/workbench'
-import { cn } from '~/lib/utils'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAuthorization } from '~/providers/authorization-provider'
+} from '@/components/ui/tooltip'
+import { ROLE_DEFINITIONS } from '@/config/permissions'
+import { User } from '@/domain/model/user'
+import { Workbench } from '@/domain/model/workbench'
+import { cn } from '@/lib/utils'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAuthorization } from '@/providers/authorization-provider'
 import {
   workbenchAddUserRole,
   workbenchRemoveUserRole
-} from '~/view-model/workbench-view-model'
+} from '@/view-model/workbench-view-model'
 
 const WORKBENCH_ROLE_COLUMNS = [
   'WorkbenchViewer',
