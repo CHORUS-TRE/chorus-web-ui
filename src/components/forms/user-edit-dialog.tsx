@@ -12,7 +12,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   Dialog,

@@ -10,7 +10,7 @@ import {
   XCircle
 } from 'lucide-react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,

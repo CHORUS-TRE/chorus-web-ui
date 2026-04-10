@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { Link } from '@/components/link'
 import { getRoleScope, RoleBadge } from '@/components/role-badge'

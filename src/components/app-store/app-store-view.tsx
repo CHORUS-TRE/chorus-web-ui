@@ -2,7 +2,7 @@ import { LayoutGrid, List, Search } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { toast } from '@/components/hooks/use-toast'
 import {
   Dialog,

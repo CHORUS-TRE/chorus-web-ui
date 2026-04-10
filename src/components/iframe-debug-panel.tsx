@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 
-import { Button } from './button'
+import { Button } from './ui/button'
 
 /**
  * Debug panel to visualize the iframe cache state.

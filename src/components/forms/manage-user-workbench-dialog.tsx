@@ -5,7 +5,7 @@ import { startTransition, useActionState } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,

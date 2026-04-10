@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { ImageUploadField } from '@/components/forms/image-upload-field'
 import { Link } from '@/components/link'
 import {

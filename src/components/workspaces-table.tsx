@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useCallback, useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,

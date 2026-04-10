@@ -3,7 +3,7 @@
 import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'

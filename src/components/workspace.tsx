@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,

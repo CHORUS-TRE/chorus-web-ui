@@ -14,7 +14,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/card'
 import {
   Dialog as DialogContainer,

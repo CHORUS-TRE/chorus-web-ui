@@ -3,7 +3,7 @@
 import { CirclePlus, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { ActionBar } from '@/components/file-manager/action-bar'
 import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import { FileGrid } from '@/components/file-manager/file-grid'

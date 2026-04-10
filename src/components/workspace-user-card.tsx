@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/card'
 import { ManageUserWorkspaceDialog } from '@/components/forms/manage-user-workspace-dialog'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'

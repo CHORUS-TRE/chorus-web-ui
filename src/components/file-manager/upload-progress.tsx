@@ -2,7 +2,7 @@
 
 import { X } from 'lucide-react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { FileSystemUploadItem } from '@/types/file-system'
 
 const STATS_UPDATE_INTERVAL = 500 // In ms

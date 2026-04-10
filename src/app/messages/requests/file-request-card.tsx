@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'

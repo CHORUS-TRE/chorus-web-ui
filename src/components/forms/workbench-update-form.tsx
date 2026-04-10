@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog as DialogContainer,
   DialogContent,

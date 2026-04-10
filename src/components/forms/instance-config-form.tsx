@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,

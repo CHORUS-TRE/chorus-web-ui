@@ -14,7 +14,7 @@ import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/card'
 import { Link } from '@/components/link'
 import { Badge } from '@/components/ui/badge'

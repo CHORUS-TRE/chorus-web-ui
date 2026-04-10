@@ -3,7 +3,7 @@
 import { Copy, Download, Edit3, Move, Share2, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,

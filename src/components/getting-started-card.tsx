@@ -5,7 +5,7 @@ import React from 'react'
 
 import { useUserPreferences } from '@/stores/user-preferences-store'
 
-import { Button } from './button'
+import { Button } from './ui/button'
 
 const GettingStartedCard: React.FC<CardComponentProps> = ({
   step,

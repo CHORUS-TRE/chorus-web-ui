@@ -28,7 +28,7 @@ import {
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/card'
 import { useToast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'

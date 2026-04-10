@@ -3,7 +3,7 @@
 import { CheckCircle2, XCircle } from 'lucide-react'
 import * as React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/hooks/use-toast'
 import {
   Dialog,

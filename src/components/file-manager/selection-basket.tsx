@@ -10,7 +10,7 @@ import {
 import { useParams } from 'next/navigation'
 import * as React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,

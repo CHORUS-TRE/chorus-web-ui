@@ -12,7 +12,7 @@ import {
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { Link } from '@/components/link'

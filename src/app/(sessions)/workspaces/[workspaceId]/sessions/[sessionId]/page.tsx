@@ -3,7 +3,7 @@ import { Store } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
 import { Link } from '@/components/link'
 import { WorkbenchServerPodStatus } from '@/domain/model'

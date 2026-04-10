@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { toast } from '@/components/hooks/use-toast'
 import { Input } from '@/components/ui/input'

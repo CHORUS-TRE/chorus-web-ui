@@ -29,7 +29,7 @@ import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 
 import packageInfo from '../../package.json'
-import { Button } from './button'
+import { Button } from './ui/button'
 
 // All navigation items (for external use like mobile nav, page titles)
 // TODO: make it dynamic based on the instance config

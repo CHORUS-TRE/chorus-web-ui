@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { LaptopMinimal, MoreVertical } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardTitle } from '@/components/card'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'

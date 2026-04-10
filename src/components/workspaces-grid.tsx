@@ -11,7 +11,7 @@ import {
 import Image from 'next/image'
 import { useCallback, useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/card'
 import {
   WorkspaceDeleteForm,

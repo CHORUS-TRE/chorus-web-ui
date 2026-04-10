@@ -14,7 +14,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/card'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { Link } from '@/components/link'

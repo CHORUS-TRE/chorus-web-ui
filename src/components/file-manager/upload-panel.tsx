@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronUp, Upload } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { UploadProgress } from '@/components/file-manager/upload-progress'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { useAppStateStore } from '@/stores/app-state-store'

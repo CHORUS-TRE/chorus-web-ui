@@ -4,7 +4,7 @@ import { LayoutGrid, Rows3, Users } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { AddUserToWorkspaceDialog } from '@/components/forms/add-user-to-workspace-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { SessionMembersSection } from '@/components/session-members-section'

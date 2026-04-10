@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useAppState } from '@/stores/app-state-store'
 
 interface BreadcrumbProps {

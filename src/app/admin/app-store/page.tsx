@@ -4,7 +4,7 @@ import { Pencil, Plus, Store, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/card'
 import { AppCreateDialog } from '@/components/forms/app-create-dialog'
 import { WebAppCreateDialog } from '@/components/forms/webapp-create-dialog'

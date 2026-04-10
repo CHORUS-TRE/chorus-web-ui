@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
 import {

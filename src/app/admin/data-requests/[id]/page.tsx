@@ -14,7 +14,7 @@ import {
 import { useParams, useRouter } from 'next/navigation'
 import * as React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/card'
 import { useToast } from '@/components/hooks/use-toast'
 import { LoadingOverlay } from '@/components/loading-overlay'

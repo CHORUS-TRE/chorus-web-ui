@@ -4,7 +4,7 @@ import { ShieldCheck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,

@@ -4,7 +4,7 @@ import { Bell, ShieldCheck, User } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
