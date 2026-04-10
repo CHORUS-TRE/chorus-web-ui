@@ -66,7 +66,7 @@ export default function PrivacySettingsPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 py-4">
-      <Card className="card-glass overflow-hidden border-none shadow-lg">
+      <Card className="card-glass overflow-hidden border-none shadow-md">
         <CardHeader className="bg-primary/5 pb-6">
           <div className="mb-1 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />

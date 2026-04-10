@@ -74,7 +74,7 @@ export function StatusBadge({
           cfg.colorClass.split(' ').find((c) => c.startsWith('text-'))
         )}
       />
-      <span className="text-gray-400">{cfg.label}</span>
+      <span className="text-muted-foreground">{cfg.label}</span>
     </Badge>
   )
 }

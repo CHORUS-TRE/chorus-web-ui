@@ -86,7 +86,7 @@ export function InboxItemRow({
     notification?.content?.approvalRequestNotification?.approvalRequestId
 
   return (
-    <div className="flex items-start justify-between rounded-xl border border-muted/20 bg-card p-4 transition-colors hover:bg-muted/10">
+    <div className="flex items-start justify-between rounded-lg border border-muted/20 bg-card p-4 transition-colors hover:bg-muted/10">
       {/* Left: icon + content */}
       <div className="flex min-w-0 gap-3">
         <ItemIcon kind={item.kind} />

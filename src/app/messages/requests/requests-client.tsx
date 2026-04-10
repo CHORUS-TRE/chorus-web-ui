@@ -781,7 +781,7 @@ export default function RequestsClient({
 
           {selectedRequest && (
             <div className="space-y-6 py-4">
-              <div className="grid grid-cols-2 gap-4 rounded-xl border border-muted/20 bg-muted/10 p-4">
+              <div className="grid grid-cols-2 gap-4 rounded-lg border border-muted/20 bg-muted/10 p-4">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">
                     Manifest Type
@@ -802,7 +802,7 @@ export default function RequestsClient({
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Applicant Justification
                 </Label>
-                <div className="rounded-xl border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
+                <div className="rounded-lg border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
                   &quot;{selectedRequest.description}&quot;
                 </div>
               </div>
@@ -822,7 +822,7 @@ export default function RequestsClient({
                   placeholder="Record relevant details for the security audit log..."
                   value={reviewNotes}
                   onChange={(e) => setReviewNotes(e.target.value)}
-                  className="min-h-[100px] resize-none rounded-xl bg-muted/20"
+                  className="min-h-[100px] resize-none rounded-lg bg-muted/20"
                 />
               </div>
             </div>
@@ -832,14 +832,14 @@ export default function RequestsClient({
             <Button
               variant="outline"
               onClick={closeDialog}
-              className="h-11 rounded-xl"
+              className="h-11 rounded-lg"
             >
               Cancel
             </Button>
             <Button
               variant={activeAction === 'approve' ? 'default' : 'destructive'}
               onClick={handleRequestAction}
-              className="h-11 min-w-[160px] rounded-xl"
+              className="h-11 min-w-[160px] rounded-lg"
             >
               {activeAction === 'approve'
                 ? 'Confirm Approval'

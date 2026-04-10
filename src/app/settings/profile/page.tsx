@@ -80,7 +80,7 @@ export default function UserProfile() {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           {/* Profile Header */}
-          <Card className="card-glass flex flex-col rounded-2xl">
+          <Card className="card-glass flex flex-col rounded-lg">
             <CardContent className="pt-6">
               <div className="flex items-start space-x-4">
                 <Avatar className="h-20 w-20">
@@ -118,7 +118,7 @@ export default function UserProfile() {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Basic Information */}
-            <Card className="card-glass flex h-full flex-col rounded-2xl">
+            <Card className="card-glass flex h-full flex-col rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
@@ -156,7 +156,7 @@ export default function UserProfile() {
             </Card>
 
             {/* Account Status */}
-            <Card className="card-glass flex h-full flex-col rounded-2xl">
+            <Card className="card-glass flex h-full flex-col rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
@@ -209,7 +209,7 @@ export default function UserProfile() {
 
           {/* Workspace Information */}
           {user?.workspaceId && (
-            <Card className="card-glass flex h-full flex-col rounded-2xl">
+            <Card className="card-glass flex h-full flex-col rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AppWindow className="h-5 w-5" />
@@ -235,7 +235,7 @@ export default function UserProfile() {
           )}
 
           {/* Actions */}
-          <Card className="card-glass flex flex-col rounded-2xl">
+          <Card className="card-glass flex flex-col rounded-lg">
             <CardContent className="pt-6">
               <div className="flex flex-wrap gap-3">
                 {user && (
@@ -252,7 +252,7 @@ export default function UserProfile() {
 
         <div>
           {/* Roles & Permissions */}
-          <Card className="card-glass flex h-full flex-col rounded-2xl">
+          <Card className="card-glass flex h-full flex-col rounded-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />

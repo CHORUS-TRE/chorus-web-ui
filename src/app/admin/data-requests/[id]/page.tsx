@@ -404,14 +404,14 @@ export default function AdminRequestDetailPage() {
                       placeholder="Record relevant details for the security audit log..."
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
-                      className="min-h-[80px] resize-none rounded-xl bg-muted/20"
+                      className="min-h-[80px] resize-none rounded-lg bg-muted/20"
                     />
                   </div>
                   <Separator className="bg-muted/20" />
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-lg"
                       disabled={isSubmitting}
                       onClick={() => handleAction(false)}
                     >
@@ -419,7 +419,7 @@ export default function AdminRequestDetailPage() {
                       Reject
                     </Button>
                     <Button
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-lg"
                       disabled={isSubmitting}
                       onClick={() => handleAction(true)}
                     >
@@ -432,7 +432,7 @@ export default function AdminRequestDetailPage() {
 
               {canDownload && (
                 <Button
-                  className="w-full rounded-xl"
+                  className="w-full rounded-lg"
                   disabled={isDownloading}
                   onClick={handleDownload}
                 >
