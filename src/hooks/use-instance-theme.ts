@@ -14,7 +14,7 @@ const DEFAULT_THEME = {
   light: {
     primary: '#1340FF',
     secondary: '#CDCBFA',
-    accent: '#B7FF13'
+    accent: '#618216'
   },
   dark: {
     primary: '#1340FF',

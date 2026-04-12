@@ -561,71 +561,7 @@ video {
   display: none;
 }
 
-:root {
-  --background: 0 0% 93%;
-  --contrast-background: 0 0% 100%;
-  --foreground: 0 0% 8%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 8%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 8%;
-  --primary: 229 100% 54%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 93%;
-  --secondary-foreground: 0 0% 26%;
-  --muted: 0 0% 93%;
-  --muted-foreground: 0 0% 26%;
-  --accent: 78 70% 30%;
-  --accent-foreground: 0 0% 100%;
-  --accent-background: 78 100% 54%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 74%;
-  --input: 0 0% 78%;
-  --ring: 229 100% 54%;
-  --radius: 0.5rem;
-  --sidebar-background: 0 0% 95%;
-  --sidebar-foreground: 0 0% 10%;
-  --sidebar-primary: 229 100% 54%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 78 100% 54%;
-  --sidebar-accent-foreground: 0 0% 8%;
-  --sidebar-border: 0 0% 85%;
-  --sidebar-ring: 229 100% 54%;
-}
-
-.dark {
-  --background: 0 0% 14%;
-  --contrast-background: 0 0% 3%;
-  --foreground: 0 0% 98%;
-  --card: 0 0% 18%;
-  --card-foreground: 0 0% 98%;
-  --popover: 0 0% 18%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 229 100% 64%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 24%;
-  --secondary-foreground: 0 0% 72%;
-  --muted: 0 0% 24%;
-  --muted-foreground: 0 0% 72%;
-  --accent: 78 100% 54%;
-  --accent-foreground: 0 0% 8%;
-  --accent-background: 78 100% 54%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 28%;
-  --input: 0 0% 22%;
-  --ring: 229 100% 64%;
-  --sidebar-background: 0 0% 14%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 229 100% 64%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 78 100% 54%;
-  --sidebar-accent-foreground: 0 0% 8%;
-  --sidebar-border: 0 0% 22%;
-  --sidebar-ring: 229 100% 64%;
-  /* Lighter blue ring */
-}
+/* Token definitions removed — source of truth is globals.css */
 
 * {
   border-color: hsl(var(--border));

@@ -397,10 +397,7 @@ export default function WorkbenchTable({
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="hover:bg-muted/10"
-                  >
+                  <TableRow key={headerGroup.id} className="hover:bg-muted/10">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead

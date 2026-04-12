@@ -145,7 +145,9 @@ export function AppInstanceCreateForm({
                   <input type="hidden" name="tenantId" defaultValue={'1'} />
                   <input type="hidden" name="status" defaultValue={'active'} />
 
-                  {state.error && <p className="text-destructive">{state.error}</p>}
+                  {state.error && (
+                    <p className="text-destructive">{state.error}</p>
+                  )}
                 </CardContent>
                 <CardFooter>
                   <SubmitButton />

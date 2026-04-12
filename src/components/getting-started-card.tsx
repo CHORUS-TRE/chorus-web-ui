@@ -91,7 +91,12 @@ const GettingStartedCard: React.FC<CardComponentProps> = ({
             Previous
           </button>
         )}
-        <span style={{ color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>
+        <span
+          style={{
+            color: 'hsl(var(--muted-foreground))',
+            whiteSpace: 'nowrap'
+          }}
+        >
           {/* {currentStep + 1} of {totalSteps} */}
         </span>
         {currentStep === totalSteps - 1 ? (

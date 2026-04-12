@@ -153,7 +153,9 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       >
         <DialogHeader>
           <div className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-foreground">Edit App Details</DialogTitle>
+            <DialogTitle className="text-foreground">
+              Edit App Details
+            </DialogTitle>
             <Link
               href="#"
               onClick={() => setShowAdvanced(!showAdvanced)}
@@ -202,7 +204,9 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Description</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Description
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -273,7 +277,9 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                     name="dockerImageTag"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">Image Tag</FormLabel>
+                        <FormLabel className="text-foreground">
+                          Image Tag
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
