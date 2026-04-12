@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { LoadingOverlay } from '~/components/loading-overlay'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
 export default function Layout({
   children

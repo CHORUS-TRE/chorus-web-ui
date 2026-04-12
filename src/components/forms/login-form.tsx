@@ -6,7 +6,10 @@ import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
-import { Link } from '@/components/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Link } from '@/components/ui/link'
 import { AuthenticationMode, Result, User } from '@/domain/model'
 import { AuthenticationModeType } from '@/domain/model/authentication'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -17,9 +20,6 @@ import {
   getAuthenticationModes,
   getOAuthUrl
 } from '@/view-model/authentication-view-model'
-import { Button } from '~/components/button'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
 
 import { toast } from '../hooks/use-toast'
 

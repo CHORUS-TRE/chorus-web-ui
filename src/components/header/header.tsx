@@ -10,7 +10,6 @@ import { useMemo, useState } from 'react'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
 import { toast } from '@/components/hooks/use-toast'
-import { Link } from '@/components/link'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -20,6 +19,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { AppBreadcrumb } from '@/components/ui/app-breadcrumb'
+import { Link } from '@/components/ui/link'
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
@@ -29,9 +30,8 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
-import { AppBreadcrumb } from '~/components/ui/app-breadcrumb'
-import { useUserPreferences } from '~/stores/user-preferences-store'
 
 import { RecentTabs } from './recent-tabs'
 import { SessionPill } from './session-pill'
@@ -188,7 +188,7 @@ export function Header() {
             href="#"
             variant="underline"
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent'
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent'
             )}
             title="Help"
           >

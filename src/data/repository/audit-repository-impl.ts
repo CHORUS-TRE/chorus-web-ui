@@ -1,7 +1,7 @@
-import { AuditDataSource } from '~/data/data-source'
-import { AuditEntry, AuditEntrySchema, Result } from '~/domain/model'
-import { AuditRepository } from '~/domain/repository'
-import { ChorusListAuditReply } from '~/internal/client'
+import { AuditDataSource } from '@/data/data-source'
+import { AuditEntry, AuditEntrySchema, Result } from '@/domain/model'
+import { AuditRepository } from '@/domain/repository'
+import { ChorusListAuditReply } from '@/internal/client'
 
 export class AuditRepositoryImpl implements AuditRepository {
   private dataSource: AuditDataSource

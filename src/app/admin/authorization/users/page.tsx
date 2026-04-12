@@ -3,12 +3,12 @@
 import { Search } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
-import { toast } from '~/components/hooks/use-toast'
-import { PermissionMatrix } from '~/components/permission-matrix'
-import { Badge } from '~/components/ui/badge'
-import { Checkbox } from '~/components/ui/checkbox'
-import { Input } from '~/components/ui/input'
+import { CreateUserRoleDialog } from '@/components/forms/create-user-role-dialog'
+import { toast } from '@/components/hooks/use-toast'
+import { PermissionMatrix } from '@/components/permission-matrix'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -16,19 +16,19 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
-import { ROLE_DEFINITIONS, type RoleDefinition } from '~/config/permissions'
-import { User } from '~/domain/model/user'
-import { cn } from '~/lib/utils'
-import { useAuthentication } from '~/providers/authentication-provider'
-import { useAppState } from '~/stores/app-state-store'
-import { deleteUserRole, listUsers } from '~/view-model/user-view-model'
+} from '@/components/ui/tooltip'
+import { ROLE_DEFINITIONS, type RoleDefinition } from '@/config/permissions'
+import { User } from '@/domain/model/user'
+import { cn } from '@/lib/utils'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
+import { deleteUserRole, listUsers } from '@/view-model/user-view-model'
 
 type Scope = 'platform' | 'workspace' | 'session'
 
@@ -49,19 +49,19 @@ function getRoleScope(
 
 const scopeColors: Record<Scope, string> = {
   platform: 'border-primary text-primary',
-  workspace: 'border-secondary text-secondary',
+  workspace: 'border-muted-foreground text-muted-foreground',
   session: 'border-accent text-accent'
 }
 
 const scopeActiveBg: Record<Scope, string> = {
   platform: 'bg-primary text-primary-foreground border-primary',
-  workspace: 'bg-secondary text-secondary-foreground border-secondary',
+  workspace: 'bg-muted text-foreground border-muted',
   session: 'bg-accent text-accent-foreground border-accent'
 }
 
 const contextBadgeColors: Record<Scope, string> = {
   platform: 'bg-primary/20 text-primary',
-  workspace: 'bg-secondary/20 text-secondary',
+  workspace: 'bg-muted/20 text-muted-foreground',
   session: 'bg-accent/20 text-accent'
 }
 
@@ -236,7 +236,7 @@ export default function AuthorizationUsersPage() {
                 <React.Fragment key={user.id}>
                   <TableRow
                     className={cn(
-                      'cursor-pointer hover:bg-accent/5',
+                      'cursor-pointer hover:bg-muted/10',
                       isMe && 'bg-primary/5'
                     )}
                     onClick={() =>

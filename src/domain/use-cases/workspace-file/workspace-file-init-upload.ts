@@ -1,5 +1,5 @@
-import { Result, WorkspaceFileCreateType } from '~/domain/model'
-import { WorkspaceFileRepository } from '~/domain/repository/workspace-file-repository'
+import { Result, WorkspaceFileCreateType } from '@/domain/model'
+import { WorkspaceFileRepository } from '@/domain/repository/workspace-file-repository'
 
 export interface WorkspaceFileInitUploadUseCase {
   execute(

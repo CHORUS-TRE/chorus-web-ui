@@ -7,13 +7,10 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { PRESETS, type Presets } from '@/components/forms/app-create-dialog'
+import { ImageUploadField } from '@/components/forms/image-upload-field'
 import { toast } from '@/components/hooks/use-toast'
-import { Link } from '@/components/link'
-import { useAppState } from '@/stores/app-state-store'
-import { appGet, appUpdate } from '@/view-model/app-view-model'
-import { Button } from '~/components/button'
-import { PRESETS, type Presets } from '~/components/forms/app-create-dialog'
-import { ImageUploadField } from '~/components/forms/image-upload-field'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -21,16 +18,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Link } from '@/components/ui/link'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { App, AppState, AppUpdateSchema, Result } from '~/domain/model'
+} from '@/components/ui/select'
+import { App, AppState, AppUpdateSchema, Result } from '@/domain/model'
+import { useAppState } from '@/stores/app-state-store'
+import { appGet, appUpdate } from '@/view-model/app-view-model'
 
 type FormData = z.infer<typeof AppUpdateSchema>
 type FormFieldName = keyof FormData

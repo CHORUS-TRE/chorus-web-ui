@@ -6,16 +6,15 @@ import { useEffect, useRef } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useInstanceConfig } from '@/hooks/use-instance-config'
-import { Button } from '~/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Checkbox } from '~/components/ui/checkbox'
+} from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -24,12 +23,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { Switch } from '~/components/ui/switch'
-import { Textarea } from '~/components/ui/textarea'
-import { useIframeCache } from '~/providers/iframe-cache-provider'
-import { useDevStoreCache } from '~/stores/dev-store-cache'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
+import { useInstanceConfig } from '@/hooks/use-instance-config'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 
 import { toast } from '../hooks/use-toast'
 

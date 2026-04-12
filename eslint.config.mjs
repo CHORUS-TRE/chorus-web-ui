@@ -30,7 +30,35 @@ export default defineConfig([
       'react-hooks/set-state-in-effect': 'off',
       'react-hooks/immutability': 'off',
       'react-hooks/purity': 'off',
-      'react-hooks/static-components': 'off'
+      'react-hooks/static-components': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['~/*'],
+              message: 'Use @/ instead of ~/. The ~/ alias has been removed.'
+            },
+            {
+              group: ['@/components/button'],
+              message: 'Import Button from @/components/ui/button'
+            },
+            {
+              group: ['@/components/card'],
+              message: 'Import Card from @/components/ui/card'
+            },
+            {
+              group: ['@/components/link'],
+              message: 'Import Link from @/components/ui/link'
+            },
+            {
+              group: ['@/components/nav-link'],
+              message:
+                'nav-link.tsx is deleted. Use Link from @/components/ui/link with variant="nav"'
+            }
+          ]
+        }
+      ]
     }
   },
   {

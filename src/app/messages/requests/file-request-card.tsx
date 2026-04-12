@@ -13,6 +13,16 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
+import { useToast } from '@/components/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from '@/components/ui/collapsible'
+import { Separator } from '@/components/ui/separator'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -24,16 +34,6 @@ import {
   getFiles,
   getTotalSize
 } from '@/lib/approval-request-utils'
-import { Button } from '~/components/button'
-import { useToast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import { Card, CardContent, CardFooter, CardHeader } from '~/components/ui/card'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '~/components/ui/collapsible'
-import { Separator } from '~/components/ui/separator'
 
 import { StatusBadge } from './_components/status-badge'
 import { TypeBadge } from './_components/type-badge'

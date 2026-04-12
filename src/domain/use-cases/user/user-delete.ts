@@ -1,5 +1,5 @@
-import { Result } from '~/domain/model'
-import { UserRepository } from '~/domain/repository'
+import { Result } from '@/domain/model'
+import { UserRepository } from '@/domain/repository'
 
 export class UserDelete {
   constructor(private readonly userRepository: UserRepository) {}

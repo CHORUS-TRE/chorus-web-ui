@@ -4,10 +4,10 @@ import { formatDistanceToNow } from 'date-fns'
 import { Plus } from 'lucide-react'
 import Image from 'next/image'
 
-import { Button } from '~/components/button'
-import { Avatar, AvatarFallback } from '~/components/ui/avatar'
-import { TableCell, TableRow } from '~/components/ui/table'
-import { App, ExternalWebApp } from '~/domain/model'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { App, ExternalWebApp } from '@/domain/model'
 
 interface SessionAppListItemProps {
   app: App | ExternalWebApp
@@ -22,7 +22,7 @@ export function SessionAppListItem({ app, onLaunch }: SessionAppListItemProps) {
   const updatedAt = 'updatedAt' in app ? (app as App).updatedAt : undefined
 
   return (
-    <TableRow className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80">
+    <TableRow className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10">
       <TableCell className="w-[50px] p-2">
         <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-lg border border-muted/10 bg-background/40 p-1">
           {iconSrc ? (

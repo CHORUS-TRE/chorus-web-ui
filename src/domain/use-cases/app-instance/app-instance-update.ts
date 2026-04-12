@@ -1,5 +1,5 @@
-import { AppInstance, AppInstanceUpdateType, Result } from '~/domain/model'
-import { AppInstanceRepository } from '~/domain/repository'
+import { AppInstance, AppInstanceUpdateType, Result } from '@/domain/model'
+import { AppInstanceRepository } from '@/domain/repository'
 
 export class AppInstanceUpdate {
   constructor(private readonly repository: AppInstanceRepository) {}

@@ -6,6 +6,11 @@ import { env } from 'next-runtime-env'
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
 import {
+  AuthenticationMode,
+  AuthenticationOAuthRedirectRequest,
+  Result
+} from '@/domain/model'
+import {
   AuthenticationGetModes,
   AuthenticationGetOAuthUrl,
   AuthenticationLogin,
@@ -14,11 +19,6 @@ import {
   AuthenticationRefreshToken
 } from '@/domain/use-cases'
 import { Analytics } from '@/lib/analytics/service'
-import {
-  AuthenticationMode,
-  AuthenticationOAuthRedirectRequest,
-  Result
-} from '~/domain/model'
 
 const getRepository = async () => {
   const dataSource = new AuthenticationApiDataSourceImpl(

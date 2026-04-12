@@ -4,8 +4,8 @@ import { LaptopMinimal, RefreshCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import WorkbenchTable from '@/components/workbench-table'
 import { useAppState } from '@/stores/app-state-store'
-import WorkbenchTable from '~/components/workbench-table'
 
 export default function AdminSessionsPage() {
   const { workbenches, refreshWorkbenches } = useAppState()

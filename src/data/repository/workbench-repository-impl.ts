@@ -1,13 +1,13 @@
-import { WorkbenchDataSource } from '~/data/data-source'
+import { WorkbenchDataSource } from '@/data/data-source'
 import {
   Result,
   Workbench,
   WorkbenchCreateType,
   WorkbenchUpdateType
-} from '~/domain/model'
-import { User } from '~/domain/model/user'
-import { WorkbenchSchema } from '~/domain/model/workbench'
-import { WorkbenchRepository } from '~/domain/repository'
+} from '@/domain/model'
+import { User } from '@/domain/model/user'
+import { WorkbenchSchema } from '@/domain/model/workbench'
+import { WorkbenchRepository } from '@/domain/repository'
 
 export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   private dataSource: WorkbenchDataSource

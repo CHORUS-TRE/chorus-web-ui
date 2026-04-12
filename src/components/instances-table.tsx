@@ -4,9 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { AppWindow, TrashIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
-import { cn } from '@/lib/utils'
-import { useAppState } from '@/stores/app-state-store'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -14,9 +13,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+} from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -24,9 +21,12 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
-import { useAuthorization } from '~/providers/authorization-provider'
-import { deleteAppInstance } from '~/view-model/app-instance-view-model'
+} from '@/components/ui/table'
+import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
+import { cn } from '@/lib/utils'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { useAppState } from '@/stores/app-state-store'
+import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 
 export default function InstancesTable({
   instances,
@@ -135,7 +135,7 @@ export default function InstancesTable({
             {instances?.map((instance) => (
               <TableRow
                 key={instance.id}
-                className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                 onClick={() =>
                   router.push(
                     `/workspaces/${instance.workspaceId}/sessions/${instance.workbenchId}`

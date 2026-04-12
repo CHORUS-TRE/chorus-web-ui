@@ -5,7 +5,7 @@ import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import { z } from 'zod'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -23,10 +23,10 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { AppInstance, Result } from '@/domain/model'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
-import { AppInstance, Result } from '~/domain/model'
 
 import { toast } from '../hooks/use-toast'
 
@@ -119,7 +119,7 @@ export function AppInstanceCreateForm({
                         </option>
                       ))}
                     </select>
-                    <div className="text-xs text-red-500">
+                    <div className="text-xs text-destructive">
                       {
                         state.issues?.find((e: z.ZodIssue) =>
                           e.path.includes('appId')
@@ -145,7 +145,9 @@ export function AppInstanceCreateForm({
                   <input type="hidden" name="tenantId" defaultValue={'1'} />
                   <input type="hidden" name="status" defaultValue={'active'} />
 
-                  {state.error && <p className="text-red-500">{state.error}</p>}
+                  {state.error && (
+                    <p className="text-destructive">{state.error}</p>
+                  )}
                 </CardContent>
                 <CardFooter>
                   <SubmitButton />

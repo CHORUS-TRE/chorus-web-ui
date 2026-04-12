@@ -16,16 +16,16 @@ import {
   useState
 } from 'react'
 
-import { Button } from '~/components/button'
-import { Input } from '~/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { cn } from '~/lib/utils'
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 
 interface ColorPickerContextValue {
   hue: number

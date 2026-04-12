@@ -25,7 +25,11 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -35,12 +39,27 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 import {
   DEFAULT_WORKSPACE_CONFIG,
   WORKSPACE_RESOURCE_PRESETS,
@@ -53,25 +72,6 @@ import {
   workspaceDelete,
   workspaceUpdateWithDev
 } from '@/view-model/workspace-view-model'
-import { Card, CardContent } from '~/components/card'
-import { DeleteDialog } from '~/components/forms/delete-dialog'
-import { Button } from '~/components/ui/button'
-import { Checkbox } from '~/components/ui/checkbox'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
-import { Switch } from '~/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { Textarea } from '~/components/ui/textarea'
 
 // Form schema for workspace create/update with config fields
 const WorkspaceFormSchema = z.object({

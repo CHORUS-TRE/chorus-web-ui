@@ -11,22 +11,22 @@ import {
 import Image from 'next/image'
 import { useCallback, useMemo, useState } from 'react'
 
-import { Card, CardTitle } from '@/components/card'
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
-import { Link } from '@/components/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Link } from '@/components/ui/link'
 import { User, WorkspaceWithDev } from '@/domain/model'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
 
 import { toast } from './hooks/use-toast'
 

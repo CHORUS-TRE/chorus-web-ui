@@ -2,19 +2,19 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useInstanceLogo } from '@/hooks/use-instance-config'
-import { Button } from '~/components/button'
+import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { toast } from '~/components/hooks/use-toast'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { useDevStoreCache } from '~/stores/dev-store-cache'
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useInstanceLogo } from '@/hooks/use-instance-config'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 
 const LogoUploadForm = () => {
   const instanceLogo = useInstanceLogo()
@@ -131,7 +131,7 @@ const LogoUploadForm = () => {
             <img
               src={lightLogo}
               alt="Light logo preview"
-              className="mt-2 h-10 w-auto rounded bg-gray-200 p-2"
+              className="mt-2 h-10 w-auto rounded bg-muted p-2"
             />
           )}
         </div>

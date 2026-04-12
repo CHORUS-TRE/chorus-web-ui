@@ -12,7 +12,8 @@ import {
 import { useRouter } from 'next/navigation'
 import React, { Suspense, useEffect, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -20,15 +21,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/card'
-import { Link } from '@/components/link'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+} from '@/components/ui/card'
+import { Link } from '@/components/ui/link'
 import { AuditEntry } from '@/domain/model/audit'
+import { useFileSystem } from '@/hooks/use-file-system'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { formatFileSize } from '@/utils/format-file-size'
-import { useFileSystem } from '~/hooks/use-file-system'
-import { listWorkspace as listWorkspaceAudit } from '~/view-model/audit-view-model'
+import { listWorkspace as listWorkspaceAudit } from '@/view-model/audit-view-model'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'

@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 
-import { Workspace } from '~/components/workspace'
+import { Workspace } from '@/components/workspace'
 
 const WorkspacePage = () => {
   const params = useParams<{ workspaceId: string; sessionId: string }>()

@@ -18,9 +18,16 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
-import { Link } from '@/components/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
 import {
   Card,
   CardContent,
@@ -29,16 +36,9 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Link } from '@/components/ui/link'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '~/components/ui/breadcrumb'
 
 const ProtocolDashboard = () => {
   const [completedSections, setCompletedSections] = useState(new Set())

@@ -2,26 +2,26 @@
 
 import { env } from 'next-runtime-env'
 
-import { Analytics } from '@/lib/analytics/service'
-import { WorkspaceFileDataSourceImpl } from '~/data/data-source'
-import { WorkspaceFileRepositoryImpl } from '~/data/repository'
-import { Result } from '~/domain/model'
+import { WorkspaceFileDataSourceImpl } from '@/data/data-source'
+import { WorkspaceFileRepositoryImpl } from '@/data/repository'
+import { Result } from '@/domain/model'
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
   WorkspaceFileUpdateType
-} from '~/domain/model/workspace-file'
-import { WorkspaceFileAbortUpload } from '~/domain/use-cases/workspace-file/workspace-file-abort-upload'
-import { WorkspaceFileCompleteUpload } from '~/domain/use-cases/workspace-file/workspace-file-complete-upload'
-import { WorkspaceFileCreate } from '~/domain/use-cases/workspace-file/workspace-file-create'
-import { WorkspaceFileDelete } from '~/domain/use-cases/workspace-file/workspace-file-delete'
-import { WorkspaceFileGet } from '~/domain/use-cases/workspace-file/workspace-file-get'
-import { WorkspaceFileInitUpload } from '~/domain/use-cases/workspace-file/workspace-file-init-upload'
-import { WorkspaceFileList } from '~/domain/use-cases/workspace-file/workspace-file-list'
-import { WorkspaceFileUpdate } from '~/domain/use-cases/workspace-file/workspace-file-update'
-import { WorkspaceFileUploadPart } from '~/domain/use-cases/workspace-file/workspace-file-upload-part'
-import { FetchError, ResponseError } from '~/internal/client/runtime'
+} from '@/domain/model/workspace-file'
+import { WorkspaceFileAbortUpload } from '@/domain/use-cases/workspace-file/workspace-file-abort-upload'
+import { WorkspaceFileCompleteUpload } from '@/domain/use-cases/workspace-file/workspace-file-complete-upload'
+import { WorkspaceFileCreate } from '@/domain/use-cases/workspace-file/workspace-file-create'
+import { WorkspaceFileDelete } from '@/domain/use-cases/workspace-file/workspace-file-delete'
+import { WorkspaceFileGet } from '@/domain/use-cases/workspace-file/workspace-file-get'
+import { WorkspaceFileInitUpload } from '@/domain/use-cases/workspace-file/workspace-file-init-upload'
+import { WorkspaceFileList } from '@/domain/use-cases/workspace-file/workspace-file-list'
+import { WorkspaceFileUpdate } from '@/domain/use-cases/workspace-file/workspace-file-update'
+import { WorkspaceFileUploadPart } from '@/domain/use-cases/workspace-file/workspace-file-upload-part'
+import { FetchError, ResponseError } from '@/internal/client/runtime'
+import { Analytics } from '@/lib/analytics/service'
 
 const getRepository = async () => {
   const dataSource = new WorkspaceFileDataSourceImpl(

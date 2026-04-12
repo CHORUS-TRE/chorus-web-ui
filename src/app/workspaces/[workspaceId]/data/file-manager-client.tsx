@@ -3,28 +3,28 @@
 import { CirclePlus, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '~/components/button'
-import { ActionBar } from '~/components/file-manager/action-bar'
-import { Breadcrumb } from '~/components/file-manager/breadcrumb'
-import { FileGrid } from '~/components/file-manager/file-grid'
-import { FileTree } from '~/components/file-manager/file-tree'
-import { SelectionBasket } from '~/components/file-manager/selection-basket'
-import { Toolbar } from '~/components/file-manager/toolbar'
-import { toast } from '~/components/hooks/use-toast'
+import { ActionBar } from '@/components/file-manager/action-bar'
+import { Breadcrumb } from '@/components/file-manager/breadcrumb'
+import { FileGrid } from '@/components/file-manager/file-grid'
+import { FileTree } from '@/components/file-manager/file-tree'
+import { SelectionBasket } from '@/components/file-manager/selection-basket'
+import { Toolbar } from '@/components/file-manager/toolbar'
+import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { useFileSystem } from '~/hooks/use-file-system'
-import type { FileSystemItem } from '~/types/file-system'
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { useFileSystem } from '@/hooks/use-file-system'
+import type { FileSystemItem } from '@/types/file-system'
 import {
   createDataExtractionRequest,
   createDataTransferRequest
-} from '~/view-model/approval-request-view-model'
+} from '@/view-model/approval-request-view-model'
 
 interface FileManagerClientProps {
   workspaceId: string

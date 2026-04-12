@@ -14,7 +14,14 @@ import {
 import { useParams, useRouter } from 'next/navigation'
 import * as React from 'react'
 
+import { useToast } from '@/components/hooks/use-toast'
 import { LoadingOverlay } from '@/components/loading-overlay'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -28,20 +35,13 @@ import {
   getFiles,
   getTotalSize
 } from '@/lib/approval-request-utils'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import {
   approveApprovalRequest,
   getApprovalRequest
 } from '@/view-model/approval-request-view-model'
 import { listUsers } from '@/view-model/user-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/card'
-import { useToast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import { Label } from '~/components/ui/label'
-import { Separator } from '~/components/ui/separator'
-import { Textarea } from '~/components/ui/textarea'
-import { useAuthentication } from '~/providers/authentication-provider'
 
 import { StatusBadge } from '../../../messages/requests/_components/status-badge'
 
@@ -404,14 +404,14 @@ export default function AdminRequestDetailPage() {
                       placeholder="Record relevant details for the security audit log..."
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
-                      className="min-h-[80px] resize-none rounded-xl bg-muted/20"
+                      className="min-h-[80px] resize-none rounded-lg bg-muted/20"
                     />
                   </div>
                   <Separator className="bg-muted/20" />
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-lg"
                       disabled={isSubmitting}
                       onClick={() => handleAction(false)}
                     >
@@ -419,7 +419,7 @@ export default function AdminRequestDetailPage() {
                       Reject
                     </Button>
                     <Button
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-lg"
                       disabled={isSubmitting}
                       onClick={() => handleAction(true)}
                     >
@@ -432,7 +432,7 @@ export default function AdminRequestDetailPage() {
 
               {canDownload && (
                 <Button
-                  className="w-full rounded-xl"
+                  className="w-full rounded-lg"
                   disabled={isDownloading}
                   onClick={handleDownload}
                 >

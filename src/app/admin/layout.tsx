@@ -8,11 +8,11 @@ const AuthenticatedApp = React.lazy(() =>
 )
 import { Package, ShieldAlert, SlidersHorizontal } from 'lucide-react'
 
+import { Login } from '@/components/login'
+import { Unauthorized } from '@/components/unauthorized'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { Login } from '~/components/login'
-import { Unauthorized } from '~/components/unauthorized'
 
 import { AdminTabs } from './admin-tabs'
 

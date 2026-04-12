@@ -1,13 +1,13 @@
-import { WorkspaceDataSource } from '~/data/data-source'
+import { WorkspaceDataSource } from '@/data/data-source'
 import {
   Result,
   Workspace,
   WorkspaceCreateType,
   WorkspaceUpdatetype
-} from '~/domain/model'
-import { User } from '~/domain/model/user'
-import { WorkspaceSchema } from '~/domain/model/workspace'
-import { WorkspaceRepository } from '~/domain/repository'
+} from '@/domain/model'
+import { User } from '@/domain/model/user'
+import { WorkspaceSchema } from '@/domain/model/workspace'
+import { WorkspaceRepository } from '@/domain/repository'
 
 export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   private dataSource: WorkspaceDataSource

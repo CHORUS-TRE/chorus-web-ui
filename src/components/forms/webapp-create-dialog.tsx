@@ -6,16 +6,15 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { Button } from '~/components/button'
-import { Checkbox } from '~/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -24,11 +23,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { Textarea } from '~/components/ui/textarea'
-import { ExternalWebApp } from '~/domain/model'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Textarea } from '@/components/ui/textarea'
+import { ExternalWebApp } from '@/domain/model'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
 
 import { DeleteDialog } from './delete-dialog'
 

@@ -20,8 +20,8 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
-import { AuditEntry } from '@/domain/model'
-import { Button } from '~/components/button'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -29,9 +29,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
-import { Input } from '~/components/ui/input'
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -39,7 +38,8 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
+import { AuditEntry } from '@/domain/model'
 
 // ─── Column Definitions ───────────────────────────────────────────────────────
 
@@ -250,7 +250,7 @@ export default function AuditTable({
                   <>
                     <TableRow
                       key={row.id}
-                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                       onClick={() => toggleRow(entry.id)}
                     >
                       {row.getVisibleCells().map((cell) => (

@@ -5,18 +5,15 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Link } from '@/components/link'
-import { useAuthentication } from '@/providers/authentication-provider'
-import { appCreate } from '@/view-model/app-view-model'
-import { Button } from '~/components/button'
-import { ImageUploadField } from '~/components/forms/image-upload-field'
+import { ImageUploadField } from '@/components/forms/image-upload-field'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -24,17 +21,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Link } from '@/components/ui/link'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { App, AppCreateSchema, AppState } from '~/domain/model'
-import { Result } from '~/domain/model'
+} from '@/components/ui/select'
+import { App, AppCreateSchema, AppState } from '@/domain/model'
+import { Result } from '@/domain/model'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { appCreate } from '@/view-model/app-view-model'
 
 import { toast } from '../hooks/use-toast'
 
@@ -367,7 +367,7 @@ export function AppCreateDialog({
                       value={field.value || ''}
                       onChange={field.onChange}
                       error={formState.errors.iconURL?.message}
-                      className="file:bg-white"
+                      className="file:bg-background"
                     />
                   )}
                 />
@@ -430,7 +430,7 @@ export function AppCreateDialog({
               </div>
 
               {showAdvanced && (
-                <div className="space-y-4 border-l border-gray-400 pl-8">
+                <div className="space-y-4 border-l border-border pl-8">
                   <FormField
                     control={form.control}
                     name="kioskConfigURL"
@@ -449,7 +449,7 @@ export function AppCreateDialog({
                     )}
                   />
 
-                  <div className="space-y-4 rounded-md border border-gray-400 p-4">
+                  <div className="space-y-4 rounded-md border border-border p-4">
                     <FormField
                       control={form.control}
                       name="preset"

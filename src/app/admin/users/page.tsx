@@ -3,7 +3,7 @@
 import { Users } from 'lucide-react'
 import { useState } from 'react'
 
-import { UserTable } from '~/components/ui/user-table'
+import { UserTable } from '@/components/ui/user-table'
 
 const UserManagementPage = () => {
   const [refreshKey] = useState(0)

@@ -1,7 +1,7 @@
 'use client'
 
-import { Badge } from '~/components/ui/badge'
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import type { InboxTab } from '../_hooks/use-inbox-data'
 

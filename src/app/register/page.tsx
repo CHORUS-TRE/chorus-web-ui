@@ -2,11 +2,11 @@
 
 import Image from 'next/image'
 
+import UserRegisterForm from '@/components/forms/user-register-form'
+import { Header } from '@/components/header'
+import LoginInfo from '@/components/login-info'
+import { Toaster } from '@/components/ui/toaster'
 import cover from '@/public/cover.jpeg'
-import UserRegisterForm from '~/components/forms/user-register-form'
-import { Header } from '~/components/header'
-import LoginInfo from '~/components/login-info'
-import { Toaster } from '~/components/ui/toaster'
 
 export default function Register() {
   return (

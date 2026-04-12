@@ -3,11 +3,8 @@
 import { CheckCircle2, XCircle } from 'lucide-react'
 import * as React from 'react'
 
-import { ApprovalRequest } from '@/domain/model/approval-request'
-import { formatBytes, getTotalSize } from '@/lib/approval-request-utils'
-import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
-import { Button } from '~/components/button'
-import { useToast } from '~/components/hooks/use-toast'
+import { useToast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -15,9 +12,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Label } from '~/components/ui/label'
-import { Textarea } from '~/components/ui/textarea'
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { ApprovalRequest } from '@/domain/model/approval-request'
+import { formatBytes, getTotalSize } from '@/lib/approval-request-utils'
+import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
 
 import { TypeBadge } from '../requests/_components/type-badge'
 
@@ -94,7 +94,7 @@ export function ApprovalDialog({
 
         {request && (
           <div className="space-y-6 py-4">
-            <div className="grid grid-cols-2 gap-4 rounded-xl border border-muted/20 bg-muted/10 p-4">
+            <div className="grid grid-cols-2 gap-4 rounded-lg border border-muted/20 bg-muted/10 p-4">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold uppercase text-muted-foreground">
                   Manifest Type
@@ -115,7 +115,7 @@ export function ApprovalDialog({
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Applicant Justification
               </Label>
-              <div className="rounded-xl border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
+              <div className="rounded-lg border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
                 &quot;{request.description}&quot;
               </div>
             </div>
@@ -135,7 +135,7 @@ export function ApprovalDialog({
                 placeholder="Record relevant details for the security audit log..."
                 value={reviewNotes}
                 onChange={(e) => setReviewNotes(e.target.value)}
-                className="min-h-[100px] resize-none rounded-xl bg-muted/20"
+                className="min-h-[100px] resize-none rounded-lg bg-muted/20"
               />
             </div>
           </div>
@@ -145,14 +145,14 @@ export function ApprovalDialog({
           <Button
             variant="outline"
             onClick={handleClose}
-            className="h-11 rounded-xl"
+            className="h-11 rounded-lg"
           >
             Cancel
           </Button>
           <Button
             variant={action === 'approve' ? 'default' : 'destructive'}
             onClick={handleSubmit}
-            className="h-11 min-w-[160px] rounded-xl"
+            className="h-11 min-w-[160px] rounded-lg"
           >
             {action === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
           </Button>

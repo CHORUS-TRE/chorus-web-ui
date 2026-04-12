@@ -8,8 +8,8 @@ import {
   ApprovalRequestType
 } from '@/domain/model/approval-request'
 import { Notification } from '@/domain/model/notification'
+import { useAppState } from '@/stores/app-state-store'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
-import { useAppState } from '~/stores/app-state-store'
 
 export type InboxItemKind =
   | 'notification'

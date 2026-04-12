@@ -3,7 +3,7 @@
 import { Shield } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { User } from '~/domain/model/user'
+import { User } from '@/domain/model/user'
 
 interface RoleCount {
   name: string

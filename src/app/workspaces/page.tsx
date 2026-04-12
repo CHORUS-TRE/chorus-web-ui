@@ -11,16 +11,16 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
+import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import WorkspacesGrid from '@/components/workspaces-grid'
+import WorkspaceTable from '@/components/workspaces-table'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { Button } from '~/components/button'
-import { WorkspaceCreateForm } from '~/components/forms/workspace-forms'
-import { toast } from '~/components/hooks/use-toast'
-import { Input } from '~/components/ui/input'
-import WorkspacesGrid from '~/components/workspaces-grid'
-import WorkspaceTable from '~/components/workspaces-table'
 
 export default function WorkspacesPage() {
   const { workspaces, refreshWorkspaces } = useAppStateStore()

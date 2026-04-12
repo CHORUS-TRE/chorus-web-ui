@@ -3,8 +3,8 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react'
 
 import { getRolePermissions, PERMISSIONS } from '@/config/permissions'
+import { User } from '@/domain/model/user'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { User } from '~/domain/model/user'
 
 // Define the shape of the context
 interface AuthorizationContextType {

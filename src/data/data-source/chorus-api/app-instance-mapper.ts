@@ -2,7 +2,7 @@ import {
   AppInstanceCreateType,
   AppInstanceUpdateType
 } from '@/domain/model/app-instance'
-import { ChorusAppInstance } from '~/internal/client'
+import { ChorusAppInstance } from '@/internal/client'
 
 export const toChorusAppInstance = (
   appInstance: AppInstanceCreateType

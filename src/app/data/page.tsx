@@ -2,15 +2,15 @@
 
 import { Database, Package } from 'lucide-react'
 
-import { useAppState } from '@/stores/app-state-store'
-import { StatCard } from '~/components/dashboard/stat-card'
+import { StatCard } from '@/components/dashboard/stat-card'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
-} from '~/components/ui/accordion'
-import { useAuthentication } from '~/providers/authentication-provider'
+} from '@/components/ui/accordion'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 
 export default function DataPage() {
   const { workspaces } = useAppState()

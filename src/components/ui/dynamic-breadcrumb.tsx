@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 
 import {
   Breadcrumb,

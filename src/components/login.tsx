@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import React from 'react'
 
+import LoginForm from '@/components/forms/login-form'
 import { Header } from '@/components/header'
+import LoginInfo from '@/components/login-info'
 import cover from '@/public/cover.jpeg'
-import LoginForm from '~/components/forms/login-form'
-import LoginInfo from '~/components/login-info'
 
 export function Login() {
   return (

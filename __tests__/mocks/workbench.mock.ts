@@ -2,8 +2,8 @@ import {
   Workbench,
   WorkbenchCreateType,
   WorkbenchUpdateType
-} from '~/domain/model'
-import { WorkbenchState } from '~/domain/model/workbench'
+} from '@/domain/model'
+import { WorkbenchState } from '@/domain/model/workbench'
 
 export const MOCK_API_CREATE: WorkbenchCreateType = {
   name: 'Test Workbench',

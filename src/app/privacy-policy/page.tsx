@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute -left-[10%] -top-[10%] h-[40%] w-[40%] rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-secondary/5 blur-[120px]" />
+        <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-muted/5 blur-[120px]" />
       </div>
 
       <div className="hover-animate mx-auto max-w-4xl px-6 py-16 sm:py-24">
@@ -112,7 +112,7 @@ export default function PrivacyPolicyPage() {
           {/* 2. Third-Party Links */}
           <section className="group">
             <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary/10 shadow-sm transition-all duration-500 group-hover:bg-secondary group-hover:text-secondary-foreground">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted/10 shadow-sm transition-all duration-500 group-hover:bg-muted group-hover:text-foreground">
                 <Globe className="h-6 w-6" />
               </div>
               <div>

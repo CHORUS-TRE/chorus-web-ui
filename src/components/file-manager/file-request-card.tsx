@@ -16,8 +16,8 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -25,19 +25,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
+} from '@/components/ui/card'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
-} from '~/components/ui/collapsible'
-import { Progress } from '~/components/ui/progress'
-import { Separator } from '~/components/ui/separator'
+} from '@/components/ui/collapsible'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
 import type {
   DataMovementRequest,
   DataMovementType,
   RequestStatus
-} from '~/types/data-requests'
+} from '@/types/data-requests'
 
 export interface FileRequestCardProps {
   request: DataMovementRequest

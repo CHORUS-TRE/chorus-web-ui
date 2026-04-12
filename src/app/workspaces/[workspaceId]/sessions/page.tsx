@@ -4,10 +4,10 @@ import { LaptopMinimal } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 
+import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
+import WorkbenchTable from '@/components/workbench-table'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { WorkbenchCreateForm } from '~/components/forms/workbench-create-form'
-import WorkbenchTable from '~/components/workbench-table'
 
 export default function SessionPage() {
   const params = useParams<{ workspaceId: string }>()

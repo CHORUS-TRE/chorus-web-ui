@@ -18,18 +18,18 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
-import { Link } from '@/components/link'
+import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
+import { useInstanceConfig } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
-import { useInstanceConfig } from '~/hooks/use-instance-config'
-import { useIframeCache } from '~/providers/iframe-cache-provider'
-import { useAppState } from '~/stores/app-state-store'
-import { useUserPreferences } from '~/stores/user-preferences-store'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { useAppState } from '@/stores/app-state-store'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 
 import packageInfo from '../../package.json'
-import { Button } from './button'
+import { Button } from './ui/button'
 
 // All navigation items (for external use like mobile nav, page titles)
 // TODO: make it dynamic based on the instance config
@@ -110,9 +110,9 @@ function SidebarContent({
           href="/"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/', true)
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -125,9 +125,9 @@ function SidebarContent({
           href="/workspaces"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/workspaces')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -140,9 +140,9 @@ function SidebarContent({
           href="/sessions"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/sessions')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -155,9 +155,9 @@ function SidebarContent({
           href="/data"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/data')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -170,9 +170,9 @@ function SidebarContent({
           href="/app-store"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/app-store') && currentTab !== 'services'
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -185,9 +185,9 @@ function SidebarContent({
           href="/messages"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
             isActive('/messages')
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-accent/15 text-accent'
               : 'text-muted-foreground'
           )}
         >
@@ -208,7 +208,7 @@ function SidebarContent({
           href="#"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent'
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent'
           )}
           title="Help"
         >
@@ -259,9 +259,9 @@ function SidebarContent({
               href={href}
               variant="underline"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
                 isLinkActive
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-accent/15 text-accent'
                   : 'text-muted-foreground'
               )}
             >
@@ -294,9 +294,9 @@ function SidebarContent({
               href="/admin"
               variant="underline"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
                 pathname.includes('/admin') || isActive('/admin')
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-accent/15 text-accent'
                   : 'text-muted-foreground'
               )}
             >
@@ -317,7 +317,7 @@ export function LeftSidebar() {
   return (
     <div
       className={cn(
-        'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
+        'flex h-full flex-col overflow-y-auto rounded-lg border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
       )}
     >
       <SidebarContent pathname={pathname} searchParams={searchParams} />

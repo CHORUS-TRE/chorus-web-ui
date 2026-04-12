@@ -4,13 +4,11 @@ import { Pencil, Plus, Store, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import { AppCreateDialog } from '@/components/forms/app-create-dialog'
+import { WebAppCreateDialog } from '@/components/forms/webapp-create-dialog'
 import { toast } from '@/components/hooks/use-toast'
-import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { appDelete, appList } from '@/view-model/app-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter } from '~/components/card'
-import { AppCreateDialog } from '~/components/forms/app-create-dialog'
-import { WebAppCreateDialog } from '~/components/forms/webapp-create-dialog'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -18,9 +16,11 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { App } from '~/domain/model'
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { App } from '@/domain/model'
+import { useIframeCache } from '@/providers/iframe-cache-provider'
+import { appDelete, appList } from '@/view-model/app-view-model'
 
 export default function AdminAppStorePage() {
   const router = useRouter()
@@ -138,7 +138,7 @@ export default function AdminAppStorePage() {
                   {apps?.map((app) => (
                     <TableRow
                       key={app.id}
-                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                     >
                       <TableCell className="p-2 font-medium">
                         {app.name}
@@ -229,7 +229,7 @@ export default function AdminAppStorePage() {
                   {externalWebApps.map((webapp) => (
                     <TableRow
                       key={webapp.id}
-                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                     >
                       <TableCell className="p-2 font-medium">
                         {webapp.name}
