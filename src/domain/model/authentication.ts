@@ -24,6 +24,7 @@ export interface AuthenticationMode {
   internal?: AuthenticationInternal
   openid?: AuthenticationOpenID
   buttonText?: string
+  iconURL?: string
 }
 
 export interface AuthenticationOAuthRedirectRequest {
