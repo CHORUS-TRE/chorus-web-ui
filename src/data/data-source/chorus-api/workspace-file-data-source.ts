@@ -36,7 +36,9 @@ interface WorkspaceFileDataSource {
     workspaceId: string,
     path: string
   ) => Promise<ChorusListWorkspaceFilesReply>
-  listStores: (workspaceId: string) => Promise<ChorusListWorkspaceFileStoresReply>
+  listStores: (
+    workspaceId: string
+  ) => Promise<ChorusListWorkspaceFileStoresReply>
   update: (
     workspaceId: string,
     oldPath: string,
@@ -111,9 +113,7 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     })
   }
 
-  listStores(
-    workspaceId: string
-  ): Promise<ChorusListWorkspaceFileStoresReply> {
+  listStores(workspaceId: string): Promise<ChorusListWorkspaceFileStoresReply> {
     return this.service.workspaceFileServiceListWorkspaceFileStores({
       workspaceId
     })

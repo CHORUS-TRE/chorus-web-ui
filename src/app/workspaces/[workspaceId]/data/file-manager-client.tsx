@@ -459,9 +459,7 @@ export default function FileManagerClient({
                 <button
                   key={storeId}
                   disabled={!isSelectable}
-                  title={
-                    isSelectable ? undefined : 'Store unavailable'
-                  }
+                  title={isSelectable ? undefined : 'Store unavailable'}
                   className={cn(
                     'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
                     isSelectable

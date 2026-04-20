@@ -112,9 +112,7 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
     }
   }
 
-  async listStores(
-    workspaceId: string
-  ): Promise<Result<WorkspaceFileStore[]>> {
+  async listStores(workspaceId: string): Promise<Result<WorkspaceFileStore[]>> {
     try {
       const response = await this.dataSource.listStores(workspaceId)
 
