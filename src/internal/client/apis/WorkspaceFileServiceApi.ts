@@ -20,6 +20,7 @@ import type {
   ChorusDeleteWorkspaceFileReply,
   ChorusGetWorkspaceFileReply,
   ChorusInitiateWorkspaceFileUploadReply,
+  ChorusListWorkspaceFileStoresReply,
   ChorusListWorkspaceFilesReply,
   ChorusUpdateWorkspaceFileReply,
   ChorusUploadWorkspaceFilePartReply,
@@ -40,6 +41,8 @@ import {
   ChorusGetWorkspaceFileReplyToJSON,
   ChorusInitiateWorkspaceFileUploadReplyFromJSON,
   ChorusInitiateWorkspaceFileUploadReplyToJSON,
+  ChorusListWorkspaceFileStoresReplyFromJSON,
+  ChorusListWorkspaceFileStoresReplyToJSON,
   ChorusListWorkspaceFilesReplyFromJSON,
   ChorusListWorkspaceFilesReplyToJSON,
   ChorusUpdateWorkspaceFileReplyFromJSON,
@@ -86,6 +89,10 @@ export interface WorkspaceFileServiceInitiateWorkspaceFileUploadRequest {
   workspaceId: string
   path: string
   file: ChorusWorkspaceFile
+}
+
+export interface WorkspaceFileServiceListWorkspaceFileStoresRequest {
+  workspaceId: string
 }
 
 export interface WorkspaceFileServiceListWorkspaceFilesRequest {
@@ -611,6 +618,66 @@ export class WorkspaceFileServiceApi extends runtime.BaseAPI {
         requestParameters,
         initOverrides
       )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns all configured file stores for the specified workspace with their reachability status
+   * List workspace file stores
+   */
+  async workspaceFileServiceListWorkspaceFileStoresRaw(
+    requestParameters: WorkspaceFileServiceListWorkspaceFileStoresRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListWorkspaceFileStoresReply>> {
+    if (
+      requestParameters.workspaceId === null ||
+      requestParameters.workspaceId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'workspaceId',
+        'Required parameter requestParameters.workspaceId was null or undefined when calling workspaceFileServiceListWorkspaceFileStores.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/{workspaceId}/stores`.replace(
+          `{${'workspaceId'}}`,
+          encodeURIComponent(String(requestParameters.workspaceId))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListWorkspaceFileStoresReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns all configured file stores for the specified workspace with their reachability status
+   * List workspace file stores
+   */
+  async workspaceFileServiceListWorkspaceFileStores(
+    requestParameters: WorkspaceFileServiceListWorkspaceFileStoresRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListWorkspaceFileStoresReply> {
+    const response = await this.workspaceFileServiceListWorkspaceFileStoresRaw(
+      requestParameters,
+      initOverrides
+    )
     return await response.value()
   }
 

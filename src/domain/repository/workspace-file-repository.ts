@@ -3,6 +3,7 @@ import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
+  WorkspaceFileStore,
   WorkspaceFileUpdateType
 } from '~/domain/model/workspace-file'
 
@@ -19,6 +20,7 @@ export interface WorkspaceFileRepository {
   ) => Promise<Result<WorkspaceFile>>
   delete: (workspaceId: string, path: string) => Promise<Result<string>>
   list: (workspaceId: string, path: string) => Promise<Result<WorkspaceFile[]>>
+  listStores: (workspaceId: string) => Promise<Result<WorkspaceFileStore[]>>
   initUpload: (
     workspaceId: string,
     path: string,

@@ -129,6 +129,8 @@ models/ChorusListUsersReply.ts
 models/ChorusListUsersResult.ts
 models/ChorusListWorkbenchesReply.ts
 models/ChorusListWorkbenchesResult.ts
+models/ChorusListWorkspaceFileStoresReply.ts
+models/ChorusListWorkspaceFileStoresResult.ts
 models/ChorusListWorkspaceFilesReply.ts
 models/ChorusListWorkspaceFilesResult.ts
 models/ChorusListWorkspacesReply.ts
@@ -185,6 +187,7 @@ models/ChorusWorkbenchFilter.ts
 models/ChorusWorkspace.ts
 models/ChorusWorkspaceFile.ts
 models/ChorusWorkspaceFilePart.ts
+models/ChorusWorkspaceFileStoreInfo.ts
 models/ChorusWorkspaceFilter.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
 models/ProtobufAny.ts
