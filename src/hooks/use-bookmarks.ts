@@ -4,8 +4,8 @@ import { useCallback, useMemo } from 'react'
 
 import { toast } from '@/components/hooks/use-toast'
 import {
-  BOOKMARKS_SOFT_CAP,
   BookmarkItem,
+  BOOKMARKS_SOFT_CAP,
   BookmarksSchema,
   normalizeRoute,
   USER_BOOKMARKS_KEY,
@@ -17,11 +17,7 @@ interface UseBookmarksReturn {
   bookmarks: BookmarkItem[]
   isBookmarked: (route: string) => boolean
   getBookmark: (route: string) => BookmarkItem | undefined
-  addBookmark: (
-    route: string,
-    label: string,
-    icon?: string
-  ) => Promise<boolean>
+  addBookmark: (route: string, label: string, icon?: string) => Promise<boolean>
   removeBookmark: (route: string) => Promise<boolean>
   toggleBookmark: (
     route: string,

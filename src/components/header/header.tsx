@@ -7,6 +7,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 
+import { BookmarkButton } from '@/components/bookmark-button'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
 import { toast } from '@/components/hooks/use-toast'
@@ -180,6 +181,7 @@ export function Header() {
 
         {/* Right: Actions & User Profile */}
         <div className="flex shrink-0 items-center gap-2">
+          {user && <BookmarkButton />}
           <Link
             onClick={(e) => {
               e.preventDefault()
