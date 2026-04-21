@@ -2,11 +2,19 @@
 
 import { Search } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Bar, BarChart, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts'
 
 import { CreateUserRoleDialog } from '~/components/forms/create-user-role-dialog'
 import { toast } from '~/components/hooks/use-toast'
 import { PermissionMatrix } from '~/components/permission-matrix'
 import { Badge } from '~/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from '~/components/ui/chart'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Input } from '~/components/ui/input'
 import {
@@ -151,6 +159,51 @@ export default function AuthorizationUsersPage() {
   const getUserRoleAssignments = (user: User, roleName: string) =>
     (user.rolesWithContext || []).filter((r) => r.name === roleName)
 
+  // --- Summary card data ---
+
+  const topRolesData = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const u of users) {
+      for (const r of u.rolesWithContext || []) {
+        if (r.name === 'Public' || r.name === 'Authenticated') continue
+        counts[r.name] = (counts[r.name] || 0) + 1
+      }
+    }
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, count]) => ({
+        role: ROLE_DEFINITIONS[name]?.displayName ?? name,
+        count
+      }))
+  }, [users])
+
+  const complianceData = useMemo(() => {
+    if (users.length === 0) return { compliant: 0, nonCompliant: 0, pct: 0 }
+    let compliant = 0
+    for (const u of users) {
+      const hasNonAuth = (u.rolesWithContext || []).some(
+        (r) => r.name !== 'Public' && r.name !== 'Authenticated'
+      )
+      if (hasNonAuth) compliant++
+    }
+    const nonCompliant = users.length - compliant
+    const pct = Math.round((compliant / users.length) * 100)
+    return { compliant, nonCompliant, pct }
+  }, [users])
+
+  const rolesChartConfig: ChartConfig = {
+    count: { label: 'Users', color: 'hsl(var(--primary))' }
+  }
+
+  const complianceChartConfig: ChartConfig = {
+    compliant: { label: 'Configured', color: 'hsl(var(--primary))' },
+    nonCompliant: {
+      label: 'Unconfigured',
+      color: 'hsl(var(--muted-foreground))'
+    }
+  }
+
   const scopes: Scope[] = ['platform', 'workspace', 'session']
   const contextKey = scope === 'workspace' ? 'workspace' : 'workbench'
 
@@ -162,6 +215,109 @@ export default function AuthorizationUsersPage() {
           View and manage user role assignments across all scopes
         </p>
       </div>
+
+      {/* Summary cards */}
+      {users.length > 0 && (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {/* Top Assigned Roles */}
+          <Card>
+            <CardHeader className="px-4 py-3">
+              <CardTitle className="text-xs font-medium">
+                Top Assigned Roles
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-3 pt-0">
+              {topRolesData.length > 0 ? (
+                <ChartContainer
+                  config={rolesChartConfig}
+                  className="aspect-auto h-[140px] w-full"
+                >
+                  <BarChart
+                    data={topRolesData}
+                    layout="vertical"
+                    margin={{ left: 0, right: 16, top: 0, bottom: 0 }}
+                  >
+                    <XAxis type="number" hide />
+                    <YAxis
+                      dataKey="role"
+                      type="category"
+                      width={140}
+                      tickLine={false}
+                      axisLine={false}
+                      className="text-xs"
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                      {topRolesData.map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={`hsl(var(--primary) / ${1 - i * 0.12})`}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ChartContainer>
+              ) : (
+                <p className="py-4 text-center text-sm text-muted-foreground">
+                  No role assignments yet.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Policy Compliance Overview */}
+          <Card>
+            <CardHeader className="px-4 py-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-medium">
+                  Policy Compliance
+                </CardTitle>
+                <span className="text-lg font-bold">{complianceData.pct}%</span>
+              </div>
+            </CardHeader>
+            <CardContent className="px-4 pb-3 pt-0">
+              <div className="flex items-center gap-4">
+                <ChartContainer
+                  config={complianceChartConfig}
+                  className="aspect-square h-[100px]"
+                >
+                  <PieChart>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Pie
+                      data={[
+                        {
+                          name: 'compliant',
+                          value: complianceData.compliant,
+                          fill: 'hsl(var(--primary))'
+                        },
+                        {
+                          name: 'nonCompliant',
+                          value: complianceData.nonCompliant,
+                          fill: 'hsl(var(--muted-foreground) / 0.3)'
+                        }
+                      ]}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius="60%"
+                      outerRadius="90%"
+                      strokeWidth={0}
+                    />
+                  </PieChart>
+                </ChartContainer>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    {complianceData.compliant} of {users.length} users have
+                    roles beyond Authenticated
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/70">
+                    Only Public/Authenticated = unconfigured
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Controls */}
       <div className="flex items-center gap-3">
@@ -195,10 +351,10 @@ export default function AuthorizationUsersPage() {
       {/* Role matrix table */}
       <div className="overflow-x-auto rounded-lg border border-border">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-20 bg-background shadow-[0_1px_0_0_hsl(var(--border))]">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="sticky left-0 z-10 w-8 bg-background" />
-              <TableHead className="sticky left-8 z-10 min-w-[180px] bg-background text-muted-foreground">
+              <TableHead className="sticky left-0 z-30 w-8 bg-background" />
+              <TableHead className="sticky left-8 z-30 min-w-[180px] bg-background text-muted-foreground">
                 User
               </TableHead>
               <TableHead className="w-24 text-muted-foreground">

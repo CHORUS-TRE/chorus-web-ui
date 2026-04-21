@@ -124,9 +124,11 @@ export default function LoginForm() {
     })
   }
 
-  const internalLogin = authModes?.some(
+  const internalMode = authModes?.find(
     (mode) => mode.type === AuthenticationModeType.INTERNAL
   )
+
+  const internalLogin = !!internalMode
 
   const publicRegistration = authModes?.some(
     (mode) =>
@@ -204,10 +206,16 @@ export default function LoginForm() {
                     >
                       {pending ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : internalMode?.iconURL ? (
+                        <img
+                          src={internalMode.iconURL}
+                          alt=""
+                          className="mr-2 h-4 w-4"
+                        />
                       ) : (
                         <ArrowRight className="mr-2 h-4 w-4" />
                       )}
-                      Login
+                      {internalMode?.buttonText || 'Login'}
                     </Button>
                   </div>
                 </form>
@@ -229,7 +237,9 @@ export default function LoginForm() {
 
             {/* OAuth Providers */}
             <div className="grid gap-4">
-              {authModes && authModes.length > 0 && (
+              {authModes?.some(
+                (mode) => mode.type === AuthenticationModeType.OPENID
+              ) && (
                 <div className="relative my-2">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />
@@ -253,8 +263,16 @@ export default function LoginForm() {
                       className="w-full"
                       onClick={() => handleOAuthLogin(mode)}
                     >
+                      {mode.iconURL ? (
+                        <img
+                          src={mode.iconURL}
+                          alt=""
+                          className="mr-2 h-4 w-4"
+                        />
+                      ) : (
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                      )}
                       {mode.buttonText || mode.openid?.id || 'Open ID'}
-                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   ))}
             </div>

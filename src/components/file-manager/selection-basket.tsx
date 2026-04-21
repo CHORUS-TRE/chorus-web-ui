@@ -198,17 +198,42 @@ export function SelectionBasket({
           </DialogHeader>
 
           <div className="space-y-5 py-2">
+            {/* Summary */}
             <div className="space-y-2 rounded-xl border border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Items to process</span>
-                <span className="font-bold">{selectedItems.length}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
-                  Total payload size
+                  {selectedItems.length} file
+                  {selectedItems.length !== 1 ? 's' : ''} selected
                 </span>
                 <span className="font-bold">{formatBytes(totalSize)}</span>
               </div>
+            </div>
+
+            {/* File list preview */}
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Files</Label>
+              <ScrollArea className="max-h-[180px] rounded-lg border border-muted/30 bg-muted/10">
+                <div className="divide-y divide-muted/20">
+                  {selectedItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between px-3 py-2 text-xs"
+                    >
+                      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                        <span className="truncate font-medium text-foreground">
+                          {item.name}
+                        </span>
+                        <span className="truncate text-[10px] text-muted-foreground/60">
+                          {item.path}
+                        </span>
+                      </div>
+                      <span className="ml-3 shrink-0 text-[10px] tabular-nums text-muted-foreground/60">
+                        {formatBytes(item.size || 0)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
 
             {requestMode === 'transfer' && (

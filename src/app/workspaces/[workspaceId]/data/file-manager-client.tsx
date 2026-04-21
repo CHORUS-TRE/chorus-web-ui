@@ -1,16 +1,28 @@
 'use client'
 
-import { CirclePlus, X } from 'lucide-react'
-import { useState } from 'react'
+import {
+  AlertTriangle,
+  CirclePlus,
+  FolderPlus,
+  HardDrive,
+  ShoppingBasket,
+  Upload,
+  Zap
+} from 'lucide-react'
+import type React from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Button } from '~/components/button'
-import { ActionBar } from '~/components/file-manager/action-bar'
 import { Breadcrumb } from '~/components/file-manager/breadcrumb'
+import {
+  type ContextMenuPosition,
+  FileContextMenu
+} from '~/components/file-manager/file-context-menu'
 import { FileGrid } from '~/components/file-manager/file-grid'
-import { FileTree } from '~/components/file-manager/file-tree'
+import { FolderDeleteDialog } from '~/components/file-manager/folder-delete-dialog'
 import { SelectionBasket } from '~/components/file-manager/selection-basket'
-import { Toolbar } from '~/components/file-manager/toolbar'
 import { toast } from '~/components/hooks/use-toast'
+import { Badge } from '~/components/ui/badge'
 import {
   Dialog,
   DialogContent,
@@ -20,7 +32,35 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { useFileSystem } from '~/hooks/use-file-system'
+import { cn } from '~/lib/utils'
 import type { FileSystemItem } from '~/types/file-system'
+
+/** Map raw mount/folder names to user-friendly display names, icons, and descriptions */
+const STORE_DISPLAY: Record<
+  string,
+  { label: string; icon: React.ElementType; description: string }
+> = {
+  archive: {
+    label: 'Permanent Storage',
+    icon: HardDrive,
+    description: 'Long-term data that persists across sessions'
+  },
+  scratch: {
+    label: 'Working Files',
+    icon: Zap,
+    description: 'Temporary workspace for active analysis'
+  }
+}
+
+function getStoreDisplay(name: string) {
+  return (
+    STORE_DISPLAY[name.toLowerCase()] ?? {
+      label: name,
+      icon: HardDrive,
+      description: 'Storage mount'
+    }
+  )
+}
 import {
   createDataExtractionRequest,
   createDataTransferRequest
@@ -35,7 +75,9 @@ export default function FileManagerClient({
 }: FileManagerClientProps) {
   const {
     state,
+    stores,
     loading,
+    movingItemId,
     searchQuery,
     getChildren,
     selectItem,
@@ -51,13 +93,207 @@ export default function FileManagerClient({
     clearSelection,
     clearBasket,
     selectBasketItem,
-    fetchFolderContents
+    selectRange,
+    selectAll,
+    fetchFolderContents,
+    clipboardCopy,
+    clipboardCut,
+    paste
   } = useFileSystem(workspaceId)
 
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false)
   const [newFolderName, setNewFolderName] = useState('')
+  const [isDraggingOver, setIsDraggingOver] = useState(false)
+  const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null)
+  const [dragOverStoreId, setDragOverStoreId] = useState<string | null>(null)
+  const [showBasket, setShowBasket] = useState(false)
+  const [folderToDelete, setFolderToDelete] = useState<{
+    id: string
+    name: string
+    childCount: number
+  } | null>(null)
 
-  const rootChildren = getChildren('root')
+  // Smart delete: check if folder is non-empty before deleting
+  const handleSmartDelete = useCallback(
+    async (itemId: string) => {
+      const item = state.items[itemId]
+      if (!item) return
+
+      if (item.type === 'folder') {
+        await fetchFolderContents(itemId)
+        const children = getChildren(itemId)
+        if (children.length > 0) {
+          setFolderToDelete({
+            id: itemId,
+            name: item.name,
+            childCount: children.length
+          })
+          return
+        }
+      }
+
+      deleteItem(itemId)
+    },
+    [state.items, getChildren, fetchFolderContents, deleteItem]
+  )
+
+  const handleConfirmFolderDelete = useCallback(() => {
+    if (folderToDelete) {
+      deleteItem(folderToDelete.id)
+      setFolderToDelete(null)
+    }
+  }, [folderToDelete, deleteItem])
+
+  // Match the hook's synthesized FileSystemItem id for a given store name.
+  const storeIdFromName = useCallback(
+    (name: string) => name.replace(/[^a-zA-Z0-9]/g, '_'),
+    []
+  )
+
+  // When a store is selected, set it as the current folder
+  const handleSelectStore = useCallback(
+    (storeId: string) => {
+      setSelectedStoreId(storeId)
+      navigateToFolder(storeId)
+      fetchFolderContents(storeId)
+    },
+    [navigateToFolder, fetchFolderContents]
+  )
+
+  // Auto-select first READY store on load
+  useEffect(() => {
+    if (!selectedStoreId) {
+      const firstReady = stores.find((s) => s.status === 'READY')
+      if (firstReady) {
+        handleSelectStore(storeIdFromName(firstReady.name))
+      }
+    }
+  }, [stores, selectedStoreId, handleSelectStore, storeIdFromName])
+
+  // External file drop handlers (drag from OS)
+  const handleExternalDragOver = useCallback((e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes('Files')) {
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'copy'
+      setIsDraggingOver(true)
+    }
+  }, [])
+
+  const handleExternalDragLeave = useCallback((e: React.DragEvent) => {
+    if (e.currentTarget === e.target) {
+      setIsDraggingOver(false)
+    }
+  }, [])
+
+  const handleExternalDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsDraggingOver(false)
+
+      const files = e.dataTransfer.files
+      if (files.length === 0) return
+
+      for (const file of Array.from(files)) {
+        try {
+          await importFile(state.currentFolderId || 'root', file)
+        } catch (error) {
+          console.error('Error importing dropped file:', error)
+        }
+      }
+    },
+    [importFile, state.currentFolderId]
+  )
+
+  // Context menu state
+  const [contextMenuPos, setContextMenuPos] =
+    useState<ContextMenuPosition | null>(null)
+  const [contextMenuTargetId, setContextMenuTargetId] = useState<string | null>(
+    null
+  )
+  const [renamingItemId, setRenamingItemId] = useState<string | null>(null)
+
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent, itemId: string | null) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setContextMenuPos({ x: e.clientX, y: e.clientY })
+      setContextMenuTargetId(itemId)
+      if (itemId && !state.selectedItems.includes(itemId)) {
+        selectItem(itemId)
+      }
+    },
+    [state.selectedItems, selectItem]
+  )
+
+  const closeContextMenu = useCallback(() => {
+    setContextMenuPos(null)
+    setContextMenuTargetId(null)
+  }, [])
+
+  const handleContextCopy = useCallback(() => {
+    const ids = contextMenuTargetId
+      ? state.selectedItems.includes(contextMenuTargetId)
+        ? state.selectedItems
+        : [contextMenuTargetId]
+      : state.selectedItems
+    clipboardCopy(ids)
+    closeContextMenu()
+  }, [
+    contextMenuTargetId,
+    state.selectedItems,
+    clipboardCopy,
+    closeContextMenu
+  ])
+
+  const handleContextCut = useCallback(() => {
+    const ids = contextMenuTargetId
+      ? state.selectedItems.includes(contextMenuTargetId)
+        ? state.selectedItems
+        : [contextMenuTargetId]
+      : state.selectedItems
+    clipboardCut(ids)
+    closeContextMenu()
+  }, [contextMenuTargetId, state.selectedItems, clipboardCut, closeContextMenu])
+
+  const handleContextPaste = useCallback(() => {
+    const targetId =
+      contextMenuTargetId && state.items[contextMenuTargetId]?.type === 'folder'
+        ? contextMenuTargetId
+        : state.currentFolderId || 'root'
+    paste(targetId)
+    closeContextMenu()
+  }, [
+    contextMenuTargetId,
+    state.items,
+    state.currentFolderId,
+    paste,
+    closeContextMenu
+  ])
+
+  const handleContextDelete = useCallback(() => {
+    const ids = contextMenuTargetId
+      ? state.selectedItems.includes(contextMenuTargetId)
+        ? state.selectedItems
+        : [contextMenuTargetId]
+      : state.selectedItems
+    for (const id of ids) {
+      handleSmartDelete(id)
+    }
+    closeContextMenu()
+  }, [
+    contextMenuTargetId,
+    state.selectedItems,
+    handleSmartDelete,
+    closeContextMenu
+  ])
+
+  const handleContextRename = useCallback(() => {
+    if (contextMenuTargetId) {
+      setRenamingItemId(contextMenuTargetId)
+    }
+    closeContextMenu()
+  }, [contextMenuTargetId, closeContextMenu])
+
   const currentChildren = getChildren(state.currentFolderId)
 
   // Build breadcrumb path
@@ -65,16 +301,16 @@ export default function FileManagerClient({
     folderId: string | null
   ): { id: string; name: string }[] => {
     if (!folderId || folderId === 'root') {
-      return [{ id: 'root', name: '/' }]
+      return []
     }
 
     const item = state.items[folderId]
-    if (!item) return [{ id: 'root', name: '/' }]
+    if (!item) return []
     const parentPath = buildPath(item.parentId)
     return [...parentPath, { id: item.id, name: item.name }]
   }
 
-  const currentPath = buildPath(state.currentFolderId)
+  const currentPath = selectedStoreId ? buildPath(state.currentFolderId) : []
 
   const handleCreateFolder = () => {
     setShowCreateFolderDialog(true)
@@ -110,13 +346,8 @@ export default function FileManagerClient({
         setNewFolderName('')
       } catch (error) {
         console.error('Error creating folder:', error)
-        // Error is already handled in the hook and displayed via error state
       }
     }
-  }
-
-  const getItemName = (itemId: string): string => {
-    return state.items[itemId]?.name || ''
   }
 
   const handleRemoveFromBasket = (itemId: string) => {
@@ -193,10 +424,6 @@ export default function FileManagerClient({
     selectBasketItem(itemId, true)
   }
 
-  const handleExpandFolder = async (folderId: string) => {
-    await fetchFolderContents(folderId)
-  }
-
   // Show loading state
   if (loading && Object.keys(state.items).length === 0) {
     return (
@@ -207,91 +434,148 @@ export default function FileManagerClient({
   }
 
   return (
-    <div className="flex h-full flex-col gap-2 overflow-hidden">
-      {/* Main Content */}
-      <div className="card-glass flex flex-1 overflow-hidden bg-card">
-        {/* Sidebar */}
-        <div className="flex w-48 flex-col overflow-hidden rounded-l-2xl border border-r-0 border-muted/40">
-          <div className="border-b border-muted/40 p-4">
-            <div className="text-md font-medium text-muted-foreground">
-              Explorer
-            </div>
-          </div>
-          <div className="flex-1 overflow-auto">
-            <FileTree
-              items={rootChildren}
-              selectedItems={state.selectedItems}
-              currentFolderId={state.currentFolderId}
-              onSelectItem={selectItem}
-              onNavigateToFolder={navigateToFolder}
-              onMoveItem={moveItem}
-              getChildren={getChildren}
-              onExpandFolder={handleExpandFolder}
-              onDownload={handleAddToBasket}
-              basketItems={state.basketItems}
-            />
-          </div>
+    <div className="flex h-full gap-2 overflow-hidden">
+      {/* Left sidebar — disks + basket */}
+      <div className="flex w-56 shrink-0 flex-col rounded-xl border border-muted/40 bg-card">
+        <div className="border-b border-muted/40 px-4 py-3">
+          <span className="text-sm font-medium text-muted-foreground">
+            Stores
+          </span>
         </div>
 
-        <div className="flex flex-1 flex-row overflow-hidden">
-          {/* Main Panel */}
-          <div className="relative flex flex-1 flex-col overflow-hidden border-r border-muted/40 pr-4">
-            <div className="flex flex-row items-center justify-between">
-              {/* Breadcrumb */}
-              <Breadcrumb
-                currentPath={currentPath}
-                onNavigateToFolder={navigateToFolder}
-              />
-
-              {/* Toolbar */}
-              <Toolbar
-                viewMode={state.viewMode}
-                searchQuery={searchQuery}
-                onToggleViewMode={toggleViewMode}
-                onCreateFolder={handleCreateFolder}
-                onImport={handleImport}
-                onSearch={setSearch}
-              />
-            </div>
-
-            {/* File Grid */}
-            <div className="flex-1 overflow-auto pb-24">
-              <FileGrid
-                items={currentChildren}
-                selectedItems={state.selectedItems}
-                viewMode={state.viewMode}
-                onSelectItem={selectItem}
-                onNavigateToFolder={navigateToFolder}
-                onMoveItem={moveItem}
-                onDownload={handleAddToBasket}
-                basketItems={state.basketItems}
-              />
-            </div>
-
-            {/* Action Bar - Floating & Sticky to the bottom */}
-            {state.selectedItems.some(
-              (id) => state.items[id]?.type !== 'folder'
-            ) && (
-              <div className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4">
-                <ActionBar
-                  selectedItems={state.selectedItems
-                    .map((id) => state.items[id])
-                    .filter(
-                      (item): item is FileSystemItem =>
-                        item !== undefined && item.type !== 'folder'
+        <div className="flex-1 space-y-1 overflow-auto p-2">
+          {stores
+            .filter((store) => store.status !== 'DISABLED')
+            .map((store) => {
+              const storeId = storeIdFromName(store.name)
+              const display = getStoreDisplay(store.name)
+              const Icon = display.icon
+              const isActive = !showBasket && selectedStoreId === storeId
+              const isSelectable = store.status === 'READY'
+              const description =
+                store.description && store.description.trim().length > 0
+                  ? store.description
+                  : display.description
+              const isDropTarget = dragOverStoreId === storeId
+              return (
+                <button
+                  key={storeId}
+                  disabled={!isSelectable}
+                  title={isSelectable ? undefined : 'Store unavailable'}
+                  className={cn(
+                    'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
+                    isSelectable
+                      ? 'hover:bg-muted/50'
+                      : 'cursor-not-allowed opacity-60',
+                    isActive
+                      ? 'bg-accent/10 text-accent'
+                      : 'text-muted-foreground',
+                    isDropTarget && 'bg-accent/5 ring-2 ring-accent/70'
+                  )}
+                  onClick={() => {
+                    if (!isSelectable) return
+                    setShowBasket(false)
+                    handleSelectStore(storeId)
+                  }}
+                  onDragOver={(e) => {
+                    if (!isSelectable) return
+                    if (storeId === selectedStoreId) return
+                    e.preventDefault()
+                    e.dataTransfer.dropEffect = 'copy'
+                    if (dragOverStoreId !== storeId) setDragOverStoreId(storeId)
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverStoreId === storeId) setDragOverStoreId(null)
+                  }}
+                  onDrop={(e) => {
+                    if (!isSelectable) return
+                    if (storeId === selectedStoreId) return
+                    e.preventDefault()
+                    setDragOverStoreId(null)
+                    const draggedItemId = e.dataTransfer.getData('text/plain')
+                    const draggedItem = draggedItemId
+                      ? state.items[draggedItemId]
+                      : undefined
+                    toast({
+                      title: 'Cross-store copy coming soon',
+                      description: draggedItem
+                        ? `Would copy "${draggedItem.name}" to ${store.name}.`
+                        : `Would copy to ${store.name}.`
+                    })
+                  }}
+                >
+                  <Icon
+                    className={cn(
+                      'h-7 w-7 shrink-0',
+                      isActive ? 'text-accent' : 'text-muted-foreground/70'
                     )}
-                  onDelete={deleteItem}
-                  onRename={renameItem}
-                  onAddToBasket={handleAddToBasket}
-                  onClearSelection={clearSelection}
-                  getItemName={getItemName}
-                />
-              </div>
-            )}
-          </div>
+                    strokeWidth={1.5}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="truncate font-medium">{store.name}</span>
+                      {store.status === 'DISCONNECTED' && (
+                        <AlertTriangle
+                          className="h-3.5 w-3.5 shrink-0 text-destructive"
+                          strokeWidth={2}
+                        />
+                      )}
+                    </div>
+                    <div className="truncate text-xs text-muted-foreground/60">
+                      {store.status === 'DISCONNECTED'
+                        ? 'Store unavailable'
+                        : description}
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+        </div>
 
-          {/* Selection Basket */}
-          <div className="flex h-full w-80 flex-col overflow-hidden bg-background/30 p-2">
+        {/* Basket at bottom of sidebar */}
+        <div className="border-t border-muted/40 p-2">
+          <button
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50',
+              showBasket
+                ? 'bg-accent/10 text-accent'
+                : state.basketItems.length > 0
+                  ? 'text-accent'
+                  : 'text-muted-foreground'
+            )}
+            onClick={() => setShowBasket(!showBasket)}
+          >
+            <ShoppingBasket
+              className={cn(
+                'h-7 w-7 shrink-0',
+                showBasket || state.basketItems.length > 0
+                  ? 'text-accent'
+                  : 'text-muted-foreground/70'
+              )}
+              strokeWidth={1.5}
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Basket</span>
+                {state.basketItems.length > 0 && (
+                  <Badge className="h-5 min-w-5 rounded-full px-1.5 text-xs">
+                    {state.basketItems.length}
+                  </Badge>
+                )}
+              </div>
+              <div className="truncate text-xs text-muted-foreground/60">
+                Download or transfer
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Right content panel */}
+      <div className="card-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-muted/40 bg-card">
+        {showBasket ? (
+          /* Basket inline panel */
+          <div className="flex flex-1 flex-col overflow-auto p-4">
             <SelectionBasket
               selectedItems={state.basketItems
                 .map((id) => state.items[id])
@@ -302,8 +586,162 @@ export default function FileManagerClient({
               onTransferRequest={handleTransferRequest}
             />
           </div>
-        </div>
+        ) : selectedStoreId ? (
+          <>
+            {/* Toolbar row: breadcrumb + actions */}
+            <div className="flex items-center justify-between border-b border-muted/40 px-3 py-1">
+              <Breadcrumb
+                currentPath={currentPath}
+                onNavigateToFolder={navigateToFolder}
+              />
+
+              <div className="flex items-center gap-1">
+                <Button
+                  onClick={handleCreateFolder}
+                  variant="ghost"
+                  size="sm"
+                  className="text-accent"
+                >
+                  <FolderPlus className="h-4 w-4" />
+                  New folder
+                </Button>
+                <Button
+                  onClick={handleImport}
+                  variant="ghost"
+                  size="sm"
+                  className="text-accent"
+                >
+                  <Upload className="h-4 w-4" />
+                  Import
+                </Button>
+              </div>
+            </div>
+
+            {/* File browser area with drop zone */}
+            <div
+              className="relative flex min-h-0 flex-1 flex-col overflow-auto"
+              onDragOver={handleExternalDragOver}
+              onDragLeave={handleExternalDragLeave}
+              onDrop={handleExternalDrop}
+              onContextMenu={(e) => {
+                if (e.target === e.currentTarget) {
+                  handleContextMenu(e, null)
+                }
+              }}
+            >
+              {/* Drop zone overlay */}
+              {isDraggingOver && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">
+                  <div className="flex flex-col items-center gap-2 text-accent">
+                    <Upload className="h-8 w-8" />
+                    <span className="text-sm font-medium">
+                      Drop files to upload
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {currentChildren.length === 0 && !loading ? (
+                /* Empty state — full-height dashed dropzone */
+                <div className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground">
+                  <Upload className="h-12 w-12 opacity-40" />
+                  <div className="text-center">
+                    <p className="text-sm font-medium">No files yet</p>
+                    <p className="mt-1 text-xs">
+                      Drag & drop files here or click Import to get started
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={handleImport}>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Import
+                  </Button>
+                </div>
+              ) : (
+                <FileGrid
+                  items={currentChildren}
+                  selectedItems={state.selectedItems}
+                  viewMode={state.viewMode}
+                  onSelectItem={selectItem}
+                  onSelectRange={selectRange}
+                  onSelectAll={selectAll}
+                  onClearSelection={clearSelection}
+                  onNavigateToFolder={navigateToFolder}
+                  onMoveItem={moveItem}
+                  onDownload={handleAddToBasket}
+                  onDelete={handleSmartDelete}
+                  onRename={(itemId) => setRenamingItemId(itemId)}
+                  basketItems={state.basketItems}
+                  movingItemId={movingItemId}
+                  onContextMenu={handleContextMenu}
+                  clipboard={state.clipboard}
+                  renamingItemId={renamingItemId}
+                  onRenameSubmit={(itemId, newName) => {
+                    renameItem(itemId, newName)
+                    setRenamingItemId(null)
+                  }}
+                  onRenameCancel={() => setRenamingItemId(null)}
+                  parentFolderId={(() => {
+                    if (
+                      !state.currentFolderId ||
+                      state.currentFolderId === 'root'
+                    ) {
+                      return null
+                    }
+                    const parentId =
+                      state.items[state.currentFolderId]?.parentId
+                    return parentId && parentId !== 'root' ? parentId : null
+                  })()}
+                />
+              )}
+            </div>
+          </>
+        ) : (
+          /* No store selected — welcome state */
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 text-muted-foreground">
+            <HardDrive className="h-12 w-12 opacity-40" />
+            <div className="text-center">
+              <p className="text-sm font-medium">
+                Select a store to browse files
+              </p>
+              <p className="mt-1 text-xs">
+                Choose a storage location from the sidebar
+              </p>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Context Menu */}
+      <FileContextMenu
+        position={contextMenuPos}
+        targetItemId={contextMenuTargetId}
+        targetItemType={
+          contextMenuTargetId
+            ? (state.items[contextMenuTargetId]?.type ?? null)
+            : null
+        }
+        selectedItemIds={state.selectedItems}
+        clipboard={state.clipboard}
+        onCopy={handleContextCopy}
+        onCut={handleContextCut}
+        onPaste={handleContextPaste}
+        onDelete={handleContextDelete}
+        onRename={handleContextRename}
+        onNewFolder={handleCreateFolder}
+        onUpload={handleImport}
+        onClose={closeContextMenu}
+      />
+
+      {/* Folder Delete Confirmation */}
+      <FolderDeleteDialog
+        open={folderToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setFolderToDelete(null)
+        }}
+        folderName={folderToDelete?.name ?? ''}
+        itemCount={folderToDelete?.childCount ?? 0}
+        onConfirmDelete={handleConfirmFolderDelete}
+      />
 
       {/* Create Folder Dialog */}
       <Dialog
@@ -312,14 +750,13 @@ export default function FileManagerClient({
       >
         <DialogContent className="bg-background">
           <DialogHeader>
-            <DialogTitle className="">New folder</DialogTitle>
+            <DialogTitle>New folder</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <Input
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder="New folder"
-              className=""
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleCreateFolderSubmit()

@@ -2,9 +2,15 @@ import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
+  WorkspaceFileStore,
+  WorkspaceFileStoreStatus,
   WorkspaceFileUpdateType
 } from '~/domain/model/workspace-file'
-import { ChorusWorkspaceFile, ChorusWorkspaceFilePart } from '~/internal/client'
+import {
+  ChorusWorkspaceFile,
+  ChorusWorkspaceFilePart,
+  ChorusWorkspaceFileStoreInfo
+} from '~/internal/client'
 
 /**
  * Maps domain workspace file types to API types
@@ -59,5 +65,31 @@ export const fromChorusWorkspaceFilePart = (
     partNumber: part.partNumber || '',
     etag: part.etag || '',
     data: part.data
+  }
+}
+
+/**
+ * Normalize the wire-format status string to the domain enum.
+ * Accepts both the short form (`READY`) and the prefixed gRPC form
+ * (`WORKSPACE_FILE_STORE_STATUS_READY`); unknown values fall back to UNKNOWN.
+ */
+const normalizeStoreStatus = (raw?: string): WorkspaceFileStoreStatus => {
+  if (!raw) return 'UNKNOWN'
+  const upper = raw.toUpperCase()
+  if (upper.endsWith('READY')) return 'READY'
+  if (upper.endsWith('DISCONNECTED')) return 'DISCONNECTED'
+  if (upper.endsWith('DISABLED')) return 'DISABLED'
+  console.warn(`[workspace-file-mapper] Unknown store status: ${raw}`)
+  return 'UNKNOWN'
+}
+
+export const fromChorusWorkspaceFileStoreInfo = (
+  store: ChorusWorkspaceFileStoreInfo
+): WorkspaceFileStore => {
+  return {
+    name: store.name || '',
+    type: store.type,
+    description: store.description,
+    status: normalizeStoreStatus(store.status)
   }
 }

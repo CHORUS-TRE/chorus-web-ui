@@ -27,10 +27,16 @@ export interface FileSystemUploadItem {
   cancelled: boolean
 }
 
+export interface FileClipboard {
+  itemIds: string[]
+  action: 'copy' | 'cut'
+}
+
 export interface FileSystemState {
   items: Record<string, FileSystemItem>
   selectedItems: string[]
   basketItems: string[]
   currentFolderId: string | null
   viewMode: 'list' | 'grid'
+  clipboard: FileClipboard | null
 }

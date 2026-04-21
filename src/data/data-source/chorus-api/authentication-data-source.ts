@@ -90,7 +90,9 @@ class AuthenticationApiDataSourceImpl implements AuthenticationDataSource {
               ? ({
                   id: mode.openid.id ?? ''
                 } as AuthenticationOpenID)
-              : undefined
+              : undefined,
+            buttonText: mode.buttonText,
+            iconURL: mode.iconURL
           }
           return authMode
         }

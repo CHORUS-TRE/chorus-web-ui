@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  BookText,
   Brain,
   ChartBar,
   CheckCircle2,
@@ -10,8 +11,11 @@ import {
   FileCheck,
   FlaskConical,
   Folder,
+  HardDrive,
   ImageIcon,
+  Layers,
   Loader2,
+  Mic,
   Settings,
   TestTubes
 } from 'lucide-react'
@@ -30,6 +34,7 @@ import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Textarea } from '~/components/ui/textarea'
 
 // ────────────────────────────────────────────
@@ -124,6 +129,113 @@ const REGULATORY_ITEMS: RegulatoryItem[] = [
   }
 ]
 
+// ────────────────────────────────────────────
+// Service categories (tabbed radio selection)
+// ────────────────────────────────────────────
+
+interface ServiceOption {
+  id: string
+  label: string
+  description: string
+  recommended?: boolean
+}
+
+interface ServiceCategory {
+  id: string
+  label: string
+  icon: React.ElementType
+  description: string
+  options: ServiceOption[]
+}
+
+const SERVICE_CATEGORIES: ServiceCategory[] = [
+  {
+    id: 'data-capture',
+    label: 'Data Capture',
+    icon: Mic,
+    description: 'How should study data be captured and digitised?',
+    options: [
+      {
+        id: 'redcap',
+        label: 'REDCap (Recommended)',
+        description:
+          'Electronic data capture for clinical research. Hosted at CHUV, GCP-compliant.',
+        recommended: true
+      },
+      {
+        id: 'manual-forms',
+        label: 'Manual Forms',
+        description:
+          'Paper-based CRFs with manual entry. Suitable for small-scale studies.'
+      },
+      {
+        id: 'external-edc',
+        label: 'External EDC',
+        description:
+          'Use a sponsor-provided electronic data capture system (e.g. Medidata, Castor).'
+      }
+    ]
+  },
+  {
+    id: 'analysis',
+    label: 'Analysis',
+    icon: BookText,
+    description: 'Which analysis environment do you need?',
+    options: [
+      {
+        id: 'jupyter',
+        label: 'Jupyter / Python (Recommended)',
+        description:
+          'Interactive notebooks with Python, R, and Julia kernels. GPU-ready.',
+        recommended: true
+      },
+      {
+        id: 'rstudio',
+        label: 'RStudio',
+        description: 'R-based IDE for biostatistics and CRAN package ecosystem.'
+      },
+      {
+        id: 'stata',
+        label: 'Stata / SAS',
+        description:
+          'Licensed statistical software for epidemiology and clinical trials.'
+      },
+      {
+        id: 'none',
+        label: 'None',
+        description: 'No analysis environment needed at this stage.'
+      }
+    ]
+  },
+  {
+    id: 'storage',
+    label: 'Storage',
+    icon: HardDrive,
+    description: 'Where should study files and datasets be stored?',
+    options: [
+      {
+        id: 'workspace-storage',
+        label: 'Workspace Storage (Recommended)',
+        description:
+          'Managed storage within your Chorus workspace. Encrypted at rest, backed up daily.',
+        recommended: true
+      },
+      {
+        id: 's3-compatible',
+        label: 'S3-Compatible Object Store',
+        description:
+          'Scalable object storage for large datasets (imaging, genomics).'
+      },
+      {
+        id: 'external-nas',
+        label: 'External NAS',
+        description:
+          'Mount an existing network-attached storage volume from CHUV infrastructure.'
+      }
+    ]
+  }
+]
+
 const WizardSchema = z.object({
   name: z.string().min(3, 'At least 3 characters'),
   shortName: z
@@ -169,6 +281,16 @@ export function StudySetupWizard({
     external: dataNeedsHint === 'external',
     imaging: dataNeedsHint === 'imaging',
     biobank: dataNeedsHint === 'biobank'
+  })
+  const [selectedServices, setSelectedServices] = useState<
+    Record<string, string>
+  >(() => {
+    const defaults: Record<string, string> = {}
+    for (const cat of SERVICE_CATEGORIES) {
+      const rec = cat.options.find((o) => o.recommended)
+      if (rec) defaults[cat.id] = rec.id
+    }
+    return defaults
   })
   const [isPending, startTransition] = useTransition()
   const [done, setDone] = useState(false)
@@ -282,6 +404,7 @@ export function StudySetupWizard({
     { label: 'Study type', icon: FlaskConical },
     { label: 'Regulatory', icon: FileCheck },
     { label: 'Data needs', icon: Database },
+    { label: 'Services', icon: Layers },
     { label: 'Workspace', icon: Settings },
     { label: 'Review', icon: CheckCircle2 }
   ]
@@ -514,12 +637,99 @@ export function StudySetupWizard({
           </div>
         )}
 
-        {/* ── Step 3: Workspace Config ── */}
+        {/* ── Step 3: Services ── */}
         {step === 3 && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Choose the services for your study
+            </p>
+            <Tabs defaultValue={SERVICE_CATEGORIES[0].id} className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                {SERVICE_CATEGORIES.map((cat) => (
+                  <TabsTrigger
+                    key={cat.id}
+                    value={cat.id}
+                    className="flex items-center gap-1.5 text-xs"
+                  >
+                    <cat.icon className="h-3.5 w-3.5" />
+                    {cat.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {SERVICE_CATEGORIES.map((cat) => (
+                <TabsContent key={cat.id} value={cat.id} className="mt-3">
+                  <p className="mb-2.5 text-[11px] text-muted-foreground">
+                    {cat.description}
+                  </p>
+                  <div className="space-y-2">
+                    {cat.options.map((option) => {
+                      const isSelected = selectedServices[cat.id] === option.id
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() =>
+                            setSelectedServices((prev) => ({
+                              ...prev,
+                              [cat.id]: option.id
+                            }))
+                          }
+                          className={cn(
+                            'flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition-all',
+                            isSelected
+                              ? 'border-primary bg-primary/5'
+                              : 'border-muted/30 hover:border-muted'
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border',
+                              isSelected
+                                ? 'border-primary bg-primary'
+                                : 'border-muted-foreground/40'
+                            )}
+                          >
+                            {isSelected && (
+                              <div className="h-1.5 w-1.5 rounded-full bg-white" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <span className="text-sm font-medium">
+                              {option.label}
+                            </span>
+                            <p className="text-[11px] text-muted-foreground">
+                              {option.description}
+                            </p>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setStep(2)}
+              >
+                Back
+              </Button>
+              <Button size="sm" onClick={() => setStep(4)}>
+                Continue
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 4: Workspace Config ── */}
+        {step === 4 && (
           <form
             onSubmit={(e) => {
               e.preventDefault()
-              setStep(4)
+              setStep(5)
             }}
             className="space-y-3"
           >
@@ -577,7 +787,7 @@ export function StudySetupWizard({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => setStep(2)}
+                onClick={() => setStep(3)}
               >
                 Back
               </Button>
@@ -592,8 +802,8 @@ export function StudySetupWizard({
           </form>
         )}
 
-        {/* ── Step 4: Review ── */}
-        {step === 4 && (
+        {/* ── Step 5: Review ── */}
+        {step === 5 && (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
               Review before creating
@@ -666,9 +876,33 @@ export function StudySetupWizard({
                   </div>
                 </div>
               )}
+
+              {/* Services summary */}
+              {Object.keys(selectedServices).length > 0 && (
+                <div className="flex flex-col gap-1 border-t border-muted/20 pt-2">
+                  <span className="text-muted-foreground">Services</span>
+                  <div className="flex flex-wrap gap-1">
+                    {SERVICE_CATEGORIES.map((cat) => {
+                      const optionId = selectedServices[cat.id]
+                      if (!optionId || optionId === 'none') return null
+                      const option = cat.options.find((o) => o.id === optionId)
+                      return (
+                        <Badge
+                          key={cat.id}
+                          variant="secondary"
+                          className="text-[10px]"
+                        >
+                          {cat.label}:{' '}
+                          {option?.label.replace(' (Recommended)', '')}
+                        </Badge>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setStep(3)}>
+              <Button variant="ghost" size="sm" onClick={() => setStep(4)}>
                 Back
               </Button>
               <Button size="sm" onClick={handleSubmit} disabled={isPending}>

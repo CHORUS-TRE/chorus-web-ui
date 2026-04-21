@@ -42,3 +42,23 @@ export const WorkspaceFilePartSchema = z.object({
 })
 
 export type WorkspaceFilePart = z.infer<typeof WorkspaceFilePartSchema>
+
+export const WorkspaceFileStoreStatusSchema = z.enum([
+  'READY',
+  'DISCONNECTED',
+  'DISABLED',
+  'UNKNOWN'
+])
+
+export type WorkspaceFileStoreStatus = z.infer<
+  typeof WorkspaceFileStoreStatusSchema
+>
+
+export const WorkspaceFileStoreSchema = z.object({
+  name: z.string(),
+  type: z.string().optional(),
+  description: z.string().optional(),
+  status: WorkspaceFileStoreStatusSchema
+})
+
+export type WorkspaceFileStore = z.infer<typeof WorkspaceFileStoreSchema>

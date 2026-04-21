@@ -1,13 +1,15 @@
 import { WorkspaceFileDataSource } from '~/data/data-source/chorus-api/workspace-file-data-source'
 import {
   fromChorusWorkspaceFile,
-  fromChorusWorkspaceFilePart
+  fromChorusWorkspaceFilePart,
+  fromChorusWorkspaceFileStoreInfo
 } from '~/data/data-source/chorus-api/workspace-file-mapper'
 import { Result } from '~/domain/model'
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
+  WorkspaceFileStore,
   WorkspaceFileUpdateType
 } from '~/domain/model/workspace-file'
 import { WorkspaceFileRepository } from '~/domain/repository/workspace-file-repository'
@@ -100,6 +102,25 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
           fromChorusWorkspaceFile(file)
         )
         return { data: workspaceFiles }
+      }
+
+      return { data: [] }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      }
+    }
+  }
+
+  async listStores(workspaceId: string): Promise<Result<WorkspaceFileStore[]>> {
+    try {
+      const response = await this.dataSource.listStores(workspaceId)
+
+      if (response.result?.stores) {
+        const stores = response.result.stores.map((store) =>
+          fromChorusWorkspaceFileStoreInfo(store)
+        )
+        return { data: stores }
       }
 
       return { data: [] }
