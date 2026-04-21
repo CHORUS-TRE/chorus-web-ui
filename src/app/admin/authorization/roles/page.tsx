@@ -31,26 +31,6 @@ function getRoleScope(
   return 'platform'
 }
 
-function getInheritanceChain(roleName: string): string[] {
-  const chain: string[] = []
-  const visited = new Set<string>()
-
-  function walk(name: string) {
-    if (visited.has(name)) return
-    visited.add(name)
-    const def = ROLE_DEFINITIONS[name]
-    if (def?.inheritsFrom) {
-      for (const parent of def.inheritsFrom) {
-        chain.push(parent)
-        walk(parent)
-      }
-    }
-  }
-
-  walk(roleName)
-  return chain
-}
-
 const scopeLabels: Record<Scope, string> = {
   platform: 'Platform',
   workspace: 'Workspace',
@@ -112,8 +92,6 @@ export default function RolesPage() {
 
   const selectedDef = ROLE_DEFINITIONS[selectedRole]
   const selectedScope = selectedDef ? getRoleScope(selectedDef) : 'platform'
-  const inheritanceChain = getInheritanceChain(selectedRole)
-
   return (
     <div className="space-y-4">
       <div>
@@ -206,44 +184,6 @@ export default function RolesPage() {
                 {selectedDef.description}
               </p>
             </div>
-
-            {/* Inheritance chain */}
-            {inheritanceChain.length > 0 && (
-              <div className="mb-4 flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-                <span className="mr-1">Inherits from:</span>
-                {inheritanceChain.map((parent, i) => (
-                  <span key={parent} className="flex items-center gap-1">
-                    {i > 0 && (
-                      <span className="text-muted-foreground/50">&gt;</span>
-                    )}
-                    <button
-                      onClick={() => {
-                        setSelectedRole(parent)
-                        // Adjust scope filter to match parent's scope
-                        const parentDef = ROLE_DEFINITIONS[parent]
-                        if (parentDef) {
-                          const parentScope = getRoleScope(parentDef)
-                          if (scopeFilter !== parentScope) {
-                            setScopeFilter(parentScope)
-                          }
-                        }
-                      }}
-                      className={cn(
-                        'rounded px-1 py-0.5 font-medium',
-                        (() => {
-                          const ps = ROLE_DEFINITIONS[parent]
-                            ? getRoleScope(ROLE_DEFINITIONS[parent])
-                            : 'platform'
-                          return `${scopeTextColor[ps]} ${scopeHoverRole[ps]}`
-                        })()
-                      )}
-                    >
-                      {ROLE_DEFINITIONS[parent]?.displayName ?? parent}
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
 
             {/* Permission matrix */}
             <PermissionMatrix

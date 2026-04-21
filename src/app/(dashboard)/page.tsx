@@ -103,11 +103,11 @@ export default function CHORUSDashboard() {
           <div className="space-y-6 lg:col-span-2">
             <section>
               <h3 className="mb-3 font-semibold">Activity Overview</h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
                 <Card
                   variant="default"
                   onClick={() => router.push('/workspaces')}
-                  className="cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
+                  className="min-w-0 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -132,7 +132,7 @@ export default function CHORUSDashboard() {
                 <Card
                   variant="default"
                   onClick={() => router.push('/sessions')}
-                  className="cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
+                  className="min-w-0 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -156,7 +156,7 @@ export default function CHORUSDashboard() {
 
                 <Card
                   variant="default"
-                  className="transition-all duration-200 hover:border-accent hover:shadow-md"
+                  className="min-w-0 transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -181,7 +181,7 @@ export default function CHORUSDashboard() {
                 <Card
                   variant="default"
                   onClick={() => router.push('/messages/requests')}
-                  className="cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
+                  className="min-w-0 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
                 >
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -199,7 +199,7 @@ export default function CHORUSDashboard() {
                 </Card>
 
                 <Card
-                  className="demo-effect transition-all duration-200 hover:border-accent hover:shadow-md"
+                  className="demo-effect min-w-0 transition-all duration-200 hover:border-accent hover:shadow-md"
                   variant="default"
                 >
                   <CardHeader className="pb-2">
@@ -260,7 +260,7 @@ export default function CHORUSDashboard() {
                     )}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-3 gap-6 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
+                <CardContent className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                   {(!workspaceList || workspaceList.length === 0) && (
                     <div className="col-span-3 flex flex-col items-center justify-center py-8 text-center">
                       <Package className="mb-4 h-12 w-12 text-muted-foreground/50" />

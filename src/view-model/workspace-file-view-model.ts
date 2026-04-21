@@ -2,6 +2,7 @@
 
 import { env } from 'next-runtime-env'
 
+import { Analytics } from '@/lib/analytics/service'
 import { WorkspaceFileDataSourceImpl } from '@/data/data-source'
 import { WorkspaceFileRepositoryImpl } from '@/data/repository'
 import { Result } from '@/domain/model'
@@ -9,6 +10,7 @@ import {
   WorkspaceFile,
   WorkspaceFileCreateType,
   WorkspaceFilePart,
+  WorkspaceFileStore,
   WorkspaceFileUpdateType
 } from '@/domain/model/workspace-file'
 import { WorkspaceFileAbortUpload } from '@/domain/use-cases/workspace-file/workspace-file-abort-upload'
@@ -18,10 +20,10 @@ import { WorkspaceFileDelete } from '@/domain/use-cases/workspace-file/workspace
 import { WorkspaceFileGet } from '@/domain/use-cases/workspace-file/workspace-file-get'
 import { WorkspaceFileInitUpload } from '@/domain/use-cases/workspace-file/workspace-file-init-upload'
 import { WorkspaceFileList } from '@/domain/use-cases/workspace-file/workspace-file-list'
+import { WorkspaceFileStoreList } from '@/domain/use-cases/workspace-file/workspace-file-store-list'
 import { WorkspaceFileUpdate } from '@/domain/use-cases/workspace-file/workspace-file-update'
 import { WorkspaceFileUploadPart } from '@/domain/use-cases/workspace-file/workspace-file-upload-part'
 import { FetchError, ResponseError } from '@/internal/client/runtime'
-import { Analytics } from '@/lib/analytics/service'
 
 const getRepository = async () => {
   const dataSource = new WorkspaceFileDataSourceImpl(
@@ -84,6 +86,20 @@ export async function workspaceFileList(
     return await useCase.execute(workspaceId, path)
   } catch (error) {
     console.error('Error listing workspace files', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceFileStoreList(
+  workspaceId: string
+): Promise<Result<WorkspaceFileStore[]>> {
+  try {
+    if (!workspaceId) throw new Error('Invalid workspace id')
+    const repository = await getRepository()
+    const useCase = new WorkspaceFileStoreList(repository)
+    return await useCase.execute(workspaceId)
+  } catch (error) {
+    console.error('Error listing workspace file stores', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

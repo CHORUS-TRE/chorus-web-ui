@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { toast } from '@/components/hooks/use-toast'
-import { WorkspaceFilePart } from '@/domain/model/workspace-file'
+import {
+  WorkspaceFilePart,
+  WorkspaceFileStore
+} from '@/domain/model/workspace-file'
 import { useAppStateStore } from '@/stores/app-state-store'
 import type { FileSystemItem, FileSystemState } from '@/types/file-system'
 import { mapWorkspaceFilesToFileSystem } from '@/utils/file-system-mapper'
@@ -13,6 +16,7 @@ import {
   workspaceFileGet,
   workspaceFileInitUpload,
   workspaceFileList,
+  workspaceFileStoreList,
   workspaceFileUpdate,
   workspaceFileUploadPart
 } from '@/view-model/workspace-file-view-model'
@@ -96,12 +100,15 @@ export function useFileSystem(workspaceId?: string) {
     selectedItems: [],
     basketItems: [],
     currentFolderId: 'root',
-    viewMode: 'list'
+    viewMode: 'list',
+    clipboard: null
   })
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(false)
+  const [movingItemId, setMovingItemId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [fetchedPaths, setFetchedPaths] = useState<Set<string>>(new Set())
+  const [stores, setStores] = useState<WorkspaceFileStore[]>([])
 
   const fetchWorkspaceFiles = useCallback(
     async (workspaceId: string, path: string, force = false) => {
@@ -124,15 +131,55 @@ export function useFileSystem(workspaceId?: string) {
         }
 
         if (result.data) {
+          console.log(
+            `[fetchWorkspaceFiles] path="${path}" → ${result.data.length} items:`,
+            result.data.map((f) => ({
+              name: f.name,
+              path: f.path,
+              isDir: f.isDirectory
+            }))
+          )
           const fileSystemItems = mapWorkspaceFilesToFileSystem(result.data)
+          console.log(
+            `[fetchWorkspaceFiles] mapped IDs:`,
+            Object.entries(fileSystemItems).map(([id, item]) => ({
+              id,
+              name: item.name,
+              parentId: item.parentId,
+              path: item.path
+            }))
+          )
 
           setState((prev) => {
-            const newState = {
-              ...prev,
-              items: { ...prev.items, ...fileSystemItems }
+            // Remove stale items that belonged to this path but are no longer in the API response.
+            // Find the parent folder ID for this path so we can clear its old children.
+            const parentId = path
+              ? Object.values(prev.items).find(
+                  (item) =>
+                    item.type === 'folder' &&
+                    (item.path === path ||
+                      item.path === path.replace(/\/$/, ''))
+                )?.id
+              : 'root'
+
+            const newItems = { ...prev.items }
+            if (parentId) {
+              // Remove old children of this folder that aren't in the new response
+              for (const [id, item] of Object.entries(newItems)) {
+                if (
+                  item.parentId === parentId &&
+                  id !== 'root' &&
+                  !fileSystemItems[id]
+                ) {
+                  delete newItems[id]
+                }
+              }
             }
 
-            return newState
+            return {
+              ...prev,
+              items: { ...newItems, ...fileSystemItems }
+            }
           })
 
           // Mark this path as fetched
@@ -147,17 +194,78 @@ export function useFileSystem(workspaceId?: string) {
     [fetchedPaths]
   )
 
-  // Fetch workspace files on mount and when workspaceId changes
+  const fetchStores = useCallback(async (workspaceId: string) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const result = await workspaceFileStoreList(workspaceId)
+      if (result.error) {
+        setError(result.error)
+        return
+      }
+      const fetchedStores = result.data ?? []
+      setStores(fetchedStores)
+
+      // Synthesize root + per-store FileSystemItem folders so existing
+      // navigation / children logic continues to work. Store paths get a
+      // trailing slash because they're folders — same convention as the
+      // file mapper.
+      const rootId = 'root'
+      const storeItems: Record<string, FileSystemItem> = {
+        [rootId]: {
+          id: rootId,
+          name: 'My data',
+          type: 'folder',
+          parentId: null,
+          path: '',
+          modifiedAt: new Date(),
+          owner: 'System'
+        }
+      }
+      for (const store of fetchedStores) {
+        const id = store.name.replace(/[^a-zA-Z0-9]/g, '_')
+        storeItems[id] = {
+          id,
+          name: store.name,
+          type: 'folder',
+          parentId: rootId,
+          path: `${store.name}/`,
+          modifiedAt: new Date(),
+          owner: 'System'
+        }
+      }
+      setState((prev) => {
+        // Preserve any non-root children (already-fetched folder contents)
+        // while replacing the root + store entries.
+        const preserved = Object.fromEntries(
+          Object.entries(prev.items).filter(
+            ([, item]) => item.parentId !== null && item.parentId !== rootId
+          )
+        )
+        return { ...prev, items: { ...preserved, ...storeItems } }
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch stores')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  // Fetch workspace stores on mount and when workspaceId changes
   useEffect(() => {
     if (workspaceId) {
-      fetchWorkspaceFiles(workspaceId, '')
+      fetchStores(workspaceId)
     }
-  }, [workspaceId, fetchWorkspaceFiles])
+  }, [workspaceId, fetchStores])
 
   const getChildren = useCallback(
     (parentId: string | null): FileSystemItem[] => {
       let items = Object.values(state.items).filter(
         (item) => item.parentId === parentId
+      )
+      console.log(
+        `[getChildren] parentId="${parentId}" → ${items.length} items:`,
+        items.map((i) => ({ id: i.id, name: i.name, parentId: i.parentId }))
       )
 
       // Apply search filter if search query exists
@@ -178,7 +286,13 @@ export function useFileSystem(workspaceId?: string) {
     [state.items, searchQuery]
   )
 
+  // Track the last selected item for shift+click range selection
+  const [lastSelectedItemId, setLastSelectedItemId] = useState<string | null>(
+    null
+  )
+
   const selectItem = useCallback((itemId: string, multiSelect = false) => {
+    setLastSelectedItemId(itemId)
     setState((prev) => ({
       ...prev,
       selectedItems: multiSelect
@@ -187,6 +301,52 @@ export function useFileSystem(workspaceId?: string) {
           : [...prev.selectedItems, itemId]
         : [itemId]
     }))
+  }, [])
+
+  /**
+   * Select a range of items between lastSelectedItemId and itemId
+   * within the given ordered list of items (the current folder contents).
+   */
+  const selectRange = useCallback(
+    (itemId: string, orderedItemIds: string[]) => {
+      setState((prev) => {
+        const anchorId = lastSelectedItemId
+        if (!anchorId) {
+          // No anchor — just select this item
+          return { ...prev, selectedItems: [itemId] }
+        }
+
+        const anchorIndex = orderedItemIds.indexOf(anchorId)
+        const targetIndex = orderedItemIds.indexOf(itemId)
+
+        if (anchorIndex === -1 || targetIndex === -1) {
+          return { ...prev, selectedItems: [itemId] }
+        }
+
+        const start = Math.min(anchorIndex, targetIndex)
+        const end = Math.max(anchorIndex, targetIndex)
+        const rangeIds = orderedItemIds.slice(start, end + 1)
+
+        // Merge with existing selection (union)
+        const merged = new Set([...prev.selectedItems, ...rangeIds])
+        return { ...prev, selectedItems: Array.from(merged) }
+      })
+      // Don't update lastSelectedItemId on range select — keep the anchor
+    },
+    [lastSelectedItemId]
+  )
+
+  /**
+   * Select all items in the given list of IDs.
+   */
+  const selectAll = useCallback((itemIds: string[]) => {
+    setState((prev) => ({
+      ...prev,
+      selectedItems: [...itemIds]
+    }))
+    if (itemIds.length > 0) {
+      setLastSelectedItemId(itemIds[itemIds.length - 1])
+    }
   }, [])
 
   const selectBasketItem = useCallback((itemId: string, force?: boolean) => {
@@ -248,6 +408,8 @@ export function useFileSystem(workspaceId?: string) {
         return
       }
 
+      setMovingItemId(itemId)
+
       try {
         // Calculate new path based on the new parent folder
         const newParentPath = newParent.path || ''
@@ -267,6 +429,11 @@ export function useFileSystem(workspaceId?: string) {
 
         if (result.error) {
           setError(result.error)
+          toast({
+            title: 'Move failed',
+            description: `Failed to move ${item.name}. Please try again.`,
+            variant: 'destructive'
+          })
           return
         }
 
@@ -292,11 +459,24 @@ export function useFileSystem(workspaceId?: string) {
         if (newParentPath !== currentPath) {
           await fetchWorkspaceFiles(workspaceId, newParentPath, true)
         }
+
+        toast({
+          title: 'File moved',
+          description: `${item.name} moved to ${newParent.name}`,
+          variant: 'default'
+        })
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to move item'
         console.error('Error moving item:', errorMessage)
         setError(errorMessage)
+        toast({
+          title: 'Move failed',
+          description: `Failed to move ${item.name}. Please try again.`,
+          variant: 'destructive'
+        })
+      } finally {
+        setMovingItemId(null)
       }
     },
     [workspaceId, state.items, state.currentFolderId, fetchWorkspaceFiles]
@@ -316,7 +496,11 @@ export function useFileSystem(workspaceId?: string) {
       }
 
       try {
-        const result = await workspaceFileDelete(workspaceId, item.path)
+        const deletePath =
+          item.type === 'folder' && !item.path.endsWith('/')
+            ? `${item.path}/`
+            : item.path
+        const result = await workspaceFileDelete(workspaceId, deletePath)
 
         if (result.error) {
           console.error('Failed to delete item:', result.error)
@@ -818,9 +1002,96 @@ export function useFileSystem(workspaceId?: string) {
     [workspaceId, state.items, fetchWorkspaceFiles]
   )
 
+  const clipboardCopy = useCallback((itemIds: string[]) => {
+    setState((prev) => ({
+      ...prev,
+      clipboard: { itemIds, action: 'copy' }
+    }))
+    const count = itemIds.length
+    toast({
+      title: `${count} item${count > 1 ? 's' : ''} copied`,
+      variant: 'default'
+    })
+  }, [])
+
+  const clipboardCut = useCallback((itemIds: string[]) => {
+    setState((prev) => ({
+      ...prev,
+      clipboard: { itemIds, action: 'cut' }
+    }))
+    const count = itemIds.length
+    toast({
+      title: `${count} item${count > 1 ? 's' : ''} cut`,
+      variant: 'default'
+    })
+  }, [])
+
+  const paste = useCallback(
+    async (targetFolderId: string) => {
+      if (!state.clipboard || state.clipboard.itemIds.length === 0) return
+      if (!workspaceId) return
+
+      const { itemIds, action } = state.clipboard
+      const targetFolder = state.items[targetFolderId]
+      if (!targetFolder || targetFolder.type !== 'folder') return
+
+      for (const itemId of itemIds) {
+        if (action === 'cut') {
+          await moveItem(itemId, targetFolderId)
+        } else {
+          // Copy: create a new file at the target path
+          const item = state.items[itemId]
+          if (!item) continue
+
+          const targetPath = targetFolder.path
+            ? `${targetFolder.path}/${item.name}`
+            : item.name
+
+          try {
+            const sourceResult = await workspaceFileGet(workspaceId, item.path)
+            if (sourceResult.error || !sourceResult.data) continue
+
+            await workspaceFileCreate(workspaceId, {
+              name: item.name,
+              path: targetPath,
+              isDirectory: item.type === 'folder',
+              content: sourceResult.data.content || '',
+              mimeType: sourceResult.data.mimeType,
+              size: sourceResult.data.size
+            })
+          } catch (err) {
+            console.error('Error copying item:', err)
+            toast({
+              title: 'Copy failed',
+              description: `Failed to copy ${item.name}`,
+              variant: 'destructive'
+            })
+          }
+        }
+      }
+
+      // Clear clipboard after cut (keep after copy)
+      if (action === 'cut') {
+        setState((prev) => ({ ...prev, clipboard: null }))
+      }
+
+      // Refresh target folder
+      await fetchWorkspaceFiles(workspaceId, targetFolder.path, true)
+
+      toast({
+        title: action === 'cut' ? 'Items moved' : 'Items pasted',
+        description: `${itemIds.length} item${itemIds.length > 1 ? 's' : ''} ${action === 'cut' ? 'moved' : 'copied'} to ${targetFolder.name}`,
+        variant: 'default'
+      })
+    },
+    [state.clipboard, state.items, workspaceId, moveItem, fetchWorkspaceFiles]
+  )
+
   return {
     state,
+    stores,
     loading,
+    movingItemId,
     error,
     searchQuery,
     getChildren,
@@ -838,7 +1109,12 @@ export function useFileSystem(workspaceId?: string) {
     clearSelection,
     clearBasket,
     selectBasketItem,
+    selectRange,
+    selectAll,
     fetchFolderContents,
-    refresh: () => workspaceId && fetchWorkspaceFiles(workspaceId, '')
+    clipboardCopy,
+    clipboardCut,
+    paste,
+    refresh: () => workspaceId && fetchStores(workspaceId)
   }
 }
