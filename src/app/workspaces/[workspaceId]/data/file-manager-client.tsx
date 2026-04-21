@@ -470,7 +470,7 @@ export default function FileManagerClient({
                     isActive
                       ? 'bg-accent/10 text-accent'
                       : 'text-muted-foreground',
-                    isDropTarget && 'ring-2 ring-accent/70 bg-accent/5'
+                    isDropTarget && 'bg-accent/5 ring-2 ring-accent/70'
                   )}
                   onClick={() => {
                     if (!isSelectable) return
