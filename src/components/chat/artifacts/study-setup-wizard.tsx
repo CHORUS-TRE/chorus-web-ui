@@ -192,8 +192,7 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
       {
         id: 'rstudio',
         label: 'RStudio',
-        description:
-          'R-based IDE for biostatistics and CRAN package ecosystem.'
+        description: 'R-based IDE for biostatistics and CRAN package ecosystem.'
       },
       {
         id: 'stata',
@@ -644,10 +643,7 @@ export function StudySetupWizard({
             <p className="text-sm text-muted-foreground">
               Choose the services for your study
             </p>
-            <Tabs
-              defaultValue={SERVICE_CATEGORIES[0].id}
-              className="w-full"
-            >
+            <Tabs defaultValue={SERVICE_CATEGORIES[0].id} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 {SERVICE_CATEGORIES.map((cat) => (
                   <TabsTrigger
@@ -667,8 +663,7 @@ export function StudySetupWizard({
                   </p>
                   <div className="space-y-2">
                     {cat.options.map((option) => {
-                      const isSelected =
-                        selectedServices[cat.id] === option.id
+                      const isSelected = selectedServices[cat.id] === option.id
                       return (
                         <button
                           key={option.id}
@@ -890,16 +885,15 @@ export function StudySetupWizard({
                     {SERVICE_CATEGORIES.map((cat) => {
                       const optionId = selectedServices[cat.id]
                       if (!optionId || optionId === 'none') return null
-                      const option = cat.options.find(
-                        (o) => o.id === optionId
-                      )
+                      const option = cat.options.find((o) => o.id === optionId)
                       return (
                         <Badge
                           key={cat.id}
                           variant="secondary"
                           className="text-[10px]"
                         >
-                          {cat.label}: {option?.label.replace(' (Recommended)', '')}
+                          {cat.label}:{' '}
+                          {option?.label.replace(' (Recommended)', '')}
                         </Badge>
                       )
                     })}

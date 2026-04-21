@@ -199,7 +199,7 @@ export default function CHORUSDashboard() {
                 </Card>
 
                 <Card
-                  className="min-w-0 demo-effect transition-all duration-200 hover:border-accent hover:shadow-md"
+                  className="demo-effect min-w-0 transition-all duration-200 hover:border-accent hover:shadow-md"
                   variant="default"
                 >
                   <CardHeader className="pb-2">

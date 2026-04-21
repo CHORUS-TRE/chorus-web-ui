@@ -42,12 +42,6 @@ export interface ChorusAppInstance {
    * @type {string}
    * @memberof ChorusAppInstance
    */
-  appId?: string
-  /**
-   *
-   * @type {string}
-   * @memberof ChorusAppInstance
-   */
   workspaceId?: string
   /**
    *
@@ -55,6 +49,36 @@ export interface ChorusAppInstance {
    * @memberof ChorusAppInstance
    */
   workbenchId?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  appId?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  appName?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  appDockerImageRegistry?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  appDockerImageName?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAppInstance
+   */
+  appDockerImageTag?: string
   /**
    *
    * @type {string}
@@ -129,9 +153,19 @@ export function ChorusAppInstanceFromJSONTyped(
     id: !exists(json, 'id') ? undefined : json['id'],
     tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId'],
     userId: !exists(json, 'userId') ? undefined : json['userId'],
-    appId: !exists(json, 'appId') ? undefined : json['appId'],
     workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
     workbenchId: !exists(json, 'workbenchId') ? undefined : json['workbenchId'],
+    appId: !exists(json, 'appId') ? undefined : json['appId'],
+    appName: !exists(json, 'appName') ? undefined : json['appName'],
+    appDockerImageRegistry: !exists(json, 'appDockerImageRegistry')
+      ? undefined
+      : json['appDockerImageRegistry'],
+    appDockerImageName: !exists(json, 'appDockerImageName')
+      ? undefined
+      : json['appDockerImageName'],
+    appDockerImageTag: !exists(json, 'appDockerImageTag')
+      ? undefined
+      : json['appDockerImageTag'],
     status: !exists(json, 'status') ? undefined : json['status'],
     k8sStatus: !exists(json, 'k8sStatus') ? undefined : json['k8sStatus'],
     k8sMessage: !exists(json, 'k8sMessage') ? undefined : json['k8sMessage'],
@@ -162,9 +196,13 @@ export function ChorusAppInstanceToJSON(value?: ChorusAppInstance | null): any {
     id: value.id,
     tenantId: value.tenantId,
     userId: value.userId,
-    appId: value.appId,
     workspaceId: value.workspaceId,
     workbenchId: value.workbenchId,
+    appId: value.appId,
+    appName: value.appName,
+    appDockerImageRegistry: value.appDockerImageRegistry,
+    appDockerImageName: value.appDockerImageName,
+    appDockerImageTag: value.appDockerImageTag,
     status: value.status,
     k8sStatus: value.k8sStatus,
     k8sMessage: value.k8sMessage,

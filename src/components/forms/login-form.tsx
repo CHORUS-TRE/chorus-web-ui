@@ -237,7 +237,9 @@ export default function LoginForm() {
 
             {/* OAuth Providers */}
             <div className="grid gap-4">
-              {authModes?.some((mode) => mode.type === AuthenticationModeType.OPENID) && (
+              {authModes?.some(
+                (mode) => mode.type === AuthenticationModeType.OPENID
+              ) && (
                 <div className="relative my-2">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />

@@ -10,10 +10,10 @@ import { PermissionMatrix } from '~/components/permission-matrix'
 import { Badge } from '~/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig
+  ChartTooltipContent
 } from '~/components/ui/chart'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Input } from '~/components/ui/input'
@@ -272,9 +272,7 @@ export default function AuthorizationUsersPage() {
                 <CardTitle className="text-xs font-medium">
                   Policy Compliance
                 </CardTitle>
-                <span className="text-lg font-bold">
-                  {complianceData.pct}%
-                </span>
+                <span className="text-lg font-bold">{complianceData.pct}%</span>
               </div>
             </CardHeader>
             <CardContent className="px-4 pb-3 pt-0">
