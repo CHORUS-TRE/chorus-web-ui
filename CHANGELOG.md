@@ -1,3 +1,19 @@
+# [1.48.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.47.1...v1.48.0) (2026-04-21)
+
+
+### Bug Fixes
+
+* ignore .worktrees directory in eslint config ([666b3fe](https://github.com/CHORUS-TRE/chorus-web-ui/commit/666b3fe31b57ffd0175afcad0ef18399a608f5df))
+* **workspaces:** show 404 instead of infinite loader for unknown workspace IDs ([63a88f3](https://github.com/CHORUS-TRE/chorus-web-ui/commit/63a88f3ed533013349d7efaa53e03ced8c1d0dc2))
+
+
+### Features
+
+* add buttonText and iconURL to login form, fix divider visibility ([e34108f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e34108f783f6ec16e42e3725cd7e0e6596f5af98))
+* **data:** drag-to-sidebar copy stub, full-height dashed dropzone, Modified column ([2181558](https://github.com/CHORUS-TRE/chorus-web-ui/commit/21815588113c9d66d522b4a212222d670dc01aef))
+* **data:** migrate store discovery to ListWorkspaceFileStores with status rendering ([922897a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/922897aafd0ec4369b7c5fda78a492d561381bcb))
+* implement file manager sidebar, context menu, and folder deletion components with associated UI refinements ([6177072](https://github.com/CHORUS-TRE/chorus-web-ui/commit/617707260e3b1d05594425ecb0389cec287cd316))
+
 ## [1.47.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.47.0...v1.47.1) (2026-04-08)
 
 # [1.47.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.46.1...v1.47.0) (2026-04-08)
