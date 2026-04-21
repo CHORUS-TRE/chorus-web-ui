@@ -45,24 +45,24 @@ export function SidebarBookmarks() {
     e.dataTransfer.setData('text/plain', String(index))
   }
 
-  const handleDragOver =
-    (index: number) => (e: DragEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      e.dataTransfer.dropEffect = 'move'
-      if (overIndex !== index) setOverIndex(index)
-    }
-
-  const handleDrop = (index: number) => async (e: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (index: number) => (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    const from = dragIndex
-    setDragIndex(null)
-    setOverIndex(null)
-    if (from === null || from === index) return
-    const ok = await reorderBookmarks(from, index)
-    if (!ok) {
-      toast({ title: 'Failed to reorder bookmarks', variant: 'destructive' })
-    }
+    e.dataTransfer.dropEffect = 'move'
+    if (overIndex !== index) setOverIndex(index)
   }
+
+  const handleDrop =
+    (index: number) => async (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault()
+      const from = dragIndex
+      setDragIndex(null)
+      setOverIndex(null)
+      if (from === null || from === index) return
+      const ok = await reorderBookmarks(from, index)
+      if (!ok) {
+        toast({ title: 'Failed to reorder bookmarks', variant: 'destructive' })
+      }
+    }
 
   const handleDragEnd = () => {
     setDragIndex(null)
@@ -145,7 +145,7 @@ export function SidebarBookmarks() {
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleEditKeyDown}
                     onBlur={commitEdit}
-                    className="w-full bg-transparent text-sm font-medium outline-none ring-1 ring-accent/60 rounded px-1"
+                    className="w-full rounded bg-transparent px-1 text-sm font-medium outline-none ring-1 ring-accent/60"
                     aria-label="Rename bookmark"
                   />
                 </div>
