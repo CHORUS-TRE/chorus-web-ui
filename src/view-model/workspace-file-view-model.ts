@@ -2,7 +2,6 @@
 
 import { env } from 'next-runtime-env'
 
-import { Analytics } from '@/lib/analytics/service'
 import { WorkspaceFileDataSourceImpl } from '@/data/data-source'
 import { WorkspaceFileRepositoryImpl } from '@/data/repository'
 import { Result } from '@/domain/model'
@@ -24,6 +23,7 @@ import { WorkspaceFileStoreList } from '@/domain/use-cases/workspace-file/worksp
 import { WorkspaceFileUpdate } from '@/domain/use-cases/workspace-file/workspace-file-update'
 import { WorkspaceFileUploadPart } from '@/domain/use-cases/workspace-file/workspace-file-upload-part'
 import { FetchError, ResponseError } from '@/internal/client/runtime'
+import { Analytics } from '@/lib/analytics/service'
 
 const getRepository = async () => {
   const dataSource = new WorkspaceFileDataSourceImpl(
