@@ -1,4 +1,3 @@
-import { z } from 'zod'
 import { create } from 'zustand'
 
 import {
@@ -96,7 +95,6 @@ type DevStoreCacheState = {
   getInstanceLogo: () => InstanceLogo | null
   getInstanceTheme: () => InstanceTheme | null
   getInstanceLimits: () => InstanceLimits | null
-  getInstanceSidebarWebapps: () => string[]
 
   setInstanceName: (name: string) => Promise<boolean>
   setInstanceHeadline: (headline: string) => Promise<boolean>
@@ -105,7 +103,6 @@ type DevStoreCacheState = {
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
-  setInstanceSidebarWebapps: (webapps: string[]) => Promise<boolean>
 
   // UI Actions
   setCookieConsentOpen: (open: boolean) => void
@@ -371,8 +368,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       tagline: state.getInstanceTagline(),
       website: state.getInstanceWebsite(),
       logo: state.getInstanceLogo(),
-      theme: state.getInstanceTheme(),
-      sidebarWebapps: state.getInstanceSidebarWebapps()
+      theme: state.getInstanceTheme()
     }
   },
 
@@ -451,25 +447,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     }
   },
 
-  getInstanceSidebarWebapps: () => {
-    const value = get().global[INSTANCE_CONFIG_KEYS.SIDEBAR_WEBAPPS]
-    if (!value) return DEFAULT_INSTANCE_CONFIG.sidebarWebapps
-
-    try {
-      const parsed = JSON.parse(value)
-      // Validate array of strings
-      const validated = z.array(z.string()).safeParse(parsed)
-      if (validated.success) {
-        return validated.data
-      }
-      console.error('Invalid instance sidebar webapps:', validated.error.issues)
-      return DEFAULT_INSTANCE_CONFIG.sidebarWebapps
-    } catch (e) {
-      console.error('Error parsing instance sidebar webapps:', e)
-      return DEFAULT_INSTANCE_CONFIG.sidebarWebapps
-    }
-  },
-
   // Individual setters
   setInstanceName: async (name: string) => {
     return get().setGlobal(INSTANCE_CONFIG_KEYS.NAME, name)
@@ -506,13 +483,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       return get().deleteGlobal(INSTANCE_CONFIG_KEYS.LIMITS)
     }
     return get().setGlobal(INSTANCE_CONFIG_KEYS.LIMITS, JSON.stringify(limits))
-  },
-
-  setInstanceSidebarWebapps: async (webapps: string[]) => {
-    return get().setGlobal(
-      INSTANCE_CONFIG_KEYS.SIDEBAR_WEBAPPS,
-      JSON.stringify(webapps)
-    )
   },
 
   // UI Actions
