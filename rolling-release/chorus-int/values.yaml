@@ -22,6 +22,11 @@ env:
     value: AEubpd2D03B+AIX8xiEQas5lTJA9wDarky7UhVybNVA=
   - name: OPENAI_API_MODEL
     value: unsloth/gemma-4-E2B-it-GGUF:Q8_0
+  - name: LLM_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: llm-api-key
+        key: key
 
 ingress:
   hosts:
