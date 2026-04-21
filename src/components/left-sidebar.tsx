@@ -14,6 +14,7 @@ import {
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
 
+import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
 import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -167,6 +168,9 @@ function SidebarContent({
           <Store className="h-4 w-4" />
           App Store
         </Link>
+
+        <SidebarBookmarks />
+
         <Separator className="my-2" />
 
         <Link

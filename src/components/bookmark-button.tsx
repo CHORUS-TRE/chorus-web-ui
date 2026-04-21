@@ -24,10 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import {
-  BOOKMARK_LABEL_MAX,
-  normalizeRoute
-} from '@/domain/model/bookmark'
+import { BOOKMARK_LABEL_MAX, normalizeRoute } from '@/domain/model/bookmark'
 import { useBookmarks } from '@/hooks/use-bookmarks'
 import {
   type DeriveBookmarkContext,
@@ -70,9 +67,7 @@ export function BookmarkButton({ className }: BookmarkButtonProps) {
     const result = await toggleBookmark(route, derived.label, derived.icon)
     if (!result) return
     toast({
-      title: result.added
-        ? `Bookmarked: ${result.label}`
-        : 'Bookmark removed'
+      title: result.added ? `Bookmarked: ${result.label}` : 'Bookmark removed'
     })
   }, [route, context, toggleBookmark])
 
