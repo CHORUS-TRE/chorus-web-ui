@@ -2,7 +2,7 @@
 
 import { Home, PackageOpen } from 'lucide-react'
 import Image from 'next/image'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { notFound, useParams, usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -26,6 +26,12 @@ export default function Layout({
   const workspace = workspaces?.find(
     (workspace) => workspace.id === params?.workspaceId
   )
+
+  // workspaces is undefined while loading, an array once loaded.
+  // If loaded and no match, the URL's workspaceId doesn't exist (or isn't visible).
+  if (workspaces !== undefined && !workspace) {
+    notFound()
+  }
 
   // Extract the path segment after workspaceId
   const pathSegments = pathname.split('/').filter(Boolean)
