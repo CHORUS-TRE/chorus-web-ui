@@ -8,10 +8,10 @@ const AuthenticatedApp = React.lazy(() =>
 )
 import { Inbox } from 'lucide-react'
 
+import { Login } from '@/components/login'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { Login } from '~/components/login'
 
 export default function Layout({
   children

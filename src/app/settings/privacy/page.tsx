@@ -19,9 +19,9 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { USER_CONFIG_KEYS } from '@/domain/model/user-config'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
-import { USER_CONFIG_KEYS } from '~/domain/model/user-config'
-import { useAuthentication } from '~/providers/authentication-provider'
 
 export default function PrivacySettingsPage() {
   const {} = useAuthentication()
@@ -66,7 +66,7 @@ export default function PrivacySettingsPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 py-4">
-      <Card className="card-glass overflow-hidden border-none shadow-lg">
+      <Card className="card-glass overflow-hidden border-none shadow-md">
         <CardHeader className="bg-primary/5 pb-6">
           <div className="mb-1 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />

@@ -4,15 +4,15 @@ import { Bell, ShieldCheck, User } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
-import { Button } from '~/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { useAuthentication } from '~/providers/authentication-provider'
+} from '@/components/ui/card'
+import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserSettingsPage() {
   const { user } = useAuthentication()
@@ -58,7 +58,7 @@ export default function UserSettingsPage() {
         {settings.map((setting) => (
           <Card
             key={setting.id}
-            className="cursor-pointer transition-colors hover:bg-muted/50"
+            className="cursor-pointer transition-colors hover:border-accent/40"
             onClick={() => router.push(setting.href)}
           >
             <CardHeader>

@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
+import { Button } from '@/components/ui/button'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -15,21 +16,20 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import {
-  Workbench,
-  WorkbenchUpdateSchema,
-  WorkbenchUpdateType
-} from '@/domain/model'
-import { workbenchUpdate } from '@/view-model/workbench-view-model'
-import { Button } from '~/components/button'
-import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import {
+  Workbench,
+  WorkbenchUpdateSchema,
+  WorkbenchUpdateType
+} from '@/domain/model'
+import { workbenchUpdate } from '@/view-model/workbench-view-model'
 
 import { toast } from '../hooks/use-toast'
 import { Textarea } from '../ui/textarea'

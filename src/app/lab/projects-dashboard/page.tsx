@@ -15,17 +15,17 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
-import { Input } from '~/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function ClinicalResearchDashboard() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -164,14 +164,14 @@ export default function ClinicalResearchDashboard() {
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-foreground">
               Clinical Research Dashboard
             </h1>
-            <p className="mt-1 text-gray-600">
+            <p className="mt-1 text-muted-foreground">
               CHUV Research Management Platform
             </p>
           </div>
-          <Button className="bg-blue-600 text-white hover:bg-blue-700">
+          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="mr-2 h-4 w-4" />
             New Study
           </Button>
@@ -182,23 +182,23 @@ export default function ClinicalResearchDashboard() {
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-5">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Projects
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold text-gray-900">
+              <span className="text-3xl font-bold text-foreground">
                 {stats.totalProjects}
               </span>
-              <FileText className="h-8 w-8 text-blue-600" />
+              <FileText className="h-8 w-8 text-primary" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Active Studies
             </CardTitle>
           </CardHeader>
@@ -214,7 +214,7 @@ export default function ClinicalResearchDashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Pending Approval
             </CardTitle>
           </CardHeader>
@@ -230,7 +230,7 @@ export default function ClinicalResearchDashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Patients
             </CardTitle>
           </CardHeader>
@@ -246,16 +246,16 @@ export default function ClinicalResearchDashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Completed
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold text-gray-600">
+              <span className="text-3xl font-bold text-muted-foreground">
                 {stats.completedStudies}
               </span>
-              <CheckCircle className="h-8 w-8 text-gray-600" />
+              <CheckCircle className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -264,7 +264,7 @@ export default function ClinicalResearchDashboard() {
       {/* Search and Filter */}
       <div className="mb-6 flex gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by study title, ID, or PI name..."
             value={searchTerm}
@@ -307,7 +307,7 @@ export default function ClinicalResearchDashboard() {
                     <div className="mb-4 flex items-start justify-between">
                       <div className="flex-1">
                         <div className="mb-2 flex items-center gap-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-foreground">
                             {project.title}
                           </h3>
                           <Badge className={getStatusColor(project.status)}>
@@ -315,7 +315,7 @@ export default function ClinicalResearchDashboard() {
                               project.status.slice(1)}
                           </Badge>
                         </div>
-                        <p className="mb-1 text-sm text-gray-600">
+                        <p className="mb-1 text-sm text-muted-foreground">
                           <span className="font-medium">Study ID:</span>{' '}
                           {project.id} |
                           <span className="ml-2 font-medium">PI:</span>{' '}
@@ -323,7 +323,7 @@ export default function ClinicalResearchDashboard() {
                           <span className="ml-2 font-medium">Department:</span>{' '}
                           {project.department}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           Started: {project.startDate} • Last updated:{' '}
                           {project.lastUpdate}
                         </p>
@@ -335,33 +335,35 @@ export default function ClinicalResearchDashboard() {
 
                     <div className="grid grid-cols-1 gap-4 border-t pt-4 md:grid-cols-4">
                       <div>
-                        <p className="mb-1 text-xs text-gray-500">
+                        <p className="mb-1 text-xs text-muted-foreground">
                           Current Phase
                         </p>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-foreground">
                           {project.phase}
                         </p>
                       </div>
                       <div>
-                        <p className="mb-1 text-xs text-gray-500">
+                        <p className="mb-1 text-xs text-muted-foreground">
                           Patient Enrollment
                         </p>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 flex-1 rounded-full bg-gray-200">
+                          <div className="h-2 flex-1 rounded-full bg-muted">
                             <div
-                              className="h-2 rounded-full bg-blue-600"
+                              className="h-2 rounded-full bg-primary"
                               style={{
                                 width: `${(project.enrolled / project.target) * 100}%`
                               }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-sm font-medium text-foreground">
                             {project.enrolled}/{project.target}
                           </span>
                         </div>
                       </div>
                       <div>
-                        <p className="mb-1 text-xs text-gray-500">Risk Level</p>
+                        <p className="mb-1 text-xs text-muted-foreground">
+                          Risk Level
+                        </p>
                         <div className="flex items-center gap-1">
                           <AlertCircle
                             className={`h-4 w-4 ${getRiskColor(project.riskLevel)}`}
@@ -391,11 +393,11 @@ export default function ClinicalResearchDashboard() {
 
               {filteredProjects.length === 0 && (
                 <div className="py-12 text-center">
-                  <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                  <h3 className="mb-2 text-lg font-medium text-gray-900">
+                  <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                  <h3 className="mb-2 text-lg font-medium text-foreground">
                     No projects found
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     Try adjusting your search or filter criteria
                   </p>
                 </div>

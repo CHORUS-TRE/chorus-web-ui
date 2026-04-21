@@ -10,14 +10,14 @@ import {
 import { useParams } from 'next/navigation'
 import * as React from 'react'
 
-import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle
-} from '~/components/ui/card'
+} from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -25,10 +25,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { ScrollArea } from '~/components/ui/scroll-area'
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Select,
   SelectContent,
@@ -36,11 +36,11 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { Separator } from '~/components/ui/separator'
-import { Textarea } from '~/components/ui/textarea'
-import { useAppState } from '~/stores/app-state-store'
-import type { FileSystemItem } from '~/types/file-system'
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
+import { useAppState } from '@/stores/app-state-store'
+import type { FileSystemItem } from '@/types/file-system'
 
 interface SelectionBasketProps {
   selectedItems: FileSystemItem[]

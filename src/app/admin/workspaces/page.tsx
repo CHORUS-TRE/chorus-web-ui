@@ -3,9 +3,9 @@
 import { Package } from 'lucide-react'
 import { useEffect } from 'react'
 
+import WorkspaceTable from '@/components/workspaces-table'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import WorkspaceTable from '~/components/workspaces-table'
 
 export default function AdminWorkspacesPage() {
   const workspaces = useAppState((state) => state.workspaces)

@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuthorization } from '@/providers/authorization-provider'
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 
 export function AdminTabs() {
   const pathname = usePathname()

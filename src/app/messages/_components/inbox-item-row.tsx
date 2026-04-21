@@ -10,6 +10,7 @@ import {
   XCircle
 } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -18,7 +19,6 @@ import {
 import { Notification } from '@/domain/model/notification'
 import { Role } from '@/domain/model/user'
 import { canApproveRequest } from '@/lib/approval-request-utils'
-import { Button } from '~/components/button'
 
 import type { InboxItem } from '../_hooks/use-inbox-data'
 import { StatusBadge } from '../requests/_components/status-badge'
@@ -37,19 +37,19 @@ function ItemIcon({ kind }: { kind: InboxItem['kind'] }) {
   switch (kind) {
     case 'notification':
       return (
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Bell className="h-4 w-4" />
         </div>
       )
     case 'extraction_request':
       return (
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/30">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
           <ArrowDownToLine className="h-4 w-4" />
         </div>
       )
     case 'transfer_request':
       return (
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/30">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <ArrowRightLeft className="h-4 w-4" />
         </div>
       )
@@ -86,7 +86,7 @@ export function InboxItemRow({
     notification?.content?.approvalRequestNotification?.approvalRequestId
 
   return (
-    <div className="flex items-start justify-between rounded-xl border border-muted/20 bg-card p-4 transition-colors hover:bg-muted/10">
+    <div className="flex items-start justify-between rounded-lg border border-muted/20 bg-card p-4 transition-colors hover:bg-muted/10">
       {/* Left: icon + content */}
       <div className="flex min-w-0 gap-3">
         <ItemIcon kind={item.kind} />
@@ -96,7 +96,7 @@ export function InboxItemRow({
             className={`text-sm ${!item.isRead ? 'font-bold' : 'font-medium'}`}
           >
             {!item.isRead && (
-              <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-blue-500" />
+              <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-primary" />
             )}
             {item.title}
           </p>
@@ -108,18 +108,13 @@ export function InboxItemRow({
           <div className="mt-2 flex items-center gap-1.5">
             {showApprovalActions && (
               <>
-                <Button
-                  size="sm"
-                  className="h-7 rounded-md px-3 text-xs"
-                  onClick={() => onApprove?.(request)}
-                >
+                <Button size="xs" onClick={() => onApprove?.(request)}>
                   <CheckCircle2 className="mr-1 h-3 w-3" />
                   Approve
                 </Button>
                 <Button
                   variant="destructive"
-                  size="sm"
-                  className="h-7 rounded-md px-3 text-xs"
+                  size="xs"
                   onClick={() => onReject?.(request)}
                 >
                   <XCircle className="mr-1 h-3 w-3" />
@@ -131,8 +126,7 @@ export function InboxItemRow({
             {isOwnApprovedExtraction && onDownload && (
               <Button
                 variant="outline"
-                size="sm"
-                className="h-7 rounded-md px-3 text-xs"
+                size="xs"
                 onClick={() => onDownload(request)}
               >
                 <Download className="mr-1 h-3 w-3" />
@@ -143,8 +137,8 @@ export function InboxItemRow({
             {isRequest && onViewRequest && request?.id && (
               <Button
                 variant="outline"
-                size="sm"
-                className="h-7 rounded-md border-muted/30 px-3 text-xs text-muted-foreground"
+                size="xs"
+                className="border-muted/30 text-muted-foreground"
                 onClick={() => onViewRequest(request.id!)}
               >
                 View details
@@ -154,8 +148,8 @@ export function InboxItemRow({
             {approvalRequestId && onViewRequest && (
               <Button
                 variant="outline"
-                size="sm"
-                className="h-7 rounded-md border-muted/30 px-3 text-xs text-muted-foreground"
+                size="xs"
+                className="border-muted/30 text-muted-foreground"
                 onClick={() => onViewRequest(approvalRequestId)}
               >
                 View Request
@@ -165,8 +159,8 @@ export function InboxItemRow({
             {!item.isRead && onMarkAsRead && item.id && (
               <Button
                 variant="ghost"
-                size="sm"
-                className="h-7 rounded-md px-3 text-xs text-muted-foreground"
+                size="xs"
+                className="text-muted-foreground"
                 onClick={() => onMarkAsRead(item.id)}
               >
                 Mark as read

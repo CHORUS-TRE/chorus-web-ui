@@ -5,12 +5,12 @@ import {
   WorkspaceFileStore,
   WorkspaceFileStoreStatus,
   WorkspaceFileUpdateType
-} from '~/domain/model/workspace-file'
+} from '@/domain/model/workspace-file'
 import {
   ChorusWorkspaceFile,
   ChorusWorkspaceFilePart,
   ChorusWorkspaceFileStoreInfo
-} from '~/internal/client'
+} from '@/internal/client'
 
 /**
  * Maps domain workspace file types to API types

@@ -16,27 +16,27 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '~/components/ui/card'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { Progress } from '~/components/ui/progress'
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function FeasibilityAssessment() {
   const [activeTab, setActiveTab] = useState('define')
@@ -58,10 +58,10 @@ export default function FeasibilityAssessment() {
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">
+              <h1 className="text-3xl font-bold text-foreground">
                 Feasibility Assessment
               </h1>
-              <p className="mt-1 text-slate-600">
+              <p className="mt-1 text-muted-foreground">
                 Pre-protocol Data Exploration & Cohort Analysis
               </p>
             </div>
@@ -214,17 +214,17 @@ export default function FeasibilityAssessment() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <Card
-                    className={`cursor-pointer transition-all ${dataSource === 'synthetic' ? 'ring-2 ring-blue-500' : ''}`}
+                    className={`cursor-pointer transition-all ${dataSource === 'synthetic' ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => setDataSource('synthetic')}
                   >
                     <CardContent className="pt-6">
                       <div className="flex items-start gap-3">
                         <div
-                          className={`mt-1 h-4 w-4 rounded-full border-2 ${dataSource === 'synthetic' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}
+                          className={`mt-1 h-4 w-4 rounded-full border-2 ${dataSource === 'synthetic' ? 'border-primary bg-primary' : 'border-border'}`}
                         />
                         <div>
                           <h3 className="mb-1 font-semibold">Synthetic Data</h3>
-                          <p className="text-sm text-slate-600">
+                          <p className="text-sm text-muted-foreground">
                             Anonymized, generated data for initial exploration
                           </p>
                           <Badge className="mt-2" variant="secondary">
@@ -236,19 +236,19 @@ export default function FeasibilityAssessment() {
                   </Card>
 
                   <Card
-                    className={`cursor-pointer transition-all ${dataSource === 'real' ? 'ring-2 ring-blue-500' : ''}`}
+                    className={`cursor-pointer transition-all ${dataSource === 'real' ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => setDataSource('real')}
                   >
                     <CardContent className="pt-6">
                       <div className="flex items-start gap-3">
                         <div
-                          className={`mt-1 h-4 w-4 rounded-full border-2 ${dataSource === 'real' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}
+                          className={`mt-1 h-4 w-4 rounded-full border-2 ${dataSource === 'real' ? 'border-primary bg-primary' : 'border-border'}`}
                         />
                         <div>
                           <h3 className="mb-1 font-semibold">
                             Real Data (Anonymized)
                           </h3>
-                          <p className="text-sm text-slate-600">
+                          <p className="text-sm text-muted-foreground">
                             Actual clinical data with privacy protection
                           </p>
                           <Badge className="mt-2" variant="outline">
@@ -292,7 +292,7 @@ export default function FeasibilityAssessment() {
                           <Input placeholder="Min" className="w-20" />
                           <span className="self-center">to</span>
                           <Input placeholder="Max" className="w-20" />
-                          <span className="self-center text-sm text-slate-600">
+                          <span className="self-center text-sm text-muted-foreground">
                             years
                           </span>
                         </div>
@@ -358,7 +358,7 @@ export default function FeasibilityAssessment() {
                           <Input placeholder="Min" className="w-20" />
                           <span className="self-center">to</span>
                           <Input placeholder="Max" className="w-20" />
-                          <span className="self-center text-sm text-slate-600">
+                          <span className="self-center text-sm text-muted-foreground">
                             %
                           </span>
                         </div>
@@ -369,7 +369,7 @@ export default function FeasibilityAssessment() {
                           <Input placeholder="Min" className="w-20" />
                           <span className="self-center">to</span>
                           <Input placeholder="Max" className="w-20" />
-                          <span className="self-center text-sm text-slate-600">
+                          <span className="self-center text-sm text-muted-foreground">
                             mg/dL
                           </span>
                         </div>
@@ -396,7 +396,7 @@ export default function FeasibilityAssessment() {
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">
+                      <span className="text-muted-foreground">
                         Estimated Cohort Size
                       </span>
                       <span className="font-semibold">~1,200</span>
@@ -406,7 +406,9 @@ export default function FeasibilityAssessment() {
 
                   <div className="space-y-2 pt-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Data Completeness</span>
+                      <span className="text-muted-foreground">
+                        Data Completeness
+                      </span>
                       <span className="font-semibold">87%</span>
                     </div>
                     <Progress value={87} />
@@ -414,7 +416,9 @@ export default function FeasibilityAssessment() {
 
                   <div className="space-y-2 pt-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Feasibility Score</span>
+                      <span className="text-muted-foreground">
+                        Feasibility Score
+                      </span>
                       <span className="font-semibold text-green-600">High</span>
                     </div>
                     <Progress value={85} className="bg-green-200" />
@@ -458,7 +462,7 @@ export default function FeasibilityAssessment() {
                         <div className="text-3xl font-bold">
                           {cohortSize.toLocaleString()}
                         </div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-sm text-muted-foreground">
                           Eligible Patients
                         </div>
                       </div>
@@ -472,7 +476,7 @@ export default function FeasibilityAssessment() {
                         <div className="text-3xl font-bold">
                           {feasibilityScore}%
                         </div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-sm text-muted-foreground">
                           Feasibility Score
                         </div>
                       </div>
@@ -484,7 +488,7 @@ export default function FeasibilityAssessment() {
                       <div className="text-center">
                         <Database className="mx-auto mb-2 h-8 w-8 text-purple-500" />
                         <div className="text-3xl font-bold">92%</div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-sm text-muted-foreground">
                           Data Quality
                         </div>
                       </div>
@@ -496,7 +500,7 @@ export default function FeasibilityAssessment() {
                       <div className="text-center">
                         <Calendar className="mx-auto mb-2 h-8 w-8 text-orange-500" />
                         <div className="text-3xl font-bold">4.2</div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-sm text-muted-foreground">
                           Avg Years Data
                         </div>
                       </div>
@@ -625,14 +629,14 @@ export default function FeasibilityAssessment() {
                 </Alert>
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-slate-50">
+                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50">
                     <div className="flex items-center gap-3">
-                      <FileText className="h-8 w-8 text-blue-500" />
+                      <FileText className="h-8 w-8 text-primary" />
                       <div>
                         <h4 className="font-semibold">
                           Full Feasibility Report (PDF)
                         </h4>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-muted-foreground">
                           Complete analysis with visualizations
                         </p>
                       </div>
@@ -643,12 +647,12 @@ export default function FeasibilityAssessment() {
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-slate-50">
+                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50">
                     <div className="flex items-center gap-3">
                       <Database className="h-8 w-8 text-green-500" />
                       <div>
                         <h4 className="font-semibold">Data Summary (CSV)</h4>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-muted-foreground">
                           Aggregated statistics for further analysis
                         </p>
                       </div>
@@ -659,14 +663,14 @@ export default function FeasibilityAssessment() {
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-slate-50">
+                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50">
                     <div className="flex items-center gap-3">
                       <BarChart3 className="h-8 w-8 text-purple-500" />
                       <div>
                         <h4 className="font-semibold">
                           Executive Summary (DOCX)
                         </h4>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-muted-foreground">
                           Brief overview for protocol documents
                         </p>
                       </div>
@@ -687,7 +691,7 @@ export default function FeasibilityAssessment() {
                         <p className="font-medium">
                           Prepare Protocol Submission
                         </p>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-muted-foreground">
                           Use feasibility report to support your protocol
                         </p>
                       </div>
@@ -696,7 +700,7 @@ export default function FeasibilityAssessment() {
                       <CheckCircle className="mt-0.5 h-5 w-5 text-green-500" />
                       <div>
                         <p className="font-medium">Request Data Access</p>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-muted-foreground">
                           Submit formal data access request for approved
                           protocol
                         </p>
@@ -706,7 +710,7 @@ export default function FeasibilityAssessment() {
                       <CheckCircle className="mt-0.5 h-5 w-5 text-green-500" />
                       <div>
                         <p className="font-medium">Schedule Consultation</p>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-muted-foreground">
                           Discuss findings with data steward if needed
                         </p>
                       </div>

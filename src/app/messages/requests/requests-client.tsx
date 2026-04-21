@@ -28,6 +28,30 @@ import {
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 
+import { useToast } from '@/components/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -42,30 +66,6 @@ import {
 } from '@/lib/approval-request-utils'
 import { useAppState } from '@/stores/app-state-store'
 import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter, CardHeader } from '~/components/card'
-import { useToast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { Textarea } from '~/components/ui/textarea'
 
 import { StatusBadge } from './_components/status-badge'
 import { TypeBadge } from './_components/type-badge'
@@ -436,7 +436,7 @@ function RequestsDataTable({
                     key={f.id}
                     variant="ghost"
                     size="sm"
-                    className={`h-7 rounded-lg px-2 text-xs font-medium hover:underline ${statusFilter === f.id ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+                    className={`h-7 rounded-lg px-2 text-xs font-medium hover:underline ${statusFilter === f.id ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`}
                     onClick={() => handleStatusFilter(f.id)}
                   >
                     {Icon && <Icon className="h-3 w-3" />}
@@ -451,7 +451,7 @@ function RequestsDataTable({
             <Button
               variant="ghost"
               size="icon"
-              className={`h-6 w-6 rounded-md ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+              className={`h-6 w-6 rounded-md ${viewMode === 'table' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`}
               onClick={() => setViewMode('table')}
               title="Table view"
             >
@@ -460,7 +460,7 @@ function RequestsDataTable({
             <Button
               variant="ghost"
               size="icon"
-              className={`h-6 w-6 rounded-md ${viewMode === 'cards' ? 'bg-primary text-primary-foreground' : 'text-accent'}`}
+              className={`h-6 w-6 rounded-md ${viewMode === 'cards' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`}
               onClick={() => setViewMode('cards')}
               title="Card view"
             >
@@ -781,7 +781,7 @@ export default function RequestsClient({
 
           {selectedRequest && (
             <div className="space-y-6 py-4">
-              <div className="grid grid-cols-2 gap-4 rounded-xl border border-muted/20 bg-muted/10 p-4">
+              <div className="grid grid-cols-2 gap-4 rounded-lg border border-muted/20 bg-muted/10 p-4">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold uppercase text-muted-foreground">
                     Manifest Type
@@ -802,7 +802,7 @@ export default function RequestsClient({
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Applicant Justification
                 </Label>
-                <div className="rounded-xl border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
+                <div className="rounded-lg border border-muted/20 bg-background/50 p-4 text-sm italic leading-relaxed">
                   &quot;{selectedRequest.description}&quot;
                 </div>
               </div>
@@ -822,7 +822,7 @@ export default function RequestsClient({
                   placeholder="Record relevant details for the security audit log..."
                   value={reviewNotes}
                   onChange={(e) => setReviewNotes(e.target.value)}
-                  className="min-h-[100px] resize-none rounded-xl bg-muted/20"
+                  className="min-h-[100px] resize-none rounded-lg bg-muted/20"
                 />
               </div>
             </div>
@@ -832,14 +832,14 @@ export default function RequestsClient({
             <Button
               variant="outline"
               onClick={closeDialog}
-              className="h-11 rounded-xl"
+              className="h-11 rounded-lg"
             >
               Cancel
             </Button>
             <Button
               variant={activeAction === 'approve' ? 'default' : 'destructive'}
               onClick={handleRequestAction}
-              className="h-11 min-w-[160px] rounded-xl"
+              className="h-11 min-w-[160px] rounded-lg"
             >
               {activeAction === 'approve'
                 ? 'Confirm Approval'

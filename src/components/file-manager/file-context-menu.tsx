@@ -12,8 +12,8 @@ import {
 import type React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 
-import { cn } from '~/lib/utils'
-import type { FileClipboard } from '~/types/file-system'
+import { cn } from '@/lib/utils'
+import type { FileClipboard } from '@/types/file-system'
 
 export interface ContextMenuPosition {
   x: number

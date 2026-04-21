@@ -3,13 +3,13 @@
  */
 import '@testing-library/jest-dom'
 
-import { UserApiDataSourceImpl } from '~/data/data-source/chorus-api/user-data-source'
-import { UserRepositoryImpl } from '~/data/repository/user-repository-impl'
-import { User, UserCreateType } from '~/domain/model/'
-import { UserCreate } from '~/domain/use-cases/user/user-create'
-import { UserGet } from '~/domain/use-cases/user/user-get'
-import { UserMe } from '~/domain/use-cases/user/user-me'
-import { ChorusUser as ChorusUserApi } from '~/internal/client'
+import { UserApiDataSourceImpl } from '@/data/data-source/chorus-api/user-data-source'
+import { UserRepositoryImpl } from '@/data/repository/user-repository-impl'
+import { User, UserCreateType } from '@/domain/model/'
+import { UserCreate } from '@/domain/use-cases/user/user-create'
+import { UserGet } from '@/domain/use-cases/user/user-get'
+import { UserMe } from '@/domain/use-cases/user/user-me'
+import { ChorusUser as ChorusUserApi } from '@/internal/client'
 
 const MOCK_USER_API_RESPONSE = {
   id: '1',

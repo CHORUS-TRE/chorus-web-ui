@@ -1,12 +1,12 @@
-import { DevStoreDataSource } from '~/data/data-source'
+import { DevStoreDataSource } from '@/data/data-source'
 import {
   DevStoreEntries,
   devStoreEntriesSchema,
   DevStoreEntry,
   devStoreEntrySchema,
   Result
-} from '~/domain/model'
-import { DevStoreRepository } from '~/domain/repository'
+} from '@/domain/model'
+import { DevStoreRepository } from '@/domain/repository'
 
 export class DevStoreRepositoryImpl implements DevStoreRepository {
   private dataSource: DevStoreDataSource

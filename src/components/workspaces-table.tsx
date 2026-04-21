@@ -7,11 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useCallback, useMemo, useState } from 'react'
 
-import { User, WorkspaceWithDev } from '@/domain/model'
-import { useInstanceTheme } from '@/hooks/use-instance-theme'
-import { useAuthorization } from '@/providers/authorization-provider'
-import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -19,7 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
+} from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -27,8 +23,12 @@ import {
   TableHead,
   TableHeader,
   TableRow as TableRowComponent
-} from '~/components/ui/table'
-import { getGradient } from '~/domain/utils/gradient'
+} from '@/components/ui/table'
+import { User, WorkspaceWithDev } from '@/domain/model'
+import { getGradient } from '@/domain/utils/gradient'
+import { useInstanceTheme } from '@/hooks/use-instance-theme'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { useAppState } from '@/stores/app-state-store'
 
 import {
   WorkspaceDeleteForm,
@@ -63,7 +63,7 @@ function WorkspaceTableRow({
 
   return (
     <TableRowComponent
-      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+      className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
       onClick={() => router.push(`/workspaces/${workspace?.id}`)}
     >
       <TableCell className="p-2">
@@ -121,7 +121,7 @@ function WorkspaceTableRow({
                   e.preventDefault()
                   onEditClick(workspace.id!)
                 }}
-                className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+                className="text-muted-foreground/60 hover:bg-muted/10 hover:text-muted-foreground"
               >
                 <PencilIcon className="h-4 w-4" />
               </Button>

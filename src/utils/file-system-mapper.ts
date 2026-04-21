@@ -1,5 +1,5 @@
-import type { WorkspaceFile } from '~/domain/model/workspace-file'
-import type { FileSystemItem } from '~/types/file-system'
+import type { WorkspaceFile } from '@/domain/model/workspace-file'
+import type { FileSystemItem } from '@/types/file-system'
 
 /**
  * Maps WorkspaceFile[] to hierarchical FileSystemItem structure

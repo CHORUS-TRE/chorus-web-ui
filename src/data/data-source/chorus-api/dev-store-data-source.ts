@@ -1,4 +1,4 @@
-import { DevStoreEntry } from '~/domain/model'
+import { DevStoreEntry } from '@/domain/model'
 import {
   ChorusDeleteEntryReply,
   ChorusGetEntryReply,
@@ -6,7 +6,7 @@ import {
   ChorusPutEntryReply,
   Configuration,
   DevstoreServiceApi
-} from '~/internal/client'
+} from '@/internal/client'
 
 import {
   toChorusPutEntryRequest,

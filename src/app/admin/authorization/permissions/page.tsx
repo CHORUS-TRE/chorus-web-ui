@@ -3,21 +3,21 @@
 import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { Input } from '~/components/ui/input'
+import { Input } from '@/components/ui/input'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
+} from '@/components/ui/tooltip'
 import {
   getRolePermissions,
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS,
   ROLE_DEFINITIONS,
   type RoleDefinition
-} from '~/config/permissions'
-import { cn } from '~/lib/utils'
+} from '@/config/permissions'
+import { cn } from '@/lib/utils'
 
 type Scope = 'platform' | 'workspace' | 'session'
 
@@ -332,7 +332,7 @@ export default function PermissionsPage() {
                 {group.permissions.map((perm) => (
                   <tr
                     key={perm.key}
-                    className="border-b border-muted/20 hover:bg-accent/5"
+                    className="border-b border-muted/20 hover:bg-muted/10"
                   >
                     <td className="sticky left-0 z-10 bg-background px-4 py-2.5">
                       <TooltipProvider delayDuration={200}>

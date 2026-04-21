@@ -2,9 +2,9 @@
 
 import Image from 'next/image'
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { App, ExternalWebApp } from '@/domain/model'
 import { cn } from '@/lib/utils'
-import { Avatar, AvatarFallback } from '~/components/ui/avatar'
-import { App, ExternalWebApp } from '~/domain/model'
 
 interface SessionAppIconProps {
   app: App | ExternalWebApp

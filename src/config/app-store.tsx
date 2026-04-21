@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import React from 'react'
 
-import { App } from '~/domain/model'
+import { App } from '@/domain/model'
 
 export const CATEGORIES = [
   { id: 'all', label: 'All Apps', icon: <Grid className="h-4 w-4" /> },

@@ -2,23 +2,23 @@
 
 import { X } from 'lucide-react'
 
-import { Badge } from '~/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '~/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '~/config/permissions'
-import type { Role } from '~/domain/model/user'
-import { cn } from '~/lib/utils'
-import { useAppState } from '~/stores/app-state-store'
+} from '@/components/ui/tooltip'
+import { ROLE_DEFINITIONS } from '@/config/permissions'
+import type { Role } from '@/domain/model/user'
+import { cn } from '@/lib/utils'
+import { useAppState } from '@/stores/app-state-store'
 
 type RoleScope = 'platform' | 'workspace' | 'session'
 
 const scopeColors: Record<RoleScope, string> = {
   platform: 'border-primary text-primary',
-  workspace: 'border-secondary text-secondary',
+  workspace: 'border-muted-foreground text-muted-foreground',
   session: 'border-accent text-accent'
 }
 

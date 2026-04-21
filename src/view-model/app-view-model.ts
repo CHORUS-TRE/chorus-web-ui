@@ -2,20 +2,20 @@
 
 import { env } from 'next-runtime-env'
 
-import { AppDataSourceImpl } from '~/data/data-source'
-import { AppRepositoryImpl } from '~/data/repository/app-repository-impl'
+import { AppDataSourceImpl } from '@/data/data-source'
+import { AppRepositoryImpl } from '@/data/repository/app-repository-impl'
 import {
   AppCreateSchema,
   AppCreateType,
   AppUpdateSchema,
   Result
-} from '~/domain/model'
-import { App, AppUpdateType } from '~/domain/model/app'
-import { AppCreate as AppCreateUseCase } from '~/domain/use-cases/app/app-create'
-import { AppDelete } from '~/domain/use-cases/app/app-delete'
-import { AppGet } from '~/domain/use-cases/app/app-get'
-import { AppList } from '~/domain/use-cases/app/app-list'
-import { AppUpdate } from '~/domain/use-cases/app/app-update'
+} from '@/domain/model'
+import { App, AppUpdateType } from '@/domain/model/app'
+import { AppCreate as AppCreateUseCase } from '@/domain/use-cases/app/app-create'
+import { AppDelete } from '@/domain/use-cases/app/app-delete'
+import { AppGet } from '@/domain/use-cases/app/app-get'
+import { AppList } from '@/domain/use-cases/app/app-list'
+import { AppUpdate } from '@/domain/use-cases/app/app-update'
 
 const getRepository = async () => {
   const dataSource = new AppDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')

@@ -12,28 +12,28 @@ import {
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { Button } from '~/components/button'
-import { Breadcrumb } from '~/components/file-manager/breadcrumb'
+import { Button } from '@/components/ui/button'
+import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import {
   type ContextMenuPosition,
   FileContextMenu
-} from '~/components/file-manager/file-context-menu'
-import { FileGrid } from '~/components/file-manager/file-grid'
-import { FolderDeleteDialog } from '~/components/file-manager/folder-delete-dialog'
-import { SelectionBasket } from '~/components/file-manager/selection-basket'
-import { toast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
+} from '@/components/file-manager/file-context-menu'
+import { FileGrid } from '@/components/file-manager/file-grid'
+import { FolderDeleteDialog } from '@/components/file-manager/folder-delete-dialog'
+import { SelectionBasket } from '@/components/file-manager/selection-basket'
+import { toast } from '@/components/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { useFileSystem } from '~/hooks/use-file-system'
-import { cn } from '~/lib/utils'
-import type { FileSystemItem } from '~/types/file-system'
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { useFileSystem } from '@/hooks/use-file-system'
+import { cn } from '@/lib/utils'
+import type { FileSystemItem } from '@/types/file-system'
 
 /** Map raw mount/folder names to user-friendly display names, icons, and descriptions */
 const STORE_DISPLAY: Record<
@@ -64,7 +64,7 @@ function getStoreDisplay(name: string) {
 import {
   createDataExtractionRequest,
   createDataTransferRequest
-} from '~/view-model/approval-request-view-model'
+} from '@/view-model/approval-request-view-model'
 
 interface FileManagerClientProps {
   workspaceId: string

@@ -3,9 +3,9 @@
 import { HardDrive, ShoppingBasket, Zap } from 'lucide-react'
 import type React from 'react'
 
-import { Badge } from '~/components/ui/badge'
-import { cn } from '~/lib/utils'
-import type { FileSystemItem } from '~/types/file-system'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import type { FileSystemItem } from '@/types/file-system'
 
 /** Map raw mount/folder names to user-friendly display names and icons */
 const STORE_DISPLAY: Record<

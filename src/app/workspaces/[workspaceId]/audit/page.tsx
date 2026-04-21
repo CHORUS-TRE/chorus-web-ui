@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import AuditTable from '@/components/audit-table'
 import { AuditEntry } from '@/domain/model'
-import { listWorkspace } from '~/view-model/audit-view-model'
+import { listWorkspace } from '@/view-model/audit-view-model'
 
 export default function WorkspaceAuditPage() {
   const params = useParams<{ workspaceId: string }>()

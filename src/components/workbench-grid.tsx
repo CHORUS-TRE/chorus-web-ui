@@ -3,22 +3,22 @@ import { formatDistanceToNow } from 'date-fns'
 import { LaptopMinimal, MoreVertical } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
-import { Card, CardDescription, CardTitle } from '@/components/card'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
-import { Link } from '@/components/link'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardDescription, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Link } from '@/components/ui/link'
 import { Workbench } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { Button } from '~/components/button'
-import { Badge } from '~/components/ui/badge'
 
 import { toast } from './hooks/use-toast'
 

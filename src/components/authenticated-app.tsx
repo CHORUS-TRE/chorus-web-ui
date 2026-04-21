@@ -5,17 +5,17 @@ import { usePathname } from 'next/navigation'
 import { NextStep, NextStepProvider } from 'nextstepjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import GettingStartedCard from '@/components/getting-started-card'
 import { Header } from '@/components/header'
+import { LeftSidebar } from '@/components/left-sidebar'
+import RightSidebar from '@/components/right-sidebar'
 import { isSessionPath } from '@/lib/route-utils'
+import { steps } from '@/lib/tours'
 import { cn } from '@/lib/utils'
 import { ChatProvider } from '@/providers/chat-provider'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import GettingStartedCard from '~/components/getting-started-card'
-import { LeftSidebar } from '~/components/left-sidebar'
-import RightSidebar from '~/components/right-sidebar'
-import { steps } from '~/lib/tours'
 
 interface MainLayoutProps {
   children: React.ReactNode

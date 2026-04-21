@@ -14,13 +14,10 @@ import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
-import { Link } from '@/components/link'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
-import { useAppState } from '@/stores/app-state-store'
-import { listUsers } from '@/view-model/user-view-model'
-import { Button } from '~/components/button'
-import { Card, CardContent, CardFooter } from '~/components/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Link } from '@/components/ui/link'
 import {
   Table,
   TableBody,
@@ -28,9 +25,12 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
-import { WorkbenchServerPodStatus } from '~/domain/model'
-import { App, AppInstance, User, Workbench, Workspace } from '~/domain/model'
+} from '@/components/ui/table'
+import { WorkbenchServerPodStatus } from '@/domain/model'
+import { App, AppInstance, User, Workbench, Workspace } from '@/domain/model'
+import { cn } from '@/lib/utils'
+import { useAppState } from '@/stores/app-state-store'
+import { listUsers } from '@/view-model/user-view-model'
 
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
@@ -53,7 +53,7 @@ const ActionCell = ({
         variant="ghost"
         size="icon"
         onClick={() => workbench.id && onEdit(workbench.id)}
-        className="text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground"
+        className="text-muted-foreground/60 hover:bg-muted/10 hover:text-muted-foreground"
       >
         <Pencil className="h-4 w-4" />
       </Button>
@@ -397,10 +397,7 @@ export default function WorkbenchTable({
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="hover:bg-background/80"
-                  >
+                  <TableRow key={headerGroup.id} className="hover:bg-muted/10">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
@@ -425,7 +422,7 @@ export default function WorkbenchTable({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && 'selected'}
-                      className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                      className="border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="p-1">

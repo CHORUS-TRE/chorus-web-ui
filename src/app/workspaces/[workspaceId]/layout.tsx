@@ -5,11 +5,11 @@ import Image from 'next/image'
 import { notFound, useParams, usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
+import { WorkspaceUpdateForm } from '@/components/forms/workspace-forms'
+import { toast } from '@/components/hooks/use-toast'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { WorkspaceUpdateForm } from '~/components/forms/workspace-forms'
-import { toast } from '~/components/hooks/use-toast'
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
 
 export default function Layout({
   children

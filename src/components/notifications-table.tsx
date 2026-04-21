@@ -4,9 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { Bell } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { Notification } from '@/domain/model'
-import { User } from '@/domain/model/user'
-import { listUsers } from '@/view-model/user-view-model'
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -14,8 +12,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
+} from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -23,7 +20,10 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
+} from '@/components/ui/table'
+import { Notification } from '@/domain/model'
+import { User } from '@/domain/model/user'
+import { listUsers } from '@/view-model/user-view-model'
 
 export default function NotificationsTable({
   notifications,
@@ -105,7 +105,7 @@ export default function NotificationsTable({
             {notifications?.map((notification) => (
               <TableRow
                 key={notification.id}
-                className="border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                className="border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
               >
                 <TableCell className="max-w-[100px] truncate p-2 font-mono text-xs">
                   {notification.id}
@@ -126,7 +126,7 @@ export default function NotificationsTable({
                     variant={isRead(notification) ? 'outline' : 'default'}
                     className={
                       !isRead(notification)
-                        ? 'bg-blue-600 hover:bg-blue-700'
+                        ? 'bg-primary hover:bg-primary/90'
                         : ''
                     }
                   >

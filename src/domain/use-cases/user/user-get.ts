@@ -1,5 +1,5 @@
-import { Result, User } from '~/domain/model'
-import { UserRepository } from '~/domain/repository'
+import { Result, User } from '@/domain/model'
+import { UserRepository } from '@/domain/repository'
 
 export class UserGet {
   constructor(private readonly userRepository: UserRepository) {}

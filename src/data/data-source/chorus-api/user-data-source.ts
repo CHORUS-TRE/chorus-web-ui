@@ -14,7 +14,7 @@ import {
   Configuration,
   UserServiceApi,
   UserServiceListUsersRequest
-} from '~/internal/client'
+} from '@/internal/client'
 
 import { toChorusUser, toChorusUserUpdate } from './user-mapper'
 

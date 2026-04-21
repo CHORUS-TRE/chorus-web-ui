@@ -4,9 +4,9 @@ import { Store, X } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 
 import { AppStoreView } from '@/components/app-store/app-store-view'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { Button } from '~/components/button'
 
 export default function SessionAppStorePage() {
   const router = useRouter()

@@ -2,6 +2,10 @@
 
 import { env } from 'next-runtime-env'
 
+import { WorkbenchDataSourceImpl } from '@/data/data-source'
+import { WorkbenchRepositoryImpl } from '@/data/repository'
+import { Result } from '@/domain/model'
+import { User } from '@/domain/model/user'
 import {
   Workbench,
   WorkbenchCreateSchema,
@@ -9,19 +13,15 @@ import {
   WorkbenchUpdateSchema,
   WorkbenchUpdateType
 } from '@/domain/model/workbench'
+import { WorkbenchCreate } from '@/domain/use-cases/workbench/workbench-create'
+import { WorkbenchDelete } from '@/domain/use-cases/workbench/workbench-delete'
+import { WorkbenchGet } from '@/domain/use-cases/workbench/workbench-get'
+import { WorkbenchList } from '@/domain/use-cases/workbench/workbench-list'
+import { WorkbenchStreamProbe } from '@/domain/use-cases/workbench/workbench-stream-probe'
+import { WorkbenchStreamUrl } from '@/domain/use-cases/workbench/workbench-stream-url'
+import { WorkbenchUpdate } from '@/domain/use-cases/workbench/workbench-update'
+import { FetchError, ResponseError } from '@/internal/client/runtime'
 import { Analytics } from '@/lib/analytics/service'
-import { WorkbenchDataSourceImpl } from '~/data/data-source'
-import { WorkbenchRepositoryImpl } from '~/data/repository'
-import { Result } from '~/domain/model'
-import { User } from '~/domain/model/user'
-import { WorkbenchCreate } from '~/domain/use-cases/workbench/workbench-create'
-import { WorkbenchDelete } from '~/domain/use-cases/workbench/workbench-delete'
-import { WorkbenchGet } from '~/domain/use-cases/workbench/workbench-get'
-import { WorkbenchList } from '~/domain/use-cases/workbench/workbench-list'
-import { WorkbenchStreamProbe } from '~/domain/use-cases/workbench/workbench-stream-probe'
-import { WorkbenchStreamUrl } from '~/domain/use-cases/workbench/workbench-stream-url'
-import { WorkbenchUpdate } from '~/domain/use-cases/workbench/workbench-update'
-import { FetchError, ResponseError } from '~/internal/client/runtime'
 
 const getRepository = async () => {
   const dataSource = new WorkbenchDataSourceImpl(

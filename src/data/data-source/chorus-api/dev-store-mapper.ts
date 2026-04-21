@@ -1,8 +1,8 @@
-import { DevStoreEntry } from '~/domain/model/dev-store'
+import { DevStoreEntry } from '@/domain/model/dev-store'
 import {
   ChorusPutEntryRequest,
   DevstoreServicePutWorkspaceEntryBody
-} from '~/internal/client'
+} from '@/internal/client'
 
 export const toChorusPutEntryRequest = (
   entry: DevStoreEntry

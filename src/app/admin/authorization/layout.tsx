@@ -4,7 +4,7 @@ import { Shield, Users } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const routes = [
   { href: '/admin/authorization/roles', label: 'Roles', icon: Shield },

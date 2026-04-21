@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { CachedIframe } from '@/domain/model'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 
-import { Button } from './button'
+import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 import {
   Dialog,

@@ -5,6 +5,23 @@ import { FileCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
+import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import {
   ApprovalRequest,
   ApprovalRequestStatus,
@@ -13,23 +30,6 @@ import {
 import { User } from '@/domain/model/user'
 import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/card'
-import { Badge } from '~/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
 
 export default function ApprovalRequestsTable({
   requests,
@@ -150,7 +150,7 @@ export default function ApprovalRequestsTable({
             {requests?.map((request) => (
               <TableRow
                 key={request.id}
-                className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-background/80"
+                className="cursor-pointer border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
                 onClick={() =>
                   router.push(`/admin/data-requests/${request.id}`)
                 }

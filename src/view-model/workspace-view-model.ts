@@ -3,9 +3,8 @@
 import { env } from 'next-runtime-env'
 import { ZodIssue } from 'zod'
 
-import { Analytics } from '@/lib/analytics/service'
-import { WorkspaceDataSourceImpl } from '~/data/data-source'
-import { WorkspaceRepositoryImpl } from '~/data/repository'
+import { WorkspaceDataSourceImpl } from '@/data/data-source'
+import { WorkspaceRepositoryImpl } from '@/data/repository'
 import {
   Result,
   Workspace,
@@ -15,25 +14,26 @@ import {
   WorkspaceDevFormType,
   WorkspaceUpdatetype,
   WorkspaceWithDev
-} from '~/domain/model'
-import { User } from '~/domain/model/user'
-import { Workbench } from '~/domain/model/workbench'
+} from '@/domain/model'
+import { User } from '@/domain/model/user'
+import { Workbench } from '@/domain/model/workbench'
 import {
   WorkspaceCreateSchema,
   WorkspaceUpdateSchema
-} from '~/domain/model/workspace'
+} from '@/domain/model/workspace'
 import {
   WorkspaceConfig,
   WorkspaceConfigSchema
-} from '~/domain/model/workspace-config'
-import { WorkspaceCreate } from '~/domain/use-cases/workspace/workspace-create'
-import { WorkspaceDelete } from '~/domain/use-cases/workspace/workspace-delete'
-import { WorkspaceGet } from '~/domain/use-cases/workspace/workspace-get'
-import { WorkspaceUpdate } from '~/domain/use-cases/workspace/workspace-update'
-import { WorkspacesList } from '~/domain/use-cases/workspace/workspaces-list'
-import { useDevStoreCache } from '~/stores/dev-store-cache'
-import { listUsers } from '~/view-model/user-view-model'
-import { workbenchList } from '~/view-model/workbench-view-model'
+} from '@/domain/model/workspace-config'
+import { WorkspaceCreate } from '@/domain/use-cases/workspace/workspace-create'
+import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
+import { WorkspaceGet } from '@/domain/use-cases/workspace/workspace-get'
+import { WorkspaceUpdate } from '@/domain/use-cases/workspace/workspace-update'
+import { WorkspacesList } from '@/domain/use-cases/workspace/workspaces-list'
+import { Analytics } from '@/lib/analytics/service'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
+import { listUsers } from '@/view-model/user-view-model'
+import { workbenchList } from '@/view-model/workbench-view-model'
 
 const getRepository = async () => {
   const dataSource = new WorkspaceDataSourceImpl(

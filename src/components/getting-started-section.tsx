@@ -3,7 +3,7 @@
 import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -178,7 +178,7 @@ export function GettingStartedSection() {
             <button
               key={step.id}
               onClick={() => handleStepClick(step)}
-              className="group flex items-start gap-3 rounded-lg border border-muted/30 bg-muted/10 p-3 text-left transition-all duration-200 hover:border-accent hover:bg-accent/10"
+              className="group flex items-start gap-3 rounded-lg border border-muted/30 bg-muted/10 p-3 text-left transition-all duration-200 hover:border-accent/40"
             >
               <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                 {index + 1}

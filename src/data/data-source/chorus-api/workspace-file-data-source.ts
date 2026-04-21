@@ -2,7 +2,7 @@ import {
   WorkspaceFileCreateType,
   WorkspaceFilePart,
   WorkspaceFileUpdateType
-} from '~/domain/model'
+} from '@/domain/model'
 import {
   ChorusAbortWorkspaceFileUploadReply,
   ChorusCompleteWorkspaceFileUploadReply,
@@ -16,7 +16,7 @@ import {
   ChorusUploadWorkspaceFilePartReply,
   Configuration,
   WorkspaceFileServiceApi
-} from '~/internal/client'
+} from '@/internal/client'
 
 import {
   toChorusWorkspaceFile,

@@ -1,5 +1,5 @@
 import { AppCreateType, AppUpdateType } from '@/domain/model'
-import { ChorusApp } from '~/internal/client'
+import { ChorusApp } from '@/internal/client'
 
 export const toChorusApp = (app: AppCreateType): ChorusApp => {
   const { groupedVersions, ...rest } = app

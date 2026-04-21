@@ -22,6 +22,9 @@ import {
 } from 'react-grid-layout'
 
 import { DynamicUIRenderer } from '@/components/chat/artifacts/dynamic-ui-renderer'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { buildSearchResultsSpec } from '@/lib/json-render/specs/search-results.spec'
 import { buildWorkflowSpec } from '@/lib/json-render/specs/workflow.spec'
 import {
@@ -35,9 +38,6 @@ import {
   useDashboardStore,
   WidgetContent
 } from '@/stores/dashboard-store'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Textarea } from '~/components/ui/textarea'
 
 // ────────────────────────────────────────────
 // Suggested prompts

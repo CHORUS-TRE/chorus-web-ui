@@ -9,14 +9,14 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { Card, CardContent, CardHeader } from '@/components/card'
-import { Button } from '~/components/button'
-import { ManageUserWorkspaceDialog } from '~/components/forms/manage-user-workspace-dialog'
-import { WorkspaceUserDeleteDialog } from '~/components/forms/workspace-user-delete-dialog'
-import { Badge } from '~/components/ui/badge'
-import { WORKSPACE_PERMISSIONS_DISPLAY } from '~/config/permissions'
-import { User } from '~/domain/model/user'
-import { useAuthorization } from '~/providers/authorization-provider'
+import { ManageUserWorkspaceDialog } from '@/components/forms/manage-user-workspace-dialog'
+import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { WORKSPACE_PERMISSIONS_DISPLAY } from '@/config/permissions'
+import { User } from '@/domain/model/user'
+import { useAuthorization } from '@/providers/authorization-provider'
 
 export function WorkspaceUserCard({
   user,
@@ -136,11 +136,11 @@ export function WorkspaceUserCard({
 
       <CardContent className="px-6 pb-6 pt-0">
         <div
-          className={`rounded-xl border border-border/50 bg-background/30 transition-all duration-300 ${isPermissionsOpen ? 'ring-2 ring-lime-500/30' : ''}`}
+          className={`rounded-xl border border-border/50 bg-background/30 transition-all duration-300 ${isPermissionsOpen ? 'ring-2 ring-accent/30' : ''}`}
         >
           <button
             onClick={() => setIsPermissionsOpen(!isPermissionsOpen)}
-            className={`flex w-full items-center justify-between p-4 text-sm font-bold transition-colors hover:bg-accent/50 ${isPermissionsOpen ? 'bg-lime-500/20 text-foreground' : 'text-muted-foreground'}`}
+            className={`flex w-full items-center justify-between p-4 text-sm font-bold transition-colors hover:bg-accent/15 ${isPermissionsOpen ? 'bg-accent/15 text-accent' : 'text-muted-foreground'}`}
           >
             <div className="flex items-center gap-2">Permissions</div>
             {isPermissionsOpen ? (

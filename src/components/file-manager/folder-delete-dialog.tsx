@@ -2,7 +2,7 @@
 
 import { AlertTriangle } from 'lucide-react'
 
-import { Button } from '~/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '~/components/ui/dialog'
+} from '@/components/ui/dialog'
 
 interface FolderDeleteDialogProps {
   open: boolean

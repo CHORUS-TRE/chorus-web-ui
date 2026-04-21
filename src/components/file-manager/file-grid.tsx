@@ -16,14 +16,14 @@ import {
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { Button } from '~/components/ui/button'
-import { Checkbox } from '~/components/ui/checkbox'
-import { cn } from '~/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { cn } from '@/lib/utils'
 import {
   formatDate as formatDateUtil,
   formatFileSize as formatFileSizeUtil
-} from '~/lib/utils'
-import type { FileClipboard, FileSystemItem } from '~/types/file-system'
+} from '@/lib/utils'
+import type { FileClipboard, FileSystemItem } from '@/types/file-system'
 
 interface FileGridProps {
   items: FileSystemItem[]

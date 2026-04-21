@@ -2,8 +2,8 @@
 
 import { startTransition, useState } from 'react'
 
+import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { workbenchDelete } from '@/view-model/workbench-view-model'
-import { DeleteDialog } from '~/components/forms/delete-dialog'
 
 import { toast } from '../hooks/use-toast'
 

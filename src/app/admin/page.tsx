@@ -20,12 +20,12 @@ import {
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
+import { StatCard } from '@/components/dashboard/stat-card'
 import { ROLE_DEFINITIONS } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
-import { StatCard } from '~/components/dashboard/stat-card'
 
 const AdminPage = () => {
   const { can, PERMISSIONS } = useAuthorization()

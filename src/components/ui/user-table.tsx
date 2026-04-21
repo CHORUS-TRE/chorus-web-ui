@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { listUsers } from '@/view-model/user-view-model'
-import { UserDeleteDialog } from '~/components/forms/user-delete-dialog'
-import { UserEditDialog } from '~/components/forms/user-edit-dialog'
-import { toast } from '~/components/hooks/use-toast'
-import { Badge } from '~/components/ui/badge'
+import { UserDeleteDialog } from '@/components/forms/user-delete-dialog'
+import { UserEditDialog } from '@/components/forms/user-edit-dialog'
+import { toast } from '@/components/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -14,9 +13,10 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '~/components/ui/table'
-import { User } from '~/domain/model/user'
-import { useAuthorization } from '~/providers/authorization-provider'
+} from '@/components/ui/table'
+import { User } from '@/domain/model/user'
+import { useAuthorization } from '@/providers/authorization-provider'
+import { listUsers } from '@/view-model/user-view-model'
 
 export function UserTable() {
   const [users, setUsers] = useState<User[]>([])

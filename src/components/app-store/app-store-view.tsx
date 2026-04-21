@@ -2,8 +2,25 @@ import { LayoutGrid, List, Search } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
+import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import { WorkspaceWorkbenchList } from '@/components/workspace-workbench-list'
 import { CATEGORIES, filterApps } from '@/config/app-store'
+import { App, AppInstanceStatus, ExternalWebApp } from '@/domain/model'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
 import { cn } from '@/lib/utils'
@@ -11,23 +28,6 @@ import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { createAppInstance } from '@/view-model/app-instance-view-model'
-import { Button } from '~/components/button'
-import { toast } from '~/components/hooks/use-toast'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
-import { App, AppInstanceStatus, ExternalWebApp } from '~/domain/model'
 
 import { SessionAppIcon } from './app-icon'
 import { SessionAppListItem } from './app-list-item'
@@ -184,8 +184,8 @@ export function AppStoreView() {
                 className={cn(
                   'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
                   selectedCategory === cat.id
-                    ? 'bg-primary/20 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'
+                    ? 'bg-accent/15 text-accent'
+                    : 'text-muted-foreground hover:text-accent'
                 )}
               >
                 {cat.icon}
@@ -206,8 +206,8 @@ export function AppStoreView() {
               className={cn(
                 'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200',
                 selectedCategory === cat.id
-                  ? 'bg-primary/20 text-primary shadow-sm'
-                  : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'
+                  ? 'bg-accent/15 text-accent'
+                  : 'text-muted-foreground hover:text-accent'
               )}
             >
               {cat.icon}
@@ -347,7 +347,7 @@ export function AppStoreView() {
           </DialogHeader>
           <div className="flex flex-col gap-2 pt-2">
             <button
-              className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-muted/10"
+              className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-accent/10"
               onClick={() => handleVersionSelected(null)}
             >
               <span className="font-medium">Base version</span>
@@ -359,7 +359,7 @@ export function AppStoreView() {
               v.id ? (
                 <button
                   key={v.id}
-                  className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-muted/10"
+                  className="rounded-lg border border-muted/20 px-4 py-2.5 text-left text-sm hover:bg-accent/10"
                   onClick={() => handleVersionSelected(v.id!)}
                 >
                   <span className="font-medium">{v.dockerImageTag}</span>

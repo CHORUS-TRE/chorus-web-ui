@@ -5,7 +5,7 @@ import {
   UserRoleCreateType,
   UserUpdateType
 } from '@/domain/model/user'
-import { UserServiceListUsersRequest } from '~/internal/client'
+import { UserServiceListUsersRequest } from '@/internal/client'
 
 interface UserRepository {
   create: (user: UserCreateType) => Promise<Result<User>>

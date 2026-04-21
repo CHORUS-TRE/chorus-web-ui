@@ -1,8 +1,8 @@
 import { AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { ApprovalRequestStatus } from '@/domain/model/approval-request'
 import { cn } from '@/lib/utils'
-import { Badge } from '~/components/ui/badge'
 
 export const STATUS_CONFIG: Record<
   ApprovalRequestStatus,
@@ -74,7 +74,7 @@ export function StatusBadge({
           cfg.colorClass.split(' ').find((c) => c.startsWith('text-'))
         )}
       />
-      <span className="text-gray-400">{cfg.label}</span>
+      <span className="text-muted-foreground">{cfg.label}</span>
     </Badge>
   )
 }

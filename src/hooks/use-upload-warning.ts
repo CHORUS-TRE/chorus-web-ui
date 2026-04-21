@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { useAppStateStore } from '~/stores/app-state-store'
+import { useAppStateStore } from '@/stores/app-state-store'
 
 export function useUploadWarning() {
   const hasActiveUploads = useAppStateStore((state) => state.hasActiveUploads)
