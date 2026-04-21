@@ -22,6 +22,7 @@ import {
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import { BOOKMARK_LABEL_MAX, normalizeRoute } from '@/domain/model/bookmark'
@@ -72,38 +73,40 @@ export function BookmarkButton({ className }: BookmarkButtonProps) {
   }, [route, context, toggleBookmark])
 
   return (
-    <div className={cn('flex items-center gap-1', className)}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={handleToggle}
-            aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this page'}
-            aria-pressed={bookmarked}
-            className="h-8 w-8"
-          >
-            {bookmarked ? (
-              <BookmarkCheck className="h-4 w-4 text-accent" />
-            ) : (
-              <Bookmark className="h-4 w-4" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          {bookmarked ? 'Remove bookmark' : 'Bookmark this page'}
-        </TooltipContent>
-      </Tooltip>
+    <TooltipProvider>
+      <div className={cn('flex items-center gap-1', className)}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleToggle}
+              aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this page'}
+              aria-pressed={bookmarked}
+              className="h-8 w-8"
+            >
+              {bookmarked ? (
+                <BookmarkCheck className="h-4 w-4 text-accent" />
+              ) : (
+                <Bookmark className="h-4 w-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {bookmarked ? 'Remove bookmark' : 'Bookmark this page'}
+          </TooltipContent>
+        </Tooltip>
 
-      {bookmarked && current && (
-        <BookmarkRenamePopover
-          route={route}
-          currentLabel={current.label}
-          onRename={updateLabel}
-        />
-      )}
-    </div>
+        {bookmarked && current && (
+          <BookmarkRenamePopover
+            route={route}
+            currentLabel={current.label}
+            onRename={updateLabel}
+          />
+        )}
+      </div>
+    </TooltipProvider>
   )
 }
 
