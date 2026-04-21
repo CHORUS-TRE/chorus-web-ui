@@ -27,13 +27,12 @@ const config = {
   // Turbopack configuration (Next.js 16 uses Turbopack by default)
   // WebAssembly support is built-in with Turbopack
   turbopack: {},
-  serverExternalPackages: ['@tobilu/qmd', 'node-llama-cpp', 'better-sqlite3'],
+  serverExternalPackages: ['better-sqlite3'],
   output: 'standalone',
   outputFileTracingIncludes: {
     '/api/*': [
-      './node_modules/@tobilu/qmd/**',
-      './node_modules/node-llama-cpp/**',
-      './node_modules/better-sqlite3/**'
+      './node_modules/better-sqlite3/**',
+      './src/app/api/.ai/index.sqlite'
     ]
   },
   logging: {

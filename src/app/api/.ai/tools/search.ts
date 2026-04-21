@@ -1,7 +1,7 @@
 import { tool } from 'ai'
 import { z } from 'zod'
 
-import { getQmdStore } from '../db/index'
+import { searchFTS } from '../db/search-fts'
 
 export const searchDocumentationTool = tool({
   description:
@@ -21,8 +21,7 @@ export const searchDocumentationTool = tool({
   }),
   execute: async ({ query, collection }) => {
     try {
-      const store = await getQmdStore()
-      const results = await store.searchLex(query, { limit: 8, collection })
+      const results = searchFTS(query, { limit: 8, collection })
 
       return {
         type: 'search-results' as const,

@@ -32,6 +32,7 @@ conductor/
 # misc
 .DS_Store
 *.pem
+!certs/lforty-combined-ca-bundle.pem
 
 # debug
 npm-debug.log*
