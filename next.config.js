@@ -16,13 +16,13 @@ const config = {
   },
   // This is needed to ensure the Go WASM module can be loaded correctly
   webpack: (config) => {
-    config.experiments = { asyncWebAssembly: true, layers: true }
+    config.experiments = { asyncWebAssembly: true, layers: true };
     // Add rule to handle .wasm files as assets
     config.module.rules.push({
       test: /\.wasm$/,
       type: 'asset/resource'
-    })
-    return config
+    });
+    return config;
   },
   // Turbopack configuration (Next.js 16 uses Turbopack by default)
   // WebAssembly support is built-in with Turbopack
@@ -33,7 +33,10 @@ const config = {
     '/api/*': [
       './node_modules/@tobilu/qmd/**',
       './node_modules/node-llama-cpp/**',
-      './node_modules/better-sqlite3/**'
+      './node_modules/better-sqlite3/**',
+      './node_modules/.pnpm/@tobilu+qmd@*/**',
+      './node_modules/.pnpm/node-llama-cpp@*/**',
+      './node_modules/.pnpm/chalk@*/**'
     ]
   },
   logging: {
@@ -55,6 +58,6 @@ const config = {
   //   locales: ["en"],
   //   defaultLocale: "en",
   // },
-}
+};
 
-export default config
+export default config;
