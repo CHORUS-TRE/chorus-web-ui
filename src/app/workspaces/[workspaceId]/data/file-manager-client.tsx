@@ -105,6 +105,7 @@ export default function FileManagerClient({
   const [newFolderName, setNewFolderName] = useState('')
   const [isDraggingOver, setIsDraggingOver] = useState(false)
   const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null)
+  const [dragOverStoreId, setDragOverStoreId] = useState<string | null>(null)
   const [showBasket, setShowBasket] = useState(false)
   const [folderToDelete, setFolderToDelete] = useState<{
     id: string
@@ -455,6 +456,7 @@ export default function FileManagerClient({
                 store.description && store.description.trim().length > 0
                   ? store.description
                   : display.description
+              const isDropTarget = dragOverStoreId === storeId
               return (
                 <button
                   key={storeId}
@@ -467,12 +469,39 @@ export default function FileManagerClient({
                       : 'cursor-not-allowed opacity-60',
                     isActive
                       ? 'bg-accent/10 text-accent'
-                      : 'text-muted-foreground'
+                      : 'text-muted-foreground',
+                    isDropTarget && 'ring-2 ring-accent/70 bg-accent/5'
                   )}
                   onClick={() => {
                     if (!isSelectable) return
                     setShowBasket(false)
                     handleSelectStore(storeId)
+                  }}
+                  onDragOver={(e) => {
+                    if (!isSelectable) return
+                    if (storeId === selectedStoreId) return
+                    e.preventDefault()
+                    e.dataTransfer.dropEffect = 'copy'
+                    if (dragOverStoreId !== storeId) setDragOverStoreId(storeId)
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverStoreId === storeId) setDragOverStoreId(null)
+                  }}
+                  onDrop={(e) => {
+                    if (!isSelectable) return
+                    if (storeId === selectedStoreId) return
+                    e.preventDefault()
+                    setDragOverStoreId(null)
+                    const draggedItemId = e.dataTransfer.getData('text/plain')
+                    const draggedItem = draggedItemId
+                      ? state.items[draggedItemId]
+                      : undefined
+                    toast({
+                      title: 'Cross-store copy coming soon',
+                      description: draggedItem
+                        ? `Would copy "${draggedItem.name}" to ${store.name}.`
+                        : `Would copy to ${store.name}.`
+                    })
                   }}
                 >
                   <Icon
@@ -590,7 +619,7 @@ export default function FileManagerClient({
 
             {/* File browser area with drop zone */}
             <div
-              className="relative overflow-auto"
+              className="relative flex min-h-0 flex-1 flex-col overflow-auto"
               onDragOver={handleExternalDragOver}
               onDragLeave={handleExternalDragLeave}
               onDrop={handleExternalDrop}
@@ -613,8 +642,8 @@ export default function FileManagerClient({
               )}
 
               {currentChildren.length === 0 && !loading ? (
-                /* Empty state */
-                <div className="flex h-full flex-col items-center justify-center gap-4 text-muted-foreground">
+                /* Empty state — full-height dashed dropzone */
+                <div className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground">
                   <Upload className="h-12 w-12 opacity-40" />
                   <div className="text-center">
                     <p className="text-sm font-medium">No files yet</p>
