@@ -1,3 +1,22 @@
+## [1.48.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.48.1...v1.48.2) (2026-04-21)
+
+
+### Bug Fixes
+
+* **admin:** remap workspace scope secondary to muted ([0bacda4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0bacda445a86070095f2b4f21ccace5c44c45223))
+* **cards:** standardize clickable card hover to border-accent/40 ([98c2f8c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/98c2f8cabce52ae9a27be8bb104700be72b5d0cc))
+* **colors:** replace hardcoded palette colors with semantic tokens ([219c2b1](https://github.com/CHORUS-TRE/chorus-web-ui/commit/219c2b14ab77ef30be536f1d00a35e73029ab157))
+* **css:** standardize interactive utility hover to muted/10 ([ef2238c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ef2238c2f9aff5312f8da1d513381a6f54401b4d))
+* **inbox:** replace className size hacks with size='xs' prop ([8cd4b46](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8cd4b4637412a84f9c7651ee209c777ace7cb7be))
+* **nav:** active=accent for filters, categories, toggles ([73d1709](https://github.com/CHORUS-TRE/chorus-web-ui/commit/73d1709b0acd452b1cd05c1b8c51f27220fb4bd5))
+* **pages:** remove secondary color from dashboard, privacy, settings ([8258eed](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8258eed5ae8b228e09aa756d747968d805634904))
+* **rows:** standardize all row hover to hover:bg-muted/10 ([51056ff](https://github.com/CHORUS-TRE/chorus-web-ui/commit/51056ff829d961244ebf32f1dccdd7e9d01cb62a))
+* **sidebar:** active=accent/15, hover=text-only per behavior spec ([1ff6faa](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1ff6faa77272064d671f05629de801e2143b7132))
+* **tokens:** accent = lime in both themes, secondary aliased to muted ([cb4b946](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cb4b946efe40b6ffdf07344cada449593a27c7b6))
+* **tokens:** remove duplicate token blocks from build.css, fix DynamicThemeApplicator accent ([757afb4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/757afb4d1045c05ab917245241a61f352f6ece8a)), closes [#B7FF13](https://github.com/CHORUS-TRE/chorus-web-ui/issues/B7FF13) [#618216](https://github.com/CHORUS-TRE/chorus-web-ui/issues/618216)
+* **tokens:** sync build.css with globals.css, darken accent for light mode contrast ([3f94e7a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3f94e7a41652ab7503eb1846aa4a28310262666c))
+* **ui:** remap secondary to muted in all UI primitives ([5b1c327](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5b1c327798174591856d8f8699201855875db6d4))
+
 ## [1.48.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.48.0...v1.48.1) (2026-04-21)
 
 # [1.48.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.47.1...v1.48.0) (2026-04-21)
