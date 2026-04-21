@@ -1,6 +1,12 @@
 import { create } from 'zustand'
 
 import {
+  BookmarkItem,
+  Bookmarks,
+  BookmarksSchema,
+  USER_BOOKMARKS_KEY
+} from '@/domain/model/bookmark'
+import {
   DEFAULT_INSTANCE_CONFIG,
   INSTANCE_CONFIG_KEYS,
   InstanceConfig,
@@ -103,6 +109,10 @@ type DevStoreCacheState = {
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
+
+  // User bookmarks (JSON array stored at user.bookmarks)
+  getUserBookmarks: () => Bookmarks
+  setUserBookmarks: (bookmarks: BookmarkItem[]) => Promise<boolean>
 
   // UI Actions
   setCookieConsentOpen: (open: boolean) => void
@@ -483,6 +493,29 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       return get().deleteGlobal(INSTANCE_CONFIG_KEYS.LIMITS)
     }
     return get().setGlobal(INSTANCE_CONFIG_KEYS.LIMITS, JSON.stringify(limits))
+  },
+
+  // ============================================
+  // User Bookmarks
+  // ============================================
+
+  getUserBookmarks: () => {
+    const value = get().user[USER_BOOKMARKS_KEY]
+    if (!value) return []
+    try {
+      const parsed = JSON.parse(value)
+      const validated = BookmarksSchema.safeParse(parsed)
+      if (validated.success) return validated.data
+      console.warn('Invalid user.bookmarks, resetting:', validated.error.issues)
+      return []
+    } catch (e) {
+      console.warn('Error parsing user.bookmarks, resetting:', e)
+      return []
+    }
+  },
+
+  setUserBookmarks: async (bookmarks: BookmarkItem[]) => {
+    return get().setUser(USER_BOOKMARKS_KEY, JSON.stringify(bookmarks))
   },
 
   // UI Actions
