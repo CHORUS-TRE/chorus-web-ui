@@ -1,76 +1,17 @@
 'use client'
 
-import { Database, Package } from 'lucide-react'
-
-import { StatCard } from '@/components/dashboard/stat-card'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion'
-import { useAuthentication } from '@/providers/authentication-provider'
-import { useAppState } from '@/stores/app-state-store'
+import { Database } from 'lucide-react'
 
 export default function DataPage() {
-  const { workspaces } = useAppState()
-  const { user } = useAuthentication()
-
   return (
-    <>
-      <div className="w-full">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <Database className="h-9 w-9" />
-            Data
-          </h2>
-        </div>
+    <div className="flex h-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-muted/40 p-8 text-center text-muted-foreground">
+      <Database className="h-10 w-10 opacity-40" />
+      <div>
+        <p className="text-sm font-medium">No workspace selected</p>
+        <p className="mt-1 text-xs">
+          Select a workspace from the sidebar to view its data.
+        </p>
       </div>
-
-      <Accordion
-        type="multiple"
-        defaultValue={['my-workspaces-data']}
-        className="w-full"
-      >
-        <AccordionItem value="my-workspaces-data" className="border-b-0">
-          <AccordionTrigger className="text-muted hover:text-accent hover:no-underline [&>svg]:text-muted [&>svg]:opacity-100">
-            <div className="text-lg font-semibold">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Package className="h-6 w-6" />
-                <div>My Workspaces Data</div>
-              </div>
-              <p className="text-sm font-normal text-muted-foreground">
-                Access data from your workspaces
-              </p>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent className="border-b-0">
-            <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
-              {workspaces
-                ?.filter((workspace) =>
-                  user?.rolesWithContext?.some(
-                    (role) => role.context.workspace === workspace.id
-                  )
-                )
-                .map((w) => (
-                  <StatCard
-                    key={`workspace-data-${w.id}`}
-                    href={`/workspaces/${w.id}/data`}
-                    title={w.name}
-                    description="View data for this workspace"
-                  />
-                ))}
-              {!workspaces?.filter((workspace) =>
-                user?.rolesWithContext?.some(
-                  (role) => role.context.workspace === workspace.id
-                )
-              ).length && (
-                <div className="text-muted">No workspaces found.</div>
-              )}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </>
+    </div>
   )
 }
