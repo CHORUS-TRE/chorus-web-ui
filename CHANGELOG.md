@@ -1,3 +1,19 @@
+# [1.49.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.48.2...v1.49.0) (2026-04-22)
+
+
+### Bug Fixes
+
+* **bookmarks:** wrap BookmarkButton tooltips in TooltipProvider ([7f83333](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7f83333b57e225dac140450b755ab2325edb5232))
+
+
+### Features
+
+* **bookmarks:** FS.1 remove sidebarWebapps / Links section ([910901e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/910901e13e897ef145af2723dd3fb99fa72ae677))
+* **bookmarks:** FS.2 data model, DevStore accessors, useBookmarks hook ([10d135e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/10d135ee37b57269c4aa177d7ce681e5e65fb1b1))
+* **bookmarks:** FS.3 BookmarkButton with inline rename ([a0abe4c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a0abe4cebec5c71c253e29368c3331c5f4acb245))
+* **bookmarks:** FS.4 sidebar bookmarks section with reorder + rename ([60bd131](https://github.com/CHORUS-TRE/chorus-web-ui/commit/60bd131271c96f7e84f93aed76ae7d9c70babc0c))
+* **bookmarks:** FS.5 deriveBookmarkLabel utility + icon registry ([349a7e9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/349a7e9ba997713d27f37d1ab47f4db45973d1fd))
+
 ## [1.48.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.48.1...v1.48.2) (2026-04-21)
 
 
