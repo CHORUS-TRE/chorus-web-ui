@@ -442,7 +442,7 @@ export default function FileManagerClient({
                     isActive
                       ? 'border border-accent text-accent'
                       : 'border border-transparent text-muted-foreground hover:text-foreground',
-                    isDropTarget && 'ring-2 ring-accent/70 bg-accent/5'
+                    isDropTarget && 'bg-accent/5 ring-2 ring-accent/70'
                   )}
                   onClick={() => {
                     if (!isSelectable) return
@@ -652,9 +652,7 @@ export default function FileManagerClient({
               <p className="text-sm font-medium">
                 Select a store to browse files
               </p>
-              <p className="mt-1 text-xs">
-                Choose a store from the top bar
-              </p>
+              <p className="mt-1 text-xs">Choose a store from the top bar</p>
             </div>
           </div>
         )}

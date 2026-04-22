@@ -14,7 +14,9 @@ export default function DataWorkspacePage() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="mb-4 text-sm text-muted-foreground">
         Data <span className="px-1">/</span>
-        <span className="text-foreground">{workspace?.name ?? workspaceId}</span>
+        <span className="text-foreground">
+          {workspace?.name ?? workspaceId}
+        </span>
       </div>
       <div className="min-h-0 flex-1">
         <FileManagerClient workspaceId={workspaceId} />

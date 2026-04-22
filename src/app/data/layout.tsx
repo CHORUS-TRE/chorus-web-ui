@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React from 'react'
 
+import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { cn } from '@/lib/utils'
 
 const AuthenticatedApp = React.lazy(() =>
   import('@/components/authenticated-app').then((mod) => ({
@@ -29,7 +29,9 @@ export default function Layout({
 
   if (!user) return <Login />
 
-  return <AuthenticatedApp>{<DataShell>{children}</DataShell>}</AuthenticatedApp>
+  return (
+    <AuthenticatedApp>{<DataShell>{children}</DataShell>}</AuthenticatedApp>
+  )
 }
 
 function DataShell({ children }: { children: React.ReactNode }) {

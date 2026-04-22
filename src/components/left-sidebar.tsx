@@ -200,7 +200,7 @@ function SidebarContent({
           href="#"
           variant="underline"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent text-muted-foreground'
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-accent'
           )}
           title="Help"
         >
