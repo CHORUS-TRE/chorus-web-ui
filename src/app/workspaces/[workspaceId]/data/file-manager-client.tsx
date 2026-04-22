@@ -1,16 +1,14 @@
 'use client'
 
 import {
-  AlertTriangle,
   CirclePlus,
   FolderPlus,
   HardDrive,
   ShoppingBasket,
-  Upload,
-  Zap
+  Upload
 } from 'lucide-react'
 import type React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import {
@@ -21,7 +19,6 @@ import { FileGrid } from '@/components/file-manager/file-grid'
 import { FolderDeleteDialog } from '@/components/file-manager/folder-delete-dialog'
 import { SelectionBasket } from '@/components/file-manager/selection-basket'
 import { toast } from '@/components/hooks/use-toast'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -35,30 +32,16 @@ import { useFileSystem } from '@/hooks/use-file-system'
 import { cn } from '@/lib/utils'
 import type { FileSystemItem } from '@/types/file-system'
 
-/** Map raw mount/folder names to user-friendly display names, icons, and descriptions */
-const STORE_DISPLAY: Record<
-  string,
-  { label: string; icon: React.ElementType; description: string }
-> = {
-  archive: {
-    label: 'Permanent Storage',
-    icon: HardDrive,
-    description: 'Long-term data that persists across sessions'
-  },
-  scratch: {
-    label: 'Working Files',
-    icon: Zap,
-    description: 'Temporary workspace for active analysis'
-  }
+/** Friendly tooltip descriptions for known mount names (chip row no longer renders these inline). */
+const STORE_DESCRIPTION: Record<string, string> = {
+  archive: 'Permanent Storage — long-term data that persists across sessions',
+  scratch: 'Working Files — temporary workspace for active analysis'
 }
 
-function getStoreDisplay(name: string) {
+function getStoreTooltip(name: string, fallback?: string) {
   return (
-    STORE_DISPLAY[name.toLowerCase()] ?? {
-      label: name,
-      icon: HardDrive,
-      description: 'Storage mount'
-    }
+    STORE_DESCRIPTION[name.toLowerCase()] ??
+    (fallback && fallback.trim().length > 0 ? fallback : 'Storage mount')
   )
 }
 import {
@@ -434,43 +417,32 @@ export default function FileManagerClient({
   }
 
   return (
-    <div className="flex h-full gap-2 overflow-hidden">
-      {/* Left sidebar — disks + basket */}
-      <div className="flex w-56 shrink-0 flex-col rounded-xl border border-muted/40 bg-card">
-        <div className="border-b border-muted/40 px-4 py-3">
-          <span className="text-sm font-medium text-muted-foreground">
-            Stores
-          </span>
-        </div>
-
-        <div className="flex-1 space-y-1 overflow-auto p-2">
+    <div className="flex h-full flex-col gap-2 overflow-hidden">
+      {/* Top chip row — stores grouped in one container + basket button */}
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center gap-1 overflow-x-auto rounded-full border border-muted/40 bg-card/40 px-2 py-1.5">
           {stores
             .filter((store) => store.status !== 'DISABLED')
             .map((store) => {
               const storeId = storeIdFromName(store.name)
-              const display = getStoreDisplay(store.name)
-              const Icon = display.icon
               const isActive = !showBasket && selectedStoreId === storeId
               const isSelectable = store.status === 'READY'
-              const description =
-                store.description && store.description.trim().length > 0
-                  ? store.description
-                  : display.description
               const isDropTarget = dragOverStoreId === storeId
+              const tooltip = !isSelectable
+                ? 'Store unavailable'
+                : getStoreTooltip(store.name, store.description)
               return (
                 <button
                   key={storeId}
                   disabled={!isSelectable}
-                  title={isSelectable ? undefined : 'Store unavailable'}
+                  title={tooltip}
                   className={cn(
-                    'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-                    isSelectable
-                      ? 'hover:bg-muted/50'
-                      : 'cursor-not-allowed opacity-60',
+                    'flex shrink-0 items-center gap-2 rounded-lg px-3 py-1 text-sm transition-colors',
+                    !isSelectable && 'cursor-not-allowed opacity-60',
                     isActive
-                      ? 'bg-accent/10 text-accent'
-                      : 'text-muted-foreground',
-                    isDropTarget && 'bg-accent/5 ring-2 ring-accent/70'
+                      ? 'border border-accent text-accent'
+                      : 'border border-transparent text-muted-foreground hover:text-foreground',
+                    isDropTarget && 'ring-2 ring-accent/70 bg-accent/5'
                   )}
                   onClick={() => {
                     if (!isSelectable) return
@@ -504,74 +476,51 @@ export default function FileManagerClient({
                     })
                   }}
                 >
-                  <Icon
+                  <span
                     className={cn(
-                      'h-7 w-7 shrink-0',
-                      isActive ? 'text-accent' : 'text-muted-foreground/70'
+                      'h-2 w-2 shrink-0 rounded-full',
+                      isActive && store.status === 'READY' && 'bg-accent',
+                      !isActive &&
+                        store.status === 'READY' &&
+                        'bg-muted-foreground/40',
+                      store.status === 'DISCONNECTED' && 'bg-destructive',
+                      store.status !== 'READY' &&
+                        store.status !== 'DISCONNECTED' &&
+                        'bg-muted-foreground/40'
                     )}
-                    strokeWidth={1.5}
                   />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="truncate font-medium">{store.name}</span>
-                      {store.status === 'DISCONNECTED' && (
-                        <AlertTriangle
-                          className="h-3.5 w-3.5 shrink-0 text-destructive"
-                          strokeWidth={2}
-                        />
-                      )}
-                    </div>
-                    <div className="truncate text-xs text-muted-foreground/60">
-                      {store.status === 'DISCONNECTED'
-                        ? 'Store unavailable'
-                        : description}
-                    </div>
-                  </div>
+                  <span className="font-medium">{store.name}</span>
+                  <span className="text-xs text-muted-foreground/60">—</span>
                 </button>
               )
             })}
         </div>
 
-        {/* Basket at bottom of sidebar */}
-        <div className="border-t border-muted/40 p-2">
-          <button
-            className={cn(
-              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50',
-              showBasket
-                ? 'bg-accent/10 text-accent'
-                : state.basketItems.length > 0
-                  ? 'text-accent'
-                  : 'text-muted-foreground'
+        <button
+          type="button"
+          className={cn(
+            'flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
+            showBasket
+              ? 'border-accent text-accent'
+              : state.basketItems.length > 0
+                ? 'border-muted/40 text-accent hover:text-foreground'
+                : 'border-muted/40 text-muted-foreground hover:text-foreground'
+          )}
+          onClick={() => setShowBasket(!showBasket)}
+        >
+          <ShoppingBasket className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+          <span className="font-medium">
+            Basket
+            {state.basketItems.length > 0 && (
+              <span className="ml-1 text-muted-foreground/70">
+                · {state.basketItems.length}
+              </span>
             )}
-            onClick={() => setShowBasket(!showBasket)}
-          >
-            <ShoppingBasket
-              className={cn(
-                'h-7 w-7 shrink-0',
-                showBasket || state.basketItems.length > 0
-                  ? 'text-accent'
-                  : 'text-muted-foreground/70'
-              )}
-              strokeWidth={1.5}
-            />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Basket</span>
-                {state.basketItems.length > 0 && (
-                  <Badge className="h-5 min-w-5 rounded-full px-1.5 text-xs">
-                    {state.basketItems.length}
-                  </Badge>
-                )}
-              </div>
-              <div className="truncate text-xs text-muted-foreground/60">
-                Download or transfer
-              </div>
-            </div>
-          </button>
-        </div>
+          </span>
+        </button>
       </div>
 
-      {/* Right content panel */}
+      {/* Content panel — full width */}
       <div className="card-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-muted/40 bg-card">
         {showBasket ? (
           /* Basket inline panel */
@@ -589,7 +538,7 @@ export default function FileManagerClient({
         ) : selectedStoreId ? (
           <>
             {/* Toolbar row: breadcrumb + actions */}
-            <div className="flex items-center justify-between border-b border-muted/40 px-3 py-1">
+            <div className="flex h-11 items-center justify-between border-b border-muted/40 px-3">
               <Breadcrumb
                 currentPath={currentPath}
                 onNavigateToFolder={navigateToFolder}
@@ -600,7 +549,7 @@ export default function FileManagerClient({
                   onClick={handleCreateFolder}
                   variant="ghost"
                   size="sm"
-                  className="text-accent"
+                  className="h-8 px-2 text-accent"
                 >
                   <FolderPlus className="h-4 w-4" />
                   New folder
@@ -609,7 +558,7 @@ export default function FileManagerClient({
                   onClick={handleImport}
                   variant="ghost"
                   size="sm"
-                  className="text-accent"
+                  className="h-8 px-2 text-accent"
                 >
                   <Upload className="h-4 w-4" />
                   Import
@@ -704,7 +653,7 @@ export default function FileManagerClient({
                 Select a store to browse files
               </p>
               <p className="mt-1 text-xs">
-                Choose a storage location from the sidebar
+                Choose a store from the top bar
               </p>
             </div>
           </div>
