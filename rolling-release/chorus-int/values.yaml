@@ -25,6 +25,3 @@ env:
       secretKeyRef:
         name: llm-api-key
         key: key
-
-ingress:
-  enabled: false
