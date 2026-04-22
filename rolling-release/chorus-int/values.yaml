@@ -25,14 +25,3 @@ env:
       secretKeyRef:
         name: llm-api-key
         key: key
-
-ingress:
-  hosts:
-    - host: int.chorus-tre.ch
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-  - hosts:
-    - int.chorus-tre.ch
-    secretName: web-ui-tls
