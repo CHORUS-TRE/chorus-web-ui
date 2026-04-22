@@ -199,7 +199,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         </Card>
 
         {/* Data Card */}
-        <Card className="flex h-full flex-col bg-contrast-background/70 backdrop-blur-sm">
+        <Card className="flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
               <Link href={`/workspaces/${workspaceId}/data`} variant="flex">

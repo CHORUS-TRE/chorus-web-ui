@@ -12,7 +12,6 @@ import {
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import {
   type ContextMenuPosition,
@@ -23,6 +22,7 @@ import { FolderDeleteDialog } from '@/components/file-manager/folder-delete-dial
 import { SelectionBasket } from '@/components/file-manager/selection-basket'
 import { toast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,

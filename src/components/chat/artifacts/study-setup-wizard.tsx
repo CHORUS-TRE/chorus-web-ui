@@ -24,11 +24,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { toast } from '@/components/hooks/use-toast'
-import { WorkspaceWithDev } from '@/domain/model'
-import { cn } from '@/lib/utils'
-import { useAuthentication } from '@/providers/authentication-provider'
-import { useAppState } from '@/stores/app-state-store'
-import { workspaceCreateWithDev } from '@/view-model/workspace-view-model'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -36,6 +31,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { WorkspaceWithDev } from '@/domain/model'
+import { cn } from '@/lib/utils'
+import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
+import { workspaceCreateWithDev } from '@/view-model/workspace-view-model'
 
 // ────────────────────────────────────────────
 // Types

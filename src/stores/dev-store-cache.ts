@@ -1,6 +1,11 @@
-import { z } from 'zod'
 import { create } from 'zustand'
 
+import {
+  BookmarkItem,
+  Bookmarks,
+  BookmarksSchema,
+  USER_BOOKMARKS_KEY
+} from '@/domain/model/bookmark'
 import {
   DEFAULT_INSTANCE_CONFIG,
   INSTANCE_CONFIG_KEYS,
@@ -96,7 +101,6 @@ type DevStoreCacheState = {
   getInstanceLogo: () => InstanceLogo | null
   getInstanceTheme: () => InstanceTheme | null
   getInstanceLimits: () => InstanceLimits | null
-  getInstanceSidebarWebapps: () => string[]
 
   setInstanceName: (name: string) => Promise<boolean>
   setInstanceHeadline: (headline: string) => Promise<boolean>
@@ -105,7 +109,10 @@ type DevStoreCacheState = {
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
-  setInstanceSidebarWebapps: (webapps: string[]) => Promise<boolean>
+
+  // User bookmarks (JSON array stored at user.bookmarks)
+  getUserBookmarks: () => Bookmarks
+  setUserBookmarks: (bookmarks: BookmarkItem[]) => Promise<boolean>
 
   // UI Actions
   setCookieConsentOpen: (open: boolean) => void
@@ -371,8 +378,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       tagline: state.getInstanceTagline(),
       website: state.getInstanceWebsite(),
       logo: state.getInstanceLogo(),
-      theme: state.getInstanceTheme(),
-      sidebarWebapps: state.getInstanceSidebarWebapps()
+      theme: state.getInstanceTheme()
     }
   },
 
@@ -451,25 +457,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     }
   },
 
-  getInstanceSidebarWebapps: () => {
-    const value = get().global[INSTANCE_CONFIG_KEYS.SIDEBAR_WEBAPPS]
-    if (!value) return DEFAULT_INSTANCE_CONFIG.sidebarWebapps
-
-    try {
-      const parsed = JSON.parse(value)
-      // Validate array of strings
-      const validated = z.array(z.string()).safeParse(parsed)
-      if (validated.success) {
-        return validated.data
-      }
-      console.error('Invalid instance sidebar webapps:', validated.error.issues)
-      return DEFAULT_INSTANCE_CONFIG.sidebarWebapps
-    } catch (e) {
-      console.error('Error parsing instance sidebar webapps:', e)
-      return DEFAULT_INSTANCE_CONFIG.sidebarWebapps
-    }
-  },
-
   // Individual setters
   setInstanceName: async (name: string) => {
     return get().setGlobal(INSTANCE_CONFIG_KEYS.NAME, name)
@@ -508,11 +495,27 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     return get().setGlobal(INSTANCE_CONFIG_KEYS.LIMITS, JSON.stringify(limits))
   },
 
-  setInstanceSidebarWebapps: async (webapps: string[]) => {
-    return get().setGlobal(
-      INSTANCE_CONFIG_KEYS.SIDEBAR_WEBAPPS,
-      JSON.stringify(webapps)
-    )
+  // ============================================
+  // User Bookmarks
+  // ============================================
+
+  getUserBookmarks: () => {
+    const value = get().user[USER_BOOKMARKS_KEY]
+    if (!value) return []
+    try {
+      const parsed = JSON.parse(value)
+      const validated = BookmarksSchema.safeParse(parsed)
+      if (validated.success) return validated.data
+      console.warn('Invalid user.bookmarks, resetting:', validated.error.issues)
+      return []
+    } catch (e) {
+      console.warn('Error parsing user.bookmarks, resetting:', e)
+      return []
+    }
+  },
+
+  setUserBookmarks: async (bookmarks: BookmarkItem[]) => {
+    return get().setUser(USER_BOOKMARKS_KEY, JSON.stringify(bookmarks))
   },
 
   // UI Actions
