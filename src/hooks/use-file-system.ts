@@ -230,7 +230,7 @@ export function useFileSystem(workspaceId?: string) {
           name: store.name,
           type: 'folder',
           parentId: rootId,
-          path: `${store.name}/`,
+          path: `${store.name}`,
           modifiedAt: new Date(),
           owner: 'System'
         }
