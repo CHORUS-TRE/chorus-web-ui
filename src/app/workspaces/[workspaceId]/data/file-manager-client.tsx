@@ -4,6 +4,7 @@ import {
   CirclePlus,
   FolderPlus,
   HardDrive,
+  Loader2,
   ShoppingBasket,
   Upload
 } from 'lucide-react'
@@ -31,19 +32,6 @@ import { Input } from '@/components/ui/input'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { cn } from '@/lib/utils'
 import type { FileSystemItem } from '@/types/file-system'
-
-/** Friendly tooltip descriptions for known mount names (chip row no longer renders these inline). */
-const STORE_DESCRIPTION: Record<string, string> = {
-  archive: 'Permanent Storage — long-term data that persists across sessions',
-  scratch: 'Working Files — temporary workspace for active analysis'
-}
-
-function getStoreTooltip(name: string, fallback?: string) {
-  return (
-    STORE_DESCRIPTION[name.toLowerCase()] ??
-    (fallback && fallback.trim().length > 0 ? fallback : 'Storage mount')
-  )
-}
 import {
   createDataExtractionRequest,
   createDataTransferRequest
@@ -61,6 +49,7 @@ export default function FileManagerClient({
     stores,
     loading,
     movingItemId,
+    isCopying,
     searchQuery,
     getChildren,
     selectItem,
@@ -430,7 +419,7 @@ export default function FileManagerClient({
               const isDropTarget = dragOverStoreId === storeId
               const tooltip = !isSelectable
                 ? 'Store unavailable'
-                : getStoreTooltip(store.name, store.description)
+                : store.description?.trim() || 'Storage mount'
               return (
                 <button
                   key={storeId}
@@ -465,15 +454,7 @@ export default function FileManagerClient({
                     e.preventDefault()
                     setDragOverStoreId(null)
                     const draggedItemId = e.dataTransfer.getData('text/plain')
-                    const draggedItem = draggedItemId
-                      ? state.items[draggedItemId]
-                      : undefined
-                    toast({
-                      title: 'Cross-store copy coming soon',
-                      description: draggedItem
-                        ? `Would copy "${draggedItem.name}" to ${store.name}.`
-                        : `Would copy to ${store.name}.`
-                    })
+                    if (draggedItemId) moveItem(draggedItemId, storeId, true)
                   }}
                 >
                   <span
@@ -578,6 +559,16 @@ export default function FileManagerClient({
                 }
               }}
             >
+              {/* Copy progress overlay */}
+              {isCopying && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-sm">
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <span className="text-sm font-medium">Copying…</span>
+                  </div>
+                </div>
+              )}
+
               {/* Drop zone overlay */}
               {isDraggingOver && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">
@@ -592,7 +583,10 @@ export default function FileManagerClient({
 
               {currentChildren.length === 0 && !loading ? (
                 /* Empty state — full-height dashed dropzone */
-                <div className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground">
+                <div
+                  className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground"
+                  onContextMenu={(e) => handleContextMenu(e, null)}
+                >
                   <Upload className="h-12 w-12 opacity-40" />
                   <div className="text-center">
                     <p className="text-sm font-medium">No files yet</p>

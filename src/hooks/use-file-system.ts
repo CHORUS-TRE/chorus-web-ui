@@ -106,6 +106,7 @@ export function useFileSystem(workspaceId?: string) {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [movingItemId, setMovingItemId] = useState<string | null>(null)
+  const [isCopying, setIsCopying] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fetchedPaths, setFetchedPaths] = useState<Set<string>>(new Set())
   const [stores, setStores] = useState<WorkspaceFileStore[]>([])
@@ -389,10 +390,14 @@ export function useFileSystem(workspaceId?: string) {
   )
 
   const moveItem = useCallback(
-    async (itemId: string, newParentId: string) => {
+    async (
+      itemId: string,
+      newParentId: string,
+      copy?: boolean
+    ): Promise<boolean> => {
       if (!workspaceId) {
         console.error('No workspace ID provided for item move')
-        return
+        return false
       }
 
       const item = state.items[itemId]
@@ -400,15 +405,37 @@ export function useFileSystem(workspaceId?: string) {
 
       if (!item) {
         console.error('Item not found:', itemId)
-        return
+        return false
       }
 
       if (!newParent || newParent.type !== 'folder') {
         console.error('Invalid destination folder:', newParentId)
-        return
+        return false
+      }
+
+      // Ensure destination folder contents are loaded so we can detect conflicts
+      await fetchWorkspaceFiles(workspaceId, newParent.path || '')
+
+      const conflict = Object.values(state.items).find(
+        (i) =>
+          i.parentId === newParentId && i.name === item.name && i.id !== itemId
+      )
+      if (conflict) {
+        toast({
+          title: 'File already exists',
+          description: `"${item.name}" already exists in "${newParent.name}".`,
+          variant: 'destructive'
+        })
+        return false
       }
 
       setMovingItemId(itemId)
+
+      const getStore = (path: string) => path.split('/')[0]
+      const isCopy =
+        copy !== undefined
+          ? copy
+          : getStore(item.path) !== getStore(newParent.path)
 
       try {
         // Calculate new path based on the new parent folder
@@ -421,34 +448,40 @@ export function useFileSystem(workspaceId?: string) {
             ? `${item.name}/`
             : item.name
 
-        const result = await workspaceFileUpdate(workspaceId, item.path, {
-          name: item.name,
-          path: newPath,
-          isDirectory: item.type === 'folder'
-        })
+        const result = await workspaceFileUpdate(
+          workspaceId,
+          item.path,
+          {
+            name: item.name,
+            path: newPath,
+            isDirectory: item.type === 'folder'
+          },
+          isCopy || undefined
+        )
 
         if (result.error) {
           setError(result.error)
           toast({
-            title: 'Move failed',
-            description: `Failed to move ${item.name}. Please try again.`,
+            title: isCopy ? 'Copy failed' : 'Move failed',
+            description: result.error,
             variant: 'destructive'
           })
-          return
+          return false
         }
 
-        // Update local state
-        setState((prev) => ({
-          ...prev,
-          items: {
-            ...prev.items,
-            [itemId]: {
-              ...prev.items[itemId],
-              parentId: newParentId,
-              path: newPath
+        if (!isCopy) {
+          setState((prev) => ({
+            ...prev,
+            items: {
+              ...prev.items,
+              [itemId]: {
+                ...prev.items[itemId],
+                parentId: newParentId,
+                path: newPath
+              }
             }
-          }
-        }))
+          }))
+        }
 
         // Refresh both the old and new parent folders
         const currentFolder = state.items[state.currentFolderId || 'root']
@@ -461,20 +494,28 @@ export function useFileSystem(workspaceId?: string) {
         }
 
         toast({
-          title: 'File moved',
-          description: `${item.name} moved to ${newParent.name}`,
+          title: isCopy ? 'File copied' : 'File moved',
+          description: `"${item.name}" ${isCopy ? 'copied' : 'moved'} to ${newParent.name}`,
           variant: 'default'
         })
+
+        return true
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : 'Failed to move item'
-        console.error('Error moving item:', errorMessage)
+          err instanceof Error
+            ? err.message
+            : `Failed to ${isCopy ? 'copy' : 'move'} item`
+        console.error(
+          `Error ${isCopy ? 'copying' : 'moving'} item:`,
+          errorMessage
+        )
         setError(errorMessage)
         toast({
-          title: 'Move failed',
-          description: `Failed to move ${item.name}. Please try again.`,
+          title: isCopy ? 'Copy failed' : 'Move failed',
+          description: errorMessage,
           variant: 'destructive'
         })
+        return false
       } finally {
         setMovingItemId(null)
       }
@@ -1035,54 +1076,28 @@ export function useFileSystem(workspaceId?: string) {
       const targetFolder = state.items[targetFolderId]
       if (!targetFolder || targetFolder.type !== 'folder') return
 
-      for (const itemId of itemIds) {
-        if (action === 'cut') {
-          await moveItem(itemId, targetFolderId)
-        } else {
-          // Copy: create a new file at the target path
-          const item = state.items[itemId]
-          if (!item) continue
+      if (action === 'copy') setIsCopying(true)
 
-          const targetPath = targetFolder.path
-            ? `${targetFolder.path}/${item.name}`
-            : item.name
-
-          try {
-            const sourceResult = await workspaceFileGet(workspaceId, item.path)
-            if (sourceResult.error || !sourceResult.data) continue
-
-            await workspaceFileCreate(workspaceId, {
-              name: item.name,
-              path: targetPath,
-              isDirectory: item.type === 'folder',
-              content: sourceResult.data.content || '',
-              mimeType: sourceResult.data.mimeType,
-              size: sourceResult.data.size
-            })
-          } catch (err) {
-            console.error('Error copying item:', err)
-            toast({
-              title: 'Copy failed',
-              description: `Failed to copy ${item.name}`,
-              variant: 'destructive'
-            })
-          }
+      try {
+        let successCount = 0
+        for (const itemId of itemIds) {
+          const ok =
+            action === 'cut'
+              ? await moveItem(itemId, targetFolderId)
+              : await moveItem(itemId, targetFolderId, true)
+          if (ok) successCount++
         }
+
+        if (successCount === 0) return
+
+        if (action === 'cut') {
+          setState((prev) => ({ ...prev, clipboard: null }))
+        }
+
+        await fetchWorkspaceFiles(workspaceId, targetFolder.path, true)
+      } finally {
+        if (action === 'copy') setIsCopying(false)
       }
-
-      // Clear clipboard after cut (keep after copy)
-      if (action === 'cut') {
-        setState((prev) => ({ ...prev, clipboard: null }))
-      }
-
-      // Refresh target folder
-      await fetchWorkspaceFiles(workspaceId, targetFolder.path, true)
-
-      toast({
-        title: action === 'cut' ? 'Items moved' : 'Items pasted',
-        description: `${itemIds.length} item${itemIds.length > 1 ? 's' : ''} ${action === 'cut' ? 'moved' : 'copied'} to ${targetFolder.name}`,
-        variant: 'default'
-      })
     },
     [state.clipboard, state.items, workspaceId, moveItem, fetchWorkspaceFiles]
   )
@@ -1092,6 +1107,7 @@ export function useFileSystem(workspaceId?: string) {
     stores,
     loading,
     movingItemId,
+    isCopying,
     error,
     searchQuery,
     getChildren,
