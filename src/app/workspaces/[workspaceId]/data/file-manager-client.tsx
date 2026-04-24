@@ -4,6 +4,7 @@ import {
   CirclePlus,
   FolderPlus,
   HardDrive,
+  Loader2,
   ShoppingBasket,
   Upload
 } from 'lucide-react'
@@ -48,6 +49,7 @@ export default function FileManagerClient({
     stores,
     loading,
     movingItemId,
+    isCopying,
     searchQuery,
     getChildren,
     selectItem,
@@ -452,15 +454,7 @@ export default function FileManagerClient({
                     e.preventDefault()
                     setDragOverStoreId(null)
                     const draggedItemId = e.dataTransfer.getData('text/plain')
-                    const draggedItem = draggedItemId
-                      ? state.items[draggedItemId]
-                      : undefined
-                    toast({
-                      title: 'Cross-store copy coming soon',
-                      description: draggedItem
-                        ? `Would copy "${draggedItem.name}" to ${store.name}.`
-                        : `Would copy to ${store.name}.`
-                    })
+                    if (draggedItemId) moveItem(draggedItemId, storeId, true)
                   }}
                 >
                   <span
@@ -565,6 +559,16 @@ export default function FileManagerClient({
                 }
               }}
             >
+              {/* Copy progress overlay */}
+              {isCopying && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-sm">
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <span className="text-sm font-medium">Copying…</span>
+                  </div>
+                </div>
+              )}
+
               {/* Drop zone overlay */}
               {isDraggingOver && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">

@@ -110,10 +110,12 @@ export function FileContextMenu({
     >
       {isOnItem ? (
         <>
-          <button className={menuItemClass} onClick={onCopy}>
-            <ClipboardCopy className="h-4 w-4" />
-            Copy
-          </button>
+          {targetItemType === 'file' && (
+            <button className={menuItemClass} onClick={onCopy}>
+              <ClipboardCopy className="h-4 w-4" />
+              Copy
+            </button>
+          )}
           <button className={menuItemClass} onClick={onCut}>
             <Scissors className="h-4 w-4" />
             Cut
