@@ -9,7 +9,8 @@ export interface WorkspaceFileUpdateUseCase {
   execute(
     workspaceId: string,
     oldPath: string,
-    file: WorkspaceFileUpdateType
+    file: WorkspaceFileUpdateType,
+    copy?: boolean
   ): Promise<Result<WorkspaceFile>>
 }
 
@@ -23,8 +24,9 @@ export class WorkspaceFileUpdate implements WorkspaceFileUpdateUseCase {
   async execute(
     workspaceId: string,
     oldPath: string,
-    file: WorkspaceFileUpdateType
+    file: WorkspaceFileUpdateType,
+    copy?: boolean
   ): Promise<Result<WorkspaceFile>> {
-    return this.repository.update(workspaceId, oldPath, file)
+    return this.repository.update(workspaceId, oldPath, file, copy)
   }
 }

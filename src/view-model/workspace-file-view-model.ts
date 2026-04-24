@@ -107,14 +107,15 @@ export async function workspaceFileStoreList(
 export async function workspaceFileUpdate(
   workspaceId: string,
   oldPath: string,
-  file: WorkspaceFileUpdateType
+  file: WorkspaceFileUpdateType,
+  copy?: boolean
 ): Promise<Result<WorkspaceFile>> {
   try {
     if (!workspaceId) throw new Error('Invalid workspace id')
     if (!oldPath) throw new Error('Invalid old file path')
     const repository = await getRepository()
     const useCase = new WorkspaceFileUpdate(repository)
-    return await useCase.execute(workspaceId, oldPath, file)
+    return await useCase.execute(workspaceId, oldPath, file, copy)
   } catch (error) {
     console.error('Error updating workspace file', error)
     return { error: error instanceof Error ? error.message : String(error) }

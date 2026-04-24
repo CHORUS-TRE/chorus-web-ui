@@ -5,6 +5,7 @@ import {
   fromChorusWorkspaceFileStoreInfo
 } from '@/data/data-source/chorus-api/workspace-file-mapper'
 import { Result } from '@/domain/model'
+import { ResponseError } from '@/internal/client/runtime'
 import {
   WorkspaceFile,
   WorkspaceFileCreateType,
@@ -61,10 +62,11 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
   async update(
     workspaceId: string,
     oldPath: string,
-    file: WorkspaceFileUpdateType
+    file: WorkspaceFileUpdateType,
+    copy?: boolean
   ): Promise<Result<WorkspaceFile>> {
     try {
-      const response = await this.dataSource.update(workspaceId, oldPath, file)
+      const response = await this.dataSource.update(workspaceId, oldPath, file, copy)
 
       if (response.result?.file) {
         const workspaceFile = fromChorusWorkspaceFile(response.result.file)
@@ -73,6 +75,9 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
 
       return { error: 'Failed to update workspace file' }
     } catch (error) {
+      if (error instanceof ResponseError && error.response.status === 409) {
+        return { error: 'A file with that name already exists at the destination.' }
+      }
       return {
         error: error instanceof Error ? error.message : 'Unknown error occurred'
       }
