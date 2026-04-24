@@ -31,19 +31,6 @@ import { Input } from '@/components/ui/input'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { cn } from '@/lib/utils'
 import type { FileSystemItem } from '@/types/file-system'
-
-/** Friendly tooltip descriptions for known mount names (chip row no longer renders these inline). */
-const STORE_DESCRIPTION: Record<string, string> = {
-  archive: 'Permanent Storage — long-term data that persists across sessions',
-  scratch: 'Working Files — temporary workspace for active analysis'
-}
-
-function getStoreTooltip(name: string, fallback?: string) {
-  return (
-    STORE_DESCRIPTION[name.toLowerCase()] ??
-    (fallback && fallback.trim().length > 0 ? fallback : 'Storage mount')
-  )
-}
 import {
   createDataExtractionRequest,
   createDataTransferRequest
@@ -430,7 +417,7 @@ export default function FileManagerClient({
               const isDropTarget = dragOverStoreId === storeId
               const tooltip = !isSelectable
                 ? 'Store unavailable'
-                : getStoreTooltip(store.name, store.description)
+                : store.description?.trim() || 'Storage mount'
               return (
                 <button
                   key={storeId}
