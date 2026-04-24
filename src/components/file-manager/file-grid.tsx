@@ -218,7 +218,7 @@ export function FileGrid({
 
   const handleDragStart = (e: React.DragEvent, item: FileSystemItem) => {
     e.dataTransfer.setData('text/plain', item.id)
-    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.effectAllowed = 'copyMove'
   }
 
   const handleDragOver = (e: React.DragEvent, item: FileSystemItem) => {

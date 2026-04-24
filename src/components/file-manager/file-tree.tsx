@@ -132,7 +132,7 @@ function TreeNode({ item, level, ...props }: TreeNodeProps) {
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('text/plain', item.id)
-    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.effectAllowed = 'copyMove'
   }
 
   const handleDragOver = (e: React.DragEvent) => {
