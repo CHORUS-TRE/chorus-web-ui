@@ -583,7 +583,10 @@ export default function FileManagerClient({
 
               {currentChildren.length === 0 && !loading ? (
                 /* Empty state — full-height dashed dropzone */
-                <div className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground">
+                <div
+                  className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground"
+                  onContextMenu={(e) => handleContextMenu(e, null)}
+                >
                   <Upload className="h-12 w-12 opacity-40" />
                   <div className="text-center">
                     <p className="text-sm font-medium">No files yet</p>
