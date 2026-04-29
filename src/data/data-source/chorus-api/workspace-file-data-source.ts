@@ -43,7 +43,7 @@ interface WorkspaceFileDataSource {
     workspaceId: string,
     oldPath: string,
     file: WorkspaceFileUpdateType,
-    copy?: boolean
+    isCopy?: boolean
   ) => Promise<ChorusUpdateWorkspaceFileReply>
   delete: (
     workspaceId: string,
@@ -124,14 +124,14 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
     workspaceId: string,
     oldPath: string,
     file: WorkspaceFileUpdateType,
-    copy?: boolean
+    isCopy?: boolean
   ): Promise<ChorusUpdateWorkspaceFileReply> {
     const chorusFile = toChorusWorkspaceFile(file)
     return this.service.workspaceFileServiceUpdateWorkspaceFile({
       workspaceId,
       oldPath,
       file: chorusFile,
-      copy
+      isCopy
     })
   }
 

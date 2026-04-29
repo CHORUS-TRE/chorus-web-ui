@@ -63,14 +63,14 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
     workspaceId: string,
     oldPath: string,
     file: WorkspaceFileUpdateType,
-    copy?: boolean
+    isCopy?: boolean
   ): Promise<Result<WorkspaceFile>> {
     try {
       const response = await this.dataSource.update(
         workspaceId,
         oldPath,
         file,
-        copy
+        isCopy
       )
 
       if (response.result?.file) {

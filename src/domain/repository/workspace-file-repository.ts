@@ -17,7 +17,7 @@ export interface WorkspaceFileRepository {
     workspaceId: string,
     oldPath: string,
     file: WorkspaceFileUpdateType,
-    copy?: boolean
+    isCopy?: boolean
   ) => Promise<Result<WorkspaceFile>>
   delete: (workspaceId: string, path: string) => Promise<Result<string>>
   list: (workspaceId: string, path: string) => Promise<Result<WorkspaceFile[]>>

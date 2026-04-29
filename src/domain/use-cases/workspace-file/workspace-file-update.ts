@@ -25,8 +25,8 @@ export class WorkspaceFileUpdate implements WorkspaceFileUpdateUseCase {
     workspaceId: string,
     oldPath: string,
     file: WorkspaceFileUpdateType,
-    copy?: boolean
+    isCopy?: boolean
   ): Promise<Result<WorkspaceFile>> {
-    return this.repository.update(workspaceId, oldPath, file, copy)
+    return this.repository.update(workspaceId, oldPath, file, isCopy)
   }
 }

@@ -104,7 +104,7 @@ export interface WorkspaceFileServiceUpdateWorkspaceFileRequest {
   workspaceId: string
   oldPath: string
   file: ChorusWorkspaceFile
-  copy?: boolean
+  isCopy?: boolean
 }
 
 export interface WorkspaceFileServiceUploadWorkspaceFilePartRequest {
@@ -797,8 +797,8 @@ export class WorkspaceFileServiceApi extends runtime.BaseAPI {
 
     const queryParameters: any = {}
 
-    if (requestParameters.copy !== undefined) {
-      queryParameters['copy'] = requestParameters.copy
+    if (requestParameters.isCopy !== undefined) {
+      queryParameters['isCopy'] = requestParameters.isCopy
     }
 
     const headerParameters: runtime.HTTPHeaders = {}
