@@ -1,3 +1,10 @@
+# [1.50.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.49.1...v1.50.0) (2026-05-04)
+
+
+### Features
+
+* add cross-store copy and move file operations ([#217](https://github.com/CHORUS-TRE/chorus-web-ui/issues/217)) ([037b484](https://github.com/CHORUS-TRE/chorus-web-ui/commit/037b4848b718d3a378f2b69976d77d804c17802d))
+
 ## [1.49.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.49.0...v1.49.1) (2026-04-22)
 
 # [1.49.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.48.2...v1.49.0) (2026-04-22)
