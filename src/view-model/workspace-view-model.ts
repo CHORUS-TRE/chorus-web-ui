@@ -90,6 +90,22 @@ async function enrichWorkspaceWithDev(
 // API/DevStore validation helpers
 // ============================================
 
+function parseAllowedFqdns(raw: unknown): string[] | undefined {
+  if (raw === undefined || raw === null || raw === '') return undefined
+  if (Array.isArray(raw)) return raw.map((v) => String(v))
+  if (typeof raw !== 'string') return undefined
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    if (Array.isArray(parsed)) return parsed.map((v) => String(v))
+  } catch {
+    // Fall through — treat as newline-separated string
+  }
+  return raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+}
+
 function extractAndValidateApiFields(
   data: Record<string, unknown>,
   isUpdate = false
@@ -101,6 +117,11 @@ function extractAndValidateApiFields(
     shortName: data.shortName as string,
     description: data.description as string | undefined,
     isMain: data.isMain as boolean | undefined,
+    networkPolicy: data.networkPolicy as
+      | WorkspaceCreateType['networkPolicy']
+      | undefined,
+    allowedFqdns: data.allowedFqdns as string[] | undefined,
+    clipboard: data.clipboard as WorkspaceCreateType['clipboard'] | undefined,
     ...(isUpdate ? { id: data.id as string } : {})
   }
 
@@ -118,8 +139,6 @@ function buildWorkspaceConfigFromDevForm(
 ): WorkspaceConfig | undefined {
   const hasConfig =
     data.descriptionMarkdown !== undefined ||
-    data.network !== undefined ||
-    data.allowCopyPaste !== undefined ||
     data.resourcePreset !== undefined ||
     data.gpu !== undefined ||
     data.cpu !== undefined ||
@@ -139,17 +158,6 @@ function buildWorkspaceConfigFromDevForm(
 
   if (data.descriptionMarkdown !== undefined) {
     partialConfig.descriptionMarkdown = data.descriptionMarkdown
-  }
-
-  const security: Partial<WorkspaceConfig['security']> = {}
-  if (data.network !== undefined) {
-    security.network = data.network
-  }
-  if (data.allowCopyPaste !== undefined) {
-    security.allowCopyPaste = data.allowCopyPaste
-  }
-  if (Object.keys(security).length > 0) {
-    partialConfig.security = security as WorkspaceConfig['security']
   }
 
   const resources: Partial<WorkspaceConfig['resources']> = {}
@@ -401,13 +409,15 @@ export async function workspaceCreateWithDev(
     const normalized: Record<string, unknown> = {
       ...raw,
       isMain: raw.isMain === 'true',
-      allowCopyPaste: raw.allowCopyPaste === 'true',
       coldStorageEnabled: raw.coldStorageEnabled === 'true',
       hotStorageEnabled: raw.hotStorageEnabled === 'true',
       serviceGitlab: raw.serviceGitlab === 'true',
       serviceK8s: raw.serviceK8s === 'true',
       serviceHpc: raw.serviceHpc === 'true',
-      gpu: raw.gpu ? parseInt(raw.gpu as string, 10) : undefined
+      gpu: raw.gpu ? parseInt(raw.gpu as string, 10) : undefined,
+      allowedFqdns: parseAllowedFqdns(raw.allowedFqdns),
+      networkPolicy: raw.networkPolicy || undefined,
+      clipboard: raw.clipboard || undefined
     }
 
     const apiValidation = extractAndValidateApiFields(normalized)
@@ -488,13 +498,15 @@ export async function workspaceUpdateWithDev(
     const normalized: Record<string, unknown> = {
       ...raw,
       isMain: raw.isMain === 'true',
-      allowCopyPaste: raw.allowCopyPaste === 'true',
       coldStorageEnabled: raw.coldStorageEnabled === 'true',
       hotStorageEnabled: raw.hotStorageEnabled === 'true',
       serviceGitlab: raw.serviceGitlab === 'true',
       serviceK8s: raw.serviceK8s === 'true',
       serviceHpc: raw.serviceHpc === 'true',
       gpu: raw.gpu ? parseInt(raw.gpu as string, 10) : undefined,
+      allowedFqdns: parseAllowedFqdns(raw.allowedFqdns),
+      networkPolicy: raw.networkPolicy || undefined,
+      clipboard: raw.clipboard || undefined,
       image: removeImage ? null : raw.image
     }
 

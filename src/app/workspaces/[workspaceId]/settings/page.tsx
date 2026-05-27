@@ -1,12 +1,11 @@
 'use client'
 
-import { Settings } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import {
   WorkspaceDeleteForm,
-  WorkspaceUpdateForm
+  WorkspaceGeneralInlineForm
 } from '@/components/forms/workspace-forms'
 import { Button } from '@/components/ui/button'
 import {
@@ -24,12 +23,9 @@ export default function WorkspaceSettingsPage() {
   const workspaceId = params?.workspaceId
   const { can, PERMISSIONS } = useAuthorization()
   const workspaces = useAppState((state) => state.workspaces)
-  const [activeTab, setActiveTab] = useState('general')
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
-  const [deleted, setDeleted] = useState<boolean>(false)
-  const [open, setOpen] = useState(false)
   const router = useRouter()
 
   if (!workspace) {
@@ -46,68 +42,42 @@ export default function WorkspaceSettingsPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between">
+      <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-semibold text-muted-foreground">
             Workspace Settings
           </h1>
-          <p className="mb-8 text-muted-foreground">
+          <p className="text-muted-foreground">
             Manage workspace configuration.
           </p>
         </div>
+        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+          Delete Workspace
+        </Button>
+        {deleteOpen && (
+          <WorkspaceDeleteForm
+            id={workspace.id}
+            state={[deleteOpen, setDeleteOpen]}
+            onSuccess={() => {
+              refreshWorkspaces()
+              router.push('/workspaces')
+            }}
+          />
+        )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle>General Configuration</CardTitle>
-            <CardDescription>Update workspace settings.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="max-w-xl">
-              <Button onClick={() => setOpen(true)}>
-                Edit Workspace Details
-              </Button>
-              {open && (
-                <WorkspaceUpdateForm
-                  workspace={workspace}
-                  state={[open, setOpen]}
-                  onSuccess={() => {
-                    // refresh handled by store usually or parent
-                    refreshWorkspaces()
-                  }}
-                />
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle>Delete Workspace</CardTitle>
-            <CardDescription>Delete workspace</CardDescription>
-          </CardHeader>
-          <CardContent className="max-w-xl">
-            <Button onClick={() => setDeleteOpen(true)}>
-              Delete Workspace
-            </Button>
-            {deleteOpen && (
-              <WorkspaceDeleteForm
-                id={workspace?.id}
-                state={[deleteOpen, setDeleteOpen]}
-                onSuccess={() => {
-                  refreshWorkspaces()
-                  router.push('/workspaces')
-                  setDeleted(true)
-                  setTimeout(() => {
-                    setDeleted(false)
-                  }, 3000)
-                }}
-              />
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>General Configuration</CardTitle>
+          <CardDescription>Update workspace settings.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <WorkspaceGeneralInlineForm
+            workspace={workspace}
+            onSuccess={() => refreshWorkspaces()}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
