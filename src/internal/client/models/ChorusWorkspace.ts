@@ -97,6 +97,36 @@ export interface ChorusWorkspace {
    * @memberof ChorusWorkspace
    */
   namespace?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  networkPolicy?: string
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ChorusWorkspace
+   */
+  allowedFqdns?: Array<string>
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  networkPolicyStatus?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  networkPolicyMessage?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  clipboard?: string
 }
 
 /**
@@ -140,7 +170,20 @@ export function ChorusWorkspaceFromJSONTyped(
     updatedAt: !exists(json, 'updatedAt')
       ? undefined
       : new Date(json['updatedAt']),
-    namespace: !exists(json, 'namespace') ? undefined : json['namespace']
+    namespace: !exists(json, 'namespace') ? undefined : json['namespace'],
+    networkPolicy: !exists(json, 'networkPolicy')
+      ? undefined
+      : json['networkPolicy'],
+    allowedFqdns: !exists(json, 'allowedFqdns')
+      ? undefined
+      : json['allowedFqdns'],
+    networkPolicyStatus: !exists(json, 'networkPolicyStatus')
+      ? undefined
+      : json['networkPolicyStatus'],
+    networkPolicyMessage: !exists(json, 'networkPolicyMessage')
+      ? undefined
+      : json['networkPolicyMessage'],
+    clipboard: !exists(json, 'clipboard') ? undefined : json['clipboard']
   }
 }
 
@@ -166,6 +209,11 @@ export function ChorusWorkspaceToJSON(value?: ChorusWorkspace | null): any {
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
       value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-    namespace: value.namespace
+    namespace: value.namespace,
+    networkPolicy: value.networkPolicy,
+    allowedFqdns: value.allowedFqdns,
+    networkPolicyStatus: value.networkPolicyStatus,
+    networkPolicyMessage: value.networkPolicyMessage,
+    clipboard: value.clipboard
   }
 }

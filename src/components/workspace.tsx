@@ -7,6 +7,7 @@ import {
   Folder,
   Footprints,
   LaptopMinimal,
+  PlugZap,
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -24,14 +25,17 @@ import {
 } from '@/components/ui/card'
 import { Link } from '@/components/ui/link'
 import { AuditEntry } from '@/domain/model/audit'
+import { WorkspaceServiceInstance } from '@/domain/model/workspace-service-instance'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
 import { formatFileSize } from '@/utils/format-file-size'
 import { listWorkspace as listWorkspaceAudit } from '@/view-model/audit-view-model'
+import { workspaceServiceInstanceList } from '@/view-model/workspace-service-instance-view-model'
 
 import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'
+import { WorkspaceServiceInstanceCreateForm } from './forms/workspace-service-instance-create-form'
 import { toast } from './hooks/use-toast'
 import { ChartContainer } from './ui/chart'
 import { ScrollArea } from './ui/scroll-area'
@@ -78,6 +82,9 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   const { user, refreshUser } = useAuthentication()
   const { getChildren } = useFileSystem(workspaceId)
   const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([])
+  const [serviceInstances, setServiceInstances] = useState<
+    WorkspaceServiceInstance[]
+  >([])
 
   const rootChildren = getChildren('root')
 
@@ -93,6 +100,20 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
       }
     }
     fetchAudit()
+  }, [workspaceId])
+
+  useEffect(() => {
+    async function fetchServiceInstances() {
+      try {
+        const result = await workspaceServiceInstanceList(workspaceId)
+        if (result.data) {
+          setServiceInstances(result.data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch service instances:', err)
+      }
+    }
+    fetchServiceInstances()
   }, [workspaceId])
   const workspace = workspaces?.find((w) => w.id === workspaceId)
 
@@ -455,6 +476,49 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               <ArrowRight className="h-4 w-4" />
               View All
             </Button>
+          </CardFooter>
+        </Card>
+
+        {/* Service Instances Card */}
+        <Card className="flex h-full flex-col">
+          <CardHeader className="mb-0 w-full">
+            <CardTitle className="mb-1 flex items-center gap-3">
+              <PlugZap className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+              Services
+            </CardTitle>
+            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
+              Helm-based services deployed in this workspace.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              {serviceInstances.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  No service instances.
+                </p>
+              ) : (
+                serviceInstances.map((instance) => (
+                  <div
+                    key={instance.id}
+                    className="flex items-center justify-between"
+                  >
+                    <p className="text-xs text-foreground">{instance.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {instance.status ?? instance.state ?? '—'}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+          <div className="flex-grow" />
+          <CardFooter className="flex items-end justify-start">
+            <WorkspaceServiceInstanceCreateForm
+              workspaceId={workspaceId}
+              onSuccess={(instance) =>
+                setServiceInstances((prev) => [...prev, instance])
+              }
+            />
           </CardFooter>
         </Card>
 
