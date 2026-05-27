@@ -1,3 +1,10 @@
+## [1.51.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.51.0...v1.51.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* trigger ci ([e832b52](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e832b52adc3b204c4842f56362c92c78d0994b30))
+
 # [1.51.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.50.0...v1.51.0) (2026-05-27)
 
 
