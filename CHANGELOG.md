@@ -1,3 +1,24 @@
+## [1.51.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.51.1...v1.51.2) (2026-05-27)
+
+
+### Bug Fixes
+
+* trigger ci ([#222](https://github.com/CHORUS-TRE/chorus-web-ui/issues/222)) ([7537ecc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7537ecc853a1429b91bbe2b47344f15782820d84))
+
+## [1.51.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.51.0...v1.51.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* trigger ci ([e832b52](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e832b52adc3b204c4842f56362c92c78d0994b30))
+
+# [1.51.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.50.0...v1.51.0) (2026-05-27)
+
+
+### Features
+
+* update app kiosk config fields to browser config ([#218](https://github.com/CHORUS-TRE/chorus-web-ui/issues/218)) ([3d28ece](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3d28ece42aafadbbd8d857b63f7875b49ba7ce3b))
+
 # [1.50.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.49.1...v1.50.0) (2026-05-04)
 
 

@@ -45,7 +45,7 @@ const baseAppSchema = z.object({
       (val) => !val || /^\d+(\.\d+)?(Gi|M|G)$/.test(val),
       'Must be a number followed by Gi, M, or G (e.g., 1Gi, 1M, 1G)'
     ),
-  kioskConfigURL: z
+  browserConfigURL: z
     .string()
     .refine(
       (val) => !val || val === '' || /^https?:\/\/.+/.test(val),

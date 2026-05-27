@@ -66,7 +66,7 @@ export default function AppEditPage() {
             shmSize: result.data.shmSize || '',
             minEphemeralStorage: result.data.minEphemeralStorage || '',
             maxEphemeralStorage: result.data.maxEphemeralStorage || '',
-            kioskConfigURL: result.data.kioskConfigURL || '',
+            browserConfigURL: result.data.browserConfigURL || '',
             maxCPU: result.data.maxCPU || '',
             minCPU: result.data.minCPU || '',
             maxMemory: result.data.maxMemory || '',
@@ -299,14 +299,14 @@ export default function AppEditPage() {
                 <div className="space-y-4 md:border-l md:pl-8">
                   <FormField
                     control={form.control}
-                    name="kioskConfigURL"
+                    name="browserConfigURL"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Kiosk Config URL</FormLabel>
+                        <FormLabel>Browser Config URL</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Enter kiosk config URL"
+                            placeholder="Enter browser config URL"
                           />
                         </FormControl>
                         <FormMessage />
