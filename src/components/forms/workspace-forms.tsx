@@ -14,7 +14,6 @@ import {
   Server,
   Shield
 } from 'lucide-react'
-import Image from 'next/image'
 import {
   startTransition,
   useEffect,
@@ -29,7 +28,6 @@ import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -266,26 +264,25 @@ export function WorkspaceCreateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4 grid w-full grid-cols-4">
+              <TabsList className="mb-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="services">Services</TabsTrigger>
-                <TabsTrigger value="resources" className="demo-effect">Resources</TabsTrigger>
-
+                {/* <TabsTrigger value="resources" className="demo-effect">
+                  Resources
+                </TabsTrigger> */}
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
                 <GeneralTabContent form={form} />
               </TabsContent>
 
-              <TabsContent value="security" className="demo-effect space-y-4">
+              <TabsContent value="security" className="space-y-4">
                 <SecurityTabContent form={form} />
               </TabsContent>
 
               <TabsContent value="resources" className="demo-effect space-y-4">
                 <ResourcesTabContent form={form} />
               </TabsContent>
-
             </Tabs>
 
             <input type="hidden" {...form.register('tenantId')} />
@@ -305,6 +302,7 @@ export function WorkspaceCreateForm({
               </Button>
               <Button
                 type="submit"
+                variant="accent-filled"
                 disabled={form.formState.isSubmitting || isPending}
               >
                 {(form.formState.isSubmitting || isPending) && (
@@ -374,16 +372,18 @@ export function WorkspaceUpdateForm({
   state: [open, setOpen],
   trigger,
   workspace,
-  onSuccess
+  onSuccess,
+  initialTab = 'general'
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   trigger?: React.ReactNode
   workspace?: WorkspaceWithDev
   onSuccess?: (workspace: WorkspaceWithDev) => void
+  initialTab?: 'general' | 'security' | 'resources' | 'services'
 }) {
   const [isPending, startTransition] = useTransition()
   const [removeImage, setRemoveImage] = useState(false)
-  const [activeTab, setActiveTab] = useState('general')
+  const [activeTab, setActiveTab] = useState<string>(initialTab)
 
   // Get existing config or use defaults
   const getConfig = (): WorkspaceConfig => {
@@ -460,9 +460,9 @@ export function WorkspaceUpdateForm({
         serviceHpc: config?.services?.hpc || false
       })
       setRemoveImage(false)
-      setActiveTab('general')
+      setActiveTab(initialTab)
     }
-  }, [open, workspace, form])
+  }, [open, workspace, form, initialTab])
 
   async function onSubmit(data: WorkspaceFormData) {
     const formData = new FormData()
@@ -548,11 +548,10 @@ export function WorkspaceUpdateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4 grid grid-cols-4">
+              <TabsList className="mb-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="resources">Resources</TabsTrigger>
-                <TabsTrigger value="services">Services</TabsTrigger>
+                {/* <TabsTrigger value="resources">Resources</TabsTrigger> */}
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
@@ -571,7 +570,6 @@ export function WorkspaceUpdateForm({
               <TabsContent value="resources" className="space-y-4">
                 <ResourcesTabContent form={form} />
               </TabsContent>
-
             </Tabs>
 
             <input type="hidden" {...form.register('id')} />
@@ -590,6 +588,7 @@ export function WorkspaceUpdateForm({
               </Button>
               <Button
                 type="submit"
+                variant="accent-filled"
                 disabled={form.formState.isSubmitting || isPending}
               >
                 {(form.formState.isSubmitting || isPending) && (
@@ -602,171 +601,6 @@ export function WorkspaceUpdateForm({
         </Form>
       </DialogContent>
     </DialogContainer>
-  )
-}
-
-export function WorkspaceGeneralInlineForm({
-  workspace,
-  onSuccess
-}: {
-  workspace: WorkspaceWithDev
-  onSuccess?: (workspace: WorkspaceWithDev) => void
-}) {
-  const [isPending, startTransition] = useTransition()
-  const [removeImage, setRemoveImage] = useState(false)
-  const [activeTab, setActiveTab] = useState('general')
-
-  const existingConfig =
-    (workspace.dev?.config as WorkspaceConfig) || DEFAULT_WORKSPACE_CONFIG
-
-  const form = useForm<WorkspaceFormData>({
-    resolver: zodResolver(WorkspaceFormSchema),
-    defaultValues: {
-      id: workspace.id || '',
-      name: workspace.name || '',
-      shortName: workspace.shortName || 'wks',
-      description: workspace.description || '',
-      isMain: workspace.isMain || false,
-      tenantId: '1',
-      userId: workspace.userId || '',
-      descriptionMarkdown: existingConfig?.descriptionMarkdown || '',
-      networkPolicy: workspace.networkPolicy || 'Airgapped',
-      allowedFqdns: workspace.allowedFqdns || [],
-      clipboard: workspace.clipboard || 'disabled',
-      resourcePreset: existingConfig?.resources?.preset || 'small',
-      gpu: existingConfig?.resources?.gpu || 0,
-      cpu: existingConfig?.resources?.cpu || '2',
-      memory: existingConfig?.resources?.memory || '4Gi',
-      coldStorageEnabled:
-        existingConfig?.resources?.coldStorage?.enabled || false,
-      coldStorageSize: existingConfig?.resources?.coldStorage?.size || '100Gi',
-      hotStorageEnabled: existingConfig?.resources?.hotStorage?.enabled || true,
-      hotStorageSize: existingConfig?.resources?.hotStorage?.size || '10Gi',
-      serviceGitlab: existingConfig?.services?.gitlab || false,
-      serviceK8s: existingConfig?.services?.k8s || false,
-      serviceHpc: existingConfig?.services?.hpc || false
-    }
-  })
-
-  async function onSubmit(data: WorkspaceFormData) {
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      if (value === undefined || value === null) return
-      if (value instanceof FileList) {
-        if (value.length > 0) {
-          formData.append(key, value[0])
-        }
-        return
-      }
-      if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value))
-        return
-      }
-      formData.append(key, String(value))
-    })
-    if (removeImage) {
-      formData.append('removeImage', 'true')
-    }
-
-    startTransition(async () => {
-      const result = await workspaceUpdateWithDev({}, formData)
-
-      if (result.issues) {
-        result.issues.forEach((issue) => {
-          let formField: keyof WorkspaceFormData
-          if (issue.path[0] === 'dev') {
-            if (issue.path.length === 2) {
-              formField = issue.path[1] as keyof WorkspaceFormData
-            } else if (issue.path.length >= 3 && issue.path[1] === 'config') {
-              formField = issue.path[
-                issue.path.length - 1
-              ] as keyof WorkspaceFormData
-            } else {
-              formField = issue.path[
-                issue.path.length - 1
-              ] as keyof WorkspaceFormData
-            }
-          } else {
-            formField = issue.path[0] as keyof WorkspaceFormData
-          }
-
-          form.setError(formField, {
-            type: 'server',
-            message: issue.message
-          })
-        })
-        return
-      }
-
-      if (result.error) {
-        toast({
-          title: 'Error',
-          description: result.error,
-          variant: 'destructive'
-        })
-        return
-      }
-
-      if (result.data) {
-        toast({
-          title: 'Success',
-          description: 'Workspace updated successfully'
-        })
-        if (onSuccess) onSuccess(result.data)
-        setRemoveImage(false)
-      }
-    })
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="resources">Resources</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="general" className="space-y-4">
-            <GeneralTabContent
-              form={form}
-              workspace={workspace}
-              removeImage={removeImage}
-              setRemoveImage={setRemoveImage}
-            />
-          </TabsContent>
-
-          <TabsContent value="security" className="space-y-4">
-            <SecurityTabContent form={form} workspace={workspace} />
-          </TabsContent>
-
-          <TabsContent value="resources" className="space-y-4">
-            <ResourcesTabContent form={form} />
-          </TabsContent>
-
-        </Tabs>
-
-        <input type="hidden" {...form.register('id')} />
-        <input type="hidden" {...form.register('tenantId')} />
-        <input type="hidden" {...form.register('userId')} />
-        <input type="hidden" {...form.register('isMain')} />
-        <input type="hidden" {...form.register('shortName')} />
-
-        <div className="mt-6 flex justify-end">
-          <Button
-            type="submit"
-            variant="accent-filled"
-            disabled={form.formState.isSubmitting || isPending}
-          >
-            {(form.formState.isSubmitting || isPending) && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Save Changes
-          </Button>
-        </div>
-      </form>
-    </Form>
   )
 }
 
@@ -1273,5 +1107,3 @@ function ResourcesTabContent({
     </Card>
   )
 }
-
-

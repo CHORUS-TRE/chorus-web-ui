@@ -17,7 +17,6 @@ import { z } from 'zod'
 
 import { WorkspaceServiceInstanceCreateForm } from '@/components/forms/workspace-service-instance-create-form'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -411,24 +410,24 @@ function ServiceCard({
 
   return (
     <>
-      <Card
-        className="cursor-pointer transition-shadow hover:shadow-md"
+      <div
+        className="cursor-pointer rounded-lg border bg-card p-4 transition-shadow hover:shadow-md"
         onClick={() => setParamsOpen(true)}
       >
-        <CardContent className="flex items-start gap-4 px-5 py-4">
+        <div className="flex items-start gap-4">
           {/* Service icon */}
-          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-primary/10">
             <PlugZap className="h-5 w-5 text-primary" />
           </div>
 
           {/* Main content */}
           <div className="min-w-0 flex-1">
             {/* Name + status badge + chart label on one line */}
-            <div className="mb-1 flex flex-wrap items-center gap-2">
-              <span className="text-sm font-bold">{instance.name}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">{instance.name}</span>
               <StatusBadge status={instance.status} />
               {chartLabel && (
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-sm text-muted-foreground">
                   {chartLabel}
                 </span>
               )}
@@ -436,8 +435,8 @@ function ServiceCard({
 
             {/* Connection info as endpoint */}
             {instance.connectionInfo && (
-              <div className="mt-0.5 inline-flex items-start gap-1">
-                <pre className="line-clamp-2 whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-muted-foreground">
+              <div className="mt-1 inline-flex items-start gap-1">
+                <pre className="line-clamp-2 whitespace-pre-wrap font-mono text-sm leading-relaxed text-muted-foreground">
                   {instance.connectionInfo}
                 </pre>
                 <CopyButton value={instance.connectionInfo} />
@@ -446,26 +445,24 @@ function ServiceCard({
 
             {/* Status message — more prominent while transient */}
             {isTransient && (
-              <div className="mt-1.5 flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2 py-1">
-                <Loader2 className="h-3 w-3 flex-shrink-0 animate-spin text-amber-600 dark:text-amber-400" />
-                <p className="text-xs text-amber-700 dark:text-amber-400">
+              <div className="mt-2 flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2 py-1">
+                <Loader2 className="h-3.5 w-3.5 flex-shrink-0 animate-spin text-amber-600 dark:text-amber-400" />
+                <p className="text-sm text-amber-700 dark:text-amber-400">
                   {instance.statusMessage ?? 'Starting…'}
                 </p>
               </div>
             )}
             {!isTransient && instance.statusMessage && (
-              <div className="mt-1.5 flex items-start gap-1.5">
-                <AlertCircle className="mt-0.5 h-3 w-3 flex-shrink-0 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground">
-                  {instance.statusMessage}
-                </p>
+              <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                <span className="truncate">{instance.statusMessage}</span>
               </div>
             )}
           </div>
 
           {/* Action buttons */}
           <div
-            className="flex flex-shrink-0 items-start gap-1.5"
+            className="flex flex-shrink-0 items-start gap-1"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Parameters — only when running */}
@@ -473,7 +470,7 @@ function ServiceCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground"
                 onClick={() => setParamsOpen(true)}
                 aria-label={`Parameters for ${instance.name}`}
               >
@@ -485,7 +482,7 @@ function ServiceCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               disabled={isBusy}
               onClick={() => instance.id && onDelete(instance.id)}
               aria-label={`Delete ${instance.name}`}
@@ -497,8 +494,8 @@ function ServiceCard({
               )}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <ServiceParametersDialog
         instance={instance}
@@ -514,32 +511,22 @@ function ServiceCard({
 
 function ServiceCardSkeleton() {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-9 w-9 rounded-lg" />
-            <div className="space-y-2">
-              <Skeleton className="h-3.5 w-32" />
-              <Skeleton className="h-2.5 w-44" />
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
+    <div className="rounded-lg border bg-card p-4">
+      <div className="flex items-start gap-4">
+        <Skeleton className="h-10 w-10 flex-shrink-0 rounded-md" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-32" />
             <Skeleton className="h-5 w-20 rounded-full" />
-            <Skeleton className="h-8 w-8 rounded-md" />
-            <Skeleton className="h-8 w-8 rounded-md" />
-            <Skeleton className="h-8 w-8 rounded-md" />
           </div>
+          <Skeleton className="h-3.5 w-3/4" />
         </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="flex gap-2">
-          <Skeleton className="h-6 w-28 rounded-md" />
-          <Skeleton className="h-6 w-20 rounded-md" />
-          <Skeleton className="h-6 w-14 rounded-md" />
+        <div className="flex flex-shrink-0 items-start gap-1">
+          <Skeleton className="h-10 w-10 rounded-md" />
+          <Skeleton className="h-10 w-10 rounded-md" />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 
@@ -616,15 +603,14 @@ export default function WorkspaceServicesPage() {
   )
 
   return (
-    <div className="mt-6 w-full space-y-6">
+    <div className="container mx-auto p-6">
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h2 className="flex items-center gap-2 text-lg font-semibold">
-            <PlugZap className="h-5 w-5" />
+          <h1 className="text-3xl font-semibold text-muted-foreground">
             Services
-          </h2>
-          <p className="text-xs text-muted-foreground">
+          </h1>
+          <p className="text-muted-foreground">
             Helm-based services deployed in this workspace.
           </p>
         </div>
