@@ -12,6 +12,7 @@ apis/UserServiceApi.ts
 apis/WorkbenchServiceApi.ts
 apis/WorkspaceFileServiceApi.ts
 apis/WorkspaceServiceApi.ts
+apis/WorkspaceServiceInstanceServiceApi.ts
 apis/index.ts
 index.ts
 models/ApprovalRequestServiceApproveApprovalRequestBody.ts
@@ -67,6 +68,8 @@ models/ChorusCreateWorkspaceFileReply.ts
 models/ChorusCreateWorkspaceFileResult.ts
 models/ChorusCreateWorkspaceReply.ts
 models/ChorusCreateWorkspaceResult.ts
+models/ChorusCreateWorkspaceServiceInstanceReply.ts
+models/ChorusCreateWorkspaceServiceInstanceResult.ts
 models/ChorusCredentials.ts
 models/ChorusDataExtractionDetails.ts
 models/ChorusDataTransferDetails.ts
@@ -82,6 +85,8 @@ models/ChorusDeleteWorkbenchReply.ts
 models/ChorusDeleteWorkbenchResult.ts
 models/ChorusDeleteWorkspaceFileReply.ts
 models/ChorusDeleteWorkspaceReply.ts
+models/ChorusDeleteWorkspaceServiceInstanceReply.ts
+models/ChorusDeleteWorkspaceServiceInstanceResult.ts
 models/ChorusDownloadApprovalRequestFileReply.ts
 models/ChorusDownloadApprovalRequestFileResult.ts
 models/ChorusEnableTotpReply.ts
@@ -107,6 +112,8 @@ models/ChorusGetWorkspaceFileReply.ts
 models/ChorusGetWorkspaceFileResult.ts
 models/ChorusGetWorkspaceReply.ts
 models/ChorusGetWorkspaceResult.ts
+models/ChorusGetWorkspaceServiceInstanceReply.ts
+models/ChorusGetWorkspaceServiceInstanceResult.ts
 models/ChorusInitializeTenantRequest.ts
 models/ChorusInitiateWorkspaceFileUploadReply.ts
 models/ChorusInitiateWorkspaceFileUploadResult.ts
@@ -133,6 +140,8 @@ models/ChorusListWorkspaceFileStoresReply.ts
 models/ChorusListWorkspaceFileStoresResult.ts
 models/ChorusListWorkspaceFilesReply.ts
 models/ChorusListWorkspaceFilesResult.ts
+models/ChorusListWorkspaceServiceInstancesReply.ts
+models/ChorusListWorkspaceServiceInstancesResult.ts
 models/ChorusListWorkspacesReply.ts
 models/ChorusListWorkspacesResult.ts
 models/ChorusLogoutReply.ts
@@ -178,6 +187,8 @@ models/ChorusUpdateWorkspaceFileReply.ts
 models/ChorusUpdateWorkspaceFileResult.ts
 models/ChorusUpdateWorkspaceReply.ts
 models/ChorusUpdateWorkspaceResult.ts
+models/ChorusUpdateWorkspaceServiceInstanceReply.ts
+models/ChorusUpdateWorkspaceServiceInstanceResult.ts
 models/ChorusUploadWorkspaceFilePartReply.ts
 models/ChorusUploadWorkspaceFilePartResult.ts
 models/ChorusUser.ts
@@ -189,6 +200,8 @@ models/ChorusWorkspaceFile.ts
 models/ChorusWorkspaceFilePart.ts
 models/ChorusWorkspaceFileStoreInfo.ts
 models/ChorusWorkspaceFilter.ts
+models/ChorusWorkspaceServiceInstance.ts
+models/ChorusWorkspaceServiceInstanceFilter.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
 models/ProtobufAny.ts
 models/RpcStatus.ts

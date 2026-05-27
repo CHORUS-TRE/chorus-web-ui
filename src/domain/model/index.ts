@@ -14,6 +14,7 @@ export * from './workbench'
 export * from './workspace'
 export * from './workspace-config'
 export * from './workspace-file'
+export * from './workspace-service-instance'
 
 export interface Result<T> {
   data?: T
