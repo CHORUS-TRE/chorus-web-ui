@@ -341,7 +341,6 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     const merged: WorkspaceConfig = {
       ...existing,
       ...config,
-      security: { ...existing.security, ...config.security },
       resources: {
         ...existing.resources,
         ...config.resources,

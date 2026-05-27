@@ -344,8 +344,11 @@ export function StudySetupWizard({
       const isInterventional = selectedType === 'clinical-trial'
       const needsColdStorage = dataNeeds.cdw || dataNeeds.imaging
 
-      formData.set('network', isInterventional ? 'restricted' : 'standard')
-      formData.set('allowCopyPaste', isInterventional ? 'false' : 'true')
+      formData.set(
+        'networkPolicy',
+        isInterventional ? 'Airgapped' : 'FQDNAllowlist'
+      )
+      formData.set('clipboard', isInterventional ? 'disabled' : 'both')
       formData.set('resourcePreset', needsGpu ? 'gpu' : 'standard')
       if (needsGpu) formData.set('gpu', '1')
       formData.set('coldStorageEnabled', needsColdStorage ? 'true' : 'false')

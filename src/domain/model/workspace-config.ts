@@ -1,8 +1,21 @@
 import { z } from 'zod'
 
-// Network policy options
-export const NetworkPolicyEnum = z.enum(['closed', 'allowlist', 'open'])
-export type NetworkPolicy = z.infer<typeof NetworkPolicyEnum>
+// Network policy options (must match backend NetworkPolicyMode)
+export const NetworkPolicyModeEnum = z.enum([
+  'Open',
+  'Airgapped',
+  'FQDNAllowlist'
+])
+export type NetworkPolicyMode = z.infer<typeof NetworkPolicyModeEnum>
+
+// Clipboard options (must match backend ClipboardMode)
+export const ClipboardModeEnum = z.enum([
+  'disabled',
+  'to-server',
+  'to-client',
+  'both'
+])
+export type ClipboardMode = z.infer<typeof ClipboardModeEnum>
 
 // Resource preset options (matching app presets)
 export const ResourcePresetEnum = z.enum([
@@ -23,13 +36,6 @@ export const StorageConfigSchema = z.object({
   size: z.string().default('10Gi') // e.g., "10Gi", "100Gi"
 })
 export type StorageConfig = z.infer<typeof StorageConfigSchema>
-
-// Security configuration
-export const SecurityConfigSchema = z.object({
-  network: NetworkPolicyEnum.default('closed'),
-  allowCopyPaste: z.boolean().default(false)
-})
-export type SecurityConfig = z.infer<typeof SecurityConfigSchema>
 
 // Resources configuration
 export const ResourcesConfigSchema = z.object({
@@ -62,12 +68,6 @@ export const WorkspaceConfigSchema = z.object({
   // Description in Markdown format
   descriptionMarkdown: z.string().optional(),
 
-  // Security settings
-  security: SecurityConfigSchema.default({
-    network: 'closed',
-    allowCopyPaste: false
-  }),
-
   // Resource allocation
   resources: ResourcesConfigSchema.default({
     preset: 'small',
@@ -91,10 +91,6 @@ export type WorkspaceConfig = z.infer<typeof WorkspaceConfigSchema>
 // Default configuration
 export const DEFAULT_WORKSPACE_CONFIG: WorkspaceConfig = {
   descriptionMarkdown: '',
-  security: {
-    network: 'closed',
-    allowCopyPaste: false
-  },
   resources: {
     preset: 'small',
     gpu: 0,
