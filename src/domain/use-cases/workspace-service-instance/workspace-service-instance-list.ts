@@ -1,14 +1,28 @@
-import { Result, WorkspaceServiceInstance } from '@/domain/model'
+import {
+  Result,
+  WorkspaceServiceInstance,
+  WorkspaceServiceInstanceListFilter
+} from '@/domain/model'
 import { WorkspaceServiceInstanceRepository } from '@/domain/repository'
 
-export class WorkspaceServiceInstanceList {
-  constructor(
-    private readonly repository: WorkspaceServiceInstanceRepository
-  ) {}
+export interface WorkspaceServiceInstanceListUseCase {
+  execute(
+    filter?: WorkspaceServiceInstanceListFilter
+  ): Promise<Result<WorkspaceServiceInstance[]>>
+}
+
+export class WorkspaceServiceInstanceList
+  implements WorkspaceServiceInstanceListUseCase
+{
+  private repository: WorkspaceServiceInstanceRepository
+
+  constructor(repository: WorkspaceServiceInstanceRepository) {
+    this.repository = repository
+  }
 
   async execute(
-    workspaceId?: string
+    filter?: WorkspaceServiceInstanceListFilter
   ): Promise<Result<WorkspaceServiceInstance[]>> {
-    return this.repository.list(workspaceId)
+    return await this.repository.list(filter)
   }
 }

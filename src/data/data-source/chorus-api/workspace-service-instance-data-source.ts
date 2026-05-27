@@ -1,26 +1,35 @@
 import {
+  WorkspaceServiceInstanceCreateType,
+  WorkspaceServiceInstanceListFilter,
+  WorkspaceServiceInstanceUpdateType
+} from '@/domain/model'
+import {
   ChorusCreateWorkspaceServiceInstanceReply,
   ChorusDeleteWorkspaceServiceInstanceReply,
   ChorusGetWorkspaceServiceInstanceReply,
   ChorusListWorkspaceServiceInstancesReply,
   ChorusUpdateWorkspaceServiceInstanceReply,
-  ChorusWorkspaceServiceInstance,
   Configuration,
   WorkspaceServiceInstanceServiceApi
 } from '@/internal/client'
 
+import {
+  toChorusWorkspaceServiceInstance,
+  toChorusWorkspaceServiceInstanceUpdate
+} from './workspace-service-instance-mapper'
+
 interface WorkspaceServiceInstanceDataSource {
-  get: (id: string) => Promise<ChorusGetWorkspaceServiceInstanceReply>
-  list: (
-    workspaceId?: string
-  ) => Promise<ChorusListWorkspaceServiceInstancesReply>
   create: (
-    instance: ChorusWorkspaceServiceInstance
+    instance: WorkspaceServiceInstanceCreateType
   ) => Promise<ChorusCreateWorkspaceServiceInstanceReply>
-  update: (
-    instance: ChorusWorkspaceServiceInstance
-  ) => Promise<ChorusUpdateWorkspaceServiceInstanceReply>
+  get: (id: string) => Promise<ChorusGetWorkspaceServiceInstanceReply>
   delete: (id: string) => Promise<ChorusDeleteWorkspaceServiceInstanceReply>
+  list: (
+    filter?: WorkspaceServiceInstanceListFilter
+  ) => Promise<ChorusListWorkspaceServiceInstancesReply>
+  update: (
+    instance: WorkspaceServiceInstanceUpdateType
+  ) => Promise<ChorusUpdateWorkspaceServiceInstanceReply>
 }
 
 export type { WorkspaceServiceInstanceDataSource }
@@ -38,41 +47,48 @@ class WorkspaceServiceInstanceDataSourceImpl
     this.service = new WorkspaceServiceInstanceServiceApi(configuration)
   }
 
+  create(
+    instance: WorkspaceServiceInstanceCreateType
+  ): Promise<ChorusCreateWorkspaceServiceInstanceReply> {
+    const body = toChorusWorkspaceServiceInstance(instance)
+    return this.service.workspaceServiceInstanceServiceCreateWorkspaceServiceInstance(
+      { body }
+    )
+  }
+
   get(id: string): Promise<ChorusGetWorkspaceServiceInstanceReply> {
     return this.service.workspaceServiceInstanceServiceGetWorkspaceServiceInstance(
       { id }
     )
   }
 
+  delete(id: string): Promise<ChorusDeleteWorkspaceServiceInstanceReply> {
+    return this.service.workspaceServiceInstanceServiceDeleteWorkspaceServiceInstance(
+      { id }
+    )
+  }
+
   list(
-    workspaceId?: string
+    filter?: WorkspaceServiceInstanceListFilter
   ): Promise<ChorusListWorkspaceServiceInstancesReply> {
     return this.service.workspaceServiceInstanceServiceListWorkspaceServiceInstances(
       {
-        filterWorkspaceIdsIn: workspaceId ? [workspaceId] : undefined
+        filterWorkspaceIdsIn: filter?.workspaceIds,
+        paginationOffset: filter?.paginationOffset,
+        paginationLimit: filter?.paginationLimit,
+        paginationSortOrder: filter?.paginationSortOrder,
+        paginationSortType: filter?.paginationSortType,
+        paginationQuery: filter?.paginationQuery
       }
     )
   }
 
-  create(
-    instance: ChorusWorkspaceServiceInstance
-  ): Promise<ChorusCreateWorkspaceServiceInstanceReply> {
-    return this.service.workspaceServiceInstanceServiceCreateWorkspaceServiceInstance(
-      { body: instance }
-    )
-  }
-
   update(
-    instance: ChorusWorkspaceServiceInstance
+    instance: WorkspaceServiceInstanceUpdateType
   ): Promise<ChorusUpdateWorkspaceServiceInstanceReply> {
+    const body = toChorusWorkspaceServiceInstanceUpdate(instance)
     return this.service.workspaceServiceInstanceServiceUpdateWorkspaceServiceInstance(
-      { body: instance }
-    )
-  }
-
-  delete(id: string): Promise<ChorusDeleteWorkspaceServiceInstanceReply> {
-    return this.service.workspaceServiceInstanceServiceDeleteWorkspaceServiceInstance(
-      { id }
+      { body }
     )
   }
 }

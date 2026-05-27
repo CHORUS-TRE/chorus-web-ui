@@ -1,12 +1,20 @@
 import { Result, WorkspaceServiceInstance } from '@/domain/model'
 import { WorkspaceServiceInstanceRepository } from '@/domain/repository'
 
-export class WorkspaceServiceInstanceGet {
-  constructor(
-    private readonly repository: WorkspaceServiceInstanceRepository
-  ) {}
+export interface WorkspaceServiceInstanceGetUseCase {
+  execute(id: string): Promise<Result<WorkspaceServiceInstance>>
+}
+
+export class WorkspaceServiceInstanceGet
+  implements WorkspaceServiceInstanceGetUseCase
+{
+  private repository: WorkspaceServiceInstanceRepository
+
+  constructor(repository: WorkspaceServiceInstanceRepository) {
+    this.repository = repository
+  }
 
   async execute(id: string): Promise<Result<WorkspaceServiceInstance>> {
-    return this.repository.get(id)
+    return await this.repository.get(id)
   }
 }
