@@ -26,27 +26,15 @@ const getRepository = async () => {
   return new WorkspaceServiceInstanceRepositoryImpl(dataSource)
 }
 
-function parseJsonArrayField(
-  raw: FormDataEntryValue | null
-): string[] | undefined {
-  if (raw === null || raw === '') return undefined
-  if (typeof raw !== 'string') return undefined
-  try {
-    const parsed = JSON.parse(raw) as unknown
-    if (Array.isArray(parsed)) return parsed.map((v) => String(v))
-  } catch {
-    // Fall through
-  }
-  return raw
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-}
-
 export async function workspaceServiceInstanceList(
-  filter?: WorkspaceServiceInstanceListFilter
+  filterOrWorkspaceId?: string | WorkspaceServiceInstanceListFilter
 ): Promise<Result<WorkspaceServiceInstance[]>> {
   try {
+    const filter: WorkspaceServiceInstanceListFilter | undefined =
+      typeof filterOrWorkspaceId === 'string'
+        ? { workspaceIds: [filterOrWorkspaceId] }
+        : filterOrWorkspaceId
+
     const repository = await getRepository()
     const useCase = new WorkspaceServiceInstanceList(repository)
     return await useCase.execute(filter)
@@ -85,27 +73,17 @@ export async function workspaceServiceInstanceDelete(
 }
 
 export async function workspaceServiceInstanceCreate(
-  prevState: Result<WorkspaceServiceInstance>,
-  formData: FormData
+  input: WorkspaceServiceInstanceCreateType
 ): Promise<Result<WorkspaceServiceInstance>> {
   try {
-    const repository = await getRepository()
-    const useCase = new WorkspaceServiceInstanceCreate(repository)
-
-    const raw = Object.fromEntries(formData.entries())
-    const instance = {
-      ...raw,
-      credentialsPaths: parseJsonArrayField(formData.get('credentialsPaths'))
-    } as Record<string, unknown>
-
-    const validation = WorkspaceServiceInstanceCreateSchema.safeParse(instance)
+    const validation = WorkspaceServiceInstanceCreateSchema.safeParse(input)
     if (!validation.success) {
-      return { ...prevState, issues: validation.error.issues }
+      return { issues: validation.error.issues }
     }
 
-    return await useCase.execute(
-      validation.data as WorkspaceServiceInstanceCreateType
-    )
+    const repository = await getRepository()
+    const useCase = new WorkspaceServiceInstanceCreate(repository)
+    return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error creating workspace service instance', error)
     return { error: error instanceof Error ? error.message : String(error) }
@@ -113,27 +91,17 @@ export async function workspaceServiceInstanceCreate(
 }
 
 export async function workspaceServiceInstanceUpdate(
-  prevState: Result<WorkspaceServiceInstance>,
-  formData: FormData
+  input: WorkspaceServiceInstanceUpdateType
 ): Promise<Result<WorkspaceServiceInstance>> {
   try {
-    const repository = await getRepository()
-    const useCase = new WorkspaceServiceInstanceUpdate(repository)
-
-    const raw = Object.fromEntries(formData.entries())
-    const instance = {
-      ...raw,
-      credentialsPaths: parseJsonArrayField(formData.get('credentialsPaths'))
-    } as Record<string, unknown>
-
-    const validation = WorkspaceServiceInstanceUpdateSchema.safeParse(instance)
+    const validation = WorkspaceServiceInstanceUpdateSchema.safeParse(input)
     if (!validation.success) {
-      return { ...prevState, issues: validation.error.issues }
+      return { issues: validation.error.issues }
     }
 
-    return await useCase.execute(
-      validation.data as WorkspaceServiceInstanceUpdateType
-    )
+    const repository = await getRepository()
+    const useCase = new WorkspaceServiceInstanceUpdate(repository)
+    return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workspace service instance', error)
     return { error: error instanceof Error ? error.message : String(error) }

@@ -1,38 +1,32 @@
 import { z } from 'zod'
 
 // Desired lifecycle state (matches backend WorkspaceServiceInstanceState)
-export const WorkspaceServiceInstanceStateEnum = z.enum([
-  'Running',
-  'Stopped',
-  'Deleted'
-])
-export type WorkspaceServiceInstanceState = z.infer<
-  typeof WorkspaceServiceInstanceStateEnum
->
+export enum WorkspaceServiceInstanceState {
+  RUNNING = 'Running',
+  STOPPED = 'Stopped',
+  DELETED = 'Deleted',
+  UNKNOWN = ''
+}
 
 // Observed status (matches backend WorkspaceServiceInstanceStatus)
-export const WorkspaceServiceInstanceStatusEnum = z.enum([
-  'Progressing',
-  'Running',
-  'Stopped',
-  'Deleted',
-  'Failed'
-])
-export type WorkspaceServiceInstanceStatus = z.infer<
-  typeof WorkspaceServiceInstanceStatusEnum
->
+export enum WorkspaceServiceInstanceStatus {
+  PROGRESSING = 'Progressing',
+  RUNNING = 'Running',
+  STOPPED = 'Stopped',
+  DELETED = 'Deleted',
+  FAILED = 'Failed',
+  UNKNOWN = ''
+}
 
 export const WorkspaceServiceInstanceSchema = z.object({
   id: z.string().optional(),
   tenantId: z.string().optional(),
   workspaceId: z.string().optional(),
   name: z.string().optional(),
-  state: z
-    .preprocess(
-      (val) => (val === '' ? undefined : val),
-      WorkspaceServiceInstanceStateEnum.optional()
-    )
-    .optional(),
+  state: z.preprocess(
+    (val) => (val === undefined ? WorkspaceServiceInstanceState.UNKNOWN : val),
+    z.nativeEnum(WorkspaceServiceInstanceState).optional()
+  ),
   chartRegistry: z.string().optional(),
   chartRepository: z.string().optional(),
   chartTag: z.string().optional(),
@@ -41,12 +35,10 @@ export const WorkspaceServiceInstanceSchema = z.object({
   credentialsPaths: z.array(z.string()).optional(),
   connectionInfoTemplate: z.string().optional(),
   computedValues: z.record(z.string(), z.string()).optional(),
-  status: z
-    .preprocess(
-      (val) => (val === '' ? undefined : val),
-      WorkspaceServiceInstanceStatusEnum.optional()
-    )
-    .optional(),
+  status: z.preprocess(
+    (val) => (val === undefined ? WorkspaceServiceInstanceStatus.UNKNOWN : val),
+    z.nativeEnum(WorkspaceServiceInstanceStatus).optional()
+  ),
   statusMessage: z.string().optional(),
   connectionInfo: z.string().optional(),
   secretName: z.string().optional(),
@@ -55,10 +47,10 @@ export const WorkspaceServiceInstanceSchema = z.object({
 })
 
 export const WorkspaceServiceInstanceCreateSchema = z.object({
-  tenantId: z.string().min(1, 'Tenant ID is required'),
+  tenantId: z.string().optional(),
   workspaceId: z.string().min(1, 'Workspace ID is required'),
   name: z.string().min(1, 'Name is required'),
-  state: WorkspaceServiceInstanceStateEnum.default('Running'),
+  state: z.nativeEnum(WorkspaceServiceInstanceState).optional(),
   chartRegistry: z.string().min(1, 'Chart registry is required'),
   chartRepository: z.string().min(1, 'Chart repository is required'),
   chartTag: z.string().min(1, 'Chart tag is required'),
@@ -73,7 +65,7 @@ export const WorkspaceServiceInstanceUpdateSchema = z.object({
   tenantId: z.string().optional(),
   workspaceId: z.string().optional(),
   name: z.string().optional(),
-  state: WorkspaceServiceInstanceStateEnum.optional(),
+  state: z.nativeEnum(WorkspaceServiceInstanceState).optional(),
   chartRegistry: z.string().optional(),
   chartRepository: z.string().optional(),
   chartTag: z.string().optional(),

@@ -178,6 +178,7 @@ function ServiceParametersDialog({
   })
 
   async function onSubmit(values: ParamsFormValues) {
+    if (!instance.id) return
     setIsSubmitting(true)
     const result = await workspaceServiceInstanceUpdate({
       id: instance.id,

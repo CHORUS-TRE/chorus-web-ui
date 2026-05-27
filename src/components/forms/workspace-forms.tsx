@@ -269,8 +269,9 @@ export function WorkspaceCreateForm({
               <TabsList className="mb-4 grid w-full grid-cols-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="resources">Resources</TabsTrigger>
                 <TabsTrigger value="services">Services</TabsTrigger>
+                <TabsTrigger value="resources" className="demo-effect">Resources</TabsTrigger>
+
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
@@ -285,9 +286,6 @@ export function WorkspaceCreateForm({
                 <ResourcesTabContent form={form} />
               </TabsContent>
 
-              <TabsContent value="services" className="demo-effect space-y-4">
-                <ServicesTabContent form={form} />
-              </TabsContent>
             </Tabs>
 
             <input type="hidden" {...form.register('tenantId')} />
@@ -574,9 +572,6 @@ export function WorkspaceUpdateForm({
                 <ResourcesTabContent form={form} />
               </TabsContent>
 
-              <TabsContent value="services" className="space-y-4">
-                <ServicesTabContent form={form} />
-              </TabsContent>
             </Tabs>
 
             <input type="hidden" {...form.register('id')} />
@@ -731,7 +726,6 @@ export function WorkspaceGeneralInlineForm({
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
             <TabsTrigger value="resources">Resources</TabsTrigger>
-            <TabsTrigger value="services">Services</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general" className="space-y-4">
@@ -751,9 +745,6 @@ export function WorkspaceGeneralInlineForm({
             <ResourcesTabContent form={form} />
           </TabsContent>
 
-          <TabsContent value="services" className="space-y-4">
-            <ServicesTabContent form={form} />
-          </TabsContent>
         </Tabs>
 
         <input type="hidden" {...form.register('id')} />
@@ -1283,94 +1274,4 @@ function ResourcesTabContent({
   )
 }
 
-function ServicesTabContent({
-  form
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
-  return (
-    <Card className="border-none bg-transparent shadow-none">
-      <CardContent className="space-y-4 p-0">
-        <p className="text-sm text-muted-foreground">
-          Enable additional services for this workspace
-        </p>
 
-        <FormField
-          control={form.control}
-          name="serviceGitlab"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <GitBranch className="h-5 w-5 text-orange-500" />
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">GitLab</FormLabel>
-                  <FormDescription className="text-muted-foreground">
-                    Version control and CI/CD pipeline
-                  </FormDescription>
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  className="data-[state=checked]:bg-accent"
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="serviceK8s"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <Server className="h-5 w-5 text-blue-500" />
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Kubernetes</FormLabel>
-                  <FormDescription className="text-muted-foreground">
-                    Container orchestration platform
-                  </FormDescription>
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  className="data-[state=checked]:bg-accent"
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="serviceHpc"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <Cpu className="h-5 w-5 text-purple-500" />
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">HPC</FormLabel>
-                  <FormDescription className="text-muted-foreground">
-                    High Performance Computing cluster access
-                  </FormDescription>
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  className="data-[state=checked]:bg-accent"
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </CardContent>
-    </Card>
-  )
-}
