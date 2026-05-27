@@ -1,3 +1,10 @@
+# [1.51.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.50.0...v1.51.0) (2026-05-27)
+
+
+### Features
+
+* update app kiosk config fields to browser config ([#218](https://github.com/CHORUS-TRE/chorus-web-ui/issues/218)) ([3d28ece](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3d28ece42aafadbbd8d857b63f7875b49ba7ce3b))
+
 # [1.50.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.49.1...v1.50.0) (2026-05-04)
 
 
