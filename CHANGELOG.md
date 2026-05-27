@@ -1,3 +1,12 @@
+# [1.52.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.51.2...v1.52.0) (2026-05-27)
+
+
+### Features
+
+* add service instances management tab to workspace ([9ef6007](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9ef6007fb5995f033948c74b62de3e4f9b8b7431))
+* add workspace service instance creation form with validation ([4b96de6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4b96de6199427714e4c77a536554f37ada90739e))
+* implement workspace service instance management with CRUD operations ([3557b9f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3557b9f6690757bd8142a24c2536aa58fb24e6b7))
+
 ## [1.51.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.51.1...v1.51.2) (2026-05-27)
 
 
