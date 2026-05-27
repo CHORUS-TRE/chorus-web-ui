@@ -200,7 +200,7 @@ export function AppCreateDialog({
       shmSize: '',
       minEphemeralStorage: '',
       maxEphemeralStorage: '',
-      kioskConfigURL: '',
+      browserConfigURL: '',
       maxCPU: '',
       minCPU: '',
       maxMemory: '',
@@ -433,14 +433,14 @@ export function AppCreateDialog({
                 <div className="space-y-4 border-l border-border pl-8">
                   <FormField
                     control={form.control}
-                    name="kioskConfigURL"
+                    name="browserConfigURL"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="">Kiosk Config URL</FormLabel>
+                        <FormLabel className="">Browser Config URL</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Enter kiosk config URL"
+                            placeholder="Enter browser config URL"
                             className="bg-background placeholder:text-muted-foreground"
                           />
                         </FormControl>

@@ -133,19 +133,19 @@ export interface ChorusApp {
    * @type {string}
    * @memberof ChorusApp
    */
-  kioskConfigURL?: string
+  browserConfigURL?: string
   /**
    *
    * @type {string}
    * @memberof ChorusApp
    */
-  kioskConfigJWTURL?: string
+  browserConfigJWTURL?: string
   /**
    *
    * @type {string}
    * @memberof ChorusApp
    */
-  kioskConfigJWTOIDCClientID?: string
+  browserConfigJWTOIDCClientID?: string
   /**
    *
    * @type {string}
@@ -158,6 +158,12 @@ export interface ChorusApp {
    * @memberof ChorusApp
    */
   iconBackgroundColor?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  stabilityStatus?: string
   /**
    *
    * @type {Date}
@@ -222,19 +228,22 @@ export function ChorusAppFromJSONTyped(
     minEphemeralStorage: !exists(json, 'minEphemeralStorage')
       ? undefined
       : json['minEphemeralStorage'],
-    kioskConfigURL: !exists(json, 'kioskConfigURL')
+    browserConfigURL: !exists(json, 'browserConfigURL')
       ? undefined
-      : json['kioskConfigURL'],
-    kioskConfigJWTURL: !exists(json, 'kioskConfigJWTURL')
+      : json['browserConfigURL'],
+    browserConfigJWTURL: !exists(json, 'browserConfigJWTURL')
       ? undefined
-      : json['kioskConfigJWTURL'],
-    kioskConfigJWTOIDCClientID: !exists(json, 'kioskConfigJWTOIDCClientID')
+      : json['browserConfigJWTURL'],
+    browserConfigJWTOIDCClientID: !exists(json, 'browserConfigJWTOIDCClientID')
       ? undefined
-      : json['kioskConfigJWTOIDCClientID'],
+      : json['browserConfigJWTOIDCClientID'],
     iconURL: !exists(json, 'iconURL') ? undefined : json['iconURL'],
     iconBackgroundColor: !exists(json, 'iconBackgroundColor')
       ? undefined
       : json['iconBackgroundColor'],
+    stabilityStatus: !exists(json, 'stabilityStatus')
+      ? undefined
+      : json['stabilityStatus'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -272,11 +281,12 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     minMemory: value.minMemory,
     maxEphemeralStorage: value.maxEphemeralStorage,
     minEphemeralStorage: value.minEphemeralStorage,
-    kioskConfigURL: value.kioskConfigURL,
-    kioskConfigJWTURL: value.kioskConfigJWTURL,
-    kioskConfigJWTOIDCClientID: value.kioskConfigJWTOIDCClientID,
+    browserConfigURL: value.browserConfigURL,
+    browserConfigJWTURL: value.browserConfigJWTURL,
+    browserConfigJWTOIDCClientID: value.browserConfigJWTOIDCClientID,
     iconURL: value.iconURL,
     iconBackgroundColor: value.iconBackgroundColor,
+    stabilityStatus: value.stabilityStatus,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:

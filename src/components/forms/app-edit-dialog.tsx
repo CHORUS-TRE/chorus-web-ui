@@ -66,7 +66,7 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
       shmSize: app.shmSize || '',
       minEphemeralStorage: app.minEphemeralStorage || '',
       maxEphemeralStorage: app.maxEphemeralStorage || '',
-      kioskConfigURL: app.kioskConfigURL || '',
+      browserConfigURL: app.browserConfigURL || '',
       maxCPU: app.maxCPU || '',
       minCPU: app.minCPU || '',
       maxMemory: app.maxMemory || '',
@@ -298,16 +298,16 @@ export const AppEditDialog: React.FC<AppEditDialogProps> = ({
                 <div className="space-y-4 border-l border-border pl-8">
                   <FormField
                     control={form.control}
-                    name="kioskConfigURL"
+                    name="browserConfigURL"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-foreground">
-                          Kiosk Config URL
+                          Browser Config URL
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Enter kiosk config URL"
+                            placeholder="Enter browser config URL"
                             className="bg-background placeholder:text-muted"
                           />
                         </FormControl>
