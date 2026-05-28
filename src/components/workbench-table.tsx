@@ -10,14 +10,14 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowUpDown, Pencil, RefreshCw, Trash2 } from 'lucide-react'
+import { ArrowUpDown, Pencil, RefreshCw, Trash2, Users } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import { Link } from '@/components/ui/link'
 import {
   Table,
   TableBody,
@@ -35,25 +35,40 @@ import { listUsers } from '@/view-model/user-view-model'
 import { WorkbenchDeleteForm } from './forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from './forms/workbench-update-form'
 import { toast } from './hooks/use-toast'
+import { SessionMembersSheet } from './session-members-sheet'
 
 const ActionCell = ({
   row,
   onEdit,
-  onDelete
+  onDelete,
+  onManageMembers
 }: {
   row: Row<Workbench>
   onEdit: (id: string) => void
   onDelete: (id: string) => void
+  onManageMembers: (id: string) => void
 }) => {
   const workbench = row.original
 
   return (
-    <div className="flex justify-end gap-2">
+    <div
+      className="flex justify-end gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => workbench.id && onManageMembers(workbench.id)}
+        className="text-accent/60 hover:bg-accent/20 hover:text-accent"
+        aria-label="Manage members"
+      >
+        <Users className="h-4 w-4" />
+      </Button>
       <Button
         variant="ghost"
         size="icon"
         onClick={() => workbench.id && onEdit(workbench.id)}
-        className="text-muted-foreground/60 hover:bg-muted/10 hover:text-muted-foreground"
+        className="text-accent/60 hover:bg-accent/20 hover:text-accent"
       >
         <Pencil className="h-4 w-4" />
       </Button>
@@ -117,6 +132,7 @@ export const columns = (
   workspaces: Workspace[] | undefined,
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
+  onManageMembers: (id: string) => void,
   appInstances: AppInstance[] | undefined,
   refreshKey?: number
 ): ColumnDef<Workbench>[] => [
@@ -148,14 +164,7 @@ export const columns = (
     },
     cell: ({ row }) => {
       const workbench = row.original
-      return (
-        <Link
-          href={`/workspaces/${workbench?.workspaceId}/sessions/${workbench?.id}`}
-          className="nav-link-base nav-link-hover [&.active]:nav-link-active"
-        >
-          {workbench?.name}
-        </Link>
-      )
+      return <span className="text-xs font-medium">{workbench?.name}</span>
     }
   },
   {
@@ -164,12 +173,16 @@ export const columns = (
     cell: ({ row }) => {
       const workbench = row.original
       const workspace = workspaces?.find((w) => w.id === workbench?.workspaceId)
-      return workspace?.name || '-'
+      return (
+        <span className="text-xs text-muted-foreground">
+          {workspace?.name || '-'}
+        </span>
+      )
     }
   },
   {
-    id: 'owner',
-    header: 'Owner',
+    id: 'users',
+    header: 'Users',
     cell: ({ row }) => {
       const workbench = row.original
       const workbenchUsers = users?.filter((user) =>
@@ -177,13 +190,36 @@ export const columns = (
           (role) => role.context.workbench === workbench.id
         )
       )
+
+      if (!workbenchUsers || workbenchUsers.length === 0) {
+        return <div className="text-xs text-muted-foreground">-</div>
+      }
+
       return (
-        <div className="text-xs">
-          {workbenchUsers && workbenchUsers.length > 0
-            ? workbenchUsers
-                .map((u) => `${u.firstName} ${u.lastName}`)
-                .join(', ')
-            : '-'}
+        <div className="flex flex-col gap-0.5 text-xs">
+          {workbenchUsers.map((u) => {
+            const role = (u.rolesWithContext || []).find(
+              (r) =>
+                r.context?.workbench === workbench.id &&
+                r.name.startsWith('Workbench')
+            )
+            const roleLabel = role?.name.replace(/^Workbench/, '')
+            return (
+              <div
+                key={u.id}
+                className="flex items-center justify-between gap-2"
+              >
+                <span>
+                  {u.firstName} {u.lastName}
+                </span>
+                {roleLabel && (
+                  <span className="text-[10px] text-muted-foreground">
+                    {roleLabel}
+                  </span>
+                )}
+              </div>
+            )
+          })}
         </div>
       )
     }
@@ -193,7 +229,7 @@ export const columns = (
     header: 'Apps',
     cell: ({ row }) => {
       const workbench = row.original
-      return (
+      const appNames =
         appInstances
           ?.filter(
             (instance) => workbench?.workspaceId === instance.workspaceId
@@ -204,7 +240,7 @@ export const columns = (
               apps?.find((app) => app.id === instance.appId)?.name || ''
           )
           .join(', ') || 'No app started'
-      )
+      return <span className="text-xs">{appNames}</span>
     }
   },
   {
@@ -259,7 +295,10 @@ export const columns = (
         ? new Date(workbench.createdAt)
         : new Date()
       return (
-        <div title={date.toLocaleDateString()}>
+        <div
+          className="text-xs text-muted-foreground"
+          title={date.toLocaleDateString()}
+        >
           {formatDistanceToNow(date)} ago
         </div>
       )
@@ -268,7 +307,12 @@ export const columns = (
   {
     id: 'actions',
     cell: (props) => (
-      <ActionCell {...props} onEdit={onEdit} onDelete={onDelete} />
+      <ActionCell
+        {...props}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onManageMembers={onManageMembers}
+      />
     )
   }
 ]
@@ -281,13 +325,16 @@ export default function WorkbenchTable({
   refreshKey?: number
 }) {
   const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
+  const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [loadingUsers, setLoadingUsers] = useState(false)
   const [activeEditId, setActiveEditId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
+  const [activeMembersId, setActiveMembersId] = useState<string | null>(null)
 
   const closeEdit = useCallback(() => setActiveEditId(null), [])
   const closeDelete = useCallback(() => setActiveDeleteId(null), [])
+  const closeMembers = useCallback(() => setActiveMembersId(null), [])
 
   const activeEditWorkbench = useMemo(
     () => workbenches?.find((w) => w.id === activeEditId),
@@ -296,6 +343,10 @@ export default function WorkbenchTable({
   const activeDeleteWorkbench = useMemo(
     () => workbenches?.find((w) => w.id === activeDeleteId),
     [workbenches, activeDeleteId]
+  )
+  const activeMembersWorkbench = useMemo(
+    () => workbenches?.find((w) => w.id === activeMembersId),
+    [workbenches, activeMembersId]
   )
 
   const loadAllUsers = useCallback(async () => {
@@ -334,6 +385,7 @@ export default function WorkbenchTable({
         workspaces,
         setActiveEditId,
         setActiveDeleteId,
+        setActiveMembersId,
         appInstances,
         refreshKey
       ),
@@ -366,6 +418,15 @@ export default function WorkbenchTable({
               description: 'Session updated successfully'
             })
           }}
+        />
+      )}
+      {activeMembersWorkbench && activeMembersWorkbench.workspaceId && (
+        <SessionMembersSheet
+          open={!!activeMembersId}
+          onOpenChange={(o) => !o && closeMembers()}
+          workspaceId={activeMembersWorkbench.workspaceId}
+          session={activeMembersWorkbench}
+          onUpdate={() => loadAllUsers()}
         />
       )}
       <WorkbenchDeleteForm
@@ -418,22 +479,36 @@ export default function WorkbenchTable({
               </TableHeader>
               <TableBody>
                 {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                      className="border-muted/40 bg-background/40 transition-colors hover:bg-muted/10"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="p-1">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
+                  table.getRowModel().rows.map((row) => {
+                    const workbench = row.original
+                    const canNavigate =
+                      !!workbench.id && !!workbench.workspaceId
+                    return (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        onClick={() =>
+                          canNavigate &&
+                          router.push(
+                            `/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`
+                          )
+                        }
+                        className={cn(
+                          'border-muted/40 bg-background/40 transition-colors hover:bg-muted/10',
+                          canNavigate && 'cursor-pointer'
+                        )}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id} className="p-1">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    )
+                  })
                 ) : (
                   <TableRow>
                     <TableCell

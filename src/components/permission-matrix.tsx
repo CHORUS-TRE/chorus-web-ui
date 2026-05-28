@@ -152,27 +152,10 @@ const PERMISSION_GROUPS: {
 const SCOPES: {
   key: Scope
   label: string
-  headerColor: string
-  borderColor: string
 }[] = [
-  {
-    key: 'session',
-    label: 'Session',
-    headerColor: 'text-orange-500',
-    borderColor: 'border-orange-400/40'
-  },
-  {
-    key: 'workspace',
-    label: 'Workspace',
-    headerColor: 'text-red-500',
-    borderColor: 'border-red-400/40'
-  },
-  {
-    key: 'platform',
-    label: 'Platform',
-    headerColor: 'text-blue-500',
-    borderColor: 'border-blue-400/40'
-  }
+  { key: 'session', label: 'Session' },
+  { key: 'workspace', label: 'Workspace' },
+  { key: 'platform', label: 'Platform' }
 ]
 
 interface PermissionMatrixProps {
@@ -238,9 +221,7 @@ export function PermissionMatrix({
           <div key={scope.key} className="min-w-0">
             <div
               className={cn(
-                'mb-3 border-b-2 pb-2 font-semibold',
-                scope.headerColor,
-                scope.borderColor,
+                'mb-3 border-b border-border pb-2 font-semibold text-foreground',
                 compact ? 'text-xs' : 'text-sm'
               )}
             >
@@ -289,7 +270,7 @@ export function PermissionMatrix({
                                   checked={isGranted}
                                   disabled={readOnly}
                                   className={cn(
-                                    'h-3.5 w-3.5',
+                                    'h-3.5 w-3.5 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground',
                                     highlightInherited && isInherited
                                       ? 'opacity-40'
                                       : ''
@@ -342,10 +323,19 @@ export function PermissionMatrix({
           )}
         >
           <span className="flex items-center gap-1">
-            <Checkbox checked disabled className="h-3 w-3" /> Direct
+            <Checkbox
+              checked
+              disabled
+              className="h-3 w-3 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
+            />{' '}
+            Direct
           </span>
           <span className="flex items-center gap-1">
-            <Checkbox checked disabled className="h-3 w-3 opacity-40" />{' '}
+            <Checkbox
+              checked
+              disabled
+              className="h-3 w-3 border-accent opacity-40 data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
+            />{' '}
             Inherited
           </span>
         </div>

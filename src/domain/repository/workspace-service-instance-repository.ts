@@ -2,12 +2,14 @@ import {
   Result,
   WorkspaceServiceInstance,
   WorkspaceServiceInstanceCreateType,
+  WorkspaceServiceInstanceListFilter,
   WorkspaceServiceInstanceUpdateType
-} from '@/domain/model'
+} from '../model'
 
-interface WorkspaceServiceInstanceRepository {
-  get: (id: string) => Promise<Result<WorkspaceServiceInstance>>
-  list: (workspaceId?: string) => Promise<Result<WorkspaceServiceInstance[]>>
+export interface WorkspaceServiceInstanceRepository {
+  list: (
+    filter?: WorkspaceServiceInstanceListFilter
+  ) => Promise<Result<WorkspaceServiceInstance[]>>
   create: (
     instance: WorkspaceServiceInstanceCreateType
   ) => Promise<Result<WorkspaceServiceInstance>>
@@ -15,6 +17,5 @@ interface WorkspaceServiceInstanceRepository {
     instance: WorkspaceServiceInstanceUpdateType
   ) => Promise<Result<WorkspaceServiceInstance>>
   delete: (id: string) => Promise<Result<string>>
+  get: (id: string) => Promise<Result<WorkspaceServiceInstance>>
 }
-
-export type { WorkspaceServiceInstanceRepository }

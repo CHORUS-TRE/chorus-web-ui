@@ -207,22 +207,15 @@ export default function AuditTable({
   return (
     <Card variant="glass" className="flex h-full flex-col justify-between">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ScrollText className="h-5 w-5 text-muted-foreground" />
-            <CardTitle>{title}</CardTitle>
-          </div>
-          <div className="relative w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search audit entries…"
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="h-9 pl-9 text-sm"
-            />
-          </div>
+        <div className="relative w-64">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search audit entries…"
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="h-9 pl-9 text-sm"
+          />
         </div>
-        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="mt-4">
         <Table>

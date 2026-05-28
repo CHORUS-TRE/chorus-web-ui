@@ -24,11 +24,22 @@ export default function WorkspaceAuditPage() {
   }, [loadAudit])
 
   return (
-    <div className="mt-6 w-full">
+    <div className="container mx-auto p-6">
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold text-muted-foreground">
+            Audit
+          </h1>
+          <p className="text-muted-foreground">
+            Detailed log of actions performed in this workspace.
+          </p>
+        </div>
+      </div>
+
       <AuditTable
         entries={entries}
         title="Workspace Audit Log"
-        description="Audit entries for this workspace."
+        description="Detailed list of all audit entries."
       />
     </div>
   )

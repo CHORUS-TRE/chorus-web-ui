@@ -4,6 +4,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  CheckCircle2,
   Cpu,
   Database,
   GitBranch,
@@ -11,10 +12,8 @@ import {
   Loader2,
   Network,
   Server,
-  Shield,
-  Users
+  Shield
 } from 'lucide-react'
-import Image from 'next/image'
 import {
   startTransition,
   useEffect,
@@ -29,7 +28,6 @@ import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog as DialogContainer,
   DialogContent,
@@ -88,9 +86,10 @@ const WorkspaceFormSchema = z.object({
   image: z.any().optional(),
   descriptionMarkdown: z.string().optional(),
 
-  // Security
-  network: z.enum(['closed', 'allowlist', 'open']).optional(),
-  allowCopyPaste: z.boolean().optional(),
+  // Security (API-backed)
+  networkPolicy: z.enum(['Open', 'Airgapped', 'FQDNAllowlist']).optional(),
+  allowedFqdns: z.array(z.string()).optional(),
+  clipboard: z.enum(['disabled', 'to-server', 'to-client', 'both']).optional(),
 
   // Resources
   resourcePreset: z
@@ -159,8 +158,9 @@ export function WorkspaceCreateForm({
       userId: userId || '',
       isMain: false,
       descriptionMarkdown: '',
-      network: 'closed',
-      allowCopyPaste: false,
+      networkPolicy: 'Airgapped',
+      allowedFqdns: [],
+      clipboard: 'disabled',
       resourcePreset: 'small',
       gpu: 0,
       cpu: '2',
@@ -190,6 +190,10 @@ export function WorkspaceCreateForm({
         if (value.length > 0) {
           formData.append(key, value[0])
         }
+        return
+      }
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value))
         return
       }
       formData.append(key, String(value))
@@ -260,27 +264,24 @@ export function WorkspaceCreateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4 grid w-full grid-cols-4">
+              <TabsList className="mb-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="resources">Resources</TabsTrigger>
-                <TabsTrigger value="services">Services</TabsTrigger>
+                {/* <TabsTrigger value="resources" className="demo-effect">
+                  Resources
+                </TabsTrigger> */}
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
                 <GeneralTabContent form={form} />
               </TabsContent>
 
-              <TabsContent value="security" className="demo-effect space-y-4">
+              <TabsContent value="security" className="space-y-4">
                 <SecurityTabContent form={form} />
               </TabsContent>
 
               <TabsContent value="resources" className="demo-effect space-y-4">
                 <ResourcesTabContent form={form} />
-              </TabsContent>
-
-              <TabsContent value="services" className="demo-effect space-y-4">
-                <ServicesTabContent form={form} />
               </TabsContent>
             </Tabs>
 
@@ -301,6 +302,7 @@ export function WorkspaceCreateForm({
               </Button>
               <Button
                 type="submit"
+                variant="accent-filled"
                 disabled={form.formState.isSubmitting || isPending}
               >
                 {(form.formState.isSubmitting || isPending) && (
@@ -370,16 +372,18 @@ export function WorkspaceUpdateForm({
   state: [open, setOpen],
   trigger,
   workspace,
-  onSuccess
+  onSuccess,
+  initialTab = 'general'
 }: {
   state: [open: boolean, setOpen: (open: boolean) => void]
   trigger?: React.ReactNode
   workspace?: WorkspaceWithDev
   onSuccess?: (workspace: WorkspaceWithDev) => void
+  initialTab?: 'general' | 'security' | 'resources' | 'services'
 }) {
   const [isPending, startTransition] = useTransition()
   const [removeImage, setRemoveImage] = useState(false)
-  const [activeTab, setActiveTab] = useState('general')
+  const [activeTab, setActiveTab] = useState<string>(initialTab)
 
   // Get existing config or use defaults
   const getConfig = (): WorkspaceConfig => {
@@ -401,8 +405,9 @@ export function WorkspaceUpdateForm({
       tenantId: '1',
       userId: workspace?.userId || '',
       descriptionMarkdown: existingConfig?.descriptionMarkdown || '',
-      network: existingConfig?.security?.network || 'closed',
-      allowCopyPaste: existingConfig?.security?.allowCopyPaste || false,
+      networkPolicy: workspace?.networkPolicy || 'Airgapped',
+      allowedFqdns: workspace?.allowedFqdns || [],
+      clipboard: workspace?.clipboard || 'disabled',
       resourcePreset: existingConfig?.resources?.preset || 'small',
       gpu: existingConfig?.resources?.gpu || 0,
       cpu: existingConfig?.resources?.cpu || '2',
@@ -439,8 +444,9 @@ export function WorkspaceUpdateForm({
         tenantId: '1',
         userId: workspace.userId || '',
         descriptionMarkdown: config?.descriptionMarkdown || '',
-        network: config?.security?.network || 'closed',
-        allowCopyPaste: config?.security?.allowCopyPaste || false,
+        networkPolicy: workspace.networkPolicy || 'Airgapped',
+        allowedFqdns: workspace.allowedFqdns || [],
+        clipboard: workspace.clipboard || 'disabled',
         resourcePreset: config?.resources?.preset || 'small',
         gpu: config?.resources?.gpu || 0,
         cpu: config?.resources?.cpu || '2',
@@ -454,9 +460,9 @@ export function WorkspaceUpdateForm({
         serviceHpc: config?.services?.hpc || false
       })
       setRemoveImage(false)
-      setActiveTab('general')
+      setActiveTab(initialTab)
     }
-  }, [open, workspace, form])
+  }, [open, workspace, form, initialTab])
 
   async function onSubmit(data: WorkspaceFormData) {
     const formData = new FormData()
@@ -466,6 +472,10 @@ export function WorkspaceUpdateForm({
         if (value.length > 0) {
           formData.append(key, value[0])
         }
+        return
+      }
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value))
         return
       }
       formData.append(key, String(value))
@@ -538,12 +548,10 @@ export function WorkspaceUpdateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4 grid grid-cols-5">
+              <TabsList className="mb-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="resources">Resources</TabsTrigger>
-                <TabsTrigger value="team">Team</TabsTrigger>
-                <TabsTrigger value="services">Services</TabsTrigger>
+                {/* <TabsTrigger value="resources">Resources</TabsTrigger> */}
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
@@ -556,19 +564,11 @@ export function WorkspaceUpdateForm({
               </TabsContent>
 
               <TabsContent value="security" className="space-y-4">
-                <SecurityTabContent form={form} />
+                <SecurityTabContent form={form} workspace={workspace} />
               </TabsContent>
 
               <TabsContent value="resources" className="space-y-4">
                 <ResourcesTabContent form={form} />
-              </TabsContent>
-
-              <TabsContent value="team" className="space-y-4">
-                <TeamTabContent workspace={workspace} />
-              </TabsContent>
-
-              <TabsContent value="services" className="space-y-4">
-                <ServicesTabContent form={form} />
               </TabsContent>
             </Tabs>
 
@@ -588,6 +588,7 @@ export function WorkspaceUpdateForm({
               </Button>
               <Button
                 type="submit"
+                variant="accent-filled"
                 disabled={form.formState.isSubmitting || isPending}
               >
                 {(form.formState.isSubmitting || isPending) && (
@@ -629,7 +630,11 @@ function GeneralTabContent({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Workspace name" />
+                <Input
+                  {...field}
+                  placeholder="Workspace name"
+                  className="text-muted-foreground"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -643,14 +648,18 @@ function GeneralTabContent({
             <FormItem>
               <FormLabel>Short Description</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Brief description" />
+                <Input
+                  {...field}
+                  placeholder="Brief description"
+                  className="text-muted-foreground"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="descriptionMarkdown"
           render={({ field }) => (
@@ -667,15 +676,15 @@ function GeneralTabContent({
                   className="min-h-[120px] font-mono text-sm"
                 />
               </FormControl>
-              <FormDescription>
+              <FormDescription className="text-muted-foreground">
                 Supports Markdown formatting for rich documentation
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label>Cover Image</Label>
           {workspace?.dev?.image && !removeImage && (
             <div className="relative mb-2 h-32 w-full overflow-hidden rounded-md bg-muted/20">
@@ -707,18 +716,22 @@ function GeneralTabContent({
           {!removeImage && (
             <Input type="file" accept="image/*" {...form.register('image')} />
           )}
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   )
 }
 
 function SecurityTabContent({
-  form
+  form,
+  workspace
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any
+  workspace?: WorkspaceWithDev
 }) {
+  const networkPolicy = form.watch('networkPolicy')
+
   return (
     <Card className="border-none bg-transparent shadow-none">
       <CardContent className="space-y-6 p-0">
@@ -731,7 +744,7 @@ function SecurityTabContent({
             </p>
             <FormField
               control={form.control}
-              name="network"
+              name="networkPolicy"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -741,13 +754,16 @@ function SecurityTabContent({
                       className="space-y-2"
                     >
                       <div className="flex items-center space-x-3 rounded-lg border p-3">
-                        <RadioGroupItem value="closed" id="network-closed" />
+                        <RadioGroupItem
+                          value="Airgapped"
+                          id="network-airgapped"
+                        />
                         <div className="flex-1">
                           <Label
-                            htmlFor="network-closed"
+                            htmlFor="network-airgapped"
                             className="font-medium"
                           >
-                            Closed
+                            Airgapped
                           </Label>
                           <p className="text-sm text-muted-foreground">
                             No external network access
@@ -757,15 +773,15 @@ function SecurityTabContent({
                       </div>
                       <div className="flex items-center space-x-3 rounded-lg border p-3">
                         <RadioGroupItem
-                          value="allowlist"
-                          id="network-allowlist"
+                          value="FQDNAllowlist"
+                          id="network-fqdn-allowlist"
                         />
                         <div className="flex-1">
                           <Label
-                            htmlFor="network-allowlist"
+                            htmlFor="network-fqdn-allowlist"
                             className="font-medium"
                           >
-                            Allowlist
+                            FQDN Allowlist
                           </Label>
                           <p className="text-sm text-muted-foreground">
                             Only approved destinations
@@ -774,7 +790,7 @@ function SecurityTabContent({
                         <Network className="h-4 w-4 text-yellow-500" />
                       </div>
                       <div className="flex items-center space-x-3 rounded-lg border p-3">
-                        <RadioGroupItem value="open" id="network-open" />
+                        <RadioGroupItem value="Open" id="network-open" />
                         <div className="flex-1">
                           <Label htmlFor="network-open" className="font-medium">
                             Open
@@ -791,36 +807,98 @@ function SecurityTabContent({
                 </FormItem>
               )}
             />
+
+            {(workspace?.networkPolicyStatus ||
+              workspace?.networkPolicyMessage) && (
+              <div className="mt-3 flex items-center gap-3 rounded-lg border p-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-500/15">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                </div>
+                <div className="min-w-0 flex-1 text-sm">
+                  {workspace.networkPolicyStatus && (
+                    <div className="font-medium">
+                      Status:{' '}
+                      <span className="text-green-500">
+                        {workspace.networkPolicyStatus}
+                      </span>
+                    </div>
+                  )}
+                  {workspace.networkPolicyMessage && (
+                    <div className="text-muted-foreground">
+                      {workspace.networkPolicyMessage}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <div className="flex-1">
-            <FormField
-              control={form.control}
-              name="allowCopyPaste"
-              render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Allow Copy/Paste
-                    </FormLabel>
-                    <FormDescription>
-                      Enable clipboard access between local machine and
-                      workspace
-                    </FormDescription>
-                  </div>
+        {networkPolicy === 'FQDNAllowlist' && (
+          <FormField
+            control={form.control}
+            name="allowedFqdns"
+            render={({ field }) => {
+              const value: string[] = field.value || []
+              return (
+                <FormItem>
+                  <FormLabel>Allowed FQDNs</FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <Textarea
+                      value={value.join('\n')}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value
+                            .split('\n')
+                            .map((s) => s.trim())
+                            .filter(Boolean)
+                        )
+                      }
+                      placeholder={'api.example.com\n*.internal.corp'}
+                      className="min-h-[100px] font-mono text-sm"
                     />
                   </FormControl>
+                  <FormDescription>
+                    One FQDN per line. Wildcards (e.g. *.example.com) are
+                    supported by the backend.
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
-              )}
-            />
-          </div>
-        </div>
+              )
+            }}
+          />
+        )}
+
+        <FormField
+          control={form.control}
+          name="clipboard"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-base">Clipboard</FormLabel>
+              <FormDescription className="text-muted-foreground">
+                Control clipboard access between local machine and workspace
+              </FormDescription>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select clipboard mode" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="disabled">Disabled</SelectItem>
+                  <SelectItem value="to-server">
+                    To server only (paste into workspace)
+                  </SelectItem>
+                  <SelectItem value="to-client">
+                    To client only (copy from workspace)
+                  </SelectItem>
+                  <SelectItem value="both">Both directions</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </CardContent>
     </Card>
   )
@@ -835,7 +913,7 @@ function ResourcesTabContent({
   const selectedPreset = form.watch('resourcePreset')
 
   return (
-    <Card className="border-none bg-transparent shadow-none">
+    <Card className="demo-effect border-none bg-transparent shadow-none">
       <CardContent className="space-y-6 p-0">
         {/* Preset Selection */}
         <div className="space-y-3">
@@ -1025,146 +1103,6 @@ function ResourcesTabContent({
             )}
           </div>
         </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-function TeamTabContent({ workspace }: { workspace?: WorkspaceWithDev }) {
-  return (
-    <Card className="border-none bg-transparent shadow-none">
-      <CardContent className="p-0">
-        <div className="mb-4 flex items-center gap-2">
-          <Users className="h-5 w-5 text-muted-foreground" />
-          <h4 className="font-medium">Team Members</h4>
-        </div>
-
-        {workspace?.dev?.members && workspace.dev.members.length > 0 ? (
-          <div className="space-y-2">
-            {workspace.dev.members.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between rounded-lg border p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium">
-                    {member.firstName?.[0]}
-                    {member.lastName?.[0]}
-                  </div>
-                  <div>
-                    <p className="font-medium">
-                      {member.firstName} {member.lastName}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {member.username}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {member.id === workspace.userId ? 'Owner' : 'Member'}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            No team members yet. Add users from the workspace users page.
-          </p>
-        )}
-
-        <p className="mt-4 text-sm text-muted-foreground">
-          To manage team members and roles, go to the workspace&apos;s Users
-          tab.
-        </p>
-      </CardContent>
-    </Card>
-  )
-}
-
-function ServicesTabContent({
-  form
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
-  return (
-    <Card className="border-none bg-transparent shadow-none">
-      <CardContent className="space-y-4 p-0">
-        <p className="text-sm text-muted-foreground">
-          Enable additional services for this workspace
-        </p>
-
-        <FormField
-          control={form.control}
-          name="serviceGitlab"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <GitBranch className="h-5 w-5 text-orange-500" />
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">GitLab</FormLabel>
-                  <FormDescription>
-                    Version control and CI/CD pipeline
-                  </FormDescription>
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="serviceK8s"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <Server className="h-5 w-5 text-blue-500" />
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Kubernetes</FormLabel>
-                  <FormDescription>
-                    Container orchestration platform
-                  </FormDescription>
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="serviceHpc"
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <Cpu className="h-5 w-5 text-purple-500" />
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">HPC</FormLabel>
-                  <FormDescription>
-                    High Performance Computing cluster access
-                  </FormDescription>
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
       </CardContent>
     </Card>
   )

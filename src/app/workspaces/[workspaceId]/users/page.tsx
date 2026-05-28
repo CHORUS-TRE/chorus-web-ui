@@ -2,26 +2,21 @@
 
 import { LayoutGrid, Rows3, Users } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { AddUserToWorkspaceDialog } from '@/components/forms/add-user-to-workspace-dialog'
 import { toast } from '@/components/hooks/use-toast'
-import { SessionMembersSection } from '@/components/session-members-section'
 import { Button } from '@/components/ui/button'
-import { WorkspaceRoleDistribution } from '@/components/workspace-role-distribution'
 import { WorkspaceUserCard } from '@/components/workspace-user-card'
 import WorkspaceUserTable from '@/components/workspace-user-table'
 import { User } from '@/domain/model/user'
-import { Workbench } from '@/domain/model/workbench'
 import { useUserPreferences } from '@/stores/user-preferences-store'
 import { listUsers } from '@/view-model/user-view-model'
-import { workbenchList } from '@/view-model/workbench-view-model'
 
 export default function UsersPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
   const [users, setUsers] = useState<User[]>([])
-  const [workbenches, setWorkbenches] = useState<Workbench[]>([])
   const { showUsersTable, toggleUsersView } = useUserPreferences()
 
   const loadUsers = useCallback(async () => {
@@ -77,10 +72,7 @@ export default function UsersPage() {
   useEffect(() => {
     if (!workspaceId) return
     loadUsers()
-    workbenchList().then((result) => {
-      if (result.data) setWorkbenches(result.data)
-    })
-  }, [workspaceId])
+  }, [workspaceId, loadUsers])
 
   if (!workspaceId) {
     return null
@@ -89,7 +81,7 @@ export default function UsersPage() {
   return (
     <div className="container mx-auto p-6">
       <div>
-        <h1 className="text-3xl font-semibold text-foreground text-muted-foreground">
+        <h1 className="text-3xl font-semibold text-muted-foreground">
           Workspace Members
         </h1>
         <p className="mb-8 text-muted-foreground">
@@ -102,7 +94,7 @@ export default function UsersPage() {
           <div className="flex items-center gap-2 text-muted-foreground">
             <Users className="h-6 w-6" />
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Members ({users.length})
+              Members
             </h2>
           </div>
           <div className="flex items-center gap-4">
@@ -154,14 +146,6 @@ export default function UsersPage() {
           </div>
         )}
       </div>
-
-      {/* Session Members */}
-      <SessionMembersSection
-        workspaceId={workspaceId}
-        workbenches={workbenches}
-        users={users}
-        onUpdate={loadUsers}
-      />
     </div>
   )
 }

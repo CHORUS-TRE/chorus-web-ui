@@ -2,7 +2,8 @@ import { z } from 'zod'
 
 import { UserSchema } from './user'
 import {
-  NetworkPolicyEnum,
+  ClipboardModeEnum,
+  NetworkPolicyModeEnum,
   ResourcePresetEnum,
   WorkspaceConfigSchema
 } from './workspace-config'
@@ -27,6 +28,11 @@ export const WorkspaceSchema = z.object({
   appInstanceIds: z.array(z.string()).optional(),
   appInstances: z.array(z.string()).optional(),
   namespace: z.string().optional(),
+  networkPolicy: NetworkPolicyModeEnum.optional(),
+  allowedFqdns: z.array(z.string()).optional(),
+  networkPolicyStatus: z.string().optional(),
+  networkPolicyMessage: z.string().optional(),
+  clipboard: ClipboardModeEnum.optional(),
   createdAt: z.date(),
   updatedAt: z.date()
 })
@@ -37,7 +43,10 @@ export const WorkspaceCreateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   shortName: z.string().min(3, 'Short name is required'),
   description: z.string().optional(),
-  isMain: z.boolean().optional()
+  isMain: z.boolean().optional(),
+  networkPolicy: NetworkPolicyModeEnum.optional(),
+  allowedFqdns: z.array(z.string()).optional(),
+  clipboard: ClipboardModeEnum.optional()
 })
 
 export const WorkspaceEditFormSchema = WorkspaceCreateSchema // For form validation
@@ -68,8 +77,6 @@ export const WorkspaceWithDevSchema = WorkspaceSchema.extend({
 export const WorkspaceDevFormSchema = z.object({
   image: z.union([z.any(), z.null()]).optional(),
   descriptionMarkdown: z.string().optional(),
-  network: NetworkPolicyEnum.optional(),
-  allowCopyPaste: z.boolean().optional(),
   resourcePreset: ResourcePresetEnum.optional(),
   gpu: z.number().int().min(0).optional(),
   cpu: z.string().optional(),

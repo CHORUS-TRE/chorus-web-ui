@@ -1,35 +1,31 @@
 'use client'
 
-import { Settings } from 'lucide-react'
+import { CheckCircle2, Cog, Info, Pencil, Shield } from 'lucide-react'
+import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import {
   WorkspaceDeleteForm,
   WorkspaceUpdateForm
 } from '@/components/forms/workspace-forms'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
+
+type EditTab = 'general' | 'security' | 'resources' | 'services'
 
 export default function WorkspaceSettingsPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
   const { can, PERMISSIONS } = useAuthorization()
   const workspaces = useAppState((state) => state.workspaces)
-  const [activeTab, setActiveTab] = useState('general')
   const workspace = workspaces?.find((w) => w.id === workspaceId)
-  const [deleteOpen, setDeleteOpen] = useState(false)
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
-  const [deleted, setDeleted] = useState<boolean>(false)
-  const [open, setOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [editTab, setEditTab] = useState<EditTab>('general')
+  const [deleteOpen, setDeleteOpen] = useState(false)
   const router = useRouter()
 
   if (!workspace) {
@@ -44,70 +40,155 @@ export default function WorkspaceSettingsPage() {
     )
   }
 
+  const openEdit = (tab: EditTab) => {
+    setEditTab(tab)
+    setEditOpen(true)
+  }
+
+  const networkPolicy = workspace.networkPolicy
+  const clipboard = workspace.clipboard
+  const allowedFqdns = workspace.allowedFqdns || []
+
+  const networkPolicyColor =
+    networkPolicy === 'Open'
+      ? 'text-green-500'
+      : networkPolicy === 'FQDNAllowlist'
+        ? 'text-yellow-500'
+        : 'text-red-500'
+
+  const ownerStatus = workspace.dev?.owner
+    ? `Owned by ${workspace.dev.owner}`
+    : undefined
+
+  const networkStatusText =
+    workspace.networkPolicyStatus || workspace.networkPolicyMessage
+      ? `${workspace.networkPolicyStatus ?? ''}${
+          workspace.networkPolicyStatus && workspace.networkPolicyMessage
+            ? ': '
+            : ''
+        }${workspace.networkPolicyMessage ?? ''}`
+      : undefined
+
   return (
     <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between">
+      <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold text-muted-foreground">
             Workspace Settings
           </h1>
-          <p className="mb-8 text-muted-foreground">
+          <p className="text-muted-foreground">
             Manage workspace configuration.
           </p>
         </div>
+        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+          Delete Workspace
+        </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle>General Configuration</CardTitle>
-            <CardDescription>Update workspace settings.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="max-w-xl">
-              <Button onClick={() => setOpen(true)}>
-                Edit Workspace Details
-              </Button>
-              {open && (
-                <WorkspaceUpdateForm
-                  workspace={workspace}
-                  state={[open, setOpen]}
-                  onSuccess={() => {
-                    // refresh handled by store usually or parent
-                    refreshWorkspaces()
-                  }}
-                />
+      <div className="card-glass p-4">
+        {/* General / identity */}
+        <div className="flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">{workspace.name}</span>
+              {workspace.isMain && <Badge variant="secondary">Main</Badge>}
+              {(workspace.shortName || workspace.namespace) && (
+                <span className="text-sm text-muted-foreground">
+                  {[workspace.shortName, workspace.namespace]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </span>
               )}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle>Delete Workspace</CardTitle>
-            <CardDescription>Delete workspace</CardDescription>
-          </CardHeader>
-          <CardContent className="max-w-xl">
-            <Button onClick={() => setDeleteOpen(true)}>
-              Delete Workspace
-            </Button>
-            {deleteOpen && (
-              <WorkspaceDeleteForm
-                id={workspace?.id}
-                state={[deleteOpen, setDeleteOpen]}
-                onSuccess={() => {
-                  refreshWorkspaces()
-                  router.push('/workspaces')
-                  setDeleted(true)
-                  setTimeout(() => {
-                    setDeleted(false)
-                  }, 3000)
-                }}
-              />
+            {workspace.description && (
+              <div className="mt-1 truncate text-sm text-muted-foreground">
+                {workspace.description}
+              </div>
             )}
-          </CardContent>
-        </Card>
+            {ownerStatus && (
+              <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Info className="h-3.5 w-3.5" />
+                <span className="truncate">{ownerStatus}</span>
+              </div>
+            )}
+          </div>
+
+          <Button
+            variant="ghost"
+            className="text-accent/60 hover:bg-accent/20 hover:text-accent"
+            size="icon"
+            onClick={() => openEdit('general')}
+            aria-label="Edit general"
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Divider */}
+        <div className="my-8" />
+
+        {/* Security */}
+        <div className="flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="">
+              <span className="font-medium">Security</span>
+              {networkPolicy && (
+                <Badge variant="secondary" className="ml-2">
+                  {networkPolicy}
+                </Badge>
+              )}
+              {clipboard && (
+                <span className="ml-2 text-sm text-muted-foreground">
+                  Clipboard <Badge variant="secondary">{clipboard}</Badge>
+                </span>
+              )}
+            </div>
+
+            {networkPolicy === 'FQDNAllowlist' && (
+              <div className="mt-1 truncate text-sm text-muted-foreground">
+                {allowedFqdns.length > 0
+                  ? `FQDNs: ${allowedFqdns.slice(0, 3).join(', ')}${
+                      allowedFqdns.length > 3
+                        ? ` (+${allowedFqdns.length - 3} more)`
+                        : ''
+                    }`
+                  : 'No FQDNs allowed'}
+              </div>
+            )}
+
+            {networkStatusText && (
+              <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                {/complete|applied|open/i.test(networkStatusText) ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                ) : (
+                  <Info className="h-3.5 w-3.5" />
+                )}
+                <span className="truncate">{networkStatusText}</span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {editOpen && (
+        <WorkspaceUpdateForm
+          workspace={workspace}
+          state={[editOpen, setEditOpen]}
+          initialTab={editTab}
+          onSuccess={() => refreshWorkspaces()}
+        />
+      )}
+
+      {deleteOpen && (
+        <WorkspaceDeleteForm
+          id={workspace.id}
+          state={[deleteOpen, setDeleteOpen]}
+          onSuccess={() => {
+            refreshWorkspaces()
+            router.push('/workspaces')
+          }}
+        />
+      )}
     </div>
   )
 }

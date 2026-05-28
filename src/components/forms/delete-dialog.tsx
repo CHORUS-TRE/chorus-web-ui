@@ -53,7 +53,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
             onClick={onConfirm}
             disabled={isDeleting}
             variant="destructive"
-            className="rounded-full"
+            className="rounded"
           >
             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Delete

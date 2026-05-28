@@ -37,36 +37,6 @@ const scopeLabels: Record<Scope, string> = {
   session: 'Session'
 }
 
-const scopeBadgeColors: Record<string, string> = {
-  platform: 'bg-primary text-primary-foreground',
-  workspace: 'bg-muted text-foreground',
-  session: 'bg-accent text-accent-foreground'
-}
-
-const scopeBadgeBorders: Record<string, string> = {
-  platform: 'border-primary text-primary',
-  workspace: 'border-muted-foreground text-muted-foreground',
-  session: 'border-accent text-accent'
-}
-
-const scopeSelectedRole: Record<string, string> = {
-  platform: 'bg-primary/20 text-primary',
-  workspace: 'bg-muted/20 text-muted-foreground',
-  session: 'bg-accent/20 text-accent'
-}
-
-const scopeHoverRole: Record<string, string> = {
-  platform: 'hover:bg-primary/10',
-  workspace: 'hover:bg-muted/10',
-  session: 'hover:bg-accent/10'
-}
-
-const scopeTextColor: Record<string, string> = {
-  platform: 'text-primary',
-  workspace: 'text-muted-foreground',
-  session: 'text-accent'
-}
-
 export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState<string>('WorkspaceMember')
   const [scopeFilter, setScopeFilter] = useState<Scope>('platform')
@@ -108,10 +78,10 @@ export default function RolesPage() {
             key={scope}
             onClick={() => setScopeFilter(scope)}
             className={cn(
-              'rounded-full rounded-md border px-3 py-1 text-xs font-medium transition-colors',
+              'rounded-full border border-accent px-4 py-1.5 text-sm font-medium capitalize transition-colors',
               scopeFilter === scope
-                ? scopeBadgeColors[scope]
-                : scopeBadgeBorders[scope]
+                ? 'bg-accent text-accent-foreground'
+                : 'text-accent hover:bg-accent/10'
             )}
           >
             {scopeLabels[scope]}
@@ -125,12 +95,7 @@ export default function RolesPage() {
         <div className="w-64 flex-shrink-0 overflow-y-auto rounded-lg border bg-card p-2 shadow-sm">
           {Object.entries(visibleGroups).map(([scope, roles]) => (
             <div key={scope}>
-              <p
-                className={cn(
-                  'mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider',
-                  scopeTextColor[scope] || 'text-muted-foreground/70'
-                )}
-              >
+              <p className="mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
                 {scope} roles
               </p>
               {roles.map(({ name, def }) => (
@@ -142,8 +107,8 @@ export default function RolesPage() {
                         className={cn(
                           'flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
                           selectedRole === name
-                            ? scopeSelectedRole[scopeFilter]
-                            : `text-foreground ${scopeHoverRole[scopeFilter]}`
+                            ? 'bg-accent/20 text-accent'
+                            : 'text-foreground hover:bg-accent/10'
                         )}
                       >
                         {def.displayName ?? name}
@@ -165,17 +130,12 @@ export default function RolesPage() {
             {/* Header */}
             <div className="mb-4 space-y-1">
               <div className="flex items-start gap-4">
-                <h2
-                  className={cn(
-                    'text-lg font-semibold',
-                    scopeTextColor[selectedScope]
-                  )}
-                >
+                <h2 className="text-lg font-semibold">
                   {selectedDef.displayName ?? selectedRole}
                 </h2>
                 <Badge
                   variant="outline"
-                  className={cn(scopeBadgeBorders[selectedScope], 'mt-1')}
+                  className="mt-1 border-accent text-accent"
                 >
                   {scopeLabels[selectedScope]}
                 </Badge>

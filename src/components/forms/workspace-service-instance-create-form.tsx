@@ -182,7 +182,7 @@ export function WorkspaceServiceInstanceCreateForm({
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="oci://registry.example.com"
+                      placeholder="registry.example.com"
                       className="text-muted-foreground placeholder:text-muted-foreground"
                     />
                   </FormControl>
