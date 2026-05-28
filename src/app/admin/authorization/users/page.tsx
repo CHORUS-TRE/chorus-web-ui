@@ -7,7 +7,6 @@ import { Bar, BarChart, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts'
 import { CreateUserRoleDialog } from '@/components/forms/create-user-role-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { PermissionMatrix } from '@/components/permission-matrix'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   type ChartConfig,
@@ -32,11 +31,16 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import { ROLE_DEFINITIONS, type RoleDefinition } from '@/config/permissions'
+import { Result } from '@/domain/model'
 import { User } from '@/domain/model/user'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
-import { deleteUserRole, listUsers } from '@/view-model/user-view-model'
+import {
+  createUserRole,
+  deleteUserRole,
+  listUsers
+} from '@/view-model/user-view-model'
 
 type Scope = 'platform' | 'workspace' | 'session'
 
@@ -55,20 +59,8 @@ function getRoleScope(
   return 'platform'
 }
 
-const scopeColors: Record<Scope, string> = {
-  platform: 'border-primary text-primary',
-  workspace: 'border-muted-foreground text-muted-foreground',
-  session: 'border-accent text-accent'
-}
-
-const scopeActiveBg: Record<Scope, string> = {
-  platform: 'bg-primary text-primary-foreground border-primary',
-  workspace: 'bg-muted text-foreground border-muted',
-  session: 'bg-accent text-accent-foreground border-accent'
-}
-
 const contextBadgeColors: Record<Scope, string> = {
-  platform: 'bg-primary/20 text-primary',
+  platform: 'bg-accent/20 text-accent',
   workspace: 'bg-muted/20 text-muted-foreground',
   session: 'bg-accent/20 text-accent'
 }
@@ -104,7 +96,9 @@ export default function AuthorizationUsersPage() {
   const roleColumns = useMemo(
     () =>
       Object.entries(ROLE_DEFINITIONS)
-        .filter(([, def]) => getRoleScope(def) === scope)
+        .filter(
+          ([name, def]) => getRoleScope(def) === scope && name !== 'Public'
+        )
         .map(([name, def]) => ({ name, def })),
     [scope]
   )
@@ -156,6 +150,26 @@ export default function AuthorizationUsersPage() {
     }
   }
 
+  const handleAddRole = async (userId: string, roleName: string) => {
+    const formData = new FormData()
+    formData.append('userId', userId)
+    formData.append('roleName', roleName)
+    const result = await createUserRole({} as Result<User>, formData)
+    if (result.error || result.issues) {
+      toast({
+        title: 'Failed to assign role',
+        description:
+          result.error ||
+          result.issues?.map((i) => i.message).join(', ') ||
+          'Unknown error',
+        variant: 'destructive'
+      })
+    } else {
+      toast({ title: 'Role assigned' })
+      refresh()
+    }
+  }
+
   const getUserRoleAssignments = (user: User, roleName: string) =>
     (user.rolesWithContext || []).filter((r) => r.name === roleName)
 
@@ -193,11 +207,11 @@ export default function AuthorizationUsersPage() {
   }, [users])
 
   const rolesChartConfig: ChartConfig = {
-    count: { label: 'Users', color: 'hsl(var(--primary))' }
+    count: { label: 'Users', color: 'hsl(var(--accent))' }
   }
 
   const complianceChartConfig: ChartConfig = {
-    compliant: { label: 'Configured', color: 'hsl(var(--primary))' },
+    compliant: { label: 'Configured', color: 'hsl(var(--accent))' },
     nonCompliant: {
       label: 'Unconfigured',
       color: 'hsl(var(--muted-foreground))'
@@ -251,7 +265,7 @@ export default function AuthorizationUsersPage() {
                       {topRolesData.map((_, i) => (
                         <Cell
                           key={i}
-                          fill={`hsl(var(--primary) / ${1 - i * 0.12})`}
+                          fill={`hsl(var(--accent) / ${1 - i * 0.12})`}
                         />
                       ))}
                     </Bar>
@@ -288,7 +302,7 @@ export default function AuthorizationUsersPage() {
                         {
                           name: 'compliant',
                           value: complianceData.compliant,
-                          fill: 'hsl(var(--primary))'
+                          fill: 'hsl(var(--accent))'
                         },
                         {
                           name: 'nonCompliant',
@@ -336,10 +350,10 @@ export default function AuthorizationUsersPage() {
               key={s}
               onClick={() => setScope(s)}
               className={cn(
-                'rounded-full border px-4 py-1.5 text-sm font-medium capitalize transition-colors',
+                'rounded-full border border-accent px-4 py-1.5 text-sm font-medium capitalize transition-colors',
                 scope === s
-                  ? scopeActiveBg[s]
-                  : `${scopeColors[s]} hover:bg-accent/10`
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-accent hover:bg-accent/10'
               )}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -356,9 +370,6 @@ export default function AuthorizationUsersPage() {
               <TableHead className="sticky left-0 z-30 w-8 bg-background" />
               <TableHead className="sticky left-8 z-30 min-w-[180px] bg-background text-muted-foreground">
                 User
-              </TableHead>
-              <TableHead className="w-24 text-muted-foreground">
-                Status
               </TableHead>
               <TooltipProvider delayDuration={200}>
                 {roleColumns.map(({ name, def }) => (
@@ -391,10 +402,7 @@ export default function AuthorizationUsersPage() {
               return (
                 <React.Fragment key={user.id}>
                   <TableRow
-                    className={cn(
-                      'cursor-pointer hover:bg-muted/10',
-                      isMe && 'bg-primary/5'
-                    )}
+                    className="cursor-pointer hover:bg-muted/10"
                     onClick={() =>
                       setExpandedUserId(isExpanded ? null : user.id)
                     }
@@ -411,8 +419,8 @@ export default function AuthorizationUsersPage() {
                           className={cn(
                             'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
                             isMe
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-primary/10 text-primary'
+                              ? 'bg-accent text-accent-foreground'
+                              : 'bg-accent/10 text-accent'
                           )}
                         >
                           {user.firstName?.[0]}
@@ -422,7 +430,7 @@ export default function AuthorizationUsersPage() {
                           <p className="flex items-center gap-1.5 text-sm font-medium">
                             {user.firstName} {user.lastName}
                             {isMe && (
-                              <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                              <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
                                 you
                               </span>
                             )}
@@ -434,22 +442,6 @@ export default function AuthorizationUsersPage() {
                       </div>
                     </TableCell>
 
-                    {/* Status */}
-                    <TableCell>
-                      {user.status ? (
-                        <Badge
-                          variant={
-                            user.status === 'active' ? 'default' : 'secondary'
-                          }
-                          className="text-xs"
-                        >
-                          {user.status}
-                        </Badge>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
-                    </TableCell>
-
                     {/* Role columns */}
                     {roleColumns.map(({ name }) => {
                       const assignments = getUserRoleAssignments(user, name)
@@ -457,6 +449,7 @@ export default function AuthorizationUsersPage() {
                       if (scope === 'platform') {
                         // Independent checkboxes — user can have multiple platform roles
                         const assignment = assignments[0]
+                        const isAssigned = assignments.length > 0
                         return (
                           <TableCell
                             key={name}
@@ -464,14 +457,16 @@ export default function AuthorizationUsersPage() {
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Checkbox
-                              checked={assignments.length > 0}
-                              disabled={!assignment?.id}
+                              checked={isAssigned}
+                              disabled={isAssigned && !assignment?.id}
                               onCheckedChange={(checked) => {
-                                if (!checked && assignment?.id) {
+                                if (checked && !isAssigned) {
+                                  handleAddRole(user.id, name)
+                                } else if (!checked && assignment?.id) {
                                   handleRemoveRole(user.id, assignment.id)
                                 }
                               }}
-                              className="mx-auto"
+                              className="mx-auto border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
                             />
                           </TableCell>
                         )
@@ -481,10 +476,16 @@ export default function AuthorizationUsersPage() {
                       return (
                         <TableCell
                           key={name}
-                          className="min-w-[110px]"
+                          className="min-w-[110px] align-top"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <div className="flex flex-wrap gap-1">
+                          <div
+                            className={cn(
+                              'flex flex-wrap gap-1',
+                              scope === 'workspace' &&
+                                'max-h-[250px] overflow-y-auto pr-1'
+                            )}
+                          >
                             {assignments.map((a) => {
                               const ctxVal = a.context?.[contextKey]
                               const label = ctxVal
@@ -532,7 +533,7 @@ export default function AuthorizationUsersPage() {
                   {isExpanded && (
                     <TableRow>
                       <TableCell />
-                      <TableCell colSpan={roleColumns.length + 3}>
+                      <TableCell colSpan={roleColumns.length + 2}>
                         <div className="rounded-lg border border-muted/40 bg-accent/5 p-4">
                           <PermissionMatrix roleNames={allRoleNames} />
                         </div>
