@@ -49,12 +49,25 @@ export default function WorkspaceSettingsPage() {
   const clipboard = workspace.clipboard
   const allowedFqdns = workspace.allowedFqdns || []
 
-  const networkAccent =
+  const networkPolicyColor =
     networkPolicy === 'Open'
-      ? 'text-green-500 bg-green-500/15'
+      ? 'text-green-500'
       : networkPolicy === 'FQDNAllowlist'
-        ? 'text-yellow-500 bg-yellow-500/15'
-        : 'text-red-500 bg-red-500/15'
+        ? 'text-yellow-500'
+        : 'text-red-500'
+
+  const ownerStatus = workspace.dev?.owner
+    ? `Owned by ${workspace.dev.owner}`
+    : undefined
+
+  const networkStatusText =
+    workspace.networkPolicyStatus || workspace.networkPolicyMessage
+      ? `${workspace.networkPolicyStatus ?? ''}${
+          workspace.networkPolicyStatus && workspace.networkPolicyMessage
+            ? ': '
+            : ''
+        }${workspace.networkPolicyMessage ?? ''}`
+      : undefined
 
   return (
     <div className="container mx-auto p-6">
@@ -72,68 +85,89 @@ export default function WorkspaceSettingsPage() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <SettingsCard
-          icon={
-            workspace.dev?.image ? (
-              <Image
-                src={workspace.dev.image}
-                alt={workspace.name}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <Cog className="h-5 w-5 text-accent" />
-            )
-          }
-          iconBg={workspace.dev?.image ? '' : 'bg-accent/15'}
-          title={workspace.name}
-          badge={
-            workspace.isMain ? <Badge variant="secondary">Main</Badge> : null
-          }
-          meta={[workspace.shortName, workspace.namespace]
-            .filter(Boolean)
-            .join(' · ')}
-          subInfo={workspace.description || undefined}
-          status={
-            workspace.dev?.owner ? `Owned by ${workspace.dev.owner}` : undefined
-          }
-          onEdit={() => openEdit('general')}
-        />
+      <div className="card-glass p-4">
+        {/* General / identity */}
+        <div className="flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">{workspace.name}</span>
+              {workspace.isMain && <Badge variant="secondary">Main</Badge>}
+              {(workspace.shortName || workspace.namespace) && (
+                <span className="text-sm text-muted-foreground">
+                  {[workspace.shortName, workspace.namespace]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </span>
+              )}
+            </div>
+            {workspace.description && (
+              <div className="mt-1 truncate text-sm text-muted-foreground">
+                {workspace.description}
+              </div>
+            )}
+            {ownerStatus && (
+              <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Info className="h-3.5 w-3.5" />
+                <span className="truncate">{ownerStatus}</span>
+              </div>
+            )}
+          </div>
 
-        <SettingsCard
-          icon={<Shield className={`h-5 w-5 ${networkAccent.split(' ')[0]}`} />}
-          iconBg={networkAccent.split(' ')[1]}
-          title="Security"
-          badge={
-            networkPolicy ? (
-              <Badge variant="secondary">{networkPolicy}</Badge>
-            ) : null
-          }
-          meta={clipboard ? `Clipboard: ${clipboard}` : undefined}
-          subInfo={
-            networkPolicy === 'FQDNAllowlist'
-              ? allowedFqdns.length > 0
-                ? `FQDNs: ${allowedFqdns.slice(0, 3).join(', ')}${
-                    allowedFqdns.length > 3
-                      ? ` (+${allowedFqdns.length - 3} more)`
-                      : ''
-                  }`
-                : 'No FQDNs allowed'
-              : undefined
-          }
-          status={
-            workspace.networkPolicyStatus || workspace.networkPolicyMessage
-              ? `${workspace.networkPolicyStatus ?? ''}${
-                  workspace.networkPolicyStatus &&
-                  workspace.networkPolicyMessage
-                    ? ': '
-                    : ''
-                }${workspace.networkPolicyMessage ?? ''}`
-              : undefined
-          }
-          onEdit={() => openEdit('security')}
-        />
+          <Button
+            variant="ghost"
+            className="text-accent/60 hover:bg-accent/20 hover:text-accent"
+            size="icon"
+            onClick={() => openEdit('general')}
+            aria-label="Edit general"
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Divider */}
+        <div className="my-8" />
+
+        {/* Security */}
+        <div className="flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="">
+              <span className="font-medium">Security</span>
+              {networkPolicy && (
+                <Badge variant="secondary" className="ml-2">
+                  {networkPolicy}
+                </Badge>
+              )}
+              {clipboard && (
+                <span className="ml-2 text-sm text-muted-foreground">
+                  Clipboard <Badge variant="secondary">{clipboard}</Badge>
+                </span>
+              )}
+            </div>
+
+            {networkPolicy === 'FQDNAllowlist' && (
+              <div className="mt-1 truncate text-sm text-muted-foreground">
+                {allowedFqdns.length > 0
+                  ? `FQDNs: ${allowedFqdns.slice(0, 3).join(', ')}${
+                      allowedFqdns.length > 3
+                        ? ` (+${allowedFqdns.length - 3} more)`
+                        : ''
+                    }`
+                  : 'No FQDNs allowed'}
+              </div>
+            )}
+
+            {networkStatusText && (
+              <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                {/complete|applied|open/i.test(networkStatusText) ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                ) : (
+                  <Info className="h-3.5 w-3.5" />
+                )}
+                <span className="truncate">{networkStatusText}</span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {editOpen && (
@@ -155,75 +189,6 @@ export default function WorkspaceSettingsPage() {
           }}
         />
       )}
-    </div>
-  )
-}
-
-function SettingsCard({
-  icon,
-  iconBg,
-  title,
-  badge,
-  meta,
-  subInfo,
-  status,
-  onEdit
-}: {
-  icon: React.ReactNode
-  iconBg: string
-  title: string
-  badge?: React.ReactNode
-  meta?: string
-  subInfo?: string
-  status?: string
-  onEdit: () => void
-}) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="flex items-start gap-4">
-        <div
-          className={`relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md ${iconBg}`}
-        >
-          {icon}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium">{title}</span>
-            {badge}
-            {meta && (
-              <span className="text-sm text-muted-foreground">{meta}</span>
-            )}
-          </div>
-          {subInfo && (
-            <div className="mt-1 truncate text-sm text-muted-foreground">
-              {subInfo}
-            </div>
-          )}
-          {status && (
-            <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-              {status.toLowerCase().includes('complete') ||
-              status.toLowerCase().includes('applied') ||
-              status.toLowerCase().includes('open') ? (
-                <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-              ) : (
-                <Info className="h-3.5 w-3.5" />
-              )}
-              <span className="truncate">{status}</span>
-            </div>
-          )}
-        </div>
-
-        <Button
-          variant="ghost"
-          className="text-muted-foreground"
-          size="icon"
-          onClick={onEdit}
-          aria-label="Edit"
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      </div>
     </div>
   )
 }

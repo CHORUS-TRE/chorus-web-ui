@@ -6,7 +6,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { PermissionMatrix } from '@/components/permission-matrix'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -168,7 +167,7 @@ export default function WorkspaceUserTable({
       })
     : users
 
-  const colSpan = WORKSPACE_ROLE_COLUMNS.length + 3 // expand + name + status + roles + actions
+  const colSpan = WORKSPACE_ROLE_COLUMNS.length + 2 // expand + name + roles + actions
 
   return (
     <div>
@@ -191,12 +190,9 @@ export default function WorkspaceUserTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-8 bg-background" />
-              <TableHead className="sticky left-8 z-10 min-w-[180px] bg-background text-muted-foreground">
+              <TableHead className="w-8" />
+              <TableHead className="sticky left-8 z-10 min-w-[180px] text-muted-foreground">
                 Name
-              </TableHead>
-              <TableHead className="w-24 text-muted-foreground">
-                Status
               </TableHead>
               <TooltipProvider delayDuration={200}>
                 {WORKSPACE_ROLE_COLUMNS.map((role) => (
@@ -246,10 +242,7 @@ export default function WorkspaceUserTable({
                 return (
                   <React.Fragment key={user.id}>
                     <TableRow
-                      className={cn(
-                        'cursor-pointer hover:bg-muted/10',
-                        isMe && 'bg-primary/5'
-                      )}
+                      className={cn('cursor-pointer hover:bg-muted/10')}
                       onClick={() =>
                         setExpandedUserId(isExpanded ? null : user.id)
                       }
@@ -289,20 +282,6 @@ export default function WorkspaceUserTable({
                         </div>
                       </TableCell>
 
-                      {/* Status */}
-                      <TableCell>
-                        {user.status && (
-                          <Badge
-                            variant={
-                              user.status === 'active' ? 'default' : 'secondary'
-                            }
-                            className="text-xs"
-                          >
-                            {user.status}
-                          </Badge>
-                        )}
-                      </TableCell>
-
                       {/* Role checkboxes — unique per workspace (radio-style) */}
                       {WORKSPACE_ROLE_COLUMNS.map((roleName) => {
                         const isChecked = wsRoleNames.includes(roleName)
@@ -320,7 +299,7 @@ export default function WorkspaceUserTable({
                               onCheckedChange={() =>
                                 handleRoleToggle(user, roleName, wsRoles)
                               }
-                              className="mx-auto"
+                              className="mx-auto border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
                             />
                           </TableCell>
                         )

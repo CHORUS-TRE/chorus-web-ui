@@ -411,7 +411,7 @@ function ServiceCard({
   return (
     <>
       <div
-        className="cursor-pointer rounded-lg border bg-card p-4 transition-shadow hover:shadow-md"
+        className="card-glass cursor-pointer p-4 transition-shadow hover:shadow-md"
         onClick={() => setParamsOpen(true)}
       >
         <div className="flex items-start gap-4">
@@ -511,7 +511,7 @@ function ServiceCard({
 
 function ServiceCardSkeleton() {
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="card-glass p-4">
       <div className="flex items-start gap-4">
         <Skeleton className="h-10 w-10 flex-shrink-0 rounded-md" />
         <div className="min-w-0 flex-1 space-y-2">
