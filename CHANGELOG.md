@@ -1,3 +1,10 @@
+# [1.53.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.52.0...v1.53.0) (2026-05-28)
+
+
+### Features
+
+* add unique filename generation for file uploads ([#223](https://github.com/CHORUS-TRE/chorus-web-ui/issues/223)) ([3cf6ca6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3cf6ca6e48d3842f172063e963385837a27207e9))
+
 # [1.52.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.51.2...v1.52.0) (2026-05-27)
 
 
