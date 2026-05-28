@@ -1,3 +1,16 @@
+# [1.54.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.53.0...v1.54.0) (2026-05-28)
+
+
+### Bug Fixes
+
+* trigger ci ([#222](https://github.com/CHORUS-TRE/chorus-web-ui/issues/222)) ([b854b9c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b854b9c1eee0d635ffdee78767713e73d0320771))
+
+
+### Features
+
+* add workspace service instance management APIs and models ([c994b16](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c994b16a9b59a004c398e50459e373c17916e2c3))
+* add workspace service instance management APIs and models ([75d4200](https://github.com/CHORUS-TRE/chorus-web-ui/commit/75d4200bf8690ad2998a4567358b7c05dddd3068))
+
 # [1.53.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.52.0...v1.53.0) (2026-05-28)
 
 
