@@ -65,7 +65,7 @@ const contextBadgeColors: Record<Scope, string> = {
   session: 'bg-accent/20 text-accent'
 }
 
-export default function AuthorizationUsersPage() {
+export function UserRolesMatrix() {
   const [users, setUsers] = useState<User[]>([])
   const [search, setSearch] = useState('')
   const [scope, setScope] = useState<Scope>('platform')
@@ -114,7 +114,6 @@ export default function AuthorizationUsersPage() {
     )
   }, [users, search])
 
-  // Sort: current user first
   const sortedUsers = useMemo(() => {
     if (!currentUser) return filteredUsers
     return [...filteredUsers].sort((a, b) => {
@@ -223,13 +222,6 @@ export default function AuthorizationUsersPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">User Management</h1>
-        <p className="text-sm text-muted-foreground">
-          View and manage user role assignments across all scopes
-        </p>
-      </div>
-
       {/* Summary cards */}
       {users.length > 0 && (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -447,7 +439,6 @@ export default function AuthorizationUsersPage() {
                       const assignments = getUserRoleAssignments(user, name)
 
                       if (scope === 'platform') {
-                        // Independent checkboxes — user can have multiple platform roles
                         const assignment = assignments[0]
                         const isAssigned = assignments.length > 0
                         return (
@@ -472,7 +463,6 @@ export default function AuthorizationUsersPage() {
                         )
                       }
 
-                      // Workspace / session: show context badges
                       return (
                         <TableCell
                           key={name}

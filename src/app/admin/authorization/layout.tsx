@@ -1,28 +1,11 @@
-'use client'
-
-import { Shield, Users } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { Shield } from 'lucide-react'
 import React from 'react'
-
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
-const routes = [
-  { href: '/admin/authorization/roles', label: 'Roles', icon: Shield },
-  { href: '/admin/authorization/users', label: 'Users', icon: Users }
-]
 
 export default function AuthorizationLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const pathname = usePathname()
-  const router = useRouter()
-
-  const activeTab =
-    routes.find((r) => pathname === r.href || pathname.startsWith(r.href + '/'))
-      ?.href || routes[0].href
-
   return (
     <div className="container mx-auto p-6">
       <div>
@@ -34,20 +17,6 @@ export default function AuthorizationLayout({
           Manage roles, permissions, and access control policies.
         </p>
       </div>
-
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => router.push(v)}
-        className="space-y-4"
-      >
-        <TabsList>
-          {routes.map((route) => (
-            <TabsTrigger key={route.href} value={route.href}>
-              {route.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
 
       {children}
     </div>
