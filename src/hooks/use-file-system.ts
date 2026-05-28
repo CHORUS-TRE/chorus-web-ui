@@ -23,6 +23,28 @@ import {
 
 const IMPORT_FILE_SIZE_THRESHOLD = 5 * 1024 * 1024 // 5MB
 
+// Helper function to generate a unique filename by appending (1), (2), … before the extension
+function getUniqueFileName(
+  fileName: string,
+  existingNames: Set<string>
+): string {
+  if (!existingNames.has(fileName)) return fileName
+
+  const dotIndex = fileName.lastIndexOf('.')
+  const hasExtension = dotIndex > 0
+  const stem = hasExtension ? fileName.slice(0, dotIndex) : fileName
+  const ext = hasExtension ? fileName.slice(dotIndex) : ''
+
+  let counter = 1
+  let candidate: string
+  do {
+    candidate = `${stem} (${counter})${ext}`
+    counter++
+  } while (existingNames.has(candidate))
+
+  return candidate
+}
+
 const RETRY_CONFIG = {
   maxRetries: 3,
   initialDelay: 1000, // 1 second
@@ -886,21 +908,38 @@ export function useFileSystem(workspaceId?: string) {
 
       const parentItem = state.items[parentId]
       const parentPath = parentItem?.path || ''
-      const filePath = parentPath ? `${parentPath}/${file.name}` : file.name
+
+      // Force-refresh the list of existing files
+      await fetchWorkspaceFiles(workspaceId, parentPath, true)
+
+      // Build a unique filename
+      const existingNames = new Set(
+        Object.values(state.items)
+          .filter((item) => item.parentId === parentId)
+          .map((item) => item.name)
+      )
+      const uniqueName = getUniqueFileName(file.name, existingNames)
+      const filePath = parentPath ? `${parentPath}/${uniqueName}` : uniqueName
+
+      // Wrap in a new File
+      const fileToUpload =
+        uniqueName !== file.name
+          ? new File([file], uniqueName, { type: file.type })
+          : file
 
       try {
         if (file.size > IMPORT_FILE_SIZE_THRESHOLD) {
           console.info('Using multipart upload for file:', file.name, file.size)
-          const completed = await importFileMultipart(file, filePath)
+          const completed = await importFileMultipart(fileToUpload, filePath)
           if (!completed) return
         } else {
           console.info('Using direct upload for file:', file.name, file.size)
-          await importFileDirect(file, filePath)
+          await importFileDirect(fileToUpload, filePath)
         }
 
         toast({
           title: 'File uploaded',
-          description: `${file.name} has been uploaded successfully`,
+          description: `${uniqueName} has been uploaded successfully`,
           variant: 'default'
         })
 
