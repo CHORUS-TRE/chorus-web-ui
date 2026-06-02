@@ -3,8 +3,8 @@ import '@/styles/globals.css'
 
 import { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
+import { headers } from 'next/headers'
 import Script from 'next/script'
-import { PublicEnvScript } from 'next-runtime-env'
 import { env } from 'next-runtime-env'
 import React from 'react'
 import { Toaster as SonnerToaster } from 'sonner'
@@ -40,6 +40,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined
+  const publicEnv = Object.fromEntries(
+    Object.entries(process.env).filter(([k]) => k.startsWith('NEXT_PUBLIC_'))
+  )
   const matomoUrl = env('NEXT_PUBLIC_MATOMO_URL')
   const containerId = env('NEXT_PUBLIC_MATOMO_CONTAINER_ID')
   const siteId = env('NEXT_PUBLIC_MATOMO_SITE_ID')
@@ -47,7 +51,13 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <PublicEnvScript />
+        <script
+          nonce={nonce}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: `window.__ENV=${JSON.stringify(publicEnv)};`
+          }}
+        />
         <Script id="matomo-tag-manager" strategy="afterInteractive">
           {`
             var _paq = window._paq = window._paq || [];
@@ -74,6 +84,7 @@ export default async function RootLayout({
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
+          nonce={nonce}
         >
           <Toaster />
           <SonnerToaster position="top-right" theme="dark" richColors />

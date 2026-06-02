@@ -1,34 +1,51 @@
 import { buildCsp } from '@/proxy'
 
 const base = {
+  nonce: 'dGVzdG5vbmNlMTI=',
   apiUrl: 'https://api.example.com',
   matomoUrl: '',
-  isDev: false,
+  isDev: false
 }
 
 describe('buildCsp', () => {
+  it('sets script-src to nonce + strict-dynamic (no unsafe-inline in script-src)', () => {
+    const csp = buildCsp(base)
+    expect(csp).toContain(
+      "script-src 'nonce-dGVzdG5vbmNlMTI=' 'strict-dynamic'"
+    )
+    const scriptSrc = csp.match(/script-src [^;]+/)![0]
+    expect(scriptSrc).not.toContain('unsafe-inline')
+  })
+
   it('includes API host (scheme-agnostic) in connect-src', () => {
     const csp = buildCsp(base)
     expect(csp).toContain("connect-src 'self' api.example.com")
   })
 
-  it('includes Matomo host (scheme-agnostic) in script-src and connect-src when provided', () => {
+  it('includes Matomo host in connect-src when provided', () => {
     const csp = buildCsp({ ...base, matomoUrl: 'https://matomo.example.com' })
-    expect(csp).toContain("script-src 'self' 'unsafe-inline' matomo.example.com")
-    expect(csp).toContain("connect-src 'self' api.example.com matomo.example.com")
+    expect(csp).toContain(
+      "connect-src 'self' api.example.com matomo.example.com"
+    )
   })
 
-  it('produces the same host token regardless of http or https scheme in input', () => {
-    const cspHttps = buildCsp({ ...base, matomoUrl: 'https://matomo.example.com' })
-    const cspHttp  = buildCsp({ ...base, matomoUrl: 'http://matomo.example.com' })
-    expect(cspHttps).toContain('matomo.example.com')
-    expect(cspHttp).toContain('matomo.example.com')
-    expect(cspHttps.match(/script-src [^;]+/)?.[0]).toBe(cspHttp.match(/script-src [^;]+/)?.[0])
+  it('produces the same connect-src token regardless of http or https scheme in Matomo URL', () => {
+    const cspHttps = buildCsp({
+      ...base,
+      matomoUrl: 'https://matomo.example.com'
+    })
+    const cspHttp = buildCsp({
+      ...base,
+      matomoUrl: 'http://matomo.example.com'
+    })
+    expect(cspHttps.match(/connect-src [^;]+/)?.[0]).toBe(
+      cspHttp.match(/connect-src [^;]+/)?.[0]
+    )
   })
 
-  it('omits Matomo URL tokens when matomoUrl is empty', () => {
+  it('omits Matomo token from connect-src when matomoUrl is empty', () => {
     const csp = buildCsp({ ...base, matomoUrl: '' })
-    expect(csp).toContain("script-src 'self' 'unsafe-inline'")
+    expect(csp).toContain("connect-src 'self' api.example.com")
     expect(csp).not.toContain('undefined')
   })
 
