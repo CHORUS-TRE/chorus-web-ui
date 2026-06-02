@@ -160,6 +160,14 @@
       "@tailwindcss/oxide",
       "better-sqlite3",
       "sharp"
-    ]
+    ],
+    "overrides": {
+      "minimatch@<9.0.7": "^9.0.7",
+      "picomatch@<2.3.2": "^2.3.2",
+      "lodash@<4.18.0": "^4.18.0",
+      "handlebars@<4.7.9": "^4.7.9",
+      "brace-expansion@<2.0.3": "^2.0.3",
+      "postcss@<8.5.10": "^8.5.10"
+    }
   }
 }
