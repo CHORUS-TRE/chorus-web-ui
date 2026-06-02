@@ -1,3 +1,11 @@
+## [1.54.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.54.0...v1.54.1) (2026-06-02)
+
+
+### Bug Fixes
+
+* enhance Content Security Policy (CSP) implementation with nonce support ([020d168](https://github.com/CHORUS-TRE/chorus-web-ui/commit/020d168812bb14c7ead3e668b708877f41de5b73))
+* implement Content Security Policy (CSP) builder and tests ([e3ec855](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e3ec855065c4fad57ef9c92ac639038ad3e35d97))
+
 # [1.54.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.53.0...v1.54.0) (2026-05-28)
 
 
