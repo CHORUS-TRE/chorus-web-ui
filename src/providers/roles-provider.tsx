@@ -31,14 +31,10 @@ export const useRoles = (): RolesContextType => {
   return ctx
 }
 
-export const RolesProvider = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
+export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuthentication()
   const [roles, setRoles] = useState<AuthorizationRole[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!!user)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -48,10 +44,12 @@ export const RolesProvider = ({
       return
     }
 
+    let ignored = false
     setLoading(true)
     setError(null)
 
     listRoles().then((result) => {
+      if (ignored) return
       if (result.error) {
         setError(result.error)
       } else {
@@ -59,6 +57,10 @@ export const RolesProvider = ({
       }
       setLoading(false)
     })
+
+    return () => {
+      ignored = true
+    }
   }, [user])
 
   const rolesByName = useMemo(
