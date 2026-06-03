@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { getWorkspaceRoles } from '@/config/permissions'
+import { useRoles } from '@/providers/roles-provider'
 import { Result } from '@/domain/model'
 import { User } from '@/domain/model/user'
 import { useAppState } from '@/stores/app-state-store'
@@ -71,6 +71,7 @@ export function ManageUserWorkspaceDialog({
 
   const [open, setOpen] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
+  const { roles } = useRoles()
 
   const currentUser = user
   const userId = user?.id
@@ -93,7 +94,7 @@ export function ManageUserWorkspaceDialog({
   const currentRoleName = currentWorkspaceRoles[0]?.name || ''
 
   // Available roles for workspace members from schema
-  const workspaceRoles = getWorkspaceRoles().map((role) => ({
+  const workspaceRoles = roles.filter(r => r.scope === 'workspace').map((role) => ({
     value: role.name,
     label: role.name
   }))

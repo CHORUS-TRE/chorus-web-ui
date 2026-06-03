@@ -22,11 +22,11 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { listUsers } from '@/view-model/user-view-model'
 import {
   workspaceAddUserRole,
@@ -55,6 +55,7 @@ export default function WorkspaceUserTable({
 }) {
   const { can, PERMISSIONS } = useAuthorization()
   const { user: currentUser } = useAuthentication()
+  const { rolesByName } = useRoles()
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
   const [pendingCell, setPendingCell] = useState<string | null>(null)
@@ -203,7 +204,7 @@ export default function WorkspaceUserTable({
                       </TableHead>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs text-xs">
-                      {ROLE_DEFINITIONS[role]?.description}
+                      {rolesByName.get(role)?.description ?? ''}
                     </TooltipContent>
                   </Tooltip>
                 ))}

@@ -4,11 +4,11 @@ import { useMemo } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import {
-  getRolePermissions,
   type Permission,
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS
 } from '@/config/permissions'
+import { useRoles } from '@/providers/roles-provider'
 import { cn } from '@/lib/utils'
 
 /** Category groupings for human-friendly display */
@@ -74,13 +74,15 @@ export function EffectivePermissionTags({
   roleNames,
   className
 }: EffectivePermissionTagsProps) {
+  const { rolesByName } = useRoles()
+
   const effectivePermissions = useMemo(() => {
     const allPerms = new Set<Permission>()
     for (const roleName of roleNames) {
-      getRolePermissions(roleName).forEach((p) => allPerms.add(p))
+      (rolesByName.get(roleName)?.permissions ?? []).forEach((p) => allPerms.add(p as Permission))
     }
     return allPerms
-  }, [roleNames])
+  }, [roleNames, rolesByName])
 
   const categorized = useMemo(() => {
     const result: Record<string, Permission[]> = {}

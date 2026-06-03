@@ -36,9 +36,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { getAllRoles, ROLE_DEFINITIONS } from '@/config/permissions'
+import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
 import { Result } from '@/domain/model'
-import { Role, User } from '@/domain/model/user'
+import { User } from '@/domain/model/user'
+
+import { useRoles } from '@/providers/roles-provider'
 import { createUserRole } from '@/view-model/user-view-model'
 
 import { toast } from '../hooks/use-toast'
@@ -60,7 +62,7 @@ export function CreateUserRoleDialog({
   onRoleAdded: (user: User) => void
 }) {
   const [open, setOpen] = useState(false)
-  const [roles, setRoles] = useState<Role[]>([])
+  const { roles: apiRoles } = useRoles()
   const form = useForm<FormData>({
     resolver: zodResolver(CreateUserRoleSchema),
     defaultValues: {
@@ -72,12 +74,6 @@ export function CreateUserRoleDialog({
   })
 
   const [state, formAction] = useActionState(createUserRole, {} as Result<User>)
-
-  useEffect(() => {
-    // Load roles from schema definition
-    const schemaRoles = getAllRoles()
-    setRoles(schemaRoles)
-  }, [])
 
   useEffect(() => {
     if (state.data) {
@@ -111,11 +107,11 @@ export function CreateUserRoleDialog({
 
   const roleOptions = useMemo(
     () =>
-      roles.map((r) => ({
-        id: r.id ?? r.name,
-        label: ROLE_DEFINITIONS[r.name]?.displayName ?? r.name
+      apiRoles.map((r) => ({
+        id: r.name,
+        label: ROLE_DISPLAY_NAMES[r.name] ?? r.name
       })),
-    [roles]
+    [apiRoles]
   )
 
   const onSubmit = (data: FormData) => {

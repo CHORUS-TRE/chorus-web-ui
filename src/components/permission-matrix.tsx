@@ -10,12 +10,11 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import {
-  getRolePermissions,
   type Permission,
   PERMISSION_DESCRIPTIONS,
-  PERMISSIONS,
-  ROLE_DEFINITIONS
+  PERMISSIONS
 } from '@/config/permissions'
+import { useRoles } from '@/providers/roles-provider'
 import { cn } from '@/lib/utils'
 
 type Scope = 'workspace' | 'session' | 'platform'
@@ -173,22 +172,24 @@ export function PermissionMatrix({
   highlightInherited = false,
   compact = false
 }: PermissionMatrixProps) {
+  const { rolesByName } = useRoles()
+
   const { resolvedPermissions, directPermissions } = useMemo(() => {
     const resolved = new Set<Permission>()
     const direct = new Set<Permission>()
 
     for (const roleName of roleNames) {
-      const allPerms = getRolePermissions(roleName)
-      allPerms.forEach((p) => resolved.add(p))
+      const allPerms = rolesByName.get(roleName)?.permissions ?? []
+      allPerms.forEach((p) => resolved.add(p as Permission))
 
-      const def = ROLE_DEFINITIONS[roleName]
+      const def = rolesByName.get(roleName)
       if (def) {
-        def.permissions.forEach((p) => direct.add(p))
+        def.permissions.forEach((p) => direct.add(p as Permission))
       }
     }
 
     return { resolvedPermissions: resolved, directPermissions: direct }
-  }, [roleNames])
+  }, [roleNames, rolesByName])
 
   const visibleScopes = useMemo(() => {
     if (!scopeFilter || scopeFilter === 'all') return SCOPES

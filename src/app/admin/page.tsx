@@ -21,14 +21,15 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { StatCard } from '@/components/dashboard/stat-card'
-import { ROLE_DEFINITIONS } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
 
 const AdminPage = () => {
   const { can, PERMISSIONS } = useAuthorization()
+  const { roles } = useRoles()
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
@@ -74,7 +75,7 @@ const AdminPage = () => {
     refreshApprovalRequests
   ])
 
-  const roleCount = Object.keys(ROLE_DEFINITIONS).length
+  const roleCount = roles.length
 
   return (
     <div className="container mx-auto p-6">

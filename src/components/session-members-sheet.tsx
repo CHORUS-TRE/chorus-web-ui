@@ -27,7 +27,8 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '@/config/permissions'
+import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
+import { useRoles } from '@/providers/roles-provider'
 import { User } from '@/domain/model/user'
 import { Workbench } from '@/domain/model/workbench'
 import { cn } from '@/lib/utils'
@@ -62,6 +63,7 @@ export function SessionMembersSheet({
 }: SessionMembersSheetProps) {
   const { can, PERMISSIONS } = useAuthorization()
   const { user: currentUser } = useAuthentication()
+  const { rolesByName } = useRoles()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
   const [pendingCell, setPendingCell] = useState<string | null>(null)
@@ -212,12 +214,12 @@ export function SessionMembersSheet({
                           <TooltipTrigger asChild>
                             <TableHead className="min-w-[90px] cursor-default text-center text-xs text-muted-foreground">
                               {(
-                                ROLE_DEFINITIONS[role]?.displayName ?? role
+                                ROLE_DISPLAY_NAMES[role] ?? role
                               ).replace(/^(Session|Workbench)/, '')}
                             </TableHead>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs text-xs">
-                            {ROLE_DEFINITIONS[role]?.description}
+                            {rolesByName.get(role)?.description ?? ''}
                           </TooltipContent>
                         </Tooltip>
                       ))}

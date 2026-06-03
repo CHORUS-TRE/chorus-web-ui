@@ -29,7 +29,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { getWorkbenchRoles } from '@/config/permissions'
+import { useRoles } from '@/providers/roles-provider'
 import { Result } from '@/domain/model'
 import { Role, User } from '@/domain/model/user'
 import { useAppState } from '@/stores/app-state-store'
@@ -85,8 +85,10 @@ export function ManageUserWorkbenchDialog({
     return workbenches?.filter((wb) => wb.workspaceId === workspaceId) || []
   }, [workbenches, workspaceId])
 
+  const { roles } = useRoles()
+
   // Available roles for workbench members from schema
-  const workbenchRoles = getWorkbenchRoles().map((role) => ({
+  const workbenchRoles = roles.filter(r => r.scope === 'session').map((role) => ({
     value: role.name,
     label: role.name
   }))

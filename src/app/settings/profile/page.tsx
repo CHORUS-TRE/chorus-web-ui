@@ -15,6 +15,7 @@ import { useMemo } from 'react'
 
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { getRoleScope, RoleBadge } from '@/components/role-badge'
+import { useRoles } from '@/providers/roles-provider'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -26,6 +27,7 @@ import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserProfile() {
   const { user, refreshUser } = useAuthentication()
+  const { rolesByName } = useRoles()
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -56,23 +58,23 @@ export default function UserProfile() {
   const platformRoles = useMemo(
     () =>
       (user?.rolesWithContext || []).filter(
-        (r) => getRoleScope(r.name) === 'platform'
+        (r) => getRoleScope(r.name, rolesByName) === 'platform'
       ),
-    [user]
+    [user, rolesByName]
   )
   const workspaceRoles = useMemo(
     () =>
       (user?.rolesWithContext || []).filter(
-        (r) => getRoleScope(r.name) === 'workspace'
+        (r) => getRoleScope(r.name, rolesByName) === 'workspace'
       ),
-    [user]
+    [user, rolesByName]
   )
   const sessionRoles = useMemo(
     () =>
       (user?.rolesWithContext || []).filter(
-        (r) => getRoleScope(r.name) === 'session'
+        (r) => getRoleScope(r.name, rolesByName) === 'session'
       ),
-    [user]
+    [user, rolesByName]
   )
 
   return (
