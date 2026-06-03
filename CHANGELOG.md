@@ -1,3 +1,10 @@
+## [1.54.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.54.1...v1.54.2) (2026-06-03)
+
+
+### Bug Fixes
+
+* update LLM API configuration in values.yaml ([2ec7e5a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2ec7e5aa6a4e5fb04a720a46c3c52232abf872e8))
+
 ## [1.54.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.54.0...v1.54.1) (2026-06-02)
 
 
