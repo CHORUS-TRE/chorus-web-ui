@@ -14,8 +14,8 @@ import {
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS
 } from '@/config/permissions'
-import { useRoles } from '@/providers/roles-provider'
 import { cn } from '@/lib/utils'
+import { useRoles } from '@/providers/roles-provider'
 
 type Scope = 'workspace' | 'session' | 'platform'
 
@@ -174,21 +174,15 @@ export function PermissionMatrix({
 }: PermissionMatrixProps) {
   const { rolesByName } = useRoles()
 
-  const { resolvedPermissions, directPermissions } = useMemo(() => {
+  const resolvedPermissions = useMemo(() => {
     const resolved = new Set<Permission>()
-    const direct = new Set<Permission>()
 
     for (const roleName of roleNames) {
       const allPerms = rolesByName.get(roleName)?.permissions ?? []
       allPerms.forEach((p) => resolved.add(p as Permission))
-
-      const def = rolesByName.get(roleName)
-      if (def) {
-        def.permissions.forEach((p) => direct.add(p as Permission))
-      }
     }
 
-    return { resolvedPermissions: resolved, directPermissions: direct }
+    return resolved
   }, [roleNames, rolesByName])
 
   const visibleScopes = useMemo(() => {
@@ -251,8 +245,7 @@ export function PermissionMatrix({
                   <div>
                     {group.permissions.map((perm) => {
                       const isGranted = resolvedPermissions.has(perm.key)
-                      const isDirect = directPermissions.has(perm.key)
-                      const isInherited = isGranted && !isDirect
+                      const isInherited = false
 
                       const desc = PERMISSION_DESCRIPTIONS[perm.key]
 

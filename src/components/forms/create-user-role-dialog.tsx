@@ -39,7 +39,6 @@ import {
 import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
 import { Result } from '@/domain/model'
 import { User } from '@/domain/model/user'
-
 import { useRoles } from '@/providers/roles-provider'
 import { createUserRole } from '@/view-model/user-view-model'
 
@@ -167,7 +166,7 @@ export function CreateUserRoleDialog({
                     </FormControl>
                     <SelectContent>
                       {roleOptions.map((r) => (
-                        <SelectItem key={r.id} value={r.label}>
+                        <SelectItem key={r.id} value={r.id}>
                           {r.label}
                         </SelectItem>
                       ))}
