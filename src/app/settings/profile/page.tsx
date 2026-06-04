@@ -15,7 +15,6 @@ import { useMemo } from 'react'
 
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { getRoleScope, RoleBadge } from '@/components/role-badge'
-import { useRoles } from '@/providers/roles-provider'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -24,6 +23,7 @@ import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
 import { Role } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useRoles } from '@/providers/roles-provider'
 
 export default function UserProfile() {
   const { user, refreshUser } = useAuthentication()

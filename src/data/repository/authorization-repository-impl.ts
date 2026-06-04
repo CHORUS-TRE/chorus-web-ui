@@ -33,6 +33,10 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
         .array(AuthorizationRoleSchema)
         .safeParse(response.result?.roles)
       if (!result.success) {
+        console.error(
+          '[AuthorizationRepository] listRoles validation failed:',
+          result.error.issues
+        )
         return {
           error: 'API response validation failed',
           issues: result.error.issues

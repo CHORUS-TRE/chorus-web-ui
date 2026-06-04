@@ -91,7 +91,6 @@ export const WORKSPACE_PERMISSIONS_DISPLAY = [
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
-
 export const ROLE_DISPLAY_NAMES: Record<string, string> = {
   WorkbenchViewer: 'Session Viewer',
   WorkbenchMember: 'Session Member',
@@ -178,4 +177,3 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
 export const getPermissionDescription = (permission: string): string => {
   return PERMISSION_DESCRIPTIONS[permission] || permission
 }
-

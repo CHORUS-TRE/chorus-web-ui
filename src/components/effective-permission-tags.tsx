@@ -8,8 +8,8 @@ import {
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS
 } from '@/config/permissions'
-import { useRoles } from '@/providers/roles-provider'
 import { cn } from '@/lib/utils'
+import { useRoles } from '@/providers/roles-provider'
 
 /** Category groupings for human-friendly display */
 const PERMISSION_CATEGORIES: Record<string, Permission[]> = {
@@ -79,7 +79,9 @@ export function EffectivePermissionTags({
   const effectivePermissions = useMemo(() => {
     const allPerms = new Set<Permission>()
     for (const roleName of roleNames) {
-      (rolesByName.get(roleName)?.permissions ?? []).forEach((p) => allPerms.add(p as Permission))
+      ;(rolesByName.get(roleName)?.permissions ?? []).forEach((p) =>
+        allPerms.add(p as Permission)
+      )
     }
     return allPerms
   }, [roleNames, rolesByName])

@@ -1,6 +1,6 @@
 import {
-  AuthorizationRoleSchema,
-  type AuthorizationRole
+  type AuthorizationRole,
+  AuthorizationRoleSchema
 } from '@/domain/model/authorization'
 
 describe('AuthorizationRoleSchema', () => {
@@ -31,11 +31,12 @@ describe('AuthorizationRoleSchema', () => {
     })
   })
 
-  it('rejects an unknown scope value', () => {
+  it('falls back to platform scope for unknown scope values', () => {
     const result = AuthorizationRoleSchema.safeParse({
       name: 'X',
       scope: 'banana'
     })
-    expect(result.success).toBe(false)
+    expect(result.success).toBe(true)
+    expect(result.data?.scope).toBe('platform')
   })
 })

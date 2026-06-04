@@ -31,9 +31,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useRoles } from '@/providers/roles-provider'
 import { Result } from '@/domain/model'
 import { User } from '@/domain/model/user'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
 import {
@@ -94,10 +94,12 @@ export function ManageUserWorkspaceDialog({
   const currentRoleName = currentWorkspaceRoles[0]?.name || ''
 
   // Available roles for workspace members from schema
-  const workspaceRoles = roles.filter(r => r.scope === 'workspace').map((role) => ({
-    value: role.name,
-    label: role.name
-  }))
+  const workspaceRoles = roles
+    .filter((r) => r.scope === 'workspace')
+    .map((role) => ({
+      value: role.name,
+      label: role.name
+    }))
 
   const form = useForm<AddUserFormData>({
     resolver: zodResolver(AddUserToWorkspaceSchema),

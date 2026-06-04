@@ -28,7 +28,8 @@ export default function UserSettingsPage() {
     [roles, rolesByName]
   )
   const workspaceRoles = useMemo(
-    () => roles.filter((r) => getRoleScope(r.name, rolesByName) === 'workspace'),
+    () =>
+      roles.filter((r) => getRoleScope(r.name, rolesByName) === 'workspace'),
     [roles, rolesByName]
   )
   const sessionRoles = useMemo(

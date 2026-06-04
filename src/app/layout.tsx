@@ -20,10 +20,10 @@ import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { Toaster } from '@/components/ui/toaster'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { AuthorizationProvider } from '@/providers/authorization-provider'
-import { RolesProvider } from '@/providers/roles-provider'
 import { FullscreenProvider } from '@/providers/fullscreen-provider'
 import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
+import { RolesProvider } from '@/providers/roles-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 
 const rubik = Rubik({

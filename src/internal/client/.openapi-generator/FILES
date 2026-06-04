@@ -7,6 +7,7 @@ apis/AuthorizationServiceApi.ts
 apis/DevstoreServiceApi.ts
 apis/HealthServiceApi.ts
 apis/NotificationServiceApi.ts
+apis/PlatformSettingsServiceApi.ts
 apis/StewardServiceApi.ts
 apis/UserServiceApi.ts
 apis/WorkbenchServiceApi.ts
@@ -58,6 +59,9 @@ models/ChorusCreateDataExtractionRequestResult.ts
 models/ChorusCreateDataTransferRequestReply.ts
 models/ChorusCreateDataTransferRequestRequest.ts
 models/ChorusCreateDataTransferRequestResult.ts
+models/ChorusCreateDynamicRoleReply.ts
+models/ChorusCreateDynamicRoleRequest.ts
+models/ChorusCreateDynamicRoleResult.ts
 models/ChorusCreateUserReply.ts
 models/ChorusCreateUserResult.ts
 models/ChorusCreateUserRoleReply.ts
@@ -102,6 +106,8 @@ models/ChorusGetAuthenticationModesResult.ts
 models/ChorusGetEntryReply.ts
 models/ChorusGetEntryResult.ts
 models/ChorusGetNotificationsReply.ts
+models/ChorusGetPlatformSettingsReply.ts
+models/ChorusGetPlatformSettingsResult.ts
 models/ChorusGetUserMeReply.ts
 models/ChorusGetUserMeResult.ts
 models/ChorusGetUserReply.ts
@@ -155,6 +161,7 @@ models/ChorusNotificationContent.ts
 models/ChorusOpenID.ts
 models/ChorusPaginationQuery.ts
 models/ChorusPaginationResult.ts
+models/ChorusPlatformSettings.ts
 models/ChorusPutEntryReply.ts
 models/ChorusPutEntryRequest.ts
 models/ChorusPutEntryResult.ts
@@ -179,6 +186,9 @@ models/ChorusUpdateAppReply.ts
 models/ChorusUpdateAppResult.ts
 models/ChorusUpdatePasswordReply.ts
 models/ChorusUpdatePasswordRequest.ts
+models/ChorusUpdatePlatformSettingsReply.ts
+models/ChorusUpdatePlatformSettingsRequest.ts
+models/ChorusUpdatePlatformSettingsResult.ts
 models/ChorusUpdateUserReply.ts
 models/ChorusUpdateUserResult.ts
 models/ChorusUpdateWorkbenchReply.ts

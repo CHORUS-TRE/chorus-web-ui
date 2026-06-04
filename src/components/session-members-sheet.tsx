@@ -28,12 +28,12 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
-import { useRoles } from '@/providers/roles-provider'
 import { User } from '@/domain/model/user'
 import { Workbench } from '@/domain/model/workbench'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { listUsers } from '@/view-model/user-view-model'
 import {
   workbenchAddUserRole,
@@ -213,9 +213,10 @@ export function SessionMembersSheet({
                         <Tooltip key={role}>
                           <TooltipTrigger asChild>
                             <TableHead className="min-w-[90px] cursor-default text-center text-xs text-muted-foreground">
-                              {(
-                                ROLE_DISPLAY_NAMES[role] ?? role
-                              ).replace(/^(Session|Workbench)/, '')}
+                              {(ROLE_DISPLAY_NAMES[role] ?? role).replace(
+                                /^(Session|Workbench)/,
+                                ''
+                              )}
                             </TableHead>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs text-xs">

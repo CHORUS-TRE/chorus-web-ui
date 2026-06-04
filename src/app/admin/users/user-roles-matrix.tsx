@@ -32,10 +32,10 @@ import {
 } from '@/components/ui/tooltip'
 import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
 import { Result } from '@/domain/model'
-import { useRoles } from '@/providers/roles-provider'
 import { User } from '@/domain/model/user'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 import {
   createUserRole,
@@ -83,8 +83,8 @@ export function UserRolesMatrix() {
   const roleColumns = useMemo(
     () =>
       roles
-        .filter(r => r.scope === scope && r.name !== 'Public')
-        .map(r => ({ name: r.name, def: r })),
+        .filter((r) => r.scope === scope && r.name !== 'Public')
+        .map((r) => ({ name: r.name, def: r })),
     [roles, scope]
   )
 
