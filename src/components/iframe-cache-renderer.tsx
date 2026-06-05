@@ -174,7 +174,7 @@ function CachedIframeRenderer({
               : 'about:blank'
             : iframe.url
         }
-        allow="autoplay; fullscreen; clipboard-write;"
+        allow="autoplay; fullscreen; clipboard-write; clipboard-read;"
         style={{
           width: isFullscreen ? '100vw' : 'calc(100vw - 15px)',
           height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',

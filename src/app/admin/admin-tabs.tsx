@@ -9,7 +9,7 @@ export function AdminTabs() {
   const pathname = usePathname()
   const router = useRouter()
 
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
 
   const routes = [
     {
@@ -20,57 +20,57 @@ export function AdminTabs() {
     {
       href: '/admin/users',
       label: 'Users',
-      authorized: can(PERMISSIONS.listUsers, { user: '*' })
+      authorized: can('listUsers', { user: '*' })
     },
     {
       href: '/admin/authorization',
       label: 'Authorization',
-      authorized: can(PERMISSIONS.manageUserRoles, { user: '*' })
+      authorized: can('manageUserRoles', { user: '*' })
     },
     {
       href: '/admin/workspaces',
       label: 'Workspaces',
-      authorized: can(PERMISSIONS.listWorkspaces, { workspace: '*' })
+      authorized: can('listWorkspaces', { workspace: '*' })
     },
     {
       href: '/admin/sessions',
       label: 'Sessions',
-      authorized: can(PERMISSIONS.listWorkbenches, { workspace: '*' })
+      authorized: can('listWorkbenchs', { workspace: '*' })
     },
     {
       href: '/admin/instances',
       label: 'App Instances',
-      authorized: can(PERMISSIONS.listAppInstances, {})
+      authorized: can('listAppInstances', {})
     },
     {
       href: '/admin/app-store',
       label: 'App Store',
-      authorized: can(PERMISSIONS.createApp, {})
+      authorized: can('createApp', {})
     },
     {
       href: '/admin/notifications',
       label: 'Notifications',
-      authorized: can(PERMISSIONS.listNotifications, {})
+      authorized: can('listNotifications', {})
     },
     {
       href: '/admin/data-requests',
       label: 'Data Requests',
-      authorized: can(PERMISSIONS.listWorkspaces, { workspace: '*' })
+      authorized: can('listWorkspaces', { workspace: '*' })
     },
     {
       href: '/admin/audit',
       label: 'Audit',
-      authorized: can(PERMISSIONS.auditPlatform, {})
+      authorized: can('auditPlatform', {})
     },
     {
       href: '/admin/configuration',
       label: 'Configuration',
-      authorized: can(PERMISSIONS.setPlatformSettings, {})
+      authorized: can('setPlatformSettings', {})
     },
     {
       href: '/admin/theme',
       label: 'Theme',
-      authorized: can(PERMISSIONS.setPlatformSettings, {})
+      authorized: can('setPlatformSettings', {})
     }
   ]
 

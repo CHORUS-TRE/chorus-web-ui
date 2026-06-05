@@ -3,65 +3,55 @@
 import { useMemo } from 'react'
 
 import { Badge } from '@/components/ui/badge'
-import {
-  getRolePermissions,
-  type Permission,
-  PERMISSION_DESCRIPTIONS,
-  PERMISSIONS
-} from '@/config/permissions'
 import { cn } from '@/lib/utils'
+import { useRoles } from '@/providers/roles-provider'
 
 /** Category groupings for human-friendly display */
-const PERMISSION_CATEGORIES: Record<string, Permission[]> = {
+const PERMISSION_CATEGORIES: Record<string, string[]> = {
   'Data Management': [
-    PERMISSIONS.listFilesInWorkspace,
-    PERMISSIONS.uploadFilesToWorkspace,
-    PERMISSIONS.downloadFilesFromWorkspace,
-    PERMISSIONS.modifyFilesInWorkspace,
-    PERMISSIONS.listWorkspaces,
-    PERMISSIONS.createWorkspace,
-    PERMISSIONS.updateWorkspace,
-    PERMISSIONS.getWorkspace,
-    PERMISSIONS.deleteWorkspace,
-    PERMISSIONS.manageUsersInWorkspace
+    'listFilesInWorkspace',
+    'uploadFilesToWorkspace',
+    'downloadFilesFromWorkspace',
+    'modifyFilesInWorkspace',
+    'listWorkspaces',
+    'createWorkspace',
+    'updateWorkspace',
+    'getWorkspace',
+    'deleteWorkspace',
+    'manageUsersInWorkspace'
   ],
   Infrastructure: [
-    PERMISSIONS.listWorkbenches,
-    PERMISSIONS.createWorkbench,
-    PERMISSIONS.updateWorkbench,
-    PERMISSIONS.getWorkbench,
-    PERMISSIONS.streamWorkbench,
-    PERMISSIONS.deleteWorkbench,
-    PERMISSIONS.manageUsersInWorkbench,
-    PERMISSIONS.listAppInstances,
-    PERMISSIONS.createAppInstance,
-    PERMISSIONS.updateAppInstance,
-    PERMISSIONS.getAppInstance,
-    PERMISSIONS.deleteAppInstance,
-    PERMISSIONS.listApps,
-    PERMISSIONS.createApp,
-    PERMISSIONS.updateApp,
-    PERMISSIONS.getApp,
-    PERMISSIONS.deleteApp
+    'listWorkbenchs',
+    'createWorkbench',
+    'updateWorkbench',
+    'getWorkbench',
+    'streamWorkbench',
+    'deleteWorkbench',
+    'manageUsersInWorkbench',
+    'listAppInstances',
+    'createAppInstance',
+    'updateAppInstance',
+    'getAppInstance',
+    'deleteAppInstance',
+    'listApps',
+    'createApp',
+    'updateApp',
+    'getApp',
+    'deleteApp'
   ],
   Security: [
-    PERMISSIONS.listUsers,
-    PERMISSIONS.searchUsers,
-    PERMISSIONS.createUser,
-    PERMISSIONS.updateUser,
-    PERMISSIONS.getUser,
-    PERMISSIONS.deleteUser,
-    PERMISSIONS.resetPassword,
-    PERMISSIONS.manageUserRoles,
-    PERMISSIONS.getPlatformSettings,
-    PERMISSIONS.setPlatformSettings
+    'listUsers',
+    'searchUsers',
+    'createUser',
+    'updateUser',
+    'getUser',
+    'deleteUser',
+    'resetPassword',
+    'manageUserRoles',
+    'getPlatformSettings',
+    'setPlatformSettings'
   ],
-  Compliance: [
-    PERMISSIONS.auditPlatform,
-    PERMISSIONS.auditWorkspace,
-    PERMISSIONS.auditWorkbench,
-    PERMISSIONS.auditUser
-  ]
+  Compliance: ['auditPlatform', 'auditWorkspace', 'auditWorkbench', 'auditUser']
 }
 
 interface EffectivePermissionTagsProps {
@@ -74,16 +64,20 @@ export function EffectivePermissionTags({
   roleNames,
   className
 }: EffectivePermissionTagsProps) {
+  const { rolesByName, permissionsByName } = useRoles()
+
   const effectivePermissions = useMemo(() => {
-    const allPerms = new Set<Permission>()
+    const allPerms = new Set<string>()
     for (const roleName of roleNames) {
-      getRolePermissions(roleName).forEach((p) => allPerms.add(p))
+      ;(rolesByName.get(roleName)?.permissions ?? []).forEach((p) =>
+        allPerms.add(p)
+      )
     }
     return allPerms
-  }, [roleNames])
+  }, [roleNames, rolesByName])
 
   const categorized = useMemo(() => {
-    const result: Record<string, Permission[]> = {}
+    const result: Record<string, string[]> = {}
     for (const [category, perms] of Object.entries(PERMISSION_CATEGORIES)) {
       const matched = perms.filter((p) => effectivePermissions.has(p))
       if (matched.length > 0) {
@@ -122,7 +116,7 @@ export function EffectivePermissionTags({
                   variant="secondary"
                   className="text-[10px] font-normal"
                 >
-                  {PERMISSION_DESCRIPTIONS[perm] || perm}
+                  {permissionsByName.get(perm)?.description || perm}
                 </Badge>
               ))}
             </div>

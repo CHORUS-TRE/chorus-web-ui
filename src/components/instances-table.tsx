@@ -41,7 +41,7 @@ export default function InstancesTable({
 }) {
   const router = useRouter()
   const { apps, workspaces, workbenches, refreshAppInstances } = useAppState()
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
 
   const getAppName = (appId: string) => {
     return apps?.find((app) => app.id === appId)?.name || appId
@@ -171,7 +171,7 @@ export default function InstancesTable({
                 >
                   {instance.workspaceId &&
                     workspaces &&
-                    can(PERMISSIONS.deleteAppInstance, {
+                    can('deleteAppInstance', {
                       workspace:
                         workspaces?.find((w) => w.id === instance.workspaceId)
                           ?.id || '*'

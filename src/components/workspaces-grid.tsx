@@ -43,7 +43,7 @@ export default function WorkspacesGrid({
 }: WorkspacesGridProps) {
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
 
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
 
@@ -149,10 +149,10 @@ export default function WorkspacesGrid({
                 </Link>
 
                 {/* Dropdown menu - top right */}
-                {(can(PERMISSIONS.deleteWorkspace, {
+                {(can('deleteWorkspace', {
                   workspace: workspace.id
                 }) ||
-                  can(PERMISSIONS.updateWorkspace, {
+                  can('updateWorkspace', {
                     workspace: workspace.id
                   })) && (
                   <div className="absolute right-2 top-2 z-10">
@@ -170,7 +170,7 @@ export default function WorkspacesGrid({
                         align="end"
                         className="glass-elevated"
                       >
-                        {can(PERMISSIONS.updateWorkspace, {
+                        {can('updateWorkspace', {
                           workspace: workspace.id
                         }) && (
                           <DropdownMenuItem
@@ -181,7 +181,7 @@ export default function WorkspacesGrid({
                             Edit
                           </DropdownMenuItem>
                         )}
-                        {can(PERMISSIONS.deleteWorkspace, {
+                        {can('deleteWorkspace', {
                           workspace: workspace.id
                         }) && (
                           <DropdownMenuItem

@@ -17,7 +17,7 @@ import {
 interface ViewPermissionsSheetProps {
   userName: string
   roleNames: string[]
-  scopeFilter?: 'platform' | 'workspace' | 'session' | 'all'
+  scopeFilter?: string
 }
 
 export function ViewPermissionsSheet({

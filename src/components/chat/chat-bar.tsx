@@ -74,7 +74,7 @@ export function ChatBar() {
   }
 
   const handleFileSelect = (file: File) => {
-    const prompt = `J'ai uploadé un document: "${file.name}". Aide-moi à créer un workspace basé sur ce document. Lance le wizard de création.`
+    const prompt = `"${file.name}". Help me create a new study setup based on this file. Launch the wizard.`
     setInput(prompt)
   }
 
@@ -86,12 +86,12 @@ export function ChatBar() {
       {!isOpen && (
         <button
           onClick={open}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-primary/30 bg-contrast-background/90 px-4 py-2.5 text-sm font-medium text-foreground shadow-lg backdrop-blur-md transition-all hover:border-primary/60 hover:bg-contrast-background hover:shadow-primary/10"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-accent/30 bg-contrast-background/90 px-4 py-2.5 text-sm font-medium text-foreground shadow-lg backdrop-blur-md transition-all hover:border-accent/60 hover:bg-contrast-background hover:shadow-accent/10"
         >
-          <Owl className="h-4 w-4 text-primary" />
+          <Owl className="h-4 w-4 text-accent" />
           <span>Ask Chorus</span>
           {messages.length > 0 && (
-            <span className="ml-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+            <span className="ml-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">
               {messages.length}
             </span>
           )}
@@ -111,7 +111,7 @@ export function ChatBar() {
           {/* Header */}
           <div className="flex h-10 flex-shrink-0 items-center justify-between border-b border-muted/30 px-4">
             <div className="flex items-center gap-2">
-              <Owl className="h-3.5 w-3.5 text-primary" />
+              <Owl className="h-3.5 w-3.5 text-accent" />
               <span className="text-sm font-semibold">Chorus Assistant</span>
               {isLoading && (
                 <span className="animate-pulse text-[11px] text-muted-foreground">
@@ -151,8 +151,8 @@ export function ChatBar() {
           >
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <MessageSquare className="h-5 w-5 text-primary" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+                  <MessageSquare className="h-5 w-5 text-accent" />
                 </div>
                 <div>
                   <p className="font-medium">Chorus Assistant</p>

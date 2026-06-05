@@ -29,9 +29,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { getWorkbenchRoles } from '@/config/permissions'
 import { Result } from '@/domain/model'
 import { Role, User } from '@/domain/model/user'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { deleteUserRole } from '@/view-model/user-view-model'
 import { workbenchAddUserRole } from '@/view-model/workbench-view-model'
@@ -85,11 +85,15 @@ export function ManageUserWorkbenchDialog({
     return workbenches?.filter((wb) => wb.workspaceId === workspaceId) || []
   }, [workbenches, workspaceId])
 
+  const { roles } = useRoles()
+
   // Available roles for workbench members from schema
-  const workbenchRoles = getWorkbenchRoles().map((role) => ({
-    value: role.name,
-    label: role.name
-  }))
+  const workbenchRoles = roles
+    .filter((r) => r.scope === 'session')
+    .map((role) => ({
+      value: role.name,
+      label: role.name
+    }))
 
   const [state, formAction] = useActionState(
     workbenchAddUserRole,

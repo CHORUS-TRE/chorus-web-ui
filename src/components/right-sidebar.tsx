@@ -24,8 +24,8 @@ const QUICK_PROMPTS = [
     label: 'Extract data',
     prompt: 'I need to extract clinical data from the CDW'
   },
-  { label: 'My study status', prompt: 'Show me my workspace status' },
-  { label: 'Regulatory help', prompt: 'What approvals do I need for my study?' }
+  // { label: 'My study status', prompt: 'Show me my workspace status' },
+  { label: 'Feasability study', prompt: 'How to perform a feasability study?' }
 ]
 
 function WelcomeCard({ onPrompt }: { onPrompt: (text: string) => void }) {
@@ -33,7 +33,7 @@ function WelcomeCard({ onPrompt }: { onPrompt: (text: string) => void }) {
     <div className="flex justify-start">
       <div className="flex min-w-0 max-w-[92%] flex-1 items-start gap-2">
         <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-muted/40">
-          <Owl className="h-3.5 w-3.5 text-primary" />
+          <Owl className="h-3.5 w-3.5 text-accent" />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div
@@ -54,7 +54,7 @@ function WelcomeCard({ onPrompt }: { onPrompt: (text: string) => void }) {
               <button
                 key={p.prompt}
                 onClick={() => onPrompt(p.prompt)}
-                className="rounded-full border border-muted/30 bg-muted/10 px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-foreground"
+                className="rounded-full border border-muted/30 bg-muted/10 px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-accent/40 hover:bg-accent/10 hover:text-foreground"
               >
                 {p.label}
               </button>

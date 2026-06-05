@@ -19,7 +19,7 @@ import {
   Settings,
   TestTubes
 } from 'lucide-react'
-import React, { useState, useTransition } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -260,6 +260,42 @@ interface StudySetupWizardProps {
 // Component
 // ────────────────────────────────────────────
 
+const WIZARD_KEY = 'chorus-wizard-state'
+
+interface WizardCache {
+  step?: number
+  selectedType?: string
+  checkedRegulatory?: Record<string, 'required' | 'done' | 'na'>
+  dataNeeds?: {
+    cdw: boolean
+    external: boolean
+    imaging: boolean
+    biobank: boolean
+  }
+  selectedServices?: Record<string, string>
+  name?: string
+  shortName?: string
+  description?: string
+}
+
+function loadWizardCache(): WizardCache | null {
+  try {
+    const raw = sessionStorage.getItem(WIZARD_KEY)
+    return raw ? (JSON.parse(raw) as WizardCache) : null
+  } catch {
+    return null
+  }
+}
+
+function saveWizardCache(patch: Record<string, unknown>): void {
+  try {
+    const prev = (loadWizardCache() ?? {}) as Record<string, unknown>
+    sessionStorage.setItem(WIZARD_KEY, JSON.stringify({ ...prev, ...patch }))
+  } catch {
+    // ignore — storage quota or private mode
+  }
+}
+
 export function StudySetupWizard({
   studyType: initialType,
   suggestedName,
@@ -271,20 +307,28 @@ export function StudySetupWizard({
   const { user } = useAuthentication()
   const refreshWorkspaces = useAppState((s) => s.refreshWorkspaces)
 
-  const [step, setStep] = useState(initialType ? 1 : 0)
-  const [selectedType, setSelectedType] = useState<string>(initialType ?? '')
+  const cached = loadWizardCache()
+
+  const [step, setStep] = useState<number>(() => cached?.step ?? 0)
+  const [selectedType, setSelectedType] = useState<string>(
+    () => cached?.selectedType ?? initialType ?? ''
+  )
   const [checkedRegulatory, setCheckedRegulatory] = useState<
     Record<string, 'required' | 'done' | 'na'>
-  >({})
-  const [dataNeeds, setDataNeeds] = useState({
-    cdw: dataNeedsHint === 'cdw',
-    external: dataNeedsHint === 'external',
-    imaging: dataNeedsHint === 'imaging',
-    biobank: dataNeedsHint === 'biobank'
-  })
+  >(() => cached?.checkedRegulatory ?? {})
+  const [dataNeeds, setDataNeeds] = useState(
+    () =>
+      cached?.dataNeeds ?? {
+        cdw: dataNeedsHint === 'cdw',
+        external: dataNeedsHint === 'external',
+        imaging: dataNeedsHint === 'imaging',
+        biobank: dataNeedsHint === 'biobank'
+      }
+  )
   const [selectedServices, setSelectedServices] = useState<
     Record<string, string>
   >(() => {
+    if (cached?.selectedServices) return cached.selectedServices
     const defaults: Record<string, string> = {}
     for (const cat of SERVICE_CATEGORIES) {
       const rec = cat.options.find((o) => o.recommended)
@@ -292,22 +336,47 @@ export function StudySetupWizard({
     }
     return defaults
   })
-  const [isPending, startTransition] = useTransition()
+  const [isPending, setIsPending] = useState(false)
   const [done, setDone] = useState(false)
+
+  // Persist wizard state so it survives background re-renders / remounts
+  useEffect(() => {
+    saveWizardCache({
+      step,
+      selectedType,
+      checkedRegulatory,
+      dataNeeds,
+      selectedServices
+    })
+  }, [step, selectedType, checkedRegulatory, dataNeeds, selectedServices])
 
   const form = useForm<WizardForm>({
     resolver: zodResolver(WizardSchema),
     defaultValues: {
-      name: suggestedName ?? '',
-      shortName: suggestedName
-        ? suggestedName
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(/[^a-z0-9-]/g, '')
-        : '',
-      description: context ?? ''
+      name: cached?.name ?? suggestedName ?? '',
+      shortName:
+        cached?.shortName ??
+        (suggestedName
+          ? suggestedName
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^a-z0-9-]/g, '')
+          : ''),
+      description: cached?.description ?? context ?? ''
     }
   })
+
+  // Persist form values on every change
+  useEffect(() => {
+    const { unsubscribe } = form.watch((values) => {
+      saveWizardCache({
+        name: values.name,
+        shortName: values.shortName,
+        description: values.description
+      })
+    })
+    return unsubscribe
+  }, [form])
 
   const toShortName = (name: string) =>
     name
@@ -329,9 +398,28 @@ export function StudySetupWizard({
     setCheckedRegulatory(initial)
   }
 
-  const handleSubmit = form.handleSubmit((data) => {
-    if (!user) return
-    startTransition(async () => {
+  const handleCreate = async () => {
+    if (!user || isPending) return
+
+    const raw = form.getValues()
+    const sanitized = {
+      ...raw,
+      shortName: toShortName(raw.shortName || raw.name || '')
+    }
+    const validation = WizardSchema.safeParse(sanitized)
+    if (!validation.success) {
+      toast({
+        title:
+          validation.error.issues[0]?.message ??
+          'Please fill in workspace name',
+        variant: 'destructive'
+      })
+      return
+    }
+    const data = validation.data
+
+    setIsPending(true)
+    try {
       const formData = new FormData()
       formData.set('tenantId', '1')
       formData.set('userId', user.id)
@@ -339,7 +427,6 @@ export function StudySetupWizard({
       formData.set('shortName', data.shortName)
       if (data.description) formData.set('description', data.description)
 
-      // Map study type + data needs → workspace dev config
       const needsGpu = selectedType === 'ml-ai'
       const isInterventional = selectedType === 'clinical-trial'
       const needsColdStorage = dataNeeds.cdw || dataNeeds.imaging
@@ -349,7 +436,7 @@ export function StudySetupWizard({
         isInterventional ? 'Airgapped' : 'FQDNAllowlist'
       )
       formData.set('clipboard', isInterventional ? 'disabled' : 'both')
-      formData.set('resourcePreset', needsGpu ? 'gpu' : 'standard')
+      formData.set('resourcePreset', needsGpu ? 'large' : 'small')
       if (needsGpu) formData.set('gpu', '1')
       formData.set('coldStorageEnabled', needsColdStorage ? 'true' : 'false')
       formData.set('hotStorageEnabled', 'true')
@@ -362,16 +449,23 @@ export function StudySetupWizard({
         emptyResult as never,
         formData
       )
-      if (result.error) {
-        toast({ title: result.error, variant: 'destructive' })
+      if (result.error || result.issues) {
+        const msg =
+          result.error ??
+          result.issues?.map((i) => i.message).join(', ') ??
+          'Workspace creation failed'
+        toast({ title: msg, variant: 'destructive' })
         return
       }
       await refreshWorkspaces()
+      sessionStorage.removeItem(WIZARD_KEY)
       setDone(true)
       toast({ title: 'Workspace created!', description: data.name })
       onComplete?.()
-    })
-  })
+    } finally {
+      setIsPending(false)
+    }
+  }
 
   // ── Done state ──
   if (done) {
@@ -423,7 +517,7 @@ export function StudySetupWizard({
               className={cn(
                 'flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-[11px] font-medium transition-colors',
                 i === step
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-accent/20 text-accent'
                   : i < step
                     ? 'cursor-pointer text-muted-foreground hover:text-foreground'
                     : 'text-muted-foreground/40'
@@ -458,11 +552,11 @@ export function StudySetupWizard({
                   className={cn(
                     'flex flex-col items-start gap-1.5 rounded-lg border p-3 text-left transition-all',
                     selectedType === pt.id
-                      ? 'border-primary bg-primary/10'
+                      ? 'border-accent bg-accent/10'
                       : 'border-muted/40 bg-background/30 hover:border-muted hover:bg-background/50'
                   )}
                 >
-                  <pt.icon className="h-4 w-4 text-primary" />
+                  <pt.icon className="h-4 w-4 text-accent" />
                   <span className="text-sm font-medium">{pt.label}</span>
                   <span className="text-[11px] text-muted-foreground">
                     {pt.description}
@@ -477,7 +571,7 @@ export function StudySetupWizard({
         {step === 1 && (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Regulatory requirements for{' '}
+              Regulatory requirements needed for{' '}
               {STUDY_TYPES.find((t) => t.id === selectedType)?.label}
             </p>
             <div className="space-y-2">
@@ -504,7 +598,7 @@ export function StudySetupWizard({
                           [item.id]: checked ? 'done' : 'required'
                         }))
                       }
-                      className="mt-0.5"
+                      className="mt-0.5 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-1.5">
@@ -541,13 +635,17 @@ export function StudySetupWizard({
             <div className="flex justify-end gap-2 pt-1">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setStep(0)}
               >
                 Back
               </Button>
-              <Button size="sm" onClick={() => setStep(2)}>
+              <Button
+                variant="accent-filled"
+                size="sm"
+                onClick={() => setStep(2)}
+              >
                 Continue
               </Button>
             </div>
@@ -592,7 +690,7 @@ export function StudySetupWizard({
                 <button
                   key={item.key}
                   onClick={() =>
-                    setDataNeeds((prev) => ({
+                    setDataNeeds((prev: typeof dataNeeds) => ({
                       ...prev,
                       [item.key]: !prev[item.key]
                     }))
@@ -600,7 +698,7 @@ export function StudySetupWizard({
                   className={cn(
                     'flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all',
                     dataNeeds[item.key]
-                      ? 'border-primary bg-primary/5'
+                      ? 'border-accent bg-accent/5'
                       : 'border-muted/30 hover:border-muted'
                   )}
                 >
@@ -608,7 +706,7 @@ export function StudySetupWizard({
                     className={cn(
                       'h-4 w-4',
                       dataNeeds[item.key]
-                        ? 'text-primary'
+                        ? 'text-accent'
                         : 'text-muted-foreground'
                     )}
                   />
@@ -619,7 +717,7 @@ export function StudySetupWizard({
                     </p>
                   </div>
                   {dataNeeds[item.key] && (
-                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
                   )}
                 </button>
               ))}
@@ -627,13 +725,17 @@ export function StudySetupWizard({
             <div className="flex justify-end gap-2 pt-1">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setStep(1)}
               >
                 Back
               </Button>
-              <Button size="sm" onClick={() => setStep(3)}>
+              <Button
+                variant="accent-filled"
+                size="sm"
+                onClick={() => setStep(3)}
+              >
                 Continue
               </Button>
             </div>
@@ -680,7 +782,7 @@ export function StudySetupWizard({
                           className={cn(
                             'flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition-all',
                             isSelected
-                              ? 'border-primary bg-primary/5'
+                              ? 'border-accent bg-accent/5'
                               : 'border-muted/30 hover:border-muted'
                           )}
                         >
@@ -688,7 +790,7 @@ export function StudySetupWizard({
                             className={cn(
                               'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border',
                               isSelected
-                                ? 'border-primary bg-primary'
+                                ? 'border-accent bg-accent'
                                 : 'border-muted-foreground/40'
                             )}
                           >
@@ -714,13 +816,17 @@ export function StudySetupWizard({
             <div className="flex justify-end gap-2 pt-1">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setStep(2)}
               >
                 Back
               </Button>
-              <Button size="sm" onClick={() => setStep(4)}>
+              <Button
+                variant="accent-filled"
+                size="sm"
+                onClick={() => setStep(4)}
+              >
                 Continue
               </Button>
             </div>
@@ -788,13 +894,14 @@ export function StudySetupWizard({
             <div className="flex justify-end gap-2 pt-1">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setStep(3)}
               >
                 Back
               </Button>
               <Button
+                variant="accent-filled"
                 type="submit"
                 size="sm"
                 disabled={!form.watch('name') || !form.watch('shortName')}
@@ -905,10 +1012,15 @@ export function StudySetupWizard({
               )}
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setStep(4)}>
+              <Button variant="outline" size="sm" onClick={() => setStep(4)}>
                 Back
               </Button>
-              <Button size="sm" onClick={handleSubmit} disabled={isPending}>
+              <Button
+                variant="accent-filled"
+                size="sm"
+                onClick={handleCreate}
+                disabled={isPending}
+              >
                 {isPending && (
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 )}

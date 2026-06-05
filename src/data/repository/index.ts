@@ -1,6 +1,7 @@
 export * from './app-instance-repository-impl'
 export * from './approval-request-repository-impl'
 export * from './authentication-repository-impl'
+export * from './authorization-repository-impl'
 export * from './dev-store-repository-impl'
 export * from './notification-repository-impl'
 export * from './user-repository-impl'

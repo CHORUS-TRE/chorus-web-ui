@@ -37,6 +37,24 @@ export interface ChorusAuthorizationRole {
    * @memberof ChorusAuthorizationRole
    */
   context?: Array<string>
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ChorusAuthorizationRole
+   */
+  permissions?: Array<string>
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusAuthorizationRole
+   */
+  scope?: string
+  /**
+   *
+   * @type {boolean}
+   * @memberof ChorusAuthorizationRole
+   */
+  dynamic?: boolean
 }
 
 /**
@@ -64,7 +82,10 @@ export function ChorusAuthorizationRoleFromJSONTyped(
   return {
     name: !exists(json, 'name') ? undefined : json['name'],
     description: !exists(json, 'description') ? undefined : json['description'],
-    context: !exists(json, 'context') ? undefined : json['context']
+    context: !exists(json, 'context') ? undefined : json['context'],
+    permissions: !exists(json, 'permissions') ? undefined : json['permissions'],
+    scope: !exists(json, 'scope') ? undefined : json['scope'],
+    dynamic: !exists(json, 'dynamic') ? undefined : json['dynamic']
   }
 }
 
@@ -80,6 +101,9 @@ export function ChorusAuthorizationRoleToJSON(
   return {
     name: value.name,
     description: value.description,
-    context: value.context
+    context: value.context,
+    permissions: value.permissions,
+    scope: value.scope,
+    dynamic: value.dynamic
   }
 }

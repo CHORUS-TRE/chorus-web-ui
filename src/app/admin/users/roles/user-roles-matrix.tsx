@@ -30,11 +30,12 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import { ROLE_DEFINITIONS, type RoleDefinition } from '@/config/permissions'
+import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
 import { Result } from '@/domain/model'
 import { User } from '@/domain/model/user'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 import {
   createUserRole,
@@ -43,21 +44,6 @@ import {
 } from '@/view-model/user-view-model'
 
 type Scope = 'platform' | 'workspace' | 'session'
-
-function getRoleScope(
-  def: RoleDefinition
-): 'platform' | 'workspace' | 'session' {
-  const attrs = def.attributes
-  if (
-    attrs?.user === '*' &&
-    attrs?.workspace === '*' &&
-    attrs?.workbench === '*'
-  )
-    return 'platform'
-  if (attrs?.workbench) return 'session'
-  if (attrs?.workspace && !attrs?.user) return 'workspace'
-  return 'platform'
-}
 
 const contextBadgeColors: Record<Scope, string> = {
   platform: 'bg-accent/20 text-accent',
@@ -73,6 +59,7 @@ export function UserRolesMatrix() {
   const [refreshKey, setRefreshKey] = useState(0)
 
   const { user: currentUser } = useAuthentication()
+  const { roles } = useRoles()
   const workspaces = useAppState((state) => state.workspaces)
 
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), [])
@@ -95,12 +82,10 @@ export function UserRolesMatrix() {
 
   const roleColumns = useMemo(
     () =>
-      Object.entries(ROLE_DEFINITIONS)
-        .filter(
-          ([name, def]) => getRoleScope(def) === scope && name !== 'Public'
-        )
-        .map(([name, def]) => ({ name, def })),
-    [scope]
+      roles
+        .filter((r) => r.scope === scope && r.name !== 'Public')
+        .map((r) => ({ name: r.name, def: r })),
+    [roles, scope]
   )
 
   const filteredUsers = useMemo(() => {
@@ -186,7 +171,7 @@ export function UserRolesMatrix() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
       .map(([name, count]) => ({
-        role: ROLE_DEFINITIONS[name]?.displayName ?? name,
+        role: ROLE_DISPLAY_NAMES[name] ?? name,
         count
       }))
   }, [users])
@@ -219,6 +204,7 @@ export function UserRolesMatrix() {
 
   const scopes: Scope[] = ['platform', 'workspace', 'session']
   const contextKey = scope === 'workspace' ? 'workspace' : 'workbench'
+
 
   return (
     <div className="space-y-4">
@@ -368,7 +354,7 @@ export function UserRolesMatrix() {
                   <Tooltip key={name}>
                     <TooltipTrigger asChild>
                       <TableHead className="min-w-[110px] cursor-default text-center text-xs text-muted-foreground">
-                        {def.displayName ?? name}
+                        {ROLE_DISPLAY_NAMES[name] ?? name}
                       </TableHead>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs text-xs">

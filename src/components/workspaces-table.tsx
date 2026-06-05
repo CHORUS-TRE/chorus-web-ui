@@ -50,7 +50,7 @@ function WorkspaceTableRow({
   const router = useRouter()
   const { resolvedTheme } = useTheme()
   const instanceTheme = useInstanceTheme()
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
 
   const getCardGradient = (name: string) => {
     const currentTheme =
@@ -111,7 +111,7 @@ function WorkspaceTableRow({
       </TableCell>
       <TableCell className="p-2" onClick={(e) => e.stopPropagation()}>
         {workspace?.id &&
-          can(PERMISSIONS.updateWorkspace, {
+          can('updateWorkspace', {
             workspace: workspace?.id
           }) && (
             <div className="flex gap-2">

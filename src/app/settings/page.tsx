@@ -14,24 +14,27 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useRoles } from '@/providers/roles-provider'
 
 export default function UserSettingsPage() {
   const { user } = useAuthentication()
+  const { rolesByName } = useRoles()
   const router = useRouter()
 
   const roles = useMemo(() => user?.rolesWithContext || [], [user])
 
   const platformRoles = useMemo(
-    () => roles.filter((r) => getRoleScope(r.name) === 'platform'),
-    [roles]
+    () => roles.filter((r) => getRoleScope(r.name, rolesByName) === 'platform'),
+    [roles, rolesByName]
   )
   const workspaceRoles = useMemo(
-    () => roles.filter((r) => getRoleScope(r.name) === 'workspace'),
-    [roles]
+    () =>
+      roles.filter((r) => getRoleScope(r.name, rolesByName) === 'workspace'),
+    [roles, rolesByName]
   )
   const sessionRoles = useMemo(
-    () => roles.filter((r) => getRoleScope(r.name) === 'session'),
-    [roles]
+    () => roles.filter((r) => getRoleScope(r.name, rolesByName) === 'session'),
+    [roles, rolesByName]
   )
 
   const settings = [

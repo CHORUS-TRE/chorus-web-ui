@@ -21,19 +21,20 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { StatCard } from '@/components/dashboard/stat-card'
-import { ROLE_DEFINITIONS } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { listUsers } from '@/view-model/user-view-model'
 
 const AdminPage = () => {
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
+  const { roles } = useRoles()
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
     async function loadUsers() {
-      if (can(PERMISSIONS.listUsers, { user: '*' })) {
+      if (can('listUsers', { user: '*' })) {
         const result = await listUsers()
         if (result.data) {
           setUsers(result.data)
@@ -74,7 +75,7 @@ const AdminPage = () => {
     refreshApprovalRequests
   ])
 
-  const roleCount = Object.keys(ROLE_DEFINITIONS).length
+  const roleCount = roles.length
 
   return (
     <div className="container mx-auto p-6">
@@ -83,7 +84,7 @@ const AdminPage = () => {
       </h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {can(PERMISSIONS.listUsers) && (
+        {can('listUsers') && (
           <StatCard
             href="/admin/users"
             title="Users"
@@ -93,7 +94,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.manageUserRoles) && (
+        {can('manageUserRoles') && (
           <StatCard
             href="/admin/authorization/roles"
             title="Authorization"
@@ -108,7 +109,7 @@ const AdminPage = () => {
           </StatCard>
         )}
 
-        {can(PERMISSIONS.listWorkspaces) && (
+        {can('listWorkspaces') && (
           <StatCard
             href="/admin/workspaces"
             title="Workspaces"
@@ -118,7 +119,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.listWorkbenches) && (
+        {can('listWorkbenchs') && (
           <StatCard
             href="/admin/sessions"
             title="Sessions"
@@ -128,7 +129,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.createApp) && (
+        {can('createApp') && (
           <StatCard
             href="/admin/app-store"
             title="App Store"
@@ -138,7 +139,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.listAppInstances) && (
+        {can('listAppInstances') && (
           <StatCard
             href="/admin/instances"
             title="App Instances"
@@ -148,7 +149,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.listNotifications) && (
+        {can('listNotifications') && (
           <StatCard
             href="/admin/notifications"
             title="Notifications"
@@ -158,7 +159,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.listWorkspaces) && (
+        {can('listWorkspaces') && (
           <StatCard
             href="/admin/data-requests"
             title="Data Requests"
@@ -168,7 +169,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.auditPlatform) && (
+        {can('auditPlatform') && (
           <StatCard
             href="/admin/audit"
             title="Audit"
@@ -178,7 +179,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can(PERMISSIONS.setPlatformSettings) && (
+        {can('setPlatformSettings') && (
           <>
             <StatCard
               href="/admin/configuration"

@@ -23,6 +23,7 @@ import { AuthorizationProvider } from '@/providers/authorization-provider'
 import { FullscreenProvider } from '@/providers/fullscreen-provider'
 import { InstanceConfigInitializer } from '@/providers/global-config-provider'
 import { IframeCacheProvider } from '@/providers/iframe-cache-provider'
+import { RolesProvider } from '@/providers/roles-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 
 const rubik = Rubik({
@@ -91,21 +92,23 @@ export default async function RootLayout({
           <InstanceConfigInitializer>
             <DynamicThemeApplicator />
             <AuthenticationProvider>
-              <AuthorizationProvider>
-                <AppStateInitializer />
-                <UploadPanel />
-                <FullscreenProvider>
-                  <IframeCacheProvider>
-                    {/* Loads either authenticated-app or Login  */}
-                    {children}
-                    <IframeCacheRenderer />
-                    <IframeCleanupDialog />
-                    <IframeDebugPanel />
-                    <CookieConsent />
-                    <MatomoConsentSync />
-                  </IframeCacheProvider>
-                </FullscreenProvider>
-              </AuthorizationProvider>
+              <RolesProvider>
+                <AuthorizationProvider>
+                  <AppStateInitializer />
+                  <UploadPanel />
+                  <FullscreenProvider>
+                    <IframeCacheProvider>
+                      {/* Loads either authenticated-app or Login  */}
+                      {children}
+                      <IframeCacheRenderer />
+                      <IframeCleanupDialog />
+                      <IframeDebugPanel />
+                      <CookieConsent />
+                      <MatomoConsentSync />
+                    </IframeCacheProvider>
+                  </FullscreenProvider>
+                </AuthorizationProvider>
+              </RolesProvider>
             </AuthenticationProvider>
           </InstanceConfigInitializer>
         </ThemeProvider>

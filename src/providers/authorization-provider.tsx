@@ -2,13 +2,11 @@
 
 import React, { createContext, useCallback, useContext, useMemo } from 'react'
 
-import { getRolePermissions, PERMISSIONS } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useRoles } from '@/providers/roles-provider'
 
-// Define the shape of the context
 interface AuthorizationContextType {
-  PERMISSIONS: typeof PERMISSIONS
   can: (permission: string, context?: Record<string, string>) => boolean
   getPermissionsForUser: (
     user: User,
@@ -17,15 +15,12 @@ interface AuthorizationContextType {
   isAdmin: boolean
 }
 
-// Create the context with a default value
 const AuthorizationContext = createContext<AuthorizationContextType>({
-  PERMISSIONS,
   can: () => false,
   getPermissionsForUser: () => new Set<string>(),
   isAdmin: false
 })
 
-// Create a custom hook for easy access to the context
 export const useAuthorization = () => {
   const context = useContext(AuthorizationContext)
   if (!context) {
@@ -36,13 +31,14 @@ export const useAuthorization = () => {
   return context
 }
 
-// Define the provider component
 export const AuthorizationProvider = ({
   children
 }: {
   children: React.ReactNode
 }) => {
   const { user } = useAuthentication()
+  const { rolesByName } = useRoles()
+
   const permissionsWithContextMap = useMemo(() => {
     if (!user || !user.rolesWithContext)
       return new Map<string, Record<string, string[]>>()
@@ -50,8 +46,7 @@ export const AuthorizationProvider = ({
     const newPermissionsMap: Record<string, Record<string, string[]>> = {}
 
     user.rolesWithContext.forEach((role) => {
-      // Resolve permissions for this role
-      const permissions = getRolePermissions(role.name)
+      const permissions = rolesByName.get(role.name)?.permissions ?? []
 
       permissions.forEach((permission) => {
         if (!newPermissionsMap[permission]) {
@@ -60,12 +55,10 @@ export const AuthorizationProvider = ({
 
         const permContext = newPermissionsMap[permission]
 
-        // Merge role context into permission context
         Object.entries(role.context).forEach(([key, value]) => {
           if (!permContext[key]) {
             permContext[key] = []
           }
-
           if (!permContext[key].includes(value)) {
             permContext[key].push(value)
           }
@@ -74,7 +67,7 @@ export const AuthorizationProvider = ({
     })
 
     return new Map(Object.entries(newPermissionsMap))
-  }, [user])
+  }, [user, rolesByName])
 
   const can = useCallback(
     (permission: string, context: Record<string, string> = {}) => {
@@ -82,23 +75,11 @@ export const AuthorizationProvider = ({
 
       const allowedContexts = permissionsWithContextMap.get(permission)!
 
-      // If no context constraints in request, and user has the permission (with any context), allow.
-      // NOTE: This assumes having the permission implies *some* access.
       if (Object.keys(context).length === 0) return true
 
-      // Check request context against allowedContexts
       return Object.entries(context).every(([key, value]) => {
         const allowedValues = allowedContexts[key]
-
-        // If the permission doesn't have this context key recorded, it usually means the role didn't specify it.
-        // If the role context was empty, it might mean global access depending on convention.
-        // But based on our transform, we only add keys that exist.
-        // If a dimension is missing in allowedValues, we deny access to it to be safe,
-        // unless we decide missing means "*" (global).
-        // We assume explicit is required.
-
         if (!allowedValues || allowedValues.length === 0) return false
-
         return allowedValues.includes('*') || allowedValues.includes(value)
       })
     },
@@ -111,42 +92,36 @@ export const AuthorizationProvider = ({
       if (!user || !user.rolesWithContext) return permissions
 
       user.rolesWithContext.forEach((role) => {
-        // Check if context matches
         const contextMatches = Object.entries(context).every(
           ([key, value]) => role.context?.[key] === value
         )
 
         if (contextMatches) {
-          getRolePermissions(role.name).forEach((p) => permissions.add(p))
+          const rolePermissions = rolesByName.get(role.name)?.permissions ?? []
+          rolePermissions.forEach((p) => permissions.add(p))
         }
       })
 
       return permissions
     },
-    []
+    [rolesByName]
   )
 
-  // Set admin state
   const isAdmin = useMemo(() => {
     if (!user || !user.rolesWithContext) return false
     return (
-      can(PERMISSIONS.listWorkspaces, { workspace: '*' }) ||
-      can(PERMISSIONS.listUsers, { workspace: '*' }) ||
-      can(PERMISSIONS.listWorkbenches, { workspace: '*' }) ||
-      can(PERMISSIONS.createApp, {}) ||
-      can(PERMISSIONS.setPlatformSettings, {})
+      can('listWorkspaces', { workspace: '*' }) ||
+      can('listUsers', { workspace: '*' }) ||
+      can('listWorkbenchs', { workspace: '*' }) ||
+      can('createApp', {}) ||
+      can('setPlatformSettings', {})
     )
   }, [user, can])
 
-  const value = {
-    PERMISSIONS,
-    can,
-    getPermissionsForUser,
-    isAdmin
-  }
-
   return (
-    <AuthorizationContext.Provider value={value}>
+    <AuthorizationContext.Provider
+      value={{ can, getPermissionsForUser, isAdmin }}
+    >
       {children}
     </AuthorizationContext.Provider>
   )

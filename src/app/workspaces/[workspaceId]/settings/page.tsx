@@ -19,7 +19,7 @@ type EditTab = 'general' | 'security' | 'resources' | 'services'
 export default function WorkspaceSettingsPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
   const workspaces = useAppState((state) => state.workspaces)
   const workspace = workspaces?.find((w) => w.id === workspaceId)
   const refreshWorkspaces = useAppState((state) => state.refreshWorkspaces)
@@ -32,7 +32,7 @@ export default function WorkspaceSettingsPage() {
     return <div className="p-8">Loading or Workspace not found...</div>
   }
 
-  if (!can(PERMISSIONS.createWorkspace, { workspace: workspace.id })) {
+  if (!can('createWorkspace', { workspace: workspace.id })) {
     return (
       <div className="p-8 text-destructive">
         You do not have permission to manage this workspace.

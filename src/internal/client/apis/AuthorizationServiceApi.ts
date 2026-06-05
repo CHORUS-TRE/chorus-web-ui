@@ -14,11 +14,17 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusCreateDynamicRoleReply,
+  ChorusCreateDynamicRoleRequest,
   ChorusListPermissionsReply,
   ChorusListRolesReply,
   RpcStatus
 } from '../models/index'
 import {
+  ChorusCreateDynamicRoleReplyFromJSON,
+  ChorusCreateDynamicRoleReplyToJSON,
+  ChorusCreateDynamicRoleRequestFromJSON,
+  ChorusCreateDynamicRoleRequestToJSON,
   ChorusListPermissionsReplyFromJSON,
   ChorusListPermissionsReplyToJSON,
   ChorusListRolesReplyFromJSON,
@@ -27,10 +33,74 @@ import {
   RpcStatusToJSON
 } from '../models/index'
 
+export interface AuthorizationServiceCreateDynamicRoleRequest {
+  body: ChorusCreateDynamicRoleRequest
+}
+
 /**
  *
  */
 export class AuthorizationServiceApi extends runtime.BaseAPI {
+  /**
+   * This endpoint creates a platform-scoped or workspace-scoped dynamic role
+   * Create dynamic role
+   */
+  async authorizationServiceCreateDynamicRoleRaw(
+    requestParameters: AuthorizationServiceCreateDynamicRoleRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusCreateDynamicRoleReply>> {
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling authorizationServiceCreateDynamicRole.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/authorization/roles`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ChorusCreateDynamicRoleRequestToJSON(requestParameters.body)
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusCreateDynamicRoleReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint creates a platform-scoped or workspace-scoped dynamic role
+   * Create dynamic role
+   */
+  async authorizationServiceCreateDynamicRole(
+    requestParameters: AuthorizationServiceCreateDynamicRoleRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusCreateDynamicRoleReply> {
+    const response = await this.authorizationServiceCreateDynamicRoleRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
   /**
    * This endpoint returns a list of all available permissions
    * List permissions

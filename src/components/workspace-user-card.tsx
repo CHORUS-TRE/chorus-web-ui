@@ -32,7 +32,7 @@ export function WorkspaceUserCard({
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
-  const { getPermissionsForUser, can, PERMISSIONS } = useAuthorization()
+  const { getPermissionsForUser, can } = useAuthorization()
 
   const workspaceRoles = useMemo(() => {
     return (
@@ -84,7 +84,7 @@ export function WorkspaceUserCard({
             </div>
           </div>
 
-          {can(PERMISSIONS.manageUsersInWorkspace, {
+          {can('manageUsersInWorkspace', {
             workspace: workspaceId
           }) && (
             <Button
@@ -102,7 +102,7 @@ export function WorkspaceUserCard({
           <div className="flex flex-wrap gap-2">
             {workspaceRoles.map((role, index) => (
               <div key={role.id || index}>
-                {can(PERMISSIONS.manageUsersInWorkspace, {
+                {can('manageUsersInWorkspace', {
                   workspace: workspaceId
                 }) ? (
                   <ManageUserWorkspaceDialog

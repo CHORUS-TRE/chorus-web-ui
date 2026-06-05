@@ -27,12 +27,13 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '@/config/permissions'
+import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { Workbench } from '@/domain/model/workbench'
 import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { useRoles } from '@/providers/roles-provider'
 import { listUsers } from '@/view-model/user-view-model'
 import {
   workbenchAddUserRole,
@@ -60,14 +61,15 @@ export function SessionMembersSheet({
   session,
   onUpdate
 }: SessionMembersSheetProps) {
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
   const { user: currentUser } = useAuthentication()
+  const { rolesByName } = useRoles()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
   const [pendingCell, setPendingCell] = useState<string | null>(null)
 
   const canManage = session.id
-    ? can(PERMISSIONS.manageUsersInWorkbench, {
+    ? can('manageUsersInWorkbench', {
         workspace: workspaceId,
         workbench: session.id
       })
@@ -211,13 +213,14 @@ export function SessionMembersSheet({
                         <Tooltip key={role}>
                           <TooltipTrigger asChild>
                             <TableHead className="min-w-[90px] cursor-default text-center text-xs text-muted-foreground">
-                              {(
-                                ROLE_DEFINITIONS[role]?.displayName ?? role
-                              ).replace(/^(Session|Workbench)/, '')}
+                              {(ROLE_DISPLAY_NAMES[role] ?? role).replace(
+                                /^(Session|Workbench)/,
+                                ''
+                              )}
                             </TableHead>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs text-xs">
-                            {ROLE_DEFINITIONS[role]?.description}
+                            {rolesByName.get(role)?.description ?? ''}
                           </TooltipContent>
                         </Tooltip>
                       ))}

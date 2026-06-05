@@ -9,12 +9,13 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import { ROLE_DEFINITIONS } from '@/config/permissions'
+import { ROLE_DISPLAY_NAMES } from '@/config/permissions'
 import type { Role } from '@/domain/model/user'
 import { cn } from '@/lib/utils'
+import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
 
-type RoleScope = 'platform' | 'workspace' | 'session'
+export type RoleScope = 'platform' | 'workspace' | 'session'
 
 const scopeColors: Record<RoleScope, string> = {
   platform: 'border-primary text-primary',
@@ -22,17 +23,12 @@ const scopeColors: Record<RoleScope, string> = {
   session: 'border-accent text-accent'
 }
 
-function getRoleScope(roleName: string): RoleScope {
-  const def = ROLE_DEFINITIONS[roleName]
-  const attrs = def?.attributes
-  if (
-    attrs?.user === '*' &&
-    attrs?.workspace === '*' &&
-    attrs?.workbench === '*'
-  )
-    return 'platform'
-  if (attrs?.workbench) return 'session'
-  if (attrs?.workspace && !attrs?.user) return 'workspace'
+export function getRoleScope(
+  roleName: string,
+  rolesByName: Map<string, { scope?: string }>
+): RoleScope {
+  const scope = rolesByName.get(roleName)?.scope
+  if (scope === 'workspace' || scope === 'session') return scope
   return 'platform'
 }
 
@@ -55,16 +51,18 @@ interface RoleBadgeProps {
 }
 
 export function RoleBadge({ role, onRemove, className }: RoleBadgeProps) {
-  const scope = getRoleScope(role.name)
+  const { rolesByName } = useRoles()
+  const scope = getRoleScope(role.name, rolesByName)
   const contextName = useResolvedContextName(role)
-  const def = ROLE_DEFINITIONS[role.name]
+  const description = rolesByName.get(role.name)?.description ?? ''
+  const displayName = ROLE_DISPLAY_NAMES[role.name] ?? role.name
 
   const badge = (
     <Badge
       variant="outline"
       className={cn('gap-1 whitespace-nowrap', scopeColors[scope], className)}
     >
-      <span>{role.name}</span>
+      <span>{displayName}</span>
       {contextName && <span className="opacity-80">&rarr; {contextName}</span>}
       {onRemove && (
         <button
@@ -81,25 +79,20 @@ export function RoleBadge({ role, onRemove, className }: RoleBadgeProps) {
     </Badge>
   )
 
-  if (!def?.description) return badge
+  if (!description) return badge
 
   return (
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>{badge}</TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs text-xs">
-          <p className="font-medium">{role.name}</p>
-          <p className="text-muted-foreground">{def.description}</p>
+          <p className="font-medium">{displayName}</p>
+          <p className="text-muted-foreground">{description}</p>
           <p className="mt-1 text-[10px] text-muted-foreground/70">
             Scope: {scope}
-            {def.inheritsFrom?.length
-              ? ` · Inherits: ${def.inheritsFrom.join(', ')}`
-              : ''}
           </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   )
 }
-
-export { getRoleScope, type RoleScope }
