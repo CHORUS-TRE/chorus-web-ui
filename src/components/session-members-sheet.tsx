@@ -61,7 +61,7 @@ export function SessionMembersSheet({
   session,
   onUpdate
 }: SessionMembersSheetProps) {
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
   const { user: currentUser } = useAuthentication()
   const { rolesByName } = useRoles()
   const [users, setUsers] = useState<User[]>([])
@@ -69,7 +69,7 @@ export function SessionMembersSheet({
   const [pendingCell, setPendingCell] = useState<string | null>(null)
 
   const canManage = session.id
-    ? can(PERMISSIONS.manageUsersInWorkbench, {
+    ? can('manageUsersInWorkbench', {
         workspace: workspaceId,
         workbench: session.id
       })

@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { Result } from '@/domain/model'
 import {
+  AuthorizationPermission,
+  AuthorizationPermissionSchema,
   AuthorizationRole,
   AuthorizationRoleSchema
 } from '@/domain/model/authorization'
@@ -35,6 +37,30 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
       if (!result.success) {
         console.error(
           '[AuthorizationRepository] listRoles validation failed:',
+          result.error.issues
+        )
+        return {
+          error: 'API response validation failed',
+          issues: result.error.issues
+        }
+      }
+      return { data: result.data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async listPermissions(): Promise<Result<AuthorizationPermission[]>> {
+    try {
+      const response = await this.dataSource.listPermissions()
+      const result = z
+        .array(AuthorizationPermissionSchema)
+        .safeParse(response.result?.permissions)
+      if (!result.success) {
+        console.error(
+          '[AuthorizationRepository] listPermissions validation failed:',
           result.error.issues
         )
         return {

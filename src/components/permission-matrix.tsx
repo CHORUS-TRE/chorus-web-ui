@@ -3,163 +3,36 @@
 import { useMemo } from 'react'
 
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
-import {
-  type Permission,
-  PERMISSION_DESCRIPTIONS,
-  PERMISSIONS
-} from '@/config/permissions'
 import { cn } from '@/lib/utils'
 import { useRoles } from '@/providers/roles-provider'
 
-type Scope = 'workspace' | 'session' | 'platform'
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
 
-const PERMISSION_GROUPS: {
-  label: string
-  scope: Scope
-  permissions: { key: Permission; label: string }[]
-}[] = [
-  {
-    label: 'Workspace',
-    scope: 'workspace',
-    permissions: [
-      { key: PERMISSIONS.listWorkspaces, label: 'List workspaces' },
-      { key: PERMISSIONS.getWorkspace, label: 'View workspace' },
-      { key: PERMISSIONS.createWorkspace, label: 'Create workspace' },
-      { key: PERMISSIONS.updateWorkspace, label: 'Update workspace' },
-      { key: PERMISSIONS.deleteWorkspace, label: 'Delete workspace' },
-      { key: PERMISSIONS.manageUsersInWorkspace, label: 'Manage members' }
-    ]
-  },
-  {
-    label: 'Files',
-    scope: 'workspace',
-    permissions: [
-      { key: PERMISSIONS.listFilesInWorkspace, label: 'List files' },
-      { key: PERMISSIONS.uploadFilesToWorkspace, label: 'Upload files' },
-      { key: PERMISSIONS.downloadFilesFromWorkspace, label: 'Download files' },
-      { key: PERMISSIONS.modifyFilesInWorkspace, label: 'Modify files' }
-    ]
-  },
-  {
-    label: 'Session',
-    scope: 'session',
-    permissions: [
-      { key: PERMISSIONS.listWorkbenches, label: 'List sessions' },
-      { key: PERMISSIONS.getWorkbench, label: 'View session' },
-      { key: PERMISSIONS.createWorkbench, label: 'Create session' },
-      { key: PERMISSIONS.updateWorkbench, label: 'Update session' },
-      { key: PERMISSIONS.streamWorkbench, label: 'Stream session' },
-      { key: PERMISSIONS.deleteWorkbench, label: 'Delete session' },
-      { key: PERMISSIONS.manageUsersInWorkbench, label: 'Manage members' }
-    ]
-  },
-  {
-    label: 'App Instances',
-    scope: 'session',
-    permissions: [
-      { key: PERMISSIONS.listAppInstances, label: 'List instances' },
-      { key: PERMISSIONS.getAppInstance, label: 'View instance' },
-      { key: PERMISSIONS.createAppInstance, label: 'Create instance' },
-      { key: PERMISSIONS.updateAppInstance, label: 'Update instance' },
-      { key: PERMISSIONS.deleteAppInstance, label: 'Delete instance' }
-    ]
-  },
-  {
-    label: 'App Store',
-    scope: 'platform',
-    permissions: [
-      { key: PERMISSIONS.listApps, label: 'List apps' },
-      { key: PERMISSIONS.getApp, label: 'View app' },
-      { key: PERMISSIONS.createApp, label: 'Create app' },
-      { key: PERMISSIONS.updateApp, label: 'Update app' },
-      { key: PERMISSIONS.deleteApp, label: 'Delete app' }
-    ]
-  },
-  {
-    label: 'Users',
-    scope: 'platform',
-    permissions: [
-      { key: PERMISSIONS.listUsers, label: 'List users' },
-      { key: PERMISSIONS.searchUsers, label: 'Search users' },
-      { key: PERMISSIONS.getUser, label: 'View user' },
-      { key: PERMISSIONS.createUser, label: 'Create user' },
-      { key: PERMISSIONS.updateUser, label: 'Update user' },
-      { key: PERMISSIONS.deleteUser, label: 'Delete user' },
-      { key: PERMISSIONS.resetPassword, label: 'Reset password' },
-      { key: PERMISSIONS.manageUserRoles, label: 'Manage roles' }
-    ]
-  },
-  {
-    label: 'Platform',
-    scope: 'platform',
-    permissions: [
-      { key: PERMISSIONS.getPlatformSettings, label: 'View settings' },
-      { key: PERMISSIONS.setPlatformSettings, label: 'Modify settings' },
-      { key: PERMISSIONS.auditPlatform, label: 'Audit platform' },
-      { key: PERMISSIONS.auditWorkspace, label: 'Audit workspace' },
-      { key: PERMISSIONS.auditWorkbench, label: 'Audit session' },
-      { key: PERMISSIONS.auditUser, label: 'Audit user' }
-    ]
-  },
-  {
-    label: 'Notifications',
-    scope: 'platform',
-    permissions: [
-      { key: PERMISSIONS.listNotifications, label: 'List notifications' },
-      { key: PERMISSIONS.countUnreadNotifications, label: 'Count unread' },
-      { key: PERMISSIONS.markNotificationAsRead, label: 'Mark read' }
-    ]
-  },
-  {
-    label: 'Authentication',
-    scope: 'platform',
-    permissions: [
-      { key: PERMISSIONS.authenticate, label: 'Authenticate' },
-      { key: PERMISSIONS.logout, label: 'Logout' },
-      {
-        key: PERMISSIONS.getListOfPossibleWayToAuthenticate,
-        label: 'View auth methods'
-      },
-      { key: PERMISSIONS.authenticateUsingAuth2, label: 'OAuth2 login' },
-      {
-        key: PERMISSIONS.authenticateRedirectUsingAuth2,
-        label: 'OAuth2 callback'
-      },
-      { key: PERMISSIONS.refreshToken, label: 'Refresh token' },
-      { key: PERMISSIONS.getMyOwnUser, label: 'View own profile' },
-      { key: PERMISSIONS.updatePassword, label: 'Change password' },
-      { key: PERMISSIONS.enableTotp, label: 'Enable TOTP' },
-      { key: PERMISSIONS.resetTotp, label: 'Reset TOTP' }
-    ]
-  },
-  {
-    label: 'System',
-    scope: 'platform',
-    permissions: [
-      { key: PERMISSIONS.getHealthCheck, label: 'Health check' },
-      { key: PERMISSIONS.initializeTenant, label: 'Initialize tenant' }
-    ]
+function getScope(context: string[], scopeMap: Record<string, string>): string {
+  for (const c of context) {
+    if (c in scopeMap) return scopeMap[c]
   }
-]
+  return 'platform'
+}
 
-const SCOPES: {
-  key: Scope
-  label: string
-}[] = [
-  { key: 'session', label: 'Session' },
-  { key: 'workspace', label: 'Workspace' },
-  { key: 'platform', label: 'Platform' }
-]
+function getGroup(context: string[], scope: string): string {
+  return context.length > 0 ? capitalize(context[0]) : capitalize(scope)
+}
+
+function formatPermName(name: string): string {
+  return name
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (c) => c.toUpperCase())
+    .trim()
+}
+
+type GroupItem = { key: string; label: string; description: string }
 
 interface PermissionMatrixProps {
   roleNames: string[]
-  scopeFilter?: 'platform' | 'workspace' | 'session' | 'all'
+  scopeFilter?: string
   readOnly?: boolean
   highlightInherited?: boolean
   compact?: boolean
@@ -172,142 +45,138 @@ export function PermissionMatrix({
   highlightInherited = false,
   compact = false
 }: PermissionMatrixProps) {
-  const { rolesByName } = useRoles()
+  const { roles, permissions, rolesByName, availableScopes: roleScopes } = useRoles()
 
   const resolvedPermissions = useMemo(() => {
-    const resolved = new Set<Permission>()
-
+    const resolved = new Set<string>()
     for (const roleName of roleNames) {
       const allPerms = rolesByName.get(roleName)?.permissions ?? []
-      allPerms.forEach((p) => resolved.add(p as Permission))
+      allPerms.forEach((p) => resolved.add(p))
     }
-
     return resolved
   }, [roleNames, rolesByName])
 
-  const visibleScopes = useMemo(() => {
-    if (!scopeFilter || scopeFilter === 'all') return SCOPES
-    return SCOPES.filter((s) => s.key === scopeFilter)
-  }, [scopeFilter])
-
-  const groupsByScope = useMemo(() => {
-    const map: Record<Scope, typeof PERMISSION_GROUPS> = {
-      session: [],
-      workspace: [],
-      platform: []
-    }
-    for (const group of PERMISSION_GROUPS) {
-      map[group.scope].push(group)
+  // Built from roles: which context dimension maps to which scope value
+  const contextScopeMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    for (const role of roles) {
+      for (const ctx of role.context) {
+        if (!(ctx in map)) map[ctx] = role.scope
+      }
     }
     return map
-  }, [])
+  }, [roles])
+
+  const { availableScopes } = useMemo(() => {
+    const map = new Map<string, Map<string, GroupItem[]>>()
+
+    for (const perm of permissions) {
+      const name = perm.name ?? ''
+      const context = perm.context ?? []
+      const scope = getScope(context, contextScopeMap)
+      const groupLabel = getGroup(context, scope)
+
+      if (!map.has(scope)) map.set(scope, new Map())
+      const scopeMap = map.get(scope)!
+      if (!scopeMap.has(groupLabel)) scopeMap.set(groupLabel, [])
+      scopeMap.get(groupLabel)!.push({
+        key: name,
+        label: formatPermName(name),
+        description: perm.description ?? ''
+      })
+    }
+
+    const scopes = roleScopes
+      .filter((s) => map.has(s))
+      .map((s) => ({
+        key: s,
+        label: s,
+        groups: Array.from(map.get(s)!.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([label, items]) => ({ label, permissions: items }))
+      }))
+
+    return { availableScopes: scopes }
+  }, [permissions, roleScopes, contextScopeMap])
+
+  const visibleScopes =
+    scopeFilter === 'all'
+      ? availableScopes
+      : availableScopes.filter((s) => s.key === scopeFilter)
 
   return (
-    <div className={cn(compact && 'text-xs')}>
-      <div
-        className={cn(
-          'grid gap-6',
-          visibleScopes.length === 3 && 'grid-cols-3',
-          visibleScopes.length === 2 && 'grid-cols-2',
-          visibleScopes.length === 1 && 'grid-cols-1'
-        )}
-      >
-        {visibleScopes.map((scope) => (
-          <div key={scope.key} className="min-w-0">
-            <div
-              className={cn(
-                'mb-3 border-b border-border pb-2 font-semibold text-foreground',
-                compact ? 'text-xs' : 'text-sm'
-              )}
-            >
-              {scope.label}
-            </div>
+    <>
+    <div className={cn('space-y-6', compact && 'space-y-4 text-xs')}>
+      {visibleScopes.map((scope) => (
+        <div key={scope.key} className="space-y-4">
+          {scope.groups.map((group) => (
+            <div key={group.label}>
+              <p
+                className={cn(
+                  'mb-2 font-semibold uppercase tracking-wide text-muted-foreground',
+                  compact ? 'text-[10px]' : 'text-xs'
+                )}
+              >
+                {group.label}
+              </p>
+              <div className="space-y-0.5">
+                {group.permissions.map((perm) => {
+                  const isGranted = resolvedPermissions.has(perm.key)
+                  const isInherited = false
 
-            <div
-              className={cn(
-                'gap-x-8 gap-y-4',
-                compact ? 'gap-y-3' : '',
-                visibleScopes.length === 1
-                  ? 'columns-2 lg:columns-3'
-                  : 'space-y-4'
-              )}
-            >
-              {groupsByScope[scope.key].map((group) => (
-                <div key={group.label} className="break-inside-avoid">
-                  <p
-                    className={cn(
-                      'mb-1 font-medium text-muted-foreground',
-                      compact ? 'text-[10px]' : 'text-xs'
-                    )}
-                  >
-                    {group.label}
-                  </p>
-                  <div>
-                    {group.permissions.map((perm) => {
-                      const isGranted = resolvedPermissions.has(perm.key)
-                      const isInherited = false
-
-                      const desc = PERMISSION_DESCRIPTIONS[perm.key]
-
-                      return (
-                        <TooltipProvider key={perm.key} delayDuration={400}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <label
-                                className={cn(
-                                  'flex cursor-default items-center gap-2 transition-colors',
-                                  compact ? 'py-0.5' : 'py-1',
-                                  !isGranted && 'opacity-40'
-                                )}
-                              >
-                                <Checkbox
-                                  checked={isGranted}
-                                  disabled={readOnly}
-                                  className={cn(
-                                    'h-3.5 w-3.5 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground',
-                                    highlightInherited && isInherited
-                                      ? 'opacity-40'
-                                      : ''
-                                  )}
-                                  aria-label={`${perm.label}: ${isGranted ? 'granted' : 'not granted'}${isInherited ? ' (inherited)' : ''}`}
-                                />
-                                <span
-                                  className={cn(
-                                    'text-foreground',
-                                    compact ? 'text-xs' : 'text-sm'
-                                  )}
-                                >
-                                  {perm.label}
-                                </span>
-                                {highlightInherited && isInherited && (
-                                  <span className="text-[10px] italic text-muted-foreground">
-                                    inherited
-                                  </span>
-                                )}
-                              </label>
-                            </TooltipTrigger>
-                            {desc && (
-                              <TooltipContent
-                                side="right"
-                                className="max-w-xs text-xs"
-                              >
-                                <p>{desc}</p>
-                                <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                                  {perm.key}
-                                </p>
-                              </TooltipContent>
+                  return (
+                    <div
+                      key={perm.key}
+                      className={cn(
+                        'flex items-start gap-3 rounded-md px-2 py-1.5',
+                        !isGranted && 'opacity-40'
+                      )}
+                    >
+                      <Checkbox
+                        checked={isGranted}
+                        disabled={readOnly}
+                        className={cn(
+                          'mt-0.5 h-3.5 w-3.5 shrink-0 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground',
+                          highlightInherited && isInherited ? 'opacity-40' : ''
+                        )}
+                        aria-label={`${perm.label}: ${isGranted ? 'granted' : 'not granted'}${isInherited ? ' (inherited)' : ''}`}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={cn(
+                              'font-medium text-foreground',
+                              compact ? 'text-xs' : 'text-sm'
                             )}
-                          </Tooltip>
-                        </TooltipProvider>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
+                          >
+                            {perm.label}
+                          </span>
+                          {highlightInherited && isInherited && (
+                            <span className="text-[10px] italic text-muted-foreground">
+                              inherited
+                            </span>
+                          )}
+                        </div>
+                        {perm.description && (
+                          <p
+                            className={cn(
+                              'text-muted-foreground',
+                              compact ? 'text-[10px]' : 'text-xs'
+                            )}
+                          >
+                            {perm.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ))}
+    </div>
 
       {highlightInherited && (
         <div
@@ -334,6 +203,6 @@ export function PermissionMatrix({
           </span>
         </div>
       )}
-    </div>
+    </>
   )
 }

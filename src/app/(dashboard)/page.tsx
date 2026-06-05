@@ -35,7 +35,7 @@ export default function CHORUSDashboard() {
   } = useAppStateStore()
   const { user } = useAuthentication()
   const [createOpen, setCreateOpen] = useState(false)
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
   const {
     workspaces: workspaceLimits,
     sessions: sessionLimits,
@@ -249,7 +249,7 @@ export default function CHORUSDashboard() {
                         Workspaces
                       </div>
                     </Link>
-                    {can(PERMISSIONS.createWorkspace) && (
+                    {can('createWorkspace') && (
                       <Button
                         onClick={() => setCreateOpen(true)}
                         variant="accent-filled"
@@ -267,7 +267,7 @@ export default function CHORUSDashboard() {
                       <p className="mb-4 text-sm text-muted-foreground">
                         You don&apos;t have any workspaces yet
                       </p>
-                      {can(PERMISSIONS.createWorkspace) && (
+                      {can('createWorkspace') && (
                         <Button
                           onClick={() => setCreateOpen(true)}
                           variant="accent-filled"

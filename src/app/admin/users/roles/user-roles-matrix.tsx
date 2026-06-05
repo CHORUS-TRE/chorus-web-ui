@@ -205,6 +205,7 @@ export function UserRolesMatrix() {
   const scopes: Scope[] = ['platform', 'workspace', 'session']
   const contextKey = scope === 'workspace' ? 'workspace' : 'workbench'
 
+
   return (
     <div className="space-y-4">
       {/* Summary cards */}

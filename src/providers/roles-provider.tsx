@@ -9,18 +9,30 @@ import React, {
 } from 'react'
 
 import { LoadingOverlay } from '@/components/loading-overlay'
-import { AuthorizationRole } from '@/domain/model/authorization'
+import {
+  AuthorizationPermission,
+  AuthorizationRole
+} from '@/domain/model/authorization'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { listRoles } from '@/view-model/authorization-view-model'
+import {
+  listPermissions,
+  listRoles
+} from '@/view-model/authorization-view-model'
 
 interface RolesContextType {
   roles: AuthorizationRole[]
   rolesByName: Map<string, AuthorizationRole>
+  permissions: AuthorizationPermission[]
+  permissionsByName: Map<string, AuthorizationPermission>
+  availableScopes: string[]
 }
 
 const RolesContext = createContext<RolesContextType>({
   roles: [],
-  rolesByName: new Map()
+  rolesByName: new Map(),
+  permissions: [],
+  permissionsByName: new Map(),
+  availableScopes: []
 })
 
 export const useRoles = (): RolesContextType => {
@@ -34,6 +46,7 @@ export const useRoles = (): RolesContextType => {
 export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuthentication()
   const [roles, setRoles] = useState<AuthorizationRole[]>([])
+  const [permissions, setPermissions] = useState<AuthorizationPermission[]>([])
   const [loading, setLoading] = useState(!!user)
   const [error, setError] = useState<string | null>(null)
 
@@ -48,15 +61,20 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true)
     setError(null)
 
-    listRoles().then((result) => {
-      if (ignored) return
-      if (result.error) {
-        setError(result.error)
-      } else {
-        setRoles(result.data ?? [])
+    Promise.all([listRoles(), listPermissions()]).then(
+      ([rolesResult, permissionsResult]) => {
+        if (ignored) return
+        if (rolesResult.error) {
+          setError(rolesResult.error)
+        } else if (permissionsResult.error) {
+          setError(permissionsResult.error)
+        } else {
+          setRoles(rolesResult.data ?? [])
+          setPermissions(permissionsResult.data ?? [])
+        }
+        setLoading(false)
       }
-      setLoading(false)
-    })
+    )
 
     return () => {
       ignored = true
@@ -67,6 +85,23 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
     () => new Map(roles.map((r) => [r.name, r])),
     [roles]
   )
+
+  const permissionsByName = useMemo(
+    () => new Map(permissions.map((p) => [p.name, p])),
+    [permissions]
+  )
+
+  const availableScopes = useMemo(() => {
+    const seen = new Set<string>()
+    const ordered: string[] = []
+    for (const role of roles) {
+      if (role.scope && !seen.has(role.scope)) {
+        seen.add(role.scope)
+        ordered.push(role.scope)
+      }
+    }
+    return ordered
+  }, [roles])
 
   if (loading) {
     return <LoadingOverlay isLoading={true} />
@@ -89,7 +124,15 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <RolesContext.Provider value={{ roles, rolesByName }}>
+    <RolesContext.Provider
+      value={{
+        roles,
+        rolesByName,
+        permissions,
+        permissionsByName,
+        availableScopes
+      }}
+    >
       {children}
     </RolesContext.Provider>
   )

@@ -2,13 +2,11 @@
 
 import React, { createContext, useCallback, useContext, useMemo } from 'react'
 
-import { PERMISSIONS } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useRoles } from '@/providers/roles-provider'
 
 interface AuthorizationContextType {
-  PERMISSIONS: typeof PERMISSIONS
   can: (permission: string, context?: Record<string, string>) => boolean
   getPermissionsForUser: (
     user: User,
@@ -18,7 +16,6 @@ interface AuthorizationContextType {
 }
 
 const AuthorizationContext = createContext<AuthorizationContextType>({
-  PERMISSIONS,
   can: () => false,
   getPermissionsForUser: () => new Set<string>(),
   isAdmin: false
@@ -113,23 +110,18 @@ export const AuthorizationProvider = ({
   const isAdmin = useMemo(() => {
     if (!user || !user.rolesWithContext) return false
     return (
-      can(PERMISSIONS.listWorkspaces, { workspace: '*' }) ||
-      can(PERMISSIONS.listUsers, { workspace: '*' }) ||
-      can(PERMISSIONS.listWorkbenches, { workspace: '*' }) ||
-      can(PERMISSIONS.createApp, {}) ||
-      can(PERMISSIONS.setPlatformSettings, {})
+      can('listWorkspaces', { workspace: '*' }) ||
+      can('listUsers', { workspace: '*' }) ||
+      can('listWorkbenchs', { workspace: '*' }) ||
+      can('createApp', {}) ||
+      can('setPlatformSettings', {})
     )
   }, [user, can])
 
-  const value = {
-    PERMISSIONS,
-    can,
-    getPermissionsForUser,
-    isAdmin
-  }
-
   return (
-    <AuthorizationContext.Provider value={value}>
+    <AuthorizationContext.Provider
+      value={{ can, getPermissionsForUser, isAdmin }}
+    >
       {children}
     </AuthorizationContext.Provider>
   )

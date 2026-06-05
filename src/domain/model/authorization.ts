@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const AuthorizationRoleSchema = z.object({
   name: z.string(),
   description: z.string().default(''),
-  scope: z.enum(['platform', 'workspace', 'session']).catch('platform'),
+  scope: z.string().default('platform'),
   permissions: z.array(z.string()).default([]),
   context: z.array(z.string()).default([]),
   dynamic: z.boolean().default(false)
@@ -17,4 +17,6 @@ export const AuthorizationPermissionSchema = z.object({
   context: z.array(z.string()).default([])
 })
 
-export type AuthorizationPermission = z.infer<typeof AuthorizationPermissionSchema>
+export type AuthorizationPermission = z.infer<
+  typeof AuthorizationPermissionSchema
+>

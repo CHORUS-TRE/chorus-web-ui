@@ -25,7 +25,7 @@ import { useUserPreferences } from '@/stores/user-preferences-store'
 export default function WorkspacesPage() {
   const { workspaces, refreshWorkspaces } = useAppStateStore()
   const { user } = useAuthentication()
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
 
   const {
     showWorkspacesTable,
@@ -87,7 +87,7 @@ export default function WorkspacesPage() {
               Workspaces
             </>
           </h2>
-          {can(PERMISSIONS.createWorkspace) && (
+          {can('createWorkspace') && (
             <Button onClick={() => setCreateOpen(true)} variant="accent-filled">
               <CirclePlus className="h-4 w-4" />
               Create Workspace

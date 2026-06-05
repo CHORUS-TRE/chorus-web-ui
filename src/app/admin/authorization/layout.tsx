@@ -14,7 +14,7 @@ export default function AuthorizationLayout({
           Authorization
         </h1>
         <p className="mb-4 text-muted-foreground">
-          Manage roles, permissions, and access control policies.
+          Manage roles, and access control policies.
         </p>
       </div>
 

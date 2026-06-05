@@ -23,7 +23,7 @@ export function UserTable() {
   const [userCollapsed, setUserCollapsed] = useState<boolean[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
 
   const handleUserChange = useCallback(() => {
     setRefreshKey((oldKey) => oldKey + 1)
@@ -50,7 +50,7 @@ export function UserTable() {
         setError(result.error || 'Failed to load users.')
       }
     }
-    if ((can(PERMISSIONS.listUsers), { workspace: '*' })) {
+    if ((can('listUsers'), { workspace: '*' })) {
       loadUsers()
     }
   }, [refreshKey])

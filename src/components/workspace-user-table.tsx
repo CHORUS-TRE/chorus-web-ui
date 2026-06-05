@@ -53,7 +53,7 @@ export default function WorkspaceUserTable({
   title?: string
   description?: string
 }) {
-  const { can, PERMISSIONS } = useAuthorization()
+  const { can } = useAuthorization()
   const { user: currentUser } = useAuthentication()
   const { rolesByName } = useRoles()
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
@@ -63,7 +63,7 @@ export default function WorkspaceUserTable({
   const [loading, setLoading] = useState(!propUsers)
 
   const users = propUsers ?? internalUsers
-  const canManage = can(PERMISSIONS.manageUsersInWorkspace, {
+  const canManage = can('manageUsersInWorkspace', {
     workspace: workspaceId
   })
 
