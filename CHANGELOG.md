@@ -1,3 +1,26 @@
+# [1.55.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.54.2...v1.55.0) (2026-06-05)
+
+
+### Bug Fixes
+
+* export AuthorizationRepository from domain repository index ([e0e6356](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e0e6356858c4b9248235bd98d24cff57caf3fa7a))
+* export AuthorizationRole from domain model index ([cf899c5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cf899c5bc2d0d6030c8517415aa32fab893de359))
+* guard roles fetch against stale closure; fix loading init for unauthenticated ([e293bf6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e293bf61d208fff187e2ce912792d5cca8cbf0a5))
+* make getRepository async to match user-view-model pattern ([0d595cf](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0d595cfbc6c6ff1ee5a01d0616a2b93302ad118a))
+* role dialog submits role name not display name; clean up permission-matrix dead code ([cbb8f32](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cbb8f3276c3de17143210088c43077e4c3fc29ad))
+* update database connection options, enhance wizard state persistence, and improve chat UI elements ([f69d286](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f69d2868501ab303bc6301bb859ab2646b70273d))
+* use z.enum().catch() for scope so unknown values fall back to platform ([6d6f85c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6d6f85cb48149c02f9d483941fa4ae30d7f2a0a4))
+
+
+### Features
+
+* add authorization view model with listRoles ([3c6dd9f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/3c6dd9f8d3298edc41f743f6bfbe24bdd87a6745))
+* add AuthorizationApiDataSourceImpl wrapping listRoles endpoint ([5d28f71](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5d28f71d89db4010102656f77a28a44469942e9b))
+* add AuthorizationRole domain model with Zod schema ([42852e2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/42852e202ad14e3a2221fc3f5116e7ce54c53992))
+* add RolesProvider — fetches listRoles on auth, exposes useRoles() ([d187a9b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d187a9b6caeffaaff5c1a54ce1748ec181bbc8bb))
+* implement AuthorizationRepositoryImpl with listRoles ([7ea0dab](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7ea0dab4368e14495101f213dbea9c71941dd5ef))
+* migrate all consumers from ROLE_DEFINITIONS to useRoles() API-driven roles ([8c882e4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8c882e44a777e800b8738779ad7dac6a64eb646d))
+
 ## [1.54.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.54.1...v1.54.2) (2026-06-03)
 
 
