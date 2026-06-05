@@ -7,12 +7,10 @@ import {
   fetchWorkspaceStatusParams,
   selectWorkspaceParams
 } from '@/lib/json-render/catalog'
+import { useAppState } from '@/stores/app-state-store'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
-import {
-  workspaceGetWithDev,
-  workspaceListWithDev
-} from '@/view-model/workspace-view-model'
+import { workspaceListWithDev } from '@/view-model/workspace-view-model'
 
 // ---------------------------------------------------------------------------
 // Spec builder
@@ -160,10 +158,19 @@ export function buildWorkspaceStatusSpec(workspaceId: string | null): Spec {
     visible: { $state: '/appInstancesExist' }
   }
 
-  elements['workspace-created'] = {
+  elements['workspace-owner'] = {
     type: 'Text',
     props: {
-      text: { $state: '/workspace/createdLabel' } as Record<string, string>,
+      text: { $state: '/workspace/ownerLabel' } as Record<string, string>,
+      variant: 'caption'
+    },
+    visible: { $state: '/workspace/ownerLabel' }
+  }
+
+  elements['workspace-dates'] = {
+    type: 'Text',
+    props: {
+      text: { $state: '/workspace/datesLabel' } as Record<string, string>,
       variant: 'caption'
     }
   }
@@ -177,7 +184,8 @@ export function buildWorkspaceStatusSpec(workspaceId: string | null): Spec {
       'members-section',
       'approvals-section',
       'apps-section',
-      'workspace-created'
+      'workspace-owner',
+      'workspace-dates'
     ]
   }
 
@@ -269,49 +277,70 @@ export const workspaceStatusHandlers: Record<string, StateAwareHandler> = {
 
     try {
       if (workspaceId) {
-        const [wsResult, approvalsResult, appsResult] = await Promise.all([
-          workspaceGetWithDev(workspaceId),
+        // Use already-loaded workspace from app state to avoid a redundant API
+        // call that fails with "Not found" for some backend configurations.
+        const cached = useAppState.getState().workspaces
+        const ws = cached?.find((w) => w.id === workspaceId)
+
+        if (!ws) {
+          setState('/error', 'Workspace not found')
+          return
+        }
+
+        const [approvalsResult, appsResult] = await Promise.all([
           listApprovalRequests({ filterSourceWorkspaceId: workspaceId }),
           listAppInstances()
         ])
 
-        if (wsResult.error) {
-          setState('/error', wsResult.error)
-        } else if (wsResult.data) {
-          const ws = wsResult.data
-          setState('/workspace', {
-            name: ws.name,
-            shortName: ws.shortName,
-            status: ws.status,
-            description: ws.description ?? null,
-            createdLabel: `Created ${new Date(ws.createdAt).toLocaleDateString()}`,
-            members: (ws.dev?.members ?? []).map((m) => ({
+        const fmt = (d: Date) =>
+          new Date(d).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+
+        setState('/workspace', {
+          name: ws.name,
+          shortName: ws.shortName,
+          status: ws.status,
+          description: ws.description ?? null,
+          ownerLabel: ws.dev?.owner ? `Owner: ${ws.dev.owner}` : null,
+          datesLabel: [
+            `Created ${fmt(ws.createdAt)}`,
+            ws.updatedAt ? `· Updated ${fmt(ws.updatedAt)}` : null
+          ]
+            .filter(Boolean)
+            .join(' '),
+          members: (ws.dev?.members ?? []).map(
+            (m: { id: string; firstName: string; lastName: string }) => ({
               id: m.id,
               displayName: `${m.firstName} ${m.lastName}`
-            }))
-          })
-          const approvals = approvalsResult.data ?? []
-          setState(
-            '/approvals',
-            approvals.map((a) => ({
-              id: a.id,
-              title: a.title,
-              status: a.status ?? ''
-            }))
+            })
           )
-          setState('/approvalsExist', approvals.length > 0)
-          const apps = (appsResult.data ?? []).filter(
-            (a) => a.workspaceId === workspaceId
-          )
-          setState(
-            '/appInstances',
-            apps.map((a) => ({
-              id: a.id,
-              displayName: `${a.name ?? a.appId} — ${a.status}`
-            }))
-          )
-          setState('/appInstancesExist', apps.length > 0)
-        }
+        })
+
+        const approvals = approvalsResult.data ?? []
+        setState(
+          '/approvals',
+          approvals.map((a) => ({
+            id: a.id ?? '',
+            title: a.title ?? '',
+            status: a.status ?? ''
+          }))
+        )
+        setState('/approvalsExist', approvals.length > 0)
+
+        const apps = (appsResult.data ?? []).filter(
+          (a) => a.workspaceId === workspaceId
+        )
+        setState(
+          '/appInstances',
+          apps.map((a) => ({
+            id: a.id ?? '',
+            displayName: `${a.name ?? a.appId} — ${a.status}`
+          }))
+        )
+        setState('/appInstancesExist', apps.length > 0)
       } else {
         const result = await workspaceListWithDev()
         if (result.error) {

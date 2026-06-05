@@ -41,7 +41,7 @@ export function ChatInput({
   return (
     <div className="space-y-2 p-3">
       {/* Input row */}
-      <div className="flex items-end gap-2 rounded-xl border border-muted/40 bg-background/40 px-3 py-2 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20">
+      <div className="flex items-end gap-2 rounded-xl border border-muted/40 bg-background/40 px-3 py-2 focus-within:border-accent/50 focus-within:ring-1 focus-within:ring-accent/20">
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -84,7 +84,7 @@ export function ChatInput({
             className={cn(
               'h-7 w-7 flex-shrink-0 rounded-lg',
               value.trim()
-                ? 'bg-primary text-primary-foreground'
+                ? 'bg-accent text-accent-foreground'
                 : 'bg-muted/30 text-muted-foreground'
             )}
             onClick={onSubmit}

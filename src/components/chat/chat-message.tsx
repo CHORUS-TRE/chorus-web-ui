@@ -9,7 +9,7 @@ import {
 } from '@json-render/react'
 import { UIMessage } from 'ai'
 import { Bot, GripVertical, User } from 'lucide-react'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { chorusRegistry } from '@/lib/json-render/registry'
@@ -116,17 +116,26 @@ export function ChatMessage({ message }: { message: UIMessage }) {
   // Combine: use streamedText if available (spec fences stripped), otherwise raw text
   const displayText = streamedText || textContent
 
-  const artifact = !isUser ? extractArtifact(message) : null
+  // Keep the last non-null artifact so interactive widgets (e.g. wizard) never
+  // unmount when the AI SDK temporarily clears a tool part's output state.
+  const [lastArtifact, setLastArtifact] = useState<ChatArtifact | null>(null)
+  const rawArtifact = !isUser ? extractArtifact(message) : null
+  useEffect(() => {
+    if (rawArtifact) {
+      setLastArtifact(rawArtifact)
+    }
+  }, [rawArtifact])
+  const artifact = lastArtifact
 
   if (isUser) {
     return (
       <div className="flex justify-end">
         <div className="flex max-w-[80%] items-start gap-2">
-          <div className="rounded-2xl rounded-tr-none bg-primary px-3 py-2 text-sm text-primary-foreground">
+          <div className="rounded-2xl rounded-tr-none bg-accent px-3 py-2 text-sm text-accent-foreground">
             {displayText}
           </div>
-          <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-            <User className="h-3.5 w-3.5 text-primary" />
+          <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/20">
+            <User className="h-3.5 w-3.5 text-accent" />
           </div>
         </div>
       </div>
@@ -140,9 +149,31 @@ export function ChatMessage({ message }: { message: UIMessage }) {
     <div className="flex justify-start">
       <div className="flex min-w-0 max-w-[92%] flex-1 items-start gap-2">
         <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-muted/40">
-          <Bot className="h-3.5 w-3.5 text-primary" />
+          <Bot className="h-3.5 w-3.5 text-accent" />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {/* Streamed spec from ```spec fences (json-render inline rendering) */}
+          {hasSpec && streamedSpec && (
+            <InlineSpecRenderer
+              spec={streamedSpec}
+              prompt={displayText || 'AI generated widget'}
+            />
+          )}
+
+          {/* Tool-based artifacts (workspace status, workflows, wizards, etc.) */}
+          {artifact &&
+            (artifact.type === 'study-setup-wizard' ||
+            artifact.type === 'wizard' ? (
+              <ArtifactRenderer artifact={artifact} />
+            ) : (
+              <DraggableArtifact
+                prompt={displayText || artifact.type}
+                data={artifact.data}
+              >
+                <ArtifactRenderer artifact={artifact} />
+              </DraggableArtifact>
+            ))}
+
           {displayText && (
             <div
               className={cn(
@@ -153,24 +184,6 @@ export function ChatMessage({ message }: { message: UIMessage }) {
             >
               <ReactMarkdown>{displayText}</ReactMarkdown>
             </div>
-          )}
-
-          {/* Streamed spec from ```spec fences (json-render inline rendering) */}
-          {hasSpec && streamedSpec && (
-            <InlineSpecRenderer
-              spec={streamedSpec}
-              prompt={displayText || 'AI generated widget'}
-            />
-          )}
-
-          {/* Tool-based artifacts (workspace status, workflows, wizards, etc.) */}
-          {artifact && (
-            <DraggableArtifact
-              prompt={displayText || artifact.type}
-              data={artifact.data}
-            >
-              <ArtifactRenderer artifact={artifact} />
-            </DraggableArtifact>
           )}
         </div>
       </div>
@@ -183,7 +196,7 @@ export function TypingIndicator() {
     <div className="flex justify-start">
       <div className="flex items-start gap-2">
         <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-muted/40">
-          <Bot className="h-3.5 w-3.5 text-primary" />
+          <Bot className="h-3.5 w-3.5 text-accent" />
         </div>
         <div className="rounded-2xl rounded-tl-none border border-muted/20 bg-muted/20 px-3 py-2">
           <div className="flex gap-1">

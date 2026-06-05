@@ -20,7 +20,7 @@ let cached: Database.Database | null = null
 function getDb(): Database.Database {
   if (cached) return cached
   const dbPath = path.join(process.cwd(), 'src/app/api/.ai', 'index.sqlite')
-  cached = new Database(dbPath, { readonly: true, fileMustExist: true })
+  cached = new Database(dbPath, { fileMustExist: true })
   return cached
 }
 

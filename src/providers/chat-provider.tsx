@@ -2,7 +2,13 @@
 
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, UIMessage } from 'ai'
-import React, { createContext, useContext, useEffect, useRef } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef
+} from 'react'
 
 import { useChatStore } from '@/stores/chat-store'
 
@@ -20,10 +26,15 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Read persisted messages once on mount (no subscription — getState avoids re-renders)
   const initialMessages = useRef<UIMessage[]>(useChatStore.getState().messages)
 
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: '/api/chat' }),
+    []
+  )
+
   const { messages, sendMessage, status, error, clearError } = useChat({
     messages:
       initialMessages.current.length > 0 ? initialMessages.current : undefined,
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport,
     onFinish: () => {
       // Tool outputs are handled by the artifact renderers in ChatMessage
     }
