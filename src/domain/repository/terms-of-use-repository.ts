@@ -1,8 +1,5 @@
 import { Result } from '../model'
-import {
-  TermsOfUseAcceptance,
-  TermsOfUseVersion
-} from '../model/terms-of-use'
+import { TermsOfUseAcceptance, TermsOfUseVersion } from '../model/terms-of-use'
 
 export interface TermsOfUseRepository {
   getMyStatus(): Promise<Result<boolean>>

@@ -4,7 +4,7 @@ import { TermsOfUseRepository } from '@/domain/repository/terms-of-use-repositor
 export class GetMyStatus {
   constructor(private readonly repository: TermsOfUseRepository) {}
 
-  execute(): Promise<Result<boolean>> {
+  async execute(): Promise<Result<boolean>> {
     return this.repository.getMyStatus()
   }
 }

@@ -5,7 +5,7 @@ import { TermsOfUseRepository } from '@/domain/repository/terms-of-use-repositor
 export class GetVersion {
   constructor(private readonly repository: TermsOfUseRepository) {}
 
-  execute(id: string): Promise<Result<TermsOfUseVersion>> {
+  async execute(id: string): Promise<Result<TermsOfUseVersion>> {
     return this.repository.getVersion(id)
   }
 }

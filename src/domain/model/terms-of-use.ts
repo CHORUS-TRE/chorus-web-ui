@@ -8,7 +8,9 @@ export const TermsOfUseVersionStatusSchema = z
   ])
   .catch('TERMS_OF_USE_VERSION_STATUS_DRAFT')
 
-export type TermsOfUseVersionStatus = z.infer<typeof TermsOfUseVersionStatusSchema>
+export type TermsOfUseVersionStatus = z.infer<
+  typeof TermsOfUseVersionStatusSchema
+>
 
 export const TermsOfUseVersionSchema = z.object({
   id: z.string().optional(),
