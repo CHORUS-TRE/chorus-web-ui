@@ -1,3 +1,11 @@
+## [1.56.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.56.0...v1.56.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* formatting ([d72138c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d72138c38add80c25ac0741eff701f1adceefd82))
+* update user table and stats row components for improved responsiveness and loading state ([47ccc1b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/47ccc1b38217a02018cee7cef055d9f6a1d6cfaf))
+
 # [1.56.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.55.0...v1.56.0) (2026-06-11)
 
 
