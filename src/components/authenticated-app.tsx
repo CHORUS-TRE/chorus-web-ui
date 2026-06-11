@@ -86,6 +86,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
         setLeftSidebarVisible(false)
       }, 2000)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Left sidebar controls (edge hover)

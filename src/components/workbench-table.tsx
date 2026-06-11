@@ -10,7 +10,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowUpDown, Pencil, RefreshCw, Trash2, Users } from 'lucide-react'
+import { ArrowUpDown, Pencil, Trash2, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
@@ -327,7 +327,6 @@ export default function WorkbenchTable({
   const { apps, workspaces, refreshWorkbenches, appInstances } = useAppState()
   const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
-  const [loadingUsers, setLoadingUsers] = useState(false)
   const [activeEditId, setActiveEditId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
   const [activeMembersId, setActiveMembersId] = useState<string | null>(null)
@@ -355,7 +354,6 @@ export default function WorkbenchTable({
       return
     }
 
-    setLoadingUsers(true)
     const workbenchIds =
       workbenches?.map((wb) => wb.id).filter((id): id is string => !!id) || []
     try {
@@ -365,8 +363,6 @@ export default function WorkbenchTable({
       }
     } catch (error) {
       console.error('Failed to load workspace members', error)
-    } finally {
-      setLoadingUsers(false)
     }
   }, [workbenches])
 

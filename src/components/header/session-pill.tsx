@@ -171,6 +171,7 @@ function AppInstanceStatusRow({
         <div className="flex min-w-0 items-center gap-2">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-muted">
             {appIcon ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img src={appIcon} alt={appName} className="h-3 w-3" />
             ) : (
               <AppWindow className="h-3 w-3 text-[#88b04b]" />

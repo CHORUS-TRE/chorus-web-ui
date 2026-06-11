@@ -1,23 +1,12 @@
 'use client'
 
-import {
-  ArrowDownToLine,
-  ArrowRightLeft,
-  ShoppingBasket,
-  Trash2,
-  X
-} from 'lucide-react'
+import { ArrowDownToLine, ArrowRightLeft, Trash2 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import * as React from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle
-} from '@/components/ui/card'
+import { CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -57,7 +46,7 @@ interface SelectionBasketProps {
 export function SelectionBasket({
   selectedItems,
   onRemoveItem,
-  onClearSelection,
+  onClearSelection: _onClearSelection,
   onDownloadRequest,
   onTransferRequest
 }: SelectionBasketProps) {

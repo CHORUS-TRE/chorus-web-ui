@@ -300,7 +300,7 @@ export function MembersRolesPanel({
 
   const RoleStatistics = () => {
     const stats = Object.entries(membersByRole)
-      .filter(([_, members]) => members.length > 0)
+      .filter(([__role, members]) => members.length > 0)
       .map(([role, members]) => ({
         role: role as WorkspaceRole,
         count: members.length

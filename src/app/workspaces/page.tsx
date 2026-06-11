@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  Building2,
-  CirclePlus,
-  LayoutGrid,
-  Package,
-  Rows3,
-  Search,
-  X
-} from 'lucide-react'
+import { CirclePlus, LayoutGrid, Package, Rows3, Search, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
@@ -75,7 +67,13 @@ export default function WorkspacesPage() {
     }
 
     return result
-  }, [workspaces, showMyWorkspaces, searchQuery, user?.rolesWithContext])
+  }, [
+    workspaces,
+    showMyWorkspaces,
+    searchQuery,
+    user?.id,
+    user?.rolesWithContext
+  ])
 
   return (
     <>

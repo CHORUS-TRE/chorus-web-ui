@@ -39,13 +39,8 @@ export function AppStoreView() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const {
-    apps,
-    refreshApps,
-    refreshWorkbenches,
-    refreshWorkspaces,
-    refreshAppInstances
-  } = useAppState()
+  const { apps, refreshWorkbenches, refreshWorkspaces, refreshAppInstances } =
+    useAppState()
   const { externalWebApps, background, openSession, openWebApp } =
     useIframeCache()
   const { user } = useAuthentication()

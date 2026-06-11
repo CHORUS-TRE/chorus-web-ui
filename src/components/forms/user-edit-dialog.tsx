@@ -12,7 +12,6 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -69,6 +68,7 @@ export function UserEditDialog({
       firstName: internalUser.firstName,
       lastName: internalUser.lastName,
       username: internalUser.username,
+      email: internalUser.email ?? '',
       password: '',
       rolesWithContext: internalUser.rolesWithContext || []
     }
@@ -80,6 +80,7 @@ export function UserEditDialog({
       firstName: internalUser.firstName,
       lastName: internalUser.lastName,
       username: internalUser.username,
+      email: internalUser.email ?? '',
       password: '',
       rolesWithContext: internalUser.rolesWithContext || []
     })
@@ -128,6 +129,7 @@ export function UserEditDialog({
     formData.append('username', data.username)
     formData.append('firstName', data.firstName)
     formData.append('lastName', data.lastName)
+    formData.append('email', data.email ?? '')
     formData.append('password', data.password)
 
     startTransition(() => {
@@ -155,34 +157,22 @@ export function UserEditDialog({
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>
-        <div className="space-y-2 border-b pb-4">
-          <div>
-            <p className="text-sm font-medium">Email</p>
-            <p className="text-sm text-muted-foreground">
-              {internalUser.email || '—'}
-            </p>
-          </div>
-          {internalUser.namespaces !== undefined && (
-            <div>
-              <p className="text-sm font-medium">Namespaces</p>
-              {internalUser.namespaces.length > 0 ? (
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {internalUser.namespaces.map((ns) => (
-                    <Badge key={ns} variant="outline">
-                      {ns}
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">—</p>
-              )}
-            </div>
-          )}
-        </div>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register('id')} />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="firstName"
@@ -240,7 +230,9 @@ export function UserEditDialog({
               )}
             />
 
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" variant="outline">
+              Save Changes
+            </Button>
           </form>
         </Form>
       </DialogContent>

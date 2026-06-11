@@ -10,7 +10,6 @@ import { WorkbenchServerPodStatus } from '@/domain/model'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
-const EMPTY_STATE_TIMEOUT = 1000
 /**
  * Page for displaying a workbench session in a cached iframe.
  * In normal mode: iframe appears in the content area

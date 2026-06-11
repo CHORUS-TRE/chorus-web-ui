@@ -102,6 +102,19 @@ export async function listUsers(filters: UserServiceListUsersRequest = {}) {
   return result
 }
 
+export async function listUsersPaginated(params: {
+  offset: number
+  limit: number
+  search?: string
+}): Promise<Result<{ users: User[]; total: number }>> {
+  const userRepository = await getRepository()
+  return userRepository.listPaginated({
+    paginationOffset: params.offset,
+    paginationLimit: params.limit,
+    ...(params.search ? { filterSearch: params.search } : {})
+  })
+}
+
 export async function deleteUser(id: string) {
   const userRepository = await getRepository()
   const useCase = new UserDelete(userRepository)

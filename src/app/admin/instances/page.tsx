@@ -1,6 +1,6 @@
 'use client'
 
-import { AppWindow, RefreshCw, Rocket } from 'lucide-react'
+import { AppWindow, RefreshCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import InstancesTable from '@/components/instances-table'

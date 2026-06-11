@@ -28,3 +28,10 @@ export async function listPermissions(): Promise<
   const repository = await getRepository()
   return repository.listPermissions()
 }
+
+export async function createRole(
+  role: AuthorizationRole
+): Promise<Result<AuthorizationRole>> {
+  const repository = await getRepository()
+  return repository.createRole(role)
+}

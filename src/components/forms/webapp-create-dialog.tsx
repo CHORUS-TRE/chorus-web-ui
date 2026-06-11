@@ -112,6 +112,7 @@ export function WebAppCreateDialog({
         resetForm()
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, initialEditingWebappId, externalWebApps])
 
   const resetForm = () => {

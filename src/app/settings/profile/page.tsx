@@ -1,33 +1,16 @@
 'use client'
 
-import {
-  AppWindow,
-  CheckCircle,
-  Clock,
-  Crown,
-  Key,
-  LaptopMinimal,
-  Shield,
-  User,
-  XCircle
-} from 'lucide-react'
-import { useMemo } from 'react'
+import { AppWindow, Shield, User } from 'lucide-react'
 
-import { UserEditDialog } from '@/components/forms/user-edit-dialog'
-import { getRoleScope, RoleBadge } from '@/components/role-badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { UserAccessDetail } from '@/app/admin/users/user-access-detail'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
-import { Role } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { useRoles } from '@/providers/roles-provider'
 
 export default function UserProfile() {
   const { user, refreshUser } = useAuthentication()
-  const { rolesByName } = useRoles()
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -42,85 +25,20 @@ export default function UserProfile() {
     }
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'active':
-        return <CheckCircle className="h-4 w-4" />
-      case 'inactive':
-        return <XCircle className="h-4 w-4" />
-      case 'pending':
-        return <Clock className="h-4 w-4" />
-      default:
-        return <Clock className="h-4 w-4" />
-    }
-  }
-
-  const platformRoles = useMemo(
-    () =>
-      (user?.rolesWithContext || []).filter(
-        (r) => getRoleScope(r.name, rolesByName) === 'platform'
-      ),
-    [user, rolesByName]
-  )
-  const workspaceRoles = useMemo(
-    () =>
-      (user?.rolesWithContext || []).filter(
-        (r) => getRoleScope(r.name, rolesByName) === 'workspace'
-      ),
-    [user, rolesByName]
-  )
-  const sessionRoles = useMemo(
-    () =>
-      (user?.rolesWithContext || []).filter(
-        (r) => getRoleScope(r.name, rolesByName) === 'session'
-      ),
-    [user, rolesByName]
-  )
-
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
+        <div>
+          <UserAccessDetail
+            user={user}
+            onChanged={refreshUser}
+            onGrantClick={() => {}}
+          />
+        </div>
         <div className="flex flex-col gap-4">
-          {/* Profile Header */}
-          <Card className="card-glass flex flex-col rounded-lg">
-            <CardContent className="pt-6">
-              <div className="flex items-start space-x-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarFallback className="text-2xl">
-                    {user?.firstName.charAt(0)}
-                    {user?.lastName.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-2">
-                  <div>
-                    <h1 className="text-3xl font-semibold text-muted-foreground">
-                      {user?.firstName} {user?.lastName}
-                    </h1>
-                    <p className="text-muted-foreground">@{user?.username}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(user?.status ?? '')}
-                    <Badge className={getStatusColor(user?.status ?? '')}>
-                      {user?.status}
-                    </Badge>
-                    {user?.totpEnabled && (
-                      <Badge
-                        variant="outline"
-                        className="flex items-center gap-1"
-                      >
-                        <Key className="h-3 w-3" />
-                        2FA Enabled
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Basic Information */}
-            <Card className="card-glass flex h-full flex-col rounded-lg">
+            <Card className="flex h-full flex-col rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
@@ -158,7 +76,7 @@ export default function UserProfile() {
             </Card>
 
             {/* Account Status */}
-            <Card className="card-glass flex h-full flex-col rounded-lg">
+            <Card className="flex h-full flex-col rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
@@ -211,7 +129,7 @@ export default function UserProfile() {
 
           {/* Workspace Information */}
           {user?.workspaceId && (
-            <Card className="card-glass flex h-full flex-col rounded-lg">
+            <Card className="flex h-full flex-col rounded-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AppWindow className="h-5 w-5" />
@@ -235,91 +153,6 @@ export default function UserProfile() {
               </CardContent>
             </Card>
           )}
-
-          {/* Actions */}
-          <Card className="card-glass flex flex-col rounded-lg">
-            <CardContent className="pt-6">
-              <div className="flex flex-wrap gap-3">
-                {user && (
-                  <UserEditDialog user={user} onUserUpdated={refreshUser} />
-                )}
-                <Button variant="outline" disabled>
-                  <Key className="mr-2 h-4 w-4" />
-                  Change Password
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div>
-          {/* Roles & Permissions */}
-          <Card className="card-glass flex h-full flex-col rounded-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Roles & Permissions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {(platformRoles.length > 0 ||
-                workspaceRoles.length > 0 ||
-                sessionRoles.length > 0) && (
-                <>
-                  <div className="space-y-3">
-                    <h5 className="text-sm font-semibold text-muted-foreground">
-                      By Scope
-                    </h5>
-                    {platformRoles.length > 0 && (
-                      <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-primary">
-                          Platform
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {platformRoles.map((role, i) => (
-                            <RoleBadge
-                              key={role.id ?? `${role.name}-${i}`}
-                              role={role}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {workspaceRoles.length > 0 && (
-                      <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                          Workspace
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {workspaceRoles.map((role, i) => (
-                            <RoleBadge
-                              key={role.id ?? `${role.name}-${i}`}
-                              role={role}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {sessionRoles.length > 0 && (
-                      <div>
-                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-accent">
-                          Session
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {sessionRoles.map((role, i) => (
-                            <RoleBadge
-                              key={role.id ?? `${role.name}-${i}`}
-                              role={role}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </div>
     </>

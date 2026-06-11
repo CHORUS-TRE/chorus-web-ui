@@ -17,28 +17,10 @@ interface GettingStartedStep {
   path?: string
 }
 
-interface AISuggestion {
-  id: string
-  type: 'workspace' | 'security' | 'data-policy' | 'resource' | 'best-practice'
-  title: string
-  description: string
-  priority: 'high' | 'medium' | 'low'
-  action?: {
-    label: string
-    href: string
-  }
-  context?: {
-    role?: string
-    workspaceCount?: number
-    securityLevel?: string
-  }
-}
-
 interface GettingStartedContent {
   steps: GettingStartedStep[]
 }
 
-const STORAGE_KEY_DISMISSED = 'getting-started-dismissed'
 export const STORAGE_KEY_COLLAPSED = 'getting-started-collapsed'
 
 async function fetchGettingStartedContent(): Promise<GettingStartedContent> {
@@ -76,9 +58,8 @@ export function GettingStartedSection() {
   const { user } = useAuthentication()
   const workspaces = useAppState((state) => state.workspaces)
   const workbenches = useAppState((state) => state.workbenches)
-  const { openWebApp, navigateWebApp } = useIframeCache()
+  const { navigateWebApp } = useIframeCache()
   const [content, setContent] = useState<GettingStartedContent | null>(null)
-  const [suggestions, setSuggestions] = useState<AISuggestion[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -89,28 +70,6 @@ export function GettingStartedSection() {
       try {
         const fetchedContent = await fetchGettingStartedContent()
         setContent(fetchedContent)
-
-        // Generate AI suggestions based on user context
-        const userRoles = user?.rolesWithContext?.map((r) => r.name) || []
-
-        // Get user's workspaces
-        const myWorkspaces =
-          workspaces?.filter((workspace) =>
-            user?.rolesWithContext?.some(
-              (role) => role.context.workspace === workspace.id
-            )
-          ) || []
-
-        // Get user's active sessions
-        const myWorkbenches =
-          workbenches?.filter((workbench) =>
-            user?.rolesWithContext?.some(
-              (role) => role.context.workbench === workbench.id
-            )
-          ) || []
-
-        const workspaceCount = myWorkspaces.length
-        const hasActiveSessions = myWorkbenches.length > 0
       } catch (error) {
         console.error('Error loading getting-started content', error)
       } finally {

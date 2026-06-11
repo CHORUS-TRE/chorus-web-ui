@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 
 import {
   INSTANCE_CONFIG_KEYS,
-  InstanceTheme,
   InstanceThemeSchema
 } from '@/domain/model/instance-config'
 import { useDevStoreCache } from '@/stores/dev-store-cache'

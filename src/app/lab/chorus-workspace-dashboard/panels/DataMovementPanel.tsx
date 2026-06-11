@@ -22,9 +22,6 @@ import {
   ArrowUpFromLine,
   CheckCircle2,
   Clock,
-  Download,
-  FileCheck,
-  FileX,
   Inbox,
   Send,
   XCircle
@@ -46,12 +43,10 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -63,7 +58,6 @@ import type {
   RequestStatus,
   WorkspaceMember
 } from '../types/enhanced-models'
-import { getRequestStatusColor } from '../types/enhanced-models'
 
 // ============================================================================
 // Props Interface

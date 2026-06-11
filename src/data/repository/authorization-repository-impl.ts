@@ -20,11 +20,11 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
   }
 
   // Not used — permission checks happen in AuthorizationProvider via useRoles()
-  isUserAllowed(_user: User, _permission: string): Result<boolean> {
+  isUserAllowed(__user: User, __permission: string): Result<boolean> {
     return { data: false }
   }
 
-  getUserPermissions(_user: User): Result<string[]> {
+  getUserPermissions(__user: User): Result<string[]> {
     return { data: [] }
   }
 
@@ -49,6 +49,17 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
       return {
         error: error instanceof Error ? error.message : String(error)
       }
+    }
+  }
+
+  async createRole(
+    role: AuthorizationRole
+  ): Promise<Result<AuthorizationRole>> {
+    try {
+      await this.dataSource.createRole({ role })
+      return { data: role }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   }
 

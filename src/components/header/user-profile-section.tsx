@@ -2,7 +2,6 @@
 
 import {
   Bell,
-  ChevronDown,
   FlaskConical,
   LogOut,
   Moon,

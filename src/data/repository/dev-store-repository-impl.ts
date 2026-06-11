@@ -24,7 +24,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
-    } catch (error) {
+    } catch {
       // Don't treat not found as an error
       return { data: undefined }
     }
@@ -71,7 +71,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
-    } catch (error) {
+    } catch {
       // Don't treat not found as an error
       return { data: undefined }
     }
@@ -121,7 +121,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
-    } catch (error) {
+    } catch {
       // Don't treat not found as an error
       return { data: undefined }
     }

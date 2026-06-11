@@ -18,7 +18,6 @@
 import {
   AlertCircle,
   CheckCircle,
-  Clock,
   Code,
   ExternalLink,
   GitBranch,

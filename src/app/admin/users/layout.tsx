@@ -8,7 +8,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const tabs = [
   { href: '/admin/users', label: 'Users' },
-  { href: '/admin/users/roles', label: 'Roles' }
+  { href: '/admin/users/roles', label: 'Role catalog' },
+  { href: '/admin/users/permissions', label: 'Permission explorer' }
 ]
 
 export default function UsersLayout({

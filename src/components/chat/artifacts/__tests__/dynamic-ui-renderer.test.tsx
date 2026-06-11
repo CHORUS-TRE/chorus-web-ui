@@ -22,8 +22,8 @@ test('renders spec content', () => {
 test('accepts handlers prop without error', () => {
   const handlers = {
     doSomething: async (
-      _params: Record<string, unknown>,
-      _setState: (path: string, value: unknown) => void
+      __params: Record<string, unknown>,
+      __setState: (path: string, value: unknown) => void
     ) => {}
   }
   expect(() =>

@@ -15,6 +15,9 @@ interface UserRepository {
   get: (id: string) => Promise<Result<User>>
   delete: (id: string) => Promise<Result<string>>
   list: (filters?: UserServiceListUsersRequest) => Promise<Result<User[]>>
+  listPaginated: (
+    filters: UserServiceListUsersRequest
+  ) => Promise<Result<{ users: User[]; total: number }>>
   update: (user: UserUpdateType) => Promise<Result<User>>
 }
 

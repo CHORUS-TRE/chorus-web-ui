@@ -11,25 +11,12 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
-import {
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  ScrollText,
-  Search
-} from 'lucide-react'
+import { ArrowUpDown, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -171,8 +158,8 @@ const columns: ColumnDef<AuditEntry>[] = [
 
 export default function AuditTable({
   entries,
-  title = 'Audit Log',
-  description = 'Detailed list of all audit entries.'
+  title: _title = 'Audit Log',
+  description: _description = 'Detailed list of all audit entries.'
 }: {
   entries: AuditEntry[] | undefined
   title?: string

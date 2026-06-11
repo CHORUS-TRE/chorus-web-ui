@@ -223,9 +223,9 @@ export default function IframeCacheRenderer() {
     openWebApp,
     setActiveIframe
   } = useIframeCache()
-  const { workbenches } = useAppState()
+  useAppState()
   const pathname = usePathname()
-  const { isFullscreen } = useFullscreenContext()
+  useFullscreenContext()
   const [iframeEntries, setIframeEntries] = useState<[string, CachedIframe][]>(
     []
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { Copy, Download, Edit3, Move, Share2, Trash2, X } from 'lucide-react'
+import { Download, Edit3, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -29,7 +29,7 @@ export function ActionBar({
   onRename,
   onAddToBasket,
   onClearSelection,
-  getItemName
+  getItemName: _getItemName
 }: ActionBarProps) {
   const [showRenameDialog, setShowRenameDialog] = useState(false)
   const [renameValue, setRenameValue] = useState('')

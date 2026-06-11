@@ -207,6 +207,7 @@ export default function LoginForm() {
                       {pending ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : internalMode?.iconURL ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={internalMode.iconURL}
                           alt=""
@@ -264,6 +265,7 @@ export default function LoginForm() {
                       onClick={() => handleOAuthLogin(mode)}
                     >
                       {mode.iconURL ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={mode.iconURL}
                           alt=""

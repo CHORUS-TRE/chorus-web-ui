@@ -1,7 +1,6 @@
 'use client'
 import { formatDistanceToNow } from 'date-fns'
 import {
-  Building2,
   HomeIcon,
   LaptopMinimal,
   MoreVertical,

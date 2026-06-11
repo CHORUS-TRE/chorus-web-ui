@@ -263,11 +263,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   },
 
   startNotificationsPolling: (intervalMs: number = 30000) => {
-    const {
-      stopNotificationsPolling,
-      refreshNotifications,
-      refreshUnreadNotificationsCount
-    } = get()
+    const { stopNotificationsPolling, refreshNotifications } = get()
     stopNotificationsPolling()
 
     // Initial fetch
@@ -343,7 +339,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   removeUpload: (uploadId) => {
     set((state) => {
       if (!state.uploads) return state
-      const { [uploadId]: _, ...rest } = state.uploads
+      const { [uploadId]: _upload, ...rest } = state.uploads
       return { uploads: rest }
     })
   },

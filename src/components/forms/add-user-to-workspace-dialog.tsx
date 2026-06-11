@@ -115,6 +115,7 @@ export function AddUserToWorkspaceDialog({
       const addedUser = users.find((u) => u.id === state.data?.id)
       onUserAdded(addedUser || state.data)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, onUserAdded, form])
 
   useEffect(() => {

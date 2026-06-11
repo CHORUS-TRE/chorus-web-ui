@@ -1,5 +1,7 @@
 import {
   AuthorizationServiceApi,
+  ChorusCreateDynamicRoleReply,
+  ChorusCreateDynamicRoleRequest,
   ChorusListPermissionsReply,
   ChorusListRolesReply,
   Configuration
@@ -8,6 +10,9 @@ import {
 interface AuthorizationDataSource {
   listRoles(): Promise<ChorusListRolesReply>
   listPermissions(): Promise<ChorusListPermissionsReply>
+  createRole(
+    body: ChorusCreateDynamicRoleRequest
+  ): Promise<ChorusCreateDynamicRoleReply>
 }
 
 export type { AuthorizationDataSource }
@@ -29,6 +34,12 @@ class AuthorizationApiDataSourceImpl implements AuthorizationDataSource {
 
   listPermissions(): Promise<ChorusListPermissionsReply> {
     return this.service.authorizationServiceListPermissions()
+  }
+
+  createRole(
+    body: ChorusCreateDynamicRoleRequest
+  ): Promise<ChorusCreateDynamicRoleReply> {
+    return this.service.authorizationServiceCreateDynamicRole({ body })
   }
 }
 

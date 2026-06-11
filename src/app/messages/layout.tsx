@@ -20,7 +20,7 @@ export default function Layout({
 }>) {
   const { setActiveIframe } = useIframeCache()
   const { user } = useAuthentication()
-  const { isAdmin } = useAuthorization()
+  useAuthorization()
 
   // Clear active iframe when navigating to admin pages
   useEffect(() => {

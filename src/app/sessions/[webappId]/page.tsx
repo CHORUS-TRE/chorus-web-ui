@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { useIframeCache } from '@/providers/iframe-cache-provider'
-import { useAppState } from '@/stores/app-state-store'
 
 /**
  * Page for displaying an external web app in a cached iframe.

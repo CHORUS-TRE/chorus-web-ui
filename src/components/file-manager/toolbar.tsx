@@ -1,9 +1,8 @@
 'use client'
 
-import { LayoutGrid, List, Plus, Search, Upload } from 'lucide-react'
+import { Plus, Upload } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 
 interface ToolbarProps {
   viewMode: 'list' | 'grid'
@@ -15,12 +14,12 @@ interface ToolbarProps {
 }
 
 export function Toolbar({
-  viewMode,
-  searchQuery,
-  onToggleViewMode,
+  viewMode: _viewMode,
+  searchQuery: _searchQuery,
+  onToggleViewMode: _onToggleViewMode,
   onCreateFolder,
   onImport,
-  onSearch
+  onSearch: _onSearch
 }: ToolbarProps) {
   return (
     <div className="flex items-center justify-between border-muted/40 pb-4">

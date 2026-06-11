@@ -1,6 +1,6 @@
 'use client'
 
-import { Palette, ShieldAlert } from 'lucide-react'
+import { Palette } from 'lucide-react'
 
 import LogoUploadForm from '@/components/forms/logo-upload-form'
 import { ThemeEditorForm } from '@/components/forms/theme-editor-form'

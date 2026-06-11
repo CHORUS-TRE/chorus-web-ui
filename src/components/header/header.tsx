@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { Bell, HelpCircle } from 'lucide-react'
+import { HelpCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -98,7 +98,7 @@ export function Header() {
     return session?.name || `Session ${sessionId?.slice(0, 8)}`
   }
 
-  const closeAppInstance = async (id: string, name?: string) => {
+  const closeAppInstance = async (id: string, _name?: string) => {
     const result = await deleteAppInstance(id)
     if (result.error) {
       toast({
