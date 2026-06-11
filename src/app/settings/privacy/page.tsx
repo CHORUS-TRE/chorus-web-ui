@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 import {
   CheckCircle2,
   Cookie,
@@ -11,6 +9,7 @@ import {
   XCircle
 } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { Badge } from '@/components/ui/badge'
@@ -150,13 +149,15 @@ export default function PrivacySettingsPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <ScrollText className="h-4 w-4 text-primary" />
-              <CardTitle className="text-sm font-medium">Terms of Use</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Terms of Use
+              </CardTitle>
             </div>
             <CardDescription>Current published version</CardDescription>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-80 rounded border p-4">
-              <div className="prose prose-sm max-w-none dark:prose-invert">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
                 <ReactMarkdown>{touContent}</ReactMarkdown>
               </div>
             </ScrollArea>

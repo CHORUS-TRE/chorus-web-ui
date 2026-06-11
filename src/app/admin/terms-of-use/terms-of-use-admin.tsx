@@ -2,7 +2,6 @@
 
 import { format } from 'date-fns'
 import { useCallback, useEffect, useState } from 'react'
-
 import ReactMarkdown from 'react-markdown'
 
 import { toast } from '@/components/hooks/use-toast'
@@ -15,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Table,
   TableBody,
@@ -23,7 +23,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import type {
@@ -272,7 +271,7 @@ export function TermsOfUseAdmin() {
           {editDialog.version &&
           editDialog.version.status !== 'TERMS_OF_USE_VERSION_STATUS_DRAFT' ? (
             <ScrollArea className="h-80 rounded border p-4">
-              <div className="prose prose-sm max-w-none dark:prose-invert">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
                 <ReactMarkdown>{editDialog.content}</ReactMarkdown>
               </div>
             </ScrollArea>

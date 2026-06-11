@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 import {
   ArrowLeft,
   Cookie,
@@ -14,6 +12,7 @@ import {
   Shield
 } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -275,7 +274,7 @@ export default function PrivacyPolicyPage() {
                 <Card className="card-glass border-none shadow-xl shadow-primary/5 transition-all duration-500 hover:shadow-primary/10">
                   <CardContent className="pt-6">
                     <ScrollArea className="h-96 rounded border p-4">
-                      <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <div className="prose prose-sm dark:prose-invert max-w-none">
                         <ReactMarkdown>{touContent}</ReactMarkdown>
                       </div>
                     </ScrollArea>

@@ -12,7 +12,8 @@ export default function TermsOfUsePage() {
         Terms of Use
       </h1>
       <p className="mb-8 text-muted-foreground">
-        Manage platform Terms of Use versions and review user acceptance records.
+        Manage platform Terms of Use versions and review user acceptance
+        records.
       </p>
       <TermsOfUseAdmin />
     </div>

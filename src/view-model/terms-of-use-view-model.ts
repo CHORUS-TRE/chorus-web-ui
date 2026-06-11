@@ -40,7 +40,9 @@ export async function getCurrentTermsOfUseVersion(): Promise<
   return await useCase.execute()
 }
 
-export async function acceptTermsOfUse(): Promise<Result<TermsOfUseAcceptance>> {
+export async function acceptTermsOfUse(): Promise<
+  Result<TermsOfUseAcceptance>
+> {
   const repository = await getRepository()
   const useCase = new Accept(repository)
   return await useCase.execute()

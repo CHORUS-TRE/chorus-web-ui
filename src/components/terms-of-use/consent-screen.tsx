@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-
 import ReactMarkdown from 'react-markdown'
 
 import { Button } from '@/components/ui/button'
@@ -29,7 +28,7 @@ export function ConsentScreen({ version, onAccept }: ConsentScreenProps) {
       <div className="flex h-[80vh] w-full max-w-2xl flex-col rounded-lg border bg-card p-8 shadow-lg">
         <h1 className="mb-4 text-2xl font-semibold">Terms of Use</h1>
         <ScrollArea className="mb-6 flex-1 rounded border p-4">
-          <div className="prose prose-sm max-w-none dark:prose-invert">
+          <div className="prose prose-sm dark:prose-invert max-w-none">
             <ReactMarkdown>{version.content ?? ''}</ReactMarkdown>
           </div>
         </ScrollArea>
