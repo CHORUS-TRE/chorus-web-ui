@@ -63,7 +63,7 @@ export function UsersMasterTable({
             <TableRow>
               <TableHead className="pl-4 text-muted-foreground">User</TableHead>
               <TableHead className="text-muted-foreground">Source</TableHead>
-              <TableHead className="text-muted-foreground">Status</TableHead>
+              <TableHead className="hidden text-muted-foreground 2xl:table-cell">Status</TableHead>
               <TableHead className="text-muted-foreground">Grants</TableHead>
             </TableRow>
           </TableHeader>
@@ -104,7 +104,7 @@ export function UsersMasterTable({
                   <TableCell>
                     <Badge variant="secondary">{user.source || '—'}</Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden 2xl:table-cell">
                     <Badge
                       variant={
                         user.status === 'active' ? 'default' : 'destructive'
