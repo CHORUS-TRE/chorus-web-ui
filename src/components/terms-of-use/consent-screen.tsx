@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import ReactMarkdown from 'react-markdown'
+
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -27,9 +29,9 @@ export function ConsentScreen({ version, onAccept }: ConsentScreenProps) {
       <div className="flex h-[80vh] w-full max-w-2xl flex-col rounded-lg border bg-card p-8 shadow-lg">
         <h1 className="mb-4 text-2xl font-semibold">Terms of Use</h1>
         <ScrollArea className="mb-6 flex-1 rounded border p-4">
-          <pre className="font-sans text-sm leading-relaxed whitespace-pre-wrap">
-            {version.content}
-          </pre>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
+            <ReactMarkdown>{version.content ?? ''}</ReactMarkdown>
+          </div>
         </ScrollArea>
         <div className="mb-6 flex items-start gap-3">
           <Checkbox

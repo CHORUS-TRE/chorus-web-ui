@@ -1,13 +1,17 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 import {
   CheckCircle2,
   Cookie,
   HelpCircle,
+  ScrollText,
   Sparkles,
   XCircle
 } from 'lucide-react'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -19,13 +23,22 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { USER_CONFIG_KEYS } from '@/domain/model/user-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
+import { getCurrentTermsOfUseVersion } from '@/view-model/terms-of-use-view-model'
 
 export default function PrivacySettingsPage() {
   const {} = useAuthentication()
   const { getUser, setCookieConsentOpen } = useDevStoreCache()
+  const [touContent, setTouContent] = useState<string | null>(null)
+
+  useEffect(() => {
+    getCurrentTermsOfUseVersion().then((result) => {
+      if (result.data?.content) setTouContent(result.data.content)
+    })
+  }, [])
 
   const handleManageCookies = () => {
     setCookieConsentOpen(true)
@@ -131,6 +144,25 @@ export default function PrivacySettingsPage() {
           and cannot be linked back to your identity.
         </CardContent>
       </Card>
+
+      {touContent && (
+        <Card className="card-glass border-none shadow-md">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <ScrollText className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium">Terms of Use</CardTitle>
+            </div>
+            <CardDescription>Current published version</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-80 rounded border p-4">
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown>{touContent}</ReactMarkdown>
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

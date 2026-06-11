@@ -3,6 +3,9 @@
 import { format } from 'date-fns'
 import { useCallback, useEffect, useState } from 'react'
 
+import ReactMarkdown from 'react-markdown'
+
+import { toast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,9 +23,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/components/hooks/use-toast'
 import type {
   TermsOfUseAcceptance,
   TermsOfUseVersion,
@@ -98,10 +101,7 @@ export function TermsOfUseAdmin() {
   const handleSave = async () => {
     setSaving(true)
     const result = editDialog.version?.id
-      ? await updateTermsOfUseVersion(
-          editDialog.version.id,
-          editDialog.content
-        )
+      ? await updateTermsOfUseVersion(editDialog.version.id, editDialog.content)
       : await createTermsOfUseVersion(editDialog.content)
     setSaving(false)
     if (result.error) {
@@ -169,9 +169,8 @@ export function TermsOfUseAdmin() {
                   <TableCell className="text-sm text-muted-foreground">
                     {v.updatedAt ? format(v.updatedAt, 'PPp') : '—'}
                   </TableCell>
-                  <TableCell className="flex gap-2 justify-end">
-                    {v.status ===
-                      'TERMS_OF_USE_VERSION_STATUS_DRAFT' && (
+                  <TableCell className="flex justify-end gap-2">
+                    {v.status === 'TERMS_OF_USE_VERSION_STATUS_DRAFT' && (
                       <>
                         <Button
                           size="sm"
@@ -188,8 +187,7 @@ export function TermsOfUseAdmin() {
                         </Button>
                       </>
                     )}
-                    {v.status !==
-                      'TERMS_OF_USE_VERSION_STATUS_DRAFT' && (
+                    {v.status !== 'TERMS_OF_USE_VERSION_STATUS_DRAFT' && (
                       <Button
                         size="sm"
                         variant="ghost"
@@ -227,7 +225,9 @@ export function TermsOfUseAdmin() {
             <TableBody>
               {acceptances.map((a) => (
                 <TableRow key={a.id}>
-                  <TableCell className="font-mono text-xs">{a.userId}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {a.userId}
+                  </TableCell>
                   <TableCell className="font-mono text-xs">
                     {a.termsOfUseVersionId}
                   </TableCell>
@@ -269,18 +269,23 @@ export function TermsOfUseAdmin() {
                 : 'New Draft'}
             </DialogTitle>
           </DialogHeader>
-          <Textarea
-            className="min-h-64 font-mono text-sm"
-            value={editDialog.content}
-            onChange={(e) =>
-              setEditDialog((s) => ({ ...s, content: e.target.value }))
-            }
-            disabled={
-              editDialog.version?.status !==
-                'TERMS_OF_USE_VERSION_STATUS_DRAFT' && !!editDialog.version
-            }
-            placeholder="Enter the Terms of Use text…"
-          />
+          {editDialog.version &&
+          editDialog.version.status !== 'TERMS_OF_USE_VERSION_STATUS_DRAFT' ? (
+            <ScrollArea className="h-80 rounded border p-4">
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown>{editDialog.content}</ReactMarkdown>
+              </div>
+            </ScrollArea>
+          ) : (
+            <Textarea
+              className="min-h-64 font-mono text-sm"
+              value={editDialog.content}
+              onChange={(e) =>
+                setEditDialog((s) => ({ ...s, content: e.target.value }))
+              }
+              placeholder="Enter the Terms of Use text…"
+            />
+          )}
           <DialogFooter>
             <Button
               variant="outline"
