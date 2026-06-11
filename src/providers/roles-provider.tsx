@@ -2,6 +2,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -25,6 +26,7 @@ interface RolesContextType {
   permissions: AuthorizationPermission[]
   permissionsByName: Map<string, AuthorizationPermission>
   availableScopes: string[]
+  refreshRoles: () => void
 }
 
 const RolesContext = createContext<RolesContextType>({
@@ -32,7 +34,8 @@ const RolesContext = createContext<RolesContextType>({
   rolesByName: new Map(),
   permissions: [],
   permissionsByName: new Map(),
-  availableScopes: []
+  availableScopes: [],
+  refreshRoles: () => {}
 })
 
 export const useRoles = (): RolesContextType => {
@@ -49,6 +52,9 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
   const [permissions, setPermissions] = useState<AuthorizationPermission[]>([])
   const [loading, setLoading] = useState(!!user)
   const [error, setError] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const refreshRoles = useCallback(() => setRefreshKey((k) => k + 1), [])
 
   useEffect(() => {
     if (!user) {
@@ -79,7 +85,7 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       ignored = true
     }
-  }, [user])
+  }, [user, refreshKey])
 
   const rolesByName = useMemo(
     () => new Map(roles.map((r) => [r.name, r])),
@@ -130,7 +136,8 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
         rolesByName,
         permissions,
         permissionsByName,
-        availableScopes
+        availableScopes,
+        refreshRoles
       }}
     >
       {children}

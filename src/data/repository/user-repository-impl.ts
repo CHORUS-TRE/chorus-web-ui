@@ -99,7 +99,14 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      return { data: userResult.data }
+      const data = {
+        ...userResult.data,
+        rolesWithContext: userResult.data.rolesWithContext?.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+      }
+
+      return { data }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
@@ -119,7 +126,14 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      return { data: userResult.data }
+      const data = {
+        ...userResult.data,
+        rolesWithContext: userResult.data.rolesWithContext?.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+      }
+
+      return { data }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)
@@ -160,7 +174,48 @@ export class UserRepositoryImpl implements UserRepository {
         }
       }
 
-      return { data: usersResult.data }
+      const data = usersResult.data.map((user) => ({
+        ...user,
+        rolesWithContext: user.rolesWithContext?.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+      }))
+
+      return { data }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async listPaginated(
+    filters: UserServiceListUsersRequest = {}
+  ): Promise<Result<{ users: User[]; total: number }>> {
+    try {
+      const response = await this.dataSource.list(filters)
+      const usersResult = z.array(UserSchema).safeParse(response.result?.users)
+
+      if (!usersResult.success) {
+        return {
+          error: 'API response validation failed',
+          issues: usersResult.error.issues
+        }
+      }
+
+      const users = usersResult.data.map((user) => ({
+        ...user,
+        rolesWithContext: user.rolesWithContext?.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+      }))
+
+      return {
+        data: {
+          users,
+          total: response.pagination?.total ?? users.length
+        }
+      }
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : String(error)

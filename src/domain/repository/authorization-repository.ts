@@ -10,4 +10,5 @@ export interface AuthorizationRepository {
   getUserPermissions(user: User): Result<string[]>
   listRoles(): Promise<Result<AuthorizationRole[]>>
   listPermissions(): Promise<Result<AuthorizationPermission[]>>
+  createRole(role: AuthorizationRole): Promise<Result<AuthorizationRole>>
 }

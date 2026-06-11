@@ -96,7 +96,7 @@ const AdminPage = () => {
 
         {can('manageUserRoles') && (
           <StatCard
-            href="/admin/authorization/roles"
+            href="/admin/users/roles"
             title="Authorization"
             icon={Shield}
             value={roleCount}

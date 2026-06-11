@@ -115,7 +115,9 @@ export function UserTable() {
               </TableCell>
               <TableCell className="p-2">{user.source || '—'}</TableCell>
               <TableCell className="p-2">
-                <Badge>{user.rolesWithContext?.length}</Badge>
+                <Badge variant="secondary">
+                  {user.rolesWithContext?.length}
+                </Badge>
               </TableCell>
               <TableCell className="p-2">
                 <Badge

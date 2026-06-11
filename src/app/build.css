@@ -2387,16 +2387,6 @@ body {
   list-style-type: none;
 }
 
-.columns-2 {
-  -moz-columns: 2;
-  columns: 2;
-}
-
-.break-inside-avoid {
-  -moz-column-break-inside: avoid;
-  break-inside: avoid;
-}
-
 .grid-flow-col {
   grid-auto-flow: column;
 }
@@ -2935,6 +2925,10 @@ body {
   border-color: hsl(var(--accent) / 0.2);
 }
 
+.border-accent\/30 {
+  border-color: hsl(var(--accent) / 0.3);
+}
+
 .border-amber-500\/20 {
   border-color: rgb(245 158 11 / 0.2);
 }
@@ -3084,10 +3078,6 @@ body {
 
 .border-primary\/20 {
   border-color: hsl(var(--primary) / 0.2);
-}
-
-.border-primary\/30 {
-  border-color: hsl(var(--primary) / 0.3);
 }
 
 .border-primary\/40 {
@@ -5827,8 +5817,8 @@ nav li {
   border-width: 0px;
 }
 
-.focus-within\:border-primary\/50:focus-within {
-  border-color: hsl(var(--primary) / 0.5);
+.focus-within\:border-accent\/50:focus-within {
+  border-color: hsl(var(--accent) / 0.5);
 }
 
 .focus-within\:ring-1:focus-within {
@@ -5851,8 +5841,8 @@ nav li {
     var(--tw-shadow, 0 0 #0000);
 }
 
-.focus-within\:ring-primary\/20:focus-within {
-  --tw-ring-color: hsl(var(--primary) / 0.2);
+.focus-within\:ring-accent\/20:focus-within {
+  --tw-ring-color: hsl(var(--accent) / 0.2);
 }
 
 .focus-within\:ring-ring:focus-within {
@@ -5883,6 +5873,10 @@ nav li {
   border-color: hsl(var(--accent) / 0.5);
 }
 
+.hover\:border-accent\/60:hover {
+  border-color: hsl(var(--accent) / 0.6);
+}
+
 .hover\:border-accent\/70:hover {
   border-color: hsl(var(--accent) / 0.7);
 }
@@ -5909,10 +5903,6 @@ nav li {
 
 .hover\:border-primary\/40:hover {
   border-color: hsl(var(--primary) / 0.4);
-}
-
-.hover\:border-primary\/60:hover {
-  border-color: hsl(var(--primary) / 0.6);
 }
 
 .hover\:border-transparent:hover {
@@ -6213,6 +6203,11 @@ nav li {
   box-shadow:
     var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
     var(--tw-shadow);
+}
+
+.hover\:shadow-accent\/10:hover {
+  --tw-shadow-color: hsl(var(--accent) / 0.1);
+  --tw-shadow: var(--tw-shadow-colored);
 }
 
 .hover\:shadow-primary\/10:hover {
@@ -7844,11 +7839,6 @@ nav li {
   .lg\:w-fit {
     width: -moz-fit-content;
     width: fit-content;
-  }
-
-  .lg\:columns-3 {
-    -moz-columns: 3;
-    columns: 3;
   }
 
   .lg\:grid-cols-2 {

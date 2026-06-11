@@ -41,7 +41,8 @@ export const UserRoleCreateSchema = z.object({
 })
 
 export const UserUpdateSchema = UserCreateSchema.extend({
-  id: z.string()
+  id: z.string(),
+  email: z.string().email().optional().or(z.literal(''))
 })
 
 export const UserEditFormSchema = UserCreateSchema

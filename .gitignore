@@ -49,3 +49,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+src/app/api/.ai/index.sqlite-shm
+.gitignore
+src/app/api/.ai/index.sqlite-wal

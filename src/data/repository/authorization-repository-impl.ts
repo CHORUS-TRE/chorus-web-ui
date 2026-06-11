@@ -52,6 +52,17 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
     }
   }
 
+  async createRole(
+    role: AuthorizationRole
+  ): Promise<Result<AuthorizationRole>> {
+    try {
+      await this.dataSource.createRole({ role })
+      return { data: role }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
   async listPermissions(): Promise<Result<AuthorizationPermission[]>> {
     try {
       const response = await this.dataSource.listPermissions()

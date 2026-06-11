@@ -45,7 +45,12 @@ export function PermissionMatrix({
   highlightInherited = false,
   compact = false
 }: PermissionMatrixProps) {
-  const { roles, permissions, rolesByName, availableScopes: roleScopes } = useRoles()
+  const {
+    roles,
+    permissions,
+    rolesByName,
+    availableScopes: roleScopes
+  } = useRoles()
 
   const resolvedPermissions = useMemo(() => {
     const resolved = new Set<string>()
@@ -106,77 +111,79 @@ export function PermissionMatrix({
 
   return (
     <>
-    <div className={cn('space-y-6', compact && 'space-y-4 text-xs')}>
-      {visibleScopes.map((scope) => (
-        <div key={scope.key} className="space-y-4">
-          {scope.groups.map((group) => (
-            <div key={group.label}>
-              <p
-                className={cn(
-                  'mb-2 font-semibold uppercase tracking-wide text-muted-foreground',
-                  compact ? 'text-[10px]' : 'text-xs'
-                )}
-              >
-                {group.label}
-              </p>
-              <div className="space-y-0.5">
-                {group.permissions.map((perm) => {
-                  const isGranted = resolvedPermissions.has(perm.key)
-                  const isInherited = false
+      <div className={cn('space-y-6', compact && 'space-y-4 text-xs')}>
+        {visibleScopes.map((scope) => (
+          <div key={scope.key} className="space-y-4">
+            {scope.groups.map((group) => (
+              <div key={group.label}>
+                <p
+                  className={cn(
+                    'mb-2 font-semibold uppercase tracking-wide text-muted-foreground',
+                    compact ? 'text-[10px]' : 'text-xs'
+                  )}
+                >
+                  {group.label}
+                </p>
+                <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                  {group.permissions.map((perm) => {
+                    const isGranted = resolvedPermissions.has(perm.key)
+                    const isInherited = false
 
-                  return (
-                    <div
-                      key={perm.key}
-                      className={cn(
-                        'flex items-start gap-3 rounded-md px-2 py-1.5',
-                        !isGranted && 'opacity-40'
-                      )}
-                    >
-                      <Checkbox
-                        checked={isGranted}
-                        disabled={readOnly}
+                    return (
+                      <div
+                        key={perm.key}
                         className={cn(
-                          'mt-0.5 h-3.5 w-3.5 shrink-0 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground',
-                          highlightInherited && isInherited ? 'opacity-40' : ''
+                          'flex items-start gap-3 rounded-md px-2 py-1.5',
+                          !isGranted && 'opacity-40'
                         )}
-                        aria-label={`${perm.label}: ${isGranted ? 'granted' : 'not granted'}${isInherited ? ' (inherited)' : ''}`}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={cn(
-                              'font-medium text-foreground',
-                              compact ? 'text-xs' : 'text-sm'
-                            )}
-                          >
-                            {perm.label}
-                          </span>
-                          {highlightInherited && isInherited && (
-                            <span className="text-[10px] italic text-muted-foreground">
-                              inherited
+                      >
+                        <Checkbox
+                          checked={isGranted}
+                          disabled={readOnly}
+                          className={cn(
+                            'mt-0.5 h-3.5 w-3.5 shrink-0 border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground',
+                            highlightInherited && isInherited
+                              ? 'opacity-40'
+                              : ''
+                          )}
+                          aria-label={`${perm.label}: ${isGranted ? 'granted' : 'not granted'}${isInherited ? ' (inherited)' : ''}`}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={cn(
+                                'font-medium text-foreground',
+                                compact ? 'text-xs' : 'text-sm'
+                              )}
+                            >
+                              {perm.label}
                             </span>
+                            {highlightInherited && isInherited && (
+                              <span className="text-[10px] italic text-muted-foreground">
+                                inherited
+                              </span>
+                            )}
+                          </div>
+                          {perm.description && (
+                            <p
+                              className={cn(
+                                'text-muted-foreground',
+                                compact ? 'text-[10px]' : 'text-xs'
+                              )}
+                            >
+                              {perm.description}
+                            </p>
                           )}
                         </div>
-                        {perm.description && (
-                          <p
-                            className={cn(
-                              'text-muted-foreground',
-                              compact ? 'text-[10px]' : 'text-xs'
-                            )}
-                          >
-                            {perm.description}
-                          </p>
-                        )}
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
+            ))}
+          </div>
+        ))}
+      </div>
 
       {highlightInherited && (
         <div
