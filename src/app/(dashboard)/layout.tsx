@@ -13,6 +13,7 @@ const Login = React.lazy(() =>
   }))
 )
 import { useAuthentication } from '@/providers/authentication-provider'
+import { TermsOfUseGate } from '@/providers/terms-of-use-provider'
 
 export default function Layout({
   children
@@ -21,5 +22,11 @@ export default function Layout({
 }>) {
   const { user } = useAuthentication()
 
-  return user ? <AuthenticatedApp>{children}</AuthenticatedApp> : <Login />
+  return user ? (
+    <TermsOfUseGate>
+      <AuthenticatedApp>{children}</AuthenticatedApp>
+    </TermsOfUseGate>
+  ) : (
+    <Login />
+  )
 }
