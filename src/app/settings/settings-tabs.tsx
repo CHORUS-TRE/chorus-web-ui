@@ -18,7 +18,7 @@ export function SettingsTabs() {
       label: 'Profile'
     },
     {
-      href: '/settings/privacy',
+      href: '/settings/profile/privacy',
       label: 'Privacy'
     }
   ]

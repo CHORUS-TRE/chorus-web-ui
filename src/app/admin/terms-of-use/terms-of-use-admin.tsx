@@ -30,13 +30,16 @@ import type {
   TermsOfUseVersion,
   TermsOfUseVersionStatus
 } from '@/domain/model/terms-of-use'
+import type { User } from '@/domain/model/user'
 import {
   createTermsOfUseVersion,
+  getTermsOfUseVersion,
   listTermsOfUseAcceptances,
   listTermsOfUseVersions,
   publishTermsOfUseVersion,
   updateTermsOfUseVersion
 } from '@/view-model/terms-of-use-view-model'
+import { listUsers } from '@/view-model/user-view-model'
 
 const STATUS_LABELS: Record<TermsOfUseVersionStatus, string> = {
   TERMS_OF_USE_VERSION_STATUS_DRAFT: 'Draft',
@@ -56,6 +59,7 @@ const STATUS_VARIANTS: Record<
 export function TermsOfUseAdmin() {
   const [versions, setVersions] = useState<TermsOfUseVersion[]>([])
   const [acceptances, setAcceptances] = useState<TermsOfUseAcceptance[]>([])
+  const [usersById, setUsersById] = useState<Record<string, User>>({})
   const [editDialog, setEditDialog] = useState<{
     open: boolean
     version?: TermsOfUseVersion
@@ -65,6 +69,11 @@ export function TermsOfUseAdmin() {
     open: boolean
     versionId?: string
   }>({ open: false })
+  const [acceptanceDialog, setAcceptanceDialog] = useState<{
+    open: boolean
+    content: string | null
+    loading: boolean
+  }>({ open: false, content: null, loading: false })
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
 
@@ -78,12 +87,22 @@ export function TermsOfUseAdmin() {
   }, [])
 
   const loadAcceptances = useCallback(async () => {
-    const result = await listTermsOfUseAcceptances()
-    if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+    const [acceptancesResult, usersResult] = await Promise.all([
+      listTermsOfUseAcceptances(),
+      listUsers()
+    ])
+    if (acceptancesResult.error) {
+      toast({ title: acceptancesResult.error, variant: 'destructive' })
       return
     }
-    setAcceptances(result.data ?? [])
+    setAcceptances(acceptancesResult.data ?? [])
+    if (usersResult.data) {
+      const map: Record<string, User> = {}
+      for (const u of usersResult.data) {
+        map[u.id] = u
+      }
+      setUsersById(map)
+    }
   }, [])
 
   useEffect(() => {
@@ -129,6 +148,20 @@ export function TermsOfUseAdmin() {
     loadVersions()
   }
 
+  const openAcceptanceVersion = async (versionId: string | undefined) => {
+    if (!versionId) return
+    setAcceptanceDialog({ open: true, content: null, loading: true })
+    const result = await getTermsOfUseVersion(versionId)
+    setAcceptanceDialog({
+      open: true,
+      content: result.data?.content ?? null,
+      loading: false
+    })
+    if (result.error) {
+      toast({ title: result.error, variant: 'destructive' })
+    }
+  }
+
   return (
     <>
       <Tabs defaultValue="versions">
@@ -144,11 +177,11 @@ export function TermsOfUseAdmin() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead />
+                <TableHead className="text-muted-foreground">ID</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground">Created</TableHead>
+                <TableHead className="text-muted-foreground">Updated</TableHead>
+                <TableHead className="text-muted-foreground" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -216,29 +249,52 @@ export function TermsOfUseAdmin() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User ID</TableHead>
-                <TableHead>Version ID</TableHead>
-                <TableHead>Accepted at</TableHead>
+                <TableHead className="text-muted-foreground">User ID</TableHead>
+                <TableHead className="text-muted-foreground">
+                  Username
+                </TableHead>
+                <TableHead className="text-muted-foreground">
+                  Full Name
+                </TableHead>
+                <TableHead className="text-muted-foreground">
+                  Version ID
+                </TableHead>
+                <TableHead className="text-muted-foreground">
+                  Accepted at
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {acceptances.map((a) => (
-                <TableRow key={a.id}>
-                  <TableCell className="font-mono text-xs">
-                    {a.userId}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {a.termsOfUseVersionId}
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {a.acceptedAt ? format(a.acceptedAt, 'PPp') : '—'}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {acceptances.map((a) => {
+                const user = a.userId ? usersById[a.userId] : undefined
+                return (
+                  <TableRow
+                    key={a.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => openAcceptanceVersion(a.termsOfUseVersionId)}
+                  >
+                    <TableCell className="font-mono text-xs">
+                      {a.userId}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {user?.username ?? '—'}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {user ? `${user.firstName} ${user.lastName}`.trim() : '—'}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {a.termsOfUseVersionId}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {a.acceptedAt ? format(a.acceptedAt, 'PPp') : '—'}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
               {acceptances.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={3}
+                    colSpan={5}
                     className="text-center text-muted-foreground"
                   >
                     No acceptances recorded yet.
@@ -282,7 +338,7 @@ export function TermsOfUseAdmin() {
               onChange={(e) =>
                 setEditDialog((s) => ({ ...s, content: e.target.value }))
               }
-              placeholder="Enter the Terms of Use text…"
+              placeholder="Enter the Terms of Use text… (you can use markdown formatting)"
             />
           )}
           <DialogFooter>
@@ -329,6 +385,50 @@ export function TermsOfUseAdmin() {
             </Button>
             <Button onClick={handlePublish} disabled={publishing}>
               {publishing ? 'Publishing…' : 'Publish'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Accepted version viewer dialog */}
+      <Dialog
+        open={acceptanceDialog.open}
+        onOpenChange={(open) =>
+          !open &&
+          setAcceptanceDialog({ open: false, content: null, loading: false })
+        }
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Accepted Terms of Use Version</DialogTitle>
+          </DialogHeader>
+          {acceptanceDialog.loading ? (
+            <div className="flex h-80 items-center justify-center text-sm text-muted-foreground">
+              Loading…
+            </div>
+          ) : acceptanceDialog.content ? (
+            <ScrollArea className="h-80 rounded border p-4">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown>{acceptanceDialog.content}</ReactMarkdown>
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="flex h-80 items-center justify-center text-sm text-muted-foreground">
+              Content not available.
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() =>
+                setAcceptanceDialog({
+                  open: false,
+                  content: null,
+                  loading: false
+                })
+              }
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

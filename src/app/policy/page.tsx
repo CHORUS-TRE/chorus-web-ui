@@ -20,7 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { getCurrentTermsOfUseVersion } from '@/view-model/terms-of-use-view-model'
 
-export default function PrivacyPolicyPage() {
+export default function PolicyPage() {
   const lastUpdated = 'January 20, 2026'
   const [touContent, setTouContent] = useState<string | null>(null)
 

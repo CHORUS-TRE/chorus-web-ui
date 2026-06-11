@@ -30,7 +30,7 @@ export default function UserSettingsPage() {
       title: 'Privacy',
       description: 'Manage your privacy settings and cookie consent.',
       icon: <ShieldCheck className="h-5 w-5" />,
-      href: `/settings/privacy`
+      href: `/settings/profile/privacy`
     }
   ]
 

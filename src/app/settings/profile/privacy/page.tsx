@@ -132,7 +132,7 @@ export default function PrivacySettingsPage() {
           When you decline tracking, we stop collecting behavioral data
           immediately. See our{' '}
           <Link
-            href="/privacy-policy"
+            href="/policy"
             target="_blank"
             rel="noreferrer"
             className="underline underline-offset-4 transition-colors hover:text-primary"
