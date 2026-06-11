@@ -127,6 +127,12 @@ export interface ChorusWorkspace {
    * @memberof ChorusWorkspace
    */
   clipboard?: string
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  gid?: string
 }
 
 /**
@@ -183,7 +189,8 @@ export function ChorusWorkspaceFromJSONTyped(
     networkPolicyMessage: !exists(json, 'networkPolicyMessage')
       ? undefined
       : json['networkPolicyMessage'],
-    clipboard: !exists(json, 'clipboard') ? undefined : json['clipboard']
+    clipboard: !exists(json, 'clipboard') ? undefined : json['clipboard'],
+    gid: !exists(json, 'gid') ? undefined : json['gid']
   }
 }
 
@@ -214,6 +221,7 @@ export function ChorusWorkspaceToJSON(value?: ChorusWorkspace | null): any {
     allowedFqdns: value.allowedFqdns,
     networkPolicyStatus: value.networkPolicyStatus,
     networkPolicyMessage: value.networkPolicyMessage,
-    clipboard: value.clipboard
+    clipboard: value.clipboard,
+    gid: value.gid
   }
 }
