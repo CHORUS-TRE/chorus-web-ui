@@ -51,13 +51,18 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
   const [roles, setRoles] = useState<AuthorizationRole[]>([])
   const [permissions, setPermissions] = useState<AuthorizationPermission[]>([])
   const [loading, setLoading] = useState(!!user)
+  const [hasLoaded, setHasLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   const refreshRoles = useCallback(() => setRefreshKey((k) => k + 1), [])
 
+  // Use only the user identity so polling-induced user-object changes
+  // don't re-fetch roles (and don't briefly unmount children).
+  const userId = user?.id
+
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       // Unauthenticated — do not block; login page renders without roles
       setLoading(false)
       return
@@ -78,6 +83,7 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
           setRoles(rolesResult.data ?? [])
           setPermissions(permissionsResult.data ?? [])
         }
+        setHasLoaded(true)
         setLoading(false)
       }
     )
@@ -85,7 +91,7 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       ignored = true
     }
-  }, [user, refreshKey])
+  }, [userId, refreshKey])
 
   const rolesByName = useMemo(
     () => new Map(roles.map((r) => [r.name, r])),
@@ -109,7 +115,7 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
     return ordered
   }, [roles])
 
-  if (loading) {
+  if (!hasLoaded && loading) {
     return <LoadingOverlay isLoading={true} />
   }
 
