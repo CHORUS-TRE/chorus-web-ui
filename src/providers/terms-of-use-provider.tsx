@@ -28,13 +28,14 @@ export function TermsOfUseGate({ children }: { children: ReactNode }) {
       return
     }
 
+    let ignored = false
     setState({ phase: 'loading' })
 
-    Promise.all([getMyTermsOfUseStatus(), getCurrentTermsOfUseVersion()]).then(
-      ([statusResult, versionResult]) => {
+    Promise.all([getMyTermsOfUseStatus(), getCurrentTermsOfUseVersion()])
+      .then(([statusResult, versionResult]) => {
+        if (ignored) return
         const version = versionResult.data
         if (!version) {
-          // No published version — let user through
           setState({ phase: 'pass' })
           return
         }
@@ -43,8 +44,16 @@ export function TermsOfUseGate({ children }: { children: ReactNode }) {
         } else {
           setState({ phase: 'pending', version })
         }
-      }
-    )
+      })
+      .catch(() => {
+        if (ignored) return
+        // On API error, let user through rather than blocking indefinitely
+        setState({ phase: 'pass' })
+      })
+
+    return () => {
+      ignored = true
+    }
   }, [userId])
 
   const handleAccept = async () => {
