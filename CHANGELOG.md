@@ -1,3 +1,10 @@
+# [1.56.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.55.0...v1.56.0) (2026-06-11)
+
+
+### Features
+
+* add CreateRoleDialog component for role creation ([ddd6f53](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ddd6f536d85f12d77cab041d8f4b3bfbd3b06cd3))
+
 # [1.55.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.54.2...v1.55.0) (2026-06-05)
 
 
