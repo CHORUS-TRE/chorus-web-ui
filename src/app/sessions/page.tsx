@@ -1,25 +1,13 @@
 'use client'
 
-import {
-  CirclePlus,
-  Globe,
-  LaptopMinimal,
-  LayoutGrid,
-  Rows3,
-  Search,
-  X
-} from 'lucide-react'
+import { LaptopMinimal, LayoutGrid, Rows3, Search, X } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
-import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Link } from '@/components/ui/link'
-import { WebAppCard } from '@/components/webapp-card'
 import WorkbenchGrid from '@/components/workbench-grid'
 import WorkbenchTable from '@/components/workbench-table'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -30,14 +18,8 @@ import { useUserPreferences } from '@/stores/user-preferences-store'
 export default function SessionPage() {
   const params = useParams<{ workspaceId: string }>()
   const workspaceId = params?.workspaceId
-  const {
-    refreshWorkbenches,
-    workbenches,
-    apps,
-    appInstances,
-    workspaces,
-    refreshWorkspaces
-  } = useAppState()
+  const { refreshWorkbenches, workbenches, apps, appInstances, workspaces } =
+    useAppState()
   const { user } = useAuthentication()
   const {
     sessionsViewMode,
@@ -45,8 +27,7 @@ export default function SessionPage() {
     sessionSearchQuery,
     setSessionSearchQuery
   } = useUserPreferences()
-  const { externalWebApps, cachedIframes } = useIframeCache()
-  const [createOpen, setCreateOpen] = useState(false)
+  useIframeCache()
   const searchQuery: string = sessionSearchQuery ?? ''
   const setSearchQuery = setSessionSearchQuery
 
@@ -103,24 +84,6 @@ export default function SessionPage() {
     appInstances,
     apps
   ])
-
-  const filteredWebApps = useMemo(() => {
-    // Only show active/loaded webapps
-    let result = externalWebApps.filter((webapp) =>
-      cachedIframes.has(webapp.id)
-    )
-
-    if (searchQuery && searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      result = result.filter((webapp) => {
-        if (webapp.name.toLowerCase().includes(query)) return true
-        if (webapp.description?.toLowerCase().includes(query)) return true
-        return false
-      })
-    }
-
-    return result
-  }, [externalWebApps, searchQuery, cachedIframes])
 
   return (
     <>

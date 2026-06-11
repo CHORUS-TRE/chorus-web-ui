@@ -3,21 +3,16 @@
 import {
   AppWindow,
   Bell,
-  Cpu,
   FileCheck,
   LaptopMinimal,
-  LayoutGrid,
   Package,
   Palette,
   ScrollText,
-  Settings,
   Settings2,
   Shield,
   Store,
-  Terminal,
   Users
 } from 'lucide-react'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { StatCard } from '@/components/dashboard/stat-card'
@@ -101,12 +96,7 @@ const AdminPage = () => {
             icon={Shield}
             value={roleCount}
             description="System Roles Defined"
-          >
-            <div className="mt-4 flex items-center text-xs text-muted-foreground">
-              <Users className="mr-1 h-3 w-3" />
-              {users?.length || 0} Users
-            </div>
-          </StatCard>
+          ></StatCard>
         )}
 
         {can('listWorkspaces') && (

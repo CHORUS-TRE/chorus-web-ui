@@ -203,6 +203,7 @@ export function ManageUserWorkspaceDialog({
       // Pass the current user object for optimistic update, background refresh will sync roles
       onUserAdded(currentUser)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, onUserAdded, form, actionMode])
 
   return (

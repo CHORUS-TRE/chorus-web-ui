@@ -1,6 +1,6 @@
 'use client'
 
-import { Settings2, ShieldAlert } from 'lucide-react'
+import { Settings2 } from 'lucide-react'
 
 import { InstanceConfigForm } from '@/components/forms/instance-config-form'
 

@@ -2,8 +2,6 @@ import { z } from 'zod'
 
 import { Result } from '@/domain/model'
 import {
-  Role,
-  RoleSchema,
   User,
   UserCreateType,
   UserRoleCreateType,
@@ -12,7 +10,6 @@ import {
 } from '@/domain/model/user'
 import { UserRepository } from '@/domain/repository'
 import { UserServiceListUsersRequest } from '@/internal/client'
-import { workspaceList } from '@/view-model/workspace-view-model'
 
 import { UserDataSource } from '../data-source'
 

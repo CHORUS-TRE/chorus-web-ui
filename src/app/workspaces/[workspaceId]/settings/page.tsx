@@ -1,7 +1,6 @@
 'use client'
 
-import { CheckCircle2, Cog, Info, Pencil, Shield } from 'lucide-react'
-import Image from 'next/image'
+import { CheckCircle2, Info, Pencil } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -48,13 +47,6 @@ export default function WorkspaceSettingsPage() {
   const networkPolicy = workspace.networkPolicy
   const clipboard = workspace.clipboard
   const allowedFqdns = workspace.allowedFqdns || []
-
-  const networkPolicyColor =
-    networkPolicy === 'Open'
-      ? 'text-green-500'
-      : networkPolicy === 'FQDNAllowlist'
-        ? 'text-yellow-500'
-        : 'text-red-500'
 
   const ownerStatus = workspace.dev?.owner
     ? `Owned by ${workspace.dev.owner}`

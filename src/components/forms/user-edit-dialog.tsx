@@ -12,7 +12,6 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

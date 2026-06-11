@@ -7,7 +7,6 @@ import {
   Folder,
   ImageIcon,
   Loader2,
-  Minus,
   Music,
   Pencil,
   Trash2,

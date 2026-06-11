@@ -236,7 +236,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     const result = await deleteGlobalEntry(key)
     if (!result.error) {
       set((state) => {
-        const { [key]: _, ...rest } = state.global
+        const { [key]: _globalVal, ...rest } = state.global
         return { global: rest }
       })
       return true
@@ -248,7 +248,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     const result = await deleteUserEntry(key)
     if (!result.error) {
       set((state) => {
-        const { [key]: _, ...rest } = state.user
+        const { [key]: _userVal, ...rest } = state.user
         return { user: rest }
       })
       return true
@@ -263,7 +263,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
         const newWorkspaces = new Map(state.workspaces)
         const current = newWorkspaces.get(workspaceId)
         if (current) {
-          const { [key]: _, ...rest } = current
+          const { [key]: _wsVal, ...rest } = current
           newWorkspaces.set(workspaceId, rest)
         }
         return { workspaces: newWorkspaces }

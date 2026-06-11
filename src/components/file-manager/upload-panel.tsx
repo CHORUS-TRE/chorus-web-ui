@@ -23,10 +23,6 @@ export function UploadPanel() {
     return null
   }
 
-  const totalProgress =
-    activeUploads.reduce((acc, u) => acc + u.uploadedBytes, 0) /
-    activeUploads.reduce((acc, u) => acc + u.fileSize, 0)
-
   return (
     <div className="fixed bottom-4 right-4 z-50 w-80 overflow-hidden rounded-lg border border-border bg-background shadow-lg">
       <div

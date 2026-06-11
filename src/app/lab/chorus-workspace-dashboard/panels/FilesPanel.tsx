@@ -76,7 +76,7 @@ export interface FilesPanelProps {
 // ============================================================================
 
 export function FilesPanel({
-  workspace,
+  workspace: _workspace,
   currentUser,
   selectionState,
   onSelectionChange

@@ -1,5 +1,4 @@
 import { formatDistanceToNow } from 'date-fns'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -27,26 +26,20 @@ export function WorkspaceWorkbenchList({
   const { user } = useAuthentication()
 
   const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const loadUsers = useCallback(async () => {
-    setLoading(true)
     if (!workspaceId) return
 
     const result = await listUsers({ filterWorkspaceIDs: [workspaceId] })
     if (result.data) {
       setUsers(result.data)
-      setError(null)
     } else {
-      setError(result.error || 'Failed to load workspace members')
       toast({
         title: 'Error',
         description: result.error || 'Failed to load workspace members',
         variant: 'destructive'
       })
     }
-    setLoading(false)
   }, [workspaceId])
 
   useEffect(() => {

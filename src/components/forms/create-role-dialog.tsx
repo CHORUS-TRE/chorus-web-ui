@@ -67,7 +67,11 @@ export function CreateRoleDialog({
   const togglePerm = (perm: string) => {
     setSelectedPerms((prev) => {
       const next = new Set(prev)
-      next.has(perm) ? next.delete(perm) : next.add(perm)
+      if (next.has(perm)) {
+        next.delete(perm)
+      } else {
+        next.add(perm)
+      }
       return next
     })
   }
@@ -76,7 +80,8 @@ export function CreateRoleDialog({
   const permsByGroup = permissions.reduce<Record<string, typeof permissions>>(
     (acc, p) => {
       const group = p.context[0] ?? 'platform'
-      ;(acc[group] ??= []).push(p)
+      if (!acc[group]) acc[group] = []
+      acc[group].push(p)
       return acc
     },
     {}

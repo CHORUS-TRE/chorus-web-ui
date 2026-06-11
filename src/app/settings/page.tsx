@@ -2,9 +2,7 @@
 
 import { ShieldCheck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
 
-import { getRoleScope, RoleBadge } from '@/components/role-badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -14,28 +12,10 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { useRoles } from '@/providers/roles-provider'
 
 export default function UserSettingsPage() {
-  const { user } = useAuthentication()
-  const { rolesByName } = useRoles()
+  useAuthentication()
   const router = useRouter()
-
-  const roles = useMemo(() => user?.rolesWithContext || [], [user])
-
-  const platformRoles = useMemo(
-    () => roles.filter((r) => getRoleScope(r.name, rolesByName) === 'platform'),
-    [roles, rolesByName]
-  )
-  const workspaceRoles = useMemo(
-    () =>
-      roles.filter((r) => getRoleScope(r.name, rolesByName) === 'workspace'),
-    [roles, rolesByName]
-  )
-  const sessionRoles = useMemo(
-    () => roles.filter((r) => getRoleScope(r.name, rolesByName) === 'session'),
-    [roles, rolesByName]
-  )
 
   const settings = [
     {
@@ -65,7 +45,7 @@ export default function UserSettingsPage() {
           >
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                <div className="rounded-lg bg-accent/10 p-2 text-accent">
                   {setting.icon}
                 </div>
                 <CardTitle>{setting.title}</CardTitle>
@@ -75,7 +55,7 @@ export default function UserSettingsPage() {
               <CardDescription>{setting.description}</CardDescription>
               <Button
                 variant="link"
-                className="mt-4 px-0 text-primary"
+                className="mt-4 px-0 text-accent"
                 onClick={(e) => {
                   e.stopPropagation()
                   router.push(setting.href)

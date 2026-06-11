@@ -216,24 +216,15 @@ export function AppCreateDialog({
   const { formState } = form
   const isSubmitting = formState.isSubmitting
 
-  useEffect(() => {
-    if (formState.errors) {
-      console.error('AppCreateDialog formState.errors', formState.errors)
-    }
-  }, [formState.errors])
-
   async function onSubmit(data: FormData) {
     try {
-      // Use the helper to convert z.infer<typeof AppCreateSchema> to FormData if needed by the view-model,
-      // but let's see how appCreate is defined. It expects FormData.
-      const formData = new FormData()
+      const formData = new window.FormData()
       Object.entries(data).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           formData.append(key, String(value))
         }
       })
 
-      // Ensure mandatory fields for the schema are present if they were empty strings
       if (!formData.has('status')) formData.append('status', AppState.ACTIVE)
       if (!formData.has('tenantId')) formData.append('tenantId', '1')
 

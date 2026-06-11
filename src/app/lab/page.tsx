@@ -1,8 +1,6 @@
 'use client'
 
 import {
-  Code2,
-  Cpu,
   FileText,
   FlaskConical,
   Layers,

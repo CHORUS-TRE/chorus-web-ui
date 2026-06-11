@@ -32,13 +32,7 @@ import * as React from 'react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import type {
@@ -345,7 +339,7 @@ export interface WorkspaceDashboardProps {
 function WorkspaceDashboard({
   workspace,
   currentUser,
-  onWorkspaceUpdate,
+  onWorkspaceUpdate: _onWorkspaceUpdate,
   onRequestAction
 }: WorkspaceDashboardProps) {
   const [viewState, setViewState] = React.useState<DashboardViewState>({

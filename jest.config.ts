@@ -16,7 +16,7 @@ const customJestConfig: Config = {
 const nextJestConfig = createJestConfig(customJestConfig)
 
 // Wrap to append extra ignore patterns after next/jest merges its defaults
-export default async (): Promise<Config> => {
+const config = async (): Promise<Config> => {
   const config = (await nextJestConfig()) as Config
   config.testPathIgnorePatterns = [
     ...(config.testPathIgnorePatterns ?? []),
@@ -26,3 +26,5 @@ export default async (): Promise<Config> => {
   ]
   return config
 }
+
+export default config

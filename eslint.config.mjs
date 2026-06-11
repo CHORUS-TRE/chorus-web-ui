@@ -20,7 +20,15 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          ignoreRestSiblings: true
+        }
+      ],
       '@typescript-eslint/no-duplicate-enum-values': 'off',
       '@typescript-eslint/no-require-imports': 'off',
       'simple-import-sort/imports': 'warn',

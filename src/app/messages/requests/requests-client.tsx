@@ -19,7 +19,6 @@ import {
   ChevronRight,
   Clock,
   Download,
-  File,
   LayoutGrid,
   List,
   Search,
@@ -611,7 +610,7 @@ function RequestsDataTable({
 export default function RequestsClient({
   requests: initialRequests,
   currentUser,
-  workspaceId: _workspaceId
+  workspaceId: __workspaceId
 }: RequestsClientProps) {
   const [requests, setRequests] =
     React.useState<ApprovalRequest[]>(initialRequests)

@@ -15,7 +15,7 @@ interface SessionAppIconProps {
 export function SessionAppIcon({
   app,
   onClick,
-  onLaunch
+  onLaunch: _onLaunch
 }: SessionAppIconProps) {
   return (
     <div

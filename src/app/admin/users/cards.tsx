@@ -1,7 +1,7 @@
 'use client'
 
 import { Bell, ShieldCheck, User } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ import {
 import { useAuthentication } from '@/providers/authentication-provider'
 
 export default function UserSettingsPage() {
-  const { user } = useAuthentication()
+  useAuthentication()
   const router = useRouter()
 
   const settings = [

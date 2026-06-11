@@ -5,13 +5,6 @@ import { useMemo } from 'react'
 
 import { User } from '@/domain/model/user'
 
-interface RoleCount {
-  name: string
-  count: number
-  color: string
-  iconColor: string
-}
-
 export function WorkspaceRoleDistribution({
   users,
   workspaceId

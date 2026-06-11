@@ -2,7 +2,7 @@
 
 import { CookieIcon } from 'lucide-react'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { USER_CONFIG_KEYS } from '@/domain/model/user-config'

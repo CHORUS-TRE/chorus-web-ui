@@ -6,7 +6,7 @@ const AuthenticatedApp = React.lazy(() =>
     default: mod.AuthenticatedApp
   }))
 )
-import { Package, ShieldAlert, SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal } from 'lucide-react'
 
 import { Login } from '@/components/login'
 import { Unauthorized } from '@/components/unauthorized'

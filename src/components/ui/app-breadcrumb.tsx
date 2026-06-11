@@ -19,7 +19,7 @@ import {
 
 export function AppBreadcrumb() {
   const pathname = usePathname()
-  const instanceConfig = useInstanceConfig()
+  useInstanceConfig()
   const { workspaces, appInstances, apps, workbenches } = useAppState()
   const { user } = useAuthentication()
 

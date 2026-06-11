@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Cpu,
   Database,
-  GitBranch,
   HardDrive,
   Loader2,
   Network,
@@ -610,9 +609,9 @@ export function WorkspaceUpdateForm({
 
 function GeneralTabContent({
   form,
-  workspace,
-  removeImage,
-  setRemoveImage
+  workspace: _workspace,
+  removeImage: _removeImage,
+  setRemoveImage: _setRemoveImage
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any

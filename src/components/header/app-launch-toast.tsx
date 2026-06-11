@@ -1,6 +1,6 @@
 'use client'
 
-import { AppWindow, CheckCircle2, Loader2, Rocket, XCircle } from 'lucide-react'
+import { AppWindow, CheckCircle2, Loader2, XCircle } from 'lucide-react'
 
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
 import { K8sAppInstanceStatus } from '@/domain/model'
@@ -50,6 +50,7 @@ export function AppLaunchToastContent({
         )}
       >
         {appIconUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={appIconUrl}
             alt={appName}

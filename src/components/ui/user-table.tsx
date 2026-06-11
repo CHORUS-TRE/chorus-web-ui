@@ -20,7 +20,6 @@ import { listUsers } from '@/view-model/user-view-model'
 
 export function UserTable() {
   const [users, setUsers] = useState<User[]>([])
-  const [userCollapsed, setUserCollapsed] = useState<boolean[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const { can } = useAuthorization()
@@ -29,18 +28,11 @@ export function UserTable() {
     setRefreshKey((oldKey) => oldKey + 1)
   }, [])
 
-  const toggleUserCollapse = (index: number) => {
-    const newCollapsed = users.map(() => true)
-    newCollapsed[index] = !userCollapsed[index]
-    setUserCollapsed(newCollapsed)
-  }
-
   useEffect(() => {
     async function loadUsers() {
       const result = await listUsers()
       if (result.data) {
         setUsers(result.data)
-        setUserCollapsed(result.data.map(() => true))
       } else {
         toast({
           title: 'Error',
@@ -53,6 +45,7 @@ export function UserTable() {
     if ((can('listUsers'), { workspace: '*' })) {
       loadUsers()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey])
 
   if (error) {
@@ -103,7 +96,7 @@ export function UserTable() {
           </TableRow>
         </TableHeader>
         <TableBody className="text-foreground">
-          {users.map((user, userIndex) => (
+          {users.map((user) => (
             <TableRow key={user.id}>
               <TableCell className="p-2">{user.id}</TableCell>
               <TableCell className="truncate p-2">
