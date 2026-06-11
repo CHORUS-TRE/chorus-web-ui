@@ -19,46 +19,78 @@ import { ListVersions } from '@/domain/use-cases/terms-of-use/list-versions'
 import { PublishVersion } from '@/domain/use-cases/terms-of-use/publish-version'
 import { UpdateVersion } from '@/domain/use-cases/terms-of-use/update-version'
 
-const getRepository = () =>
-  new TermsOfUseRepositoryImpl(
-    new TermsOfUseApiDataSourceImpl(env('NEXT_PUBLIC_API_URL') || '')
+const getRepository = async () => {
+  const dataSource = new TermsOfUseApiDataSourceImpl(
+    env('NEXT_PUBLIC_API_URL') || ''
   )
+  return new TermsOfUseRepositoryImpl(dataSource)
+}
 
-export const getMyTermsOfUseStatus = (): Promise<Result<boolean>> =>
-  new GetMyStatus(getRepository()).execute()
+export async function getMyTermsOfUseStatus(): Promise<Result<boolean>> {
+  const repository = await getRepository()
+  const useCase = new GetMyStatus(repository)
+  return await useCase.execute()
+}
 
-export const getCurrentTermsOfUseVersion = (): Promise<
+export async function getCurrentTermsOfUseVersion(): Promise<
   Result<TermsOfUseVersion | null>
-> => new GetCurrentVersion(getRepository()).execute()
+> {
+  const repository = await getRepository()
+  const useCase = new GetCurrentVersion(repository)
+  return await useCase.execute()
+}
 
-export const acceptTermsOfUse = (): Promise<Result<TermsOfUseAcceptance>> =>
-  new Accept(getRepository()).execute()
+export async function acceptTermsOfUse(): Promise<Result<TermsOfUseAcceptance>> {
+  const repository = await getRepository()
+  const useCase = new Accept(repository)
+  return await useCase.execute()
+}
 
-export const listTermsOfUseVersions = (): Promise<
+export async function listTermsOfUseVersions(): Promise<
   Result<TermsOfUseVersion[]>
-> => new ListVersions(getRepository()).execute()
+> {
+  const repository = await getRepository()
+  const useCase = new ListVersions(repository)
+  return await useCase.execute()
+}
 
-export const getTermsOfUseVersion = (
+export async function getTermsOfUseVersion(
   id: string
-): Promise<Result<TermsOfUseVersion>> =>
-  new GetVersion(getRepository()).execute(id)
+): Promise<Result<TermsOfUseVersion>> {
+  const repository = await getRepository()
+  const useCase = new GetVersion(repository)
+  return await useCase.execute(id)
+}
 
-export const createTermsOfUseVersion = (
+export async function createTermsOfUseVersion(
   content: string
-): Promise<Result<TermsOfUseVersion>> =>
-  new CreateVersion(getRepository()).execute(content)
+): Promise<Result<TermsOfUseVersion>> {
+  const repository = await getRepository()
+  const useCase = new CreateVersion(repository)
+  return await useCase.execute(content)
+}
 
-export const updateTermsOfUseVersion = (
+export async function updateTermsOfUseVersion(
   id: string,
   content: string
-): Promise<Result<TermsOfUseVersion>> =>
-  new UpdateVersion(getRepository()).execute(id, content)
+): Promise<Result<TermsOfUseVersion>> {
+  const repository = await getRepository()
+  const useCase = new UpdateVersion(repository)
+  return await useCase.execute(id, content)
+}
 
-export const publishTermsOfUseVersion = (
+export async function publishTermsOfUseVersion(
   id: string
-): Promise<Result<TermsOfUseVersion>> =>
-  new PublishVersion(getRepository()).execute(id)
+): Promise<Result<TermsOfUseVersion>> {
+  const repository = await getRepository()
+  const useCase = new PublishVersion(repository)
+  return await useCase.execute(id)
+}
 
-export const listTermsOfUseAcceptances = (): Promise<
+export async function listTermsOfUseAcceptances(): Promise<
   Result<TermsOfUseAcceptance[]>
-> => new ListAcceptances(getRepository()).execute()
+> {
+  const repository = await getRepository()
+  const useCase = new ListAcceptances(repository)
+  return await useCase.execute()
+}
