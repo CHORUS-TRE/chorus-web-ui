@@ -98,6 +98,10 @@
     --sidebar-ring: 229 100% 64%; /* Lighter blue ring */
   }
 
+  html {
+    font-size: 15px; /* down from browser default 16px */
+  }
+
   * {
     @apply border-border;
   }

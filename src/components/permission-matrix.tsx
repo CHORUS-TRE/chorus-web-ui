@@ -116,14 +116,29 @@ export function PermissionMatrix({
           <div key={scope.key} className="space-y-4">
             {scope.groups.map((group) => (
               <div key={group.label}>
-                <p
-                  className={cn(
-                    'mb-2 font-semibold uppercase tracking-wide text-muted-foreground',
-                    compact ? 'text-[10px]' : 'text-xs'
-                  )}
-                >
-                  {group.label}
-                </p>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <p
+                    className={cn(
+                      'font-semibold uppercase tracking-wide text-muted-foreground',
+                      compact ? 'text-[10px]' : 'text-xs'
+                    )}
+                  >
+                    {group.label}
+                  </p>
+                  <span
+                    className={cn(
+                      'text-muted-foreground',
+                      compact ? 'text-[10px]' : 'text-xs'
+                    )}
+                  >
+                    {
+                      group.permissions.filter((p) =>
+                        resolvedPermissions.has(p.key)
+                      ).length
+                    }
+                    /{group.permissions.length}
+                  </span>
+                </div>
                 <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
                   {group.permissions.map((perm) => {
                     const isGranted = resolvedPermissions.has(perm.key)

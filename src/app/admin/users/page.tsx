@@ -1,12 +1,14 @@
 'use client'
 
-import { Search } from 'lucide-react'
+import { Lock, Search } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { GrantAccessDialog } from '@/components/forms/grant-access-dialog'
 import { toast } from '@/components/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { User } from '@/domain/model/user'
+import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { listUsers, listUsersPaginated } from '@/view-model/user-view-model'
 
@@ -30,6 +32,7 @@ export default function UsersPage() {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>()
+  const [hasSensitiveOnly, setHasSensitiveOnly] = useState(false)
 
   const [grantOpen, setGrantOpen] = useState(false)
   const [grantUserId, setGrantUserId] = useState<string | undefined>()
@@ -114,33 +117,38 @@ export default function UsersPage() {
     <div className="space-y-4">
       <UsersStatsRow totalUsers={total} />
 
-      {/* Toolbar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative w-full max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search users…"
-            className="pl-9"
-            aria-label="Search users"
-          />
-        </div>
-      </div>
-
       {/* Master-detail */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-        <div className="rounded-xl border bg-card">
-          <div className="flex items-center justify-between border-b p-4">
-            <div>
-              <div className="text-sm font-semibold">Users</div>
-              <div className="text-xs text-muted-foreground">
-                Click a user to review effective access
-              </div>
-            </div>
-            <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent">
-              {total} total
+        <div className="overflow-hidden rounded-[14px] border bg-card dark:border-white/[.08] dark:bg-white/[.018]">
+          <div className="flex items-center gap-3 border-b px-4 py-3 dark:border-white/[.08]">
+            <span className="text-sm font-semibold">Users</span>
+            <span className="text-xs text-muted-foreground">
+              {users.length} of {total}
             </span>
+            <div className="flex-1" />
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search…"
+                className="h-8 w-40 pl-7 text-xs"
+                aria-label="Search users"
+              />
+            </div>
+            {/* <Button
+              variant="outline"
+              size="sm"
+              className={cn(
+                'h-8 gap-1.5 text-xs',
+                hasSensitiveOnly &&
+                  'border-amber-500/60 bg-amber-500/10 text-amber-500'
+              )}
+              onClick={() => setHasSensitiveOnly((v) => !v)}
+            >
+              <Lock className="h-3 w-3" />
+              Has sensitive
+            </Button> */}
           </div>
           <UsersMasterTable
             users={users}
@@ -151,6 +159,7 @@ export default function UsersPage() {
             pageSize={pageSize}
             onPageChange={setPage}
             onPageSizeChange={handlePageSizeChange}
+            hasSensitiveOnly={hasSensitiveOnly}
           />
         </div>
 
