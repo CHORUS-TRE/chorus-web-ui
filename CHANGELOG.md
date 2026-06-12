@@ -1,3 +1,11 @@
+# [1.58.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.57.0...v1.58.0) (2026-06-12)
+
+
+### Features
+
+* add description to user edit dialog and comment out button in users page ([7f9bc26](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7f9bc26fbe8230e98bb8a4f52ba1426bb4563ac4))
+* enhance user access detail and user management UI ([9dac3de](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9dac3de4655a78e6b021970eefc245ac8e4a93c8))
+
 # [1.57.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.56.1...v1.57.0) (2026-06-12)
 
 
