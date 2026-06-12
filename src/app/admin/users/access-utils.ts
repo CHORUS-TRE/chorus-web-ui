@@ -51,7 +51,7 @@ export function effectivePermissionNames(
 
 /** Heuristic for flagging sensitive actions (informational only, not a score). */
 export const SENSITIVE_PERMISSION_RE =
-  /delete|reset|update|create|audit|settings/i
+  /listUsers|manageUserRoles|auditUser|initializeTenant|createUser|setPlatformSettings|auditPlatform|manageDynamicRoles|createApp|updateApp|deleteApp|createTermsOfUseVersion|updateTermsOfUseVersion|publishTermsOfUseVersion/i
 
 export function countSensitive(permissionNames: string[]): number {
   return permissionNames.filter((p) => SENSITIVE_PERMISSION_RE.test(p)).length

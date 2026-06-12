@@ -1,10 +1,10 @@
 'use client'
 
-import { Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { Search, ShieldCheck, Users } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -13,15 +13,26 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { AuthorizationPermission } from '@/domain/model/authorization'
+import { User } from '@/domain/model/user'
+import { cn } from '@/lib/utils'
 import { useRoles } from '@/providers/roles-provider'
+import { listUsers } from '@/view-model/user-view-model'
+
+import { getInitials, SENSITIVE_PERMISSION_RE } from '../access-utils'
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-/** Group a permission by its primary context dimension (or "Global"). */
 function groupOf(context: string[]): string {
   return context.length > 0 ? capitalize(context[0]) : 'Global'
+}
+
+const GROUP_STYLE: Record<string, { text: string; bg: string }> = {
+  Workspace: { text: 'text-violet-400', bg: 'bg-violet-500/15' },
+  Workbench: { text: 'text-cyan-300', bg: 'bg-cyan-400/15' },
+  Global: { text: 'text-blue-400', bg: 'bg-blue-500/15' }
 }
 
 export default function PermissionExplorerPage() {
@@ -29,22 +40,24 @@ export default function PermissionExplorerPage() {
 
   const [search, setSearch] = useState('')
   const [groupFilter, setGroupFilter] = useState('all')
+  const [selected, setSelected] = useState<AuthorizationPermission | null>(null)
+  const [users, setUsers] = useState<User[]>([])
+
+  useEffect(() => {
+    let ignored = false
+    listUsers().then((res) => {
+      if (!ignored && res.data) setUsers(res.data)
+    })
+    return () => {
+      ignored = true
+    }
+  }, [])
 
   const groups = useMemo(() => {
     const set = new Set<string>()
     for (const p of permissions) set.add(groupOf(p.context))
     return Array.from(set).sort()
   }, [permissions])
-
-  const usedByCount = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const role of roles) {
-      for (const perm of role.permissions) {
-        counts.set(perm, (counts.get(perm) ?? 0) + 1)
-      }
-    }
-    return counts
-  }, [roles])
 
   const visible = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -57,10 +70,47 @@ export default function PermissionExplorerPage() {
     })
   }, [permissions, search, groupFilter])
 
+  const detail = useMemo(() => {
+    if (!selected) return null
+    const grantingRoles = roles.filter((r) =>
+      r.permissions.includes(selected.name)
+    )
+    const grantingRoleNames = new Set(grantingRoles.map((r) => r.name))
+    const usersWithPerm = users
+      .filter((u) =>
+        u.rolesWithContext?.some((g) => grantingRoleNames.has(g.name))
+      )
+      .map((u) => ({
+        user: u,
+        viaRoles: (u.rolesWithContext ?? [])
+          .filter((g) => grantingRoleNames.has(g.name))
+          .map((g) => g.name)
+      }))
+    return { grantingRoles, usersWithPerm }
+  }, [selected, roles, users])
+
+  // Auto-select first item; keep selection valid when filters change.
+  useEffect(() => {
+    if (
+      visible.length > 0 &&
+      (!selected || !visible.some((p) => p.name === selected.name))
+    ) {
+      setSelected(visible[0])
+    }
+  }, [visible]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const selectedIsVisible =
+    selected !== null && visible.some((p) => p.name === selected.name)
+
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative w-full max-w-xs">
+    <div className="flex h-full min-h-0 gap-4">
+      {/* Left: permission list */}
+      <div className="flex w-72 flex-shrink-0 flex-col gap-3">
+        <p className="text-xs text-muted-foreground">
+          Select a permission to see which roles grant it and which users hold
+          it.
+        </p>
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
@@ -71,73 +121,196 @@ export default function PermissionExplorerPage() {
           />
         </div>
         <Select value={groupFilter} onValueChange={setGroupFilter}>
-          <SelectTrigger className="w-44" aria-label="Filter by group">
+          <SelectTrigger className="w-full" aria-label="Filter by group">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All groups</SelectItem>
-            {groups.map((group) => (
-              <SelectItem key={group} value={group}>
-                {group}
+            {groups.map((g) => (
+              <SelectItem key={g} value={g}>
+                {g}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+
+        <div className="min-h-0 flex-1 overflow-y-auto rounded-[14px] border bg-card dark:border-white/[.08] dark:bg-white/[.018]">
+          {visible.length === 0 ? (
+            <p className="p-4 text-center text-sm text-muted-foreground">
+              No permissions match.
+            </p>
+          ) : (
+            <ul>
+              {visible.map((p) => {
+                const isSensitive = SENSITIVE_PERMISSION_RE.test(p.name)
+                const isSelected = selected?.name === p.name
+                return (
+                  <li
+                    key={p.name}
+                    onClick={() => setSelected(p)}
+                    className={cn(
+                      'cursor-pointer border-b px-3 py-2.5 last:border-0 hover:bg-muted/50',
+                      isSelected && 'bg-accent/10'
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-sm font-medium">
+                        {p.name}
+                      </span>
+                      {isSensitive && (
+                        <Badge
+                          variant="outline"
+                          className="shrink-0 border-amber-500/40 text-[10px] text-amber-500"
+                        >
+                          Sensitive
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">
+                      {groupOf(p.context)}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-4">
-        <div className="mb-1 text-sm font-semibold">Permission explorer</div>
-        <p className="mb-4 text-xs text-muted-foreground">
-          Use this page for transparency and debugging, not day-to-day user
-          grants.
-        </p>
-
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {visible.map((permission) => {
-            const count = usedByCount.get(permission.name) ?? 0
-            return (
-              <Card key={permission.name}>
-                <CardContent className="p-4">
-                  <div className="font-semibold">{permission.name}</div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {permission.description || 'No description'}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    <Badge variant="secondary" className="text-[10px]">
-                      {groupOf(permission.context)}
-                    </Badge>
-                    {permission.context.length > 0 ? (
-                      permission.context.map((ctx) => (
-                        <Badge
-                          key={ctx}
-                          variant="outline"
-                          className="text-[10px] font-normal capitalize"
-                        >
-                          {ctx}
-                        </Badge>
-                      ))
-                    ) : (
+      {/* Right: detail panel */}
+      <div className="min-w-0 flex-1 rounded-[14px] border bg-card dark:border-white/[.08] dark:bg-white/[.018]">
+        {!selected || !selectedIsVisible ? (
+          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+            Select a permission to see who holds it
+          </div>
+        ) : (
+          <div className="flex h-full flex-col overflow-y-auto p-5">
+            {/* Header */}
+            <div className="mb-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-semibold">{selected.name}</span>
+                    {SENSITIVE_PERMISSION_RE.test(selected.name) && (
                       <Badge
                         variant="outline"
-                        className="text-[10px] font-normal"
+                        className="border-amber-500/40 text-[10px] text-amber-500"
                       >
-                        global
+                        Sensitive
                       </Badge>
                     )}
                   </div>
-                  <div className="mt-3 text-xs text-muted-foreground">
-                    Used by {count} {count === 1 ? 'role' : 'roles'}
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {selected.description || 'No description'}
+                  </p>
+                </div>
+                {(() => {
+                  const group = groupOf(selected.context)
+                  const style = GROUP_STYLE[group] ?? GROUP_STYLE['Global']
+                  return (
+                    <span
+                      className={cn(
+                        'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium',
+                        style.bg,
+                        style.text
+                      )}
+                    >
+                      {group}
+                    </span>
+                  )
+                })()}
+              </div>
+            </div>
+
+            {detail && (
+              <>
+                {/* Roles that grant it */}
+                <section className="mb-6">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Granted by{' '}
+                    {detail.grantingRoles.length === 1
+                      ? '1 role'
+                      : `${detail.grantingRoles.length} roles`}
                   </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-          {visible.length === 0 && (
-            <p className="col-span-full py-8 text-center text-sm text-muted-foreground">
-              No permissions match the current filters.
-            </p>
-          )}
-        </div>
+                  {detail.grantingRoles.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No roles grant this permission.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-1.5">
+                      {detail.grantingRoles.map((r) => (
+                        <Badge
+                          key={r.name}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          {r.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                {/* Users who hold it */}
+                <section>
+                  <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Users className="h-3.5 w-3.5" />
+                    {detail.usersWithPerm.length === 1
+                      ? '1 user'
+                      : `${detail.usersWithPerm.length} users`}{' '}
+                    with this permission
+                  </div>
+                  {detail.usersWithPerm.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      {users.length === 0
+                        ? 'Loading users…'
+                        : 'No users currently hold this permission.'}
+                    </p>
+                  ) : (
+                    <ul className="space-y-2">
+                      {detail.usersWithPerm.map(({ user, viaRoles }) => (
+                        <li
+                          key={user.id}
+                          className="rounded-[10px] border px-3 py-2 dark:border-white/[.08] dark:bg-white/[.018]"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-7 w-7 shrink-0">
+                              <AvatarFallback className="bg-blue-500/20 text-[10px] font-semibold text-blue-400">
+                                {getInitials(user)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                              <div className="truncate text-sm font-medium">
+                                {user.firstName} {user.lastName}
+                              </div>
+                              <div className="truncate text-xs text-muted-foreground">
+                                @{user.username}
+                              </div>
+                            </div>
+                          </div>
+                          {viaRoles.length > 0 && (
+                            <div className="mt-1.5 flex flex-wrap gap-1">
+                              {[...new Set(viaRoles)].map((roleName) => (
+                                <Badge
+                                  key={roleName}
+                                  variant="outline"
+                                  className="text-[10px] font-normal"
+                                >
+                                  via {roleName}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

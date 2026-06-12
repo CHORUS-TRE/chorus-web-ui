@@ -38,7 +38,7 @@ export default function UserProfile() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-6">
             {/* Basic Information */}
-            <Card className="border-bg flex h-full flex-col rounded-lg border bg-card">
+            <Card className="flex h-full flex-col overflow-hidden rounded-[14px] border bg-card dark:border-white/[.08] dark:bg-white/[.018]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
@@ -82,7 +82,7 @@ export default function UserProfile() {
             </Card>
 
             {/* Account Status */}
-            <Card className="border-bg flex h-full flex-col rounded-lg border bg-card">
+            <Card className="flex h-full flex-col overflow-hidden rounded-[14px] border bg-card dark:border-white/[.08] dark:bg-white/[.018]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
@@ -135,7 +135,7 @@ export default function UserProfile() {
 
           {/* Workspace Information */}
           {user?.workspaceId && (
-            <Card className="flex h-full flex-col rounded-lg">
+            <Card className="flex h-full flex-col overflow-hidden rounded-[14px] border bg-card dark:border-white/[.08] dark:bg-white/[.018]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AppWindow className="h-5 w-5" />
