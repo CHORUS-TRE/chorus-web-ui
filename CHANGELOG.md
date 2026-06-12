@@ -1,3 +1,30 @@
+# [1.57.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.56.1...v1.57.0) (2026-06-12)
+
+
+### Bug Fixes
+
+* **tou:** add race-condition safety and error handling to TermsOfUseGate ([13fca9e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/13fca9e2aaca134781c5c11ffb9bdd49da83ba2d))
+* **tou:** align view model to async pattern consistent with codebase ([8bd39c2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8bd39c2b6e1230fe843c330be409a6af043ded21))
+
+
+### Features
+
+* add models for Terms of Use management ([197ae3f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/197ae3f79c853ed38b89af68e91139cc769437d7))
+* enhance Terms of Use admin with Markdown editor and improve user profile layout ([a8b5a04](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a8b5a046afb9928b0ab8fcdfec36f87ef66aaf6c))
+* **terms-of-use:** restructure privacy routes and enhance acceptance log ([5b76abd](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5b76abdd07e301ba25180eaf17c86f3ecb56e2b5))
+* **tou:** add admin Terms of Use management page ([5943ac9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5943ac911d3ab0c1dd694483abdf0da4d00d9e32))
+* **tou:** add ConsentScreen component ([9a4867f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9a4867f15d54331d5ca56e62d1fa5af6e9b2fdd8))
+* **tou:** add Terms of Use API data source ([0932981](https://github.com/CHORUS-TRE/chorus-web-ui/commit/09329815837ad536119d04bb607dc197bc389e85))
+* **tou:** add Terms of Use domain model ([5b5f848](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5b5f848e49f066013a2360e91492cb3ddf5ef1a3))
+* **tou:** add Terms of Use repository interface ([97e9d82](https://github.com/CHORUS-TRE/chorus-web-ui/commit/97e9d826bdc3e674ea22c2181e2df0fc83c810a7))
+* **tou:** add Terms of Use tab to admin panel ([ef959e9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ef959e936da4a0805a9781ed78c41da568e352af))
+* **tou:** add Terms of Use use cases ([739ef66](https://github.com/CHORUS-TRE/chorus-web-ui/commit/739ef66f0739938c34a654fc8b118d5bd51686fb))
+* **tou:** add Terms of Use view model ([ad631aa](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ad631aa292086a1e7b7572f834b0ef8ac716164a))
+* **tou:** add TermsOfUseGate provider ([eeb612a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/eeb612a8cb87a48a58e6f0654e7514ed7004bcbe))
+* **tou:** implement Terms of Use repository and data source integration ([35be43d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/35be43d0781694fd273cb06a0a470c234504de08))
+* **tou:** render markdown content, add ToU to privacy pages ([1885674](https://github.com/CHORUS-TRE/chorus-web-ui/commit/18856746a14d76e1dff4704d63af487b86cbad04))
+* **tou:** wire TermsOfUseGate into dashboard layout ([5245899](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5245899037d1df7fe05d64e2f834bf4754ad3833))
+
 ## [1.56.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.56.0...v1.56.1) (2026-06-11)
 
 
