@@ -9,6 +9,7 @@ apis/HealthServiceApi.ts
 apis/NotificationServiceApi.ts
 apis/PlatformSettingsServiceApi.ts
 apis/StewardServiceApi.ts
+apis/TermsOfUseServiceApi.ts
 apis/UserServiceApi.ts
 apis/WorkbenchServiceApi.ts
 apis/WorkspaceFileServiceApi.ts
@@ -19,6 +20,8 @@ index.ts
 models/ApprovalRequestServiceApproveApprovalRequestBody.ts
 models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusAbortWorkspaceFileUploadReply.ts
+models/ChorusAcceptTermsOfUseReply.ts
+models/ChorusAcceptTermsOfUseResult.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
 models/ChorusAppInstanceFilter.ts
@@ -62,6 +65,9 @@ models/ChorusCreateDataTransferRequestResult.ts
 models/ChorusCreateDynamicRoleReply.ts
 models/ChorusCreateDynamicRoleRequest.ts
 models/ChorusCreateDynamicRoleResult.ts
+models/ChorusCreateTermsOfUseVersionReply.ts
+models/ChorusCreateTermsOfUseVersionRequest.ts
+models/ChorusCreateTermsOfUseVersionResult.ts
 models/ChorusCreateUserReply.ts
 models/ChorusCreateUserResult.ts
 models/ChorusCreateUserRoleReply.ts
@@ -103,11 +109,17 @@ models/ChorusGetApprovalRequestReply.ts
 models/ChorusGetApprovalRequestResult.ts
 models/ChorusGetAuthenticationModesReply.ts
 models/ChorusGetAuthenticationModesResult.ts
+models/ChorusGetCurrentTermsOfUseVersionReply.ts
+models/ChorusGetCurrentTermsOfUseVersionResult.ts
 models/ChorusGetEntryReply.ts
 models/ChorusGetEntryResult.ts
+models/ChorusGetMyTermsOfUseStatusReply.ts
+models/ChorusGetMyTermsOfUseStatusResult.ts
 models/ChorusGetNotificationsReply.ts
 models/ChorusGetPlatformSettingsReply.ts
 models/ChorusGetPlatformSettingsResult.ts
+models/ChorusGetTermsOfUseVersionReply.ts
+models/ChorusGetTermsOfUseVersionResult.ts
 models/ChorusGetUserMeReply.ts
 models/ChorusGetUserMeResult.ts
 models/ChorusGetUserReply.ts
@@ -138,6 +150,10 @@ models/ChorusListPermissionsReply.ts
 models/ChorusListPermissionsResult.ts
 models/ChorusListRolesReply.ts
 models/ChorusListRolesResult.ts
+models/ChorusListTermsOfUseAcceptancesReply.ts
+models/ChorusListTermsOfUseAcceptancesResult.ts
+models/ChorusListTermsOfUseVersionsReply.ts
+models/ChorusListTermsOfUseVersionsResult.ts
 models/ChorusListUsersReply.ts
 models/ChorusListUsersResult.ts
 models/ChorusListWorkbenchesReply.ts
@@ -162,6 +178,8 @@ models/ChorusOpenID.ts
 models/ChorusPaginationQuery.ts
 models/ChorusPaginationResult.ts
 models/ChorusPlatformSettings.ts
+models/ChorusPublishTermsOfUseVersionReply.ts
+models/ChorusPublishTermsOfUseVersionResult.ts
 models/ChorusPutEntryReply.ts
 models/ChorusPutEntryRequest.ts
 models/ChorusPutEntryResult.ts
@@ -180,6 +198,10 @@ models/ChorusResetTotpResult.ts
 models/ChorusRole.ts
 models/ChorusSort.ts
 models/ChorusSystemNotification.ts
+models/ChorusTermsOfUseAcceptance.ts
+models/ChorusTermsOfUseUserStatus.ts
+models/ChorusTermsOfUseVersion.ts
+models/ChorusTermsOfUseVersionStatus.ts
 models/ChorusUpdateAppInstanceReply.ts
 models/ChorusUpdateAppInstanceResult.ts
 models/ChorusUpdateAppReply.ts
@@ -189,6 +211,8 @@ models/ChorusUpdatePasswordRequest.ts
 models/ChorusUpdatePlatformSettingsReply.ts
 models/ChorusUpdatePlatformSettingsRequest.ts
 models/ChorusUpdatePlatformSettingsResult.ts
+models/ChorusUpdateTermsOfUseVersionReply.ts
+models/ChorusUpdateTermsOfUseVersionResult.ts
 models/ChorusUpdateUserReply.ts
 models/ChorusUpdateUserResult.ts
 models/ChorusUpdateWorkbenchReply.ts
@@ -215,6 +239,7 @@ models/ChorusWorkspaceServiceInstanceFilter.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
 models/ProtobufAny.ts
 models/RpcStatus.ts
+models/TermsOfUseServiceUpdateTermsOfUseVersionBody.ts
 models/UserServiceCreateUserRoleBody.ts
 models/WorkbenchServiceManageUserRoleInWorkbenchBody.ts
 models/WorkspaceServiceManageUserRoleInWorkspaceBody.ts

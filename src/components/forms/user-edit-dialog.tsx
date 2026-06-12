@@ -112,9 +112,11 @@ export function UserEditDialog({
         })
       }
     } else if (state?.data) {
+      toast({ title: 'User updated successfully' })
+      onUserUpdated()
       setDialogOpen(false)
     }
-  }, [state])
+  }, [state, onUserUpdated])
 
   const handleOpenChange = (isOpen: boolean) => {
     setDialogOpen(isOpen)

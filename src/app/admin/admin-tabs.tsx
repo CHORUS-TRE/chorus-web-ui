@@ -63,6 +63,11 @@ export function AdminTabs() {
       authorized: can('setPlatformSettings', {})
     },
     {
+      href: '/admin/terms-of-use',
+      label: 'Terms of Use',
+      authorized: can('setPlatformSettings', {})
+    },
+    {
       href: '/admin/theme',
       label: 'Theme',
       authorized: can('setPlatformSettings', {})

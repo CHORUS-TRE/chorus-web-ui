@@ -4,10 +4,13 @@ import {
   CheckCircle2,
   Cookie,
   HelpCircle,
+  ScrollText,
   Sparkles,
   XCircle
 } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -19,13 +22,22 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { USER_CONFIG_KEYS } from '@/domain/model/user-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
+import { getCurrentTermsOfUseVersion } from '@/view-model/terms-of-use-view-model'
 
 export default function PrivacySettingsPage() {
   const {} = useAuthentication()
   const { getUser, setCookieConsentOpen } = useDevStoreCache()
+  const [touContent, setTouContent] = useState<string | null>(null)
+
+  useEffect(() => {
+    getCurrentTermsOfUseVersion().then((result) => {
+      if (result.data?.content) setTouContent(result.data.content)
+    })
+  }, [])
 
   const handleManageCookies = () => {
     setCookieConsentOpen(true)
@@ -65,12 +77,12 @@ export default function PrivacySettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 py-4">
-      <Card className="card-glass overflow-hidden border-none shadow-md">
-        <CardHeader className="bg-primary/5 pb-6">
+    <div className="">
+      <Card className="border-bg mb-4 overflow-hidden border bg-card shadow-md">
+        <CardHeader className="pb-6">
           <div className="mb-1 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+            <Sparkles className="h-4 w-4 text-accent" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">
               Data Collection
             </span>
           </div>
@@ -111,26 +123,30 @@ export default function PrivacySettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="card-glass border-t border-none border-white/10">
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">About Privacy</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm leading-relaxed text-muted-foreground">
-          Your privacy is important to us. We comply with GDPR requirements.
-          When you decline tracking, we stop collecting behavioral data
-          immediately. See our{' '}
-          <Link
-            href="/privacy-policy"
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-4 transition-colors hover:text-primary"
-          >
-            Privacy Policy
-          </Link>{' '}
-          for more information. Any data previously collected remains anonymized
-          and cannot be linked back to your identity.
-        </CardContent>
-      </Card>
+      {touContent && (
+        <Card className="border-bg overflow-hidden border bg-card shadow-md">
+          <CardHeader className="mb-4 pb-6">
+            <div className="mb-1 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-accent" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                Privacy Policy
+              </span>
+            </div>
+            <CardTitle>Terms of Use</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              Below is the current version of our Terms of Use you agreed to
+              when you accepted the terms.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-80 rounded border p-4">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown>{touContent}</ReactMarkdown>
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

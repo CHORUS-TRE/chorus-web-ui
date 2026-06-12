@@ -84,7 +84,7 @@ export function UserProfileSection() {
               @{user.username} (id: {user.id})
             </p>
             <Link
-              href={`/settings/profile`}
+              href={`/profile`}
               variant="underline"
               className="mt-1 block text-xs font-medium"
             >
@@ -136,17 +136,6 @@ export function UserProfileSection() {
 
         {/* Section 4: Settings & Data */}
         <div className="py-1">
-          <DropdownMenuItem asChild>
-            <Link
-              href={`/settings`}
-              variant="underline"
-              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-normal text-foreground transition-colors hover:bg-muted/40"
-            >
-              <Settings className="h-4 w-4" />
-              Settings
-            </Link>
-          </DropdownMenuItem>
-
           {isAdmin && (
             <DropdownMenuItem asChild>
               <Link

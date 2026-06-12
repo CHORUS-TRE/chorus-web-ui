@@ -10,15 +10,11 @@ export function SettingsTabs() {
 
   const routes = [
     {
-      href: '/settings',
-      label: 'Overview'
-    },
-    {
-      href: '/settings/profile',
+      href: '/profile',
       label: 'Profile'
     },
     {
-      href: '/settings/privacy',
+      href: '/profile/privacy',
       label: 'Privacy'
     }
   ]

@@ -8,15 +8,27 @@ import {
   Lock,
   Mail,
   Scale,
+  ScrollText,
   Shield
 } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { getCurrentTermsOfUseVersion } from '@/view-model/terms-of-use-view-model'
 
-export default function PrivacyPolicyPage() {
+export default function PolicyPage() {
   const lastUpdated = 'January 20, 2026'
+  const [touContent, setTouContent] = useState<string | null>(null)
+
+  useEffect(() => {
+    getCurrentTermsOfUseVersion().then((result) => {
+      if (result.data?.content) setTouContent(result.data.content)
+    })
+  }, [])
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
@@ -240,6 +252,37 @@ export default function PrivacyPolicyPage() {
               </CardContent>
             </Card>
           </section>
+
+          {/* Terms of Use */}
+          {touContent && (
+            <>
+              <Separator className="my-8" />
+              <section className="group">
+                <div className="mb-8 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 shadow-sm transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+                    <ScrollText className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-tight">
+                      Terms of Use
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Current published version
+                    </p>
+                  </div>
+                </div>
+                <Card className="card-glass border-none shadow-xl shadow-primary/5 transition-all duration-500 hover:shadow-primary/10">
+                  <CardContent className="pt-6">
+                    <ScrollArea className="h-96 rounded border p-4">
+                      <div className="prose prose-sm dark:prose-invert max-w-none">
+                        <ReactMarkdown>{touContent}</ReactMarkdown>
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </section>
+            </>
+          )}
 
           {/* Contact Section */}
           <Separator className="my-8" />
