@@ -136,7 +136,7 @@ export default function UsersPage() {
                 aria-label="Search users"
               />
             </div>
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
               className={cn(
@@ -148,7 +148,7 @@ export default function UsersPage() {
             >
               <Lock className="h-3 w-3" />
               Has sensitive
-            </Button>
+            </Button> */}
           </div>
           <UsersMasterTable
             users={users}
