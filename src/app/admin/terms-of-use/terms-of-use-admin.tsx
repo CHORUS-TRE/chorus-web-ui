@@ -1,8 +1,14 @@
 'use client'
 
 import { format } from 'date-fns'
+import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+
+const MDEditorClient = dynamic(() => import('@uiw/react-md-editor'), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse rounded border bg-muted" />
+})
 
 import { toast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
@@ -24,7 +30,6 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
 import type {
   TermsOfUseAcceptance,
   TermsOfUseVersion,
@@ -186,7 +191,11 @@ export function TermsOfUseAdmin() {
             </TableHeader>
             <TableBody>
               {versions.map((v) => (
-                <TableRow key={v.id}>
+                <TableRow
+                  key={v.id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => openEdit(v)}
+                >
                   <TableCell className="font-mono text-xs">{v.id}</TableCell>
                   <TableCell>
                     {v.status && (
@@ -207,13 +216,19 @@ export function TermsOfUseAdmin() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => openEdit(v)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            openEdit(v)
+                          }}
                         >
                           Edit
                         </Button>
                         <Button
                           size="sm"
-                          onClick={() => v.id && openPublish(v.id)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            v.id && openPublish(v.id)
+                          }}
                         >
                           Publish
                         </Button>
@@ -223,7 +238,10 @@ export function TermsOfUseAdmin() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => openEdit(v)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openEdit(v)
+                        }}
                       >
                         View
                       </Button>
@@ -332,14 +350,18 @@ export function TermsOfUseAdmin() {
               </div>
             </ScrollArea>
           ) : (
-            <Textarea
-              className="min-h-64 font-mono text-sm"
-              value={editDialog.content}
-              onChange={(e) =>
-                setEditDialog((s) => ({ ...s, content: e.target.value }))
-              }
-              placeholder="Enter the Terms of Use text… (you can use markdown formatting)"
-            />
+            <div className="space-y-3">
+              <div data-color-mode="auto">
+                <MDEditorClient
+                  value={editDialog.content}
+                  onChange={(val) =>
+                    setEditDialog((s) => ({ ...s, content: val ?? '' }))
+                  }
+                  height={300}
+                  preview="preview"
+                />
+              </div>
+            </div>
           )}
           <DialogFooter>
             <Button
@@ -359,6 +381,25 @@ export function TermsOfUseAdmin() {
               </Button>
             )}
           </DialogFooter>
+          <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-800 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300">
+            <p className="mb-1 font-semibold">Markdown formatting</p>
+            <p className="mb-2 text-blue-700 dark:text-blue-400">
+              Content is rendered as{' '}
+              <a
+                href="https://commonmark.org/help/"
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-2 hover:text-blue-900 dark:hover:text-blue-200"
+              >
+                Markdown
+              </a>
+            </p>
+
+            <p className="mt-2 text-blue-700 dark:text-blue-400">
+              Use the <span className="font-semibold">toolbar icons</span> to
+              switch between Edit, Split, and Preview 👁 modes.
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
 

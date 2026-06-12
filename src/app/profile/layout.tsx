@@ -27,17 +27,15 @@ export default function Layout({
   if (!user) return <Login />
 
   return (
-    <div className="w-full">
+    <div className="container mx-auto p-6">
       <AuthenticatedApp>
         <div className="flex items-center justify-between gap-3">
-          <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 px-8 text-start">
+          <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
             <UserIcon className="h-9 w-9" />
-            User Settings
+            {user?.firstName}&apos;s Profile
           </h2>
         </div>
-        <div className="px-8">
-          <SettingsTabs />
-        </div>
+        <SettingsTabs />
 
         <div className="float-start flex w-full">
           <main className="w-full px-8">{children}</main>

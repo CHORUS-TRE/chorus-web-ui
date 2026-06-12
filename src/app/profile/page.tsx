@@ -27,8 +27,8 @@ export default function UserProfile() {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2">
           <UserAccessDetail
             user={user}
             onChanged={refreshUser}
@@ -36,9 +36,9 @@ export default function UserProfile() {
           />
         </div>
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="flex flex-col gap-6">
             {/* Basic Information */}
-            <Card className="flex h-full flex-col rounded-lg">
+            <Card className="border-bg flex h-full flex-col rounded-lg border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
@@ -46,6 +46,12 @@ export default function UserProfile() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Email
+                  </label>
+                  <p>{user?.email}</p>
+                </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     User ID
@@ -76,7 +82,7 @@ export default function UserProfile() {
             </Card>
 
             {/* Account Status */}
-            <Card className="flex h-full flex-col rounded-lg">
+            <Card className="border-bg flex h-full flex-col rounded-lg border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
