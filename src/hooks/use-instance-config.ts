@@ -12,6 +12,7 @@ import {
   InstanceLogo,
   InstanceLogoSchema
 } from '@/domain/model/instance-config'
+import { WorkspaceState } from '@/domain/model/workspace'
 import { useAppState } from '@/stores/app-state-store'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 
@@ -162,8 +163,9 @@ export function useInstanceLimits(userId?: string): InstanceLimitsResult {
     }
 
     const workspaceCount =
-      workspaces?.filter((w) => w.userId === userId && w.status !== 'deleted')
-        .length ?? 0
+      workspaces?.filter(
+        (w) => w.userId === userId && w.status !== WorkspaceState.DELETED
+      ).length ?? 0
     const sessionCount =
       workbenches?.filter(
         (wb) => wb.userId === userId && wb.status !== WorkbenchStatus.DELETED

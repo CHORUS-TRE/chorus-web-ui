@@ -1041,7 +1041,7 @@ function VisibilityTabContent({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>
+                    <FormDescription className="text-muted-foreground">
                       Optional — if not set, no contact info appears on the
                       public listing
                     </FormDescription>
