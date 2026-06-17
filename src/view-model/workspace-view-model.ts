@@ -309,7 +309,7 @@ export async function workspaceListWithDev(): Promise<
 > {
   const [workspacesResult, workbenchesResult, meResult] = await Promise.all([
     workspaceList(),
-    workbenchList(), 
+    workbenchList(),
     userMe()
   ])
 
@@ -321,7 +321,9 @@ export async function workspaceListWithDev(): Promise<
 
   const workbenches = workbenchesResult.data || []
   const enriched = await Promise.all(
-    workspacesResult.data.map((ws) => enrichWorkspaceWithDev(ws, workbenches, meResult.data))
+    workspacesResult.data.map((ws) =>
+      enrichWorkspaceWithDev(ws, workbenches, meResult.data)
+    )
   )
 
   return { data: enriched }
