@@ -267,15 +267,6 @@ export default function CHORUSDashboard() {
                       <p className="mb-4 text-sm text-muted-foreground">
                         You don&apos;t have any workspaces yet
                       </p>
-                      {can('createWorkspace') && (
-                        <Button
-                          onClick={() => setCreateOpen(true)}
-                          variant="accent-filled"
-                        >
-                          <CirclePlus className="h-4 w-4" />
-                          Create Workspace
-                        </Button>
-                      )}
                     </div>
                   )}
                   {workspaceList?.map((workspace) => {
