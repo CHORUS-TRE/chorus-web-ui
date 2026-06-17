@@ -3,10 +3,41 @@ import {
   App,
   AppCreateType,
   AppSchema,
+  AppState,
   AppUpdateType,
   Result
 } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
+
+const RESOURCE_FIELDS = [
+  'shmSize',
+  'minEphemeralStorage',
+  'maxEphemeralStorage',
+  'maxCPU',
+  'minCPU',
+  'maxMemory',
+  'minMemory'
+] as const
+
+const normalizeAppStatus = (raw?: string): AppState => {
+  if (!raw) return AppState.UNKNOWN
+  const upper = raw.toUpperCase()
+  if (upper.endsWith('ACTIVE')) return AppState.ACTIVE
+  if (upper.endsWith('INACTIVE')) return AppState.INACTIVE
+  if (upper.endsWith('DELETED')) return AppState.DELETED
+  return AppState.UNKNOWN
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeApp = (app: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+  const normalized = { ...app, status: normalizeAppStatus(app.status) }
+  for (const field of RESOURCE_FIELDS) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (normalized[field] === '') normalized[field] = undefined
+  }
+  return normalized
+}
 
 export class AppRepositoryImpl implements AppRepository {
   private dataSource: AppDataSource
@@ -20,7 +51,7 @@ export class AppRepositoryImpl implements AppRepository {
       const response = await this.dataSource.get(id)
       if (!response.result?.app) return { error: 'Error getting app' }
 
-      const app = AppSchema.parse(response.result.app)
+      const app = AppSchema.parse(normalizeApp(response.result.app))
 
       return { data: app }
     } catch (error) {
@@ -35,7 +66,9 @@ export class AppRepositoryImpl implements AppRepository {
 
       if (!response.result?.apps) return { error: 'Error listing apps' }
 
-      const apps = response.result.apps.map((r) => AppSchema.parse(r))
+      const apps = response.result.apps.map((r) =>
+        AppSchema.parse(normalizeApp(r))
+      )
 
       return { data: apps }
     } catch (error) {
@@ -51,7 +84,7 @@ export class AppRepositoryImpl implements AppRepository {
         return { error: 'Error creating app' }
       }
 
-      const appResult = AppSchema.safeParse(response.result.app)
+      const appResult = AppSchema.safeParse(normalizeApp(response.result.app))
       if (!appResult.success) {
         return {
           error: 'API response validation failed',
