@@ -17,6 +17,7 @@ import type {
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
+  ChorusListPublicWorkspacesReply,
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
@@ -33,6 +34,8 @@ import {
   ChorusDeleteWorkspaceReplyToJSON,
   ChorusGetWorkspaceReplyFromJSON,
   ChorusGetWorkspaceReplyToJSON,
+  ChorusListPublicWorkspacesReplyFromJSON,
+  ChorusListPublicWorkspacesReplyToJSON,
   ChorusListWorkspacesReplyFromJSON,
   ChorusListWorkspacesReplyToJSON,
   ChorusManageUserRoleInWorkspaceReplyFromJSON,
@@ -61,6 +64,14 @@ export interface WorkspaceServiceDeleteWorkspaceRequest {
 
 export interface WorkspaceServiceGetWorkspaceRequest {
   id: string
+}
+
+export interface WorkspaceServiceListPublicWorkspacesRequest {
+  paginationOffset?: number
+  paginationLimit?: number
+  paginationSortOrder?: string
+  paginationSortType?: string
+  paginationQuery?: Array<string>
 }
 
 export interface WorkspaceServiceListWorkspacesRequest {
@@ -265,6 +276,75 @@ export class WorkspaceServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetWorkspaceReply> {
     const response = await this.workspaceServiceGetWorkspaceRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns a list of public workspaces
+   * List public workspaces
+   */
+  async workspaceServiceListPublicWorkspacesRaw(
+    requestParameters: WorkspaceServiceListPublicWorkspacesRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusListPublicWorkspacesReply>> {
+    const queryParameters: any = {}
+
+    if (requestParameters.paginationOffset !== undefined) {
+      queryParameters['pagination.offset'] = requestParameters.paginationOffset
+    }
+
+    if (requestParameters.paginationLimit !== undefined) {
+      queryParameters['pagination.limit'] = requestParameters.paginationLimit
+    }
+
+    if (requestParameters.paginationSortOrder !== undefined) {
+      queryParameters['pagination.sort.order'] =
+        requestParameters.paginationSortOrder
+    }
+
+    if (requestParameters.paginationSortType !== undefined) {
+      queryParameters['pagination.sort.type'] =
+        requestParameters.paginationSortType
+    }
+
+    if (requestParameters.paginationQuery) {
+      queryParameters['pagination.query'] = requestParameters.paginationQuery
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspaces/public`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusListPublicWorkspacesReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns a list of public workspaces
+   * List public workspaces
+   */
+  async workspaceServiceListPublicWorkspaces(
+    requestParameters: WorkspaceServiceListPublicWorkspacesRequest = {},
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusListPublicWorkspacesReply> {
+    const response = await this.workspaceServiceListPublicWorkspacesRaw(
       requestParameters,
       initOverrides
     )

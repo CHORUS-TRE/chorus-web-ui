@@ -13,6 +13,19 @@
  */
 
 import { exists, mapValues } from '../runtime'
+import type { ChorusWorkspaceStatus } from './ChorusWorkspaceStatus'
+import {
+  ChorusWorkspaceStatusFromJSON,
+  ChorusWorkspaceStatusFromJSONTyped,
+  ChorusWorkspaceStatusToJSON
+} from './ChorusWorkspaceStatus'
+import type { ChorusWorkspaceVisibility } from './ChorusWorkspaceVisibility'
+import {
+  ChorusWorkspaceVisibilityFromJSON,
+  ChorusWorkspaceVisibilityFromJSONTyped,
+  ChorusWorkspaceVisibilityToJSON
+} from './ChorusWorkspaceVisibility'
+
 /**
  *
  * @export
@@ -57,10 +70,10 @@ export interface ChorusWorkspace {
   description?: string
   /**
    *
-   * @type {string}
+   * @type {ChorusWorkspaceStatus}
    * @memberof ChorusWorkspace
    */
-  status?: string
+  status?: ChorusWorkspaceStatus
   /**
    *
    * @type {boolean}
@@ -79,18 +92,6 @@ export interface ChorusWorkspace {
    * @memberof ChorusWorkspace
    */
   appInstances?: Array<string>
-  /**
-   *
-   * @type {Date}
-   * @memberof ChorusWorkspace
-   */
-  createdAt?: Date
-  /**
-   *
-   * @type {Date}
-   * @memberof ChorusWorkspace
-   */
-  updatedAt?: Date
   /**
    *
    * @type {string}
@@ -133,6 +134,30 @@ export interface ChorusWorkspace {
    * @memberof ChorusWorkspace
    */
   gid?: string
+  /**
+   *
+   * @type {ChorusWorkspaceVisibility}
+   * @memberof ChorusWorkspace
+   */
+  visibility?: ChorusWorkspaceVisibility
+  /**
+   *
+   * @type {string}
+   * @memberof ChorusWorkspace
+   */
+  contactUserId?: string
+  /**
+   *
+   * @type {Date}
+   * @memberof ChorusWorkspace
+   */
+  createdAt?: Date
+  /**
+   *
+   * @type {Date}
+   * @memberof ChorusWorkspace
+   */
+  updatedAt?: Date
 }
 
 /**
@@ -162,7 +187,9 @@ export function ChorusWorkspaceFromJSONTyped(
     name: !exists(json, 'name') ? undefined : json['name'],
     shortName: !exists(json, 'shortName') ? undefined : json['shortName'],
     description: !exists(json, 'description') ? undefined : json['description'],
-    status: !exists(json, 'status') ? undefined : json['status'],
+    status: !exists(json, 'status')
+      ? undefined
+      : ChorusWorkspaceStatusFromJSON(json['status']),
     isMain: !exists(json, 'isMain') ? undefined : json['isMain'],
     appInstanceIds: !exists(json, 'appInstanceIds')
       ? undefined
@@ -170,12 +197,6 @@ export function ChorusWorkspaceFromJSONTyped(
     appInstances: !exists(json, 'appInstances')
       ? undefined
       : json['appInstances'],
-    createdAt: !exists(json, 'createdAt')
-      ? undefined
-      : new Date(json['createdAt']),
-    updatedAt: !exists(json, 'updatedAt')
-      ? undefined
-      : new Date(json['updatedAt']),
     namespace: !exists(json, 'namespace') ? undefined : json['namespace'],
     networkPolicy: !exists(json, 'networkPolicy')
       ? undefined
@@ -190,7 +211,19 @@ export function ChorusWorkspaceFromJSONTyped(
       ? undefined
       : json['networkPolicyMessage'],
     clipboard: !exists(json, 'clipboard') ? undefined : json['clipboard'],
-    gid: !exists(json, 'gid') ? undefined : json['gid']
+    gid: !exists(json, 'gid') ? undefined : json['gid'],
+    visibility: !exists(json, 'visibility')
+      ? undefined
+      : ChorusWorkspaceVisibilityFromJSON(json['visibility']),
+    contactUserId: !exists(json, 'contactUserId')
+      ? undefined
+      : json['contactUserId'],
+    createdAt: !exists(json, 'createdAt')
+      ? undefined
+      : new Date(json['createdAt']),
+    updatedAt: !exists(json, 'updatedAt')
+      ? undefined
+      : new Date(json['updatedAt'])
   }
 }
 
@@ -208,20 +241,22 @@ export function ChorusWorkspaceToJSON(value?: ChorusWorkspace | null): any {
     name: value.name,
     shortName: value.shortName,
     description: value.description,
-    status: value.status,
+    status: ChorusWorkspaceStatusToJSON(value.status),
     isMain: value.isMain,
     appInstanceIds: value.appInstanceIds,
     appInstances: value.appInstances,
-    createdAt:
-      value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
-    updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
     namespace: value.namespace,
     networkPolicy: value.networkPolicy,
     allowedFqdns: value.allowedFqdns,
     networkPolicyStatus: value.networkPolicyStatus,
     networkPolicyMessage: value.networkPolicyMessage,
     clipboard: value.clipboard,
-    gid: value.gid
+    gid: value.gid,
+    visibility: ChorusWorkspaceVisibilityToJSON(value.visibility),
+    contactUserId: value.contactUserId,
+    createdAt:
+      value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
+    updatedAt:
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
   }
 }

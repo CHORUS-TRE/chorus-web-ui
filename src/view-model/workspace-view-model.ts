@@ -15,6 +15,7 @@ import {
   WorkspaceUpdatetype,
   WorkspaceWithDev
 } from '@/domain/model'
+import { PublicWorkspace } from '@/domain/model/public-workspace'
 import { User } from '@/domain/model/user'
 import { Workbench } from '@/domain/model/workbench'
 import {
@@ -25,6 +26,7 @@ import {
   WorkspaceConfig,
   WorkspaceConfigSchema
 } from '@/domain/model/workspace-config'
+import { PublicWorkspacesList } from '@/domain/use-cases/workspace/public-workspaces-list'
 import { WorkspaceCreate } from '@/domain/use-cases/workspace/workspace-create'
 import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
 import { WorkspaceGet } from '@/domain/use-cases/workspace/workspace-get'
@@ -122,6 +124,10 @@ function extractAndValidateApiFields(
       | undefined,
     allowedFqdns: data.allowedFqdns as string[] | undefined,
     clipboard: data.clipboard as WorkspaceCreateType['clipboard'] | undefined,
+    visibility: data.visibility as
+      | WorkspaceCreateType['visibility']
+      | undefined,
+    contactUserId: (data.contactUserId as string) || undefined,
     ...(isUpdate ? { id: data.id as string } : {})
   }
 
@@ -282,6 +288,14 @@ export async function workspaceDelete(id: string): Promise<Result<string>> {
 export async function workspaceList(): Promise<Result<Workspace[]>> {
   const repository = await getRepository()
   const useCase = new WorkspacesList(repository)
+  return await useCase.execute()
+}
+
+export async function publicWorkspaceList(): Promise<
+  Result<PublicWorkspace[]>
+> {
+  const repository = await getRepository()
+  const useCase = new PublicWorkspacesList(repository)
   return await useCase.execute()
 }
 

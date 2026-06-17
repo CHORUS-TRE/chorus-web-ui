@@ -5,9 +5,45 @@ import {
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '@/domain/model'
+import {
+  PublicWorkspace,
+  PublicWorkspaceSchema
+} from '@/domain/model/public-workspace'
 import { User } from '@/domain/model/user'
-import { WorkspaceSchema } from '@/domain/model/workspace'
+import {
+  WorkspaceSchema,
+  WorkspaceState,
+  WorkspaceVisibility
+} from '@/domain/model/workspace'
 import { WorkspaceRepository } from '@/domain/repository'
+
+const normalizeWorkspaceStatus = (raw?: string): WorkspaceState => {
+  if (!raw) return WorkspaceState.UNKNOWN
+  const upper = raw.toUpperCase()
+  if (upper.includes('INACTIVE')) return WorkspaceState.INACTIVE
+  if (upper.includes('ACTIVE')) return WorkspaceState.ACTIVE
+  if (upper.includes('DELETED')) return WorkspaceState.DELETED
+  return WorkspaceState.UNKNOWN
+}
+
+const normalizeWorkspaceVisibility = (
+  raw?: string
+): WorkspaceVisibility | undefined => {
+  if (!raw) return undefined
+  const upper = raw.toUpperCase()
+  if (upper.includes('PUBLIC')) return WorkspaceVisibility.PUBLIC
+  if (upper.includes('PRIVATE')) return WorkspaceVisibility.PRIVATE
+  return undefined
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeWorkspace = (w: any) => ({
+  ...w,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+  status: normalizeWorkspaceStatus(w.status),
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+  visibility: normalizeWorkspaceVisibility(w.visibility)
+})
 
 export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   private dataSource: WorkspaceDataSource
@@ -24,7 +60,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       }
 
       const workspaceResult = WorkspaceSchema.safeParse(
-        response.result.workspace
+        normalizeWorkspace(response.result.workspace)
       )
       if (!workspaceResult.success) {
         return {
@@ -46,7 +82,9 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       if (!response.result?.workspace) {
         return { error: 'Not found' }
       }
-      const validatedData = WorkspaceSchema.parse(response.result.workspace)
+      const validatedData = WorkspaceSchema.parse(
+        normalizeWorkspace(response.result.workspace)
+      )
       return { data: validatedData }
     } catch (error) {
       console.error('Error getting workspace', error)
@@ -71,11 +109,29 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return { data: [] }
       }
       const validatedData = response.result.workspaces.map((w) =>
-        WorkspaceSchema.parse(w)
+        WorkspaceSchema.parse(normalizeWorkspace(w))
       )
       return { data: validatedData }
     } catch (error) {
       console.error('Error listing workspaces', error)
+      return {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  async listPublic(): Promise<Result<PublicWorkspace[]>> {
+    try {
+      const response = await this.dataSource.listPublic()
+      if (!response.result?.publicWorkspaces) {
+        return { data: [] }
+      }
+      const validatedData = response.result.publicWorkspaces.map((w) =>
+        PublicWorkspaceSchema.parse(normalizeWorkspace(w))
+      )
+      return { data: validatedData }
+    } catch (error) {
+      console.error('Error listing public workspaces', error)
       return {
         error: error instanceof Error ? error.message : String(error)
       }
