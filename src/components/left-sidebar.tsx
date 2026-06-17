@@ -52,6 +52,11 @@ export const navItems = [
     label: 'Services',
     icon: Globe,
     href: '/app-store?tab=services'
+  },
+  {
+    label: 'Public Workspaces',
+    icon: Globe,
+    href: '/public-workspaces'
   }
 ]
 
@@ -124,6 +129,21 @@ function SidebarContent({
           Workspaces
         </Link>
 
+        {/* Public Workspaces (sub-item) */}
+        <Link
+          href="/public-workspaces"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg py-1.5 pl-10 pr-3 text-sm font-medium transition-colors hover:text-accent',
+            isActive('/public-workspaces')
+              ? 'bg-accent/15 text-accent'
+              : 'text-muted-foreground'
+          )}
+        >
+          <Globe className="h-3.5 w-3.5" />
+          Public
+        </Link>
+
         {/* Sessions */}
         <Link
           href="/sessions"
@@ -169,10 +189,6 @@ function SidebarContent({
           App Store
         </Link>
 
-        <SidebarBookmarks />
-
-        <Separator className="my-2" />
-
         <Link
           href="/messages"
           variant="underline"
@@ -191,6 +207,10 @@ function SidebarContent({
             </span>
           )}
         </Link>
+
+        <SidebarBookmarks />
+
+        <Separator className="my-2" />
 
         <Link
           onClick={(e) => {

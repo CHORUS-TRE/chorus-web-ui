@@ -69,19 +69,17 @@ export default function CHORUSDashboard() {
     ) || []
 
   const workbenchesList =
-    workbenches?.filter(
-      (workbench) =>
-        user?.rolesWithContext?.some(
-          (role) => role.context.workspace === workbench.workspaceId
-        ) || user?.id === workbench.userId
+    workbenches?.filter((workbench) =>
+      user?.rolesWithContext?.some(
+        (role) => role.context.workbench === workbench.id
+      )
     ) || []
 
   const appInstancesList =
-    appInstances?.filter(
-      (instance) =>
-        user?.rolesWithContext?.some(
-          (role) => role.context.workspace === instance.workspaceId
-        ) || user?.id === instance.userId
+    appInstances?.filter((instance) =>
+      user?.rolesWithContext?.some(
+        (role) => role.context.workbench === instance.workbenchId
+      )
     ) || []
 
   return (
@@ -267,20 +265,15 @@ export default function CHORUSDashboard() {
                       <p className="mb-4 text-sm text-muted-foreground">
                         You don&apos;t have any workspaces yet
                       </p>
-                      {can('createWorkspace') && (
-                        <Button
-                          onClick={() => setCreateOpen(true)}
-                          variant="accent-filled"
-                        >
-                          <CirclePlus className="h-4 w-4" />
-                          Create Workspace
-                        </Button>
-                      )}
                     </div>
                   )}
                   {workspaceList?.map((workspace) => {
                     const workspaceSessions = workbenches?.filter(
-                      (wb) => wb.workspaceId === workspace.id
+                      (wb) =>
+                        wb.workspaceId === workspace.id &&
+                        user?.rolesWithContext?.some(
+                          (role) => role.context.workbench === wb.id
+                        )
                     )
                     return (
                       <div

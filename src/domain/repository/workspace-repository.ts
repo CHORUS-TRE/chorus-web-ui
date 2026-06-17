@@ -4,10 +4,12 @@ import {
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '../model'
+import { PublicWorkspace } from '../model/public-workspace'
 import { User } from '../model/user'
 
 export interface WorkspaceRepository {
   list: () => Promise<Result<Workspace[]>>
+  listPublic: () => Promise<Result<PublicWorkspace[]>>
   create: (workspace: WorkspaceCreateType) => Promise<Result<Workspace>>
   update: (workspace: WorkspaceUpdatetype) => Promise<Result<Workspace>>
   delete: (id: string) => Promise<Result<string>>

@@ -148,6 +148,8 @@ models/ChorusListEntriesReply.ts
 models/ChorusListEntriesResult.ts
 models/ChorusListPermissionsReply.ts
 models/ChorusListPermissionsResult.ts
+models/ChorusListPublicWorkspacesReply.ts
+models/ChorusListPublicWorkspacesResult.ts
 models/ChorusListRolesReply.ts
 models/ChorusListRolesResult.ts
 models/ChorusListTermsOfUseAcceptancesReply.ts
@@ -178,6 +180,7 @@ models/ChorusOpenID.ts
 models/ChorusPaginationQuery.ts
 models/ChorusPaginationResult.ts
 models/ChorusPlatformSettings.ts
+models/ChorusPublicWorkspace.ts
 models/ChorusPublishTermsOfUseVersionReply.ts
 models/ChorusPublishTermsOfUseVersionResult.ts
 models/ChorusPutEntryReply.ts
@@ -236,6 +239,8 @@ models/ChorusWorkspaceFileStoreInfo.ts
 models/ChorusWorkspaceFilter.ts
 models/ChorusWorkspaceServiceInstance.ts
 models/ChorusWorkspaceServiceInstanceFilter.ts
+models/ChorusWorkspaceStatus.ts
+models/ChorusWorkspaceVisibility.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
 models/ProtobufAny.ts
 models/RpcStatus.ts

@@ -10,7 +10,7 @@ import {
   Users
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -116,6 +116,19 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
   }, [workspaceId])
   const workspace = workspaces?.find((w) => w.id === workspaceId)
 
+  const workspaceSessions = useMemo(
+    () =>
+      workbenches?.filter(
+        (workbench) =>
+          workbench.workspaceId === workspaceId &&
+          user?.rolesWithContext?.some(
+            (role) => role.context.workbench === workbench.id
+          )
+      ) ?? [],
+    [workbenches, workspaceId, user?.rolesWithContext]
+  )
+  const sessionCount = workspaceSessions.length
+
   return (
     <>
       {openEdit && (
@@ -155,53 +168,34 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
               </Link>
             </CardTitle>
             <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
-              {(() => {
-                const sessionCount =
-                  workbenches?.filter(
-                    (workbench) => workbench.workspaceId === workspaceId
-                  )?.length || 0
-                return (
-                  <span className="w-16 truncate text-nowrap">{`${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}`}</span>
-                )
-              })()}
+              <span className="w-16 truncate text-nowrap">{`${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'} in ${workspace?.name}`}</span>
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<div>Loading sessions...</div>}>
-              {(() => {
-                const sessionCount =
-                  workbenches?.filter(
-                    (workbench) => workbench.workspaceId === workspaceId
-                  )?.length || 0
-
-                // Adaptive layout based on session count
-                const getScrollAreaClass = () => {
-                  if (sessionCount === 0) return 'flex flex-col'
-                  if (sessionCount <= 2)
-                    return 'flex max- flex-col overflow-y-auto'
-                  if (sessionCount <= 4)
-                    return 'flex max-h-32 flex-col overflow-y-auto'
-                  return 'flex max-h-40 flex-col overflow-y-auto'
+              <ScrollArea
+                className={
+                  sessionCount === 0
+                    ? 'flex flex-col'
+                    : sessionCount <= 2
+                      ? 'max- flex flex-col overflow-y-auto'
+                      : sessionCount <= 4
+                        ? 'flex max-h-32 flex-col overflow-y-auto'
+                        : 'flex max-h-40 flex-col overflow-y-auto'
                 }
-
-                return (
-                  <ScrollArea
-                    className={getScrollAreaClass()}
-                    type="hover"
-                    role="region"
-                    aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
-                    aria-describedby="scroll-hint"
-                  >
-                    <div id="scroll-hint" className="sr-only">
-                      Use arrow keys or scroll to navigate through sessions
-                    </div>
-                    <WorkspaceWorkbenchList
-                      workspaceId={workspaceId}
-                      size="small"
-                    />
-                  </ScrollArea>
-                )
-              })()}
+                type="hover"
+                role="region"
+                aria-label={`Sessions list with ${sessionCount} ${sessionCount === 1 ? 'session' : 'sessions'}`}
+                aria-describedby="scroll-hint"
+              >
+                <div id="scroll-hint" className="sr-only">
+                  Use arrow keys or scroll to navigate through sessions
+                </div>
+                <WorkspaceWorkbenchList
+                  workspaceId={workspaceId}
+                  size="small"
+                />
+              </ScrollArea>
             </Suspense>
           </CardContent>
           <div className="flex-grow" />

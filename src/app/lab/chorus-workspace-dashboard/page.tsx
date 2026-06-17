@@ -34,6 +34,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ChorusWorkspaceStatus } from '@/internal/client'
 
 import type {
   DashboardViewState,
@@ -237,7 +238,7 @@ const MOCK_WORKSPACE: EnhancedChorusWorkspace = {
   shortName: 'genomics-lab',
   description:
     'Secure analysis environment for CHORUS genomics research projects with controlled data movement.',
-  status: 'active',
+  status: 'WORKSPACE_STATUS_ACTIVE' as ChorusWorkspaceStatus,
   isMain: true,
   appInstanceIds: [],
   appInstances: [],

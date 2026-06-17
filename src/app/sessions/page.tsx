@@ -44,7 +44,11 @@ export default function SessionPage() {
 
     // Filter by "My Sessions"
     if (showMySessions && user) {
-      result = result?.filter((workbench) => workbench.userId === user.id)
+      result = result?.filter((workbench) =>
+        user?.rolesWithContext?.some(
+          (role) => role.context.workbench === workbench.id
+        )
+      )
     }
 
     // Apply search filter
@@ -134,7 +138,7 @@ export default function SessionPage() {
           <div className="flex items-center justify-end gap-0">
             <Button
               variant="ghost"
-              className={`${sessionsViewMode === 'grid' ? 'bg-primary text-primary-foreground' : ''}`}
+              className={`${sessionsViewMode === 'grid' ? 'bg-accent text-accent-foreground' : ''}`}
               onClick={() => setSessionsViewMode('grid')}
               id="grid-button"
               disabled={sessionsViewMode === 'grid'}
@@ -144,7 +148,7 @@ export default function SessionPage() {
             </Button>
             <Button
               variant="ghost"
-              className={`${sessionsViewMode === 'table' ? 'bg-primary text-primary-foreground' : ''}`}
+              className={`${sessionsViewMode === 'table' ? 'bg-accent text-accent-foreground' : ''}`}
               onClick={() => setSessionsViewMode('table')}
               id="table-button"
               disabled={sessionsViewMode === 'table'}
@@ -186,7 +190,7 @@ export default function SessionPage() {
                   <>
                     <p className="text-sm">A session requires a workspace.</p>
                     <p className="mb-4 text-sm">
-                      <Link href="/workspaces" className="text-primary">
+                      <Link href="/workspaces" className="text-accent">
                         Create
                       </Link>{' '}
                       or join a workspace to get started

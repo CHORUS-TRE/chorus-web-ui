@@ -119,7 +119,7 @@ export default function WorkspacesPage() {
           <div className="flex items-center gap-0">
             <Button
               variant="ghost"
-              className={`${!showWorkspacesTable ? 'bg-primary text-primary-foreground' : ''}`}
+              className={`${!showWorkspacesTable ? 'bg-accent text-accent-foreground' : ''}`}
               onClick={toggleWorkspaceView}
               id="grid-button"
               disabled={!showWorkspacesTable}
@@ -129,7 +129,7 @@ export default function WorkspacesPage() {
             </Button>
             <Button
               variant="ghost"
-              className={`${showWorkspacesTable ? 'bg-primary text-primary-foreground' : ''}`}
+              className={`${showWorkspacesTable ? 'bg-accent text-accent-foreground' : ''}`}
               onClick={toggleWorkspaceView}
               id="table-button"
               disabled={showWorkspacesTable}
@@ -141,9 +141,23 @@ export default function WorkspacesPage() {
         </div>
 
         {!workspaces ? (
-          <span className="animate-pulse text-muted">
-            Loading workspaces...
-          </span>
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,280px))]">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-lg border border-muted/40 bg-contrast-background/70 p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="h-16 w-16 shrink-0 rounded-lg bg-muted/30" />
+                  <div className="flex-1 space-y-2 pt-1">
+                    <div className="h-4 w-3/4 rounded bg-muted/30" />
+                    <div className="h-3 w-1/2 rounded bg-muted/20" />
+                    <div className="mt-3 h-3 w-2/3 rounded bg-muted/20" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : filteredWorkspaces?.length === 0 ? (
           searchQuery ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">

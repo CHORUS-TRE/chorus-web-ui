@@ -15,6 +15,7 @@ import {
   WorkspaceUpdatetype,
   WorkspaceWithDev
 } from '@/domain/model'
+import { PublicWorkspace } from '@/domain/model/public-workspace'
 import { User } from '@/domain/model/user'
 import { Workbench } from '@/domain/model/workbench'
 import {
@@ -25,6 +26,7 @@ import {
   WorkspaceConfig,
   WorkspaceConfigSchema
 } from '@/domain/model/workspace-config'
+import { PublicWorkspacesList } from '@/domain/use-cases/workspace/public-workspaces-list'
 import { WorkspaceCreate } from '@/domain/use-cases/workspace/workspace-create'
 import { WorkspaceDelete } from '@/domain/use-cases/workspace/workspace-delete'
 import { WorkspaceGet } from '@/domain/use-cases/workspace/workspace-get'
@@ -32,7 +34,7 @@ import { WorkspaceUpdate } from '@/domain/use-cases/workspace/workspace-update'
 import { WorkspacesList } from '@/domain/use-cases/workspace/workspaces-list'
 import { Analytics } from '@/lib/analytics/service'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
-import { listUsers } from '@/view-model/user-view-model'
+import { listUsers, userMe } from '@/view-model/user-view-model'
 import { workbenchList } from '@/view-model/workbench-view-model'
 
 const getRepository = async () => {
@@ -48,7 +50,8 @@ const getRepository = async () => {
 
 async function enrichWorkspaceWithDev(
   workspace: Workspace,
-  workbenches?: Workbench[]
+  workbenches?: Workbench[],
+  me?: User
 ): Promise<WorkspaceWithDev> {
   const devStore = useDevStoreCache.getState()
 
@@ -58,18 +61,22 @@ async function enrichWorkspaceWithDev(
   const usersResult = await listUsers({ filterWorkspaceIDs: [workspace.id] })
   const users = usersResult.data || []
   const owner = users.find((user) => user.id === workspace.userId)
+  const myRoles = me?.rolesWithContext || []
+
+  const filterMyWorkbenches = (wbs: Workbench[]) =>
+    wbs.filter(
+      (wb) =>
+        wb.workspaceId === workspace.id &&
+        myRoles.some((role) => role.context.workbench === wb.id)
+    )
 
   let workbenchCount = 0
   if (workbenches) {
-    workbenchCount = workbenches.filter(
-      (wb) => wb.workspaceId === workspace.id
-    ).length
+    workbenchCount = filterMyWorkbenches(workbenches).length
   } else {
     const wbResult = await workbenchList()
     if (wbResult.data) {
-      workbenchCount = wbResult.data.filter(
-        (wb) => wb.workspaceId === workspace.id
-      ).length
+      workbenchCount = filterMyWorkbenches(wbResult.data).length
     }
   }
 
@@ -122,6 +129,10 @@ function extractAndValidateApiFields(
       | undefined,
     allowedFqdns: data.allowedFqdns as string[] | undefined,
     clipboard: data.clipboard as WorkspaceCreateType['clipboard'] | undefined,
+    visibility: data.visibility as
+      | WorkspaceCreateType['visibility']
+      | undefined,
+    contactUserId: (data.contactUserId as string) || undefined,
     ...(isUpdate ? { id: data.id as string } : {})
   }
 
@@ -285,21 +296,34 @@ export async function workspaceList(): Promise<Result<Workspace[]>> {
   return await useCase.execute()
 }
 
+export async function publicWorkspaceList(): Promise<
+  Result<PublicWorkspace[]>
+> {
+  const repository = await getRepository()
+  const useCase = new PublicWorkspacesList(repository)
+  return await useCase.execute()
+}
+
 export async function workspaceListWithDev(): Promise<
   Result<WorkspaceWithDev[]>
 > {
-  const [workspacesResult, workbenchesResult] = await Promise.all([
+  const [workspacesResult, workbenchesResult, meResult] = await Promise.all([
     workspaceList(),
-    workbenchList()
+    workbenchList(),
+    userMe()
   ])
 
   if (workspacesResult.error) return { error: workspacesResult.error }
   if (workbenchesResult.error) return { error: workbenchesResult.error }
   if (!workspacesResult.data) return { data: [] }
+  if (!meResult) return { data: [] }
+  if (meResult && !meResult.data) return { data: [] }
 
   const workbenches = workbenchesResult.data || []
   const enriched = await Promise.all(
-    workspacesResult.data.map((ws) => enrichWorkspaceWithDev(ws, workbenches))
+    workspacesResult.data.map((ws) =>
+      enrichWorkspaceWithDev(ws, workbenches, meResult.data)
+    )
   )
 
   return { data: enriched }

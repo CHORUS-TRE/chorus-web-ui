@@ -3,6 +3,7 @@ import {
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
+  ChorusListPublicWorkspacesReply,
   ChorusListWorkspacesReply,
   ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
@@ -22,6 +23,7 @@ interface WorkspaceDataSource {
   get: (id: string) => Promise<ChorusGetWorkspaceReply>
   delete: (id: string) => Promise<ChorusDeleteWorkspaceReply>
   list: () => Promise<ChorusListWorkspacesReply>
+  listPublic: () => Promise<ChorusListPublicWorkspacesReply>
   update: (
     workspace: WorkspaceUpdatetype
   ) => Promise<ChorusUpdateWorkspaceReply>
@@ -71,6 +73,10 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
 
   list(): Promise<ChorusListWorkspacesReply> {
     return this.service.workspaceServiceListWorkspaces()
+  }
+
+  listPublic(): Promise<ChorusListPublicWorkspacesReply> {
+    return this.service.workspaceServiceListPublicWorkspaces()
   }
 
   update(workspace: WorkspaceUpdatetype): Promise<ChorusUpdateWorkspaceReply> {

@@ -10,6 +10,7 @@ import {
   WorkspaceCreateType,
   WorkspaceUpdatetype
 } from '@/domain/model/'
+import { WorkspaceState } from '@/domain/model/workspace'
 import { WorkspaceCreate } from '@/domain/use-cases/workspace/workspace-create'
 import { WorkspaceGet } from '@/domain/use-cases/workspace/workspace-get'
 import { WorkspacesList } from '@/domain/use-cases/workspace/workspaces-list'
@@ -33,7 +34,7 @@ const MOCK_WORKSPACE_RESULT = {
   shortName: '101',
   description: 'Study 101 is a test workspace to improve learning',
   userId: '2',
-  status: 'active',
+  status: WorkspaceState.ACTIVE,
   createdAt: new Date('2024-07-17T12:30:54Z'),
   updatedAt: new Date('2024-07-17T12:30:54Z')
 } as Workspace
@@ -53,7 +54,7 @@ const MOCK_API_UPDATE = {
   name: 'Updated Study 101',
   shortName: '101-updated',
   description: 'Updated description for Study 101',
-  status: 'active'
+  status: WorkspaceState.ACTIVE
 } as WorkspaceUpdatetype
 
 const MOCK_UPDATED_WORKSPACE = {

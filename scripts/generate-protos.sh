@@ -20,10 +20,14 @@ function generate_client() {
        -i api/openapiv2/v1-tags/apis.swagger.yaml \
        -g typescript-fetch \
        -o src/internal/client
+}
 
-    # rm -rf src/internal/api/server_template
-    # mv src/internal/api/server_template_tmp/server_template src/internal/api/server_template
-    # rm -r src/internal/api/server_template_tmp
+function lint_client() {
+    echo
+    echo "==> Linting generated client code:"
+    pnpm fix
 }
 
 generate_client
+git checkout src/internal/client/runtime.ts
+lint_client

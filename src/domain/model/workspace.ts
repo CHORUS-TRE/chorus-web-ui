@@ -9,10 +9,15 @@ import {
 } from './workspace-config'
 
 export enum WorkspaceState {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DELETED = 'deleted',
+  ACTIVE = 'WORKSPACE_STATUS_ACTIVE',
+  INACTIVE = 'WORKSPACE_STATUS_INACTIVE',
+  DELETED = 'WORKSPACE_STATUS_DELETED',
   UNKNOWN = ''
+}
+
+export enum WorkspaceVisibility {
+  PRIVATE = 'WORKSPACE_VISIBILITY_PRIVATE',
+  PUBLIC = 'WORKSPACE_VISIBILITY_PUBLIC'
 }
 
 // Workspace conforming to API (no DevStore enrichments)
@@ -33,6 +38,8 @@ export const WorkspaceSchema = z.object({
   networkPolicyStatus: z.string().optional(),
   networkPolicyMessage: z.string().optional(),
   clipboard: ClipboardModeEnum.optional(),
+  visibility: z.nativeEnum(WorkspaceVisibility).optional(),
+  contactUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date()
 })
@@ -46,7 +53,9 @@ export const WorkspaceCreateSchema = z.object({
   isMain: z.boolean().optional(),
   networkPolicy: NetworkPolicyModeEnum.optional(),
   allowedFqdns: z.array(z.string()).optional(),
-  clipboard: ClipboardModeEnum.optional()
+  clipboard: ClipboardModeEnum.optional(),
+  visibility: z.nativeEnum(WorkspaceVisibility).optional(),
+  contactUserId: z.string().optional()
 })
 
 export const WorkspaceEditFormSchema = WorkspaceCreateSchema // For form validation

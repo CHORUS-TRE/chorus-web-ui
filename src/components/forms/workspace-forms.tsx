@@ -7,6 +7,8 @@ import {
   CheckCircle2,
   Cpu,
   Database,
+  Eye,
+  Globe,
   HardDrive,
   Loader2,
   Network,
@@ -114,7 +116,13 @@ const WorkspaceFormSchema = z.object({
   // Services
   serviceGitlab: z.boolean().optional(),
   serviceK8s: z.boolean().optional(),
-  serviceHpc: z.boolean().optional()
+  serviceHpc: z.boolean().optional(),
+
+  // Visibility
+  visibility: z
+    .enum(['WORKSPACE_VISIBILITY_PRIVATE', 'WORKSPACE_VISIBILITY_PUBLIC'])
+    .optional(),
+  contactUserId: z.string().optional()
 })
 
 type WorkspaceFormData = z.infer<typeof WorkspaceFormSchema>
@@ -170,7 +178,9 @@ export function WorkspaceCreateForm({
       hotStorageSize: '10Gi',
       serviceGitlab: false,
       serviceK8s: false,
-      serviceHpc: false
+      serviceHpc: false,
+      visibility: 'WORKSPACE_VISIBILITY_PRIVATE',
+      contactUserId: ''
     }
   })
 
@@ -266,6 +276,7 @@ export function WorkspaceCreateForm({
               <TabsList className="mb-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
+                <TabsTrigger value="visibility">Visibility</TabsTrigger>
                 {/* <TabsTrigger value="resources" className="demo-effect">
                   Resources
                 </TabsTrigger> */}
@@ -277,6 +288,10 @@ export function WorkspaceCreateForm({
 
               <TabsContent value="security" className="space-y-4">
                 <SecurityTabContent form={form} />
+              </TabsContent>
+
+              <TabsContent value="visibility" className="space-y-4">
+                <VisibilityTabContent form={form} />
               </TabsContent>
 
               <TabsContent value="resources" className="demo-effect space-y-4">
@@ -378,7 +393,7 @@ export function WorkspaceUpdateForm({
   trigger?: React.ReactNode
   workspace?: WorkspaceWithDev
   onSuccess?: (workspace: WorkspaceWithDev) => void
-  initialTab?: 'general' | 'security' | 'resources' | 'services'
+  initialTab?: 'general' | 'security' | 'resources' | 'services' | 'visibility'
 }) {
   const [isPending, startTransition] = useTransition()
   const [removeImage, setRemoveImage] = useState(false)
@@ -418,7 +433,9 @@ export function WorkspaceUpdateForm({
       hotStorageSize: existingConfig?.resources?.hotStorage?.size || '10Gi',
       serviceGitlab: existingConfig?.services?.gitlab || false,
       serviceK8s: existingConfig?.services?.k8s || false,
-      serviceHpc: existingConfig?.services?.hpc || false
+      serviceHpc: existingConfig?.services?.hpc || false,
+      visibility: workspace?.visibility || 'WORKSPACE_VISIBILITY_PRIVATE',
+      contactUserId: workspace?.contactUserId || ''
     }
   })
 
@@ -456,7 +473,9 @@ export function WorkspaceUpdateForm({
         hotStorageSize: config?.resources?.hotStorage?.size || '10Gi',
         serviceGitlab: config?.services?.gitlab || false,
         serviceK8s: config?.services?.k8s || false,
-        serviceHpc: config?.services?.hpc || false
+        serviceHpc: config?.services?.hpc || false,
+        visibility: workspace.visibility || 'WORKSPACE_VISIBILITY_PRIVATE',
+        contactUserId: workspace.contactUserId || ''
       })
       setRemoveImage(false)
       setActiveTab(initialTab)
@@ -550,6 +569,7 @@ export function WorkspaceUpdateForm({
               <TabsList className="mb-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
+                <TabsTrigger value="visibility">Visibility</TabsTrigger>
                 {/* <TabsTrigger value="resources">Resources</TabsTrigger> */}
               </TabsList>
 
@@ -564,6 +584,10 @@ export function WorkspaceUpdateForm({
 
               <TabsContent value="security" className="space-y-4">
                 <SecurityTabContent form={form} workspace={workspace} />
+              </TabsContent>
+
+              <TabsContent value="visibility" className="space-y-4">
+                <VisibilityTabContent form={form} workspace={workspace} />
               </TabsContent>
 
               <TabsContent value="resources" className="space-y-4">
@@ -898,6 +922,136 @@ function SecurityTabContent({
             </FormItem>
           )}
         />
+      </CardContent>
+    </Card>
+  )
+}
+
+function VisibilityTabContent({
+  form,
+  workspace
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: any
+  workspace?: WorkspaceWithDev
+}) {
+  const visibility = form.watch('visibility')
+  const isPublic = visibility === 'WORKSPACE_VISIBILITY_PUBLIC'
+  const members = workspace?.dev?.members || []
+
+  return (
+    <Card className="border-none bg-transparent shadow-none">
+      <CardContent className="space-y-6 p-0">
+        <div className="flex items-start gap-3">
+          <Eye className="mt-1 h-5 w-5 text-muted-foreground" />
+          <div className="flex-1">
+            <h4 className="font-medium">Workspace Visibility</h4>
+            <p className="mb-3 text-sm text-muted-foreground">
+              Control whether this workspace is discoverable by other platform
+              users
+            </p>
+            <FormField
+              control={form.control}
+              name="visibility"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center space-x-3 rounded-lg border p-3">
+                        <RadioGroupItem
+                          value="WORKSPACE_VISIBILITY_PRIVATE"
+                          id="visibility-private"
+                        />
+                        <div className="flex-1">
+                          <Label
+                            htmlFor="visibility-private"
+                            className="font-medium"
+                          >
+                            Private
+                          </Label>
+                          <p className="text-sm text-muted-foreground">
+                            Only members can see this workspace
+                          </p>
+                        </div>
+                        <Shield className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="flex items-center space-x-3 rounded-lg border p-3">
+                        <RadioGroupItem
+                          value="WORKSPACE_VISIBILITY_PUBLIC"
+                          id="visibility-public"
+                        />
+                        <div className="flex-1">
+                          <Label
+                            htmlFor="visibility-public"
+                            className="font-medium"
+                          >
+                            Public
+                          </Label>
+                          <p className="text-sm text-muted-foreground">
+                            All platform users in your organization can discover
+                            this workspace
+                          </p>
+                        </div>
+                        <Globe className="h-4 w-4 text-green-500" />
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {isPublic && (
+          <div className="flex items-start gap-3">
+            <Globe className="mt-1 h-5 w-5 text-muted-foreground" />
+            <div className="flex-1">
+              <h4 className="font-medium">Contact Person</h4>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Shown on the public listing so users know who to reach out to
+              </p>
+              <FormField
+                control={form.control}
+                name="contactUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={(v) =>
+                        field.onChange(v === '__none__' ? '' : v)
+                      }
+                      value={field.value || '__none__'}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a contact person" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="__none__">None</SelectItem>
+                        {members.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            {member.firstName} {member.lastName}
+                            {member.email ? ` (${member.email})` : ''}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription className="text-muted-foreground">
+                      Optional — if not set, no contact info appears on the
+                      public listing
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

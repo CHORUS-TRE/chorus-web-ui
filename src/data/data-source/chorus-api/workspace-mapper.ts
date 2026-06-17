@@ -19,3 +19,11 @@ export const toChorusWorkspaceUpdate = (
     ...workspace
   }
 }
+
+export const toPublicWorkspace = (chorus: Record<string, unknown>) => ({
+  ...chorus,
+  createdAt: chorus.createdAt
+    ? new Date(chorus.createdAt as string)
+    : undefined,
+  updatedAt: chorus.updatedAt ? new Date(chorus.updatedAt as string) : undefined
+})

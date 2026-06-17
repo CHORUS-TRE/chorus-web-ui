@@ -166,6 +166,12 @@ export interface ChorusApp {
   stabilityStatus?: string
   /**
    *
+   * @type {string}
+   * @memberof ChorusApp
+   */
+  category?: string
+  /**
+   *
    * @type {Date}
    * @memberof ChorusApp
    */
@@ -244,6 +250,7 @@ export function ChorusAppFromJSONTyped(
     stabilityStatus: !exists(json, 'stabilityStatus')
       ? undefined
       : json['stabilityStatus'],
+    category: !exists(json, 'category') ? undefined : json['category'],
     createdAt: !exists(json, 'createdAt')
       ? undefined
       : new Date(json['createdAt']),
@@ -287,6 +294,7 @@ export function ChorusAppToJSON(value?: ChorusApp | null): any {
     iconURL: value.iconURL,
     iconBackgroundColor: value.iconBackgroundColor,
     stabilityStatus: value.stabilityStatus,
+    category: value.category,
     createdAt:
       value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
     updatedAt:
