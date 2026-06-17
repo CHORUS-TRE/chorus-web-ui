@@ -1,3 +1,18 @@
+# [1.59.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.58.0...v1.59.0) (2026-06-17)
+
+
+### Bug Fixes
+
+* normalize app and workspace statuses and update validation regex for resource fields ([21674f5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/21674f5c22c8f313932b14a2162aed02f7450f61))
+
+
+### Features
+
+* add category field to ChorusApp model and update JSON serialization methods ([85d8928](https://github.com/CHORUS-TRE/chorus-web-ui/commit/85d892803c68f16991c214560052a9d32e01c1f5))
+* add workspace visibility and contact person features ([9b9df6e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9b9df6e2e527acec54922551b088bc4c8e3f0f7c))
+* implement public workspaces feature with layout, card components, and sidebar navigation ([87e32ab](https://github.com/CHORUS-TRE/chorus-web-ui/commit/87e32ab1fed5fab81dbbba63825c9784f644ed1f))
+* update workspace and session filtering logic to use workbench context and improve UI elements ([4620d7a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/4620d7ab3e11a3971f232b88fb639eaf9cd6d592))
+
 # [1.58.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.57.0...v1.58.0) (2026-06-12)
 
 
