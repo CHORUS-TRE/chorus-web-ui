@@ -13,7 +13,10 @@ import {
   WorkspaceWithDev
 } from '@/domain/model'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
-import type { FileSystemUploadItem } from '@/types/file-system'
+import type {
+  FileSystemUploadItem,
+  FolderUploadBatch
+} from '@/types/file-system'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
 import {
@@ -39,6 +42,7 @@ export type AppStateStore = {
   pendingApprovalRequestsCount: number | undefined
   unreadNotificationsCount: number | undefined
   uploads: Record<string, FileSystemUploadItem> | undefined
+  folderBatches: Record<string, FolderUploadBatch> | undefined
 
   refreshWorkspaces: () => Promise<void>
   refreshWorkbenches: () => Promise<void>
@@ -57,6 +61,13 @@ export type AppStateStore = {
   removeUpload: (uploadId: string) => void
   markUploadCancelled: (uploadId: string) => void
   hasActiveUploads: () => boolean
+  addFolderBatch: (batch: FolderUploadBatch) => void
+  updateFolderBatch: (
+    batchId: string,
+    patch: Partial<FolderUploadBatch>
+  ) => void
+  removeFolderBatch: (batchId: string) => void
+  markFolderBatchCancelled: (batchId: string) => void
 
   contentRect: DOMRect | null
   setContentRect: (rect: DOMRect | null) => void
@@ -88,6 +99,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   pendingApprovalRequestsCount: undefined,
   unreadNotificationsCount: undefined,
   uploads: undefined,
+  folderBatches: undefined,
   notificationsPollingInterval: null,
 
   refreshWorkspaces: async () => {
@@ -297,7 +309,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       approvalRequests: undefined,
       pendingApprovalRequestsCount: undefined,
       unreadNotificationsCount: undefined,
-      uploads: undefined
+      uploads: undefined,
+      folderBatches: undefined
     })
     const { clearUserData } = useDevStoreCache.getState()
     clearUserData()
@@ -361,6 +374,46 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     return Object.values(get().uploads ?? {}).some(
       (u) => !u.cancelled && u.uploadedParts < u.totalParts
     )
+  },
+
+  addFolderBatch: (batch) => {
+    set((state) => ({
+      folderBatches: { ...state.folderBatches, [batch.id]: batch }
+    }))
+  },
+
+  updateFolderBatch: (batchId, patch) => {
+    set((state) => {
+      const existing = state.folderBatches?.[batchId]
+      if (!existing) return state
+      return {
+        folderBatches: {
+          ...state.folderBatches,
+          [batchId]: { ...existing, ...patch }
+        }
+      }
+    })
+  },
+
+  removeFolderBatch: (batchId) => {
+    set((state) => {
+      if (!state.folderBatches) return state
+      const { [batchId]: _, ...rest } = state.folderBatches
+      return { folderBatches: Object.keys(rest).length > 0 ? rest : undefined }
+    })
+  },
+
+  markFolderBatchCancelled: (batchId) => {
+    set((state) => {
+      const existing = state.folderBatches?.[batchId]
+      if (!existing) return state
+      return {
+        folderBatches: {
+          ...state.folderBatches,
+          [batchId]: { ...existing, cancelled: true }
+        }
+      }
+    })
   },
 
   contentRect: null,

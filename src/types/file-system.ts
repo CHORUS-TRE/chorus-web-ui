@@ -32,6 +32,16 @@ export interface FileClipboard {
   action: 'copy' | 'cut'
 }
 
+export interface FolderUploadBatch {
+  id: string
+  folderName: string
+  totalFiles: number
+  completedFiles: number
+  failedFiles: number
+  failedFileNames: string[]
+  cancelled: boolean
+}
+
 export interface FileSystemState {
   items: Record<string, FileSystemItem>
   selectedItems: string[]

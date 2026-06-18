@@ -8,6 +8,8 @@ import {
 import { useAppStateStore } from '@/stores/app-state-store'
 import type { FileSystemItem, FileSystemState } from '@/types/file-system'
 import { mapWorkspaceFilesToFileSystem } from '@/utils/file-system-mapper'
+import type { FolderTraversalResult } from '@/utils/folder-traversal'
+import { replaceRootFolder } from '@/utils/folder-traversal'
 import {
   workspaceFileAbortUpload,
   workspaceFileCompleteUpload,
@@ -22,6 +24,7 @@ import {
 } from '@/view-model/workspace-file-view-model'
 
 const IMPORT_FILE_SIZE_THRESHOLD = 5 * 1024 * 1024 // 5MB
+const FOLDER_UPLOAD_CONCURRENCY = 3
 
 // Helper function to generate a unique filename by appending (1), (2), … before the extension
 function getUniqueFileName(
@@ -968,6 +971,174 @@ export function useFileSystem(workspaceId?: string) {
     ]
   )
 
+  const importFolder = useCallback(
+    async (parentId: string, traversal: FolderTraversalResult) => {
+      if (!workspaceId) {
+        console.error('No workspace ID provided for folder import')
+        return
+      }
+
+      if (traversal.files.length === 0 && traversal.directories.length === 0) {
+        toast({
+          title: 'Empty folder',
+          description: 'The selected folder contains no files to upload.',
+          variant: 'default'
+        })
+        return
+      }
+
+      const parentItem = state.items[parentId]
+      const parentPath = parentItem?.path || ''
+
+      // Deduplicate root folder name against existing siblings
+      await fetchWorkspaceFiles(workspaceId, parentPath, true)
+      const existingNames = new Set(
+        Object.values(state.items)
+          .filter((item) => item.parentId === parentId)
+          .map((item) => item.name)
+      )
+      const uniqueRoot = getUniqueFileName(
+        traversal.rootFolderName,
+        existingNames
+      )
+
+      const batchId = `folder-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      const store = useAppStateStore.getState()
+      store.addFolderBatch({
+        id: batchId,
+        folderName: uniqueRoot,
+        totalFiles: traversal.files.length,
+        completedFiles: 0,
+        failedFiles: 0,
+        failedFileNames: [],
+        cancelled: false
+      })
+
+      const isCancelled = () =>
+        useAppStateStore.getState().folderBatches?.[batchId]?.cancelled ?? false
+
+      try {
+        // Create directories in depth order
+        const sortedDirs = [...traversal.directories].sort(
+          (a, b) => a.split('/').length - b.split('/').length
+        )
+        for (const dir of sortedDirs) {
+          if (isCancelled()) break
+          const adjustedDir = replaceRootFolder(
+            dir,
+            traversal.rootFolderName,
+            uniqueRoot
+          )
+          const dirPath = parentPath
+            ? `${parentPath}/${adjustedDir}/`
+            : `${adjustedDir}/`
+          const dirName = adjustedDir.split('/').pop() || adjustedDir
+
+          await workspaceFileCreate(workspaceId, {
+            name: dirName,
+            path: dirPath,
+            isDirectory: true,
+            content: ''
+          })
+        }
+
+        // Upload files with concurrency limit
+        const fileQueue = [...traversal.files]
+        let completedFiles = 0
+        let failedFiles = 0
+        const failedFileNames: string[] = []
+
+        const uploadNext = async (): Promise<void> => {
+          while (fileQueue.length > 0) {
+            if (isCancelled()) return
+
+            const entry = fileQueue.shift()
+            if (!entry) return
+
+            const adjustedPath = replaceRootFolder(
+              entry.relativePath,
+              traversal.rootFolderName,
+              uniqueRoot
+            )
+            const filePath = parentPath
+              ? `${parentPath}/${adjustedPath}`
+              : adjustedPath
+
+            try {
+              if (entry.file.size > IMPORT_FILE_SIZE_THRESHOLD) {
+                await importFileMultipart(entry.file, filePath)
+              } else {
+                await importFileDirect(entry.file, filePath)
+              }
+              completedFiles++
+            } catch (err) {
+              console.error('Failed to upload file:', entry.relativePath, err)
+              failedFiles++
+              failedFileNames.push(entry.relativePath)
+            }
+
+            useAppStateStore.getState().updateFolderBatch(batchId, {
+              completedFiles,
+              failedFiles,
+              failedFileNames
+            })
+          }
+        }
+
+        const workers = Array.from(
+          {
+            length: Math.min(FOLDER_UPLOAD_CONCURRENCY, traversal.files.length)
+          },
+          () => uploadNext()
+        )
+        await Promise.all(workers)
+
+        // Report results
+        if (isCancelled()) {
+          toast({
+            title: 'Folder upload cancelled',
+            description: `"${uniqueRoot}" — ${completedFiles} of ${traversal.files.length} files uploaded.`,
+            variant: 'default'
+          })
+        } else if (failedFiles > 0) {
+          toast({
+            title: 'Folder upload completed with errors',
+            description: `"${uniqueRoot}" — ${completedFiles} uploaded, ${failedFiles} failed.`,
+            variant: 'destructive'
+          })
+        } else {
+          toast({
+            title: 'Folder uploaded',
+            description: `"${uniqueRoot}" — ${completedFiles} files uploaded successfully.`,
+            variant: 'default'
+          })
+        }
+      } finally {
+        // Refresh the file browser
+        const currentFolder = state.items[state.currentFolderId || 'root']
+        const currentPath = currentFolder?.path || parentPath
+        await fetchWorkspaceFiles(workspaceId, currentPath, true)
+
+        // Remove batch after a short delay so the panel can show final state
+        setTimeout(() => {
+          useAppStateStore.getState().removeFolderBatch(batchId)
+        }, 3000)
+      }
+    },
+    [
+      workspaceId,
+      state.items,
+      state.currentFolderId,
+      fetchWorkspaceFiles,
+      importFileMultipart,
+      importFileDirect
+    ]
+  )
+
+  const cancelFolderUpload = useCallback((batchId: string) => {
+    useAppStateStore.getState().markFolderBatchCancelled(batchId)
+  }, [])
+
   const cancelMultipartUpload = useCallback((uploadId: string) => {
     useAppStateStore.getState().markUploadCancelled(uploadId)
   }, [])
@@ -1157,7 +1328,9 @@ export function useFileSystem(workspaceId?: string) {
     renameItem,
     createFolder,
     importFile,
+    importFolder,
     cancelMultipartUpload,
+    cancelFolderUpload,
     downloadFile,
     setSearch,
     toggleViewMode,
