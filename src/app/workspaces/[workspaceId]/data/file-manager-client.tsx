@@ -3,13 +3,14 @@
 import {
   CirclePlus,
   FolderPlus,
+  FolderUp,
   HardDrive,
   Loader2,
   ShoppingBasket,
   Upload
 } from 'lucide-react'
 import type React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import {
@@ -32,6 +33,13 @@ import { Input } from '@/components/ui/input'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { cn } from '@/lib/utils'
 import type { FileSystemItem } from '@/types/file-system'
+import type { FolderTraversalResult } from '@/utils/folder-traversal'
+import {
+  hasDroppedFolders,
+  traverseDroppedEntry,
+  traverseFileInput
+} from '@/utils/folder-traversal'
+import { formatFileSize } from '@/utils/format-file-size'
 import {
   createDataExtractionRequest,
   createDataTransferRequest
@@ -58,6 +66,7 @@ export default function FileManagerClient({
     renameItem,
     createFolder,
     importFile,
+    importFolder,
     clearSelection,
     clearBasket,
     selectBasketItem,
@@ -80,6 +89,9 @@ export default function FileManagerClient({
     name: string
     childCount: number
   } | null>(null)
+  const [pendingFolderUpload, setPendingFolderUpload] =
+    useState<FolderTraversalResult | null>(null)
+  const folderInputRef = useRef<HTMLInputElement>(null)
 
   // Smart delete: check if folder is non-empty before deleting
   const handleSmartDelete = useCallback(
@@ -138,6 +150,42 @@ export default function FileManagerClient({
     }
   }, [stores, selectedStoreId, handleSelectStore, storeIdFromName])
 
+  const startFolderUpload = useCallback(
+    (traversal: FolderTraversalResult) => {
+      if (traversal.files.length > 500) {
+        setPendingFolderUpload(traversal)
+      } else {
+        importFolder(state.currentFolderId || 'root', traversal)
+      }
+    },
+    [importFolder, state.currentFolderId]
+  )
+
+  const handleConfirmFolderUpload = useCallback(() => {
+    if (pendingFolderUpload) {
+      importFolder(state.currentFolderId || 'root', pendingFolderUpload)
+      setPendingFolderUpload(null)
+    }
+  }, [pendingFolderUpload, importFolder, state.currentFolderId])
+
+  const handleImportFolder = useCallback(() => {
+    folderInputRef.current?.click()
+  }, [])
+
+  const handleFolderInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files
+      if (!files || files.length === 0) return
+
+      const traversal = traverseFileInput(files)
+      startFolderUpload(traversal)
+
+      // Reset input so the same folder can be re-selected
+      e.target.value = ''
+    },
+    [startFolderUpload]
+  )
+
   // External file drop handlers (drag from OS)
   const handleExternalDragOver = useCallback((e: React.DragEvent) => {
     if (e.dataTransfer.types.includes('Files')) {
@@ -158,6 +206,41 @@ export default function FileManagerClient({
       e.preventDefault()
       setIsDraggingOver(false)
 
+      // Detect dropped folders via webkitGetAsEntry
+      if (hasDroppedFolders(e.dataTransfer)) {
+        const items = Array.from(e.dataTransfer.items)
+        for (const item of items) {
+          const entry = item.webkitGetAsEntry?.()
+          if (!entry) continue
+
+          if (entry.isDirectory) {
+            try {
+              const traversal = await traverseDroppedEntry(entry)
+              startFolderUpload(traversal)
+            } catch (error) {
+              console.error('Error traversing dropped folder:', error)
+              toast({
+                title: 'Folder upload failed',
+                description: 'Could not read the dropped folder.',
+                variant: 'destructive'
+              })
+            }
+          } else if (entry.isFile) {
+            const fileEntry = entry as FileSystemFileEntry
+            const file = await new Promise<File>((resolve, reject) =>
+              fileEntry.file(resolve, reject)
+            )
+            try {
+              await importFile(state.currentFolderId || 'root', file)
+            } catch (error) {
+              console.error('Error importing dropped file:', error)
+            }
+          }
+        }
+        return
+      }
+
+      // Fallback: plain file drop
       const files = e.dataTransfer.files
       if (files.length === 0) return
 
@@ -169,7 +252,7 @@ export default function FileManagerClient({
         }
       }
     },
-    [importFile, state.currentFolderId]
+    [importFile, startFolderUpload, state.currentFolderId]
   )
 
   // Context menu state
@@ -540,6 +623,25 @@ export default function FileManagerClient({
                   <Upload className="h-4 w-4" />
                   Import
                 </Button>
+                <Button
+                  onClick={handleImportFolder}
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-accent"
+                >
+                  <FolderUp className="h-4 w-4" />
+                  Upload folder
+                </Button>
+                <input
+                  ref={folderInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleFolderInputChange}
+                  {...({
+                    webkitdirectory: '',
+                    directory: ''
+                  } as React.InputHTMLAttributes<HTMLInputElement>)}
+                />
               </div>
             </div>
 
@@ -571,7 +673,7 @@ export default function FileManagerClient({
                   <div className="flex flex-col items-center gap-2 text-accent">
                     <Upload className="h-8 w-8" />
                     <span className="text-sm font-medium">
-                      Drop files to upload
+                      Drop files or folders to upload
                     </span>
                   </div>
                 </div>
@@ -587,7 +689,8 @@ export default function FileManagerClient({
                   <div className="text-center">
                     <p className="text-sm font-medium">No files yet</p>
                     <p className="mt-1 text-xs">
-                      Drag & drop files here or click Import to get started
+                      Drag & drop files or folders here, or click Import to get
+                      started
                     </p>
                   </div>
                   <Button variant="outline" size="sm" onClick={handleImport}>
@@ -679,6 +782,59 @@ export default function FileManagerClient({
         itemCount={folderToDelete?.childCount ?? 0}
         onConfirmDelete={handleConfirmFolderDelete}
       />
+
+      {/* Large Folder Upload Confirmation Dialog */}
+      <Dialog
+        open={pendingFolderUpload !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingFolderUpload(null)
+        }}
+      >
+        <DialogContent className="bg-background">
+          <DialogHeader>
+            <DialogTitle>Upload large folder?</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-sm text-muted-foreground">
+            <p>
+              <strong className="text-foreground">
+                {pendingFolderUpload?.rootFolderName}
+              </strong>{' '}
+              contains:
+            </p>
+            <ul className="mt-2 list-inside list-disc space-y-1">
+              <li>
+                {pendingFolderUpload?.files.length.toLocaleString()} files
+              </li>
+              <li>
+                {pendingFolderUpload?.directories.length.toLocaleString()}{' '}
+                folders
+              </li>
+              <li>
+                {formatFileSize((pendingFolderUpload?.totalSize ?? 0) / 1024)}{' '}
+                total
+              </li>
+            </ul>
+            {(pendingFolderUpload?.filteredCount ?? 0) > 0 && (
+              <p className="mt-2 text-xs">
+                {pendingFolderUpload?.filteredCount} hidden/system files
+                excluded.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="accent-filled"
+              onClick={() => setPendingFolderUpload(null)}
+            >
+              Cancel
+            </Button>
+            <Button variant="accent-filled" onClick={handleConfirmFolderUpload}>
+              <Upload className="h-4 w-4" />
+              Upload {pendingFolderUpload?.files.length.toLocaleString()} files
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Folder Dialog */}
       <Dialog
