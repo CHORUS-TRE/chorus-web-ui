@@ -1,22 +1,37 @@
 'use client'
 
-import {
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Trash2,
-  XCircle
-} from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { CheckCircle2, Plus, Trash2, XCircle } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 
-import { ManageUserWorkspaceDialog } from '@/components/forms/manage-user-workspace-dialog'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
+import { toast } from '@/components/hooks/use-toast'
+import { RoleBadge } from '@/components/role-badge'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
 import { WORKSPACE_PERMISSIONS_DISPLAY } from '@/config/permissions'
 import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
+import { useRoles } from '@/providers/roles-provider'
+import {
+  workspaceAddUserRole,
+  workspaceRemoveUserRole
+} from '@/view-model/workspace-view-model'
 
 export function WorkspaceUserCard({
   user,
@@ -29,10 +44,12 @@ export function WorkspaceUserCard({
   isMe?: boolean
   onUpdate: () => void
 }) {
-  const [isPermissionsOpen, setIsPermissionsOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [addRoleOpen, setAddRoleOpen] = useState(false)
+  const [roleToRemove, setRoleToRemove] = useState<string | null>(null)
 
   const { getPermissionsForUser, can } = useAuthorization()
+  const { roles } = useRoles()
 
   const workspaceRoles = useMemo(() => {
     return (
@@ -42,9 +59,64 @@ export function WorkspaceUserCard({
     )
   }, [user.rolesWithContext, workspaceId])
 
+  const assignedRoleNames = useMemo(
+    () => new Set(workspaceRoles.map((r) => r.name)),
+    [workspaceRoles]
+  )
+
+  const availableRoles = useMemo(
+    () =>
+      roles
+        .filter((r) => r.scope === 'workspace' && !assignedRoleNames.has(r.name)),
+    [roles, assignedRoleNames]
+  )
+
   const userPermissions = useMemo(() => {
     return getPermissionsForUser(user, { workspace: workspaceId })
   }, [user, workspaceId, getPermissionsForUser])
+
+  const handleRemoveRole = useCallback(
+    async (roleName: string) => {
+      const result = await workspaceRemoveUserRole(
+        workspaceId,
+        user.id,
+        roleName
+      )
+      if (result.error) {
+        toast({
+          title: 'Error removing role',
+          description: result.error,
+          variant: 'destructive'
+        })
+      } else {
+        toast({ title: 'Role removed' })
+        onUpdate()
+      }
+    },
+    [workspaceId, user.id, onUpdate]
+  )
+
+  const handleAddRole = useCallback(
+    async (roleName: string) => {
+      const formData = new FormData()
+      formData.append('workspaceId', workspaceId)
+      formData.append('userId', user.id)
+      formData.append('roleName', roleName)
+      const result = await workspaceAddUserRole({}, formData)
+      if (result.error) {
+        toast({
+          title: 'Error adding role',
+          description: result.error,
+          variant: 'destructive'
+        })
+      } else {
+        toast({ title: 'Role added' })
+        setAddRoleOpen(false)
+        onUpdate()
+      }
+    },
+    [workspaceId, user.id, onUpdate]
+  )
 
   return (
     <Card
@@ -99,68 +171,71 @@ export function WorkspaceUserCard({
         </div>
 
         <div className="mt-4">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {workspaceRoles.map((role, index) => (
-              <div key={role.id || index}>
-                {can('manageUsersInWorkspace', {
-                  workspace: workspaceId
-                }) ? (
-                  <ManageUserWorkspaceDialog
-                    user={user}
-                    workspaceId={workspaceId}
-                    onUserAdded={onUpdate}
-                  >
-                    <div
-                      className={`inline-flex cursor-pointer items-center gap-2 rounded-md bg-slate-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-600 hover:bg-opacity-80 active:scale-95`}
-                    >
-                      {role.name.replace('Workspace', 'Workspace ')}
-                    </div>
-                  </ManageUserWorkspaceDialog>
-                ) : (
-                  <div
-                    className={`inline-flex items-center gap-2 rounded-md bg-slate-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm`}
-                  >
-                    {role.name.replace('Workspace', 'Workspace ')}
-                  </div>
-                )}
-              </div>
+              <RoleBadge
+                key={role.id || index}
+                role={role}
+                onRemove={
+                  can('manageUsersInWorkspace', { workspace: workspaceId })
+                    ? () => setRoleToRemove(role.name)
+                    : undefined
+                }
+              />
             ))}
             {workspaceRoles.length === 0 && (
               <div className="text-xs text-muted-foreground">
                 No workspace roles
               </div>
             )}
+            {can('manageUsersInWorkspace', {
+              workspace: workspaceId
+            }) &&
+              availableRoles.length > 0 && (
+                <Popover open={addRoleOpen} onOpenChange={setAddRoleOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-dashed border-muted-foreground/40 text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+                      aria-label="Add workspace role"
+                    >
+                      <Plus className="h-3 w-3" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    side="bottom"
+                    align="start"
+                    className="w-48 p-1"
+                  >
+                    {availableRoles.map((role) => (
+                      <button
+                        key={role.name}
+                        className="flex w-full rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent/20"
+                        onClick={() => handleAddRole(role.name)}
+                      >
+                        {role.name}
+                      </button>
+                    ))}
+                  </PopoverContent>
+                </Popover>
+              )}
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="px-6 pb-6 pt-0">
-        <div
-          className={`rounded-xl border border-border/50 bg-background/30 transition-all duration-300 ${isPermissionsOpen ? 'ring-2 ring-accent/30' : ''}`}
-        >
-          <button
-            onClick={() => setIsPermissionsOpen(!isPermissionsOpen)}
-            className={`flex w-full items-center justify-between p-4 text-sm font-bold transition-colors hover:bg-accent/15 ${isPermissionsOpen ? 'bg-accent/15 text-accent' : 'text-muted-foreground'}`}
-          >
-            <div className="flex items-center gap-2">Permissions</div>
-            {isPermissionsOpen ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </button>
-
-          <div
-            className={`grid grid-cols-2 gap-x-8 gap-y-3 overflow-hidden transition-all duration-300 ${isPermissionsOpen ? 'max-h-96 p-4 pt-2' : 'max-h-0'}`}
-          >
+        <div className="rounded-xl border border-border/50 bg-background/30">
+          <div className="p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Permissions
+          </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 px-4 pb-4">
             {WORKSPACE_PERMISSIONS_DISPLAY.map((perm) => {
               const hasPermission = userPermissions.has(perm.key)
               return (
                 <div key={perm.label} className="flex items-center gap-3">
                   {hasPermission ? (
-                    <CheckCircle2 className="h-5 w-5 text-lime-500" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-lime-500" />
                   ) : (
-                    <XCircle className="h-5 w-5 text-muted-foreground/30" />
+                    <XCircle className="h-4 w-4 shrink-0 text-muted-foreground/30" />
                   )}
                   <span
                     className={`text-sm ${hasPermission ? 'text-foreground' : 'text-muted-foreground line-through decoration-muted-foreground/30'}`}
@@ -173,6 +248,35 @@ export function WorkspaceUserCard({
           </div>
         </div>
       </CardContent>
+
+      <AlertDialog
+        open={roleToRemove !== null}
+        onOpenChange={(open) => {
+          if (!open) setRoleToRemove(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove role</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              Remove <span className="font-semibold">{roleToRemove}</span> from{' '}
+              {user.firstName} {user.lastName}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (roleToRemove) handleRemoveRole(roleToRemove)
+                setRoleToRemove(null)
+              }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <WorkspaceUserDeleteDialog
         userId={user.id}

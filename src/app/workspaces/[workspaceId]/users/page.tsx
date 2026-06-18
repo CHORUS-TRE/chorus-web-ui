@@ -90,10 +90,10 @@ export default function UsersPage() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-border/50 pb-4">
+        <div className="flex items-center justify-between pb-4">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Users className="h-6 w-6" />
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground border-0">
               Members
             </h2>
           </div>
@@ -101,7 +101,7 @@ export default function UsersPage() {
             <div className="flex items-center gap-0 overflow-hidden rounded-lg border border-border/50 bg-background/50 p-1">
               <Button
                 variant="ghost"
-                className={`h-8 w-8 p-0 ${!showUsersTable ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}
+                className={`h-8 w-8 p-0 ${!showUsersTable ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}
                 onClick={toggleUsersView}
                 disabled={!showUsersTable}
                 aria-label="Switch to grid view"
@@ -110,7 +110,7 @@ export default function UsersPage() {
               </Button>
               <Button
                 variant="ghost"
-                className={`h-8 w-8 p-0 ${showUsersTable ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}
+                className={`h-8 w-8 p-0 ${showUsersTable ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}
                 onClick={toggleUsersView}
                 disabled={showUsersTable}
                 aria-label="Switch to table view"
