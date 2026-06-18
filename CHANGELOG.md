@@ -1,3 +1,10 @@
+# [1.60.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.59.1...v1.60.0) (2026-06-18)
+
+
+### Features
+
+* implement folder upload functionality with UI and state management ([1b4be7e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1b4be7ea6f52c5ec5c8cab6ada10a2afcd78816c))
+
 ## [1.59.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.59.0...v1.59.1) (2026-06-18)
 
 
