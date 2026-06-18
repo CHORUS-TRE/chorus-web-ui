@@ -66,8 +66,9 @@ export function WorkspaceUserCard({
 
   const availableRoles = useMemo(
     () =>
-      roles
-        .filter((r) => r.scope === 'workspace' && !assignedRoleNames.has(r.name)),
+      roles.filter(
+        (r) => r.scope === 'workspace' && !assignedRoleNames.has(r.name)
+      ),
     [roles, assignedRoleNames]
   )
 

@@ -93,7 +93,7 @@ export default function UsersPage() {
         <div className="flex items-center justify-between pb-4">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Users className="h-6 w-6" />
-            <h2 className="text-2xl font-bold tracking-tight text-foreground border-0">
+            <h2 className="border-0 text-2xl font-bold tracking-tight text-foreground">
               Members
             </h2>
           </div>

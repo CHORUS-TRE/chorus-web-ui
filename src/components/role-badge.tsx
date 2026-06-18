@@ -40,7 +40,10 @@ export function RoleBadge({ role, onRemove, className }: RoleBadgeProps) {
   const badge = (
     <Badge
       variant="outline"
-      className={cn('gap-1 whitespace-nowrap rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground', className)}
+      className={cn(
+        'gap-1 whitespace-nowrap rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground',
+        className
+      )}
     >
       <span>{displayName}</span>
       {onRemove && (
