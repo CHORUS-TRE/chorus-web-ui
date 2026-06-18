@@ -1,3 +1,10 @@
+## [1.59.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.59.0...v1.59.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* **workspace-members:** rework member card with inline role management ([a3e0541](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a3e0541c663b183de4016c89b17b2d6cbbb5d36a))
+
 # [1.59.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.58.0...v1.59.0) (2026-06-17)
 
 
