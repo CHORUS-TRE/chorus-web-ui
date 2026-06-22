@@ -3,21 +3,22 @@
 import { formatDistanceToNow } from 'date-fns'
 import {
   AppWindow,
+  ArrowRight,
   CircleGauge,
-  CirclePlus,
-  Clock,
-  Cpu,
   LaptopMinimal,
-  Package
+  Package,
+  Plus
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
+import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Link } from '@/components/ui/link'
+import { K8sWorkbenchStatus, type Workbench } from '@/domain/model/workbench'
+import type { WorkspaceWithDev } from '@/domain/model/workspace'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
@@ -28,52 +29,64 @@ export default function CHORUSDashboard() {
     workspaces,
     refreshWorkspaces,
     workbenches,
+    refreshWorkbenches,
     appInstances,
     apps,
-    notifications,
     approvalRequests
   } = useAppStateStore()
   const { user } = useAuthentication()
-  const [createOpen, setCreateOpen] = useState(false)
   const { can } = useAuthorization()
+  const router = useRouter()
+  const [createOpen, setCreateOpen] = useState(false)
   const {
     workspaces: workspaceLimits,
     sessions: sessionLimits,
     appInstances: appInstanceLimits
   } = useInstanceLimits(user?.id)
 
-  // Filter for pending approval requests where user is an approver
-  const pendingApprovals = React.useMemo(() => {
-    if (!approvalRequests || !user?.id) return 0
+  const workspaceList = useMemo(
+    () =>
+      workspaces?.filter(
+        (ws) =>
+          user?.rolesWithContext?.some(
+            (role) => role.context.workspace === ws.id
+          ) || user?.id === ws.userId
+      ) ?? [],
+    [workspaces, user]
+  )
+
+  const sessionsList = useMemo(
+    () =>
+      workbenches?.filter((wb) =>
+        user?.rolesWithContext?.some((role) => role.context.workbench === wb.id)
+      ) ?? [],
+    [workbenches, user]
+  )
+
+  const runningSessions = useMemo(
+    () =>
+      sessionsList.filter(
+        (wb) =>
+          wb.k8sStatus === K8sWorkbenchStatus.RUNNING ||
+          wb.k8sStatus === K8sWorkbenchStatus.PROGRESSING
+      ),
+    [sessionsList]
+  )
+
+  const pendingApprovalsList = useMemo(() => {
+    if (!approvalRequests || !user?.id) return []
     return approvalRequests.filter(
       (req) =>
         req.status === 'APPROVAL_REQUEST_STATUS_PENDING' &&
         req.approverIds?.includes(user.id)
-    ).length
+    )
   }, [approvalRequests, user?.id])
 
-  // Get unread notifications
-  const unreadNotifications = React.useMemo(() => {
-    if (!notifications) return []
-    return notifications.filter((n) => !n.readAt).slice(0, 5) // Show max 5
-  }, [notifications])
-
-  const router = useRouter()
-
-  const workspaceList =
-    workspaces?.filter(
-      (workspace) =>
-        user?.rolesWithContext?.some(
-          (role) => role.context.workspace === workspace.id
-        ) || user?.id === workspace.userId
-    ) || []
-
-  const workbenchesList =
-    workbenches?.filter((workbench) =>
-      user?.rolesWithContext?.some(
-        (role) => role.context.workbench === workbench.id
-      )
-    ) || []
+  const getSessionApps = (wb: Workbench) =>
+    appInstances
+      ?.filter((inst) => inst.workbenchId === wb.id)
+      .map((inst) => apps?.find((a) => a.id === inst.appId)?.name)
+      .filter(Boolean) ?? []
 
   const appInstancesList =
     appInstances?.filter((instance) =>
@@ -82,389 +95,419 @@ export default function CHORUSDashboard() {
       )
     ) || []
 
+  const getWorkspaceRole = (ws: WorkspaceWithDev) => {
+    if (ws.userId === user?.id) return 'OWNER'
+    const role = user?.rolesWithContext?.find(
+      (r) => r.context.workspace === ws.id
+    )
+    if (role?.name?.toLowerCase().includes('admin')) return 'ADMIN'
+    if (role?.name?.toLowerCase().includes('member')) return 'MEMBER'
+    return 'VIEWER'
+  }
+
+  const getWorkspaceSessions = (ws: WorkspaceWithDev) =>
+    sessionsList.filter((wb) => wb.workspaceId === ws.id)
+
+  const recentWorkspaces = useMemo(
+    () =>
+      [...workspaceList]
+        .sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        )
+        .slice(0, 3),
+    [workspaceList]
+  )
+
+  const wsColors = [
+    'bg-[rgba(71,122,255,0.18)] text-[#7FA2FF]',
+    'bg-[rgba(171,165,245,0.16)] text-[#ABA5F5]',
+    'bg-[rgba(102,239,255,0.13)] text-[#66EFFF]'
+  ]
+
   return (
-    <>
+    <div>
+      {/* Header */}
       <div className="mb-8 w-full">
-        <h2 className="mb-2 mt-5 flex w-full flex-row items-center gap-3 text-start">
-          <CircleGauge className="h-9 w-9" />
-          Dashboard
-        </h2>
+        <div className="flex items-baseline gap-3">
+          <h2 className="mb-2 mt-5 flex w-full flex-row items-center gap-3 text-start">
+            <CircleGauge className="h-9 w-9" />
+            Welcome back, {user?.firstName ?? ''}
+          </h2>
+          <div className="ml-auto flex gap-2.5">
+            {can('createWorkbench') && (
+              <WorkbenchCreateForm
+                userId={user?.id}
+                onSuccess={() => refreshWorkbenches()}
+                disabled={workspaceList.length === 0}
+                disabledReason="You need a workspace to open a session."
+              />
+            )}
+          </div>
+        </div>
         <h3 className="mb-2 text-sm italic text-muted-foreground">
-          Welcome, {user?.firstName || ''} {user?.lastName || ''}
+          {runningSessions.length} session
+          {runningSessions.length !== 1 ? 's' : ''} running
+          {pendingApprovalsList.length > 0 && (
+            <>
+              {' '}
+              · {pendingApprovalsList.length} approval
+              {pendingApprovalsList.length !== 1 ? 's' : ''} waiting on you
+            </>
+          )}
         </h3>
       </div>
 
-      {/* <LayoutTabs /> */}
+      {/* Running Sessions */}
+      <div className="mt-6 rounded-lg border border-border  p-5 shadow-sm">
+        <SectionHeader
+          title="Running sessions"
+          badge={`${runningSessions.length} active`}
+          action="View all"
+          onAction={() => router.push('/sessions')}
+        />
 
-      <div className="w-full">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
-            <section>
-              <h3 className="mb-3 font-semibold">Activity Overview</h3>
-              <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-                <Card
-                  variant="default"
-                  onClick={() => router.push('/workspaces')}
-                  className="min-w-0 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
+        {runningSessions.length > 0 ? (
+          <div className="mt-3.5 grid grid-cols-1 gap-3.5 lg:grid-cols-3">
+            {runningSessions.map((wb) => {
+              const sessionApps = getSessionApps(wb)
+              const workspace = workspaceList.find(
+                (ws) => ws.id === wb.workspaceId
+              )
+              return (
+                <Link
+                  key={wb.id}
+                  href={`/workspaces/${wb.workspaceId}/sessions/${wb.id}`}
+                  variant="plain"
+                  className="flex gap-3.5 rounded-[13px] border border-border !bg-background p-3.5 shadow-sm transition-all duration-200 hover:border-accent/40 hover:shadow-md"
                 >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Total Workspaces
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground">
-                        {workspaceList?.length}
-                        {workspaceLimits.max != null && (
-                          <span className="text-3xl font-normal text-muted-foreground">
-                            /{workspaceLimits.max}
-                          </span>
-                        )}
-                      </span>
-                      <Package className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card
-                  variant="default"
-                  onClick={() => router.push('/sessions')}
-                  className="min-w-0 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Active Sessions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground">
-                        {workbenchesList?.length}
-                        {sessionLimits.max != null && (
-                          <span className="text-3xl font-normal text-muted-foreground">
-                            /{sessionLimits.max}
-                          </span>
-                        )}
-                      </span>
-                      <LaptopMinimal className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card
-                  variant="default"
-                  className="min-w-0 transition-all duration-200 hover:border-accent hover:shadow-md"
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Active Apps
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground">
-                        {appInstancesList?.length}
-                        {appInstanceLimits.max != null && (
-                          <span className="text-3xl font-normal text-muted-foreground">
-                            /{appInstanceLimits.max}
-                          </span>
-                        )}
-                      </span>
-                      <AppWindow className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card
-                  variant="default"
-                  onClick={() => router.push('/messages/requests')}
-                  className="min-w-0 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-md"
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Data Requests
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground">
-                        {pendingApprovals}
-                      </span>
-                      <Clock className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card
-                  className="demo-effect min-w-0 transition-all duration-200 hover:border-accent hover:shadow-md"
-                  variant="default"
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-foreground">
-                      Compute Usage
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-primary">
-                        {'73%'}
-                      </span>
-                      <Cpu className="h-8 w-8 text-primary" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* <Card className="demo-effect" variant="default">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-foreground">
-                      Storage Usage
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-semibold text-muted-foreground text-gray-600">
-                        {'85%'}
-                      </span>
-                      <DatabaseZap className="h-8 w-8 text-gray-600" />
-                    </div>
-                  </CardContent>
-                </Card> */}
-              </div>
-            </section>
-
-            <div>
-              <h3 className="mb-3 font-semibold">My Workspaces & Sessions</h3>
-              <Card variant="glass">
-                <CardHeader className="flex flex-col gap-2">
-                  <CardTitle className="flex items-center justify-between">
-                    <Link
-                      href="/workspaces"
-                      className="flex items-center gap-1 text-sm"
-                    >
-                      <div className="flex items-center gap-2 text-base underline underline-offset-[0.3rem] sm:text-lg">
-                        <Package className="h-5 w-5" />
-                        Workspaces
+                  {/* Thumbnail */}
+                  <div className="relative h-[64px] w-[64px] flex-none overflow-hidden rounded-[9px] border border-muted/20 bg-muted/10">
+                    {workspace?.dev?.image ? (
+                      <Image
+                        src={workspace.dev.image}
+                        alt=""
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <LaptopMinimal className="h-8 w-8 text-muted-foreground/40" />
                       </div>
-                    </Link>
-                    {can('createWorkspace') && (
-                      <Button
-                        onClick={() => setCreateOpen(true)}
-                        variant="accent-filled"
-                      >
-                        <CirclePlus className="h-4 w-4" />
-                        Create Workspace
-                      </Button>
                     )}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                  {(!workspaceList || workspaceList.length === 0) && (
-                    <div className="col-span-3 flex flex-col items-center justify-center py-8 text-center">
-                      <Package className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                      <p className="mb-4 text-sm text-muted-foreground">
-                        You don&apos;t have any workspaces yet
-                      </p>
-                    </div>
-                  )}
-                  {workspaceList?.map((workspace) => {
-                    const workspaceSessions = workbenches?.filter(
-                      (wb) =>
-                        wb.workspaceId === workspace.id &&
-                        user?.rolesWithContext?.some(
-                          (role) => role.context.workbench === wb.id
-                        )
-                    )
-                    return (
-                      <div
-                        key={workspace.id}
-                        className="group/workspace relative w-full rounded-lg border border-muted/40 bg-card/50 text-card-foreground shadow-sm transition-all duration-300 hover:border-accent has-[.session-link:hover]:border-muted/40"
-                      >
-                        {/* Workspace link as a separate clickable area */}
-                        <Link
-                          href={`/workspaces/${workspace.id}`}
-                          variant="plain"
-                          className="flex w-full cursor-pointer rounded-t-lg p-4 transition-colors hover:bg-muted/10"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
-                              {workspace.dev?.image ? (
-                                <Image
-                                  src={workspace.dev.image}
-                                  alt={workspace.name}
-                                  width={32}
-                                  height={32}
-                                  className="aspect-square h-8 w-8 flex-shrink-0 rounded-md object-cover"
-                                />
-                              ) : (
-                                <Package className="h-10 w-10 flex-shrink-0 text-muted-foreground" />
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-muted-foreground">
-                                {workspace.name}
-                              </h4>
-                              <p className="mt-2 text-[10px] font-medium text-muted-foreground">
-                                Created{' '}
-                                {formatDistanceToNow(
-                                  workspace?.createdAt || new Date()
-                                )}{' '}
-                                ago
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
+                  </div>
 
-                        {/* Sessions under this workspace */}
-                        {workspaceSessions && workspaceSessions.length > 0 && (
-                          <div className="space-y-2 px-4 pb-4">
-                            <div className="flex items-center gap-2 pt-2 text-sm font-semibold text-muted-foreground">
-                              <LaptopMinimal className="h-4 w-4" />
-                              {workspaceSessions.length}{' '}
-                              {workspaceSessions.length === 1
-                                ? 'Session'
-                                : 'Sessions'}
-                            </div>
-                            {workspaceSessions.map((workbench) => {
-                              const sessionAppNames = appInstances
-                                ?.filter(
-                                  (instance) =>
-                                    instance.workbenchId === workbench.id
-                                )
-                                .map(
-                                  (instance) =>
-                                    apps?.find(
-                                      (app) => app.id === instance.appId
-                                    )?.name
-                                )
-                                .filter(Boolean)
-                                .join(', ')
-
-                              return (
-                                <Link
-                                  key={workbench.id}
-                                  href={`/workspaces/${workbench.workspaceId}/sessions/${workbench.id}`}
-                                  className="session-link block w-full"
-                                  variant="rounded"
-                                >
-                                  <div className="relative flex w-full items-center gap-3 overflow-hidden rounded-xl border border-muted/10 p-3 text-muted-foreground transition-all hover:border-muted/30">
-                                    <div
-                                      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                                      style={{
-                                        backgroundImage: "url('/cover-sm.png')"
-                                      }}
-                                    />
-                                    <div className="absolute inset-0 bg-contrast-background/70 backdrop-blur-sm" />
-                                    <LaptopMinimal className="text-foreground-muted relative h-10 w-10 flex-shrink-0" />
-                                    <div className="relative min-w-0 flex-1">
-                                      <p className="text-sm font-semibold text-muted-foreground hover:text-accent">
-                                        {workbench.name}
-                                      </p>
-                                      <p className="text-[12px] text-muted-foreground">
-                                        {sessionAppNames}
-                                      </p>
-                                      <p className="mt-2 text-[10px] font-medium text-muted-foreground">
-                                        Created{' '}
-                                        {formatDistanceToNow(
-                                          workbench.createdAt || new Date()
-                                        )}{' '}
-                                        ago
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Link>
-                              )
-                            })}
-                          </div>
-                        )}
+                  {/* Info */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px]">
+                            {wb.name ?? wb.shortName}
+                          </span>
+                        </div>
+                        <div className="text-[11.5px] text-muted-foreground">
+                          {sessionApps.length} app
+                          {sessionApps.length !== 1 ? 's' : ''}
+                          {sessionApps.length > 0 &&
+                            ` · ${sessionApps.join(', ')}`}
+                        </div>
                       </div>
-                    )
-                  })}
-                </CardContent>
-              </Card>
+                      {/* Resume */}
+                      <div className="flex flex-col justify-start">
+                        <span className="inline-flex items-center gap-[5px] whitespace-nowrap rounded-full border border-accent px-[15px] py-[7px] text-[12.5px] font-medium text-accent">
+                          Resume
+                          <ArrowRight className="h-[13px] w-[13px]" />
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mr-4 mt-3 flex justify-between gap-4">
+                      <Metric label="Apps">{sessionApps.length}</Metric>
+                      <Metric label="Status">{wb.k8sStatus ?? '—'}</Metric>
+                      <Metric label="Active">
+                        {wb.updatedAt
+                          ? formatDistanceToNow(wb.updatedAt, {
+                              addSuffix: false
+                            }) + ' ago'
+                          : '—'}
+                      </Metric>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="mt-3.5 flex flex-col items-center justify-center py-10 text-center">
+            <LaptopMinimal className="mb-3.5 h-11 w-11 text-muted-foreground/30" />
+            <div className="text-sm text-muted-foreground">
+              No sessions running yet
+            </div>
+            <div className="mt-1 text-[12.5px] text-muted-foreground/70">
+              Launch one to start analysing — it opens right here in your
+              browser.
             </div>
           </div>
+        )}
+      </div>
 
-          <div className="lg:col-span-1">
-            <h3 className="mb-3 font-semibold">Messages</h3>
-            <Card variant="glass">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <Link
-                    href="/messages"
-                    className="flex items-center gap-2 text-base underline underline-offset-[0.3rem] sm:text-lg"
+      {/* Bottom grid: Workspaces | Metrics + Approvals */}
+      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
+        {/* Recent workspaces */}
+        <div>
+          <SectionHeader title="Recent workspaces" />
+          <div className="mt-3 flex flex-col gap-2">
+            {recentWorkspaces.map((ws, i) => {
+              const wsSessions = getWorkspaceSessions(ws)
+              const runningCount = wsSessions.filter(
+                (s) =>
+                  s.k8sStatus === K8sWorkbenchStatus.RUNNING ||
+                  s.k8sStatus === K8sWorkbenchStatus.PROGRESSING
+              ).length
+              const role = getWorkspaceRole(ws)
+
+              return (
+                <Link
+                  key={ws.id}
+                  href={`/workspaces/${ws.id}`}
+                  variant="plain"
+                  className="flex items-center gap-3 rounded-[11px] border border-muted/20 bg-card/50 p-3 px-3.5 transition-all hover:border-accent/40"
+                >
+                  <div
+                    className={`inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg ${wsColors[i % wsColors.length]}`}
                   >
-                    <Clock className="h-5 w-5" />
-                    Inbox
-                  </Link>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {unreadNotifications.length > 0 ? (
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Recent
-                    </h4>
-                    <div className="space-y-1">
-                      {unreadNotifications.map((notification) => (
-                        <Link
-                          variant="plain"
-                          key={notification.id}
-                          href={
-                            notification.content?.approvalRequestNotification
-                              ?.approvalRequestId
-                              ? `/messages/requests/${notification.content.approvalRequestNotification.approvalRequestId}`
-                              : '/messages'
-                          }
-                          className="block rounded-lg border border-muted/10 bg-muted/20 p-2 transition-colors hover:bg-muted/50"
-                        >
-                          <div className="flex items-start gap-2">
-                            <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-                            <div className="min-w-0 flex-1">
-                              <p className="line-clamp-2 text-xs font-medium text-muted-foreground">
-                                {notification.message}
-                              </p>
-                              {notification.createdAt && (
-                                <p className="text-[10px] text-muted-foreground/70">
-                                  {formatDistanceToNow(
-                                    new Date(notification.createdAt),
-                                    { addSuffix: true }
-                                  )}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
+                    <Package className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px]">{ws.name}</div>
+                    <div className="mt-0.5 text-[11px] text-muted-foreground">
+                      {ws.dev?.memberCount ?? 0} member
+                      {(ws.dev?.memberCount ?? 0) !== 1 ? 's' : ''} ·{' '}
+                      {runningCount} running ·{' '}
+                      {formatDistanceToNow(ws.updatedAt, { addSuffix: false })}{' '}
+                      ago
                     </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <Clock className="mb-3 h-10 w-10 text-muted-foreground/30" />
-                    <p className="text-sm text-muted-foreground">
-                      No unread messages
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground/70">
-                      You&apos;re all caught up!
-                    </p>
-                  </div>
+                  <RoleBadge role={role} />
+                </Link>
+              )
+            })}
+
+            {recentWorkspaces.length === 0 && (
+              <div className="flex flex-col items-center py-8 text-center">
+                <Package className="mb-3 h-10 w-10 text-muted-foreground/30" />
+                <p className="text-sm text-muted-foreground">
+                  No workspaces yet
+                </p>
+                {can('createWorkspace') && (
+                  <button
+                    onClick={() => setCreateOpen(true)}
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-accent px-4 py-1.5 text-xs font-medium text-accent"
+                  >
+                    <Plus className="h-3 w-3" /> Create workspace
+                  </button>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            )}
           </div>
         </div>
 
-        {createOpen && (
-          <WorkspaceCreateForm
-            state={[createOpen, setCreateOpen]}
-            userId={user?.id}
-            onSuccess={async (workspace) => {
-              workspaceList.push(workspace)
-              await refreshWorkspaces()
-            }}
-          />
-        )}
+        {/* Metrics + Approvals */}
+        <div className="flex flex-col gap-3">
+          {/* Compute + Storage */}
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Card
+              variant="default"
+              onClick={() => router.push('/workspaces')}
+              className="min-w-0 flex-1 cursor-pointer transition-all duration-200 hover:border-accent/40 hover:shadow-md"
+            >
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Total Workspaces
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-semibold text-muted-foreground">
+                    {workspaceList?.length}
+                    {workspaceLimits.max != null && (
+                      <span className="text-3xl font-normal text-muted-foreground">
+                        /{workspaceLimits.max}
+                      </span>
+                    )}
+                  </span>
+                  <Package className="h-8 w-8 text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card
+              variant="default"
+              onClick={() => router.push('/sessions')}
+              className="min-w-0 flex-1 cursor-pointer transition-all duration-200 hover:border-accent/40 hover:shadow-md"
+            >
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Active Sessions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-semibold text-muted-foreground">
+                    {sessionsList?.length}
+                    {sessionLimits.max != null && (
+                      <span className="text-3xl font-normal text-muted-foreground">
+                        /{sessionLimits.max}
+                      </span>
+                    )}
+                  </span>
+                  <LaptopMinimal className="h-8 w-8 text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card
+              variant="default"
+              className="min-w-0 flex-1 transition-all duration-200 hover:shadow-md"
+            >
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Active Apps
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-semibold text-muted-foreground">
+                    {appInstancesList?.length}
+                    {appInstanceLimits.max != null && (
+                      <span className="text-3xl font-normal text-muted-foreground">
+                        /{appInstanceLimits.max}
+                      </span>
+                    )}
+                  </span>
+                  <AppWindow className="h-8 w-8 text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Pending approvals */}
+          <div className="flex flex-col rounded-[11px] border border-border bg-card/50 p-3.5">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                Pending approvals
+              </span>
+              {pendingApprovalsList.length > 0 && (
+                <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-[5px] text-[9.5px] font-bold text-white">
+                  {pendingApprovalsList.length}
+                </span>
+              )}
+            </div>
+
+            {pendingApprovalsList.length > 0 ? (
+              <div className="flex flex-col">
+                {pendingApprovalsList.slice(0, 4).map((req) => (
+                  <Link
+                    key={req.id}
+                    href={`/messages/requests/${req.id}`}
+                    variant="plain"
+                    className="flex items-center gap-2.5 border-b border-muted/15 py-2 last:border-0"
+                  >
+                    <div className="h-[7px] w-[7px] flex-none rounded-full bg-amber-500" />
+                    <div className="flex-1 text-xs text-foreground/85">
+                      {req.title ?? 'Approval request'}
+                    </div>
+                    <span className="text-[11px] text-primary">Review</span>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="py-4 text-center text-xs text-muted-foreground">
+                No pending approvals
+              </p>
+            )}
+          </div>
+        </div>
       </div>
-    </>
+
+      {createOpen && (
+        <WorkspaceCreateForm
+          state={[createOpen, setCreateOpen]}
+          userId={user?.id}
+          onSuccess={async (workspace) => {
+            workspaceList.push(workspace)
+            await refreshWorkspaces()
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+// --- Sub-components ---
+
+function SectionHeader({
+  title,
+  badge,
+  action,
+  onAction,
+  className
+}: {
+  title: string
+  badge?: string
+  action?: string
+  onAction?: () => void
+  className?: string
+}) {
+  return (
+    <div className={`flex items-center gap-2.5 ${className ?? ''}`}>
+      <h3 className="font-semibold tracking-[0.04em] text-muted-foreground">
+        {title}
+      </h3>
+      {badge && (
+        <span className="mt-1 text-[11px] text-muted-foreground/60">
+          {badge}
+        </span>
+      )}
+      <div className="mt-1 flex-1 border-b border-dotted border-muted/40" />
+      {action && (
+        <button
+          onClick={onAction}
+          className="text-xs text-accent hover:underline"
+        >
+          {action}
+        </button>
+      )}
+    </div>
+  )
+}
+
+function Metric({
+  label,
+  children
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <div className="text-[9.5px] uppercase tracking-[0.06em] text-muted-foreground/60">
+        {label}
+      </div>
+      <div className="mt-0.5 text-[12.5px] text-foreground/85">{children}</div>
+    </div>
+  )
+}
+
+function RoleBadge({ role }: { role: string }) {
+  const isOwner = role === 'OWNER'
+  return (
+    <span
+      className={`rounded-full px-[9px] py-0.5 text-[9.5px] font-semibold tracking-[0.06em] ${
+        isOwner
+          ? 'bg-primary text-primary-foreground'
+          : 'border border-muted/40 text-muted-foreground'
+      }`}
+    >
+      {role}
+    </span>
   )
 }
