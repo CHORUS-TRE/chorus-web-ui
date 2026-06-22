@@ -212,7 +212,7 @@ function SidebarContent({
         <SidebarBookmarks />
 
         <div className="flex-1" />
-        {/* <Link
+        <Link
           onClick={(e) => {
             e.preventDefault()
             setHasCompletedOnboarding(false)
@@ -226,7 +226,7 @@ function SidebarContent({
         >
           <Rocket className="h-4 w-4" />
           Getting Started
-        </Link> */}
+        </Link>
 
         <Link
           onClick={(e) => {

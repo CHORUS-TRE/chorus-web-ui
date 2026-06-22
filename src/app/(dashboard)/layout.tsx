@@ -12,7 +12,7 @@ const Login = React.lazy(() =>
     default: mod.Login
   }))
 )
-// import { OnboardingWizard } from '@/components/onboarding/onboarding-wizard'
+import { OnboardingWizard } from '@/components/onboarding/onboarding-wizard'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { TermsOfUseGate } from '@/providers/terms-of-use-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
@@ -29,7 +29,7 @@ export default function Layout({
 
   if (!user) return <Login />
 
-  // if (!hasCompletedOnboarding) return <OnboardingWizard />
+  if (!hasCompletedOnboarding) return <OnboardingWizard />
 
   return (
     <TermsOfUseGate>
