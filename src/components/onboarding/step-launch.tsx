@@ -16,7 +16,13 @@ const SESSION_APPS = [
 export function StepLaunch({ onLaunch, onSkip }: StepLaunchProps) {
   return (
     <>
-      <div className="pointer-events-none absolute -top-[60px] right-[-40px] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(182,255,18,0.1),transparent_70%)]" />
+      <div
+        className="pointer-events-none absolute -top-[60px] right-[-40px] h-[300px] w-[300px] rounded-full"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, rgba(182,255,18,0.1), transparent 70%)'
+        }}
+      />
       <div className="relative flex flex-col">
         <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a8a8a]">
           Final step

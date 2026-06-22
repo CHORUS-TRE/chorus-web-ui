@@ -39,7 +39,13 @@ const features = [
 export function StepWelcome({ onNext, onSkip }: StepWelcomeProps) {
   return (
     <>
-      <div className="pointer-events-none absolute -top-20 right-[-60px] h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle,rgba(71,122,255,0.14),transparent_70%)]" />
+      <div
+        className="pointer-events-none absolute -top-20 right-[-60px] h-[340px] w-[340px] rounded-full"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, rgba(71,122,255,0.14), transparent 70%)'
+        }}
+      />
       <div className="relative">
         <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a8a8a]">
           Getting started · 2 min
