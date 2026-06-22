@@ -29,7 +29,7 @@ export default function SessionPage() {
           (role) => role.context.workbench === workbench.id
         )
       ),
-    [workbenches, workspaceId, user?.rolesWithContext]
+    [workbenches, user?.rolesWithContext]
   )
 
   if (!workspaceId) {

@@ -117,7 +117,7 @@
   } */
 
   h2 {
-    @apply border-b border-dotted border-muted pb-2 text-4xl font-medium leading-10;
+    @apply border-b border-dotted border-muted pb-2 text-3xl font-medium leading-10;
   }
 
   h3 {

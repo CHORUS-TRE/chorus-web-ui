@@ -51,6 +51,10 @@ interface UserPreferencesState {
   hasSeenGettingStartedTour: boolean
   setHasSeenGettingStartedTour: (value: boolean) => void
 
+  // Onboarding wizard
+  hasCompletedOnboarding: boolean
+  setHasCompletedOnboarding: (value: boolean) => void
+
   // Reset
   resetPreferences: () => void
 }
@@ -68,7 +72,8 @@ const defaultPreferences = {
   showRightSidebar: false,
   sessionsViewMode: 'grid' as const,
   showAppStoreHero: true,
-  hasSeenGettingStartedTour: false
+  hasSeenGettingStartedTour: true,
+  hasCompletedOnboarding: true
 }
 
 export const useUserPreferences = create<UserPreferencesState>()(
@@ -122,6 +127,11 @@ export const useUserPreferences = create<UserPreferencesState>()(
       hasSeenGettingStartedTour: defaultPreferences.hasSeenGettingStartedTour,
       setHasSeenGettingStartedTour: (value) =>
         set({ hasSeenGettingStartedTour: value }),
+
+      // Onboarding wizard
+      hasCompletedOnboarding: defaultPreferences.hasCompletedOnboarding,
+      setHasCompletedOnboarding: (value) =>
+        set({ hasCompletedOnboarding: value }),
 
       // Reset all preferences
       resetPreferences: () => set(defaultPreferences)

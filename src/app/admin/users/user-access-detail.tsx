@@ -17,7 +17,6 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Collapsible,
@@ -455,7 +454,7 @@ export function UserAccessDetail({
   onGrantClick
 }: UserAccessDetailProps) {
   const { rolesByName, permissionsByName } = useRoles()
-  const [tab, setTab] = useState<'effective' | 'grants'>('effective')
+  const [tab, setTab] = useState<'effective' | 'grants'>('grants')
 
   if (!user) {
     return (
@@ -599,8 +598,8 @@ export function UserAccessDetail({
         <div className="mt-4 inline-flex gap-0.5 rounded-lg border bg-muted/50 p-0.5">
           {(
             [
-              ['effective', 'Effective access'],
-              ['grants', 'Role grants']
+              ['grants', 'Role grants'],
+              ['effective', 'Effective access']
             ] as const
           ).map(([key, label]) => (
             <button

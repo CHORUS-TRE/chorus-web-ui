@@ -4,11 +4,9 @@ import {
   CheckCircle2,
   Cookie,
   HelpCircle,
-  ScrollText,
   Sparkles,
   XCircle
 } from 'lucide-react'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
