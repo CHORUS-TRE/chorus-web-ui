@@ -1,3 +1,17 @@
+# [1.61.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.60.0...v1.61.0) (2026-06-22)
+
+
+### Bug Fixes
+
+* **onboarding:** refactor background styling for launch and welcome steps ([0edab82](https://github.com/CHORUS-TRE/chorus-web-ui/commit/0edab82e3eee9abd27b5031e9834a4cd62abd565))
+* update app version assignment to use dockerImageTag ([884bd53](https://github.com/CHORUS-TRE/chorus-web-ui/commit/884bd538f523472f43f2af7231e1f38b9a915712))
+
+
+### Features
+
+* enhance dashboard layout ([36083d6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/36083d6697172e23a82902f13ed2cdb3c1c5ffa0))
+* **onboarding:** implement onboarding steps for user setup ([180ce85](https://github.com/CHORUS-TRE/chorus-web-ui/commit/180ce85737158db81e13eadb7b2fef6d5899d9f9))
+
 # [1.60.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.59.1...v1.60.0) (2026-06-18)
 
 
