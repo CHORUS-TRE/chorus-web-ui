@@ -159,12 +159,14 @@ export default function CHORUSDashboard() {
       </div>
 
       {/* Running Sessions */}
-      <div className="mt-6 rounded-lg border border-border  p-5 shadow-sm">
+
+      <div className="mb-16 rounded-lg border border-border p-5 shadow-sm">
         <SectionHeader
           title="Running sessions"
           badge={`${runningSessions.length} active`}
           action="View all"
           onAction={() => router.push('/sessions')}
+          className="mt-2"
         />
 
         {runningSessions.length > 0 ? (
@@ -179,7 +181,7 @@ export default function CHORUSDashboard() {
                   key={wb.id}
                   href={`/workspaces/${wb.workspaceId}/sessions/${wb.id}`}
                   variant="plain"
-                  className="flex gap-3.5 rounded-[13px] border border-border !bg-background p-3.5 shadow-sm transition-all duration-200 hover:border-accent/40 hover:shadow-md"
+                  className="flex gap-3.5 rounded-[13px] border border-muted/40 !bg-card p-3.5 shadow-sm transition-all duration-200 hover:border-accent/40 hover:shadow-md"
                 >
                   {/* Thumbnail */}
                   <div className="relative h-[64px] w-[64px] flex-none overflow-hidden rounded-[9px] border border-muted/20 bg-muted/10">
@@ -238,7 +240,7 @@ export default function CHORUSDashboard() {
             })}
           </div>
         ) : (
-          <div className="mt-3.5 flex flex-col items-center justify-center py-10 text-center">
+          <div className="mt-3.5 flex flex-col items-center justify-center rounded-xl border border-dashed border-muted/40 py-10 text-center">
             <LaptopMinimal className="mb-3.5 h-11 w-11 text-muted-foreground/30" />
             <div className="text-sm text-muted-foreground">
               No sessions running yet

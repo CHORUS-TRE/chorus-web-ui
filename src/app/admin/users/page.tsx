@@ -1,14 +1,12 @@
 'use client'
 
-import { Lock, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { GrantAccessDialog } from '@/components/forms/grant-access-dialog'
 import { toast } from '@/components/hooks/use-toast'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { User } from '@/domain/model/user'
-import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { listUsers, listUsersPaginated } from '@/view-model/user-view-model'
 
@@ -32,7 +30,7 @@ export default function UsersPage() {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>()
-  const [hasSensitiveOnly, setHasSensitiveOnly] = useState(false)
+  const [hasSensitiveOnly] = useState(false)
 
   const [grantOpen, setGrantOpen] = useState(false)
   const [grantUserId, setGrantUserId] = useState<string | undefined>()

@@ -227,7 +227,7 @@ export function TermsOfUseAdmin() {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation()
-                            v.id && openPublish(v.id)
+                            if (v.id) openPublish(v.id)
                           }}
                         >
                           Publish

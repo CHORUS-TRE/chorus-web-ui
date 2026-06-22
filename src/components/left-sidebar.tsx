@@ -8,6 +8,7 @@ import {
   HelpCircle,
   LaptopMinimal,
   Package,
+  Rocket,
   SlidersHorizontal,
   Store
 } from 'lucide-react'
@@ -86,7 +87,7 @@ function SidebarContent({
     return pathname === href || pathname.startsWith(href + '/')
   }
 
-  const { toggleRightSidebar } = useUserPreferences()
+  const { toggleRightSidebar, setHasCompletedOnboarding } = useUserPreferences()
 
   return (
     <>
@@ -210,7 +211,22 @@ function SidebarContent({
 
         <SidebarBookmarks />
 
-        <Separator className="my-2" />
+        <div className="flex-1" />
+        {/* <Link
+          onClick={(e) => {
+            e.preventDefault()
+            setHasCompletedOnboarding(false)
+          }}
+          href="#"
+          variant="underline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-accent'
+          )}
+          title="Getting Started"
+        >
+          <Rocket className="h-4 w-4" />
+          Getting Started
+        </Link> */}
 
         <Link
           onClick={(e) => {
@@ -227,9 +243,6 @@ function SidebarContent({
           <HelpCircle className="h-4 w-4" />
           Help
         </Link>
-
-        <div className="flex-1" />
-
         <p className="px-3 text-right text-[10px] text-muted-foreground/50">
           v{packageInfo.version}
         </p>

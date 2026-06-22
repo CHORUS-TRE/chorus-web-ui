@@ -41,6 +41,12 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
+import {
   Workbench,
   WorkbenchCreateSchema,
   WorkbenchCreateType,
@@ -64,13 +70,17 @@ export function WorkbenchCreateForm({
   workspaceName,
   userId,
   onSuccess,
-  openOnStart = false
+  openOnStart = false,
+  disabled = false,
+  disabledReason = 'You need a workspace to open a session.'
 }: {
   workspaceId?: string
   workspaceName?: string
   userId?: string
   onSuccess?: (workbench: Workbench) => void
   openOnStart?: boolean
+  disabled?: boolean
+  disabledReason?: string
 }) {
   const [open, setOpen] = useState(openOnStart)
   const [isCreating, setIsCreating] = useState(false)
@@ -234,14 +244,40 @@ export function WorkbenchCreateForm({
     })
   }
 
+  const triggerButton = (
+    <Button
+      variant="accent-filled"
+      type="button"
+      disabled={isCreating || disabled}
+    >
+      <CirclePlus className="h-4 w-4" />
+      {isCreating ? 'Creating...' : 'Create session'}
+    </Button>
+  )
+
   return (
-    <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="accent-filled" type="button" disabled={isCreating}>
-          <CirclePlus className="h-4 w-4" />
-          {isCreating ? 'Creating...' : 'Create session'}
-        </Button>
-      </DialogTrigger>
+    <DialogContainer
+      open={open}
+      onOpenChange={(next) => {
+        if (disabled) return
+        setOpen(next)
+      }}
+    >
+      {disabled ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {/* span wrapper so the tooltip still fires on a disabled button */}
+              <span tabIndex={0} className="inline-flex cursor-not-allowed">
+                {triggerButton}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>{disabledReason}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+      )}
       <DialogContent className="bg-background">
         <DialogHeader>
           <DialogTitle>Create Session</DialogTitle>
