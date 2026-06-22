@@ -99,7 +99,7 @@ export function StepApps({ onNext, onBack }: StepAppsProps) {
         id: app.id,
         name: app.name,
         description: app.description ?? '',
-        version: app.version ?? '',
+        version: app.dockerImageTag ?? '',
         icon: FALLBACK_APPS[i % FALLBACK_APPS.length].icon,
         color: FALLBACK_APPS[i % FALLBACK_APPS.length].color
       }))
