@@ -10,12 +10,14 @@ import {
   WorkspaceServiceInstanceCreateSchema,
   WorkspaceServiceInstanceCreateType,
   WorkspaceServiceInstanceListFilter,
+  WorkspaceServiceInstanceSecrets,
   WorkspaceServiceInstanceUpdateSchema,
   WorkspaceServiceInstanceUpdateType
 } from '@/domain/model'
 import { WorkspaceServiceInstanceCreate } from '@/domain/use-cases/workspace-service-instance/workspace-service-instance-create'
 import { WorkspaceServiceInstanceDelete } from '@/domain/use-cases/workspace-service-instance/workspace-service-instance-delete'
 import { WorkspaceServiceInstanceGet } from '@/domain/use-cases/workspace-service-instance/workspace-service-instance-get'
+import { WorkspaceServiceInstanceGetSecrets } from '@/domain/use-cases/workspace-service-instance/workspace-service-instance-get-secrets'
 import { WorkspaceServiceInstanceList } from '@/domain/use-cases/workspace-service-instance/workspace-service-instance-list'
 import { WorkspaceServiceInstanceUpdate } from '@/domain/use-cases/workspace-service-instance/workspace-service-instance-update'
 
@@ -54,6 +56,20 @@ export async function workspaceServiceInstanceGet(
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workspace service instance', error)
+    return { error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+export async function workspaceServiceInstanceGetSecrets(
+  id: string
+): Promise<Result<WorkspaceServiceInstanceSecrets>> {
+  try {
+    if (!id) throw new Error('Invalid workspace service instance id')
+    const repository = await getRepository()
+    const useCase = new WorkspaceServiceInstanceGetSecrets(repository)
+    return await useCase.execute(id)
+  } catch (error) {
+    console.error('Error getting workspace service instance secrets', error)
     return { error: error instanceof Error ? error.message : String(error) }
   }
 }

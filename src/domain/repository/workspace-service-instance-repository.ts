@@ -3,6 +3,7 @@ import {
   WorkspaceServiceInstance,
   WorkspaceServiceInstanceCreateType,
   WorkspaceServiceInstanceListFilter,
+  WorkspaceServiceInstanceSecrets,
   WorkspaceServiceInstanceUpdateType
 } from '../model'
 
@@ -18,4 +19,5 @@ export interface WorkspaceServiceInstanceRepository {
   ) => Promise<Result<WorkspaceServiceInstance>>
   delete: (id: string) => Promise<Result<string>>
   get: (id: string) => Promise<Result<WorkspaceServiceInstance>>
+  getSecrets: (id: string) => Promise<Result<WorkspaceServiceInstanceSecrets>>
 }

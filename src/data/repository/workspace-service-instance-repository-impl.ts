@@ -5,6 +5,8 @@ import {
   WorkspaceServiceInstanceCreateType,
   WorkspaceServiceInstanceListFilter,
   WorkspaceServiceInstanceSchema,
+  WorkspaceServiceInstanceSecrets,
+  WorkspaceServiceInstanceSecretsSchema,
   WorkspaceServiceInstanceUpdateType
 } from '@/domain/model'
 import { WorkspaceServiceInstanceRepository } from '@/domain/repository'
@@ -56,6 +58,27 @@ export class WorkspaceServiceInstanceRepositoryImpl
       return { data: validatedData }
     } catch (error) {
       console.error('Error getting workspace service instance', error)
+      return { error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async getSecrets(
+    id: string
+  ): Promise<Result<WorkspaceServiceInstanceSecrets>> {
+    try {
+      const response = await this.dataSource.getSecrets(id)
+      const validation = WorkspaceServiceInstanceSecretsSchema.safeParse(
+        response.result?.secrets ?? {}
+      )
+      if (!validation.success) {
+        return {
+          error: 'API response validation failed',
+          issues: validation.error.issues
+        }
+      }
+      return { data: validation.data }
+    } catch (error) {
+      console.error('Error getting workspace service instance secrets', error)
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }
