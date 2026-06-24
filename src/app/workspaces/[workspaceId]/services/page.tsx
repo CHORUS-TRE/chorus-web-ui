@@ -5,6 +5,8 @@ import {
   AlertCircle,
   Check,
   Copy,
+  Eye,
+  EyeOff,
   Loader2,
   PlugZap,
   Settings,
@@ -43,6 +45,7 @@ import {
 } from '@/domain/model/workspace-service-instance'
 import {
   workspaceServiceInstanceDelete,
+  workspaceServiceInstanceGetSecrets,
   workspaceServiceInstanceList,
   workspaceServiceInstanceUpdate
 } from '@/view-model/workspace-service-instance-view-model'
@@ -165,6 +168,41 @@ function ServiceParametersDialog({
   onUpdate: (updated: WorkspaceServiceInstance) => void
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [secrets, setSecrets] = useState<Record<string, string> | null>(null)
+  const [secretsLoading, setSecretsLoading] = useState(false)
+  const [secretsRevealed, setSecretsRevealed] = useState(false)
+
+  async function handleToggleSecrets() {
+    if (!instance.id) return
+
+    // Hide if currently shown
+    if (secretsRevealed) {
+      setSecretsRevealed(false)
+      return
+    }
+
+    // Already fetched — just reveal again
+    if (secrets) {
+      setSecretsRevealed(true)
+      return
+    }
+
+    // Fetch then reveal
+    setSecretsLoading(true)
+    const result = await workspaceServiceInstanceGetSecrets(instance.id)
+    setSecretsLoading(false)
+
+    if (result.error) {
+      toast({
+        title: 'Error',
+        description: result.error,
+        variant: 'destructive'
+      })
+      return
+    }
+    setSecrets(result.data ?? {})
+    setSecretsRevealed(true)
+  }
 
   const form = useForm<ParamsFormValues>({
     resolver: zodResolver(paramsSchema),
@@ -276,6 +314,69 @@ function ServiceParametersDialog({
             </dl>
           </div>
         )}
+
+        {/* ── Secrets ── */}
+        <div className="px-1 py-2">
+          <div className="mb-2.5 flex min-h-6 items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Secrets
+            </p>
+            {(secretsRevealed || secretsLoading) && (
+              <button
+                type="button"
+                onClick={handleToggleSecrets}
+                disabled={secretsLoading}
+                aria-label="Hide secrets"
+                className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+              >
+                {secretsLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <EyeOff className="h-4 w-4" />
+                )}
+              </button>
+            )}
+          </div>
+
+          {secretsRevealed && secrets ? (
+            Object.keys(secrets).length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                No secrets available for this service.
+              </p>
+            ) : (
+              <dl className="space-y-1.5">
+                {Object.entries(secrets).map(([key, value]) => (
+                  <div key={key} className="flex items-start gap-3">
+                    <dt className="w-36 flex-shrink-0 break-all text-xs text-muted-foreground">
+                      {key}
+                    </dt>
+                    <div className="flex min-w-0 flex-1 items-start gap-2">
+                      <span className="min-w-0 flex-1 break-all font-mono text-xs text-foreground">
+                        {value}
+                      </span>
+                      <CopyButton value={value} />
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            )
+          ) : (
+            <button
+              type="button"
+              onClick={handleToggleSecrets}
+              disabled={secretsLoading}
+              className="flex w-full items-center gap-2 rounded-md border border-dashed px-3 py-2 text-left transition-colors hover:bg-muted/50 disabled:opacity-50"
+            >
+              <Eye className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
+              <span className="font-mono text-xs tracking-widest text-muted-foreground">
+                ••••••••••••
+              </span>
+              <span className="ml-auto text-xs text-muted-foreground">
+                Click to reveal
+              </span>
+            </button>
+          )}
+        </div>
 
         {/* ── Parameters form ── */}
         <Form {...form}>
