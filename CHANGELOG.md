@@ -1,3 +1,11 @@
+# [1.62.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.61.0...v1.62.0) (2026-06-24)
+
+
+### Features
+
+* add getSecrets functionality to workspace service instance ([84bf051](https://github.com/CHORUS-TRE/chorus-web-ui/commit/84bf051b52596aa1b2697f8ded767a632161ef61))
+* implement secrets toggle functionality in service params dialog ([16577ca](https://github.com/CHORUS-TRE/chorus-web-ui/commit/16577caca478bfcd8df2a53d240dca6df610bd9d))
+
 # [1.61.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.60.0...v1.61.0) (2026-06-22)
 
 
