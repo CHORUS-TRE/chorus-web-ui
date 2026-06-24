@@ -47,6 +47,8 @@ models/ChorusAuthorizationPermission.ts
 models/ChorusAuthorizationRole.ts
 models/ChorusBulkCreateAppsReply.ts
 models/ChorusBulkCreateAppsRequest.ts
+models/ChorusChorusErrorCode.ts
+models/ChorusChorusErrorResponse.ts
 models/ChorusCompleteWorkspaceFileUploadReply.ts
 models/ChorusCompleteWorkspaceFileUploadResult.ts
 models/ChorusCountMyApprovalRequestsReply.ts
@@ -101,6 +103,7 @@ models/ChorusDownloadApprovalRequestFileReply.ts
 models/ChorusDownloadApprovalRequestFileResult.ts
 models/ChorusEnableTotpReply.ts
 models/ChorusEnableTotpRequest.ts
+models/ChorusErrorDetail.ts
 models/ChorusGetAppInstanceReply.ts
 models/ChorusGetAppInstanceResult.ts
 models/ChorusGetAppReply.ts
@@ -132,7 +135,11 @@ models/ChorusGetWorkspaceReply.ts
 models/ChorusGetWorkspaceResult.ts
 models/ChorusGetWorkspaceServiceInstanceReply.ts
 models/ChorusGetWorkspaceServiceInstanceResult.ts
+models/ChorusGetWorkspaceServiceInstanceSecretsReply.ts
+models/ChorusGetWorkspaceServiceInstanceSecretsResult.ts
+models/ChorusInitializeTenantReply.ts
 models/ChorusInitializeTenantRequest.ts
+models/ChorusInitializeTenantResult.ts
 models/ChorusInitiateWorkspaceFileUploadReply.ts
 models/ChorusInitiateWorkspaceFileUploadResult.ts
 models/ChorusInternal.ts
@@ -230,6 +237,7 @@ models/ChorusUploadWorkspaceFilePartReply.ts
 models/ChorusUploadWorkspaceFilePartResult.ts
 models/ChorusUser.ts
 models/ChorusUserFilter.ts
+models/ChorusValidationError.ts
 models/ChorusWorkbench.ts
 models/ChorusWorkbenchFilter.ts
 models/ChorusWorkspace.ts
@@ -242,8 +250,6 @@ models/ChorusWorkspaceServiceInstanceFilter.ts
 models/ChorusWorkspaceStatus.ts
 models/ChorusWorkspaceVisibility.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
-models/ProtobufAny.ts
-models/RpcStatus.ts
 models/TermsOfUseServiceUpdateTermsOfUseVersionBody.ts
 models/UserServiceCreateUserRoleBody.ts
 models/WorkbenchServiceManageUserRoleInWorkbenchBody.ts

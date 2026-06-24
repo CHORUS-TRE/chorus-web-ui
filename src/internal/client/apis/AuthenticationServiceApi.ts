@@ -18,11 +18,11 @@ import type {
   ChorusAuthenticateOauthRedirectReply,
   ChorusAuthenticateOauthReply,
   ChorusAuthenticationReply,
+  ChorusChorusErrorResponse,
   ChorusCredentials,
   ChorusGetAuthenticationModesReply,
   ChorusLogoutReply,
-  ChorusRefreshTokenReply,
-  RpcStatus
+  ChorusRefreshTokenReply
 } from '../models/index'
 import {
   AuthenticationServiceAuthenticateOauthRedirectBodyFromJSON,
@@ -33,6 +33,8 @@ import {
   ChorusAuthenticateOauthReplyToJSON,
   ChorusAuthenticationReplyFromJSON,
   ChorusAuthenticationReplyToJSON,
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCredentialsFromJSON,
   ChorusCredentialsToJSON,
   ChorusGetAuthenticationModesReplyFromJSON,
@@ -40,9 +42,7 @@ import {
   ChorusLogoutReplyFromJSON,
   ChorusLogoutReplyToJSON,
   ChorusRefreshTokenReplyFromJSON,
-  ChorusRefreshTokenReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusRefreshTokenReplyToJSON
 } from '../models/index'
 
 export interface AuthenticationServiceAuthenticateRequest {

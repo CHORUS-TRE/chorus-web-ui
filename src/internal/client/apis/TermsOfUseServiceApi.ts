@@ -15,6 +15,7 @@
 import * as runtime from '../runtime'
 import type {
   ChorusAcceptTermsOfUseReply,
+  ChorusChorusErrorResponse,
   ChorusCreateTermsOfUseVersionReply,
   ChorusCreateTermsOfUseVersionRequest,
   ChorusGetCurrentTermsOfUseVersionReply,
@@ -24,12 +25,13 @@ import type {
   ChorusListTermsOfUseVersionsReply,
   ChorusPublishTermsOfUseVersionReply,
   ChorusUpdateTermsOfUseVersionReply,
-  RpcStatus,
   TermsOfUseServiceUpdateTermsOfUseVersionBody
 } from '../models/index'
 import {
   ChorusAcceptTermsOfUseReplyFromJSON,
   ChorusAcceptTermsOfUseReplyToJSON,
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateTermsOfUseVersionReplyFromJSON,
   ChorusCreateTermsOfUseVersionReplyToJSON,
   ChorusCreateTermsOfUseVersionRequestFromJSON,
@@ -48,8 +50,6 @@ import {
   ChorusPublishTermsOfUseVersionReplyToJSON,
   ChorusUpdateTermsOfUseVersionReplyFromJSON,
   ChorusUpdateTermsOfUseVersionReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON,
   TermsOfUseServiceUpdateTermsOfUseVersionBodyFromJSON,
   TermsOfUseServiceUpdateTermsOfUseVersionBodyToJSON
 } from '../models/index'

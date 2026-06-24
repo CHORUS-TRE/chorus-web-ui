@@ -14,15 +14,17 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusDeleteEntryReply,
   ChorusGetEntryReply,
   ChorusListEntriesReply,
   ChorusPutEntryReply,
   ChorusPutEntryRequest,
-  DevstoreServicePutWorkspaceEntryBody,
-  RpcStatus
+  DevstoreServicePutWorkspaceEntryBody
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusDeleteEntryReplyFromJSON,
   ChorusDeleteEntryReplyToJSON,
   ChorusGetEntryReplyFromJSON,
@@ -34,9 +36,7 @@ import {
   ChorusPutEntryRequestFromJSON,
   ChorusPutEntryRequestToJSON,
   DevstoreServicePutWorkspaceEntryBodyFromJSON,
-  DevstoreServicePutWorkspaceEntryBodyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  DevstoreServicePutWorkspaceEntryBodyToJSON
 } from '../models/index'
 
 export interface DevstoreServiceDeleteGlobalEntryRequest {

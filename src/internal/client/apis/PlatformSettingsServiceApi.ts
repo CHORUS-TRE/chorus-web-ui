@@ -14,20 +14,20 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusGetPlatformSettingsReply,
   ChorusUpdatePlatformSettingsReply,
-  ChorusUpdatePlatformSettingsRequest,
-  RpcStatus
+  ChorusUpdatePlatformSettingsRequest
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusGetPlatformSettingsReplyFromJSON,
   ChorusGetPlatformSettingsReplyToJSON,
   ChorusUpdatePlatformSettingsReplyFromJSON,
   ChorusUpdatePlatformSettingsReplyToJSON,
   ChorusUpdatePlatformSettingsRequestFromJSON,
-  ChorusUpdatePlatformSettingsRequestToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusUpdatePlatformSettingsRequestToJSON
 } from '../models/index'
 
 export interface PlatformSettingsServiceUpdatePlatformSettingsRequest {

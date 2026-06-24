@@ -14,13 +14,15 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusCreateDynamicRoleReply,
   ChorusCreateDynamicRoleRequest,
   ChorusListPermissionsReply,
-  ChorusListRolesReply,
-  RpcStatus
+  ChorusListRolesReply
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateDynamicRoleReplyFromJSON,
   ChorusCreateDynamicRoleReplyToJSON,
   ChorusCreateDynamicRoleRequestFromJSON,
@@ -28,9 +30,7 @@ import {
   ChorusListPermissionsReplyFromJSON,
   ChorusListPermissionsReplyToJSON,
   ChorusListRolesReplyFromJSON,
-  ChorusListRolesReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusListRolesReplyToJSON
 } from '../models/index'
 
 export interface AuthorizationServiceCreateDynamicRoleRequest {
