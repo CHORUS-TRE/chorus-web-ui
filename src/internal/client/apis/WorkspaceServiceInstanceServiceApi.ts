@@ -14,29 +14,32 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusCreateWorkspaceServiceInstanceReply,
   ChorusDeleteWorkspaceServiceInstanceReply,
   ChorusGetWorkspaceServiceInstanceReply,
+  ChorusGetWorkspaceServiceInstanceSecretsReply,
   ChorusListWorkspaceServiceInstancesReply,
   ChorusUpdateWorkspaceServiceInstanceReply,
-  ChorusWorkspaceServiceInstance,
-  RpcStatus
+  ChorusWorkspaceServiceInstance
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateWorkspaceServiceInstanceReplyFromJSON,
   ChorusCreateWorkspaceServiceInstanceReplyToJSON,
   ChorusDeleteWorkspaceServiceInstanceReplyFromJSON,
   ChorusDeleteWorkspaceServiceInstanceReplyToJSON,
   ChorusGetWorkspaceServiceInstanceReplyFromJSON,
   ChorusGetWorkspaceServiceInstanceReplyToJSON,
+  ChorusGetWorkspaceServiceInstanceSecretsReplyFromJSON,
+  ChorusGetWorkspaceServiceInstanceSecretsReplyToJSON,
   ChorusListWorkspaceServiceInstancesReplyFromJSON,
   ChorusListWorkspaceServiceInstancesReplyToJSON,
   ChorusUpdateWorkspaceServiceInstanceReplyFromJSON,
   ChorusUpdateWorkspaceServiceInstanceReplyToJSON,
   ChorusWorkspaceServiceInstanceFromJSON,
-  ChorusWorkspaceServiceInstanceToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusWorkspaceServiceInstanceToJSON
 } from '../models/index'
 
 export interface WorkspaceServiceInstanceServiceCreateWorkspaceServiceInstanceRequest {
@@ -48,6 +51,10 @@ export interface WorkspaceServiceInstanceServiceDeleteWorkspaceServiceInstanceRe
 }
 
 export interface WorkspaceServiceInstanceServiceGetWorkspaceServiceInstanceRequest {
+  id: string
+}
+
+export interface WorkspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecretsRequest {
   id: string
 }
 
@@ -239,6 +246,66 @@ export class WorkspaceServiceInstanceServiceApi extends runtime.BaseAPI {
   ): Promise<ChorusGetWorkspaceServiceInstanceReply> {
     const response =
       await this.workspaceServiceInstanceServiceGetWorkspaceServiceInstanceRaw(
+        requestParameters,
+        initOverrides
+      )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint returns the secrets of the deployed service.
+   * Get the secrets of a workspace service instance
+   */
+  async workspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecretsRaw(
+    requestParameters: WorkspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecretsRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<
+    runtime.ApiResponse<ChorusGetWorkspaceServiceInstanceSecretsReply>
+  > {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecrets.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workspace-service-instances/{id}/secrets`.replace(
+          `{${'id'}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusGetWorkspaceServiceInstanceSecretsReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint returns the secrets of the deployed service.
+   * Get the secrets of a workspace service instance
+   */
+  async workspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecrets(
+    requestParameters: WorkspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecretsRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusGetWorkspaceServiceInstanceSecretsReply> {
+    const response =
+      await this.workspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecretsRaw(
         requestParameters,
         initOverrides
       )

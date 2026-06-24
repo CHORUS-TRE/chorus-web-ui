@@ -14,20 +14,20 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusCountUnreadNotificationsReply,
   ChorusGetNotificationsReply,
-  ChorusMarkNotificationsAsReadRequest,
-  RpcStatus
+  ChorusMarkNotificationsAsReadRequest
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCountUnreadNotificationsReplyFromJSON,
   ChorusCountUnreadNotificationsReplyToJSON,
   ChorusGetNotificationsReplyFromJSON,
   ChorusGetNotificationsReplyToJSON,
   ChorusMarkNotificationsAsReadRequestFromJSON,
-  ChorusMarkNotificationsAsReadRequestToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusMarkNotificationsAsReadRequestToJSON
 } from '../models/index'
 
 export interface NotificationServiceGetNotificationsRequest {

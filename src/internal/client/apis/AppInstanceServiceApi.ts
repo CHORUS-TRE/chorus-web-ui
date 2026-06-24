@@ -15,16 +15,18 @@
 import * as runtime from '../runtime'
 import type {
   ChorusAppInstance,
+  ChorusChorusErrorResponse,
   ChorusCreateAppInstanceReply,
   ChorusDeleteAppInstanceReply,
   ChorusGetAppInstanceReply,
   ChorusListAppInstancesReply,
-  ChorusUpdateAppInstanceReply,
-  RpcStatus
+  ChorusUpdateAppInstanceReply
 } from '../models/index'
 import {
   ChorusAppInstanceFromJSON,
   ChorusAppInstanceToJSON,
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateAppInstanceReplyFromJSON,
   ChorusCreateAppInstanceReplyToJSON,
   ChorusDeleteAppInstanceReplyFromJSON,
@@ -34,9 +36,7 @@ import {
   ChorusListAppInstancesReplyFromJSON,
   ChorusListAppInstancesReplyToJSON,
   ChorusUpdateAppInstanceReplyFromJSON,
-  ChorusUpdateAppInstanceReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusUpdateAppInstanceReplyToJSON
 } from '../models/index'
 
 export interface AppInstanceServiceCreateAppInstanceRequest {

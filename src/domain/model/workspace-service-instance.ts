@@ -75,6 +75,11 @@ export const WorkspaceServiceInstanceUpdateSchema = z.object({
   connectionInfoTemplate: z.string().optional()
 })
 
+export const WorkspaceServiceInstanceSecretsSchema = z.record(
+  z.string(),
+  z.string()
+)
+
 export const WorkspaceServiceInstanceListFilterSchema = z.object({
   workspaceIds: z.array(z.string()).optional(),
   paginationOffset: z.number().int().min(0).optional(),
@@ -95,4 +100,7 @@ export type WorkspaceServiceInstanceUpdateType = z.infer<
 >
 export type WorkspaceServiceInstanceListFilter = z.infer<
   typeof WorkspaceServiceInstanceListFilterSchema
+>
+export type WorkspaceServiceInstanceSecrets = z.infer<
+  typeof WorkspaceServiceInstanceSecretsSchema
 >

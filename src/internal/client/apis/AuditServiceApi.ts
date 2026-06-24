@@ -13,12 +13,15 @@
  */
 
 import * as runtime from '../runtime'
-import type { ChorusListAuditReply, RpcStatus } from '../models/index'
+import type {
+  ChorusChorusErrorResponse,
+  ChorusListAuditReply
+} from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusListAuditReplyFromJSON,
-  ChorusListAuditReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusListAuditReplyToJSON
 } from '../models/index'
 
 export interface AuditServiceListActorAuditRequest {

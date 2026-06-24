@@ -7,6 +7,7 @@ import {
   ChorusCreateWorkspaceServiceInstanceReply,
   ChorusDeleteWorkspaceServiceInstanceReply,
   ChorusGetWorkspaceServiceInstanceReply,
+  ChorusGetWorkspaceServiceInstanceSecretsReply,
   ChorusListWorkspaceServiceInstancesReply,
   ChorusUpdateWorkspaceServiceInstanceReply,
   Configuration,
@@ -23,6 +24,9 @@ interface WorkspaceServiceInstanceDataSource {
     instance: WorkspaceServiceInstanceCreateType
   ) => Promise<ChorusCreateWorkspaceServiceInstanceReply>
   get: (id: string) => Promise<ChorusGetWorkspaceServiceInstanceReply>
+  getSecrets: (
+    id: string
+  ) => Promise<ChorusGetWorkspaceServiceInstanceSecretsReply>
   delete: (id: string) => Promise<ChorusDeleteWorkspaceServiceInstanceReply>
   list: (
     filter?: WorkspaceServiceInstanceListFilter
@@ -58,6 +62,14 @@ class WorkspaceServiceInstanceDataSourceImpl
 
   get(id: string): Promise<ChorusGetWorkspaceServiceInstanceReply> {
     return this.service.workspaceServiceInstanceServiceGetWorkspaceServiceInstance(
+      { id }
+    )
+  }
+
+  getSecrets(
+    id: string
+  ): Promise<ChorusGetWorkspaceServiceInstanceSecretsReply> {
+    return this.service.workspaceServiceInstanceServiceGetWorkspaceServiceInstanceSecrets(
       { id }
     )
   }

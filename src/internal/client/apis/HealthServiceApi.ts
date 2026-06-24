@@ -13,8 +13,11 @@
  */
 
 import * as runtime from '../runtime'
-import type { RpcStatus } from '../models/index'
-import { RpcStatusFromJSON, RpcStatusToJSON } from '../models/index'
+import type { ChorusChorusErrorResponse } from '../models/index'
+import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON
+} from '../models/index'
 
 /**
  *

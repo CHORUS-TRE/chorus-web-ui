@@ -13,12 +13,18 @@
  */
 
 import * as runtime from '../runtime'
-import type { ChorusInitializeTenantRequest, RpcStatus } from '../models/index'
+import type {
+  ChorusChorusErrorResponse,
+  ChorusInitializeTenantReply,
+  ChorusInitializeTenantRequest
+} from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
+  ChorusInitializeTenantReplyFromJSON,
+  ChorusInitializeTenantReplyToJSON,
   ChorusInitializeTenantRequestFromJSON,
-  ChorusInitializeTenantRequestToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusInitializeTenantRequestToJSON
 } from '../models/index'
 
 export interface StewardServiceInitializeTenantRequest {
@@ -36,7 +42,7 @@ export class StewardServiceApi extends runtime.BaseAPI {
   async stewardServiceInitializeTenantRaw(
     requestParameters: StewardServiceInitializeTenantRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<object>> {
+  ): Promise<runtime.ApiResponse<ChorusInitializeTenantReply>> {
     if (
       requestParameters.body === null ||
       requestParameters.body === undefined
@@ -69,7 +75,9 @@ export class StewardServiceApi extends runtime.BaseAPI {
       initOverrides
     )
 
-    return new runtime.JSONApiResponse<any>(response)
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusInitializeTenantReplyFromJSON(jsonValue)
+    )
   }
 
   /**
@@ -79,7 +87,7 @@ export class StewardServiceApi extends runtime.BaseAPI {
   async stewardServiceInitializeTenant(
     requestParameters: StewardServiceInitializeTenantRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<object> {
+  ): Promise<ChorusInitializeTenantReply> {
     const response = await this.stewardServiceInitializeTenantRaw(
       requestParameters,
       initOverrides

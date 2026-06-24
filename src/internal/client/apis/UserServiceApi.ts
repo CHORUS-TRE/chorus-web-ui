@@ -14,6 +14,7 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusCreateUserReply,
   ChorusCreateUserRoleReply,
   ChorusDeleteUserReply,
@@ -30,10 +31,11 @@ import type {
   ChorusUpdatePasswordRequest,
   ChorusUpdateUserReply,
   ChorusUser,
-  RpcStatus,
   UserServiceCreateUserRoleBody
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateUserReplyFromJSON,
   ChorusCreateUserReplyToJSON,
   ChorusCreateUserRoleReplyFromJSON,
@@ -66,8 +68,6 @@ import {
   ChorusUpdateUserReplyToJSON,
   ChorusUserFromJSON,
   ChorusUserToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON,
   UserServiceCreateUserRoleBodyFromJSON,
   UserServiceCreateUserRoleBodyToJSON
 } from '../models/index'

@@ -15,6 +15,7 @@
 import * as runtime from '../runtime'
 import type {
   ChorusAbortWorkspaceFileUploadReply,
+  ChorusChorusErrorResponse,
   ChorusCompleteWorkspaceFileUploadReply,
   ChorusCreateWorkspaceFileReply,
   ChorusDeleteWorkspaceFileReply,
@@ -25,12 +26,13 @@ import type {
   ChorusUpdateWorkspaceFileReply,
   ChorusUploadWorkspaceFilePartReply,
   ChorusWorkspaceFile,
-  ChorusWorkspaceFilePart,
-  RpcStatus
+  ChorusWorkspaceFilePart
 } from '../models/index'
 import {
   ChorusAbortWorkspaceFileUploadReplyFromJSON,
   ChorusAbortWorkspaceFileUploadReplyToJSON,
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCompleteWorkspaceFileUploadReplyFromJSON,
   ChorusCompleteWorkspaceFileUploadReplyToJSON,
   ChorusCreateWorkspaceFileReplyFromJSON,
@@ -52,9 +54,7 @@ import {
   ChorusWorkspaceFileFromJSON,
   ChorusWorkspaceFileToJSON,
   ChorusWorkspaceFilePartFromJSON,
-  ChorusWorkspaceFilePartToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusWorkspaceFilePartToJSON
 } from '../models/index'
 
 export interface WorkspaceFileServiceAbortWorkspaceFileUploadRequest {

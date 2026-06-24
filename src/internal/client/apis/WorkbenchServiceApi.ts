@@ -14,6 +14,7 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
@@ -22,10 +23,11 @@ import type {
   ChorusRemoveUserFromWorkbenchReply,
   ChorusUpdateWorkbenchReply,
   ChorusWorkbench,
-  RpcStatus,
   WorkbenchServiceManageUserRoleInWorkbenchBody
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateWorkbenchReplyFromJSON,
   ChorusCreateWorkbenchReplyToJSON,
   ChorusDeleteWorkbenchReplyFromJSON,
@@ -42,8 +44,6 @@ import {
   ChorusUpdateWorkbenchReplyToJSON,
   ChorusWorkbenchFromJSON,
   ChorusWorkbenchToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON,
   WorkbenchServiceManageUserRoleInWorkbenchBodyFromJSON,
   WorkbenchServiceManageUserRoleInWorkbenchBodyToJSON
 } from '../models/index'

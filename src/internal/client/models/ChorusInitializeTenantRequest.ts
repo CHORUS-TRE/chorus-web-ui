@@ -24,7 +24,7 @@ export interface ChorusInitializeTenantRequest {
    * @type {string}
    * @memberof ChorusInitializeTenantRequest
    */
-  tenantId?: string
+  name?: string
 }
 
 /**
@@ -52,7 +52,7 @@ export function ChorusInitializeTenantRequestFromJSONTyped(
     return json
   }
   return {
-    tenantId: !exists(json, 'tenantId') ? undefined : json['tenantId']
+    name: !exists(json, 'name') ? undefined : json['name']
   }
 }
 
@@ -66,6 +66,6 @@ export function ChorusInitializeTenantRequestToJSON(
     return null
   }
   return {
-    tenantId: value.tenantId
+    name: value.name
   }
 }

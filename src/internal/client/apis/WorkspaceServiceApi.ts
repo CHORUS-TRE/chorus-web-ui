@@ -14,6 +14,7 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusChorusErrorResponse,
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
@@ -24,10 +25,11 @@ import type {
   ChorusRemoveUserRoleInWorkspaceReply,
   ChorusUpdateWorkspaceReply,
   ChorusWorkspace,
-  RpcStatus,
   WorkspaceServiceManageUserRoleInWorkspaceBody
 } from '../models/index'
 import {
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateWorkspaceReplyFromJSON,
   ChorusCreateWorkspaceReplyToJSON,
   ChorusDeleteWorkspaceReplyFromJSON,
@@ -48,8 +50,6 @@ import {
   ChorusUpdateWorkspaceReplyToJSON,
   ChorusWorkspaceFromJSON,
   ChorusWorkspaceToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON,
   WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSON,
   WorkspaceServiceManageUserRoleInWorkspaceBodyToJSON
 } from '../models/index'

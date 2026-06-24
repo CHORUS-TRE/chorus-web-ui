@@ -17,12 +17,12 @@ import type {
   ChorusApp,
   ChorusBulkCreateAppsReply,
   ChorusBulkCreateAppsRequest,
+  ChorusChorusErrorResponse,
   ChorusCreateAppReply,
   ChorusDeleteAppReply,
   ChorusGetAppReply,
   ChorusListAppsReply,
-  ChorusUpdateAppReply,
-  RpcStatus
+  ChorusUpdateAppReply
 } from '../models/index'
 import {
   ChorusAppFromJSON,
@@ -31,6 +31,8 @@ import {
   ChorusBulkCreateAppsReplyToJSON,
   ChorusBulkCreateAppsRequestFromJSON,
   ChorusBulkCreateAppsRequestToJSON,
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCreateAppReplyFromJSON,
   ChorusCreateAppReplyToJSON,
   ChorusDeleteAppReplyFromJSON,
@@ -40,9 +42,7 @@ import {
   ChorusListAppsReplyFromJSON,
   ChorusListAppsReplyToJSON,
   ChorusUpdateAppReplyFromJSON,
-  ChorusUpdateAppReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusUpdateAppReplyToJSON
 } from '../models/index'
 
 export interface AppServiceBulkCreateAppsRequest {

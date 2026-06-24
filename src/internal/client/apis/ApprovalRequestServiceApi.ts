@@ -16,6 +16,7 @@ import * as runtime from '../runtime'
 import type {
   ApprovalRequestServiceApproveApprovalRequestBody,
   ChorusApproveApprovalRequestReply,
+  ChorusChorusErrorResponse,
   ChorusCountMyApprovalRequestsReply,
   ChorusCreateDataExtractionRequestReply,
   ChorusCreateDataExtractionRequestRequest,
@@ -24,14 +25,15 @@ import type {
   ChorusDeleteApprovalRequestReply,
   ChorusDownloadApprovalRequestFileReply,
   ChorusGetApprovalRequestReply,
-  ChorusListApprovalRequestsReply,
-  RpcStatus
+  ChorusListApprovalRequestsReply
 } from '../models/index'
 import {
   ApprovalRequestServiceApproveApprovalRequestBodyFromJSON,
   ApprovalRequestServiceApproveApprovalRequestBodyToJSON,
   ChorusApproveApprovalRequestReplyFromJSON,
   ChorusApproveApprovalRequestReplyToJSON,
+  ChorusChorusErrorResponseFromJSON,
+  ChorusChorusErrorResponseToJSON,
   ChorusCountMyApprovalRequestsReplyFromJSON,
   ChorusCountMyApprovalRequestsReplyToJSON,
   ChorusCreateDataExtractionRequestReplyFromJSON,
@@ -49,9 +51,7 @@ import {
   ChorusGetApprovalRequestReplyFromJSON,
   ChorusGetApprovalRequestReplyToJSON,
   ChorusListApprovalRequestsReplyFromJSON,
-  ChorusListApprovalRequestsReplyToJSON,
-  RpcStatusFromJSON,
-  RpcStatusToJSON
+  ChorusListApprovalRequestsReplyToJSON
 } from '../models/index'
 
 export interface ApprovalRequestServiceApproveApprovalRequestRequest {
