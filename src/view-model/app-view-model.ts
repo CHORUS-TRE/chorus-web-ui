@@ -4,6 +4,7 @@ import { env } from 'next-runtime-env'
 
 import { AppDataSourceImpl } from '@/data/data-source'
 import { AppRepositoryImpl } from '@/data/repository/app-repository-impl'
+import { toChorusError } from '@/data/repository/chorus-error-mapper'
 import {
   AppCreateSchema,
   AppCreateType,
@@ -29,7 +30,7 @@ export async function appGet(id: string): Promise<Result<App>> {
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting app', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -42,7 +43,7 @@ export async function appList(options?: {
     return await useCase.execute(options)
   } catch (error) {
     console.error('Error listing apps', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -84,7 +85,7 @@ export async function appUpdate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating app', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -96,6 +97,6 @@ export async function appDelete(id: string): Promise<Result<string>> {
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error deleting app', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }

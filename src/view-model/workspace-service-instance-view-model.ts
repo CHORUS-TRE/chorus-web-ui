@@ -4,6 +4,7 @@ import { env } from 'next-runtime-env'
 
 import { WorkspaceServiceInstanceDataSourceImpl } from '@/data/data-source'
 import { WorkspaceServiceInstanceRepositoryImpl } from '@/data/repository'
+import { toChorusError } from '@/data/repository/chorus-error-mapper'
 import {
   Result,
   WorkspaceServiceInstance,
@@ -42,7 +43,7 @@ export async function workspaceServiceInstanceList(
     return await useCase.execute(filter)
   } catch (error) {
     console.error('Error listing workspace service instances', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -56,7 +57,7 @@ export async function workspaceServiceInstanceGet(
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workspace service instance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -70,7 +71,7 @@ export async function workspaceServiceInstanceGetSecrets(
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workspace service instance secrets', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -84,7 +85,7 @@ export async function workspaceServiceInstanceDelete(
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error deleting workspace service instance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -102,7 +103,7 @@ export async function workspaceServiceInstanceCreate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error creating workspace service instance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -120,6 +121,6 @@ export async function workspaceServiceInstanceUpdate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workspace service instance', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }

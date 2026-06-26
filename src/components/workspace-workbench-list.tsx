@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { User } from '@/domain/model/user'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
@@ -36,7 +37,7 @@ export function WorkspaceWorkbenchList({
     } else {
       toast({
         title: 'Error',
-        description: result.error || 'Failed to load workspace members',
+        ...errorToast(result.error, 'Failed to load workspace members'),
         variant: 'destructive'
       })
     }

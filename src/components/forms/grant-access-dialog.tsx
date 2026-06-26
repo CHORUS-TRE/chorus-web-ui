@@ -8,6 +8,7 @@ import {
   useState
 } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -98,7 +99,7 @@ export function GrantAccessDialog({
     } else if (state.error) {
       toast({
         title: 'Failed to grant access',
-        description: state.error,
+        ...errorToast(state.error),
         variant: 'destructive'
       })
     }

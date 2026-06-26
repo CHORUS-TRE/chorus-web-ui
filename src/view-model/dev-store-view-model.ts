@@ -4,6 +4,7 @@ import { env } from 'next-runtime-env'
 
 import { DevStoreDataSourceImpl } from '@/data/data-source'
 import { DevStoreRepositoryImpl } from '@/data/repository'
+import { toChorusError } from '@/data/repository/chorus-error-mapper'
 import { DevStoreEntries, DevStoreEntry, Result } from '@/domain/model'
 import { DevStoreDeleteGlobalEntry } from '@/domain/use-cases/dev-store/dev-store-delete-global-entry'
 import { DevStoreDeleteUserEntry } from '@/domain/use-cases/dev-store/dev-store-delete-user-entry'
@@ -34,7 +35,7 @@ export async function getGlobalEntry(
     const useCase = new DevStoreGetGlobalEntry(repository)
     return await useCase.execute(key)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -44,7 +45,7 @@ export async function listGlobalEntries(): Promise<Result<DevStoreEntries>> {
     const useCase = new DevStoreListGlobalEntries(repository)
     return await useCase.execute()
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -56,7 +57,7 @@ export async function putGlobalEntry(
     const useCase = new DevStorePutGlobalEntry(repository)
     return await useCase.execute(entry)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -66,7 +67,7 @@ export async function deleteGlobalEntry(key: string): Promise<Result<void>> {
     const useCase = new DevStoreDeleteGlobalEntry(repository)
     return await useCase.execute(key)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -79,7 +80,7 @@ export async function getUserEntry(
     const useCase = new DevStoreGetUserEntry(repository)
     return await useCase.execute(key)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -89,7 +90,7 @@ export async function listUserEntries(): Promise<Result<DevStoreEntries>> {
     const useCase = new DevStoreListUserEntries(repository)
     return await useCase.execute()
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -101,7 +102,7 @@ export async function putUserEntry(
     const useCase = new DevStorePutUserEntry(repository)
     return await useCase.execute(entry)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -111,7 +112,7 @@ export async function deleteUserEntry(key: string): Promise<Result<void>> {
     const useCase = new DevStoreDeleteUserEntry(repository)
     return await useCase.execute(key)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -125,7 +126,7 @@ export async function getWorkspaceEntry(
     const useCase = new DevStoreGetWorkspaceEntry(repository)
     return await useCase.execute(workspaceId, key)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -137,7 +138,7 @@ export async function listWorkspaceEntries(
     const useCase = new DevStoreListWorkspaceEntries(repository)
     return await useCase.execute(workspaceId)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -150,7 +151,7 @@ export async function putWorkspaceEntry(
     const useCase = new DevStorePutWorkspaceEntry(repository)
     return await useCase.execute(workspaceId, entry)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -163,7 +164,7 @@ export async function deleteWorkspaceEntry(
     const useCase = new DevStoreDeleteWorkspaceEntry(repository)
     return await useCase.execute(workspaceId, key)
   } catch (error) {
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 

@@ -1,8 +1,10 @@
 'use client'
+
 import { env } from 'next-runtime-env'
 
 import { UserApiDataSourceImpl } from '@/data/data-source'
 import { UserRepositoryImpl } from '@/data/repository'
+import { toChorusError } from '@/data/repository/chorus-error-mapper'
 import { Result } from '@/domain/model'
 import {
   User,
@@ -82,7 +84,7 @@ export async function createUser(
   } catch (error) {
     console.error('Error creating user', error)
     return {
-      error: error instanceof Error ? error.message : String(error)
+      error: toChorusError(error)
     }
   }
 }

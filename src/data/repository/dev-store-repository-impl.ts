@@ -8,6 +8,8 @@ import {
 } from '@/domain/model'
 import { DevStoreRepository } from '@/domain/repository'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 export class DevStoreRepositoryImpl implements DevStoreRepository {
   private dataSource: DevStoreDataSource
 
@@ -38,19 +40,19 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       const validatedData = devStoreEntriesSchema.parse(response.result.entries)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
   async putGlobalEntry(entry: DevStoreEntry): Promise<Result<DevStoreEntry>> {
     try {
       const response = await this.dataSource.putGlobalEntry(entry)
       if (!response.result) {
-        return { error: 'Error putting entry' }
+        return { error: conversionError('Error putting entry') }
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
   async deleteGlobalEntry(key: string): Promise<Result<void>> {
@@ -58,7 +60,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       await this.dataSource.deleteGlobalEntry(key)
       return { data: undefined }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -85,19 +87,19 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       const validatedData = devStoreEntriesSchema.parse(response.result.entries)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
   async putUserEntry(entry: DevStoreEntry): Promise<Result<DevStoreEntry>> {
     try {
       const response = await this.dataSource.putUserEntry(entry)
       if (!response.result) {
-        return { error: 'Error putting entry' }
+        return { error: conversionError('Error putting entry') }
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
   async deleteUserEntry(key: string): Promise<Result<void>> {
@@ -105,7 +107,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       await this.dataSource.deleteUserEntry(key)
       return { data: undefined }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -137,7 +139,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       const validatedData = devStoreEntriesSchema.parse(response.result.entries)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
   async putWorkspaceEntry(
@@ -150,12 +152,12 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
         entry
       )
       if (!response.result) {
-        return { error: 'Error putting entry' }
+        return { error: conversionError('Error putting entry') }
       }
       const validatedData = devStoreEntrySchema.parse(response.result)
       return { data: validatedData }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
   async deleteWorkspaceEntry(
@@ -166,7 +168,7 @@ export class DevStoreRepositoryImpl implements DevStoreRepository {
       await this.dataSource.deleteWorkspaceEntry(workspaceId, key)
       return { data: undefined }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

@@ -9,6 +9,8 @@ import { User } from '@/domain/model/user'
 import { WorkbenchSchema } from '@/domain/model/workbench'
 import { WorkbenchRepository } from '@/domain/repository'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 export class WorkbenchRepositoryImpl implements WorkbenchRepository {
   private dataSource: WorkbenchDataSource
 
@@ -21,7 +23,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       const response = await this.dataSource.streamUrl(id)
       return { data: response }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -31,7 +33,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
 
       return { data: response.ok }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -39,7 +41,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     try {
       const response = await this.dataSource.create(workbench)
       if (!response.result?.workbench) {
-        return { error: 'Error creating workbench' }
+        return { error: conversionError('Error creating workbench') }
       }
 
       const workbenchResult = WorkbenchSchema.safeParse(
@@ -47,7 +49,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       )
       if (!workbenchResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: workbenchResult.error.issues
         }
       }
@@ -55,7 +57,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       return { data: workbenchResult.data }
     } catch (error) {
       console.error('Error creating workbench', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -63,13 +65,13 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     try {
       const response = await this.dataSource.get(id)
       if (!response.result?.workbench) {
-        return { error: 'Not found' }
+        return { error: conversionError('Not found') }
       }
       const validatedData = WorkbenchSchema.parse(response.result.workbench)
       return { data: validatedData }
     } catch (error) {
       console.error('Error getting workbench', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -79,7 +81,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       return { data: id }
     } catch (error) {
       console.error('Error deleting workbench', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -96,7 +98,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     } catch (error) {
       console.error('Error listing workbenches', error)
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -107,7 +109,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       return this.get(workbench.id)
     } catch (error) {
       console.error('Error updating workbench', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -127,7 +129,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       })
 
       if (!response.result?.workbench) {
-        return { error: 'Error managing user role' }
+        return { error: conversionError('Error managing user role') }
       }
 
       // Since the API returns workbench data not user data,
@@ -147,7 +149,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
     } catch (error) {
       console.error('Error managing user role in workbench', error)
 
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -162,7 +164,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       )
 
       if (!response.result?.workbench) {
-        return { error: 'Error managing user role' }
+        return { error: conversionError('Error managing user role') }
       }
 
       // Since the API returns workbench data not user data,
@@ -181,7 +183,7 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       }
     } catch (error) {
       console.error('Error deleting user from workbench', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

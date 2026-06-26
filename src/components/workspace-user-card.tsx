@@ -3,6 +3,7 @@
 import { CheckCircle2, Plus, Trash2, XCircle } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { RoleBadge } from '@/components/role-badge'
@@ -86,7 +87,7 @@ export function WorkspaceUserCard({
       if (result.error) {
         toast({
           title: 'Error removing role',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
       } else {
@@ -107,7 +108,7 @@ export function WorkspaceUserCard({
       if (result.error) {
         toast({
           title: 'Error adding role',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
       } else {

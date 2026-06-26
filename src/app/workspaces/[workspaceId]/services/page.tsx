@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { WorkspaceServiceInstanceCreateForm } from '@/components/forms/workspace-service-instance-create-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -195,7 +196,7 @@ function ServiceParametersDialog({
     if (result.error) {
       toast({
         title: 'Error',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return
@@ -240,7 +241,7 @@ function ServiceParametersDialog({
     if (result.error) {
       toast({
         title: 'Error',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return
@@ -654,7 +655,7 @@ export default function WorkspaceServicesPage() {
     if (result.error)
       toast({
         title: 'Error',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
   }, [workspaceId])
@@ -685,7 +686,7 @@ export default function WorkspaceServicesPage() {
     if (result.error) {
       toast({
         title: 'Error',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return

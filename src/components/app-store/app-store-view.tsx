@@ -120,7 +120,7 @@ export function AppStoreView() {
 
     try {
       const result = await createAppInstance({}, formData)
-      if (result.error) throw new Error(result.error)
+      if (result.error?.message) throw new Error(result.error?.message)
 
       openSession(sessionId as string, workspaceId as string)
       router.push(`/workspaces/${workspaceId}/sessions/${sessionId}`)

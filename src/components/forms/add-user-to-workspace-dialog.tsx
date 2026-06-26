@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -93,7 +94,7 @@ export function AddUserToWorkspaceDialog({
     if (state.error) {
       toast({
         title: 'Error adding user',
-        description: state.error,
+        ...errorToast(state.error),
         variant: 'destructive'
       })
     } else if (state.issues) {

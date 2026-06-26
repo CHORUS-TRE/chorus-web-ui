@@ -11,6 +11,7 @@ import { User } from '@/domain/model/user'
 import { AuthorizationRepository } from '@/domain/repository'
 
 import { AuthorizationDataSource } from '../data-source'
+import { conversionError, toChorusError } from './chorus-error-mapper'
 
 export class AuthorizationRepositoryImpl implements AuthorizationRepository {
   private dataSource: AuthorizationDataSource
@@ -40,14 +41,14 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
           result.error.issues
         )
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: result.error.issues
         }
       }
       return { data: result.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -59,7 +60,7 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
       await this.dataSource.createRole({ role })
       return { data: role }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -75,14 +76,14 @@ export class AuthorizationRepositoryImpl implements AuthorizationRepository {
           result.error.issues
         )
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: result.error.issues
         }
       }
       return { data: result.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }

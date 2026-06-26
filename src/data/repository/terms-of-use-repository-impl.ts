@@ -10,6 +10,7 @@ import {
 import { TermsOfUseRepository } from '@/domain/repository/terms-of-use-repository'
 
 import { TermsOfUseDataSource } from '../data-source'
+import { conversionError, toChorusError } from './chorus-error-mapper'
 
 export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
   constructor(private readonly dataSource: TermsOfUseDataSource) {}
@@ -19,7 +20,7 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
       const response = await this.dataSource.getMyStatus()
       return { data: response.result?.status?.accepted ?? false }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -31,12 +32,12 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
       const parsed = TermsOfUseVersionSchema.safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -44,16 +45,19 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
     try {
       const response = await this.dataSource.accept()
       const raw = response.result?.termsOfUseAcceptance
-      if (!raw) return { error: 'API response missing acceptance record' }
+      if (!raw)
+        return {
+          error: conversionError('API response missing acceptance record')
+        }
       const parsed = TermsOfUseAcceptanceSchema.safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -64,12 +68,12 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
       const parsed = z.array(TermsOfUseVersionSchema).safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -77,16 +81,16 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
     try {
       const response = await this.dataSource.getVersion(id)
       const raw = response.result?.termsOfUseVersion
-      if (!raw) return { error: 'Version not found' }
+      if (!raw) return { error: conversionError('Version not found') }
       const parsed = TermsOfUseVersionSchema.safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -94,16 +98,17 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
     try {
       const response = await this.dataSource.createVersion(content)
       const raw = response.result?.termsOfUseVersion
-      if (!raw) return { error: 'API response missing version' }
+      if (!raw)
+        return { error: conversionError('API response missing version') }
       const parsed = TermsOfUseVersionSchema.safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -114,16 +119,17 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
     try {
       const response = await this.dataSource.updateVersion(id, content)
       const raw = response.result?.termsOfUseVersion
-      if (!raw) return { error: 'API response missing version' }
+      if (!raw)
+        return { error: conversionError('API response missing version') }
       const parsed = TermsOfUseVersionSchema.safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -131,16 +137,17 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
     try {
       const response = await this.dataSource.publishVersion(id)
       const raw = response.result?.termsOfUseVersion
-      if (!raw) return { error: 'API response missing version' }
+      if (!raw)
+        return { error: conversionError('API response missing version') }
       const parsed = TermsOfUseVersionSchema.safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -151,12 +158,12 @@ export class TermsOfUseRepositoryImpl implements TermsOfUseRepository {
       const parsed = z.array(TermsOfUseAcceptanceSchema).safeParse(raw)
       if (!parsed.success)
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: parsed.error.issues
         }
       return { data: parsed.data }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

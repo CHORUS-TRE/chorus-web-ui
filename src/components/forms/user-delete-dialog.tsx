@@ -2,6 +2,7 @@
 
 import { Trash2 } from 'lucide-react'
 
+import { errorToast } from '@/components/error-toast'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,7 +37,7 @@ export function UserDeleteDialog({
     if (result.error) {
       toast({
         title: 'Error deleting user',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
     } else {

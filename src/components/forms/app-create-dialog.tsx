@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { ImageUploadField } from '@/components/forms/image-upload-field'
 import { Button } from '@/components/ui/button'
 import {
@@ -243,7 +244,7 @@ export function AppCreateDialog({
       if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return

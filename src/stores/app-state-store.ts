@@ -2,6 +2,7 @@
 
 import { create } from 'zustand'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import {
   App,
@@ -105,7 +106,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   refreshWorkspaces: async () => {
     const result = await workspaceListWithDev()
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     if (result.data) {
@@ -123,7 +124,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   refreshWorkbenches: async () => {
     const result = await workbenchList()
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     if (result.data) {
@@ -140,7 +141,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   refreshApps: async () => {
     const result = await appList()
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     if (result.data) {
@@ -157,7 +158,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   refreshAppInstances: async () => {
     const result = await listAppInstances()
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     if (result.data) {

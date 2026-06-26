@@ -9,6 +9,8 @@ import {
 } from '@/domain/model'
 import { AppRepository } from '@/domain/repository'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 const RESOURCE_FIELDS = [
   'shmSize',
   'minEphemeralStorage',
@@ -49,14 +51,15 @@ export class AppRepositoryImpl implements AppRepository {
   async get(id: string): Promise<Result<App>> {
     try {
       const response = await this.dataSource.get(id)
-      if (!response.result?.app) return { error: 'Error getting app' }
+      if (!response.result?.app)
+        return { error: conversionError('Error getting app') }
 
       const app = AppSchema.parse(normalizeApp(response.result.app))
 
       return { data: app }
     } catch (error) {
       console.error('Error getting app', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -64,7 +67,8 @@ export class AppRepositoryImpl implements AppRepository {
     try {
       const response = await this.dataSource.list(options ?? {})
 
-      if (!response.result?.apps) return { error: 'Error listing apps' }
+      if (!response.result?.apps)
+        return { error: conversionError('Error listing apps') }
 
       const apps = response.result.apps.map((r) =>
         AppSchema.parse(normalizeApp(r))
@@ -73,7 +77,7 @@ export class AppRepositoryImpl implements AppRepository {
       return { data: apps }
     } catch (error) {
       console.error('Error listing apps', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -81,13 +85,13 @@ export class AppRepositoryImpl implements AppRepository {
     try {
       const response = await this.dataSource.create(app)
       if (!response.result?.app) {
-        return { error: 'Error creating app' }
+        return { error: conversionError('Error creating app') }
       }
 
       const appResult = AppSchema.safeParse(normalizeApp(response.result.app))
       if (!appResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: appResult.error.issues
         }
       }
@@ -95,7 +99,7 @@ export class AppRepositoryImpl implements AppRepository {
       return { data: appResult.data }
     } catch (error) {
       console.error('Error creating app', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -106,7 +110,7 @@ export class AppRepositoryImpl implements AppRepository {
       return this.get(app.id)
     } catch (error) {
       console.error('Error updating app', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -116,7 +120,7 @@ export class AppRepositoryImpl implements AppRepository {
       return { data: id }
     } catch (error) {
       console.error('Error deleting app', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

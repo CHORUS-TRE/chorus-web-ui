@@ -20,7 +20,7 @@ export default function PublicWorkspacesPage() {
   const fetchPublicWorkspaces = useCallback(async () => {
     const result = await publicWorkspaceList()
     if (result.error) {
-      setError(result.error)
+      setError(result.error?.message ?? null)
     } else {
       setWorkspaces(result.data ?? [])
     }

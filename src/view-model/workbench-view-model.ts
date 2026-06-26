@@ -4,6 +4,10 @@ import { env } from 'next-runtime-env'
 
 import { WorkbenchDataSourceImpl } from '@/data/data-source'
 import { WorkbenchRepositoryImpl } from '@/data/repository'
+import {
+  conversionError,
+  toChorusError
+} from '@/data/repository/chorus-error-mapper'
 import { Result } from '@/domain/model'
 import { User } from '@/domain/model/user'
 import {
@@ -20,7 +24,6 @@ import { WorkbenchList } from '@/domain/use-cases/workbench/workbench-list'
 import { WorkbenchStreamProbe } from '@/domain/use-cases/workbench/workbench-stream-probe'
 import { WorkbenchStreamUrl } from '@/domain/use-cases/workbench/workbench-stream-url'
 import { WorkbenchUpdate } from '@/domain/use-cases/workbench/workbench-update'
-import { FetchError, ResponseError } from '@/internal/client/runtime'
 import { Analytics } from '@/lib/analytics/service'
 
 const getRepository = async () => {
@@ -37,7 +40,7 @@ export async function workbenchStreamUrl(id: string): Promise<Result<string>> {
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workbench stream url', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -52,20 +55,8 @@ export async function workbenchStreamProbe(
 
     return { data: result.data ? true : false, error: result.error }
   } catch (error) {
-    if (error instanceof ResponseError) {
-      // Handle HTTP errors like 502, 404, etc.
-      return {
-        error: `API Error: ${error.response.status}`
-      }
-    }
-    if (error instanceof FetchError) {
-      // Handle network errors, including CORS issues
-      return {
-        error: `Network Error: ${error.message}. Check browser console for CORS details.`
-      }
-    }
     console.error('Error probing workbench stream', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -85,7 +76,7 @@ export async function workbenchDelete(id: string): Promise<Result<string>> {
     return result
   } catch (error) {
     console.error('Error deleting workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -122,7 +113,7 @@ export async function workbenchCreate(
     const result = await useCase.execute(validation.data)
 
     if (result.error) {
-      Analytics.Session.launchError(result.error)
+      Analytics.Session.launchError(result.error?.message ?? '')
     } else if (result.data) {
       Analytics.Session.launchSuccess(result.data.id as string)
     }
@@ -134,7 +125,7 @@ export async function workbenchCreate(
     console.error('Error creating workbench', error)
     return {
       ...prevState,
-      error: errorMessage
+      error: toChorusError(error)
     }
   }
 }
@@ -146,7 +137,7 @@ export async function workbenchList(): Promise<Result<Workbench[]>> {
     return await useCase.execute()
   } catch (error) {
     console.error('Error listing workbenches', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -157,7 +148,7 @@ export async function getWorkbench(id: string): Promise<Result<Workbench>> {
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -189,7 +180,7 @@ export async function workbenchUpdate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -206,14 +197,16 @@ export async function workbenchAddUserRole(
 
     if (!workbenchId || !userId || !roleName) {
       return {
-        error: 'Missing required fields: workbenchId, userId, or roleName'
+        error: conversionError(
+          'Missing required fields: workbenchId, userId, or roleName'
+        )
       }
     }
 
     return await repository.addUserRole(workbenchId, userId, roleName)
   } catch (error) {
     console.error('Error adding user role to workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -229,13 +222,13 @@ export async function workbenchRemoveUserRole(
 
     if (!workbenchId || !userId) {
       return {
-        error: 'Missing required fields: workbenchId, userId'
+        error: conversionError('Missing required fields: workbenchId, userId')
       }
     }
 
     return await repository.removeUserFromWorkbench(workbenchId, userId)
   } catch (error) {
     console.error('Error adding user role to workbench', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }

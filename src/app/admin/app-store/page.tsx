@@ -4,6 +4,7 @@ import { Pencil, Plus, Store, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { AppCreateDialog } from '@/components/forms/app-create-dialog'
 import { WebAppCreateDialog } from '@/components/forms/webapp-create-dialog'
 import { toast } from '@/components/hooks/use-toast'
@@ -37,7 +38,7 @@ export default function AdminAppStorePage() {
   const fetchApps = async () => {
     const result = await appList({ disableGrouping: true })
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     setApps(result.data)
@@ -56,7 +57,7 @@ export default function AdminAppStorePage() {
       if (result.error) {
         toast({
           title: 'Error deleting app',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
       } else {

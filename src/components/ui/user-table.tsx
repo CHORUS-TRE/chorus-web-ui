@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { UserDeleteDialog } from '@/components/forms/user-delete-dialog'
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { toast } from '@/components/hooks/use-toast'
@@ -36,10 +37,10 @@ export function UserTable() {
       } else {
         toast({
           title: 'Error',
-          description: result.error || 'Failed to load users.',
+          ...errorToast(result.error, 'Failed to load users.'),
           variant: 'destructive'
         })
-        setError(result.error || 'Failed to load users.')
+        setError(result.error?.message || 'Failed to load users.')
       }
     }
     if ((can('listUsers'), { workspace: '*' })) {

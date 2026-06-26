@@ -5,6 +5,7 @@ import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -68,7 +69,7 @@ export function AppInstanceCreateForm({
     if (state.error) {
       toast({
         title: 'Error',
-        description: state.error,
+        ...errorToast(state.error),
         variant: 'destructive'
       })
     }
@@ -146,7 +147,7 @@ export function AppInstanceCreateForm({
                   <input type="hidden" name="status" defaultValue={'active'} />
 
                   {state.error && (
-                    <p className="text-destructive">{state.error}</p>
+                    <p className="text-destructive">{state.error?.message}</p>
                   )}
                 </CardContent>
                 <CardFooter>

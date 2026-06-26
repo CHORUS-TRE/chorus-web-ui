@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -73,7 +74,7 @@ export default function LoginForm() {
     if (state.error) {
       toast({
         title: 'Login failed',
-        description: state.error,
+        ...errorToast(state.error),
         variant: 'destructive'
       })
 
@@ -87,7 +88,7 @@ export default function LoginForm() {
       if (response.error) {
         toast({
           title: "Couldn't initiate login",
-          description: response.error,
+          ...errorToast(response.error),
           variant: 'destructive'
         })
         return

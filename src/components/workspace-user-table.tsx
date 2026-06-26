@@ -3,6 +3,7 @@
 import { Trash2 } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { PermissionMatrix } from '@/components/permission-matrix'
@@ -120,7 +121,7 @@ export default function WorkspaceUserTable({
         if (result.error) {
           toast({
             title: 'Failed to remove role',
-            description: result.error,
+            ...errorToast(result.error),
             variant: 'destructive'
           })
           return
@@ -134,7 +135,7 @@ export default function WorkspaceUserTable({
         if (result.error) {
           toast({
             title: 'Failed to add role',
-            description: result.error,
+            ...errorToast(result.error),
             variant: 'destructive'
           })
           return

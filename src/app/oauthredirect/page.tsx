@@ -30,7 +30,7 @@ export default function OAuthRedirectPage() {
 
           const response = await handleOAuthRedirect(queryParams)
           if (response.error) {
-            throw new Error(response.error)
+            throw new Error(response.error?.message)
           }
 
           // Get stored redirect URL or fallback to home

@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
+import { errorToast } from '@/components/error-toast'
+
 const MDEditorClient = dynamic(() => import('@uiw/react-md-editor'), {
   ssr: false,
   loading: () => <div className="h-64 animate-pulse rounded border bg-muted" />
@@ -85,7 +87,7 @@ export function TermsOfUseAdmin() {
   const loadVersions = useCallback(async () => {
     const result = await listTermsOfUseVersions()
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     setVersions(result.data ?? [])
@@ -97,7 +99,7 @@ export function TermsOfUseAdmin() {
       listUsers()
     ])
     if (acceptancesResult.error) {
-      toast({ title: acceptancesResult.error, variant: 'destructive' })
+      toast({ ...errorToast(acceptancesResult.error), variant: 'destructive' })
       return
     }
     setAcceptances(acceptancesResult.data ?? [])
@@ -128,7 +130,7 @@ export function TermsOfUseAdmin() {
       : await createTermsOfUseVersion(editDialog.content)
     setSaving(false)
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     toast({ title: editDialog.version ? 'Version updated' : 'Draft created' })
@@ -145,7 +147,7 @@ export function TermsOfUseAdmin() {
     const result = await publishTermsOfUseVersion(publishDialog.versionId)
     setPublishing(false)
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
       return
     }
     toast({ title: 'Version published — all users will need to re-accept' })
@@ -163,7 +165,7 @@ export function TermsOfUseAdmin() {
       loading: false
     })
     if (result.error) {
-      toast({ title: result.error, variant: 'destructive' })
+      toast({ ...errorToast(result.error), variant: 'destructive' })
     }
   }
 

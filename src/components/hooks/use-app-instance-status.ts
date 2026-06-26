@@ -26,7 +26,7 @@ export function useAppInstanceStatus(appInstanceId?: string) {
       const result = await getAppInstance(appInstanceId)
 
       if (result.error) {
-        setResponse({ error: result.error })
+        setResponse({ error: result.error?.message })
         clearInterval(intervalId)
         clearTimeout(timeoutId)
         return

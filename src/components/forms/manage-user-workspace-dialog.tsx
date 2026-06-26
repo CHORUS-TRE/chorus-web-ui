@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -146,7 +147,7 @@ export function ManageUserWorkspaceDialog({
       if (result.error) {
         toast({
           title: 'Error removing role',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
       } else {
@@ -181,7 +182,7 @@ export function ManageUserWorkspaceDialog({
       const actionText = actionMode === 'add' ? 'adding' : 'updating'
       toast({
         title: `Error ${actionText} user role`,
-        description: state.error,
+        ...errorToast(state.error),
         variant: 'destructive'
       })
     } else if (state.issues) {

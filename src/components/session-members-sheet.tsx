@@ -4,6 +4,7 @@ import { ExternalLink, Info, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -89,7 +90,7 @@ export function SessionMembersSheet({
       } else if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
       }
@@ -143,7 +144,7 @@ export function SessionMembersSheet({
         if (result.error) {
           toast({
             title: 'Failed to update role',
-            description: result.error,
+            ...errorToast(result.error),
             variant: 'destructive'
           })
           return

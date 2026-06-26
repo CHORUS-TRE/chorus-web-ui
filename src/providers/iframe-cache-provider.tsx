@@ -13,6 +13,7 @@ import {
   useState
 } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import {
   CachedIframe,
@@ -560,7 +561,7 @@ export const IframeCacheProvider = ({
       if (result.error || !result.data) {
         toast({
           title: 'Error opening session',
-          description: result.error || 'Failed to get session URL',
+          ...errorToast(result.error, 'Failed to get session URL'),
           variant: 'destructive'
         })
         return

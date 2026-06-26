@@ -27,6 +27,7 @@ import {
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { useToast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -691,7 +692,7 @@ export default function RequestsClient({
       toast({
         variant: 'destructive',
         title: 'Action failed',
-        description: result.error || 'Something went wrong.'
+        ...errorToast(result.error, 'Something went wrong.')
       })
     }
   }

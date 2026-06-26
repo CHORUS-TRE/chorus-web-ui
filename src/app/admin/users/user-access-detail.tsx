@@ -3,6 +3,7 @@
 import { ChevronRight, Lock, Minus, Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { UserEditDialog } from '@/components/forms/user-edit-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import {
@@ -276,7 +277,7 @@ function RoleCard({
     if (result.error) {
       toast({
         title: 'Failed to remove grant',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return

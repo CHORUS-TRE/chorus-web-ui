@@ -1,11 +1,14 @@
 import { ZodIssue } from 'zod'
 
+import { ChorusError } from './chorus-error'
+
 export * from './app'
 export * from './app-instance'
 export * from './approval-request'
 export * from './audit'
 export * from './authentication'
 export * from './authorization'
+export * from './chorus-error'
 export * from './dev-store'
 export * from './external-webapp'
 export * from './instance-config'
@@ -21,6 +24,6 @@ export * from './workspace-service-instance'
 
 export interface Result<T> {
   data?: T
-  error?: string
+  error?: ChorusError
   issues?: ZodIssue[]
 }

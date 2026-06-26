@@ -4,6 +4,7 @@ import { Plus, Trash2, UserPlus } from 'lucide-react'
 import { startTransition, useActionState } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -102,7 +103,7 @@ export function ManageUserWorkbenchDialog({
       if (result.error) {
         toast({
           title: 'Error removing role',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
       } else {
@@ -148,7 +149,7 @@ export function ManageUserWorkbenchDialog({
     if (state.error) {
       toast({
         title: 'Error adding role',
-        description: state.error,
+        ...errorToast(state.error),
         variant: 'destructive'
       })
     } else if (state.issues) {

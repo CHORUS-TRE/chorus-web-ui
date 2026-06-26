@@ -12,6 +12,7 @@ import { UserRepository } from '@/domain/repository'
 import { UserServiceListUsersRequest } from '@/internal/client'
 
 import { UserDataSource } from '../data-source'
+import { conversionError, toChorusError } from './chorus-error-mapper'
 
 export class UserRepositoryImpl implements UserRepository {
   private dataSource: UserDataSource
@@ -24,14 +25,14 @@ export class UserRepositoryImpl implements UserRepository {
       const response = await this.dataSource.create(user)
 
       if (!response.result?.user) {
-        return { error: 'API response validation failed' }
+        return { error: conversionError('API response validation failed') }
       }
 
       const userResult = UserSchema.safeParse(response.result.user)
 
       if (!userResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: userResult.error.issues
         }
       }
@@ -39,7 +40,7 @@ export class UserRepositoryImpl implements UserRepository {
       return { data: userResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -51,7 +52,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!roleResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: roleResult.error.issues
         }
       }
@@ -59,7 +60,7 @@ export class UserRepositoryImpl implements UserRepository {
       return { data: roleResult.data ?? undefined }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -71,7 +72,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!userResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: userResult.error.issues
         }
       }
@@ -79,7 +80,7 @@ export class UserRepositoryImpl implements UserRepository {
       return { data: userResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -91,7 +92,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!userResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: userResult.error.issues
         }
       }
@@ -106,7 +107,7 @@ export class UserRepositoryImpl implements UserRepository {
       return { data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -118,7 +119,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!userResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: userResult.error.issues
         }
       }
@@ -133,7 +134,7 @@ export class UserRepositoryImpl implements UserRepository {
       return { data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -145,14 +146,14 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!idResult) {
         return {
-          error: 'API response validation failed'
+          error: conversionError('API response validation failed')
         }
       }
 
       return { data: id }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -166,7 +167,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!usersResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: usersResult.error.issues
         }
       }
@@ -181,7 +182,7 @@ export class UserRepositoryImpl implements UserRepository {
       return { data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -195,7 +196,7 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!usersResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: usersResult.error.issues
         }
       }
@@ -215,7 +216,7 @@ export class UserRepositoryImpl implements UserRepository {
       }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -228,14 +229,14 @@ export class UserRepositoryImpl implements UserRepository {
 
       if (!userResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: userResult.error?.issues
         }
       }
       return { data: userResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }

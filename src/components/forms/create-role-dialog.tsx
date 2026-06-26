@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -123,7 +124,7 @@ export function CreateRoleDialog({
     if (result.error) {
       toast({
         title: 'Failed to create role',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return

@@ -12,6 +12,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -108,7 +109,7 @@ export function UserEditDialog({
       } else if (state.error) {
         toast({
           title: 'Error updating user',
-          description: state.error,
+          ...errorToast(state.error),
           variant: 'destructive'
         })
       }

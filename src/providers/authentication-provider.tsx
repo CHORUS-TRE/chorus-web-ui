@@ -12,6 +12,7 @@ import {
 } from 'react'
 
 import { LoadingOverlay } from '@/components/loading-overlay'
+import { conversionError } from '@/data/repository/chorus-error-mapper'
 import { Result, User } from '@/domain/model'
 import { login, logout } from '@/view-model/authentication-view-model'
 import { userMe } from '@/view-model/user-view-model'
@@ -134,7 +135,7 @@ export const AuthenticationProvider = ({
 
     return {
       ...prevState,
-      error: 'Failed to retrieve user information'
+      error: conversionError('Failed to retrieve user information')
     }
   }
 

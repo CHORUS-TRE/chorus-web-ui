@@ -3,6 +3,7 @@
 import { CheckCircle2, XCircle } from 'lucide-react'
 import * as React from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { useToast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
@@ -60,7 +61,7 @@ export function ApprovalDialog({
       toast({
         variant: 'destructive',
         title: 'Action failed',
-        description: result.error || 'Something went wrong.'
+        ...errorToast(result.error, 'Something went wrong.')
       })
     }
   }

@@ -451,7 +451,7 @@ export function StudySetupWizard({
       )
       if (result.error || result.issues) {
         const msg =
-          result.error ??
+          result.error?.message ??
           result.issues?.map((i) => i.message).join(', ') ??
           'Workspace creation failed'
         toast({ title: msg, variant: 'destructive' })
