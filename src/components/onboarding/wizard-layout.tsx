@@ -11,7 +11,6 @@ export interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   { label: 'Welcome' },
   { label: 'Terms & data policy' },
-  { label: 'Your profile' },
   { label: 'Create a workspace' },
   { label: 'Pick apps' },
   { label: 'Launch a session' }
@@ -50,7 +49,7 @@ export function WizardLayout({
           />
           <div className="mt-auto">
             <div className="mb-[18px] text-[11px] font-semibold uppercase tracking-[0.1em] text-[#B6FF12]">
-              {subtitleOverride ?? 'Trusted Research Environment'}
+              {subtitleOverride ?? 'Secure Processing Environment'}
             </div>
             <StepRail currentStep={currentStep} />
           </div>

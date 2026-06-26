@@ -1,10 +1,8 @@
 import {
   Activity,
   ArrowRight,
-  CircleGauge,
   Database,
   Folder,
-  Footprints,
   LaptopMinimal,
   PlugZap,
   Users
@@ -36,42 +34,8 @@ import { WorkbenchCreateForm } from './forms/workbench-create-form'
 import { WorkspaceUpdateForm } from './forms/workspace-forms'
 import { WorkspaceServiceInstanceCreateForm } from './forms/workspace-service-instance-create-form'
 import { toast } from './hooks/use-toast'
-import { ChartContainer } from './ui/chart'
 import { ScrollArea } from './ui/scroll-area'
 import { WorkspaceWorkbenchList } from './workspace-workbench-list'
-
-// Add a simple custom bar chart component
-function SimpleBarChart({
-  data,
-  height = 36,
-  width = 72,
-  color = 'hsl(var(--chart-1))'
-}: {
-  data: Array<{ value: number }>
-  height?: number
-  width?: number
-  color?: string
-}) {
-  const maxValue = Math.max(...data.map((item) => item.value))
-
-  return (
-    <div style={{ width, height }} className="flex items-end space-x-1">
-      {data.map((item, index) => {
-        const barHeight = (item.value / maxValue) * height
-        return (
-          <div
-            key={index}
-            style={{
-              height: `${barHeight}px`,
-              backgroundColor: color
-            }}
-            className="flex-1 rounded-t-sm"
-          />
-        )
-      })}
-    </div>
-  )
-}
 
 export function Workspace({ workspaceId }: { workspaceId: string }) {
   const router = useRouter()
@@ -476,8 +440,10 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
         <Card className="flex h-full flex-col">
           <CardHeader className="mb-0 w-full">
             <CardTitle className="mb-1 flex items-center gap-3">
-              <PlugZap className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-              Services
+              <Link href={`/workspaces/${workspaceId}/services`} variant="flex">
+                <PlugZap className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                Services
+              </Link>
             </CardTitle>
             <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
               Helm-based services deployed in this workspace.
@@ -515,74 +481,7 @@ export function Workspace({ workspaceId }: { workspaceId: string }) {
           </CardFooter>
         </Card>
 
-        {/* Resources Card */}
-        <Card className="demo-effect flex h-full flex-col">
-          <CardHeader className="mb-0 w-full">
-            <CardTitle className="mb-1 flex items-center gap-3">
-              <Link href={'#'} variant="flex">
-                <CircleGauge className="h-6 w-6" />
-                Resources
-              </Link>
-            </CardTitle>
-            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground">
-              You&apos;re using 1.2GB of your 5GB storage limit.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <>
-              <div className="flex items-baseline gap-1 text-3xl font-semibold tabular-nums leading-none text-muted text-muted-foreground">
-                12.5
-                <span className="text-sm font-normal text-muted">Mo/day</span>
-              </div>
-              <ChartContainer
-                config={{
-                  steps: { label: 'Steps', color: 'hsl(var(--chart-1))' }
-                }}
-                className="ml-auto w-[72px]"
-              >
-                <SimpleBarChart
-                  data={[
-                    { value: 2000 },
-                    { value: 2100 },
-                    { value: 2200 },
-                    { value: 1300 },
-                    { value: 1400 }
-                  ]}
-                />
-              </ChartContainer>
-            </>
-          </CardContent>
-          <div className="flex-grow" />
-          <CardFooter className="flex items-end justify-start">
-            <Button disabled variant="accent-filled">
-              <ArrowRight className="h-4 w-4" />
-              View Resources
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {/* Footprint Card */}
-        <Card className="demo-effect flex h-full flex-col">
-          <CardHeader className="mb-0 w-full">
-            <CardTitle className="mb-1 flex items-center gap-3">
-              <Link href={'#'} variant="flex">
-                <Footprints className="h-6 w-6" />
-                Footprint
-              </Link>
-            </CardTitle>
-            <CardDescription className="overflow-hidden truncate text-xs text-muted-foreground"></CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm text-muted"></div>
-          </CardContent>
-          <div className="flex-grow" />
-          <CardFooter className="flex items-end justify-start">
-            <Button disabled variant="accent-filled">
-              <ArrowRight className="h-4 w-4" />
-              View Footprint
-            </Button>
-          </CardFooter>
-        </Card>
+        {/* Resources and Footprint cards hidden */}
       </div>
     </>
   )

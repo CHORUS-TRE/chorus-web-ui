@@ -40,10 +40,10 @@ export function StepWelcome({ onNext, onSkip }: StepWelcomeProps) {
   return (
     <>
       <div
-        className="pointer-events-none absolute -top-20 right-[-60px] h-[340px] w-[340px] rounded-full"
+        className="pointer-events-none absolute -top-20 right-[-60px] h-[680px] w-[680px] rounded-full"
         style={{
           backgroundImage:
-            'radial-gradient(circle, rgba(71,122,255,0.14), transparent 70%)'
+            'radial-gradient(circle, rgba(71,122,255,0.14), transparent 90%)'
         }}
       />
       <div className="relative">
@@ -54,10 +54,10 @@ export function StepWelcome({ onNext, onSkip }: StepWelcomeProps) {
           Welcome to CHORUS
         </h2>
         <p className="mb-9 max-w-[560px] text-[15px] leading-[1.65] text-[#B8B8B8]">
-          CHORUS is a trusted research environment — a secure room where you
-          analyse sensitive health data without the data ever leaving. You bring
-          the tools; the data stays put. Here&apos;s how it keeps your work
-          safe.
+          CHORUS is a Secure Processing Environment — a secure room where you
+          analyse sensitive health data without the data ever leaving. We bring
+          the tools, you bring the data; the data stays put. Here&apos;s how it
+          keeps your work safe.
         </p>
 
         <div className="grid max-w-[600px] grid-cols-2 gap-3.5">

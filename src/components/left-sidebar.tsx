@@ -12,7 +12,7 @@ import {
   SlidersHorizontal,
   Store
 } from 'lucide-react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
@@ -88,6 +88,7 @@ function SidebarContent({
   }
 
   const { toggleRightSidebar, setHasCompletedOnboarding } = useUserPreferences()
+  const router = useRouter()
 
   return (
     <>
@@ -216,6 +217,9 @@ function SidebarContent({
           onClick={(e) => {
             e.preventDefault()
             setHasCompletedOnboarding(false)
+            // Navigate to the dashboard root so the onboarding wizard (which
+            // only renders there) is actually shown.
+            router.push('/')
           }}
           href="#"
           variant="underline"

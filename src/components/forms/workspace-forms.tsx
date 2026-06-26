@@ -127,33 +127,17 @@ const WorkspaceFormSchema = z.object({
 
 type WorkspaceFormData = z.infer<typeof WorkspaceFormSchema>
 
-export function WorkspaceCreateForm({
-  state: [open, setOpen],
+export function WorkspaceCreateFormInline({
   userId,
-  children,
-  onSuccess
+  onSuccess,
+  footer
 }: {
-  state: [open: boolean, setOpen: (open: boolean) => void]
   userId?: string
-  children?: React.ReactNode
   onSuccess?: (workspace: WorkspaceWithDev) => void
+  footer?: (ctx: { isSubmitting: boolean }) => React.ReactNode
 }) {
   const [activeTab, setActiveTab] = useState('general')
-  const { workspaces: workspaceLimits } = useInstanceLimits(userId)
-
   const [isPending, startTransition] = useTransition()
-
-  // Show toast and close dialog when limit is reached
-  useEffect(() => {
-    if (open && workspaceLimits.isAtLimit) {
-      toast({
-        title: 'Workspace limit reached',
-        description: `You've reached the maximum number of workspaces (${workspaceLimits.current}/${workspaceLimits.max}). Please delete existing workspaces before creating new ones.`,
-        variant: 'destructive'
-      })
-      setOpen(false)
-    }
-  }, [open, workspaceLimits, setOpen])
 
   const form = useForm<WorkspaceFormData>({
     resolver: zodResolver(WorkspaceFormSchema),
@@ -184,12 +168,10 @@ export function WorkspaceCreateForm({
     }
   })
 
+  // userId may resolve after mount (e.g. during onboarding), keep it in sync
   useEffect(() => {
-    if (!open) {
-      form.reset()
-      setActiveTab('general')
-    }
-  }, [open, form])
+    if (userId) form.setValue('userId', userId)
+  }, [userId, form])
 
   async function onSubmit(data: WorkspaceFormData) {
     const formData = new FormData()
@@ -254,11 +236,92 @@ export function WorkspaceCreateForm({
           description: 'Workspace created successfully'
         })
         if (onSuccess) onSuccess(result.data)
-        setOpen(false)
         form.reset()
       }
     })
   }
+
+  const isSubmitting = form.formState.isSubmitting || isPending
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="visibility">Visibility</TabsTrigger>
+            {/* <TabsTrigger value="resources" className="demo-effect">
+              Resources
+            </TabsTrigger> */}
+          </TabsList>
+
+          <TabsContent value="general" className="space-y-4">
+            <GeneralTabContent form={form} />
+          </TabsContent>
+
+          <TabsContent value="security" className="space-y-4">
+            <SecurityTabContent form={form} />
+          </TabsContent>
+
+          <TabsContent value="visibility" className="space-y-4">
+            <VisibilityTabContent form={form} />
+          </TabsContent>
+
+          <TabsContent value="resources" className="demo-effect space-y-4">
+            <ResourcesTabContent form={form} />
+          </TabsContent>
+        </Tabs>
+
+        <input type="hidden" {...form.register('tenantId')} />
+        <input type="hidden" {...form.register('userId')} />
+        <input type="hidden" {...form.register('shortName')} />
+
+        {footer ? (
+          footer({ isSubmitting })
+        ) : (
+          <div className="mt-6 flex justify-end gap-4">
+            <Button
+              type="submit"
+              variant="accent-filled"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Create Workspace
+            </Button>
+          </div>
+        )}
+      </form>
+    </Form>
+  )
+}
+
+export function WorkspaceCreateForm({
+  state: [open, setOpen],
+  userId,
+  children,
+  onSuccess
+}: {
+  state: [open: boolean, setOpen: (open: boolean) => void]
+  userId?: string
+  children?: React.ReactNode
+  onSuccess?: (workspace: WorkspaceWithDev) => void
+}) {
+  const { workspaces: workspaceLimits } = useInstanceLimits(userId)
+
+  // Show toast and close dialog when limit is reached
+  useEffect(() => {
+    if (open && workspaceLimits.isAtLimit) {
+      toast({
+        title: 'Workspace limit reached',
+        description: `You've reached the maximum number of workspaces (${workspaceLimits.current}/${workspaceLimits.max}). Please delete existing workspaces before creating new ones.`,
+        variant: 'destructive'
+      })
+      setOpen(false)
+    }
+  }, [open, workspaceLimits, setOpen])
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
@@ -270,63 +333,34 @@ export function WorkspaceCreateForm({
             Configure your new workspace settings.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4">
-                <TabsTrigger value="general">General</TabsTrigger>
-                <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="visibility">Visibility</TabsTrigger>
-                {/* <TabsTrigger value="resources" className="demo-effect">
-                  Resources
-                </TabsTrigger> */}
-              </TabsList>
-
-              <TabsContent value="general" className="space-y-4">
-                <GeneralTabContent form={form} />
-              </TabsContent>
-
-              <TabsContent value="security" className="space-y-4">
-                <SecurityTabContent form={form} />
-              </TabsContent>
-
-              <TabsContent value="visibility" className="space-y-4">
-                <VisibilityTabContent form={form} />
-              </TabsContent>
-
-              <TabsContent value="resources" className="demo-effect space-y-4">
-                <ResourcesTabContent form={form} />
-              </TabsContent>
-            </Tabs>
-
-            <input type="hidden" {...form.register('tenantId')} />
-            <input type="hidden" {...form.register('userId')} />
-            <input type="hidden" {...form.register('shortName')} />
-
+        <WorkspaceCreateFormInline
+          userId={userId}
+          onSuccess={(ws) => {
+            onSuccess?.(ws)
+            setOpen(false)
+          }}
+          footer={({ isSubmitting }) => (
             <div className="mt-6 flex justify-end gap-4">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  setOpen(false)
-                  form.reset()
-                }}
+                onClick={() => setOpen(false)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="accent-filled"
-                disabled={form.formState.isSubmitting || isPending}
+                disabled={isSubmitting}
               >
-                {(form.formState.isSubmitting || isPending) && (
+                {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Create Workspace
               </Button>
             </div>
-          </form>
-        </Form>
+          )}
+        />
       </DialogContent>
     </DialogContainer>
   )
