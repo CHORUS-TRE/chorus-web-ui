@@ -1,3 +1,10 @@
+# [1.64.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.63.0...v1.64.0) (2026-06-26)
+
+
+### Features
+
+* introduce structured error handling with ChorusError model ([a4f3ed8](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a4f3ed8be9169571f3023440e29eb4acca9ab8ed))
+
 # [1.63.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.62.0...v1.63.0) (2026-06-26)
 
 
