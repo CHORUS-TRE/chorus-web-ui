@@ -16,6 +16,7 @@ import {
 import { ApprovalRequestServiceListApprovalRequestsRequest } from '@/internal/client'
 
 import { ApprovalRequestDataSource } from '../data-source'
+import { conversionError, toChorusError } from './chorus-error-mapper'
 
 export class ApprovalRequestRepositoryImpl
   implements ApprovalRequestRepository
@@ -38,7 +39,7 @@ export class ApprovalRequestRepositoryImpl
       return { data: undefined }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -48,7 +49,7 @@ export class ApprovalRequestRepositoryImpl
       const response = await this.dataSource.countMine()
       const result = response.result
       if (!result) {
-        return { error: 'API response validation failed' }
+        return { error: conversionError('API response validation failed') }
       }
       return {
         data: {
@@ -75,7 +76,7 @@ export class ApprovalRequestRepositoryImpl
       }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -98,7 +99,7 @@ export class ApprovalRequestRepositoryImpl
       )
       if (!approvalRequestResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: approvalRequestResult.error.issues
         }
       }
@@ -106,7 +107,7 @@ export class ApprovalRequestRepositoryImpl
       return { data: approvalRequestResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -130,7 +131,7 @@ export class ApprovalRequestRepositoryImpl
       )
       if (!approvalRequestResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: approvalRequestResult.error.issues
         }
       }
@@ -138,7 +139,7 @@ export class ApprovalRequestRepositoryImpl
       return { data: approvalRequestResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -149,7 +150,7 @@ export class ApprovalRequestRepositoryImpl
       return { data: undefined }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -163,7 +164,7 @@ export class ApprovalRequestRepositoryImpl
 
       if (!approvalRequestResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: approvalRequestResult.error.issues
         }
       }
@@ -171,7 +172,7 @@ export class ApprovalRequestRepositoryImpl
       return { data: approvalRequestResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -187,7 +188,7 @@ export class ApprovalRequestRepositoryImpl
 
       if (!approvalRequestsResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: approvalRequestsResult.error.issues
         }
       }
@@ -195,7 +196,7 @@ export class ApprovalRequestRepositoryImpl
       return { data: approvalRequestsResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -212,7 +213,7 @@ export class ApprovalRequestRepositoryImpl
 
       const result = response.result
       if (!result?.content) {
-        return { error: 'No file content returned from API' }
+        return { error: conversionError('No file content returned from API') }
       }
 
       return {
@@ -223,7 +224,7 @@ export class ApprovalRequestRepositoryImpl
       }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }

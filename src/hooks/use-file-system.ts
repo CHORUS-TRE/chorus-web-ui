@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import {
   WorkspaceFilePart,
@@ -152,7 +153,7 @@ export function useFileSystem(workspaceId?: string) {
         const result = await workspaceFileList(workspaceId, apiPath)
 
         if (result.error) {
-          setError(result.error)
+          setError(result.error?.message ?? null)
           return
         }
 
@@ -226,7 +227,7 @@ export function useFileSystem(workspaceId?: string) {
     try {
       const result = await workspaceFileStoreList(workspaceId)
       if (result.error) {
-        setError(result.error)
+        setError(result.error?.message ?? null)
         return
       }
       const fetchedStores = result.data ?? []
@@ -485,10 +486,10 @@ export function useFileSystem(workspaceId?: string) {
         )
 
         if (result.error) {
-          setError(result.error)
+          setError(result.error?.message ?? null)
           toast({
             title: isCopy ? 'Copy failed' : 'Move failed',
-            description: result.error,
+            ...errorToast(result.error),
             variant: 'destructive'
           })
           return false
@@ -570,7 +571,7 @@ export function useFileSystem(workspaceId?: string) {
 
         if (result.error) {
           console.error('Failed to delete item:', result.error)
-          setError(result.error)
+          setError(result.error?.message ?? null)
           return
         }
 
@@ -643,7 +644,7 @@ export function useFileSystem(workspaceId?: string) {
 
         if (result.error) {
           console.error('Failed to rename item:', result.error)
-          setError(result.error)
+          setError(result.error?.message ?? null)
           return
         }
 
@@ -697,7 +698,7 @@ export function useFileSystem(workspaceId?: string) {
 
         if (result.error) {
           console.error('Failed to create folder:', result.error)
-          setError(result.error)
+          setError(result.error?.message ?? null)
           return
         }
 
@@ -736,7 +737,7 @@ export function useFileSystem(workspaceId?: string) {
       })
 
       if (result.error) {
-        throw new Error(result.error)
+        throw new Error(result.error?.message)
       }
     },
     [workspaceId]
@@ -1186,7 +1187,7 @@ export function useFileSystem(workspaceId?: string) {
 
         if (result.error) {
           console.error('Failed to download file:', result.error)
-          setError(result.error)
+          setError(result.error?.message ?? null)
           return
         }
 

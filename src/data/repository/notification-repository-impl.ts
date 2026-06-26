@@ -6,6 +6,7 @@ import { NotificationRepository } from '@/domain/repository/notification-reposit
 import { NotificationServiceGetNotificationsRequest } from '@/internal/client'
 
 import { NotificationDataSource } from '../data-source'
+import { conversionError, toChorusError } from './chorus-error-mapper'
 
 export class NotificationRepositoryImpl implements NotificationRepository {
   private dataSource: NotificationDataSource
@@ -25,7 +26,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
 
       if (!notificationsResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: notificationsResult.error.issues
         }
       }
@@ -33,7 +34,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
       return { data: notificationsResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -44,13 +45,13 @@ export class NotificationRepositoryImpl implements NotificationRepository {
       const count = response.result
 
       if (count === undefined) {
-        return { error: 'API response validation failed' }
+        return { error: conversionError('API response validation failed') }
       }
 
       return { data: Number(count) }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -63,7 +64,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
       return { data: undefined }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }

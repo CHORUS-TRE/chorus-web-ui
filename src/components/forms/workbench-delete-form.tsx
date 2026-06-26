@@ -2,6 +2,7 @@
 
 import { startTransition, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { workbenchDelete } from '@/view-model/workbench-view-model'
 
@@ -28,7 +29,7 @@ export function WorkbenchDeleteForm({
       if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return

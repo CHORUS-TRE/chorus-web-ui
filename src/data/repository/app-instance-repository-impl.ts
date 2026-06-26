@@ -10,6 +10,8 @@ import {
 } from '@/domain/model'
 import { AppInstanceRepository } from '@/domain/repository'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 export class AppInstanceRepositoryImpl implements AppInstanceRepository {
   private dataSource: AppInstanceDataSource
 
@@ -26,14 +28,16 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       if (!instanceResult.success) {
         return {
-          error: 'API response validation failed for AppInstance get',
+          error: conversionError(
+            'API response validation failed for AppInstance get'
+          ),
           issues: instanceResult.error.issues
         }
       }
       return { data: instanceResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -47,7 +51,9 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       if (!instancesResult.success) {
         return {
-          error: 'API response validation failed for AppInstance list',
+          error: conversionError(
+            'API response validation failed for AppInstance list'
+          ),
           issues: instancesResult.error.issues
         }
       }
@@ -55,7 +61,7 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
       return { data: instancesResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -68,7 +74,9 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       if (!response.result?.appInstance) {
         return {
-          error: 'API response validation failed for AppInstance create'
+          error: conversionError(
+            'API response validation failed for AppInstance create'
+          )
         }
       }
 
@@ -77,7 +85,9 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
       )
       if (!instanceResult.success) {
         return {
-          error: 'API response validation failed for AppInstance create',
+          error: conversionError(
+            'API response validation failed for AppInstance create'
+          ),
           issues: instanceResult.error.issues
         }
       }
@@ -85,7 +95,7 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
       return { data: instanceResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -97,13 +107,15 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       if (!idResult) {
         return {
-          error: 'API response validation failed for AppInstance delete'
+          error: conversionError(
+            'API response validation failed for AppInstance delete'
+          )
         }
       }
       return { data: id }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -117,14 +129,16 @@ export class AppInstanceRepositoryImpl implements AppInstanceRepository {
 
       if (!instanceResult.success) {
         return {
-          error: 'API response validation failed for AppInstance update',
+          error: conversionError(
+            'API response validation failed for AppInstance update'
+          ),
           issues: instanceResult.error.issues
         }
       }
       return { data: instanceResult.data }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }

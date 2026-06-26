@@ -4,6 +4,7 @@ import { LayoutGrid, Rows3, Users } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { AddUserToWorkspaceDialog } from '@/components/forms/add-user-to-workspace-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
@@ -32,7 +33,7 @@ export default function UsersPage() {
     } else {
       toast({
         title: 'Error',
-        description: result.error || 'Failed to load workspace members',
+        ...errorToast(result.error, 'Failed to load workspace members'),
         variant: 'destructive'
       })
     }

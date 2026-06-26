@@ -11,6 +11,8 @@ import {
 } from '@/domain/model'
 import { WorkspaceServiceInstanceRepository } from '@/domain/repository'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 export class WorkspaceServiceInstanceRepositoryImpl
   implements WorkspaceServiceInstanceRepository
 {
@@ -26,7 +28,9 @@ export class WorkspaceServiceInstanceRepositoryImpl
     try {
       const response = await this.dataSource.create(instance)
       if (!response.result?.workspaceServiceInstance) {
-        return { error: 'Error creating workspace service instance' }
+        return {
+          error: conversionError('Error creating workspace service instance')
+        }
       }
 
       const validation = WorkspaceServiceInstanceSchema.safeParse(
@@ -34,7 +38,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       )
       if (!validation.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: validation.error.issues
         }
       }
@@ -42,7 +46,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       return { data: validation.data }
     } catch (error) {
       console.error('Error creating workspace service instance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -50,7 +54,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
     try {
       const response = await this.dataSource.get(id)
       if (!response.result?.workspaceServiceInstance) {
-        return { error: 'Not found' }
+        return { error: conversionError('Not found') }
       }
       const validatedData = WorkspaceServiceInstanceSchema.parse(
         response.result.workspaceServiceInstance
@@ -58,7 +62,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       return { data: validatedData }
     } catch (error) {
       console.error('Error getting workspace service instance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -72,14 +76,14 @@ export class WorkspaceServiceInstanceRepositoryImpl
       )
       if (!validation.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: validation.error.issues
         }
       }
       return { data: validation.data }
     } catch (error) {
       console.error('Error getting workspace service instance secrets', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -89,7 +93,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       return { data: id }
     } catch (error) {
       console.error('Error deleting workspace service instance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -107,7 +111,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       return { data: validatedData }
     } catch (error) {
       console.error('Error listing workspace service instances', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -117,7 +121,9 @@ export class WorkspaceServiceInstanceRepositoryImpl
     try {
       const response = await this.dataSource.update(instance)
       if (!response.result?.workspaceServiceInstance) {
-        return { error: 'Error updating workspace service instance' }
+        return {
+          error: conversionError('Error updating workspace service instance')
+        }
       }
 
       const validation = WorkspaceServiceInstanceSchema.safeParse(
@@ -125,7 +131,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       )
       if (!validation.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: validation.error.issues
         }
       }
@@ -133,7 +139,7 @@ export class WorkspaceServiceInstanceRepositoryImpl
       return { data: validation.data }
     } catch (error) {
       console.error('Error updating workspace service instance', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

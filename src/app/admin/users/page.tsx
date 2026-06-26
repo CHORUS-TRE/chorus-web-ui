@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { GrantAccessDialog } from '@/components/forms/grant-access-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { Input } from '@/components/ui/input'
@@ -69,10 +70,10 @@ export default function UsersPage() {
           return ids.includes(prev ?? '') ? prev : ids[0]
         })
       } else {
-        setError(result.error || 'Failed to load users.')
+        setError(result.error?.message || 'Failed to load users.')
         toast({
           title: 'Error',
-          description: result.error || 'Failed to load users.',
+          ...errorToast(result.error, 'Failed to load users.'),
           variant: 'destructive'
         })
       }

@@ -17,6 +17,8 @@ import {
 } from '@/domain/model/workspace'
 import { WorkspaceRepository } from '@/domain/repository'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 const normalizeWorkspaceStatus = (raw?: string): WorkspaceState => {
   if (!raw) return WorkspaceState.UNKNOWN
   const upper = raw.toUpperCase()
@@ -56,7 +58,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     try {
       const response = await this.dataSource.create(workspace)
       if (!response.result?.workspace) {
-        return { error: 'Error creating workspace' }
+        return { error: conversionError('Error creating workspace') }
       }
 
       const workspaceResult = WorkspaceSchema.safeParse(
@@ -64,7 +66,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       )
       if (!workspaceResult.success) {
         return {
-          error: 'API response validation failed',
+          error: conversionError('API response validation failed'),
           issues: workspaceResult.error.issues
         }
       }
@@ -72,7 +74,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return { data: workspaceResult.data }
     } catch (error) {
       console.error('Error creating workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -80,7 +82,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     try {
       const response = await this.dataSource.get(id)
       if (!response.result?.workspace) {
-        return { error: 'Not found' }
+        return { error: conversionError('Not found') }
       }
       const validatedData = WorkspaceSchema.parse(
         normalizeWorkspace(response.result.workspace)
@@ -88,7 +90,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return { data: validatedData }
     } catch (error) {
       console.error('Error getting workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -98,7 +100,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return { data: id }
     } catch (error) {
       console.error('Error deleting workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -115,7 +117,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     } catch (error) {
       console.error('Error listing workspaces', error)
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -133,7 +135,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     } catch (error) {
       console.error('Error listing public workspaces', error)
       return {
-        error: error instanceof Error ? error.message : String(error)
+        error: toChorusError(error)
       }
     }
   }
@@ -144,7 +146,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return this.get(workspace.id)
     } catch (error) {
       console.error('Error updating workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -165,7 +167,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       })
 
       if (!response.result?.workspace) {
-        return { error: 'Error managing user role' }
+        return { error: conversionError('Error managing user role') }
       }
 
       // Since the API returns workspace data not user data,
@@ -184,20 +186,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       }
     } catch (error) {
       console.error('Error managing user role in workspace', error)
-
-      // Try to extract more specific error information from the API response
-      if (error && typeof error === 'object' && 'response' in error) {
-        const apiError = error as {
-          response?: { status?: number; statusText?: string }
-        }
-        if (apiError.response?.status) {
-          return {
-            error: `API Error ${apiError.response.status}: ${apiError.response.statusText || 'Unknown error'}`
-          }
-        }
-      }
-
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -214,7 +203,9 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       )
 
       if (!response.result?.workspace) {
-        return { error: 'Error removing user role from workspace' }
+        return {
+          error: conversionError('Error removing user role from workspace')
+        }
       }
 
       return {
@@ -231,7 +222,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       }
     } catch (error) {
       console.error('Error removing user role from workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -245,7 +236,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
         userId
       )
       if (!response.result?.workspace) {
-        return { error: 'Error removing user from workspace' }
+        return { error: conversionError('Error removing user from workspace') }
       }
 
       return {
@@ -262,7 +253,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       }
     } catch (error) {
       console.error('Error removing user from workspace', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

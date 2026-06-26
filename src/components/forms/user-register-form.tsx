@@ -45,7 +45,7 @@ export default function UserRegisterForm() {
   )
 
   useEffect(() => {
-    if (state.data?.id && !state.error?.includes('fail')) {
+    if (state.data?.id && !state.error?.message?.includes('fail')) {
       redirect(`/?username=${state.data.username}`)
     }
   }, [state])
@@ -150,9 +150,11 @@ export default function UserRegisterForm() {
       </form>
 
       <p aria-live="polite" className="sr-only" role="status">
-        {state.error}
+        {state.error?.message}
       </p>
-      {state.error && <p className="text-destructive">{state.error}</p>}
+      {state.error?.message && (
+        <p className="text-destructive">{state.error?.message}</p>
+      )}
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{' '}

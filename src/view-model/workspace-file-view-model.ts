@@ -4,6 +4,7 @@ import { env } from 'next-runtime-env'
 
 import { WorkspaceFileDataSourceImpl } from '@/data/data-source'
 import { WorkspaceFileRepositoryImpl } from '@/data/repository'
+import { toChorusError } from '@/data/repository/chorus-error-mapper'
 import { Result } from '@/domain/model'
 import {
   WorkspaceFile,
@@ -22,7 +23,6 @@ import { WorkspaceFileList } from '@/domain/use-cases/workspace-file/workspace-f
 import { WorkspaceFileStoreList } from '@/domain/use-cases/workspace-file/workspace-file-store-list'
 import { WorkspaceFileUpdate } from '@/domain/use-cases/workspace-file/workspace-file-update'
 import { WorkspaceFileUploadPart } from '@/domain/use-cases/workspace-file/workspace-file-upload-part'
-import { FetchError, ResponseError } from '@/internal/client/runtime'
 import { Analytics } from '@/lib/analytics/service'
 
 const getRepository = async () => {
@@ -43,7 +43,7 @@ export async function workspaceFileCreate(
     return await useCase.execute(workspaceId, file)
   } catch (error) {
     console.error('Error creating workspace file', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -59,19 +59,7 @@ export async function workspaceFileGet(
     return await useCase.execute(workspaceId, path)
   } catch (error) {
     console.error('Error getting workspace file', error)
-    if (error instanceof ResponseError) {
-      // Handle HTTP errors like 502, 404, etc.
-      return {
-        error: `API Error: ${error.response.status} ${error.response.statusText}`
-      }
-    }
-    if (error instanceof FetchError) {
-      // Handle network errors, including CORS issues
-      return {
-        error: `Network Error: ${error.message}. Check browser console for CORS details.`
-      }
-    }
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -86,7 +74,7 @@ export async function workspaceFileList(
     return await useCase.execute(workspaceId, path)
   } catch (error) {
     console.error('Error listing workspace files', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -100,7 +88,7 @@ export async function workspaceFileStoreList(
     return await useCase.execute(workspaceId)
   } catch (error) {
     console.error('Error listing workspace file stores', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -118,7 +106,7 @@ export async function workspaceFileUpdate(
     return await useCase.execute(workspaceId, oldPath, file, isCopy)
   } catch (error) {
     console.error('Error updating workspace file', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -134,7 +122,7 @@ export async function workspaceFileDelete(
     return await useCase.execute(workspaceId, path)
   } catch (error) {
     console.error('Error deleting workspace file', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -159,7 +147,7 @@ export async function workspaceFileInitUpload(
   } catch (error) {
     Analytics.Data.uploadError()
     console.error('Error initializing workspace file upload', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -179,7 +167,7 @@ export async function workspaceFileUploadPart(
   } catch (error) {
     Analytics.Data.uploadError()
     console.error('Error uploading workspace file part', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -207,7 +195,7 @@ export async function workspaceFileCompleteUpload(
   } catch (error) {
     Analytics.Data.uploadError()
     console.error('Error completing workspace file upload', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -225,6 +213,6 @@ export async function workspaceFileAbortUpload(
     return await useCase.execute(workspaceId, path, uploadId)
   } catch (error) {
     console.error('Error aborting workspace file upload', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }

@@ -53,7 +53,7 @@ describe('AuthorizationRepositoryImpl.listRoles', () => {
     const ds = makeDataSource(null, true)
     const repo = new AuthorizationRepositoryImpl(ds)
     const result = await repo.listRoles()
-    expect(result.error).toBe('network error')
+    expect(result.error?.message).toBe('network error')
     expect(result.data).toBeUndefined()
   })
 

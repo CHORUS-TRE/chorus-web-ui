@@ -15,6 +15,8 @@ import {
 import { WorkspaceFileRepository } from '@/domain/repository/workspace-file-repository'
 import { ResponseError } from '@/internal/client/runtime'
 
+import { conversionError, toChorusError } from './chorus-error-mapper'
+
 export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
   private dataSource: WorkspaceFileDataSource
 
@@ -34,10 +36,10 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
         return { data: workspaceFile }
       }
 
-      return { error: 'Failed to create workspace file' }
+      return { error: conversionError('Failed to create workspace file') }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -51,10 +53,10 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
         return { data: workspaceFile }
       }
 
-      return { error: 'Workspace file not found' }
+      return { error: conversionError('Workspace file not found') }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -78,16 +80,18 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
         return { data: workspaceFile }
       }
 
-      return { error: 'Failed to update workspace file' }
+      return { error: conversionError('Failed to update workspace file') }
     } catch (error) {
       if (error instanceof ResponseError && error.response.status === 409) {
         return {
-          error: 'A file with that name already exists at the destination.'
+          error: {
+            code: 'ALREADY_EXISTS',
+            message: 'A file with that name already exists at the destination.',
+            httpStatus: 409
+          }
         }
       }
-      return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
-      }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -97,7 +101,7 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
       return { data: 'Workspace file deleted successfully' }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -119,7 +123,7 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
       return { data: [] }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -138,7 +142,7 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
       return { data: [] }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -167,10 +171,10 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
         }
       }
 
-      return { error: 'Failed to initiate upload' }
+      return { error: conversionError('Failed to initiate upload') }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -194,10 +198,10 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
         return { data: uploadedPart }
       }
 
-      return { error: 'Failed to upload part' }
+      return { error: conversionError('Failed to upload part') }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -221,10 +225,10 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
         return { data: workspaceFile }
       }
 
-      return { error: 'Failed to complete upload' }
+      return { error: conversionError('Failed to complete upload') }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }
@@ -239,7 +243,7 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
       return { data: 'Upload aborted successfully' }
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: toChorusError(error)
       }
     }
   }

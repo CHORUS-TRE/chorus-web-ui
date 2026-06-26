@@ -24,7 +24,7 @@ export function useWorkbenchStatus(workbenchId?: string) {
       const result = await getWorkbench(workbenchId)
 
       if (result.error) {
-        setResponse({ error: result.error })
+        setResponse({ error: result.error?.message })
         clearInterval(intervalId)
         clearTimeout(timeoutId)
         return

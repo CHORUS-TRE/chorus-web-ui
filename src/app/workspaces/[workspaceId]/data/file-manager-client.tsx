@@ -12,6 +12,7 @@ import {
 import type React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { Breadcrumb } from '@/components/file-manager/breadcrumb'
 import {
   type ContextMenuPosition,
@@ -420,7 +421,7 @@ export default function FileManagerClient({
       if (result.error) {
         toast({
           title: 'Request failed',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return
@@ -454,7 +455,7 @@ export default function FileManagerClient({
       if (result.error) {
         toast({
           title: 'Request failed',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return

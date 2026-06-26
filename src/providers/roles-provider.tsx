@@ -76,9 +76,9 @@ export const RolesProvider = ({ children }: { children: React.ReactNode }) => {
       ([rolesResult, permissionsResult]) => {
         if (ignored) return
         if (rolesResult.error) {
-          setError(rolesResult.error)
+          setError(rolesResult.error?.message ?? null)
         } else if (permissionsResult.error) {
-          setError(permissionsResult.error)
+          setError(permissionsResult.error?.message ?? null)
         } else {
           setRoles(rolesResult.data ?? [])
           setPermissions(permissionsResult.data ?? [])

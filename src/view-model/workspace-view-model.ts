@@ -6,6 +6,10 @@ import { ZodIssue } from 'zod'
 import { WorkspaceDataSourceImpl } from '@/data/data-source'
 import { WorkspaceRepositoryImpl } from '@/data/repository'
 import {
+  conversionError,
+  toChorusError
+} from '@/data/repository/chorus-error-mapper'
+import {
   Result,
   Workspace,
   WorkspaceCreateType,
@@ -286,7 +290,7 @@ export async function workspaceDelete(id: string): Promise<Result<string>> {
     return result
   } catch (error) {
     console.error('Error deleting workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -357,7 +361,7 @@ export async function workspaceCreate(
     const result = await useCase.execute(validation.data)
 
     if (result.error) {
-      Analytics.Workspace.createError(result.error)
+      Analytics.Workspace.createError(result.error?.message ?? '')
     } else if (result.data) {
       Analytics.Workspace.createSuccess(result.data.id)
     }
@@ -367,7 +371,7 @@ export async function workspaceCreate(
     const errorMessage = error instanceof Error ? error.message : String(error)
     Analytics.Workspace.createError(errorMessage)
     console.error('Error creating workspace', error)
-    return { error: errorMessage }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -378,7 +382,7 @@ export async function workspaceGet(id: string): Promise<Result<Workspace>> {
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -407,7 +411,7 @@ export async function workspaceUpdate(
     return await useCase.execute(validation.data)
   } catch (error) {
     console.error('Error updating workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -416,7 +420,7 @@ export async function workspaceGetWithDev(
 ): Promise<Result<WorkspaceWithDev>> {
   const workspaceResult = await workspaceGet(id)
   if (workspaceResult.error) return { error: workspaceResult.error }
-  if (!workspaceResult.data) return { error: 'Not found' }
+  if (!workspaceResult.data) return { error: conversionError('Not found') }
 
   const enriched = await enrichWorkspaceWithDev(workspaceResult.data)
   return { data: enriched }
@@ -462,7 +466,7 @@ export async function workspaceCreateWithDev(
       apiValidation.data as WorkspaceCreateType
     )
     if (createResult.error) {
-      Analytics.Workspace.createError(createResult.error)
+      Analytics.Workspace.createError(createResult.error?.message ?? '')
       return { error: createResult.error }
     }
     if (createResult.issues) {
@@ -471,7 +475,7 @@ export async function workspaceCreateWithDev(
     }
     if (!createResult.data) {
       Analytics.Workspace.createError('Failed to create workspace')
-      return { error: 'Failed to create workspace' }
+      return { error: conversionError('Failed to create workspace') }
     }
 
     Analytics.Workspace.createSuccess(createResult.data.id)
@@ -506,7 +510,7 @@ export async function workspaceCreateWithDev(
     const errorMessage = error instanceof Error ? error.message : String(error)
     Analytics.Workspace.createError(errorMessage)
     console.error('Error creating workspace with dev fields', error)
-    return { error: errorMessage }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -552,7 +556,8 @@ export async function workspaceUpdateWithDev(
     )
     if (updateResult.error) return { error: updateResult.error }
     if (updateResult.issues) return { issues: updateResult.issues }
-    if (!updateResult.data) return { error: 'Failed to update workspace' }
+    if (!updateResult.data)
+      return { error: conversionError('Failed to update workspace') }
 
     if (devValidation.data && updateResult.data.id) {
       const { setWorkspace, deleteWorkspace, setWorkspaceConfig } =
@@ -585,7 +590,7 @@ export async function workspaceUpdateWithDev(
     return { data: enriched }
   } catch (error) {
     console.error('Error updating workspace with dev fields', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -602,14 +607,16 @@ export async function workspaceAddUserRole(
 
     if (!workspaceId || !userId || !roleName) {
       return {
-        error: 'Missing required fields: workspaceId, userId, or roleName'
+        error: conversionError(
+          'Missing required fields: workspaceId, userId, or roleName'
+        )
       }
     }
 
     return await repository.addUserRole(workspaceId, userId, roleName)
   } catch (error) {
     console.error('Error adding user role to workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -623,14 +630,16 @@ export async function workspaceRemoveUserRole(
 
     if (!workspaceId || !userId || !roleName) {
       return {
-        error: 'Missing required fields: workspaceId, userId, or roleName'
+        error: conversionError(
+          'Missing required fields: workspaceId, userId, or roleName'
+        )
       }
     }
 
     return await repository.removeUserRole(workspaceId, userId, roleName)
   } catch (error) {
     console.error('Error removing user role from workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }
 
@@ -646,13 +655,13 @@ export async function workspaceRemoveUserFromWorkspace(
 
     if (!workspaceId || !userId) {
       return {
-        error: 'Missing required fields: workspaceId, userId'
+        error: conversionError('Missing required fields: workspaceId, userId')
       }
     }
 
     return await repository.removeUserFromWorkspace(workspaceId, userId)
   } catch (error) {
     console.error('Error removing user from workspace', error)
-    return { error: error instanceof Error ? error.message : String(error) }
+    return { error: toChorusError(error) }
   }
 }

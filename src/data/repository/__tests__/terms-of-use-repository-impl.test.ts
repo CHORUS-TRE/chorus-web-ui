@@ -46,7 +46,7 @@ describe('TermsOfUseRepositoryImpl.getMyStatus', () => {
     })
     const repo = new TermsOfUseRepositoryImpl(ds)
     const result = await repo.getMyStatus()
-    expect(result.error).toBe('network error')
+    expect(result.error?.message).toBe('network error')
   })
 })
 
@@ -87,7 +87,7 @@ describe('TermsOfUseRepositoryImpl.getCurrentVersion', () => {
     })
     const repo = new TermsOfUseRepositoryImpl(ds)
     const result = await repo.getCurrentVersion()
-    expect(result.error).toBe('timeout')
+    expect(result.error?.message).toBe('timeout')
   })
 })
 

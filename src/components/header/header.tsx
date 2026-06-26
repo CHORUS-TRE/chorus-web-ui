@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 
 import { BookmarkButton } from '@/components/bookmark-button'
+import { errorToast } from '@/components/error-toast'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
 import { toast } from '@/components/hooks/use-toast'
@@ -99,7 +100,7 @@ export function Header() {
     if (result.error) {
       toast({
         title: 'Error closing app',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return
@@ -121,8 +122,8 @@ export function Header() {
               src={defaultLogo}
               alt="Chorus"
               height={24}
-              width={36}
-              className="aspect-auto cursor-pointer"
+              width={41}
+              className="h-6 w-auto cursor-pointer"
               id="logo"
               priority
               unoptimized
@@ -133,7 +134,7 @@ export function Header() {
                 alt="Chorus"
                 height={32}
                 width={75}
-                className="ml-4 aspect-[80/33] cursor-pointer"
+                className="ml-4 h-8 w-auto cursor-pointer"
                 id="logo"
                 priority
                 unoptimized

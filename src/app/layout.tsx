@@ -12,6 +12,7 @@ import { Toaster as SonnerToaster } from 'sonner'
 import { AppStateInitializer } from '@/components/app-state-initializer'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DynamicThemeApplicator } from '@/components/dynamic-theme-applicator'
+import { ErrorDetailDialog } from '@/components/error-detail-dialog'
 import { UploadPanel } from '@/components/file-manager/upload-panel'
 import IframeCacheRenderer from '@/components/iframe-cache-renderer'
 import { IframeCleanupDialog } from '@/components/iframe-cleanup-dialog'
@@ -88,6 +89,7 @@ export default async function RootLayout({
           nonce={nonce}
         >
           <Toaster />
+          <ErrorDetailDialog />
           <SonnerToaster position="top-right" theme="dark" richColors />
           <InstanceConfigInitializer>
             <DynamicThemeApplicator />

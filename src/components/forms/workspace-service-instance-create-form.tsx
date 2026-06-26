@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Collapsible,
@@ -115,7 +116,7 @@ export function WorkspaceServiceInstanceCreateForm({
     if (result.error) {
       toast({
         title: 'Error',
-        description: result.error,
+        ...errorToast(result.error),
         variant: 'destructive'
       })
       return

@@ -16,6 +16,7 @@ import React, { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -123,7 +124,7 @@ export function WizardArtifact({
         formData
       )
       if (result.error) {
-        toast({ title: result.error, variant: 'destructive' })
+        toast({ ...errorToast(result.error), variant: 'destructive' })
         return
       }
       await refreshWorkspaces()

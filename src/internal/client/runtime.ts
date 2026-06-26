@@ -157,6 +157,8 @@ export class BaseAPI {
       return response
     }
 
+    // Keep the raw parsed body: it carries fields (e.g. details[].stackTrace)
+    // that the generated ChorusChorusErrorResponse model does not model.
     const errorBody = await response.json().catch(() => null)
     const errorMessage =
       errorBody?.message || errorBody?.error || response.statusText
@@ -167,7 +169,7 @@ export class BaseAPI {
       details: errorBody
     })
 
-    throw new ResponseError(response, errorMessage)
+    throw new ResponseError(response, errorMessage, errorBody)
   }
 
   private async createFetchParams(
@@ -318,7 +320,10 @@ export class ResponseError extends Error {
   override name: 'ResponseError' = 'ResponseError'
   constructor(
     public response: Response,
-    msg?: string
+    msg?: string,
+    // Raw parsed error body (ChorusChorusErrorResponse-shaped, plus extra
+    // fields like details[].stackTrace). Typed by toChorusError at the boundary.
+    public chorusError?: unknown
   ) {
     super(msg)
   }

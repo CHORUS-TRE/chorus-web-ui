@@ -5,6 +5,7 @@ import { env } from 'next-runtime-env'
 
 import { AuthenticationApiDataSourceImpl } from '@/data/data-source'
 import { AuthenticationRepositoryImpl } from '@/data/repository'
+import { conversionError } from '@/data/repository/chorus-error-mapper'
 import {
   AuthenticationMode,
   AuthenticationOAuthRedirectRequest,
@@ -49,7 +50,7 @@ export async function login(
   if (!login.data)
     return {
       ...prevState,
-      error: 'Something went wrong, please try again'
+      error: conversionError('Something went wrong, please try again')
     }
 
   Analytics.Auth.loginSuccess()
@@ -70,7 +71,7 @@ export async function getAuthenticationModes(): Promise<
     return await useCase.execute()
   } catch (error) {
     console.error({ error })
-    return { error: 'Failed to fetch authentication modes' }
+    return { error: conversionError('Failed to fetch authentication modes') }
   }
 }
 
@@ -104,7 +105,7 @@ export async function logout() {
   } catch (error) {
     console.error('Error during logout:', error)
     return {
-      error: 'Failed to logout'
+      error: conversionError('Failed to logout')
     }
   }
 }
@@ -117,7 +118,7 @@ export async function getOAuthUrl(id: string): Promise<Result<string>> {
     return await useCase.execute(id)
   } catch (error) {
     console.error('Error getting OAuth URL:', error)
-    return { error: 'Failed to get OAuth URL' }
+    return { error: conversionError('Failed to get OAuth URL') }
   }
 }
 
@@ -134,7 +135,7 @@ export async function handleOAuthRedirect(
     }
 
     if (!response.data) {
-      return { error: 'No token received' }
+      return { error: conversionError('No token received') }
     }
 
     // TODO: Remove this after testing
@@ -143,7 +144,7 @@ export async function handleOAuthRedirect(
     return response
   } catch (error) {
     console.error('Error handling OAuth redirect:', error)
-    return { error: 'Failed to handle OAuth redirect' }
+    return { error: conversionError('Failed to handle OAuth redirect') }
   }
 }
 
@@ -155,6 +156,6 @@ export async function refreshToken(): Promise<Result<string>> {
     return await useCase.execute()
   } catch (error) {
     console.error('Error refreshing token:', error)
-    return { error: 'Failed to refresh token' }
+    return { error: conversionError('Failed to refresh token') }
   }
 }

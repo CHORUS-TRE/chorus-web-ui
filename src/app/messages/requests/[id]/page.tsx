@@ -14,6 +14,7 @@ import {
 import { useParams, useRouter } from 'next/navigation'
 import * as React from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { useToast } from '@/components/hooks/use-toast'
 import { LoadingOverlay } from '@/components/loading-overlay'
 import { Badge } from '@/components/ui/badge'
@@ -185,7 +186,7 @@ export default function RequestDetailPage() {
       toast({
         variant: 'destructive',
         title: 'Action failed',
-        description: result.error || 'Something went wrong.'
+        ...errorToast(result.error, 'Something went wrong.')
       })
     }
   }

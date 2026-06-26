@@ -25,6 +25,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
@@ -224,7 +225,7 @@ export function WorkspaceCreateFormInline({
       if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return
@@ -387,7 +388,7 @@ export function WorkspaceDeleteForm({
       if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return
@@ -569,7 +570,7 @@ export function WorkspaceUpdateForm({
       if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return

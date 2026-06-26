@@ -3,6 +3,8 @@ import { AuditEntry, AuditEntrySchema, Result } from '@/domain/model'
 import { AuditRepository } from '@/domain/repository'
 import { ChorusListAuditReply } from '@/internal/client'
 
+import { toChorusError } from './chorus-error-mapper'
+
 export class AuditRepositoryImpl implements AuditRepository {
   private dataSource: AuditDataSource
 
@@ -26,7 +28,7 @@ export class AuditRepositoryImpl implements AuditRepository {
       return this.parseEntries(response)
     } catch (error) {
       console.error('Error listing platform audit', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -36,7 +38,7 @@ export class AuditRepositoryImpl implements AuditRepository {
       return this.parseEntries(response)
     } catch (error) {
       console.error('Error listing actor audit', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -46,7 +48,7 @@ export class AuditRepositoryImpl implements AuditRepository {
       return this.parseEntries(response)
     } catch (error) {
       console.error('Error listing workspace audit', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -56,7 +58,7 @@ export class AuditRepositoryImpl implements AuditRepository {
       return this.parseEntries(response)
     } catch (error) {
       console.error('Error listing workbench audit', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -66,7 +68,7 @@ export class AuditRepositoryImpl implements AuditRepository {
       return this.parseEntries(response)
     } catch (error) {
       console.error('Error listing user audit', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }

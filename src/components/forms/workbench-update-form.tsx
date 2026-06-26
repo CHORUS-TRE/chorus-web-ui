@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
+import { errorToast } from '@/components/error-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog as DialogContainer,
@@ -110,7 +111,7 @@ export function WorkbenchUpdateForm({
       if (result.error) {
         toast({
           title: 'Error',
-          description: result.error,
+          ...errorToast(result.error),
           variant: 'destructive'
         })
         return

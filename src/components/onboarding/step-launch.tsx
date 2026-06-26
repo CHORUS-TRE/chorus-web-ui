@@ -4,6 +4,7 @@ import { Loader2, Play, Shield } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { errorToast } from '@/components/error-toast'
 import { toast } from '@/components/hooks/use-toast'
 import { AppInstanceStatus, WorkbenchStatus } from '@/domain/model'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -64,7 +65,7 @@ export function StepLaunch({
     if (sessionResult.error || !sessionResult.data) {
       toast({
         title: 'Could not create session',
-        description: sessionResult.error || 'Unknown error',
+        ...errorToast(sessionResult.error, 'Unknown error'),
         variant: 'destructive'
       })
       setLaunching(false)

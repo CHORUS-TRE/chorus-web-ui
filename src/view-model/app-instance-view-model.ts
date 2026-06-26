@@ -4,6 +4,7 @@ import { env } from 'next-runtime-env'
 
 import { AppInstanceDataSourceImpl } from '@/data/data-source'
 import { AppInstanceRepositoryImpl } from '@/data/repository'
+import { toChorusError } from '@/data/repository/chorus-error-mapper'
 import { Result } from '@/domain/model'
 import {
   AppInstance,
@@ -55,7 +56,7 @@ export async function createAppInstance(
     const result = await useCase.execute(validation.data)
 
     if (result.error) {
-      Analytics.AppInstance.launchError(raw.appId, result.error)
+      Analytics.AppInstance.launchError(raw.appId, result.error?.message ?? '')
       return { ...prevState, error: result.error }
     }
     Analytics.AppInstance.launchSuccess(raw.appId)
@@ -70,7 +71,7 @@ export async function createAppInstance(
     )
     return {
       ...prevState,
-      error: error instanceof Error ? error.message : String(error)
+      error: toChorusError(error)
     }
   }
 }
@@ -125,7 +126,7 @@ export async function updateAppInstance(
   } catch (error) {
     return {
       ...prevState,
-      error: error instanceof Error ? error.message : String(error)
+      error: toChorusError(error)
     }
   }
 }

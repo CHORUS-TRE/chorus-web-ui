@@ -7,6 +7,7 @@ import { Result } from '@/domain/model'
 import { AuthenticationRepository } from '@/domain/repository'
 
 import { AuthenticationDataSource } from '../data-source'
+import { toChorusError } from './chorus-error-mapper'
 
 export class AuthenticationRepositoryImpl implements AuthenticationRepository {
   private dataSource: AuthenticationDataSource
@@ -22,7 +23,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { data: d }
     } catch (error) {
       console.error('Error logging in', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -32,7 +33,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { data: modes }
     } catch (error) {
       console.error('Error getting authentication modes', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -42,7 +43,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { data: url }
     } catch (error) {
       console.error('Error getting OAuth URL', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -54,7 +55,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { data: token }
     } catch (error) {
       console.error('Error handling OAuth redirect', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -65,7 +66,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { data: response }
     } catch (error) {
       console.error('Error logging out', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 
@@ -75,7 +76,7 @@ export class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return { data: token }
     } catch (error) {
       console.error('Error refreshing token', error)
-      return { error: error instanceof Error ? error.message : String(error) }
+      return { error: toChorusError(error) }
     }
   }
 }
