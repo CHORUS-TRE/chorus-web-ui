@@ -73,6 +73,19 @@ export default function CHORUSDashboard() {
     [sessionsList]
   )
 
+  // Most recent sessions, capped to 4 (two rows of two)
+  const recentSessions = useMemo(
+    () =>
+      [...runningSessions]
+        .sort(
+          (a, b) =>
+            new Date(b.updatedAt ?? 0).getTime() -
+            new Date(a.updatedAt ?? 0).getTime()
+        )
+        .slice(0, 4),
+    [runningSessions]
+  )
+
   const pendingApprovalsList = useMemo(() => {
     if (!approvalRequests || !user?.id) return []
     return approvalRequests.filter(
@@ -162,16 +175,18 @@ export default function CHORUSDashboard() {
 
       <div className="mb-16 rounded-lg border border-border p-5 shadow-sm">
         <SectionHeader
-          title="Running sessions"
-          badge={`${runningSessions.length} active`}
+          title="Recent sessions"
+          badge={`${sessionsList.length} total session${
+            sessionsList.length !== 1 ? 's' : ''
+          }`}
           action="View all"
           onAction={() => router.push('/sessions')}
           className="mt-2"
         />
 
         {runningSessions.length > 0 ? (
-          <div className="mt-3.5 grid grid-cols-1 gap-3.5 lg:grid-cols-3">
-            {runningSessions.map((wb) => {
+          <div className="mt-3.5 grid grid-cols-1 gap-3.5 lg:grid-cols-2">
+            {recentSessions.map((wb) => {
               const sessionApps = getSessionApps(wb)
               const workspace = workspaceList.find(
                 (ws) => ws.id === wb.workspaceId
@@ -256,7 +271,7 @@ export default function CHORUSDashboard() {
       {/* Bottom grid: Workspaces | Metrics + Approvals */}
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
         {/* Recent workspaces */}
-        <div>
+        <div className="rounded-lg border border-border p-5 shadow-sm">
           <SectionHeader title="Recent workspaces" />
           <div className="mt-3 flex flex-col gap-2">
             {recentWorkspaces.map((ws, i) => {
@@ -273,7 +288,7 @@ export default function CHORUSDashboard() {
                   key={ws.id}
                   href={`/workspaces/${ws.id}`}
                   variant="plain"
-                  className="flex items-center gap-3 rounded-[11px] border border-muted/20 bg-card/50 p-3 px-3.5 transition-all hover:border-accent/40"
+                  className="flex items-center gap-3 rounded-[11px] border border-muted/40 !bg-card p-3 px-3.5 shadow-sm transition-all hover:border-accent/40 hover:shadow-md"
                 >
                   <div
                     className={`inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg ${wsColors[i % wsColors.length]}`}
@@ -349,7 +364,7 @@ export default function CHORUSDashboard() {
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Active Sessions
+                  Total Sessions
                 </CardTitle>
               </CardHeader>
               <CardContent>
