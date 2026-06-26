@@ -1,3 +1,10 @@
+# [1.63.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.62.0...v1.63.0) (2026-06-26)
+
+
+### Features
+
+* **onboarding:** enhance onboarding steps and improve workspace management ([336443f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/336443fd97527f9d0e7c117e3d3de3b659da5753))
+
 # [1.62.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.61.0...v1.62.0) (2026-06-24)
 
 
