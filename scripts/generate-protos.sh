@@ -10,6 +10,12 @@ PATH="$PATH:$PWD/scripts/tools/linux/bin"
 
 echo $PATH
 
+function clean() {
+    echo
+    echo "==> Deleting generated client code:"
+    rm -rf src/internal/client
+}
+
 function generate_client() {
     # Protobuf and openapiv2 instantiations.
     echo
@@ -28,6 +34,8 @@ function lint_client() {
     pnpm fix
 }
 
+
+clean
 generate_client
 git checkout src/internal/client/runtime.ts
 lint_client

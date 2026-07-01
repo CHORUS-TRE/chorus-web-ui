@@ -5,16 +5,16 @@ import {
   WorkbenchUpdateType
 } from '@/domain/model/workbench'
 import {
+  ChorusAddUserRoleInWorkbenchReply,
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
   ChorusListWorkbenchesReply,
-  ChorusManageUserRoleInWorkbenchReply,
   ChorusRemoveUserFromWorkbenchReply,
   ChorusUpdateWorkbenchReply,
   Configuration,
-  WorkbenchServiceApi,
-  WorkbenchServiceManageUserRoleInWorkbenchBody
+  WorkbenchServiceAddUserRoleInWorkbenchBody,
+  WorkbenchServiceApi
 } from '@/internal/client'
 
 // import { BaseAPI } from '@/internal/client/runtime'
@@ -35,8 +35,8 @@ interface WorkbenchDataSource {
   addUserRole: (
     workbenchId: string,
     userId: string,
-    body: WorkbenchServiceManageUserRoleInWorkbenchBody
-  ) => Promise<ChorusManageUserRoleInWorkbenchReply>
+    body: WorkbenchServiceAddUserRoleInWorkbenchBody
+  ) => Promise<ChorusAddUserRoleInWorkbenchReply>
   removeUserFromWorkbench: (
     workbenchId: string,
     userId: string
@@ -100,9 +100,9 @@ class WorkbenchDataSourceImpl implements WorkbenchDataSource {
   addUserRole(
     workbenchId: string,
     userId: string,
-    body: WorkbenchServiceManageUserRoleInWorkbenchBody
-  ): Promise<ChorusManageUserRoleInWorkbenchReply> {
-    return this.service.workbenchServiceManageUserRoleInWorkbench({
+    body: WorkbenchServiceAddUserRoleInWorkbenchBody
+  ): Promise<ChorusAddUserRoleInWorkbenchReply> {
+    return this.service.workbenchServiceAddUserRoleInWorkbench({
       id: workbenchId,
       userId,
       body

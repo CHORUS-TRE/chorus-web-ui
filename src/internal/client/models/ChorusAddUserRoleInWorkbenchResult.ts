@@ -23,21 +23,21 @@ import {
 /**
  *
  * @export
- * @interface ChorusManageUserRoleInWorkbenchResult
+ * @interface ChorusAddUserRoleInWorkbenchResult
  */
-export interface ChorusManageUserRoleInWorkbenchResult {
+export interface ChorusAddUserRoleInWorkbenchResult {
   /**
    *
    * @type {ChorusWorkbench}
-   * @memberof ChorusManageUserRoleInWorkbenchResult
+   * @memberof ChorusAddUserRoleInWorkbenchResult
    */
   workbench?: ChorusWorkbench
 }
 
 /**
- * Check if a given object implements the ChorusManageUserRoleInWorkbenchResult interface.
+ * Check if a given object implements the ChorusAddUserRoleInWorkbenchResult interface.
  */
-export function instanceOfChorusManageUserRoleInWorkbenchResult(
+export function instanceOfChorusAddUserRoleInWorkbenchResult(
   value: object
 ): boolean {
   let isInstance = true
@@ -45,16 +45,16 @@ export function instanceOfChorusManageUserRoleInWorkbenchResult(
   return isInstance
 }
 
-export function ChorusManageUserRoleInWorkbenchResultFromJSON(
+export function ChorusAddUserRoleInWorkbenchResultFromJSON(
   json: any
-): ChorusManageUserRoleInWorkbenchResult {
-  return ChorusManageUserRoleInWorkbenchResultFromJSONTyped(json, false)
+): ChorusAddUserRoleInWorkbenchResult {
+  return ChorusAddUserRoleInWorkbenchResultFromJSONTyped(json, false)
 }
 
-export function ChorusManageUserRoleInWorkbenchResultFromJSONTyped(
+export function ChorusAddUserRoleInWorkbenchResultFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ChorusManageUserRoleInWorkbenchResult {
+): ChorusAddUserRoleInWorkbenchResult {
   if (json === undefined || json === null) {
     return json
   }
@@ -65,8 +65,8 @@ export function ChorusManageUserRoleInWorkbenchResultFromJSONTyped(
   }
 }
 
-export function ChorusManageUserRoleInWorkbenchResultToJSON(
-  value?: ChorusManageUserRoleInWorkbenchResult | null
+export function ChorusAddUserRoleInWorkbenchResultToJSON(
+  value?: ChorusAddUserRoleInWorkbenchResult | null
 ): any {
   if (value === undefined) {
     return undefined

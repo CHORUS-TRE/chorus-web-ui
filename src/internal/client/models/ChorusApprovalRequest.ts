@@ -25,6 +25,18 @@ import {
   ChorusApprovalRequestTypeFromJSONTyped,
   ChorusApprovalRequestTypeToJSON
 } from './ChorusApprovalRequestType'
+import type { ChorusApprovalStepDecision } from './ChorusApprovalStepDecision'
+import {
+  ChorusApprovalStepDecisionFromJSON,
+  ChorusApprovalStepDecisionFromJSONTyped,
+  ChorusApprovalStepDecisionToJSON
+} from './ChorusApprovalStepDecision'
+import type { ChorusApproverIds } from './ChorusApproverIds'
+import {
+  ChorusApproverIdsFromJSON,
+  ChorusApproverIdsFromJSONTyped,
+  ChorusApproverIdsToJSON
+} from './ChorusApproverIds'
 import type { ChorusDataExtractionDetails } from './ChorusDataExtractionDetails'
 import {
   ChorusDataExtractionDetailsFromJSON,
@@ -39,7 +51,11 @@ import {
 } from './ChorusDataTransferDetails'
 
 /**
- *
+ * ApprovalRequest is split into approval steps keyed by name. A data
+ * extraction has one step, "download" (data leaving the source workspace);
+ * a data transfer adds "upload" (data entering the destination). The request
+ * is approved once every required step is approved, and rejected the moment
+ * any step is rejected.
  * @export
  * @interface ChorusApprovalRequest
  */
@@ -99,35 +115,17 @@ export interface ChorusApprovalRequest {
    */
   dataTransfer?: ChorusDataTransferDetails
   /**
-   *
-   * @type {Array<string>}
+   * Users allowed to approve each step, keyed by step name ("download", "upload").
+   * @type {{ [key: string]: ChorusApproverIds; }}
    * @memberof ChorusApprovalRequest
    */
-  approverIds?: Array<string>
+  approverIdsByStep?: { [key: string]: ChorusApproverIds }
   /**
-   *
-   * @type {string}
+   * Decisions recorded for each step so far, keyed by step name.
+   * @type {{ [key: string]: ChorusApprovalStepDecision; }}
    * @memberof ChorusApprovalRequest
    */
-  approvedById?: string
-  /**
-   *
-   * @type {Date}
-   * @memberof ChorusApprovalRequest
-   */
-  createdAt?: Date
-  /**
-   *
-   * @type {Date}
-   * @memberof ChorusApprovalRequest
-   */
-  updatedAt?: Date
-  /**
-   *
-   * @type {Date}
-   * @memberof ChorusApprovalRequest
-   */
-  approvedAt?: Date
+  stepDecisions?: { [key: string]: ChorusApprovalStepDecision }
   /**
    *
    * @type {boolean}
@@ -140,6 +138,24 @@ export interface ChorusApprovalRequest {
    * @memberof ChorusApprovalRequest
    */
   approvalMessage?: string
+  /**
+   *
+   * @type {Date}
+   * @memberof ChorusApprovalRequest
+   */
+  approvedAt?: Date
+  /**
+   *
+   * @type {Date}
+   * @memberof ChorusApprovalRequest
+   */
+  createdAt?: Date
+  /**
+   *
+   * @type {Date}
+   * @memberof ChorusApprovalRequest
+   */
+  updatedAt?: Date
 }
 
 /**
@@ -182,25 +198,27 @@ export function ChorusApprovalRequestFromJSONTyped(
     dataTransfer: !exists(json, 'dataTransfer')
       ? undefined
       : ChorusDataTransferDetailsFromJSON(json['dataTransfer']),
-    approverIds: !exists(json, 'approverIds') ? undefined : json['approverIds'],
-    approvedById: !exists(json, 'approvedById')
+    approverIdsByStep: !exists(json, 'approverIdsByStep')
       ? undefined
-      : json['approvedById'],
-    createdAt: !exists(json, 'createdAt')
+      : mapValues(json['approverIdsByStep'], ChorusApproverIdsFromJSON),
+    stepDecisions: !exists(json, 'stepDecisions')
       ? undefined
-      : new Date(json['createdAt']),
-    updatedAt: !exists(json, 'updatedAt')
-      ? undefined
-      : new Date(json['updatedAt']),
-    approvedAt: !exists(json, 'approvedAt')
-      ? undefined
-      : new Date(json['approvedAt']),
+      : mapValues(json['stepDecisions'], ChorusApprovalStepDecisionFromJSON),
     autoApproved: !exists(json, 'autoApproved')
       ? undefined
       : json['autoApproved'],
     approvalMessage: !exists(json, 'approvalMessage')
       ? undefined
-      : json['approvalMessage']
+      : json['approvalMessage'],
+    approvedAt: !exists(json, 'approvedAt')
+      ? undefined
+      : new Date(json['approvedAt']),
+    createdAt: !exists(json, 'createdAt')
+      ? undefined
+      : new Date(json['createdAt']),
+    updatedAt: !exists(json, 'updatedAt')
+      ? undefined
+      : new Date(json['updatedAt'])
   }
 }
 
@@ -223,17 +241,23 @@ export function ChorusApprovalRequestToJSON(
     description: value.description,
     dataExtraction: ChorusDataExtractionDetailsToJSON(value.dataExtraction),
     dataTransfer: ChorusDataTransferDetailsToJSON(value.dataTransfer),
-    approverIds: value.approverIds,
-    approvedById: value.approvedById,
-    createdAt:
-      value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
-    updatedAt:
-      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+    approverIdsByStep:
+      value.approverIdsByStep === undefined
+        ? undefined
+        : mapValues(value.approverIdsByStep, ChorusApproverIdsToJSON),
+    stepDecisions:
+      value.stepDecisions === undefined
+        ? undefined
+        : mapValues(value.stepDecisions, ChorusApprovalStepDecisionToJSON),
+    autoApproved: value.autoApproved,
+    approvalMessage: value.approvalMessage,
     approvedAt:
       value.approvedAt === undefined
         ? undefined
         : value.approvedAt.toISOString(),
-    autoApproved: value.autoApproved,
-    approvalMessage: value.approvalMessage
+    createdAt:
+      value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
+    updatedAt:
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString()
   }
 }

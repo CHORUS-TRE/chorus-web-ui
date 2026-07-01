@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 apis/AppInstanceServiceApi.ts
 apis/AppServiceApi.ts
 apis/ApprovalRequestServiceApi.ts
@@ -22,6 +23,10 @@ models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusAbortWorkspaceFileUploadReply.ts
 models/ChorusAcceptTermsOfUseReply.ts
 models/ChorusAcceptTermsOfUseResult.ts
+models/ChorusAddUserRoleInWorkbenchReply.ts
+models/ChorusAddUserRoleInWorkbenchResult.ts
+models/ChorusAddUserRoleInWorkspaceReply.ts
+models/ChorusAddUserRoleInWorkspaceResult.ts
 models/ChorusApp.ts
 models/ChorusAppInstance.ts
 models/ChorusAppInstanceFilter.ts
@@ -32,8 +37,10 @@ models/ChorusApprovalRequestFilter.ts
 models/ChorusApprovalRequestNotification.ts
 models/ChorusApprovalRequestStatus.ts
 models/ChorusApprovalRequestType.ts
+models/ChorusApprovalStepDecision.ts
 models/ChorusApproveApprovalRequestReply.ts
 models/ChorusApproveApprovalRequestResult.ts
+models/ChorusApproverIds.ts
 models/ChorusAuditEntry.ts
 models/ChorusAuditFilter.ts
 models/ChorusAuthenticateOauthRedirectReply.ts
@@ -176,10 +183,6 @@ models/ChorusListWorkspaceServiceInstancesResult.ts
 models/ChorusListWorkspacesReply.ts
 models/ChorusListWorkspacesResult.ts
 models/ChorusLogoutReply.ts
-models/ChorusManageUserRoleInWorkbenchReply.ts
-models/ChorusManageUserRoleInWorkbenchResult.ts
-models/ChorusManageUserRoleInWorkspaceReply.ts
-models/ChorusManageUserRoleInWorkspaceResult.ts
 models/ChorusMarkNotificationsAsReadRequest.ts
 models/ChorusNotification.ts
 models/ChorusNotificationContent.ts
@@ -252,7 +255,7 @@ models/ChorusWorkspaceVisibility.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
 models/TermsOfUseServiceUpdateTermsOfUseVersionBody.ts
 models/UserServiceCreateUserRoleBody.ts
-models/WorkbenchServiceManageUserRoleInWorkbenchBody.ts
-models/WorkspaceServiceManageUserRoleInWorkspaceBody.ts
+models/WorkbenchServiceAddUserRoleInWorkbenchBody.ts
+models/WorkspaceServiceAddUserRoleInWorkspaceBody.ts
 models/index.ts
 runtime.ts

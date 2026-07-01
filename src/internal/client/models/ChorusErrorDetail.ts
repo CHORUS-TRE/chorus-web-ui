@@ -62,6 +62,12 @@ export interface ChorusErrorDetail {
    * @memberof ChorusErrorDetail
    */
   validationErrors?: Array<ChorusValidationError>
+  /**
+   * Debug-only stack trace; empty unless server has stacktrace exposure enabled.
+   * @type {string}
+   * @memberof ChorusErrorDetail
+   */
+  stackTrace?: string
 }
 
 /**
@@ -95,7 +101,8 @@ export function ChorusErrorDetailFromJSONTyped(
       ? undefined
       : (json['validationErrors'] as Array<any>).map(
           ChorusValidationErrorFromJSON
-        )
+        ),
+    stackTrace: !exists(json, 'stackTrace') ? undefined : json['stackTrace']
   }
 }
 
@@ -116,6 +123,7 @@ export function ChorusErrorDetailToJSON(value?: ChorusErrorDetail | null): any {
         ? undefined
         : (value.validationErrors as Array<any>).map(
             ChorusValidationErrorToJSON
-          )
+          ),
+    stackTrace: value.stackTrace
   }
 }
