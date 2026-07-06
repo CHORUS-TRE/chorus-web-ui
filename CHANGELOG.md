@@ -1,3 +1,10 @@
+# [1.68.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.67.0...v1.68.0) (2026-07-06)
+
+
+### Features
+
+* add sidebar options form for displaying participating centers ([10c29b4](https://github.com/CHORUS-TRE/chorus-web-ui/commit/10c29b44d9876b7926980aaac12fccc64d8f5376))
+
 # [1.67.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.66.0...v1.67.0) (2026-07-06)
 
 
