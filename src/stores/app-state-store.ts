@@ -7,7 +7,6 @@ import { toast } from '@/components/hooks/use-toast'
 import {
   App,
   AppInstance,
-  ApprovalRequest,
   Notification,
   User,
   Workbench,
@@ -20,10 +19,6 @@ import type {
 } from '@/types/file-system'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
-import {
-  countMyApprovalRequests,
-  listApprovalRequests
-} from '@/view-model/approval-request-view-model'
 import { refreshToken } from '@/view-model/authentication-view-model'
 import {
   countUnreadNotifications,
@@ -39,8 +34,6 @@ export type AppStateStore = {
   apps: App[] | undefined
   appInstances: AppInstance[] | undefined
   notifications: Notification[] | undefined
-  approvalRequests: ApprovalRequest[] | undefined
-  pendingApprovalRequestsCount: number | undefined
   unreadNotificationsCount: number | undefined
   uploads: Record<string, FileSystemUploadItem> | undefined
   folderBatches: Record<string, FolderUploadBatch> | undefined
@@ -50,8 +43,6 @@ export type AppStateStore = {
   refreshApps: () => Promise<void>
   refreshAppInstances: () => Promise<void>
   refreshNotifications: () => Promise<void>
-  refreshApprovalRequests: () => Promise<void>
-  refreshPendingApprovalRequestsCount: () => Promise<void>
   refreshUnreadNotificationsCount: () => Promise<void>
   startNotificationsPolling: (intervalMs?: number) => void
   stopNotificationsPolling: () => void
@@ -96,8 +87,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   apps: undefined,
   appInstances: undefined,
   notifications: undefined,
-  approvalRequests: undefined,
-  pendingApprovalRequestsCount: undefined,
   unreadNotificationsCount: undefined,
   uploads: undefined,
   folderBatches: undefined,
@@ -235,35 +224,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
-  refreshApprovalRequests: async () => {
-    const result = await listApprovalRequests()
-    if (result.error) {
-      console.error('Failed to refresh approval requests:', result.error)
-      return
-    }
-    if (result.data) {
-      const stable = stableUpdate(get().approvalRequests, result.data)
-      if (stable !== get().approvalRequests) {
-        set({ approvalRequests: stable })
-      }
-    }
-  },
-
-  refreshPendingApprovalRequestsCount: async () => {
-    const result = await countMyApprovalRequests()
-    if (result.error) {
-      console.error('Failed to refresh approval requests count:', result.error)
-      return
-    }
-    if (result.data) {
-      const pending =
-        result.data.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING'] ?? 0
-      if (pending !== get().pendingApprovalRequestsCount) {
-        set({ pendingApprovalRequestsCount: pending })
-      }
-    }
-  },
-
   refreshUnreadNotificationsCount: async () => {
     const result = await countUnreadNotifications()
     if (result.error) {
@@ -275,17 +235,15 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
-  startNotificationsPolling: (intervalMs: number = 30000) => {
+  startNotificationsPolling: (intervalMs: number = 30 * 1000) => {
     const { stopNotificationsPolling, refreshNotifications } = get()
     stopNotificationsPolling()
 
     // Initial fetch
     refreshNotifications()
-    get().refreshPendingApprovalRequestsCount()
 
     const interval = setInterval(() => {
       refreshNotifications()
-      get().refreshPendingApprovalRequestsCount()
     }, intervalMs)
 
     set({ notificationsPollingInterval: interval })
@@ -307,8 +265,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       apps: undefined,
       appInstances: undefined,
       notifications: undefined,
-      approvalRequests: undefined,
-      pendingApprovalRequestsCount: undefined,
       unreadNotificationsCount: undefined,
       uploads: undefined,
       folderBatches: undefined
@@ -327,8 +283,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       get().refreshWorkspaces(),
       get().refreshWorkbenches(),
       get().refreshApps(),
-      get().refreshAppInstances(),
-      get().refreshApprovalRequests()
+      get().refreshAppInstances()
     ])
 
     get().startNotificationsPolling()

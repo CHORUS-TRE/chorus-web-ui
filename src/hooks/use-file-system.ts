@@ -158,24 +158,7 @@ export function useFileSystem(workspaceId?: string) {
         }
 
         if (result.data) {
-          console.log(
-            `[fetchWorkspaceFiles] path="${path}" → ${result.data.length} items:`,
-            result.data.map((f) => ({
-              name: f.name,
-              path: f.path,
-              isDir: f.isDirectory
-            }))
-          )
           const fileSystemItems = mapWorkspaceFilesToFileSystem(result.data)
-          console.log(
-            `[fetchWorkspaceFiles] mapped IDs:`,
-            Object.entries(fileSystemItems).map(([id, item]) => ({
-              id,
-              name: item.name,
-              parentId: item.parentId,
-              path: item.path
-            }))
-          )
 
           setState((prev) => {
             // Remove stale items that belonged to this path but are no longer in the API response.

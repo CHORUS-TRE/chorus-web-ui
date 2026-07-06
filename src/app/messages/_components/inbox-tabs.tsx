@@ -1,6 +1,5 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import type { InboxTab } from '../_hooks/use-inbox-data'
@@ -8,17 +7,15 @@ import type { InboxTab } from '../_hooks/use-inbox-data'
 interface InboxTabsProps {
   activeTab: InboxTab
   onTabChange: (tab: InboxTab) => void
-  inboxCount: number
-  outboxCount: number
-  inboxUnreadCount: number
+  inboxPendingCount: number
+  outboxPendingCount: number
 }
 
 export function InboxTabs({
   activeTab,
   onTabChange,
-  inboxCount,
-  outboxCount,
-  inboxUnreadCount
+  inboxPendingCount,
+  outboxPendingCount
 }: InboxTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as InboxTab)}>
@@ -28,15 +25,7 @@ export function InboxTabs({
           className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
         >
           Inbox
-          {inboxCount > 0 && ` (${inboxCount})`}
-          {inboxUnreadCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="no-underline-inherit ml-1 px-1.5 py-0 text-[10px]"
-            >
-              {inboxUnreadCount}
-            </Badge>
-          )}
+          {inboxPendingCount > 0 && ` (${inboxPendingCount})`}
         </TabsTrigger>
 
         <TabsTrigger
@@ -44,7 +33,7 @@ export function InboxTabs({
           className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
         >
           Outbox
-          {outboxCount > 0 && ` (${outboxCount})`}
+          {outboxPendingCount > 0 && ` (${outboxPendingCount})`}
         </TabsTrigger>
       </TabsList>
     </Tabs>

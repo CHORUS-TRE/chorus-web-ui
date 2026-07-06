@@ -17,7 +17,6 @@ import {
   ApprovalRequestType
 } from '@/domain/model/approval-request'
 import { Notification } from '@/domain/model/notification'
-import { Role } from '@/domain/model/user'
 import { canApproveRequest } from '@/lib/approval-request-utils'
 
 import type { InboxItem } from '../_hooks/use-inbox-data'
@@ -25,7 +24,7 @@ import { StatusBadge } from '../requests/_components/status-badge'
 
 interface InboxItemRowProps {
   item: InboxItem
-  userRoles?: Role[]
+  currentUserId?: string
   onMarkAsRead?: (id: string) => void
   onApprove?: (request: ApprovalRequest) => void
   onReject?: (request: ApprovalRequest) => void
@@ -58,7 +57,7 @@ function ItemIcon({ kind }: { kind: InboxItem['kind'] }) {
 
 export function InboxItemRow({
   item,
-  userRoles,
+  currentUserId,
   onMarkAsRead,
   onApprove,
   onReject,
@@ -74,8 +73,7 @@ export function InboxItemRow({
     isRequest &&
     isPending &&
     request &&
-    userRoles &&
-    canApproveRequest(userRoles, request)
+    canApproveRequest(currentUserId, request)
 
   const isOwnApprovedExtraction =
     request &&

@@ -1,12 +1,19 @@
 'use client'
 
-import { CheckCircle2, Plus, Trash2, XCircle } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
 import { errorToast } from '@/components/error-toast'
 import { WorkspaceUserDeleteDialog } from '@/components/forms/workspace-user-delete-dialog'
 import { toast } from '@/components/hooks/use-toast'
+import { PermissionMatrix } from '@/components/permission-matrix'
 import { RoleBadge } from '@/components/role-badge'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,8 +32,8 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { WORKSPACE_PERMISSIONS_DISPLAY } from '@/config/permissions'
 import { User } from '@/domain/model/user'
+import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useRoles } from '@/providers/roles-provider'
 import {
@@ -37,17 +44,16 @@ import {
 export function WorkspaceUserCard({
   user,
   workspaceId,
-  isMe = false,
   onUpdate
 }: {
   user: User
   workspaceId: string
-  isMe?: boolean
   onUpdate: () => void
 }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [addRoleOpen, setAddRoleOpen] = useState(false)
   const [roleToRemove, setRoleToRemove] = useState<string | null>(null)
+  const { user: currentUser } = useAuthentication()
 
   const { getPermissionsForUser, can } = useAuthorization()
   const { roles } = useRoles()
@@ -122,7 +128,7 @@ export function WorkspaceUserCard({
 
   return (
     <Card
-      className={`relative flex flex-col overflow-hidden border-none bg-contrast-background/70 backdrop-blur-sm transition-all duration-300 hover:bg-contrast-background/90 ${isMe ? 'ring-1 ring-primary/40' : ''}`}
+      className={`relative flex flex-col overflow-hidden border-none bg-contrast-background/70 backdrop-blur-sm transition-all duration-300 hover:bg-contrast-background/90 ${user.id === currentUser?.id ? 'ring-1 ring-primary/40' : ''}`}
     >
       <CardHeader className="p-6">
         <div className="flex items-start justify-between">
@@ -138,7 +144,7 @@ export function WorkspaceUserCard({
                 <h3 className="truncate text-base font-semibold leading-tight text-foreground">
                   {user.firstName} {user.lastName}
                 </h3>
-                {isMe && (
+                {user.id === currentUser?.id && (
                   <Badge
                     variant="secondary"
                     className="h-4 border-none bg-primary/20 px-2 text-[10px] text-primary"
@@ -152,7 +158,7 @@ export function WorkspaceUserCard({
                   <span>
                     Joined {user.createdAt?.toLocaleDateString() || 'Recently'}
                   </span>
-                  <span>{user.username}</span>
+                  <span title={`id: ${user.id}`}>{user.username}</span>
                 </div>
               </div>
             </div>
@@ -226,28 +232,21 @@ export function WorkspaceUserCard({
 
       <CardContent className="px-6 pb-6 pt-0">
         <div className="rounded-xl border border-border/50 bg-background/30">
-          <div className="p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Permissions
-          </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3 px-4 pb-4">
-            {WORKSPACE_PERMISSIONS_DISPLAY.map((perm) => {
-              const hasPermission = userPermissions.has(perm.key)
-              return (
-                <div key={perm.label} className="flex items-center gap-3">
-                  {hasPermission ? (
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-lime-500" />
-                  ) : (
-                    <XCircle className="h-4 w-4 shrink-0 text-muted-foreground/30" />
-                  )}
-                  <span
-                    className={`text-sm ${hasPermission ? 'text-foreground' : 'text-muted-foreground line-through decoration-muted-foreground/30'}`}
-                  >
-                    {perm.label}
-                  </span>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="permissions" className="border-none">
+              <AccordionTrigger className="px-4 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                Permissions
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 pt-0">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                  <PermissionMatrix
+                    roleNames={availableRoles.map((r) => r.name)}
+                    scopeFilter="workspace"
+                  />
                 </div>
-              )
-            })}
-          </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </CardContent>
 

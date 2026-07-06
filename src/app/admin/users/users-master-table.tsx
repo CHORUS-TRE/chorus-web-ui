@@ -141,6 +141,7 @@ export function UsersMasterTable({
                       fontWeight: 500,
                       color: '#F2F2F2'
                     }}
+                    title={`id: ${user.id}`}
                   >
                     {user.firstName} {user.lastName}
                   </span>

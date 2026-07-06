@@ -88,7 +88,7 @@ export interface ApprovalRequestServiceListApprovalRequestsRequest {
   paginationQuery?: Array<string>
   filterStatusesIn?: Array<ApprovalRequestServiceListApprovalRequestsFilterStatusesInEnum>
   filterTypesIn?: Array<ApprovalRequestServiceListApprovalRequestsFilterTypesInEnum>
-  filterSourceWorkspaceId?: string
+  filterWorkspaceId?: string
   filterPendingApproval?: boolean
   filterApproverId?: string
   filterRequesterId?: string
@@ -566,9 +566,9 @@ export class ApprovalRequestServiceApi extends runtime.BaseAPI {
       queryParameters['filter.typesIn'] = requestParameters.filterTypesIn
     }
 
-    if (requestParameters.filterSourceWorkspaceId !== undefined) {
-      queryParameters['filter.sourceWorkspaceId'] =
-        requestParameters.filterSourceWorkspaceId
+    if (requestParameters.filterWorkspaceId !== undefined) {
+      queryParameters['filter.workspaceId'] =
+        requestParameters.filterWorkspaceId
     }
 
     if (requestParameters.filterPendingApproval !== undefined) {

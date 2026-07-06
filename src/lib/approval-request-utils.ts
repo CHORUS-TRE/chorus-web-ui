@@ -1,11 +1,10 @@
 import {
   ApprovalRequest,
-  ApprovalRequestFile
+  ApprovalRequestFile,
+  ApprovalRequestType,
+  ApprovalStepDecision
 } from '@/domain/model/approval-request'
-import { Role } from '@/domain/model/user'
 import { downloadApprovalRequestFile } from '@/view-model/approval-request-view-model'
-
-const APPROVER_ROLES = ['WorkspaceDataManager', 'SuperAdmin']
 
 export function getSourceWorkspaceId(
   request: ApprovalRequest
@@ -16,23 +15,71 @@ export function getSourceWorkspaceId(
   )
 }
 
+export function getDestinationWorkspaceId(
+  request: ApprovalRequest
+): string | undefined {
+  return request.dataTransfer?.destinationWorkspaceId
+}
+
+// "download" = data leaving the source workspace; "upload" = data entering
+// the destination workspace. An extraction only ever needs the download step;
+// a transfer needs both.
+export type ApprovalStep = 'download' | 'upload'
+
+export function getRequiredSteps(request: ApprovalRequest): ApprovalStep[] {
+  return request.type === ApprovalRequestType.DATA_TRANSFER
+    ? ['download', 'upload']
+    : ['download']
+}
+
+export function getStepApproverIds(
+  request: ApprovalRequest,
+  step: ApprovalStep
+): string[] {
+  return request.approverIdsByStep?.[step]?.ids ?? []
+}
+
+export function getStepDecision(
+  request: ApprovalRequest,
+  step: ApprovalStep
+): ApprovalStepDecision | undefined {
+  return request.stepDecisions?.[step]
+}
+
+export function isStepDecided(
+  request: ApprovalRequest,
+  step: ApprovalStep
+): boolean {
+  return Boolean(getStepDecision(request, step)?.approvedAt)
+}
+
+/**
+ * Whether `userId` may approve/reject a specific step: they're listed as an
+ * approver for that step, and the step has no decision recorded yet.
+ */
+export function canActOnStep(
+  userId: string | undefined,
+  request: ApprovalRequest,
+  step: ApprovalStep
+): boolean {
+  if (!userId) return false
+  return (
+    getStepApproverIds(request, step).includes(userId) &&
+    !isStepDecided(request, step)
+  )
+}
+
+/**
+ * Whether `userId` may approve/reject the request at all: an approver on any
+ * of its required steps that still needs a decision.
+ */
 export function canApproveRequest(
-  userRoles: Role[] | undefined,
+  userId: string | undefined,
   request: ApprovalRequest
 ): boolean {
-  if (!userRoles || userRoles.length === 0) return false
-
-  const sourceWorkspaceId = getSourceWorkspaceId(request)
-
-  return userRoles.some((role) => {
-    if (!APPROVER_ROLES.includes(role.name)) return false
-    // SuperAdmin with wildcard context can approve anything
-    if (role.context.workspace === '*') return true
-    // WorkspaceAdmin must match the request's source workspace
-    if (sourceWorkspaceId && role.context.workspace === sourceWorkspaceId)
-      return true
-    return false
-  })
+  return getRequiredSteps(request).some((step) =>
+    canActOnStep(userId, request, step)
+  )
 }
 
 export function formatBytes(bytesStr?: string): string {

@@ -288,7 +288,7 @@ export const workspaceStatusHandlers: Record<string, StateAwareHandler> = {
         }
 
         const [approvalsResult, appsResult] = await Promise.all([
-          listApprovalRequests({ filterSourceWorkspaceId: workspaceId }),
+          listApprovalRequests({ filterWorkspaceId: workspaceId }),
           listAppInstances()
         ])
 

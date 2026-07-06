@@ -43,7 +43,7 @@ export function PermissionMatrix({
   scopeFilter = 'all',
   readOnly = true,
   highlightInherited = false,
-  compact = false
+  compact = true
 }: PermissionMatrixProps) {
   const {
     roles,
@@ -139,7 +139,7 @@ export function PermissionMatrix({
                     /{group.permissions.length}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                <div className="">
                   {group.permissions.map((perm) => {
                     const isGranted = resolvedPermissions.has(perm.key)
                     const isInherited = false

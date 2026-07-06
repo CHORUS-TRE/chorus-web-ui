@@ -33,6 +33,8 @@ export interface FileRequestCardProps {
   showApprovalActions: boolean
   onApprove?: () => void
   onReject?: () => void
+  workspaceDirection?: 'from' | 'to'
+  workspaceName?: string
 }
 
 export const FileRequestCard = React.memo(function FileRequestCard({
@@ -40,7 +42,9 @@ export const FileRequestCard = React.memo(function FileRequestCard({
   currentUser,
   showApprovalActions,
   onApprove,
-  onReject
+  onReject,
+  workspaceDirection,
+  workspaceName
 }: FileRequestCardProps) {
   const [isExpanded, setIsExpanded] = React.useState(false)
   const [isDownloading, setIsDownloading] = React.useState(false)
@@ -68,7 +72,7 @@ export const FileRequestCard = React.memo(function FileRequestCard({
   }
 
   return (
-    <Card className="border-muted/20 bg-muted/50">
+    <Card variant="default" className="border-muted/20 bg-muted/50">
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
@@ -105,17 +109,31 @@ export const FileRequestCard = React.memo(function FileRequestCard({
               {formatBytes(totalSize.toString())}
             </div>
           </div>
-          {request.type === ApprovalRequestType.DATA_TRANSFER &&
-            request.dataTransfer?.destinationWorkspaceId && (
-              <div>
-                <span className="text-[9px] font-bold uppercase tracking-tight text-muted-foreground/60">
-                  Target
-                </span>
-                <div className="truncate text-sm font-bold text-primary/80">
-                  {request.dataTransfer.destinationWorkspaceId}
+          {workspaceDirection
+            ? workspaceName && (
+                <div>
+                  <span className="text-[9px] font-bold uppercase tracking-tight text-muted-foreground/60">
+                    {workspaceDirection === 'from' ? 'From' : 'To'}
+                  </span>
+                  <div
+                    className="truncate text-sm font-bold text-primary/80"
+                    title={workspaceName}
+                  >
+                    {workspaceName}
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            : request.type === ApprovalRequestType.DATA_TRANSFER &&
+              request.dataTransfer?.destinationWorkspaceId && (
+                <div>
+                  <span className="text-[9px] font-bold uppercase tracking-tight text-muted-foreground/60">
+                    Target
+                  </span>
+                  <div className="truncate text-sm font-bold text-primary/80">
+                    {request.dataTransfer.destinationWorkspaceId}
+                  </div>
+                </div>
+              )}
         </div>
 
         <div>

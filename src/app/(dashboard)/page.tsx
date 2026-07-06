@@ -11,18 +11,23 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Link } from '@/components/ui/link'
+import {
+  type ApprovalRequest,
+  ApprovalRequestStatus
+} from '@/domain/model/approval-request'
 import { K8sWorkbenchStatus, type Workbench } from '@/domain/model/workbench'
 import type { WorkspaceWithDev } from '@/domain/model/workspace'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
+import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 
 export default function CHORUSDashboard() {
   const {
@@ -31,13 +36,24 @@ export default function CHORUSDashboard() {
     workbenches,
     refreshWorkbenches,
     appInstances,
-    apps,
-    approvalRequests
+    apps
   } = useAppStateStore()
   const { user } = useAuthentication()
   const { can } = useAuthorization()
   const router = useRouter()
   const [createOpen, setCreateOpen] = useState(false)
+  const [approvalRequests, setApprovalRequests] = useState<ApprovalRequest[]>()
+
+  useEffect(() => {
+    let cancelled = false
+    listApprovalRequests().then((result) => {
+      if (cancelled || !result.data) return
+      setApprovalRequests(result.data)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
   const {
     workspaces: workspaceLimits,
     sessions: sessionLimits,
@@ -90,7 +106,7 @@ export default function CHORUSDashboard() {
     if (!approvalRequests || !user?.id) return []
     return approvalRequests.filter(
       (req) =>
-        req.status === 'APPROVAL_REQUEST_STATUS_PENDING' &&
+        req.status === ApprovalRequestStatus.PENDING &&
         req.approverIds?.includes(user.id)
     )
   }, [approvalRequests, user?.id])

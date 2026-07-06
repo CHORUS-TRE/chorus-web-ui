@@ -178,7 +178,11 @@ export function AddUserToWorkspaceDialog({
                               )
                           )
                           .map((user) => (
-                            <SelectItem key={user.id} value={user.id}>
+                            <SelectItem
+                              key={user.id}
+                              value={user.id}
+                              title={`id: ${user.id}`}
+                            >
                               {user.firstName} {user.lastName} ({user.username})
                             </SelectItem>
                           ))}
