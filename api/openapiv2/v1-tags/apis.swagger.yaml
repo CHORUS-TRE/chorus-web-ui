@@ -363,7 +363,7 @@ paths:
               - APPROVAL_REQUEST_TYPE_DATA_EXTRACTION
               - APPROVAL_REQUEST_TYPE_DATA_TRANSFER
           collectionFormat: multi
-        - name: filter.sourceWorkspaceId
+        - name: filter.workspaceId
           in: query
           required: false
           type: string
@@ -3994,14 +3994,14 @@ paths:
         - WorkbenchService
   /api/rest/v1/workbenches/{id}/user/{userId}/role:
     post:
-      summary: Manage a user's role in a workbench
-      description: This endpoint manages a user's role in a workbench
-      operationId: WorkbenchService_ManageUserRoleInWorkbench
+      summary: Add a user's role in a workbench
+      description: This endpoint adds a user's role in a workbench
+      operationId: WorkbenchService_AddUserRoleInWorkbench
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/chorusManageUserRoleInWorkbenchReply'
+            $ref: '#/definitions/chorusAddUserRoleInWorkbenchReply'
         "400":
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema:
@@ -4041,7 +4041,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/WorkbenchServiceManageUserRoleInWorkbenchBody'
+            $ref: '#/definitions/WorkbenchServiceAddUserRoleInWorkbenchBody'
       tags:
         - WorkbenchService
   /api/rest/v1/workbenchs:
@@ -4334,14 +4334,14 @@ paths:
         - WorkbenchService
   /api/rest/v1/workbenchs/{id}/user/{userId}/role:
     post:
-      summary: Manage a user's role in a workbench
-      description: This endpoint manages a user's role in a workbench
-      operationId: WorkbenchService_ManageUserRoleInWorkbench2
+      summary: Add a user's role in a workbench
+      description: This endpoint adds a user's role in a workbench
+      operationId: WorkbenchService_AddUserRoleInWorkbench2
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/chorusManageUserRoleInWorkbenchReply'
+            $ref: '#/definitions/chorusAddUserRoleInWorkbenchReply'
         "400":
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema:
@@ -4381,7 +4381,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/WorkbenchServiceManageUserRoleInWorkbenchBody'
+            $ref: '#/definitions/WorkbenchServiceAddUserRoleInWorkbenchBody'
       tags:
         - WorkbenchService
   /api/rest/v1/workspace-service-instances:
@@ -5025,14 +5025,14 @@ paths:
         - WorkspaceService
   /api/rest/v1/workspaces/{id}/user/{userId}/role:
     post:
-      summary: Manage a user's role in a workspace
-      description: This endpoint manages a user's role in a workspace
-      operationId: WorkspaceService_ManageUserRoleInWorkspace
+      summary: Add a user's role in a workspace
+      description: This endpoint adds a user's role in a workspace
+      operationId: WorkspaceService_AddUserRoleInWorkspace
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/chorusManageUserRoleInWorkspaceReply'
+            $ref: '#/definitions/chorusAddUserRoleInWorkspaceReply'
         "400":
           description: 'Bad Request: indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing)'
           schema:
@@ -5072,7 +5072,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/WorkspaceServiceManageUserRoleInWorkspaceBody'
+            $ref: '#/definitions/WorkspaceServiceAddUserRoleInWorkspaceBody'
       tags:
         - WorkspaceService
   /api/rest/v1/workspaces/{id}/user/{userId}/role/{roleName}:
@@ -5171,6 +5171,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/chorusWorkspaceFile'
+        - name: complianceMessage
+          in: query
+          required: false
+          type: string
       tags:
         - WorkspaceFileService
   /api/rest/v1/workspaces/{workspaceId}/file/{oldPath}:
@@ -5374,6 +5378,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/chorusWorkspaceFile'
+        - name: complianceMessage
+          in: query
+          required: false
+          type: string
       tags:
         - WorkspaceFileService
   /api/rest/v1/workspaces/{workspaceId}/file/{path}/upload/{uploadId}:
@@ -5669,12 +5677,12 @@ definitions:
   UserServiceResetPasswordBody:
     type: object
     title: Reset Password
-  WorkbenchServiceManageUserRoleInWorkbenchBody:
+  WorkbenchServiceAddUserRoleInWorkbenchBody:
     type: object
     properties:
       role:
         $ref: '#/definitions/chorusRole'
-  WorkspaceServiceManageUserRoleInWorkspaceBody:
+  WorkspaceServiceAddUserRoleInWorkspaceBody:
     type: object
     properties:
       role:
@@ -5698,6 +5706,26 @@ definitions:
     properties:
       termsOfUseAcceptance:
         $ref: '#/definitions/chorusTermsOfUseAcceptance'
+  chorusAddUserRoleInWorkbenchReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusAddUserRoleInWorkbenchResult'
+  chorusAddUserRoleInWorkbenchResult:
+    type: object
+    properties:
+      workbench:
+        $ref: '#/definitions/chorusWorkbench'
+  chorusAddUserRoleInWorkspaceReply:
+    type: object
+    properties:
+      result:
+        $ref: '#/definitions/chorusAddUserRoleInWorkspaceResult'
+  chorusAddUserRoleInWorkspaceResult:
+    type: object
+    properties:
+      workspace:
+        $ref: '#/definitions/chorusWorkspace'
   chorusApp:
     type: object
     properties:
@@ -5850,27 +5878,35 @@ definitions:
         $ref: '#/definitions/chorusDataExtractionDetails'
       dataTransfer:
         $ref: '#/definitions/chorusDataTransferDetails'
-      approverIds:
-        type: array
-        items:
-          type: string
-          format: uint64
-      approvedById:
+      approverIdsByStep:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/chorusApproverIds'
+        description: Users allowed to approve each step, keyed by step name ("download", "upload").
+      stepDecisions:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/chorusApprovalStepDecision'
+        description: Decisions recorded for each step so far, keyed by step name.
+      autoApproved:
+        type: boolean
+      approvalMessage:
         type: string
-        format: uint64
+      approvedAt:
+        type: string
+        format: date-time
       createdAt:
         type: string
         format: date-time
       updatedAt:
         type: string
         format: date-time
-      approvedAt:
-        type: string
-        format: date-time
-      autoApproved:
-        type: boolean
-      approvalMessage:
-        type: string
+    description: |-
+      ApprovalRequest is split into approval steps keyed by name. A data
+      extraction has one step, "download" (data leaving the source workspace);
+      a data transfer adds "upload" (data entering the destination). The request
+      is approved once every required step is approved, and rejected the moment
+      any step is rejected.
   chorusApprovalRequestFile:
     type: object
     properties:
@@ -5892,7 +5928,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/chorusApprovalRequestType'
-      sourceWorkspaceId:
+      workspaceId:
         type: string
         format: uint64
       pendingApproval:
@@ -5927,6 +5963,19 @@ definitions:
       - APPROVAL_REQUEST_TYPE_DATA_EXTRACTION
       - APPROVAL_REQUEST_TYPE_DATA_TRANSFER
     default: APPROVAL_REQUEST_TYPE_UNSPECIFIED
+  chorusApprovalStepDecision:
+    type: object
+    properties:
+      approverId:
+        type: string
+        format: uint64
+      approvedAt:
+        type: string
+        format: date-time
+      approve:
+        type: boolean
+        description: 'true: approved, false: rejected.'
+    description: ApprovalStepDecision is one approver's decision on one step.
   chorusApproveApprovalRequestReply:
     type: object
     properties:
@@ -5937,6 +5986,15 @@ definitions:
     properties:
       approvalRequest:
         $ref: '#/definitions/chorusApprovalRequest'
+  chorusApproverIds:
+    type: object
+    properties:
+      ids:
+        type: array
+        items:
+          type: string
+          format: uint64
+    description: ApproverIds is a list of user ids.
   chorusAuditEntry:
     type: object
     properties:
@@ -6511,6 +6569,9 @@ definitions:
           type: object
           $ref: '#/definitions/chorusValidationError'
         title: Field-level validation errors (only populated for VALIDATION_ERROR)
+      stackTrace:
+        type: string
+        description: Debug-only stack trace; empty unless server has stacktrace exposure enabled.
     description: A single error occurrence; Chorus errors return exactly one in ChorusErrorResponse.details.
   chorusGetAppInstanceReply:
     type: object
@@ -6971,26 +7032,6 @@ definitions:
         type: string
   chorusLogoutRequest:
     type: object
-  chorusManageUserRoleInWorkbenchReply:
-    type: object
-    properties:
-      result:
-        $ref: '#/definitions/chorusManageUserRoleInWorkbenchResult'
-  chorusManageUserRoleInWorkbenchResult:
-    type: object
-    properties:
-      workbench:
-        $ref: '#/definitions/chorusWorkbench'
-  chorusManageUserRoleInWorkspaceReply:
-    type: object
-    properties:
-      result:
-        $ref: '#/definitions/chorusManageUserRoleInWorkspaceResult'
-  chorusManageUserRoleInWorkspaceResult:
-    type: object
-    properties:
-      workspace:
-        $ref: '#/definitions/chorusWorkspace'
   chorusMarkNotificationsAsReadRequest:
     type: object
     properties:

@@ -28,7 +28,7 @@ export interface InboxItem {
 }
 
 export type InboxTab = 'inbox' | 'outbox'
-export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread'
+export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread' | 'all'
 
 function notificationToInboxItem(n: Notification): InboxItem {
   return {
@@ -141,6 +141,9 @@ export function filterInboxItems(
       break
     case 'unread':
       filtered = items.filter((i) => !i.isRead)
+      break
+    case 'all':
+      filtered = items
       break
   }
 

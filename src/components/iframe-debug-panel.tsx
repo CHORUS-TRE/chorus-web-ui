@@ -251,14 +251,14 @@ export function IframeDebugPanel() {
                 console.group('🔍 Iframe DOM Check')
                 iframes.forEach((f) => {
                   const iframe = f as HTMLIFrameElement
-                  console.log({
-                    id: iframe.id,
-                    src: iframe.src,
-                    visibility: iframe.style.visibility,
-                    pointerEvents: iframe.style.pointerEvents,
-                    zIndex: iframe.style.zIndex,
-                    inDocument: document.body.contains(iframe)
-                  })
+                  // console.log({
+                  //   id: iframe.id,
+                  //   src: iframe.src,
+                  //   visibility: iframe.style.visibility,
+                  //   pointerEvents: iframe.style.pointerEvents,
+                  //   zIndex: iframe.style.zIndex,
+                  //   inDocument: document.body.contains(iframe)
+                  // })
                 })
                 console.groupEnd()
                 alert(

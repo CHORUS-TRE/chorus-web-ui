@@ -1,19 +1,26 @@
 'use client'
 
 import { FileCheck } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import ApprovalRequestsTable from '@/components/approval-requests-table'
-import { useAppState } from '@/stores/app-state-store'
+import { ApprovalRequest } from '@/domain/model/approval-request'
+import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 
 export default function AdminDataRequestsPage() {
-  const { approvalRequests, refreshApprovalRequests, refreshWorkspaces } =
-    useAppState()
+  const [approvalRequests, setApprovalRequests] = useState<ApprovalRequest[]>()
 
   useEffect(() => {
-    refreshApprovalRequests()
-    refreshWorkspaces()
-  }, [refreshApprovalRequests, refreshWorkspaces])
+    async function loadApprovalRequests() {
+      const result = await listApprovalRequests()
+      if (result.error) {
+        console.error('Failed to load approval requests:', result.error)
+        return
+      }
+      setApprovalRequests(result.data)
+    }
+    loadApprovalRequests()
+  }, [])
 
   return (
     <div className="container mx-auto p-6">

@@ -80,8 +80,11 @@ export function UserProfileSection() {
             <p className="truncate text-sm font-semibold text-foreground">
               {user.firstName} {user.lastName}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
-              @{user.username} (id: {user.id})
+            <p
+              className="truncate text-xs text-muted-foreground"
+              title={`id: ${user.id}`}
+            >
+              @{user.username}
             </p>
             <Link
               href={`/profile`}

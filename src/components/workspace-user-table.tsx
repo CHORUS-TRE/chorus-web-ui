@@ -277,7 +277,10 @@ export default function WorkspaceUserTable({
                                 </span>
                               )}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">
+                            <p
+                              className="text-[11px] text-muted-foreground"
+                              title={`id: ${user.id}`}
+                            >
                               {user.username}
                             </p>
                           </div>

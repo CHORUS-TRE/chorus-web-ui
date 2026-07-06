@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
 
@@ -38,7 +38,7 @@ export default function MessagesPage() {
 
   // URL-driven state
   const activeTab = (searchParams.get('tab') as InboxTab) || 'inbox'
-  const activeFilter = (searchParams.get('filter') as InboxFilter) || 'unread'
+  const activeFilter = (searchParams.get('filter') as InboxFilter) || 'pending'
   const [searchQuery, setSearchQuery] = React.useState('')
 
   // Pagination
@@ -72,7 +72,8 @@ export default function MessagesPage() {
         .length,
       rejected: items.filter((i) => i.status === ApprovalRequestStatus.REJECTED)
         .length,
-      unread: items.filter((i) => !i.isRead).length
+      unread: items.filter((i) => !i.isRead).length,
+      all: items.length
     }
   }, [inboxItems, outboxItems, activeTab])
 
@@ -85,7 +86,12 @@ export default function MessagesPage() {
   const from = totalFiltered === 0 ? 0 : page * PAGE_SIZE + 1
   const to = Math.min((page + 1) * PAGE_SIZE, totalFiltered)
 
-  const inboxUnreadCount = inboxItems.filter((i) => !i.isRead).length
+  const inboxPendingCount = inboxItems.filter(
+    (i) => i.status === ApprovalRequestStatus.PENDING
+  ).length
+  const outboxPendingCount = outboxItems.filter(
+    (i) => i.status === ApprovalRequestStatus.PENDING
+  ).length
 
   // Reset page on filter/tab change
   React.useEffect(() => {
@@ -183,17 +189,9 @@ export default function MessagesPage() {
         <InboxTabs
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          inboxCount={inboxItems.length}
-          outboxCount={outboxItems.length}
-          inboxUnreadCount={inboxUnreadCount}
+          inboxPendingCount={inboxPendingCount}
+          outboxPendingCount={outboxPendingCount}
         />
-
-        {activeTab === 'inbox' && inboxUnreadCount > 0 && (
-          <Button variant="outline" size="sm" onClick={handleMarkAllAsRead}>
-            <CheckCircle2 className="mr-2 h-4 w-4" />
-            Mark all as read
-          </Button>
-        )}
       </div>
 
       <InboxFilters
@@ -213,7 +211,7 @@ export default function MessagesPage() {
             <InboxItemRow
               key={item.id}
               item={item}
-              userRoles={user.rolesWithContext}
+              currentUserId={userId}
               onMarkAsRead={handleMarkAsRead}
               onApprove={handleApprove}
               onReject={handleReject}

@@ -1,6 +1,6 @@
 'use client'
 
-import { Loader2, Play, Shield } from 'lucide-react'
+import { Loader2, Play } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 

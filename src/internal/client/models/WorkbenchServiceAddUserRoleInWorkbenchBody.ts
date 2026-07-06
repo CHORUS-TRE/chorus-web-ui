@@ -23,21 +23,21 @@ import {
 /**
  *
  * @export
- * @interface WorkspaceServiceManageUserRoleInWorkspaceBody
+ * @interface WorkbenchServiceAddUserRoleInWorkbenchBody
  */
-export interface WorkspaceServiceManageUserRoleInWorkspaceBody {
+export interface WorkbenchServiceAddUserRoleInWorkbenchBody {
   /**
    *
    * @type {ChorusRole}
-   * @memberof WorkspaceServiceManageUserRoleInWorkspaceBody
+   * @memberof WorkbenchServiceAddUserRoleInWorkbenchBody
    */
   role?: ChorusRole
 }
 
 /**
- * Check if a given object implements the WorkspaceServiceManageUserRoleInWorkspaceBody interface.
+ * Check if a given object implements the WorkbenchServiceAddUserRoleInWorkbenchBody interface.
  */
-export function instanceOfWorkspaceServiceManageUserRoleInWorkspaceBody(
+export function instanceOfWorkbenchServiceAddUserRoleInWorkbenchBody(
   value: object
 ): boolean {
   let isInstance = true
@@ -45,16 +45,16 @@ export function instanceOfWorkspaceServiceManageUserRoleInWorkspaceBody(
   return isInstance
 }
 
-export function WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSON(
+export function WorkbenchServiceAddUserRoleInWorkbenchBodyFromJSON(
   json: any
-): WorkspaceServiceManageUserRoleInWorkspaceBody {
-  return WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSONTyped(json, false)
+): WorkbenchServiceAddUserRoleInWorkbenchBody {
+  return WorkbenchServiceAddUserRoleInWorkbenchBodyFromJSONTyped(json, false)
 }
 
-export function WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSONTyped(
+export function WorkbenchServiceAddUserRoleInWorkbenchBodyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): WorkspaceServiceManageUserRoleInWorkspaceBody {
+): WorkbenchServiceAddUserRoleInWorkbenchBody {
   if (json === undefined || json === null) {
     return json
   }
@@ -63,8 +63,8 @@ export function WorkspaceServiceManageUserRoleInWorkspaceBodyFromJSONTyped(
   }
 }
 
-export function WorkspaceServiceManageUserRoleInWorkspaceBodyToJSON(
-  value?: WorkspaceServiceManageUserRoleInWorkspaceBody | null
+export function WorkbenchServiceAddUserRoleInWorkbenchBodyToJSON(
+  value?: WorkbenchServiceAddUserRoleInWorkbenchBody | null
 ): any {
   if (value === undefined) {
     return undefined

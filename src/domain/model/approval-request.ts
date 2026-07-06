@@ -31,6 +31,18 @@ export const DataTransferDetailsSchema = z.object({
   files: z.array(ApprovalRequestFileSchema).optional()
 })
 
+// Users allowed to approve a given step.
+export const ApproverIdsSchema = z.object({
+  ids: z.array(z.string()).optional()
+})
+
+// One approver's decision on a given step.
+export const ApprovalStepDecisionSchema = z.object({
+  approverId: z.string().optional(),
+  approvedAt: z.date().optional(),
+  approve: z.boolean().optional()
+})
+
 export const ApprovalRequestSchema = z.object({
   id: z.string().optional(),
   tenantId: z.string().optional(),
@@ -41,6 +53,10 @@ export const ApprovalRequestSchema = z.object({
   description: z.string().optional(),
   dataExtraction: DataExtractionDetailsSchema.optional(),
   dataTransfer: DataTransferDetailsSchema.optional(),
+  // Keyed by step name ("download", "upload").
+  approverIdsByStep: z.record(z.string(), ApproverIdsSchema).optional(),
+  // Decisions recorded so far, keyed by step name.
+  stepDecisions: z.record(z.string(), ApprovalStepDecisionSchema).optional(),
   approverIds: z.array(z.string()).optional(),
   approvedById: z.string().optional(),
   createdAt: z.date().optional(),
@@ -75,6 +91,8 @@ export type ApprovalRequest = z.infer<typeof ApprovalRequestSchema>
 export type ApprovalRequestFile = z.infer<typeof ApprovalRequestFileSchema>
 export type DataExtractionDetails = z.infer<typeof DataExtractionDetailsSchema>
 export type DataTransferDetails = z.infer<typeof DataTransferDetailsSchema>
+export type ApproverIds = z.infer<typeof ApproverIdsSchema>
+export type ApprovalStepDecision = z.infer<typeof ApprovalStepDecisionSchema>
 export type CreateDataExtractionRequest = z.infer<
   typeof CreateDataExtractionRequestSchema
 >

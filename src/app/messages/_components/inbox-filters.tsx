@@ -5,13 +5,14 @@ import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread'
+export type InboxFilter = 'pending' | 'approved' | 'rejected' | 'unread' | 'all'
 
 const FILTER_OPTIONS: { id: InboxFilter; label: string }[] = [
-  { id: 'unread', label: 'Unread' },
   { id: 'pending', label: 'Pending' },
+  { id: 'unread', label: 'Unread' },
   { id: 'approved', label: 'Approved' },
-  { id: 'rejected', label: 'Rejected' }
+  { id: 'rejected', label: 'Rejected' },
+  { id: 'all', label: 'All' }
 ]
 
 interface InboxFiltersProps {
@@ -24,6 +25,7 @@ interface InboxFiltersProps {
     approved: number
     rejected: number
     unread: number
+    all: number
   }
 }
 

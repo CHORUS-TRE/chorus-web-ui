@@ -49,7 +49,7 @@ export interface ChorusApprovalRequestFilter {
    * @type {string}
    * @memberof ChorusApprovalRequestFilter
    */
-  sourceWorkspaceId?: string
+  workspaceId?: string
   /**
    *
    * @type {boolean}
@@ -101,9 +101,7 @@ export function ChorusApprovalRequestFilterFromJSONTyped(
     typesIn: !exists(json, 'typesIn')
       ? undefined
       : (json['typesIn'] as Array<any>).map(ChorusApprovalRequestTypeFromJSON),
-    sourceWorkspaceId: !exists(json, 'sourceWorkspaceId')
-      ? undefined
-      : json['sourceWorkspaceId'],
+    workspaceId: !exists(json, 'workspaceId') ? undefined : json['workspaceId'],
     pendingApproval: !exists(json, 'pendingApproval')
       ? undefined
       : json['pendingApproval'],
@@ -132,7 +130,7 @@ export function ChorusApprovalRequestFilterToJSON(
       value.typesIn === undefined
         ? undefined
         : (value.typesIn as Array<any>).map(ChorusApprovalRequestTypeToJSON),
-    sourceWorkspaceId: value.sourceWorkspaceId,
+    workspaceId: value.workspaceId,
     pendingApproval: value.pendingApproval,
     approverId: value.approverId,
     requesterId: value.requesterId

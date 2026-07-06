@@ -14,18 +14,20 @@
 
 import * as runtime from '../runtime'
 import type {
+  ChorusAddUserRoleInWorkbenchReply,
   ChorusChorusErrorResponse,
   ChorusCreateWorkbenchReply,
   ChorusDeleteWorkbenchReply,
   ChorusGetWorkbenchReply,
   ChorusListWorkbenchesReply,
-  ChorusManageUserRoleInWorkbenchReply,
   ChorusRemoveUserFromWorkbenchReply,
   ChorusUpdateWorkbenchReply,
   ChorusWorkbench,
-  WorkbenchServiceManageUserRoleInWorkbenchBody
+  WorkbenchServiceAddUserRoleInWorkbenchBody
 } from '../models/index'
 import {
+  ChorusAddUserRoleInWorkbenchReplyFromJSON,
+  ChorusAddUserRoleInWorkbenchReplyToJSON,
   ChorusChorusErrorResponseFromJSON,
   ChorusChorusErrorResponseToJSON,
   ChorusCreateWorkbenchReplyFromJSON,
@@ -36,17 +38,27 @@ import {
   ChorusGetWorkbenchReplyToJSON,
   ChorusListWorkbenchesReplyFromJSON,
   ChorusListWorkbenchesReplyToJSON,
-  ChorusManageUserRoleInWorkbenchReplyFromJSON,
-  ChorusManageUserRoleInWorkbenchReplyToJSON,
   ChorusRemoveUserFromWorkbenchReplyFromJSON,
   ChorusRemoveUserFromWorkbenchReplyToJSON,
   ChorusUpdateWorkbenchReplyFromJSON,
   ChorusUpdateWorkbenchReplyToJSON,
   ChorusWorkbenchFromJSON,
   ChorusWorkbenchToJSON,
-  WorkbenchServiceManageUserRoleInWorkbenchBodyFromJSON,
-  WorkbenchServiceManageUserRoleInWorkbenchBodyToJSON
+  WorkbenchServiceAddUserRoleInWorkbenchBodyFromJSON,
+  WorkbenchServiceAddUserRoleInWorkbenchBodyToJSON
 } from '../models/index'
+
+export interface WorkbenchServiceAddUserRoleInWorkbenchRequest {
+  id: string
+  userId: string
+  body: WorkbenchServiceAddUserRoleInWorkbenchBody
+}
+
+export interface WorkbenchServiceAddUserRoleInWorkbench2Request {
+  id: string
+  userId: string
+  body: WorkbenchServiceAddUserRoleInWorkbenchBody
+}
 
 export interface WorkbenchServiceCreateWorkbenchRequest {
   body: ChorusWorkbench
@@ -90,18 +102,6 @@ export interface WorkbenchServiceListWorkbenches2Request {
   filterWorkspaceIdsIn?: Array<string>
 }
 
-export interface WorkbenchServiceManageUserRoleInWorkbenchRequest {
-  id: string
-  userId: string
-  body: WorkbenchServiceManageUserRoleInWorkbenchBody
-}
-
-export interface WorkbenchServiceManageUserRoleInWorkbench2Request {
-  id: string
-  userId: string
-  body: WorkbenchServiceManageUserRoleInWorkbenchBody
-}
-
 export interface WorkbenchServiceRemoveUserFromWorkbenchRequest {
   id: string
   userId: string
@@ -124,6 +124,180 @@ export interface WorkbenchServiceUpdateWorkbench2Request {
  *
  */
 export class WorkbenchServiceApi extends runtime.BaseAPI {
+  /**
+   * This endpoint adds a user\'s role in a workbench
+   * Add a user\'s role in a workbench
+   */
+  async workbenchServiceAddUserRoleInWorkbenchRaw(
+    requestParameters: WorkbenchServiceAddUserRoleInWorkbenchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusAddUserRoleInWorkbenchReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceAddUserRoleInWorkbench.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workbenchServiceAddUserRoleInWorkbench.'
+      )
+    }
+
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceAddUserRoleInWorkbench.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenches/{id}/user/{userId}/role`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: WorkbenchServiceAddUserRoleInWorkbenchBodyToJSON(
+          requestParameters.body
+        )
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusAddUserRoleInWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint adds a user\'s role in a workbench
+   * Add a user\'s role in a workbench
+   */
+  async workbenchServiceAddUserRoleInWorkbench(
+    requestParameters: WorkbenchServiceAddUserRoleInWorkbenchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusAddUserRoleInWorkbenchReply> {
+    const response = await this.workbenchServiceAddUserRoleInWorkbenchRaw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
+  /**
+   * This endpoint adds a user\'s role in a workbench
+   * Add a user\'s role in a workbench
+   */
+  async workbenchServiceAddUserRoleInWorkbench2Raw(
+    requestParameters: WorkbenchServiceAddUserRoleInWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ChorusAddUserRoleInWorkbenchReply>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        'id',
+        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceAddUserRoleInWorkbench2.'
+      )
+    }
+
+    if (
+      requestParameters.userId === null ||
+      requestParameters.userId === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling workbenchServiceAddUserRoleInWorkbench2.'
+      )
+    }
+
+    if (
+      requestParameters.body === null ||
+      requestParameters.body === undefined
+    ) {
+      throw new runtime.RequiredError(
+        'body',
+        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceAddUserRoleInWorkbench2.'
+      )
+    }
+
+    const queryParameters: any = {}
+
+    const headerParameters: runtime.HTTPHeaders = {}
+
+    headerParameters['Content-Type'] = 'application/json'
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        this.configuration.apiKey('Authorization') // bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/api/rest/v1/workbenchs/{id}/user/{userId}/role`
+          .replace(
+            `{${'id'}}`,
+            encodeURIComponent(String(requestParameters.id))
+          )
+          .replace(
+            `{${'userId'}}`,
+            encodeURIComponent(String(requestParameters.userId))
+          ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: WorkbenchServiceAddUserRoleInWorkbenchBodyToJSON(
+          requestParameters.body
+        )
+      },
+      initOverrides
+    )
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      ChorusAddUserRoleInWorkbenchReplyFromJSON(jsonValue)
+    )
+  }
+
+  /**
+   * This endpoint adds a user\'s role in a workbench
+   * Add a user\'s role in a workbench
+   */
+  async workbenchServiceAddUserRoleInWorkbench2(
+    requestParameters: WorkbenchServiceAddUserRoleInWorkbench2Request,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<ChorusAddUserRoleInWorkbenchReply> {
+    const response = await this.workbenchServiceAddUserRoleInWorkbench2Raw(
+      requestParameters,
+      initOverrides
+    )
+    return await response.value()
+  }
+
   /**
    * This endpoint creates a workbench
    * Create a workbench
@@ -614,180 +788,6 @@ export class WorkbenchServiceApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusListWorkbenchesReply> {
     const response = await this.workbenchServiceListWorkbenches2Raw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint manages a user\'s role in a workbench
-   * Manage a user\'s role in a workbench
-   */
-  async workbenchServiceManageUserRoleInWorkbenchRaw(
-    requestParameters: WorkbenchServiceManageUserRoleInWorkbenchRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusManageUserRoleInWorkbenchReply>> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-      throw new runtime.RequiredError(
-        'id',
-        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceManageUserRoleInWorkbench.'
-      )
-    }
-
-    if (
-      requestParameters.userId === null ||
-      requestParameters.userId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'userId',
-        'Required parameter requestParameters.userId was null or undefined when calling workbenchServiceManageUserRoleInWorkbench.'
-      )
-    }
-
-    if (
-      requestParameters.body === null ||
-      requestParameters.body === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'body',
-        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceManageUserRoleInWorkbench.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    headerParameters['Content-Type'] = 'application/json'
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workbenches/{id}/user/{userId}/role`
-          .replace(
-            `{${'id'}}`,
-            encodeURIComponent(String(requestParameters.id))
-          )
-          .replace(
-            `{${'userId'}}`,
-            encodeURIComponent(String(requestParameters.userId))
-          ),
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: WorkbenchServiceManageUserRoleInWorkbenchBodyToJSON(
-          requestParameters.body
-        )
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusManageUserRoleInWorkbenchReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint manages a user\'s role in a workbench
-   * Manage a user\'s role in a workbench
-   */
-  async workbenchServiceManageUserRoleInWorkbench(
-    requestParameters: WorkbenchServiceManageUserRoleInWorkbenchRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusManageUserRoleInWorkbenchReply> {
-    const response = await this.workbenchServiceManageUserRoleInWorkbenchRaw(
-      requestParameters,
-      initOverrides
-    )
-    return await response.value()
-  }
-
-  /**
-   * This endpoint manages a user\'s role in a workbench
-   * Manage a user\'s role in a workbench
-   */
-  async workbenchServiceManageUserRoleInWorkbench2Raw(
-    requestParameters: WorkbenchServiceManageUserRoleInWorkbench2Request,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ChorusManageUserRoleInWorkbenchReply>> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-      throw new runtime.RequiredError(
-        'id',
-        'Required parameter requestParameters.id was null or undefined when calling workbenchServiceManageUserRoleInWorkbench2.'
-      )
-    }
-
-    if (
-      requestParameters.userId === null ||
-      requestParameters.userId === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'userId',
-        'Required parameter requestParameters.userId was null or undefined when calling workbenchServiceManageUserRoleInWorkbench2.'
-      )
-    }
-
-    if (
-      requestParameters.body === null ||
-      requestParameters.body === undefined
-    ) {
-      throw new runtime.RequiredError(
-        'body',
-        'Required parameter requestParameters.body was null or undefined when calling workbenchServiceManageUserRoleInWorkbench2.'
-      )
-    }
-
-    const queryParameters: any = {}
-
-    const headerParameters: runtime.HTTPHeaders = {}
-
-    headerParameters['Content-Type'] = 'application/json'
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        this.configuration.apiKey('Authorization') // bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/api/rest/v1/workbenchs/{id}/user/{userId}/role`
-          .replace(
-            `{${'id'}}`,
-            encodeURIComponent(String(requestParameters.id))
-          )
-          .replace(
-            `{${'userId'}}`,
-            encodeURIComponent(String(requestParameters.userId))
-          ),
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: WorkbenchServiceManageUserRoleInWorkbenchBodyToJSON(
-          requestParameters.body
-        )
-      },
-      initOverrides
-    )
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ChorusManageUserRoleInWorkbenchReplyFromJSON(jsonValue)
-    )
-  }
-
-  /**
-   * This endpoint manages a user\'s role in a workbench
-   * Manage a user\'s role in a workbench
-   */
-  async workbenchServiceManageUserRoleInWorkbench2(
-    requestParameters: WorkbenchServiceManageUserRoleInWorkbench2Request,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ChorusManageUserRoleInWorkbenchReply> {
-    const response = await this.workbenchServiceManageUserRoleInWorkbench2Raw(
       requestParameters,
       initOverrides
     )

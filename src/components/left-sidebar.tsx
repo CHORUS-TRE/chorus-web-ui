@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
+import { countMyApprovalRequests } from '@/view-model/approval-request-view-model'
 
 import packageInfo from '../../package.json'
 
@@ -73,8 +74,24 @@ function SidebarContent({
 }) {
   const { isAdmin } = useAuthorization()
   const currentTab = searchParams.get('tab')
-  const { unreadNotificationsCount, pendingApprovalRequestsCount } =
-    useAppState()
+  const { unreadNotificationsCount } = useAppState()
+  const [pendingApprovalRequestsCount, setPendingApprovalRequestsCount] =
+    React.useState<number>()
+
+  React.useEffect(() => {
+    async function loadPendingApprovalRequestsCount() {
+      const result = await countMyApprovalRequests()
+      if (result.error) {
+        console.error('Failed to load approval requests count:', result.error)
+        return
+      }
+      setPendingApprovalRequestsCount(
+        result.data?.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING'] ?? 0
+      )
+    }
+    loadPendingApprovalRequestsCount()
+  }, [])
+
   const messagesBadgeCount =
     (unreadNotificationsCount ?? 0) + (pendingApprovalRequestsCount ?? 0)
 
@@ -282,7 +299,7 @@ export function LeftSidebar() {
   return (
     <div
       className={cn(
-        'flex h-full flex-col overflow-y-auto rounded-lg border border-muted/60 bg-contrast-background/60 backdrop-blur-md'
+        'flex h-full flex-col overflow-y-auto rounded-2xl border border-muted/40 bg-contrast-background/60 backdrop-blur-md'
       )}
     >
       <SidebarContent pathname={pathname} searchParams={searchParams} />

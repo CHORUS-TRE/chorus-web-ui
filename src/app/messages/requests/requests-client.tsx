@@ -18,7 +18,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  Download,
   LayoutGrid,
   List,
   Search,
@@ -54,12 +53,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import {
   ApprovalRequest,
-  ApprovalRequestStatus,
-  ApprovalRequestType
+  ApprovalRequestStatus
 } from '@/domain/model/approval-request'
 import { WorkspaceWithDev } from '@/domain/model/workspace'
 import {
-  downloadRequestFiles,
   formatBytes,
   getFiles,
   getTotalSize
@@ -80,20 +77,18 @@ export interface RequestsClientProps {
 // ─── Column Definitions ───────────────────────────────────────────────────────
 
 const STATUS_FILTERS = [
-  { id: 'all', label: 'All' },
   { id: ApprovalRequestStatus.PENDING, label: 'Pending', icon: Clock },
   { id: ApprovalRequestStatus.APPROVED, label: 'Approved', icon: CheckCircle2 },
-  { id: ApprovalRequestStatus.REJECTED, label: 'Rejected', icon: XCircle }
+  { id: ApprovalRequestStatus.REJECTED, label: 'Rejected', icon: XCircle },
+  { id: 'all', label: 'All' }
 ] as const
 
+export type WorkspaceDirection = 'from' | 'to'
+
 function makeColumns(
-  currentUser: { id: string; name: string; permissions: { approve: boolean } },
-  showApprovalActions: boolean,
   workspaces: WorkspaceWithDev[] | undefined,
-  onApprove: (req: ApprovalRequest) => void,
-  onReject: (req: ApprovalRequest) => void,
   onViewDetails: (req: ApprovalRequest) => void,
-  onDownload: (req: ApprovalRequest) => void
+  workspaceDirection?: WorkspaceDirection
 ): ColumnDef<ApprovalRequest>[] {
   const resolveWorkspace = (id?: string) => workspaces?.find((w) => w.id === id)
 
@@ -142,9 +137,37 @@ function makeColumns(
     },
     {
       id: 'workspace',
-      header: 'Workspace',
+      header:
+        workspaceDirection === 'from'
+          ? 'From Workspace'
+          : workspaceDirection === 'to'
+            ? 'To Workspace'
+            : 'Workspace',
       cell: ({ row }) => {
         const req = row.original
+
+        // Directional mode: show only the counterpart workspace (source for
+        // "from", destination for "to") based on the active tab.
+        if (workspaceDirection) {
+          const id =
+            workspaceDirection === 'from'
+              ? req.dataExtraction?.sourceWorkspaceId ||
+                req.dataTransfer?.sourceWorkspaceId
+              : req.dataTransfer?.destinationWorkspaceId
+          const ws = resolveWorkspace(id)
+          if (!ws) {
+            return <span className="text-xs text-muted-foreground/50">—</span>
+          }
+          return (
+            <span
+              className="block max-w-[160px] truncate text-xs font-medium"
+              title={ws.name}
+            >
+              {ws.name}
+            </span>
+          )
+        }
+
         const sourceId =
           req.dataExtraction?.sourceWorkspaceId ||
           req.dataTransfer?.sourceWorkspaceId
@@ -163,7 +186,7 @@ function makeColumns(
                 className="max-w-[140px] truncate text-xs font-medium"
                 title={source.name}
               >
-                {source.shortName || source.name}
+                {source.name}
               </span>
             )}
             {dest && (
@@ -171,7 +194,7 @@ function makeColumns(
                 className="max-w-[140px] truncate text-[10px] text-muted-foreground"
                 title={dest.name}
               >
-                → {dest.shortName || dest.name}
+                → {dest.name}
               </span>
             )}
           </div>
@@ -256,54 +279,6 @@ function makeColumns(
         )
       },
       sortingFn: 'datetime'
-    },
-    {
-      id: 'actions',
-      cell: ({ row }) => {
-        const req = row.original
-        const isPending = req.status === ApprovalRequestStatus.PENDING
-        const isApprovedExtraction =
-          req.status === ApprovalRequestStatus.APPROVED &&
-          req.type === ApprovalRequestType.DATA_EXTRACTION &&
-          req.requesterId === currentUser.id
-
-        return (
-          <div className="flex items-center justify-end gap-1.5">
-            {showApprovalActions && isPending && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 rounded-lg px-2 text-xs text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => onReject(req)}
-                >
-                  <XCircle className="mr-1 h-3.5 w-3.5" />
-                  Reject
-                </Button>
-                <Button
-                  size="sm"
-                  className="h-7 rounded-lg px-2 text-xs"
-                  onClick={() => onApprove(req)}
-                >
-                  <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
-                  Approve
-                </Button>
-              </>
-            )}
-            {isApprovedExtraction && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-7 rounded-lg px-2 text-xs"
-                onClick={() => onDownload(req)}
-              >
-                <Download className="mr-1 h-3.5 w-3.5" />
-                Download
-              </Button>
-            )}
-          </div>
-        )
-      }
     }
   ]
 }
@@ -312,52 +287,86 @@ function makeColumns(
 
 type ViewMode = 'table' | 'cards'
 
-function RequestsDataTable({
+export function RequestsDataTable({
   data,
   currentUser,
   showApprovalActions,
   onApprove,
-  onReject
+  onReject,
+  workspaceDirection,
+  workspaceId
 }: {
   data: ApprovalRequest[]
   currentUser: { id: string; name: string; permissions: { approve: boolean } }
-  showApprovalActions: boolean
+  // Either a flat toggle, or a per-request predicate. Approval of a transfer is
+  // scoped to the request's source workspace, so callers listing another
+  // workspace's requests pass a predicate that checks each row's source.
+  showApprovalActions: boolean | ((req: ApprovalRequest) => boolean)
   onApprove: (req: ApprovalRequest) => void
   onReject: (req: ApprovalRequest) => void
+  workspaceDirection?: WorkspaceDirection
+  // When set, "view details" links into the workspace-scoped transfer-requests
+  // route instead of the global /messages/requests route.
+  workspaceId?: string
 }) {
   const { workspaces } = useAppState()
+
+  const canApproveRow = React.useCallback(
+    (req: ApprovalRequest) =>
+      typeof showApprovalActions === 'function'
+        ? showApprovalActions(req)
+        : showApprovalActions,
+    [showApprovalActions]
+  )
+
+  const resolveCounterpartName = React.useCallback(
+    (req: ApprovalRequest) => {
+      if (!workspaceDirection) return undefined
+      const id =
+        workspaceDirection === 'from'
+          ? req.dataExtraction?.sourceWorkspaceId ||
+            req.dataTransfer?.sourceWorkspaceId
+          : req.dataTransfer?.destinationWorkspaceId
+      return workspaces?.find((w) => w.id === id)?.name
+    },
+    [workspaces, workspaceDirection]
+  )
   const router = useRouter()
-  const { toast } = useToast()
 
   const [viewMode, setViewMode] = React.useState<ViewMode>('table')
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'createdAt', desc: true }
   ])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
+    { id: 'status', value: ApprovalRequestStatus.PENDING }
+  ])
   const [globalFilter, setGlobalFilter] = React.useState('')
-  const [statusFilter, setStatusFilter] = React.useState<string>('all')
+  const [statusFilter, setStatusFilter] = React.useState<string>(
+    ApprovalRequestStatus.PENDING
+  )
+
+  const statusCounts = React.useMemo(() => {
+    const counts: Record<string, number> = { all: data.length }
+    for (const status of [
+      ApprovalRequestStatus.PENDING,
+      ApprovalRequestStatus.APPROVED,
+      ApprovalRequestStatus.REJECTED
+    ]) {
+      counts[status] = data.filter((req) => req.status === status).length
+    }
+    return counts
+  }, [data])
 
   const handleViewDetails = React.useCallback(
     (req: ApprovalRequest) => {
-      if (req.id) router.push(`/messages/requests/${req.id}`)
-    },
-    [router]
-  )
-
-  const handleDownload = React.useCallback(
-    async (req: ApprovalRequest) => {
       if (!req.id) return
-      await downloadRequestFiles(req.id, getFiles(req), (fileName) => {
-        toast({
-          variant: 'destructive',
-          title: 'Download failed',
-          description: `Failed to download ${fileName}`
-        })
-      })
+      router.push(
+        workspaceId
+          ? `/workspaces/${workspaceId}/transfer-requests/${req.id}`
+          : `/messages/requests/${req.id}`
+      )
     },
-    [toast]
+    [router, workspaceId]
   )
 
   const handleStatusFilter = (id: string) => {
@@ -370,25 +379,8 @@ function RequestsDataTable({
   }
 
   const columns = React.useMemo(
-    () =>
-      makeColumns(
-        currentUser,
-        showApprovalActions,
-        workspaces,
-        onApprove,
-        onReject,
-        handleViewDetails,
-        handleDownload
-      ),
-    [
-      currentUser,
-      showApprovalActions,
-      workspaces,
-      onApprove,
-      onReject,
-      handleViewDetails,
-      handleDownload
-    ]
+    () => makeColumns(workspaces, handleViewDetails, workspaceDirection),
+    [workspaces, handleViewDetails, workspaceDirection]
   )
 
   const table = useReactTable({
@@ -441,6 +433,9 @@ function RequestsDataTable({
                   >
                     {Icon && <Icon className="h-3 w-3" />}
                     {f.label}
+                    <span className="tabular-nums opacity-70">
+                      ({statusCounts[f.id]})
+                    </span>
                   </Button>
                 )
               })}
@@ -540,11 +535,13 @@ function RequestsDataTable({
                   request={row.original}
                   currentUser={currentUser}
                   showApprovalActions={
-                    showApprovalActions &&
+                    canApproveRow(row.original) &&
                     row.original.status === ApprovalRequestStatus.PENDING
                   }
                   onApprove={() => onApprove(row.original)}
                   onReject={() => onReject(row.original)}
+                  workspaceDirection={workspaceDirection}
+                  workspaceName={resolveCounterpartName(row.original)}
                 />
               ))}
             </div>

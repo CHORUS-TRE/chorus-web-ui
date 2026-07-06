@@ -1,17 +1,17 @@
 import { WorkspaceCreateType, WorkspaceUpdatetype } from '@/domain/model'
 import {
+  ChorusAddUserRoleInWorkspaceReply,
   ChorusCreateWorkspaceReply,
   ChorusDeleteWorkspaceReply,
   ChorusGetWorkspaceReply,
   ChorusListPublicWorkspacesReply,
   ChorusListWorkspacesReply,
-  ChorusManageUserRoleInWorkspaceReply,
   ChorusRemoveUserFromWorkspaceReply,
   ChorusRemoveUserRoleInWorkspaceReply,
   ChorusUpdateWorkspaceReply,
   Configuration,
-  WorkspaceServiceApi,
-  WorkspaceServiceManageUserRoleInWorkspaceBody
+  WorkspaceServiceAddUserRoleInWorkspaceBody,
+  WorkspaceServiceApi
 } from '@/internal/client'
 
 import { toChorusWorkspace, toChorusWorkspaceUpdate } from './workspace-mapper'
@@ -30,8 +30,8 @@ interface WorkspaceDataSource {
   addUserRole: (
     workspaceId: string,
     userId: string,
-    body: WorkspaceServiceManageUserRoleInWorkspaceBody
-  ) => Promise<ChorusManageUserRoleInWorkspaceReply>
+    body: WorkspaceServiceAddUserRoleInWorkspaceBody
+  ) => Promise<ChorusAddUserRoleInWorkspaceReply>
   removeUserRole: (
     workspaceId: string,
     userId: string,
@@ -89,9 +89,9 @@ class WorkspaceDataSourceImpl implements WorkspaceDataSource {
   addUserRole(
     workspaceId: string,
     userId: string,
-    body: WorkspaceServiceManageUserRoleInWorkspaceBody
-  ): Promise<ChorusManageUserRoleInWorkspaceReply> {
-    return this.service.workspaceServiceManageUserRoleInWorkspace({
+    body: WorkspaceServiceAddUserRoleInWorkspaceBody
+  ): Promise<ChorusAddUserRoleInWorkspaceReply> {
+    return this.service.workspaceServiceAddUserRoleInWorkspace({
       id: workspaceId,
       userId,
       body

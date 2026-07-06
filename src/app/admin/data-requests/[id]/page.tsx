@@ -144,7 +144,7 @@ export default function AdminRequestDetailPage() {
   const totalSize = getTotalSize(request)
   const isExtraction = request.type === ApprovalRequestType.DATA_EXTRACTION
   const isPending = request.status === ApprovalRequestStatus.PENDING
-  const isApprover = canApproveRequest(user.rolesWithContext, request)
+  const isApprover = canApproveRequest(user.id, request)
   const isOwner = user.id === request.requesterId
   const canDownload =
     isOwner && isExtraction && request.status === ApprovalRequestStatus.APPROVED
@@ -279,9 +279,7 @@ export default function AdminRequestDetailPage() {
                         ws.id === request.dataTransfer?.destinationWorkspaceId
                     )?.name ?? 'Unknown workspace'}
                   </span>
-                  <span className="truncate font-mono text-[10px] text-muted-foreground">
-                    id: {request.dataTransfer.destinationWorkspaceId}
-                  </span>
+                  <span className="truncate font-mono text-[10px] text-muted-foreground"></span>
                 </div>
               </MetaField>
             )}

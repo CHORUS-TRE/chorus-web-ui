@@ -14,47 +14,45 @@
 
 import { exists, mapValues } from '../runtime'
 /**
- *
+ * ApproverIds is a list of user ids.
  * @export
- * @interface ProtobufAny
+ * @interface ChorusApproverIds
  */
-export interface ProtobufAny {
-  [key: string]: object | any
+export interface ChorusApproverIds {
   /**
    *
-   * @type {string}
-   * @memberof ProtobufAny
+   * @type {Array<string>}
+   * @memberof ChorusApproverIds
    */
-  type?: string
+  ids?: Array<string>
 }
 
 /**
- * Check if a given object implements the ProtobufAny interface.
+ * Check if a given object implements the ChorusApproverIds interface.
  */
-export function instanceOfProtobufAny(value: object): boolean {
+export function instanceOfChorusApproverIds(value: object): boolean {
   let isInstance = true
 
   return isInstance
 }
 
-export function ProtobufAnyFromJSON(json: any): ProtobufAny {
-  return ProtobufAnyFromJSONTyped(json, false)
+export function ChorusApproverIdsFromJSON(json: any): ChorusApproverIds {
+  return ChorusApproverIdsFromJSONTyped(json, false)
 }
 
-export function ProtobufAnyFromJSONTyped(
+export function ChorusApproverIdsFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): ProtobufAny {
+): ChorusApproverIds {
   if (json === undefined || json === null) {
     return json
   }
   return {
-    ...json,
-    type: !exists(json, '@type') ? undefined : json['@type']
+    ids: !exists(json, 'ids') ? undefined : json['ids']
   }
 }
 
-export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
+export function ChorusApproverIdsToJSON(value?: ChorusApproverIds | null): any {
   if (value === undefined) {
     return undefined
   }
@@ -62,7 +60,6 @@ export function ProtobufAnyToJSON(value?: ProtobufAny | null): any {
     return null
   }
   return {
-    ...value,
-    '@type': value.type
+    ids: value.ids
   }
 }

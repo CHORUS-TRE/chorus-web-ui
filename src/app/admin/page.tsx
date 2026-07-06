@@ -3,7 +3,6 @@
 import {
   AppWindow,
   Bell,
-  FileCheck,
   LaptopMinimal,
   Package,
   Palette,
@@ -45,13 +44,11 @@ const AdminPage = () => {
     apps,
     appInstances,
     notifications,
-    approvalRequests,
     refreshWorkspaces,
     refreshWorkbenches,
     refreshApps,
     refreshAppInstances,
-    refreshNotifications,
-    refreshApprovalRequests
+    refreshNotifications
   } = useAppState()
 
   useEffect(() => {
@@ -60,14 +57,12 @@ const AdminPage = () => {
     refreshApps()
     refreshAppInstances()
     refreshNotifications()
-    refreshApprovalRequests()
   }, [
     refreshWorkspaces,
     refreshWorkbenches,
     refreshApps,
     refreshAppInstances,
-    refreshNotifications,
-    refreshApprovalRequests
+    refreshNotifications
   ])
 
   const roleCount = roles.length
@@ -149,7 +144,7 @@ const AdminPage = () => {
           />
         )}
 
-        {can('listWorkspaces') && (
+        {/* {can('listWorkspaces') && (
           <StatCard
             href="/admin/data-requests"
             title="Data Requests"
@@ -157,7 +152,7 @@ const AdminPage = () => {
             value={approvalRequests?.length || 0}
             description="Pending Approvals"
           />
-        )}
+        )} */}
 
         {can('auditPlatform') && (
           <StatCard

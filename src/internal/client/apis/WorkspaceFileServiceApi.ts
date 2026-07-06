@@ -73,6 +73,7 @@ export interface WorkspaceFileServiceCompleteWorkspaceFileUploadRequest {
 export interface WorkspaceFileServiceCreateWorkspaceFileRequest {
   workspaceId: string
   file: ChorusWorkspaceFile
+  complianceMessage?: string
 }
 
 export interface WorkspaceFileServiceDeleteWorkspaceFileRequest {
@@ -89,6 +90,7 @@ export interface WorkspaceFileServiceInitiateWorkspaceFileUploadRequest {
   workspaceId: string
   path: string
   file: ChorusWorkspaceFile
+  complianceMessage?: string
 }
 
 export interface WorkspaceFileServiceListWorkspaceFileStoresRequest {
@@ -340,6 +342,10 @@ export class WorkspaceFileServiceApi extends runtime.BaseAPI {
 
     const queryParameters: any = {}
 
+    if (requestParameters.complianceMessage !== undefined) {
+      queryParameters['complianceMessage'] = requestParameters.complianceMessage
+    }
+
     const headerParameters: runtime.HTTPHeaders = {}
 
     headerParameters['Content-Type'] = 'application/json'
@@ -572,6 +578,10 @@ export class WorkspaceFileServiceApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {}
+
+    if (requestParameters.complianceMessage !== undefined) {
+      queryParameters['complianceMessage'] = requestParameters.complianceMessage
+    }
 
     const headerParameters: runtime.HTTPHeaders = {}
 
