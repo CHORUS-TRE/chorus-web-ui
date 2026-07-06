@@ -1,3 +1,11 @@
+# [1.65.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.64.0...v1.65.0) (2026-07-06)
+
+
+### Features
+
+* improve workspace service management with toggle and delete ([f9c0373](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f9c037356f50ae694831be8e48e5bef3b3701515))
+* update polling strategy for workspace service status updates ([a429ea6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a429ea65170cba000d6f2cde429cfbaf9b7fdfd5))
+
 # [1.64.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.63.0...v1.64.0) (2026-06-26)
 
 
