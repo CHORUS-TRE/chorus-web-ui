@@ -9,7 +9,8 @@ export const INSTANCE_CONFIG_KEYS = {
   TAGS: 'instance.tags',
   LOGO: 'instance.logo',
   THEME: 'instance.theme',
-  LIMITS: 'instance.limits'
+  LIMITS: 'instance.limits',
+  DISPLAY_PARTICIPATING_CENTERS: 'instance.displayParticipatingCenters'
 } as const
 
 // Logo configuration (light and dark variants)
@@ -64,7 +65,8 @@ export const InstanceConfigSchema = z.object({
   website: z.string().default('https://www.chorus-tre.ch/en/'),
   logo: InstanceLogoSchema.nullable().optional(),
   theme: InstanceThemeSchema.nullable().optional(),
-  limits: InstanceLimitsSchema.nullable().optional()
+  limits: InstanceLimitsSchema.nullable().optional(),
+  displayParticipatingCenters: z.boolean().default(false)
 })
 
 export type InstanceConfig = z.infer<typeof InstanceConfigSchema>
@@ -82,5 +84,6 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
     maxWorkspacesPerUser: null,
     maxSessionsPerUser: null,
     maxAppInstancesPerUser: null
-  }
+  },
+  displayParticipatingCenters: false
 }

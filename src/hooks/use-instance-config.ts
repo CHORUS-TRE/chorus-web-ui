@@ -45,6 +45,9 @@ export function useInstanceConfig(): InstanceConfig {
   const limitsRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.LIMITS]
   )
+  const displayParticipatingCentersRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
+  )
 
   // Memoize the parsed config
   const config = useMemo((): InstanceConfig => {
@@ -82,6 +85,18 @@ export function useInstanceConfig(): InstanceConfig {
       }
     }
 
+    // Parse displayParticipatingCenters
+    let displayParticipatingCenters =
+      DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+    if (displayParticipatingCentersRaw) {
+      try {
+        displayParticipatingCenters =
+          JSON.parse(displayParticipatingCentersRaw) === true
+      } catch {
+        // Keep default
+      }
+    }
+
     return {
       name: nameRaw || DEFAULT_INSTANCE_CONFIG.name,
       headline: headlineRaw || DEFAULT_INSTANCE_CONFIG.headline,
@@ -89,7 +104,8 @@ export function useInstanceConfig(): InstanceConfig {
       website: websiteRaw || DEFAULT_INSTANCE_CONFIG.website,
       logo,
       theme,
-      limits
+      limits,
+      displayParticipatingCenters
     }
   }, [
     nameRaw,
@@ -98,10 +114,30 @@ export function useInstanceConfig(): InstanceConfig {
     websiteRaw,
     logoRaw,
     themeRaw,
-    limitsRaw
+    limitsRaw,
+    displayParticipatingCentersRaw
   ])
 
   return config
+}
+
+/**
+ * Hook to access whether the Participating Centers section should be shown
+ */
+export function useDisplayParticipatingCenters(): boolean {
+  const displayParticipatingCentersRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
+  )
+
+  return useMemo(() => {
+    if (!displayParticipatingCentersRaw)
+      return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+    try {
+      return JSON.parse(displayParticipatingCentersRaw) === true
+    } catch {
+      return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+    }
+  }, [displayParticipatingCentersRaw])
 }
 
 /**

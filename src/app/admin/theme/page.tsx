@@ -3,6 +3,7 @@
 import { Palette } from 'lucide-react'
 
 import LogoUploadForm from '@/components/forms/logo-upload-form'
+import { SidebarOptionsForm } from '@/components/forms/sidebar-options-form'
 import { ThemeEditorForm } from '@/components/forms/theme-editor-form'
 
 const ThemePage = () => {
@@ -18,6 +19,10 @@ const ThemePage = () => {
 
       <h3 className="mb-4 text-lg font-semibold">Logo</h3>
       <LogoUploadForm />
+
+      <div className="mt-8">
+        <SidebarOptionsForm />
+      </div>
 
       <div className="mt-8">
         <h3 className="mb-4 text-lg font-semibold">Theme</h3>
