@@ -688,18 +688,7 @@ export default function WorkspaceServicesPage() {
     useState<WorkspaceServiceInstance | null>(null)
   const loadInFlight = useRef(false)
 
-  const FAST_POLL_MS = 3_000
-  const SLOW_POLL_MS = 15_000
-
-  // An instance is "pending" while its observed status hasn't converged to its
-  // desired state yet (starting, stopping, or still unknown).
-  const isPending = (i: WorkspaceServiceInstance) =>
-    i.status === WorkspaceServiceInstanceStatus.PROGRESSING ||
-    i.status === WorkspaceServiceInstanceStatus.UNKNOWN ||
-    (i.state === WorkspaceServiceInstanceState.RUNNING &&
-      i.status === WorkspaceServiceInstanceStatus.STOPPED) ||
-    (i.state === WorkspaceServiceInstanceState.STOPPED &&
-      i.status === WorkspaceServiceInstanceStatus.RUNNING)
+  const POLL_INTERVAL_MS = 3_000
 
   const load = useCallback(
     async ({ silent = false }: { silent?: boolean } = {}) => {
@@ -726,15 +715,12 @@ export default function WorkspaceServicesPage() {
     load()
   }, [load])
 
-  // Poll continuously while the tab is visible: fast while any instance is
-  // still converging to its desired state, slow otherwise. Background poll
-  // errors are silent to avoid toast spam.
-  const hasPending = instances?.some(isPending) ?? false
+  // Poll at a fixed interval while the tab is visible, regardless of instance
+  // states. Background poll errors are silent to avoid toast spam.
   useEffect(() => {
-    const intervalMs = hasPending ? FAST_POLL_MS : SLOW_POLL_MS
     const id = setInterval(() => {
       if (document.visibilityState === 'visible') load({ silent: true })
-    }, intervalMs)
+    }, POLL_INTERVAL_MS)
 
     // Catch up immediately when the user comes back to the tab
     const onVisibilityChange = () => {
@@ -746,7 +732,7 @@ export default function WorkspaceServicesPage() {
       clearInterval(id)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [hasPending, load])
+  }, [load])
 
   function replaceInstance(updated: WorkspaceServiceInstance) {
     setInstances((prev) =>
