@@ -101,6 +101,7 @@ type DevStoreCacheState = {
   getInstanceLogo: () => InstanceLogo | null
   getInstanceTheme: () => InstanceTheme | null
   getInstanceLimits: () => InstanceLimits | null
+  getDisplayParticipatingCenters: () => boolean
 
   setInstanceName: (name: string) => Promise<boolean>
   setInstanceHeadline: (headline: string) => Promise<boolean>
@@ -109,6 +110,7 @@ type DevStoreCacheState = {
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
+  setDisplayParticipatingCenters: (display: boolean) => Promise<boolean>
 
   // User bookmarks (JSON array stored at user.bookmarks)
   getUserBookmarks: () => Bookmarks
@@ -377,7 +379,8 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       tagline: state.getInstanceTagline(),
       website: state.getInstanceWebsite(),
       logo: state.getInstanceLogo(),
-      theme: state.getInstanceTheme()
+      theme: state.getInstanceTheme(),
+      displayParticipatingCenters: state.getDisplayParticipatingCenters()
     }
   },
 
@@ -456,6 +459,19 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     }
   },
 
+  getDisplayParticipatingCenters: () => {
+    const value =
+      get().global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
+    if (!value) return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+
+    try {
+      return JSON.parse(value) === true
+    } catch (e) {
+      console.error('Error parsing displayParticipatingCenters:', e)
+      return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+    }
+  },
+
   // Individual setters
   setInstanceName: async (name: string) => {
     return get().setGlobal(INSTANCE_CONFIG_KEYS.NAME, name)
@@ -492,6 +508,13 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       return get().deleteGlobal(INSTANCE_CONFIG_KEYS.LIMITS)
     }
     return get().setGlobal(INSTANCE_CONFIG_KEYS.LIMITS, JSON.stringify(limits))
+  },
+
+  setDisplayParticipatingCenters: async (display: boolean) => {
+    return get().setGlobal(
+      INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS,
+      JSON.stringify(display)
+    )
   },
 
   // ============================================

@@ -121,8 +121,8 @@ export function Header() {
             <Image
               src={defaultLogo}
               alt="Chorus"
-              height={24}
-              width={41}
+              height={32}
+              width={75}
               className="h-6 w-auto cursor-pointer"
               id="logo"
               priority
@@ -134,7 +134,7 @@ export function Header() {
                 alt="Chorus"
                 height={32}
                 width={75}
-                className="ml-4 h-8 w-auto cursor-pointer"
+                className="ml-4 h-6 w-auto cursor-pointer"
                 id="logo"
                 priority
                 unoptimized

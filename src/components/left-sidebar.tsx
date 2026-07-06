@@ -2,6 +2,7 @@
 
 import {
   Bell,
+  Building2,
   Database,
   GaugeCircle,
   Globe,
@@ -18,6 +19,7 @@ import React from 'react'
 import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
 import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
+import { useDisplayParticipatingCenters } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -59,6 +61,11 @@ export const navItems = [
     label: 'Public Workspaces',
     icon: Globe,
     href: '/public-workspaces'
+  },
+  {
+    label: 'Participating Centers',
+    icon: Building2,
+    href: '/participating-centers'
   }
 ]
 
@@ -73,6 +80,7 @@ function SidebarContent({
   searchParams: URLSearchParams
 }) {
   const { isAdmin } = useAuthorization()
+  const displayParticipatingCenters = useDisplayParticipatingCenters()
   const currentTab = searchParams.get('tab')
   const { unreadNotificationsCount } = useAppState()
   const [pendingApprovalRequestsCount, setPendingApprovalRequestsCount] =
@@ -132,6 +140,23 @@ function SidebarContent({
           <GaugeCircle className="h-4 w-4" />
           Dashboard
         </Link>
+
+        {/* Participating Centers */}
+        {displayParticipatingCenters && (
+          <Link
+            href="/participating-centers"
+            variant="underline"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
+              isActive('/participating-centers')
+                ? 'bg-accent/15 text-accent'
+                : 'text-muted-foreground'
+            )}
+          >
+            <Building2 className="h-4 w-4" />
+            Participating Centers
+          </Link>
+        )}
 
         {/* Workspaces */}
         <Link
