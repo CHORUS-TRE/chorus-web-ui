@@ -1,3 +1,11 @@
+# [1.66.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.65.0...v1.66.0) (2026-07-06)
+
+
+### Features
+
+* add user role management models for workbench and workspace ([d29f447](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d29f447e9f17cc310e41e06936e9f3bea8184888))
+* add workspace transfer requests pages and detail view ([a4feb4d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a4feb4d043a326dc15a1bfc9d244402952eb51e1))
+
 # [1.65.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.64.0...v1.65.0) (2026-07-06)
 
 
