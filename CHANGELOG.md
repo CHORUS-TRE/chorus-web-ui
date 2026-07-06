@@ -1,3 +1,10 @@
+# [1.67.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.66.0...v1.67.0) (2026-07-06)
+
+
+### Features
+
+* **workspace-service:** add service presets in creation form ([6954f44](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6954f44a61cdb70a2fe2e44187e122add36218c5))
+
 # [1.66.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.65.0...v1.66.0) (2026-07-06)
 
 
