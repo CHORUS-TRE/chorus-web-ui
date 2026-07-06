@@ -8,16 +8,19 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  Play,
   PlugZap,
   Settings,
+  Square,
   Trash2
 } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { errorToast } from '@/components/error-toast'
+import { DeleteDialog } from '@/components/forms/delete-dialog'
 import { WorkspaceServiceInstanceCreateForm } from '@/components/forms/workspace-service-instance-create-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -486,24 +489,40 @@ function ServiceParametersDialog({
 
 // ─── Service card ─────────────────────────────────────────────────────────────
 
+type BusyAction = 'delete' | 'toggle'
+
 function ServiceCard({
   instance,
-  busyId,
+  busyAction,
   onDelete,
+  onToggleState,
   onUpdate
 }: {
   instance: WorkspaceServiceInstance
-  busyId: string | null
-  onDelete: (id: string) => void
+  busyAction: BusyAction | null
+  onDelete: (instance: WorkspaceServiceInstance) => void
+  onToggleState: (instance: WorkspaceServiceInstance) => void
   onUpdate: (updated: WorkspaceServiceInstance) => void
 }) {
   const [paramsOpen, setParamsOpen] = useState(false)
-  const isBusy = busyId === instance.id
+  const isBusy = busyAction !== null
 
   const isRunning = instance.state === WorkspaceServiceInstanceState.RUNNING
+  const canToggle =
+    instance.state === WorkspaceServiceInstanceState.RUNNING ||
+    instance.state === WorkspaceServiceInstanceState.STOPPED
+  // Transient while the observed status hasn't converged to the desired state
   const isTransient =
     instance.status === WorkspaceServiceInstanceStatus.PROGRESSING ||
-    instance.status === WorkspaceServiceInstanceStatus.UNKNOWN
+    instance.status === WorkspaceServiceInstanceStatus.UNKNOWN ||
+    (instance.state === WorkspaceServiceInstanceState.RUNNING &&
+      instance.status === WorkspaceServiceInstanceStatus.STOPPED) ||
+    (instance.state === WorkspaceServiceInstanceState.STOPPED &&
+      instance.status === WorkspaceServiceInstanceStatus.RUNNING)
+  const transientFallback =
+    instance.state === WorkspaceServiceInstanceState.STOPPED
+      ? 'Stopping…'
+      : 'Starting…'
 
   const chartLabel =
     [instance.chartRepository, instance.chartTag ?? null]
@@ -550,7 +569,7 @@ function ServiceCard({
               <div className="mt-2 flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2 py-1">
                 <Loader2 className="h-3.5 w-3.5 flex-shrink-0 animate-spin text-amber-600 dark:text-amber-400" />
                 <p className="text-sm text-amber-700 dark:text-amber-400">
-                  {instance.statusMessage ?? 'Starting…'}
+                  {instance.statusMessage ?? transientFallback}
                 </p>
               </div>
             )}
@@ -580,16 +599,38 @@ function ServiceCard({
               </Button>
             )}
 
+            {/* Stop / Start */}
+            {canToggle && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
+                disabled={isBusy}
+                onClick={() => onToggleState(instance)}
+                aria-label={
+                  isRunning ? `Stop ${instance.name}` : `Start ${instance.name}`
+                }
+              >
+                {busyAction === 'toggle' ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isRunning ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+
             {/* Delete */}
             <Button
               variant="ghost"
               size="icon"
               className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               disabled={isBusy}
-              onClick={() => instance.id && onDelete(instance.id)}
+              onClick={() => onDelete(instance)}
               aria-label={`Delete ${instance.name}`}
             >
-              {isBusy ? (
+              {busyAction === 'delete' ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Trash2 className="h-4 w-4" />
@@ -640,38 +681,58 @@ export default function WorkspaceServicesPage() {
   const [instances, setInstances] = useState<
     WorkspaceServiceInstance[] | undefined
   >(undefined)
-  const [busyId, setBusyId] = useState<string | null>(null)
+  const [busy, setBusy] = useState<{ id: string; action: BusyAction } | null>(
+    null
+  )
+  const [deleteTarget, setDeleteTarget] =
+    useState<WorkspaceServiceInstance | null>(null)
+  const loadInFlight = useRef(false)
 
-  const POLL_INTERVAL_MS = 5_000
+  const POLL_INTERVAL_MS = 3_000
 
-  const isTransient = (i: WorkspaceServiceInstance) =>
-    i.status === WorkspaceServiceInstanceStatus.PROGRESSING ||
-    i.status === WorkspaceServiceInstanceStatus.UNKNOWN
-
-  const load = useCallback(async () => {
-    if (!workspaceId) return
-    const result = await workspaceServiceInstanceList(workspaceId)
-    if (result.data) setInstances(result.data)
-    if (result.error)
-      toast({
-        title: 'Error',
-        ...errorToast(result.error),
-        variant: 'destructive'
-      })
-  }, [workspaceId])
+  const load = useCallback(
+    async ({ silent = false }: { silent?: boolean } = {}) => {
+      if (!workspaceId || loadInFlight.current) return
+      loadInFlight.current = true
+      try {
+        const result = await workspaceServiceInstanceList(workspaceId)
+        if (result.data) setInstances(result.data)
+        if (result.error && !silent)
+          toast({
+            title: 'Error',
+            ...errorToast(result.error),
+            variant: 'destructive'
+          })
+      } finally {
+        loadInFlight.current = false
+      }
+    },
+    [workspaceId]
+  )
 
   // Initial load
   useEffect(() => {
     load()
   }, [load])
 
-  // Poll while any instance is in a transient state
-  const hasTransient = instances?.some(isTransient) ?? false
+  // Poll at a fixed interval while the tab is visible, regardless of instance
+  // states. Background poll errors are silent to avoid toast spam.
   useEffect(() => {
-    if (!hasTransient) return
-    const id = setInterval(load, POLL_INTERVAL_MS)
-    return () => clearInterval(id)
-  }, [hasTransient, load])
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') load({ silent: true })
+    }, POLL_INTERVAL_MS)
+
+    // Catch up immediately when the user comes back to the tab
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') load({ silent: true })
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+
+    return () => {
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [load])
 
   function replaceInstance(updated: WorkspaceServiceInstance) {
     setInstances((prev) =>
@@ -679,10 +740,13 @@ export default function WorkspaceServicesPage() {
     )
   }
 
-  async function handleDelete(id: string) {
-    setBusyId(id)
+  async function handleDeleteConfirm() {
+    const id = deleteTarget?.id
+    if (!id) return
+    setBusy({ id, action: 'delete' })
     const result = await workspaceServiceInstanceDelete(id)
-    setBusyId(null)
+    setBusy(null)
+    setDeleteTarget(null)
     if (result.error) {
       toast({
         title: 'Error',
@@ -693,6 +757,49 @@ export default function WorkspaceServicesPage() {
     }
     setInstances((prev) => prev?.filter((i) => i.id !== id))
     toast({ title: 'Service instance deleted' })
+  }
+
+  async function handleToggleState(instance: WorkspaceServiceInstance) {
+    if (!instance.id) return
+    const nextState =
+      instance.state === WorkspaceServiceInstanceState.RUNNING
+        ? WorkspaceServiceInstanceState.STOPPED
+        : WorkspaceServiceInstanceState.RUNNING
+
+    setBusy({ id: instance.id, action: 'toggle' })
+    const result = await workspaceServiceInstanceUpdate({
+      id: instance.id,
+      workspaceId: instance.workspaceId,
+      name: instance.name,
+      state: nextState,
+      chartRegistry: instance.chartRegistry ?? '',
+      chartRepository: instance.chartRepository ?? '',
+      chartTag: instance.chartTag ?? '',
+      valuesOverrideJson: instance.valuesOverrideJson,
+      credentialsSecretName: instance.credentialsSecretName,
+      credentialsPaths: instance.credentialsPaths,
+      connectionInfoTemplate: instance.connectionInfoTemplate
+    })
+    setBusy(null)
+
+    if (result.error) {
+      toast({
+        title: 'Error',
+        ...errorToast(result.error),
+        variant: 'destructive'
+      })
+      return
+    }
+    if (result.data) replaceInstance(result.data)
+    toast({
+      title:
+        nextState === WorkspaceServiceInstanceState.STOPPED
+          ? `Stopping ${instance.name}`
+          : `Starting ${instance.name}`
+    })
+    // Refresh right away so the status starts updating without waiting for
+    // the next poll tick
+    load({ silent: true })
   }
 
   const createForm = (
@@ -748,13 +855,24 @@ export default function WorkspaceServicesPage() {
             <ServiceCard
               key={instance.id}
               instance={instance}
-              busyId={busyId}
-              onDelete={handleDelete}
+              busyAction={busy && busy.id === instance.id ? busy.action : null}
+              onDelete={setDeleteTarget}
+              onToggleState={handleToggleState}
               onUpdate={replaceInstance}
             />
           ))}
         </div>
       )}
+
+      {/* Delete confirmation */}
+      <DeleteDialog
+        open={deleteTarget !== null}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={busy?.action === 'delete'}
+        title="Delete Service"
+        description={`Are you sure you want to delete ${deleteTarget?.name ?? 'this service'}? This action cannot be undone.`}
+      />
     </div>
   )
 }
