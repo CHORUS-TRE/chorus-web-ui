@@ -1,3 +1,22 @@
+# [1.69.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.68.0...v1.69.0) (2026-07-07)
+
+
+### Bug Fixes
+
+* **admin:** remove misleading notifications page; hide system notifications ([52523aa](https://github.com/CHORUS-TRE/chorus-web-ui/commit/52523aa2fa90ebedbbe12b71dc91b0e7134d022e))
+* **approval-request:** apply server-confirmed state instead of guessing ([1aee824](https://github.com/CHORUS-TRE/chorus-web-ui/commit/1aee824c3861f1ee199405ad4c97b5634b7790f1))
+* **approval-request:** drop dead schema fields, migrate broken consumers ([c5b2c55](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c5b2c55cf9d0719186735f02a7e1fa2c7fba4812))
+* **notifications:** derive unread count from totalItems, not a truncated list ([8f80830](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8f8083086a7167c654359d12a992112985fbdbb7))
+* **notifications:** honest server-side pagination and markAll ([d896a08](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d896a08fafa93130a8fbef7091bc002ab0ff62d5))
+* **service-card:** remove title attribute from Stop button for clarity ([7c88995](https://github.com/CHORUS-TRE/chorus-web-ui/commit/7c8899501d2a1bd4d40f22e0ec8938c74654d542))
+* **sidebar:** Messages badge counts unread notifications only ([9d1a335](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9d1a335429a4a07d6d8fd6bca65aed9c6c96dead))
+
+
+### Features
+
+* **notifications:** centralize approval read-sync in the store ([bca0312](https://github.com/CHORUS-TRE/chorus-web-ui/commit/bca031205679a022b7b64bccad2c129106458b10))
+* update onboarding step descriptions for clarity and accuracy ([e6e9cfc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e6e9cfcd848ffa4f5320c44faa77f1918b6081d5))
+
 # [1.68.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.67.0...v1.68.0) (2026-07-06)
 
 
