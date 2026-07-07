@@ -27,18 +27,31 @@ export class ApprovalRequestRepositoryImpl
     this.dataSource = dataSource
   }
 
-  async approve(action: ApproveApprovalRequestAction): Promise<Result<void>> {
+  async approve(
+    action: ApproveApprovalRequestAction
+  ): Promise<Result<ApprovalRequest>> {
     try {
       // Domain action field names (approved/reason) intentionally differ from
       // the API's (approve/comment); mapped explicitly here at the boundary.
-      await this.dataSource.approve({
+      const response = await this.dataSource.approve({
         id: action.id,
         body: {
           approve: action.approved,
           comment: action.reason
         }
       })
-      return { data: undefined }
+
+      const approvalRequestResult = ApprovalRequestSchema.safeParse(
+        response.result?.approvalRequest
+      )
+      if (!approvalRequestResult.success) {
+        return {
+          error: conversionError('API response validation failed'),
+          issues: approvalRequestResult.error.issues
+        }
+      }
+
+      return { data: approvalRequestResult.data }
     } catch (error) {
       return {
         error: toChorusError(error)

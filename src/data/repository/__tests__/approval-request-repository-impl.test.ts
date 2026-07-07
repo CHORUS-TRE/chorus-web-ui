@@ -46,3 +46,45 @@ describe('ApprovalRequestRepositoryImpl.list', () => {
     expect(result.totalItems).toBeUndefined()
   })
 })
+
+describe('ApprovalRequestRepositoryImpl.approve', () => {
+  it('returns the server-confirmed request from the approve reply', async () => {
+    const ds = makeDataSource({
+      approve: async () => ({
+        result: {
+          approvalRequest: {
+            id: 'req-1',
+            status: 'APPROVAL_REQUEST_STATUS_PENDING',
+            stepDecisions: {
+              download: {
+                approverId: 'approver-1',
+                approvedAt: new Date('2026-07-01T00:00:00Z'),
+                approve: true
+              }
+            }
+          }
+        }
+      })
+    })
+    const repo = new ApprovalRequestRepositoryImpl(ds)
+
+    const result = await repo.approve({ id: 'req-1', approved: true })
+
+    expect(result.error).toBeUndefined()
+    // The transfer's second step hasn't been decided, so status stays
+    // PENDING -- callers must apply this instead of assuming APPROVED.
+    expect(result.data?.status).toBe('APPROVAL_REQUEST_STATUS_PENDING')
+    expect(result.data?.stepDecisions?.download?.approverId).toBe('approver-1')
+  })
+
+  it('returns an error on network failure', async () => {
+    const ds = makeDataSource({
+      approve: () => Promise.reject(new Error('network error'))
+    })
+    const repo = new ApprovalRequestRepositoryImpl(ds)
+
+    const result = await repo.approve({ id: 'req-1', approved: true })
+
+    expect(result.error?.message).toBe('network error')
+  })
+})

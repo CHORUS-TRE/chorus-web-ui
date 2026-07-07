@@ -28,7 +28,10 @@ import {
 } from '@/components/ui/table'
 import { getApprovalRequestWorkspaceId } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
-import { useAppState } from '@/stores/app-state-store'
+import {
+  NOTIFICATION_WRITE_CACHE_DELAY_MS,
+  useAppState
+} from '@/stores/app-state-store'
 import { getApprovalRequest } from '@/view-model/approval-request-view-model'
 import {
   markAllNotificationsAsRead,
@@ -139,11 +142,7 @@ export default function MessagesPage() {
   const { user } = useAuthentication()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const {
-    unreadNotificationsCount,
-    refreshNotifications,
-    refreshUnreadNotificationsCount
-  } = useAppState()
+  const { unreadNotificationsCount, refreshNotifications } = useAppState()
 
   const rawTab = searchParams.get('tab')
   const activeTab: InboxTab = rawTab === 'all' ? 'all' : 'unread'
@@ -163,13 +162,16 @@ export default function MessagesPage() {
   }
 
   const refreshAll = async () => {
-    // Preserves the existing 2s wait for backend eventual-consistency before refetching.
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    await Promise.all([
-      refreshNotifications(),
-      refreshUnreadNotificationsCount(),
-      refetch()
-    ])
+    // See NOTIFICATION_WRITE_CACHE_DELAY_MS: the backend caches
+    // GetNotifications/CountUnreadNotifications for 2s and does not
+    // invalidate that cache on MarkNotificationsAsRead, so an immediate
+    // refetch would replay the stale (still-unread) response.
+    await new Promise((resolve) =>
+      setTimeout(resolve, NOTIFICATION_WRITE_CACHE_DELAY_MS)
+    )
+    // refreshNotifications() already updates unreadNotificationsCount; no
+    // need for the separate refreshUnreadNotificationsCount() call.
+    await Promise.all([refreshNotifications(), refetch()])
   }
 
   const handleMarkAsRead = async (id: string) => {

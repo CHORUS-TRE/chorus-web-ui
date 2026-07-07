@@ -76,7 +76,7 @@ export default function AdminRequestDetailPage() {
   const router = useRouter()
   const { toast } = useToast()
   const { user } = useAuthentication()
-  const { workspaces } = useAppState()
+  const { workspaces, onApprovalDecision } = useAppState()
 
   const [request, setRequest] = React.useState<ApprovalRequest | null>(null)
   const [requester, setRequester] = React.useState<User | null>(null)
@@ -183,17 +183,14 @@ export default function AdminRequestDetailPage() {
         title: approved ? 'Request approved' : 'Request rejected',
         description: 'The request has been processed successfully.'
       })
-      setRequest((prev) =>
-        prev
-          ? {
-              ...prev,
-              status: approved
-                ? ApprovalRequestStatus.APPROVED
-                : ApprovalRequestStatus.REJECTED
-            }
-          : prev
-      )
+      // Apply the server-confirmed request (status, step decisions) rather
+      // than guessing — a data transfer stays PENDING after only one of its
+      // two required steps is decided.
+      if (result.data) {
+        setRequest(result.data)
+      }
       setReviewNotes('')
+      await onApprovalDecision(request.id)
     } else {
       toast({
         variant: 'destructive',

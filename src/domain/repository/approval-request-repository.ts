@@ -15,7 +15,9 @@ export interface DownloadFileResult {
 }
 
 export interface ApprovalRequestRepository {
-  approve(action: ApproveApprovalRequestAction): Promise<Result<void>>
+  approve(
+    action: ApproveApprovalRequestAction
+  ): Promise<Result<ApprovalRequest>>
   countMine(): Promise<Result<ApprovalRequestCount>>
   createDataExtraction(
     request: CreateDataExtractionRequest

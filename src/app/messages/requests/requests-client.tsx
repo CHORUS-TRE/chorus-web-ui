@@ -669,19 +669,17 @@ export default function RequestsClient({
         title: `Request ${activeAction === 'approve' ? 'approved' : 'rejected'}`,
         description: 'The request has been processed successfully.'
       })
-      setRequests((prev) =>
-        prev.map((req) =>
-          req.id === selectedRequest.id
-            ? {
-                ...req,
-                status:
-                  activeAction === 'approve'
-                    ? ApprovalRequestStatus.APPROVED
-                    : ApprovalRequestStatus.REJECTED
-              }
-            : req
+      // Apply the server-confirmed request (status, step decisions) rather
+      // than guessing — a data transfer stays PENDING after only one of its
+      // two required steps is decided.
+      const updatedRequest = result.data
+      if (updatedRequest) {
+        setRequests((prev) =>
+          prev.map((req) =>
+            req.id === selectedRequest.id ? updatedRequest : req
+          )
         )
-      )
+      }
       setIsReviewDialogOpen(false)
       setSelectedRequest(null)
       setReviewNotes('')

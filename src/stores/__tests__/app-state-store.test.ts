@@ -6,7 +6,10 @@ import {
   markNotificationsAsRead
 } from '@/view-model/notification-view-model'
 
-import { useAppStateStore } from '../app-state-store'
+import {
+  NOTIFICATION_WRITE_CACHE_DELAY_MS,
+  useAppStateStore
+} from '../app-state-store'
 
 jest.mock('../../view-model/notification-view-model')
 jest.mock('../../view-model/approval-request-view-model')
@@ -122,7 +125,8 @@ describe('onApprovalDecision', () => {
     })
   })
 
-  it('marks the linked unread notification as read and refreshes counts', async () => {
+  it('marks the linked unread notification as read, waits out the backend notification cache, then refreshes counts', async () => {
+    jest.useFakeTimers()
     mockedListNotifications
       .mockResolvedValueOnce({
         data: [notificationFor('n1', 'req-1'), notificationFor('n2', 'req-2')],
@@ -132,14 +136,40 @@ describe('onApprovalDecision', () => {
     mockedMarkAsRead.mockResolvedValue({ data: undefined })
     mockedCountUnread.mockResolvedValue({ data: 0 })
 
-    await useAppStateStore.getState().onApprovalDecision('req-1')
+    const decision = useAppStateStore.getState().onApprovalDecision('req-1')
+    await jest.advanceTimersByTimeAsync(NOTIFICATION_WRITE_CACHE_DELAY_MS)
+    await decision
+    jest.useRealTimers()
 
     expect(mockedMarkAsRead).toHaveBeenCalledWith(['n1'])
     expect(mockedCountMyApprovalRequests).toHaveBeenCalledTimes(1)
     expect(useAppStateStore.getState().approvalRequestCounts?.total).toBe(0)
   })
 
+  it('does not refresh until the notification cache TTL has elapsed', async () => {
+    jest.useFakeTimers()
+    mockedListNotifications
+      .mockResolvedValueOnce({
+        data: [notificationFor('n1', 'req-1')],
+        totalItems: 1
+      })
+      .mockResolvedValueOnce({ data: [], totalItems: 0 })
+    mockedMarkAsRead.mockResolvedValue({ data: undefined })
+    mockedCountUnread.mockResolvedValue({ data: 0 })
+
+    const decision = useAppStateStore.getState().onApprovalDecision('req-1')
+    await Promise.resolve() // let the mark-as-read microtasks settle
+    expect(mockedCountMyApprovalRequests).not.toHaveBeenCalled()
+
+    await jest.advanceTimersByTimeAsync(NOTIFICATION_WRITE_CACHE_DELAY_MS)
+    await decision
+    jest.useRealTimers()
+
+    expect(mockedCountMyApprovalRequests).toHaveBeenCalledTimes(1)
+  })
+
   it('pages through the unread set to find a match beyond the first page', async () => {
+    jest.useFakeTimers()
     const page1 = Array.from({ length: 100 }, (_, i) =>
       notificationFor(`n${i}`, 'other-request')
     )
@@ -153,7 +183,12 @@ describe('onApprovalDecision', () => {
     mockedMarkAsRead.mockResolvedValue({ data: undefined })
     mockedCountUnread.mockResolvedValue({ data: 0 })
 
-    await useAppStateStore.getState().onApprovalDecision('req-target')
+    const decision = useAppStateStore
+      .getState()
+      .onApprovalDecision('req-target')
+    await jest.advanceTimersByTimeAsync(NOTIFICATION_WRITE_CACHE_DELAY_MS)
+    await decision
+    jest.useRealTimers()
 
     expect(mockedListNotifications).toHaveBeenNthCalledWith(
       1,

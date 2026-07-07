@@ -44,6 +44,14 @@ const NOTIFICATIONS_POLL_LIMIT = 100
 const READ_SYNC_SEARCH_PAGE_SIZE = 100
 const READ_SYNC_SEARCH_MAX_PAGES = 50
 
+// chorus-backend caches GetNotifications/CountUnreadNotifications for 2s
+// (pkg/notification/service/middleware/caching.go, defaultCacheExpiration)
+// and MarkNotificationsAsRead does not invalidate that cache. Re-reading
+// immediately after a mark-as-read write can replay the stale (still-unread)
+// cached response, so callers that write-then-refresh wait this long first.
+// Not a client-side choice — it mirrors a real backend cache TTL.
+export const NOTIFICATION_WRITE_CACHE_DELAY_MS = 2000
+
 export type AppStateStore = {
   workspaces: WorkspaceWithDev[] | undefined
   workbenches: Workbench[] | undefined
@@ -301,16 +309,27 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   onApprovalDecision: async (requestId: string) => {
     // Best-effort: an approval must not fail or block because the inbox
     // couldn't sync. Errors here are logged, never surfaced or rethrown.
+    let markedAsRead = false
     try {
       const notificationIds =
         await findUnreadNotificationIdsForApprovalRequest(requestId)
       if (notificationIds.length > 0) {
         await markNotificationsAsRead(notificationIds)
+        markedAsRead = true
       }
     } catch (error) {
       console.error(
         'Failed to mark linked notifications as read after approval decision:',
         error
+      )
+    }
+
+    // See NOTIFICATION_WRITE_CACHE_DELAY_MS: only needed when we actually
+    // wrote a read-state change that the next refresh would otherwise re-read
+    // stale from the backend cache.
+    if (markedAsRead) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, NOTIFICATION_WRITE_CACHE_DELAY_MS)
       )
     }
 

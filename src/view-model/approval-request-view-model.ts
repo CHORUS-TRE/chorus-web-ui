@@ -37,7 +37,7 @@ export async function countMyApprovalRequests(): Promise<
 
 export async function approveApprovalRequest(
   action: ApproveApprovalRequestAction
-): Promise<Result<void>> {
+): Promise<Result<ApprovalRequest>> {
   const repository = await getRepository()
   const useCase = new ApproveApprovalRequest(repository)
   return await useCase.execute(action)
