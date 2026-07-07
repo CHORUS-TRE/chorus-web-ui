@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 import ApprovalRequestsTable from '@/components/approval-requests-table'
 import { ApprovalRequest } from '@/domain/model/approval-request'
+import { APPROVAL_REQUESTS_FETCH_LIMIT } from '@/lib/approval-request-utils'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 
 export default function AdminDataRequestsPage() {
@@ -12,7 +13,9 @@ export default function AdminDataRequestsPage() {
 
   useEffect(() => {
     async function loadApprovalRequests() {
-      const result = await listApprovalRequests()
+      const result = await listApprovalRequests({
+        paginationLimit: APPROVAL_REQUESTS_FETCH_LIMIT
+      })
       if (result.error) {
         console.error('Failed to load approval requests:', result.error)
         return

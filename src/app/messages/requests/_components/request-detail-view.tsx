@@ -442,7 +442,10 @@ export function RequestDetailView({
 
   const markRequestNotificationAsRead = async (requestId: string) => {
     try {
-      const result = await listNotifications({ isRead: false })
+      const result = await listNotifications({
+        isRead: false,
+        paginationLimit: 100
+      })
       const matchingIds = (result.data ?? [])
         .filter(
           (n) =>

@@ -193,7 +193,10 @@ export class ApprovalRequestRepositoryImpl
         }
       }
 
-      return { data: approvalRequestsResult.data }
+      return {
+        data: approvalRequestsResult.data,
+        totalItems: response.pagination?.total
+      }
     } catch (error) {
       return {
         error: toChorusError(error)

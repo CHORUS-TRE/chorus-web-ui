@@ -5,6 +5,7 @@ import { NotificationApiDataSourceImpl } from '@/data/data-source'
 import { NotificationRepositoryImpl } from '@/data/repository'
 import { Notification, Result } from '@/domain/model'
 import { ListNotifications } from '@/domain/use-cases/notification/list-notifications'
+import { MarkAllNotificationsAsRead } from '@/domain/use-cases/notification/mark-all-notifications-as-read'
 import { MarkNotificationsAsRead } from '@/domain/use-cases/notification/mark-notifications-as-read'
 import { NotificationServiceGetNotificationsRequest } from '@/internal/client'
 
@@ -37,4 +38,10 @@ export async function markNotificationsAsRead(
   const repository = await getRepository()
   const useCase = new MarkNotificationsAsRead(repository)
   return await useCase.execute(ids)
+}
+
+export async function markAllNotificationsAsRead(): Promise<Result<void>> {
+  const repository = await getRepository()
+  const useCase = new MarkAllNotificationsAsRead(repository)
+  return await useCase.execute()
 }

@@ -51,4 +51,17 @@ export class NotificationRepositoryImpl implements NotificationRepository {
       }
     }
   }
+
+  async markAllAsRead(): Promise<Result<void>> {
+    try {
+      await this.dataSource.markNotificationsAsRead({
+        body: { markAll: true }
+      })
+      return { data: undefined }
+    } catch (error) {
+      return {
+        error: toChorusError(error)
+      }
+    }
+  }
 }

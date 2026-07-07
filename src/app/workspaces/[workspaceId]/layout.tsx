@@ -10,6 +10,7 @@ import { toast } from '@/components/hooks/use-toast'
 import { RoleBadge } from '@/components/role-badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ApprovalRequestStatus } from '@/domain/model/approval-request'
+import { APPROVAL_REQUESTS_FETCH_LIMIT } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
@@ -36,7 +37,10 @@ export default function Layout({
     if (!workspaceId) return
     let cancelled = false
 
-    listApprovalRequests({ filterWorkspaceId: workspaceId }).then((result) => {
+    listApprovalRequests({
+      filterWorkspaceId: workspaceId,
+      paginationLimit: APPROVAL_REQUESTS_FETCH_LIMIT
+    }).then((result) => {
       if (cancelled || result.error) return
       // Matches the incoming/outgoing filters on the transfer-requests page
       // itself (data transfers only, not extraction requests).

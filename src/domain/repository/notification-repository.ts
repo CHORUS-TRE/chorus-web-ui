@@ -8,4 +8,5 @@ export interface NotificationRepository {
     params?: NotificationServiceGetNotificationsRequest
   ): Promise<Result<Notification[]>>
   markAsRead(ids: string[]): Promise<Result<void>>
+  markAllAsRead(): Promise<Result<void>>
 }

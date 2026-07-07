@@ -15,6 +15,7 @@ import {
 } from '@/domain/model/approval-request'
 import { Permission, usePermissions } from '@/hooks/use-permissions'
 import {
+  APPROVAL_REQUESTS_FETCH_LIMIT,
   canActOnStep,
   getDestinationWorkspaceId,
   getSourceWorkspaceId
@@ -53,7 +54,8 @@ export default function WorkspaceTransferRequestsPage() {
     setIsLoading(true)
     try {
       const approvalRequests = await listApprovalRequests({
-        filterWorkspaceId: workspaceId
+        filterWorkspaceId: workspaceId,
+        paginationLimit: APPROVAL_REQUESTS_FETCH_LIMIT
       })
 
       if (approvalRequests?.error) {

@@ -1,9 +1,10 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 
 import type { Notification } from '@/domain/model/notification'
 import { listNotifications } from '@/view-model/notification-view-model'
 
 import {
+  type InboxTab,
   isSystemNotification,
   notificationToInboxItem,
   useNotificationsInbox
@@ -109,7 +110,8 @@ describe('useNotificationsInbox', () => {
           createdAt: new Date('2026-07-01T11:00:00Z'),
           content: { systemNotification: { refreshJWTRequired: true } }
         }
-      ]
+      ],
+      totalItems: 2
     })
 
     const { result } = renderHook(() => useNotificationsInbox('unread'))
@@ -117,16 +119,21 @@ describe('useNotificationsInbox', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
     expect(mockedListNotifications).toHaveBeenCalledWith(
-      expect.objectContaining({ isRead: false })
+      expect.objectContaining({
+        isRead: false,
+        paginationLimit: 20,
+        paginationOffset: 0
+      })
     )
     expect(result.current.items).toHaveLength(2)
     expect(result.current.items.map((i) => i.id)).toEqual(
       expect.arrayContaining(['1', '2'])
     )
+    expect(result.current.totalItems).toBe(2)
   })
 
   it('requests isRead: undefined for the all tab', async () => {
-    mockedListNotifications.mockResolvedValue({ data: [] })
+    mockedListNotifications.mockResolvedValue({ data: [], totalItems: 0 })
 
     const { result } = renderHook(() => useNotificationsInbox('all'))
 
@@ -135,5 +142,43 @@ describe('useNotificationsInbox', () => {
     expect(mockedListNotifications).toHaveBeenCalledWith(
       expect.objectContaining({ isRead: undefined })
     )
+  })
+
+  it('requests the next page with an explicit offset', async () => {
+    mockedListNotifications.mockResolvedValue({ data: [], totalItems: 45 })
+
+    const { result } = renderHook(() => useNotificationsInbox('all'))
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    mockedListNotifications.mockClear()
+    act(() => result.current.setPageIndex(1))
+
+    await waitFor(() =>
+      expect(mockedListNotifications).toHaveBeenCalledWith(
+        expect.objectContaining({ paginationOffset: 20, paginationLimit: 20 })
+      )
+    )
+  })
+
+  it('resets to page 0 and refetches when the tab changes', async () => {
+    mockedListNotifications.mockResolvedValue({ data: [], totalItems: 45 })
+
+    const { result, rerender } = renderHook(
+      ({ tab }) => useNotificationsInbox(tab),
+      { initialProps: { tab: 'all' as InboxTab } }
+    )
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    act(() => result.current.setPageIndex(2))
+    await waitFor(() => expect(result.current.pageIndex).toBe(2))
+
+    mockedListNotifications.mockClear()
+    rerender({ tab: 'unread' })
+
+    await waitFor(() =>
+      expect(mockedListNotifications).toHaveBeenCalledWith(
+        expect.objectContaining({ isRead: false, paginationOffset: 0 })
+      )
+    )
+    expect(result.current.pageIndex).toBe(0)
   })
 })

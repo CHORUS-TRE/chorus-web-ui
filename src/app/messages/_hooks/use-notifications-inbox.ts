@@ -15,6 +15,8 @@ export interface InboxItem {
   approvalRequestId?: string
 }
 
+export const INBOX_PAGE_SIZE = 20
+
 export function isSystemNotification(n: Notification): boolean {
   return !!n.content?.systemNotification
 }
@@ -36,36 +38,60 @@ export function notificationToInboxItem(n: Notification): InboxItem {
   return item
 }
 
-export function useNotificationsInbox(tab: InboxTab) {
+export function useNotificationsInbox(
+  tab: InboxTab,
+  pageSize: number = INBOX_PAGE_SIZE
+) {
   const [items, setItems] = React.useState<InboxItem[]>([])
+  const [totalItems, setTotalItems] = React.useState(0)
+  const [pageIndex, setPageIndex] = React.useState(0)
   const [isLoading, setIsLoading] = React.useState(true)
+  const prevTabRef = React.useRef(tab)
 
   const fetchItems = React.useCallback(async () => {
     setIsLoading(true)
     try {
       const result = await listNotifications({
         isRead: tab === 'unread' ? false : undefined,
-        paginationLimit: 100,
+        paginationLimit: pageSize,
+        paginationOffset: pageIndex * pageSize,
         paginationSortType: 'CREATEDAT',
         paginationSortOrder: 'DESC'
       })
 
       if (result.data) {
-        const mapped = result.data
-          .map(notificationToInboxItem)
-          .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-        setItems(mapped)
+        setItems(result.data.map(notificationToInboxItem))
+        setTotalItems(result.totalItems ?? result.data.length)
       }
     } catch (error) {
       console.error('Failed to fetch notifications:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [tab])
+  }, [tab, pageIndex, pageSize])
 
   React.useEffect(() => {
+    // Switching tabs must reset to page 0 before fetching, not after — a
+    // stale nonzero offset would page into the new tab's result set. If the
+    // offset is already 0, fall through to fetch immediately; otherwise defer
+    // to the next run (triggered by the pageIndex change below).
+    if (prevTabRef.current !== tab) {
+      prevTabRef.current = tab
+      if (pageIndex !== 0) {
+        setPageIndex(0)
+        return
+      }
+    }
     fetchItems()
-  }, [fetchItems])
+  }, [tab, pageIndex, pageSize, fetchItems])
 
-  return { items, isLoading, refetch: fetchItems }
+  return {
+    items,
+    isLoading,
+    totalItems,
+    pageIndex,
+    pageSize,
+    setPageIndex,
+    refetch: fetchItems
+  }
 }

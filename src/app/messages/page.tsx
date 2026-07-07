@@ -5,9 +5,10 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type SortingState,
+  type Updater,
   useReactTable
 } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
@@ -29,18 +30,20 @@ import { getApprovalRequestWorkspaceId } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { getApprovalRequest } from '@/view-model/approval-request-view-model'
-import { markNotificationsAsRead } from '@/view-model/notification-view-model'
+import {
+  markAllNotificationsAsRead,
+  markNotificationsAsRead
+} from '@/view-model/notification-view-model'
 
 import { InboxEmptyState } from './_components/inbox-empty-state'
 import { InboxFilters } from './_components/inbox-filters'
 import { InboxTabs } from './_components/inbox-tabs'
 import {
+  INBOX_PAGE_SIZE,
   type InboxItem,
   type InboxTab,
   useNotificationsInbox
 } from './_hooks/use-notifications-inbox'
-
-const PAGE_SIZE = 20
 
 function makeColumns(
   onViewRequest: (requestId: string) => void,
@@ -149,7 +152,8 @@ export default function MessagesPage() {
     { id: 'timestamp', desc: true }
   ])
 
-  const { items, isLoading, refetch } = useNotificationsInbox(activeTab)
+  const { items, isLoading, totalItems, pageIndex, setPageIndex, refetch } =
+    useNotificationsInbox(activeTab)
 
   const handleTabChange = (tab: InboxTab) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -174,11 +178,9 @@ export default function MessagesPage() {
   }
 
   const handleMarkAllAsRead = async () => {
-    const unreadIds = items.filter((i) => !i.isRead).map((i) => i.id)
-    if (unreadIds.length > 0) {
-      await markNotificationsAsRead(unreadIds)
-      await refreshAll()
-    }
+    await markAllNotificationsAsRead()
+    setPageIndex(0)
+    await refreshAll()
   }
 
   const handleViewRequest = async (requestId: string) => {
@@ -197,25 +199,55 @@ export default function MessagesPage() {
 
   const columns = makeColumns(handleViewRequest, handleMarkAsRead)
 
+  // Pagination is server-driven (page size and offset sent to the API, see
+  // useNotificationsInbox) — `items` is already exactly one page. react-table
+  // only tracks pageIndex/pageCount here for the Previous/Next controls; it
+  // does not slice `items` itself (no getPaginationRowModel).
+  const handlePaginationChange = (updater: Updater<PaginationState>) => {
+    const next =
+      typeof updater === 'function'
+        ? updater({ pageIndex, pageSize: INBOX_PAGE_SIZE })
+        : updater
+    setPageIndex(next.pageIndex)
+  }
+
   const table = useReactTable({
     data: items,
     columns,
-    state: { sorting, globalFilter: searchQuery },
+    state: {
+      sorting,
+      globalFilter: searchQuery,
+      pagination: { pageIndex, pageSize: INBOX_PAGE_SIZE }
+    },
     onSortingChange: setSorting,
     onGlobalFilterChange: setSearchQuery,
+    onPaginationChange: handlePaginationChange,
     globalFilterFn: 'includesString',
+    manualPagination: true,
+    pageCount: Math.max(1, Math.ceil(totalItems / INBOX_PAGE_SIZE)),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: PAGE_SIZE } }
+    getFilteredRowModel: getFilteredRowModel()
   })
 
   const rows = table.getRowModel().rows
-  const totalFiltered = table.getFilteredRowModel().rows.length
-  const { pageIndex, pageSize } = table.getState().pagination
-  const from = totalFiltered === 0 ? 0 : pageIndex * pageSize + 1
-  const to = Math.min((pageIndex + 1) * pageSize, totalFiltered)
+
+  // Search only filters the currently loaded page (there is no backend
+  // full-text search endpoint to page against), so while searching we report
+  // matches on this page rather than a false global total.
+  const isSearching = searchQuery.trim().length > 0
+  const matchesOnPage = rows.length
+  const from = isSearching
+    ? matchesOnPage === 0
+      ? 0
+      : 1
+    : totalItems === 0
+      ? 0
+      : pageIndex * INBOX_PAGE_SIZE + 1
+  const to = isSearching
+    ? matchesOnPage
+    : Math.min((pageIndex + 1) * INBOX_PAGE_SIZE, totalItems)
+  const displayTotal = isSearching ? matchesOnPage : totalItems
 
   if (!user) return null
 
@@ -234,7 +266,7 @@ export default function MessagesPage() {
             variant="ghost"
             size="sm"
             onClick={handleMarkAllAsRead}
-            disabled={items.every((i) => i.isRead)}
+            disabled={totalItems === 0}
           >
             Mark all as read
           </Button>
@@ -310,7 +342,7 @@ export default function MessagesPage() {
         {!isLoading && (
           <CardFooter className="justify-between py-3 text-xs text-muted-foreground">
             <span>
-              {totalFiltered === 0 ? (
+              {displayTotal === 0 ? (
                 ''
               ) : (
                 <>
@@ -318,11 +350,11 @@ export default function MessagesPage() {
                   <strong>
                     {from}–{to}
                   </strong>{' '}
-                  of <strong>{totalFiltered}</strong>
+                  of <strong>{displayTotal}</strong>
                 </>
               )}
             </span>
-            {table.getPageCount() > 1 && (
+            {!isSearching && table.getPageCount() > 1 && (
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"

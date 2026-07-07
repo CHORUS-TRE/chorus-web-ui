@@ -28,6 +28,13 @@ import {
 import { workbenchList } from '@/view-model/workbench-view-model'
 import { workspaceListWithDev } from '@/view-model/workspace-view-model'
 
+// Explicit poll truncation policy: the store caches only the latest N
+// notifications (the backend defaults to 20 if no limit is given at all).
+// Older unread notifications still count toward unreadNotificationsCount
+// (derived from totalItems) but are only reachable through the paginated
+// Messages inbox, not this cached list.
+const NOTIFICATIONS_POLL_LIMIT = 100
+
 export type AppStateStore = {
   workspaces: WorkspaceWithDev[] | undefined
   workbenches: Workbench[] | undefined
@@ -182,7 +189,9 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
 
-    const result = await listNotifications()
+    const result = await listNotifications({
+      paginationLimit: NOTIFICATIONS_POLL_LIMIT
+    })
     if (result.error) {
       // Avoid spamming toasts for background polling errors
       console.error('Failed to refresh notifications:', result.error)

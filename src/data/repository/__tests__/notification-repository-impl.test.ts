@@ -9,6 +9,32 @@ const makeDataSource = (
   ...overrides
 })
 
+describe('NotificationRepositoryImpl.markAllAsRead', () => {
+  it('sends markAll: true rather than a notification id list', async () => {
+    const markNotificationsAsRead = jest.fn().mockResolvedValue(undefined)
+    const ds = makeDataSource({ markNotificationsAsRead })
+    const repo = new NotificationRepositoryImpl(ds)
+
+    const result = await repo.markAllAsRead()
+
+    expect(result.error).toBeUndefined()
+    expect(markNotificationsAsRead).toHaveBeenCalledWith({
+      body: { markAll: true }
+    })
+  })
+
+  it('returns an error on failure', async () => {
+    const ds = makeDataSource({
+      markNotificationsAsRead: () => Promise.reject(new Error('network error'))
+    })
+    const repo = new NotificationRepositoryImpl(ds)
+
+    const result = await repo.markAllAsRead()
+
+    expect(result.error?.message).toBe('network error')
+  })
+})
+
 describe('NotificationRepositoryImpl.list', () => {
   it('surfaces totalItems from the reply alongside the parsed notifications', async () => {
     const ds = makeDataSource({

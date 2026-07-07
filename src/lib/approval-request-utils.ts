@@ -6,6 +6,13 @@ import {
 } from '@/domain/model/approval-request'
 import { downloadApprovalRequestFile } from '@/view-model/approval-request-view-model'
 
+// The backend defaults to a page of 20 when no limit is given. Views that
+// list "all requests for this workspace/tenant" without their own pagination
+// controls pass this explicit limit instead, so they don't silently show a
+// truncated set. Not a substitute for real pagination if a workspace/tenant
+// ever exceeds it.
+export const APPROVAL_REQUESTS_FETCH_LIMIT = 200
+
 export function getSourceWorkspaceId(
   request: ApprovalRequest
 ): string | undefined {
