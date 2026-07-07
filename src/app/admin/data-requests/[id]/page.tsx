@@ -30,10 +30,13 @@ import {
 } from '@/domain/model/approval-request'
 import { User } from '@/domain/model/user'
 import {
+  type ApprovalStep,
   canApproveRequest,
   downloadRequestFiles,
   formatBytes,
   getFiles,
+  getRequiredSteps,
+  getStepDecision,
   getTotalSize
 } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
@@ -45,6 +48,11 @@ import {
 import { listUsers } from '@/view-model/user-view-model'
 
 import { StatusBadge } from '../../../messages/requests/_components/status-badge'
+
+const STEP_LABELS: Record<ApprovalStep, string> = {
+  download: 'Release',
+  upload: 'Receive'
+}
 
 function MetaField({
   label,
@@ -72,7 +80,9 @@ export default function AdminRequestDetailPage() {
 
   const [request, setRequest] = React.useState<ApprovalRequest | null>(null)
   const [requester, setRequester] = React.useState<User | null>(null)
-  const [approver, setApprover] = React.useState<User | null>(null)
+  const [approversById, setApproversById] = React.useState<
+    Record<string, User>
+  >({})
   const [isLoading, setIsLoading] = React.useState(true)
   const [reviewNotes, setReviewNotes] = React.useState('')
   const [isSubmitting, setIsSubmitting] = React.useState(false)
@@ -104,12 +114,19 @@ export default function AdminRequestDetailPage() {
                 if (requesterUser) setRequester(requesterUser)
               }
 
-              if (requestData.approvedById) {
-                const approverUser = usersRes.data.find(
-                  (u) => u.id === requestData.approvedById
+              const approverIds = getRequiredSteps(requestData)
+                .map((step) => getStepDecision(requestData, step)?.approverId)
+                .filter((approverId): approverId is string =>
+                  Boolean(approverId)
                 )
-                if (approverUser) setApprover(approverUser)
+              const approversMap: Record<string, User> = {}
+              for (const approverId of approverIds) {
+                const approverUser = usersRes.data.find(
+                  (u) => u.id === approverId
+                )
+                if (approverUser) approversMap[approverId] = approverUser
               }
+              setApproversById(approversMap)
             }
           }
         }
@@ -142,6 +159,9 @@ export default function AdminRequestDetailPage() {
 
   const files = getFiles(request)
   const totalSize = getTotalSize(request)
+  const decidedSteps = getRequiredSteps(request)
+    .map((step) => ({ step, decision: getStepDecision(request, step) }))
+    .filter((entry) => Boolean(entry.decision?.approvedAt))
   const isExtraction = request.type === ApprovalRequestType.DATA_EXTRACTION
   const isPending = request.status === ApprovalRequestStatus.PENDING
   const isApprover = canApproveRequest(user.id, request)
@@ -284,38 +304,34 @@ export default function AdminRequestDetailPage() {
               </MetaField>
             )}
 
-            {(request.approvedById || request.autoApproved) && (
+            {request.autoApproved ? (
               <MetaField label="Reviewed by">
-                <span className="truncate">
-                  {request.autoApproved
-                    ? 'Auto-approved'
-                    : (approver?.username ?? request.approvedById ?? '—')}
-                </span>
+                <span className="truncate">Auto-approved</span>
               </MetaField>
-            )}
-
-            {request.approvedAt && (
-              <MetaField label="Reviewed">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-muted-foreground">
-                    {formatDistanceToNow(new Date(request.approvedAt), {
-                      addSuffix: true
-                    })}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground/70">
-                    {new Date(request.approvedAt).toLocaleDateString(
-                      undefined,
-                      {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }
+            ) : (
+              decidedSteps.map(({ step, decision }) => (
+                <MetaField
+                  key={step}
+                  label={`Reviewed by (${STEP_LABELS[step]})`}
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <span className="truncate">
+                      {(decision?.approverId
+                        ? approversById[decision.approverId]?.username
+                        : undefined) ??
+                        decision?.approverId ??
+                        '—'}
+                    </span>
+                    {decision?.approvedAt && (
+                      <span className="text-[10px] text-muted-foreground/70">
+                        {formatDistanceToNow(new Date(decision.approvedAt), {
+                          addSuffix: true
+                        })}
+                      </span>
                     )}
-                  </span>
-                </div>
-              </MetaField>
+                  </div>
+                </MetaField>
+              ))
             )}
           </CardContent>
         </Card>

@@ -5,13 +5,25 @@ export const SystemNotificationSchema = z.object({
 })
 
 export const ApprovalRequestNotificationSchema = z.object({
-  approvalRequestId: z.string().optional()
+  approvalRequestId: z.string().optional(),
+  // Lowercase casing (not autoApproved) matches the backend API field name.
+  autoapproved: z.boolean().optional()
 })
 
-export const NotificationContentSchema = z.object({
-  systemNotification: SystemNotificationSchema.optional(),
-  approvalRequestNotification: ApprovalRequestNotificationSchema.optional()
-})
+// Mirrors the backend's `oneof content` — a notification carries at most one
+// of the two variants, never both. The wire shape has no literal tag field to
+// switch on (just whichever key is present), so this can't be a
+// z.discriminatedUnion; the refine below enforces the same invariant instead.
+export const NotificationContentSchema = z
+  .object({
+    systemNotification: SystemNotificationSchema.optional(),
+    approvalRequestNotification: ApprovalRequestNotificationSchema.optional()
+  })
+  .refine(
+    (content) =>
+      !(content.systemNotification && content.approvalRequestNotification),
+    { message: 'NotificationContent must not set both oneof variants' }
+  )
 
 export const NotificationSchema = z.object({
   id: z.string().optional(),

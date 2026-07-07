@@ -29,6 +29,8 @@ export class ApprovalRequestRepositoryImpl
 
   async approve(action: ApproveApprovalRequestAction): Promise<Result<void>> {
     try {
+      // Domain action field names (approved/reason) intentionally differ from
+      // the API's (approve/comment); mapped explicitly here at the boundary.
       await this.dataSource.approve({
         id: action.id,
         body: {
@@ -90,7 +92,7 @@ export class ApprovalRequestRepositoryImpl
           title: request.title,
           description: request.description,
           sourceWorkspaceId: request.sourceWorkspaceId,
-          filePaths: request.fileIds
+          filePaths: request.filePaths
         }
       })
 
@@ -122,7 +124,7 @@ export class ApprovalRequestRepositoryImpl
           description: request.description,
           sourceWorkspaceId: request.sourceWorkspaceId,
           destinationWorkspaceId: request.destinationWorkspaceId,
-          filePaths: request.fileIds
+          filePaths: request.filePaths
         }
       })
 

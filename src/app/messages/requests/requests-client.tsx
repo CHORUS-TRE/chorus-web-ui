@@ -57,6 +57,7 @@ import {
 } from '@/domain/model/approval-request'
 import { WorkspaceWithDev } from '@/domain/model/workspace'
 import {
+  canApproveRequest,
   formatBytes,
   getFiles,
   getTotalSize
@@ -631,7 +632,7 @@ export default function RequestsClient({
     () =>
       requests.filter(
         (req) =>
-          req.approverIds?.includes(currentUser.id) &&
+          canApproveRequest(currentUser.id, req) &&
           req.requesterId !== currentUser.id
       ),
     [requests, currentUser.id]
