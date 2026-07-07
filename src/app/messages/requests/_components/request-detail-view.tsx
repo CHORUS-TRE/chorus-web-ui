@@ -51,6 +51,10 @@ import {
   approveApprovalRequest,
   getApprovalRequest
 } from '@/view-model/approval-request-view-model'
+import {
+  listNotifications,
+  markNotificationsAsRead
+} from '@/view-model/notification-view-model'
 import { getUser, listUsers } from '@/view-model/user-view-model'
 import { workspaceGet } from '@/view-model/workspace-view-model'
 
@@ -420,7 +424,7 @@ export function RequestDetailView({
   const destinationWorkspaceId = request.dataTransfer?.destinationWorkspaceId
   const requiredSteps = getRequiredSteps(request)
   const canDownload =
-    isOwner && isExtraction && request.status === ApprovalRequestStatus.APPROVED
+    isExtraction && request.status === ApprovalRequestStatus.APPROVED
 
   const stepWorkspaceName = (step: ApprovalStep) =>
     step === 'download'
@@ -429,12 +433,31 @@ export function RequestDetailView({
 
   const stepLabel = (step: ApprovalStep) =>
     step === 'download'
-      ? `Upload (from ${stepWorkspaceName(step)})`
-      : `Download (to ${stepWorkspaceName(step)})`
+      ? `Release (from ${stepWorkspaceName(step)})`
+      : `Receive (in ${stepWorkspaceName(step)})`
 
   const stepsExplanation = isExtraction
     ? 'The source workspace must approve this request before the files can be downloaded.'
     : 'Moving files between workspaces takes two approvals: the source workspace approves releasing the files, then the destination workspace approves receiving them. Both are required before the files move.'
+
+  const markRequestNotificationAsRead = async (requestId: string) => {
+    try {
+      const result = await listNotifications({ isRead: false })
+      const matchingIds = (result.data ?? [])
+        .filter(
+          (n) =>
+            n.content?.approvalRequestNotification?.approvalRequestId ===
+            requestId
+        )
+        .map((n) => n.id)
+        .filter((id): id is string => Boolean(id))
+
+      if (matchingIds.length > 0) await markNotificationsAsRead(matchingIds)
+    } catch (err) {
+      // Best-effort: an approval must not fail because the inbox couldn't sync.
+      console.error('Failed to mark request notification as read:', err)
+    }
+  }
 
   const handleAction = async (approved: boolean) => {
     if (!request.id) return
@@ -451,6 +474,7 @@ export function RequestDetailView({
         description: 'The request has been processed successfully.'
       })
       setReviewNotes('')
+      await markRequestNotificationAsRead(request.id)
       onReviewed?.()
       // Re-fetch so reviewer/timestamp metadata reflects the server state
       // rather than a partial local patch.
@@ -652,15 +676,24 @@ export function RequestDetailView({
           <CardContent className="space-y-4 pb-4">
             {requiredSteps.map((step) => {
               const decision = getStepDecision(request, step)
-              const approverName = decision?.approverId
-                ? (stepApprovers[decision.approverId]?.username ??
-                  decision.approverId)
-                : undefined
+              // No per-step decision is ever recorded for an auto-approved
+              // request, so without this the step would show "Awaiting
+              // approval" even though the request itself is Approved.
+              const isAutoApprovedStep = !decision && request.autoApproved
+              const effectiveDecision = isAutoApprovedStep
+                ? { approve: true, approvedAt: request.approvedAt }
+                : decision
+              const approverName = isAutoApprovedStep
+                ? 'Auto-approved'
+                : decision?.approverId
+                  ? (stepApprovers[decision.approverId]?.username ??
+                    decision.approverId)
+                  : undefined
               return (
                 <StepRow
                   key={step}
                   label={stepLabel(step)}
-                  decision={decision}
+                  decision={effectiveDecision}
                   approverName={approverName}
                   canAct={isPending && canActOnStep(user.id, request, step)}
                   isSubmitting={isSubmitting}

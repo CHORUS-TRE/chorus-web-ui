@@ -187,9 +187,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       const systemNotifications = result.data.filter(
         (n) => n.content?.systemNotification
       )
-      const regularNotifications = result.data.filter(
-        (n) => !n.content?.systemNotification
-      )
+      const regularNotifications = result.data
 
       // Set only regular notifications to the state (don't display system notifications)
       const stableNotifications = stableUpdate(
@@ -208,17 +206,6 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
 
         if (needsRefresh) {
           await refreshToken()
-        }
-
-        // Mark system notifications as read so they don't stay in the unread count
-        const systemIds = systemNotifications
-          .map((n) => n.id)
-          .filter((id): id is string => !!id)
-
-        if (systemIds.length > 0) {
-          await markNotificationsAsRead(systemIds)
-          // Refresh unread count to reflect the marking as read
-          get().refreshUnreadNotificationsCount()
         }
       }
     }

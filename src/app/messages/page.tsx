@@ -1,185 +1,221 @@
 'use client'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable
+} from '@tanstack/react-table'
+import { formatDistanceToNow } from 'date-fns'
+import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
 
-import { useToast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import {
-  ApprovalRequest,
-  ApprovalRequestStatus
-} from '@/domain/model/approval-request'
-import { downloadRequestFiles, getFiles } from '@/lib/approval-request-utils'
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { getApprovalRequestWorkspaceId } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAppState } from '@/stores/app-state-store'
+import { getApprovalRequest } from '@/view-model/approval-request-view-model'
 import { markNotificationsAsRead } from '@/view-model/notification-view-model'
 
-import { ApprovalDialog } from './_components/approval-dialog'
 import { InboxEmptyState } from './_components/inbox-empty-state'
-import { type InboxFilter, InboxFilters } from './_components/inbox-filters'
-import { InboxItemRow } from './_components/inbox-item-row'
+import { InboxFilters } from './_components/inbox-filters'
 import { InboxTabs } from './_components/inbox-tabs'
 import {
-  filterInboxItems,
+  type InboxItem,
   type InboxTab,
-  useInboxData
-} from './_hooks/use-inbox-data'
+  useNotificationsInbox
+} from './_hooks/use-notifications-inbox'
 
 const PAGE_SIZE = 20
+
+function makeColumns(
+  onViewRequest: (requestId: string) => void,
+  onMarkAsRead: (id: string) => void
+): ColumnDef<InboxItem>[] {
+  return [
+    {
+      accessorKey: 'title',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-3 h-8 text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Notification
+          <ArrowUpDown className="ml-1.5 h-3 w-3" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const item = row.original
+        return (
+          <div className="flex items-center gap-2">
+            {!item.isRead && (
+              <span className="h-2 w-2 flex-none rounded-full bg-primary" />
+            )}
+            <span
+              className={`text-sm ${!item.isRead ? 'font-bold' : 'font-medium'}`}
+            >
+              {item.title}
+            </span>
+          </div>
+        )
+      },
+      filterFn: 'includesString'
+    },
+    {
+      accessorKey: 'timestamp',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-3 h-8 text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Received
+          <ArrowUpDown className="ml-1.5 h-3 w-3" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <span className="text-xs text-muted-foreground">
+          {formatDistanceToNow(row.original.timestamp, { addSuffix: true })}
+        </span>
+      ),
+      sortingFn: 'datetime'
+    },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => {
+        const item = row.original
+        return (
+          <div className="flex items-center justify-end gap-1.5">
+            {item.approvalRequestId && (
+              <Button
+                variant="outline"
+                size="xs"
+                className="border-muted/30 text-muted-foreground"
+                onClick={() => onViewRequest(item.approvalRequestId!)}
+              >
+                View Request
+              </Button>
+            )}
+            {!item.isRead && (
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-muted-foreground"
+                onClick={() => onMarkAsRead(item.id)}
+              >
+                Mark as read
+              </Button>
+            )}
+          </div>
+        )
+      },
+      enableSorting: false
+    }
+  ]
+}
 
 export default function MessagesPage() {
   const { user } = useAuthentication()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { toast } = useToast()
-  const { refreshNotifications, refreshUnreadNotificationsCount } =
-    useAppState()
+  const {
+    unreadNotificationsCount,
+    refreshNotifications,
+    refreshUnreadNotificationsCount
+  } = useAppState()
 
-  // URL-driven state
-  const activeTab = (searchParams.get('tab') as InboxTab) || 'inbox'
-  const activeFilter = (searchParams.get('filter') as InboxFilter) || 'pending'
+  const rawTab = searchParams.get('tab')
+  const activeTab: InboxTab = rawTab === 'all' ? 'all' : 'unread'
   const [searchQuery, setSearchQuery] = React.useState('')
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: 'timestamp', desc: true }
+  ])
 
-  // Pagination
-  const [page, setPage] = React.useState(0)
-
-  // Approval dialog
-  const [dialogRequest, setDialogRequest] =
-    React.useState<ApprovalRequest | null>(null)
-  const [dialogAction, setDialogAction] = React.useState<
-    'approve' | 'reject' | null
-  >(null)
-  const [dialogOpen, setDialogOpen] = React.useState(false)
-
-  const userId = user?.id || ''
-  const { inboxItems, outboxItems, refetchRequests } = useInboxData(userId)
-
-  const currentItems = activeTab === 'inbox' ? inboxItems : outboxItems
-  const filteredItems = filterInboxItems(
-    currentItems,
-    activeFilter,
-    searchQuery
-  )
-
-  // Compute counts for each filter (without search query)
-  const filterCounts = React.useMemo(() => {
-    const items = activeTab === 'inbox' ? inboxItems : outboxItems
-    return {
-      pending: items.filter((i) => i.status === ApprovalRequestStatus.PENDING)
-        .length,
-      approved: items.filter((i) => i.status === ApprovalRequestStatus.APPROVED)
-        .length,
-      rejected: items.filter((i) => i.status === ApprovalRequestStatus.REJECTED)
-        .length,
-      unread: items.filter((i) => !i.isRead).length,
-      all: items.length
-    }
-  }, [inboxItems, outboxItems, activeTab])
-
-  const totalFiltered = filteredItems.length
-  const totalPages = Math.ceil(totalFiltered / PAGE_SIZE)
-  const paginatedItems = filteredItems.slice(
-    page * PAGE_SIZE,
-    (page + 1) * PAGE_SIZE
-  )
-  const from = totalFiltered === 0 ? 0 : page * PAGE_SIZE + 1
-  const to = Math.min((page + 1) * PAGE_SIZE, totalFiltered)
-
-  const inboxPendingCount = inboxItems.filter(
-    (i) => i.status === ApprovalRequestStatus.PENDING
-  ).length
-  const outboxPendingCount = outboxItems.filter(
-    (i) => i.status === ApprovalRequestStatus.PENDING
-  ).length
-
-  // Reset page on filter/tab change
-  React.useEffect(() => {
-    setPage(0)
-  }, [activeTab, activeFilter, searchQuery])
-
-  const updateParams = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams.toString())
-    for (const [key, value] of Object.entries(updates)) {
-      if (value === null) {
-        params.delete(key)
-      } else {
-        params.set(key, value)
-      }
-    }
-    const qs = params.toString()
-    router.replace(`/messages${qs ? `?${qs}` : ''}`, { scroll: false })
-  }
+  const { items, isLoading, refetch } = useNotificationsInbox(activeTab)
 
   const handleTabChange = (tab: InboxTab) => {
-    updateParams({ tab, filter: null })
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('filter')
+    params.set('tab', tab)
+    router.replace(`/messages?${params.toString()}`, { scroll: false })
   }
 
-  const handleFilterChange = (filter: InboxFilter) => {
-    updateParams({ filter })
+  const refreshAll = async () => {
+    // Preserves the existing 2s wait for backend eventual-consistency before refetching.
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await Promise.all([
+      refreshNotifications(),
+      refreshUnreadNotificationsCount(),
+      refetch()
+    ])
   }
 
   const handleMarkAsRead = async (id: string) => {
-    const item = inboxItems.find((i) => i.id === id)
-    if (item?.kind === 'notification') {
-      await markNotificationsAsRead([id])
-      // Wait for backend to process, then refresh
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      await Promise.all([
-        refreshNotifications(),
-        refreshUnreadNotificationsCount(),
-        refetchRequests()
-      ])
-    }
+    await markNotificationsAsRead([id])
+    await refreshAll()
   }
 
   const handleMarkAllAsRead = async () => {
-    const unreadNotifIds = inboxItems
-      .filter((i) => !i.isRead && i.kind === 'notification')
-      .map((i) => i.id)
-      .filter(Boolean)
-    if (unreadNotifIds.length > 0) {
-      await markNotificationsAsRead(unreadNotifIds)
-      // Wait for backend to process, then refresh
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      await Promise.all([
-        refreshNotifications(),
-        refreshUnreadNotificationsCount(),
-        refetchRequests()
-      ])
+    const unreadIds = items.filter((i) => !i.isRead).map((i) => i.id)
+    if (unreadIds.length > 0) {
+      await markNotificationsAsRead(unreadIds)
+      await refreshAll()
     }
   }
 
-  const handleApprove = (req: ApprovalRequest) => {
-    setDialogRequest(req)
-    setDialogAction('approve')
-    setDialogOpen(true)
+  const handleViewRequest = async (requestId: string) => {
+    const result = await getApprovalRequest(requestId)
+    const request = result.data
+    const workspaceId = request
+      ? getApprovalRequestWorkspaceId(user?.id, request)
+      : undefined
+
+    router.push(
+      workspaceId
+        ? `/workspaces/${workspaceId}/transfer-requests/${requestId}`
+        : `/messages/requests/${requestId}`
+    )
   }
 
-  const handleReject = (req: ApprovalRequest) => {
-    setDialogRequest(req)
-    setDialogAction('reject')
-    setDialogOpen(true)
-  }
+  const columns = makeColumns(handleViewRequest, handleMarkAsRead)
 
-  const handleDownload = async (req: ApprovalRequest) => {
-    if (!req.id) return
-    await downloadRequestFiles(req.id, getFiles(req), (fileName) => {
-      toast({
-        variant: 'destructive',
-        title: 'Download failed',
-        description: `Failed to download ${fileName}`
-      })
-    })
-  }
+  const table = useReactTable({
+    data: items,
+    columns,
+    state: { sorting, globalFilter: searchQuery },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setSearchQuery,
+    globalFilterFn: 'includesString',
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: PAGE_SIZE } }
+  })
 
-  const handleViewRequest = (requestId: string) => {
-    router.push(`/messages/requests/${requestId}`)
-  }
-
-  const handleApprovalComplete = () => {
-    refetchRequests()
-  }
+  const rows = table.getRowModel().rows
+  const totalFiltered = table.getFilteredRowModel().rows.length
+  const { pageIndex, pageSize } = table.getState().pagination
+  const from = totalFiltered === 0 ? 0 : pageIndex * pageSize + 1
+  const to = Math.min((pageIndex + 1) * pageSize, totalFiltered)
 
   if (!user) return null
 
@@ -189,82 +225,131 @@ export default function MessagesPage() {
         <InboxTabs
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          inboxPendingCount={inboxPendingCount}
-          outboxPendingCount={outboxPendingCount}
+          unreadCount={unreadNotificationsCount ?? 0}
         />
+
+        {activeTab === 'unread' && (
+          <Button
+            className="text-muted-foreground"
+            variant="ghost"
+            size="sm"
+            onClick={handleMarkAllAsRead}
+            disabled={items.every((i) => i.isRead)}
+          >
+            Mark all as read
+          </Button>
+        )}
       </div>
 
-      <InboxFilters
-        activeFilter={activeFilter}
-        onFilterChange={handleFilterChange}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        filterCounts={filterCounts}
-      />
+      <Card variant="glass" className="flex flex-col">
+        <CardHeader className="pb-3 pt-4">
+          <InboxFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+        </CardHeader>
 
-      {/* Message list */}
-      {paginatedItems.length === 0 ? (
-        <InboxEmptyState tab={activeTab} />
-      ) : (
-        <div className="flex flex-col gap-3">
-          {paginatedItems.map((item) => (
-            <InboxItemRow
-              key={item.id}
-              item={item}
-              currentUserId={userId}
-              onMarkAsRead={handleMarkAsRead}
-              onApprove={handleApprove}
-              onReject={handleReject}
-              onDownload={handleDownload}
-              onViewRequest={handleViewRequest}
-            />
-          ))}
-        </div>
-      )}
+        <CardContent className="p-0">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16 text-sm text-muted-foreground">
+              Loading…
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((hg) => (
+                  <TableRow key={hg.id} className="hover:bg-transparent">
+                    {hg.headers.map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className="h-9 px-3 text-muted-foreground"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {rows.length === 0 ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={columns.length} className="p-0">
+                      <InboxEmptyState
+                        tab={activeTab}
+                        hasSearchQuery={!!searchQuery}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      className="border-muted/20 transition-colors hover:bg-muted/10"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className="px-3 py-2.5">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
 
-      {/* Pagination */}
-      {totalFiltered > PAGE_SIZE && (
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>
-            Showing{' '}
-            <strong>
-              {from}–{to}
-            </strong>{' '}
-            of <strong>{totalFiltered}</strong>
-          </span>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => setPage((p) => p - 1)}
-              disabled={page === 0}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="px-1 tabular-nums">
-              {page + 1} / {totalPages}
+        {!isLoading && (
+          <CardFooter className="justify-between py-3 text-xs text-muted-foreground">
+            <span>
+              {totalFiltered === 0 ? (
+                ''
+              ) : (
+                <>
+                  Showing{' '}
+                  <strong>
+                    {from}–{to}
+                  </strong>{' '}
+                  of <strong>{totalFiltered}</strong>
+                </>
+              )}
             </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => setPage((p) => p + 1)}
-              disabled={page >= totalPages - 1}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <ApprovalDialog
-        request={dialogRequest}
-        action={dialogAction}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onComplete={handleApprovalComplete}
-      />
+            {table.getPageCount() > 1 && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="px-1 tabular-nums">
+                  {pageIndex + 1} / {table.getPageCount()}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </CardFooter>
+        )}
+      </Card>
     </div>
   )
 }

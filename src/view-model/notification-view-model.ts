@@ -25,9 +25,12 @@ export async function listNotifications(
 }
 
 export async function countUnreadNotifications(): Promise<Result<number>> {
-  const repository = await getRepository()
-  const useCase = new CountUnreadNotifications(repository)
-  return await useCase.execute()
+  const list = await listNotifications()
+  if (list.error) {
+    return { error: list.error }
+  }
+  const count = list.data?.filter((n) => !n.readAt).length ?? 0
+  return { data: count }
 }
 
 export async function markNotificationsAsRead(

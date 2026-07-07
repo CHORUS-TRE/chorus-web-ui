@@ -82,6 +82,25 @@ export function canApproveRequest(
   )
 }
 
+/**
+ * Which workspace `userId` should land in when viewing this request: the
+ * source workspace if they're the pending "download" (release) approver, the
+ * destination workspace if they're the pending "upload" (receive) approver,
+ * otherwise the source workspace as a default.
+ */
+export function getApprovalRequestWorkspaceId(
+  userId: string | undefined,
+  request: ApprovalRequest
+): string | undefined {
+  if (canActOnStep(userId, request, 'download')) {
+    return getSourceWorkspaceId(request)
+  }
+  if (canActOnStep(userId, request, 'upload')) {
+    return getDestinationWorkspaceId(request)
+  }
+  return getSourceWorkspaceId(request)
+}
+
 export function formatBytes(bytesStr?: string): string {
   const bytes = parseInt(bytesStr || '0')
   if (bytes === 0) return '—'

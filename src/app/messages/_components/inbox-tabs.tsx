@@ -2,38 +2,35 @@
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import type { InboxTab } from '../_hooks/use-inbox-data'
+import type { InboxTab } from '../_hooks/use-notifications-inbox'
 
 interface InboxTabsProps {
   activeTab: InboxTab
   onTabChange: (tab: InboxTab) => void
-  inboxPendingCount: number
-  outboxPendingCount: number
+  unreadCount: number
 }
 
 export function InboxTabs({
   activeTab,
   onTabChange,
-  inboxPendingCount,
-  outboxPendingCount
+  unreadCount
 }: InboxTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as InboxTab)}>
       <TabsList>
         <TabsTrigger
-          value="inbox"
+          value="unread"
           className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
         >
-          Inbox
-          {inboxPendingCount > 0 && ` (${inboxPendingCount})`}
+          Unread
+          {unreadCount > 0 && ` (${unreadCount})`}
         </TabsTrigger>
 
         <TabsTrigger
-          value="outbox"
+          value="all"
           className="pb-3 pr-4 pt-2 font-semibold text-muted-foreground"
         >
-          Outbox
-          {outboxPendingCount > 0 && ` (${outboxPendingCount})`}
+          All
         </TabsTrigger>
       </TabsList>
     </Tabs>
