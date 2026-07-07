@@ -80,12 +80,11 @@ function SidebarContent({
   const { isAdmin } = useAuthorization()
   const displayParticipatingCenters = useDisplayParticipatingCenters()
   const currentTab = searchParams.get('tab')
-  const { unreadNotificationsCount, approvalRequestCounts } = useAppState()
-  const pendingApprovalRequestsCount =
-    approvalRequestCounts?.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING']
-
-  const messagesBadgeCount =
-    (unreadNotificationsCount ?? 0) + (pendingApprovalRequestsCount ?? 0)
+  const { unreadNotificationsCount } = useAppState()
+  // Unread notifications only: an actionable approval request already has a
+  // linked notification, so summing in the pending-request count double-
+  // counted it and also lit the badge for the user's own outgoing requests.
+  const messagesBadgeCount = unreadNotificationsCount ?? 0
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
