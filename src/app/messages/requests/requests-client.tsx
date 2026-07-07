@@ -622,6 +622,7 @@ export default function RequestsClient({
   >(null)
   const { toast } = useToast()
   const router = useRouter()
+  const onApprovalDecision = useAppState((state) => state.onApprovalDecision)
 
   const myRequests = React.useMemo(
     () => requests.filter((req) => req.requesterId === currentUser.id),
@@ -685,6 +686,7 @@ export default function RequestsClient({
       setSelectedRequest(null)
       setReviewNotes('')
       setActiveAction(null)
+      await onApprovalDecision(selectedRequest.id)
       router.refresh()
     } else {
       toast({

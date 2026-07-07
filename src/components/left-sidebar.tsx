@@ -14,7 +14,6 @@ import {
   Store
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React from 'react'
 
 import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
 import { Link } from '@/components/ui/link'
@@ -24,7 +23,6 @@ import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { countMyApprovalRequests } from '@/view-model/approval-request-view-model'
 
 import packageInfo from '../../package.json'
 
@@ -82,23 +80,9 @@ function SidebarContent({
   const { isAdmin } = useAuthorization()
   const displayParticipatingCenters = useDisplayParticipatingCenters()
   const currentTab = searchParams.get('tab')
-  const { unreadNotificationsCount } = useAppState()
-  const [pendingApprovalRequestsCount, setPendingApprovalRequestsCount] =
-    React.useState<number>()
-
-  React.useEffect(() => {
-    async function loadPendingApprovalRequestsCount() {
-      const result = await countMyApprovalRequests()
-      if (result.error) {
-        console.error('Failed to load approval requests count:', result.error)
-        return
-      }
-      setPendingApprovalRequestsCount(
-        result.data?.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING'] ?? 0
-      )
-    }
-    loadPendingApprovalRequestsCount()
-  }, [])
+  const { unreadNotificationsCount, approvalRequestCounts } = useAppState()
+  const pendingApprovalRequestsCount =
+    approvalRequestCounts?.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING']
 
   const messagesBadgeCount =
     (unreadNotificationsCount ?? 0) + (pendingApprovalRequestsCount ?? 0)

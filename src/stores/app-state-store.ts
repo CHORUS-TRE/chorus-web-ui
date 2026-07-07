@@ -7,6 +7,7 @@ import { toast } from '@/components/hooks/use-toast'
 import {
   App,
   AppInstance,
+  ApprovalRequestCount,
   Notification,
   User,
   Workbench,
@@ -19,6 +20,7 @@ import type {
 } from '@/types/file-system'
 import { listAppInstances } from '@/view-model/app-instance-view-model'
 import { appList } from '@/view-model/app-view-model'
+import { countMyApprovalRequests } from '@/view-model/approval-request-view-model'
 import { refreshToken } from '@/view-model/authentication-view-model'
 import {
   countUnreadNotifications,
@@ -35,6 +37,13 @@ import { workspaceListWithDev } from '@/view-model/workspace-view-model'
 // Messages inbox, not this cached list.
 const NOTIFICATIONS_POLL_LIMIT = 100
 
+// Page size used when searching unread notifications for the one(s) linked
+// to a decided approval request. Bounded by totalItems so it never loops
+// forever, but pages past the first 100 so a match isn't missed just because
+// newer unread notifications pushed it off page one (see onApprovalDecision).
+const READ_SYNC_SEARCH_PAGE_SIZE = 100
+const READ_SYNC_SEARCH_MAX_PAGES = 50
+
 export type AppStateStore = {
   workspaces: WorkspaceWithDev[] | undefined
   workbenches: Workbench[] | undefined
@@ -42,6 +51,7 @@ export type AppStateStore = {
   appInstances: AppInstance[] | undefined
   notifications: Notification[] | undefined
   unreadNotificationsCount: number | undefined
+  approvalRequestCounts: ApprovalRequestCount | undefined
   uploads: Record<string, FileSystemUploadItem> | undefined
   folderBatches: Record<string, FolderUploadBatch> | undefined
 
@@ -51,6 +61,8 @@ export type AppStateStore = {
   refreshAppInstances: () => Promise<void>
   refreshNotifications: () => Promise<void>
   refreshUnreadNotificationsCount: () => Promise<void>
+  refreshApprovalRequestCounts: () => Promise<void>
+  onApprovalDecision: (requestId: string) => Promise<void>
   startNotificationsPolling: (intervalMs?: number) => void
   stopNotificationsPolling: () => void
   clearState: () => void
@@ -88,6 +100,43 @@ function stableUpdate<T>(existing: T[] | undefined, incoming: T[]): T[] {
   return incoming
 }
 
+/**
+ * Finds the ids of unread notifications linked to `requestId`, paging
+ * through the unread set (bounded by totalItems) instead of only checking
+ * the first page — a decided request's notification may not be among the
+ * newest unread items.
+ */
+async function findUnreadNotificationIdsForApprovalRequest(
+  requestId: string
+): Promise<string[]> {
+  const matches: string[] = []
+  let offset = 0
+
+  for (let page = 0; page < READ_SYNC_SEARCH_MAX_PAGES; page++) {
+    const result = await listNotifications({
+      isRead: false,
+      paginationLimit: READ_SYNC_SEARCH_PAGE_SIZE,
+      paginationOffset: offset
+    })
+    if (result.error || !result.data || result.data.length === 0) break
+
+    for (const n of result.data) {
+      if (
+        n.id &&
+        n.content?.approvalRequestNotification?.approvalRequestId === requestId
+      ) {
+        matches.push(n.id)
+      }
+    }
+
+    offset += result.data.length
+    const total = result.totalItems ?? result.data.length
+    if (offset >= total) break
+  }
+
+  return matches
+}
+
 export const useAppStateStore = create<AppStateStore>((set, get) => ({
   workspaces: undefined,
   workbenches: undefined,
@@ -95,6 +144,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   appInstances: undefined,
   notifications: undefined,
   unreadNotificationsCount: undefined,
+  approvalRequestCounts: undefined,
   uploads: undefined,
   folderBatches: undefined,
   notificationsPollingInterval: null,
@@ -237,6 +287,39 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
     }
   },
 
+  refreshApprovalRequestCounts: async () => {
+    const result = await countMyApprovalRequests()
+    if (result.error) {
+      console.error('Failed to refresh approval request counts:', result.error)
+      return
+    }
+    if (result.data) {
+      set({ approvalRequestCounts: result.data })
+    }
+  },
+
+  onApprovalDecision: async (requestId: string) => {
+    // Best-effort: an approval must not fail or block because the inbox
+    // couldn't sync. Errors here are logged, never surfaced or rethrown.
+    try {
+      const notificationIds =
+        await findUnreadNotificationIdsForApprovalRequest(requestId)
+      if (notificationIds.length > 0) {
+        await markNotificationsAsRead(notificationIds)
+      }
+    } catch (error) {
+      console.error(
+        'Failed to mark linked notifications as read after approval decision:',
+        error
+      )
+    }
+
+    await Promise.all([
+      get().refreshNotifications(),
+      get().refreshApprovalRequestCounts()
+    ])
+  },
+
   startNotificationsPolling: (intervalMs: number = 30 * 1000) => {
     const { stopNotificationsPolling, refreshNotifications } = get()
     stopNotificationsPolling()
@@ -268,6 +351,7 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       appInstances: undefined,
       notifications: undefined,
       unreadNotificationsCount: undefined,
+      approvalRequestCounts: undefined,
       uploads: undefined,
       folderBatches: undefined
     })
@@ -285,7 +369,8 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       get().refreshWorkspaces(),
       get().refreshWorkbenches(),
       get().refreshApps(),
-      get().refreshAppInstances()
+      get().refreshAppInstances(),
+      get().refreshApprovalRequestCounts()
     ])
 
     get().startNotificationsPolling()

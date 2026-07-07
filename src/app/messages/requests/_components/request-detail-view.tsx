@@ -47,14 +47,11 @@ import {
   getTotalSize
 } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import {
   approveApprovalRequest,
   getApprovalRequest
 } from '@/view-model/approval-request-view-model'
-import {
-  listNotifications,
-  markNotificationsAsRead
-} from '@/view-model/notification-view-model'
 import { getUser, listUsers } from '@/view-model/user-view-model'
 import { workspaceGet } from '@/view-model/workspace-view-model'
 
@@ -234,6 +231,7 @@ export function RequestDetailView({
 }) {
   const { toast } = useToast()
   const { user } = useAuthentication()
+  const onApprovalDecision = useAppState((state) => state.onApprovalDecision)
 
   const [request, setRequest] = React.useState<ApprovalRequest | null>(null)
   const [requester, setRequester] = React.useState<User | null>(null)
@@ -440,28 +438,6 @@ export function RequestDetailView({
     ? 'The source workspace must approve this request before the files can be downloaded.'
     : 'Moving files between workspaces takes two approvals: the source workspace approves releasing the files, then the destination workspace approves receiving them. Both are required before the files move.'
 
-  const markRequestNotificationAsRead = async (requestId: string) => {
-    try {
-      const result = await listNotifications({
-        isRead: false,
-        paginationLimit: 100
-      })
-      const matchingIds = (result.data ?? [])
-        .filter(
-          (n) =>
-            n.content?.approvalRequestNotification?.approvalRequestId ===
-            requestId
-        )
-        .map((n) => n.id)
-        .filter((id): id is string => Boolean(id))
-
-      if (matchingIds.length > 0) await markNotificationsAsRead(matchingIds)
-    } catch (err) {
-      // Best-effort: an approval must not fail because the inbox couldn't sync.
-      console.error('Failed to mark request notification as read:', err)
-    }
-  }
-
   const handleAction = async (approved: boolean) => {
     if (!request.id) return
     setIsSubmitting(true)
@@ -477,7 +453,7 @@ export function RequestDetailView({
         description: 'The request has been processed successfully.'
       })
       setReviewNotes('')
-      await markRequestNotificationAsRead(request.id)
+      await onApprovalDecision(request.id)
       onReviewed?.()
       // Re-fetch so reviewer/timestamp metadata reflects the server state
       // rather than a partial local patch.
