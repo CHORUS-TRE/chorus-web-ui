@@ -93,7 +93,7 @@ describe('useNotificationsInbox', () => {
     mockedListNotifications.mockReset()
   })
 
-  it('requests isRead: false for the unread tab and includes all notification types', async () => {
+  it('requests isRead: false for the unread tab and excludes system notifications', async () => {
     mockedListNotifications.mockResolvedValue({
       data: [
         {
@@ -125,11 +125,9 @@ describe('useNotificationsInbox', () => {
         paginationOffset: 0
       })
     )
-    expect(result.current.items).toHaveLength(2)
-    expect(result.current.items.map((i) => i.id)).toEqual(
-      expect.arrayContaining(['1', '2'])
-    )
-    expect(result.current.totalItems).toBe(2)
+    // System notifications are never rendered, only the approval-request one.
+    expect(result.current.items).toHaveLength(1)
+    expect(result.current.items[0].id).toBe('1')
   })
 
   it('requests isRead: undefined for the all tab', async () => {

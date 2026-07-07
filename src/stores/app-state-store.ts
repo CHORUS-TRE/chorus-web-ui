@@ -256,13 +256,14 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
       return
     }
     if (result.data) {
-      // Logic for system notifications (e.g., refresh token)
       const systemNotifications = result.data.filter(
         (n) => n.content?.systemNotification
       )
-      const regularNotifications = result.data
+      // System notifications are never rendered; only regular ones go to state.
+      const regularNotifications = result.data.filter(
+        (n) => !n.content?.systemNotification
+      )
 
-      // Set only regular notifications to the state (don't display system notifications)
       const stableNotifications = stableUpdate(
         get().notifications,
         regularNotifications
@@ -271,14 +272,24 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
         set({ notifications: stableNotifications })
       }
 
-      // Handle system notifications
       if (systemNotifications.length > 0) {
         const needsRefresh = systemNotifications.some(
           (n) => n.content?.systemNotification?.refreshJWTRequired
         )
-
         if (needsRefresh) {
           await refreshToken()
+        }
+
+        // Since system notifications are invisible in the UI, an unread one
+        // would otherwise inflate unreadNotificationsCount forever with
+        // nothing for the user to clear it with. Mark them read once handled;
+        // the corrected count lands on the next poll (see
+        // NOTIFICATION_WRITE_CACHE_DELAY_MS for why not immediately here).
+        const unreadSystemIds = systemNotifications
+          .filter((n) => !n.readAt && n.id)
+          .map((n) => n.id as string)
+        if (unreadSystemIds.length > 0) {
+          await markNotificationsAsRead(unreadSystemIds)
         }
       }
     }

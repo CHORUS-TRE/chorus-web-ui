@@ -2,7 +2,6 @@
 
 import {
   AppWindow,
-  Bell,
   LaptopMinimal,
   Package,
   Palette,
@@ -43,12 +42,10 @@ const AdminPage = () => {
     workbenches,
     apps,
     appInstances,
-    notifications,
     refreshWorkspaces,
     refreshWorkbenches,
     refreshApps,
-    refreshAppInstances,
-    refreshNotifications
+    refreshAppInstances
   } = useAppState()
 
   useEffect(() => {
@@ -56,14 +53,7 @@ const AdminPage = () => {
     refreshWorkbenches()
     refreshApps()
     refreshAppInstances()
-    refreshNotifications()
-  }, [
-    refreshWorkspaces,
-    refreshWorkbenches,
-    refreshApps,
-    refreshAppInstances,
-    refreshNotifications
-  ])
+  }, [refreshWorkspaces, refreshWorkbenches, refreshApps, refreshAppInstances])
 
   const roleCount = roles.length
 
@@ -131,16 +121,6 @@ const AdminPage = () => {
             icon={AppWindow}
             value={appInstances?.length || 0}
             description="Running Instances"
-          />
-        )}
-
-        {can('listNotifications') && (
-          <StatCard
-            href="/admin/notifications"
-            title="Notifications"
-            icon={Bell}
-            value={notifications?.length || 0}
-            description="System Notifications"
           />
         )}
 

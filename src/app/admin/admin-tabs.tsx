@@ -43,11 +43,6 @@ export function AdminTabs() {
       authorized: can('createApp', {})
     },
     {
-      href: '/admin/notifications',
-      label: 'Notifications',
-      authorized: can('listNotifications', {})
-    },
-    {
       href: '/admin/data-requests',
       label: 'Data Requests',
       authorized: can('listWorkspaces', { workspace: '*' })

@@ -1,5 +1,6 @@
 import type { Notification } from '@/domain/model/notification'
 import { countMyApprovalRequests } from '@/view-model/approval-request-view-model'
+import { refreshToken } from '@/view-model/authentication-view-model'
 import {
   countUnreadNotifications,
   listNotifications,
@@ -13,6 +14,7 @@ import {
 
 jest.mock('../../view-model/notification-view-model')
 jest.mock('../../view-model/approval-request-view-model')
+jest.mock('../../view-model/authentication-view-model')
 
 const mockedCountUnread = countUnreadNotifications as jest.MockedFunction<
   typeof countUnreadNotifications
@@ -25,6 +27,9 @@ const mockedMarkAsRead = markNotificationsAsRead as jest.MockedFunction<
 >
 const mockedCountMyApprovalRequests =
   countMyApprovalRequests as jest.MockedFunction<typeof countMyApprovalRequests>
+const mockedRefreshToken = refreshToken as jest.MockedFunction<
+  typeof refreshToken
+>
 
 const notification = (id: string): Notification => ({
   id,
@@ -36,6 +41,10 @@ describe('refreshNotifications polling behavior', () => {
   beforeEach(() => {
     mockedCountUnread.mockReset()
     mockedListNotifications.mockReset()
+    mockedMarkAsRead.mockReset()
+    mockedRefreshToken.mockReset()
+    mockedRefreshToken.mockResolvedValue({ data: 'new-token' })
+    mockedMarkAsRead.mockResolvedValue({ data: undefined })
     useAppStateStore.setState({
       notifications: undefined,
       unreadNotificationsCount: undefined
@@ -97,6 +106,59 @@ describe('refreshNotifications polling behavior', () => {
     expect(mockedListNotifications).not.toHaveBeenCalled()
     expect(errorSpy).toHaveBeenCalled()
     errorSpy.mockRestore()
+  })
+
+  it('filters system notifications out of state, refreshes the token, and marks them read', async () => {
+    mockedCountUnread.mockResolvedValue({ data: 1 })
+    mockedListNotifications.mockResolvedValue({
+      data: [
+        notification('1'),
+        {
+          id: 'sys-1',
+          message: 'session refresh',
+          createdAt: new Date('2026-07-01T00:00:00Z'),
+          content: { systemNotification: { refreshJWTRequired: true } }
+        }
+      ]
+    })
+
+    await useAppStateStore.getState().refreshNotifications()
+
+    expect(useAppStateStore.getState().notifications).toEqual([
+      notification('1')
+    ])
+    expect(mockedRefreshToken).toHaveBeenCalledTimes(1)
+    expect(mockedMarkAsRead).toHaveBeenCalledWith(['sys-1'])
+  })
+
+  it('does not call refreshToken or markAsRead when there are no system notifications', async () => {
+    mockedCountUnread.mockResolvedValue({ data: 1 })
+    mockedListNotifications.mockResolvedValue({ data: [notification('1')] })
+
+    await useAppStateStore.getState().refreshNotifications()
+
+    expect(mockedRefreshToken).not.toHaveBeenCalled()
+    expect(mockedMarkAsRead).not.toHaveBeenCalled()
+  })
+
+  it('does not re-mark an already-read system notification', async () => {
+    mockedCountUnread.mockResolvedValue({ data: 0 })
+    mockedListNotifications.mockResolvedValue({
+      data: [
+        {
+          id: 'sys-1',
+          message: 'session refresh',
+          createdAt: new Date('2026-07-01T00:00:00Z'),
+          readAt: new Date('2026-07-01T00:00:01Z'),
+          content: { systemNotification: { refreshJWTRequired: true } }
+        }
+      ]
+    })
+
+    await useAppStateStore.getState().refreshNotifications()
+
+    expect(mockedRefreshToken).toHaveBeenCalledTimes(1)
+    expect(mockedMarkAsRead).not.toHaveBeenCalled()
   })
 })
 

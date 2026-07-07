@@ -60,7 +60,12 @@ export function useNotificationsInbox(
       })
 
       if (result.data) {
-        setItems(result.data.map(notificationToInboxItem))
+        // System notifications (e.g. refreshJWTRequired) are never rendered.
+        setItems(
+          result.data
+            .filter((n) => !isSystemNotification(n))
+            .map(notificationToInboxItem)
+        )
         setTotalItems(result.totalItems ?? result.data.length)
       }
     } catch (error) {
