@@ -614,10 +614,7 @@ function ServiceCard({
                 {busyAction === 'toggle' ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : isRunning ? (
-                  <SquareStop
-                    className="h-4 w-4"
-                    title={`Stop ${instance.name}`}
-                  />
+                  <SquareStop className="h-4 w-4" />
                 ) : (
                   <Play className="h-4 w-4" />
                 )}
