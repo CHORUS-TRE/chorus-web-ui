@@ -365,7 +365,7 @@ export default function MessagesPage() {
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 text-muted-foreground" />
                 </Button>
                 <span className="px-1 tabular-nums">
                   {pageIndex + 1} / {table.getPageCount()}
@@ -377,7 +377,7 @@ export default function MessagesPage() {
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </div>
             )}

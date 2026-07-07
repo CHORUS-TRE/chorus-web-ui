@@ -11,7 +11,7 @@ import {
   Play,
   PlugZap,
   Settings,
-  Square,
+  SquareStop,
   Trash2
 } from 'lucide-react'
 import { useParams } from 'next/navigation'
@@ -614,7 +614,10 @@ function ServiceCard({
                 {busyAction === 'toggle' ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : isRunning ? (
-                  <Square className="h-4 w-4" />
+                  <SquareStop
+                    className="h-4 w-4"
+                    title={`Stop ${instance.name}`}
+                  />
                 ) : (
                   <Play className="h-4 w-4" />
                 )}
