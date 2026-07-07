@@ -415,7 +415,7 @@ export default function FileManagerClient({
         title: `Download request for ${items.length} files`,
         description: justification,
         sourceWorkspaceId: workspaceId,
-        fileIds: items.map((item) => item.path)
+        filePaths: items.map((item) => item.path)
       })
 
       if (result.error) {
@@ -449,7 +449,7 @@ export default function FileManagerClient({
         description: justification,
         sourceWorkspaceId: workspaceId,
         destinationWorkspaceId: targetWorkspaceId,
-        fileIds: items.map((item) => item.path)
+        filePaths: items.map((item) => item.path)
       })
 
       if (result.error) {

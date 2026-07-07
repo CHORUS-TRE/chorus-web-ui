@@ -27,16 +27,31 @@ export class ApprovalRequestRepositoryImpl
     this.dataSource = dataSource
   }
 
-  async approve(action: ApproveApprovalRequestAction): Promise<Result<void>> {
+  async approve(
+    action: ApproveApprovalRequestAction
+  ): Promise<Result<ApprovalRequest>> {
     try {
-      await this.dataSource.approve({
+      // Domain action field names (approved/reason) intentionally differ from
+      // the API's (approve/comment); mapped explicitly here at the boundary.
+      const response = await this.dataSource.approve({
         id: action.id,
         body: {
           approve: action.approved,
           comment: action.reason
         }
       })
-      return { data: undefined }
+
+      const approvalRequestResult = ApprovalRequestSchema.safeParse(
+        response.result?.approvalRequest
+      )
+      if (!approvalRequestResult.success) {
+        return {
+          error: conversionError('API response validation failed'),
+          issues: approvalRequestResult.error.issues
+        }
+      }
+
+      return { data: approvalRequestResult.data }
     } catch (error) {
       return {
         error: toChorusError(error)
@@ -90,7 +105,7 @@ export class ApprovalRequestRepositoryImpl
           title: request.title,
           description: request.description,
           sourceWorkspaceId: request.sourceWorkspaceId,
-          filePaths: request.fileIds
+          filePaths: request.filePaths
         }
       })
 
@@ -122,7 +137,7 @@ export class ApprovalRequestRepositoryImpl
           description: request.description,
           sourceWorkspaceId: request.sourceWorkspaceId,
           destinationWorkspaceId: request.destinationWorkspaceId,
-          filePaths: request.fileIds
+          filePaths: request.filePaths
         }
       })
 
@@ -193,7 +208,10 @@ export class ApprovalRequestRepositoryImpl
         }
       }
 
-      return { data: approvalRequestsResult.data }
+      return {
+        data: approvalRequestsResult.data,
+        totalItems: response.pagination?.total
+      }
     } catch (error) {
       return {
         error: toChorusError(error)

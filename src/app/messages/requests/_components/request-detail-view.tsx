@@ -47,6 +47,7 @@ import {
   getTotalSize
 } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
+import { useAppState } from '@/stores/app-state-store'
 import {
   approveApprovalRequest,
   getApprovalRequest
@@ -230,6 +231,7 @@ export function RequestDetailView({
 }) {
   const { toast } = useToast()
   const { user } = useAuthentication()
+  const onApprovalDecision = useAppState((state) => state.onApprovalDecision)
 
   const [request, setRequest] = React.useState<ApprovalRequest | null>(null)
   const [requester, setRequester] = React.useState<User | null>(null)
@@ -420,7 +422,7 @@ export function RequestDetailView({
   const destinationWorkspaceId = request.dataTransfer?.destinationWorkspaceId
   const requiredSteps = getRequiredSteps(request)
   const canDownload =
-    isOwner && isExtraction && request.status === ApprovalRequestStatus.APPROVED
+    isExtraction && request.status === ApprovalRequestStatus.APPROVED
 
   const stepWorkspaceName = (step: ApprovalStep) =>
     step === 'download'
@@ -429,8 +431,8 @@ export function RequestDetailView({
 
   const stepLabel = (step: ApprovalStep) =>
     step === 'download'
-      ? `Upload (from ${stepWorkspaceName(step)})`
-      : `Download (to ${stepWorkspaceName(step)})`
+      ? `Release (from ${stepWorkspaceName(step)})`
+      : `Receive (in ${stepWorkspaceName(step)})`
 
   const stepsExplanation = isExtraction
     ? 'The source workspace must approve this request before the files can be downloaded.'
@@ -451,6 +453,7 @@ export function RequestDetailView({
         description: 'The request has been processed successfully.'
       })
       setReviewNotes('')
+      await onApprovalDecision(request.id)
       onReviewed?.()
       // Re-fetch so reviewer/timestamp metadata reflects the server state
       // rather than a partial local patch.
@@ -652,15 +655,24 @@ export function RequestDetailView({
           <CardContent className="space-y-4 pb-4">
             {requiredSteps.map((step) => {
               const decision = getStepDecision(request, step)
-              const approverName = decision?.approverId
-                ? (stepApprovers[decision.approverId]?.username ??
-                  decision.approverId)
-                : undefined
+              // No per-step decision is ever recorded for an auto-approved
+              // request, so without this the step would show "Awaiting
+              // approval" even though the request itself is Approved.
+              const isAutoApprovedStep = !decision && request.autoApproved
+              const effectiveDecision = isAutoApprovedStep
+                ? { approve: true, approvedAt: request.approvedAt }
+                : decision
+              const approverName = isAutoApprovedStep
+                ? 'Auto-approved'
+                : decision?.approverId
+                  ? (stepApprovers[decision.approverId]?.username ??
+                    decision.approverId)
+                  : undefined
               return (
                 <StepRow
                   key={step}
                   label={stepLabel(step)}
-                  decision={decision}
+                  decision={effectiveDecision}
                   approverName={approverName}
                   canAct={isPending && canActOnStep(user.id, request, step)}
                   isSubmitting={isSubmitting}

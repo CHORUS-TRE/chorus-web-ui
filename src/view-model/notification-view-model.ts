@@ -4,8 +4,8 @@ import { env } from 'next-runtime-env'
 import { NotificationApiDataSourceImpl } from '@/data/data-source'
 import { NotificationRepositoryImpl } from '@/data/repository'
 import { Notification, Result } from '@/domain/model'
-import { CountUnreadNotifications } from '@/domain/use-cases/notification/count-unread-notifications'
 import { ListNotifications } from '@/domain/use-cases/notification/list-notifications'
+import { MarkAllNotificationsAsRead } from '@/domain/use-cases/notification/mark-all-notifications-as-read'
 import { MarkNotificationsAsRead } from '@/domain/use-cases/notification/mark-notifications-as-read'
 import { NotificationServiceGetNotificationsRequest } from '@/internal/client'
 
@@ -25,9 +25,11 @@ export async function listNotifications(
 }
 
 export async function countUnreadNotifications(): Promise<Result<number>> {
-  const repository = await getRepository()
-  const useCase = new CountUnreadNotifications(repository)
-  return await useCase.execute()
+  const result = await listNotifications({ isRead: false, paginationLimit: 1 })
+  if (result.error) {
+    return { error: result.error, issues: result.issues }
+  }
+  return { data: result.totalItems ?? 0 }
 }
 
 export async function markNotificationsAsRead(
@@ -36,4 +38,10 @@ export async function markNotificationsAsRead(
   const repository = await getRepository()
   const useCase = new MarkNotificationsAsRead(repository)
   return await useCase.execute(ids)
+}
+
+export async function markAllNotificationsAsRead(): Promise<Result<void>> {
+  const repository = await getRepository()
+  const useCase = new MarkAllNotificationsAsRead(repository)
+  return await useCase.execute()
 }

@@ -11,23 +11,21 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
+import { useNotificationsInbox } from '@/app/messages/_hooks/use-notifications-inbox'
 import { WorkbenchCreateForm } from '@/components/forms/workbench-create-form'
 import { WorkspaceCreateForm } from '@/components/forms/workspace-forms'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Link } from '@/components/ui/link'
-import {
-  type ApprovalRequest,
-  ApprovalRequestStatus
-} from '@/domain/model/approval-request'
 import { K8sWorkbenchStatus, type Workbench } from '@/domain/model/workbench'
 import type { WorkspaceWithDev } from '@/domain/model/workspace'
 import { useInstanceLimits } from '@/hooks/use-instance-config'
+import { getApprovalRequestWorkspaceId } from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppStateStore } from '@/stores/app-state-store'
-import { listApprovalRequests } from '@/view-model/approval-request-view-model'
+import { getApprovalRequest } from '@/view-model/approval-request-view-model'
 
 export default function CHORUSDashboard() {
   const {
@@ -42,18 +40,8 @@ export default function CHORUSDashboard() {
   const { can } = useAuthorization()
   const router = useRouter()
   const [createOpen, setCreateOpen] = useState(false)
-  const [approvalRequests, setApprovalRequests] = useState<ApprovalRequest[]>()
+  const { items: unreadNotifications } = useNotificationsInbox('unread')
 
-  useEffect(() => {
-    let cancelled = false
-    listApprovalRequests().then((result) => {
-      if (cancelled || !result.data) return
-      setApprovalRequests(result.data)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [])
   const {
     workspaces: workspaceLimits,
     sessions: sessionLimits,
@@ -102,14 +90,24 @@ export default function CHORUSDashboard() {
     [runningSessions]
   )
 
-  const pendingApprovalsList = useMemo(() => {
-    if (!approvalRequests || !user?.id) return []
-    return approvalRequests.filter(
-      (req) =>
-        req.status === ApprovalRequestStatus.PENDING &&
-        req.approverIds?.includes(user.id)
+  const unreadApprovalNotifications = useMemo(
+    () => unreadNotifications.filter((n) => n.approvalRequestId),
+    [unreadNotifications]
+  )
+
+  const handleViewNotification = async (requestId: string) => {
+    const result = await getApprovalRequest(requestId)
+    const request = result.data
+    const workspaceId = request
+      ? getApprovalRequestWorkspaceId(user?.id, request)
+      : undefined
+
+    router.push(
+      workspaceId
+        ? `/workspaces/${workspaceId}/transfer-requests/${requestId}`
+        : `/messages/requests/${requestId}`
     )
-  }, [approvalRequests, user?.id])
+  }
 
   const getSessionApps = (wb: Workbench) =>
     appInstances
@@ -177,11 +175,11 @@ export default function CHORUSDashboard() {
         <h3 className="mb-2 text-sm italic text-muted-foreground">
           {runningSessions.length} session
           {runningSessions.length !== 1 ? 's' : ''} running
-          {pendingApprovalsList.length > 0 && (
+          {unreadApprovalNotifications.length > 0 && (
             <>
               {' '}
-              · {pendingApprovalsList.length} approval
-              {pendingApprovalsList.length !== 1 ? 's' : ''} waiting on you
+              · {unreadApprovalNotifications.length} unread notification
+              {unreadApprovalNotifications.length !== 1 ? 's' : ''}
             </>
           )}
         </h3>
@@ -422,39 +420,40 @@ export default function CHORUSDashboard() {
             </Card>
           </div>
 
-          {/* Pending approvals */}
+          {/* Unread notifications */}
           <div className="flex flex-col rounded-[11px] border border-border bg-card/50 p-3.5">
             <div className="mb-3 flex items-center gap-2">
               <span className="text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                Pending approvals
+                Unread messages
               </span>
-              {pendingApprovalsList.length > 0 && (
+              {unreadApprovalNotifications.length > 0 && (
                 <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-[5px] text-[9.5px] font-bold text-white">
-                  {pendingApprovalsList.length}
+                  {unreadApprovalNotifications.length}
                 </span>
               )}
             </div>
 
-            {pendingApprovalsList.length > 0 ? (
+            {unreadApprovalNotifications.length > 0 ? (
               <div className="flex flex-col">
-                {pendingApprovalsList.slice(0, 4).map((req) => (
-                  <Link
-                    key={req.id}
-                    href={`/messages/requests/${req.id}`}
-                    variant="plain"
-                    className="flex items-center gap-2.5 border-b border-muted/15 py-2 last:border-0"
+                {unreadApprovalNotifications.slice(0, 4).map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() =>
+                      handleViewNotification(item.approvalRequestId!)
+                    }
+                    className="flex items-center gap-2.5 border-b border-muted/15 py-2 text-left last:border-0"
                   >
                     <div className="h-[7px] w-[7px] flex-none rounded-full bg-amber-500" />
                     <div className="flex-1 text-xs text-foreground/85">
-                      {req.title ?? 'Approval request'}
+                      {item.title}
                     </div>
-                    <span className="text-[11px] text-primary">Review</span>
-                  </Link>
+                    <span className="text-[11px] text-primary">View</span>
+                  </button>
                 ))}
               </div>
             ) : (
               <p className="py-4 text-center text-xs text-muted-foreground">
-                No pending approvals
+                No unread messages
               </p>
             )}
           </div>

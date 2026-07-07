@@ -57,8 +57,6 @@ export const ApprovalRequestSchema = z.object({
   approverIdsByStep: z.record(z.string(), ApproverIdsSchema).optional(),
   // Decisions recorded so far, keyed by step name.
   stepDecisions: z.record(z.string(), ApprovalStepDecisionSchema).optional(),
-  approverIds: z.array(z.string()).optional(),
-  approvedById: z.string().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   approvedAt: z.date().optional(),
@@ -70,7 +68,7 @@ export const CreateDataExtractionRequestSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
   sourceWorkspaceId: z.string(),
-  fileIds: z.array(z.string())
+  filePaths: z.array(z.string())
 })
 
 export const CreateDataTransferRequestSchema = z.object({
@@ -78,9 +76,12 @@ export const CreateDataTransferRequestSchema = z.object({
   description: z.string().optional(),
   sourceWorkspaceId: z.string(),
   destinationWorkspaceId: z.string(),
-  fileIds: z.array(z.string())
+  filePaths: z.array(z.string())
 })
 
+// Named approved/reason rather than mirroring the API's approve/comment —
+// this is a domain action (the reviewer's decision), not the wire request;
+// see ApprovalRequestRepositoryImpl.approve for the explicit boundary mapping.
 export const ApproveApprovalRequestSchema = z.object({
   id: z.string(),
   approved: z.boolean(),

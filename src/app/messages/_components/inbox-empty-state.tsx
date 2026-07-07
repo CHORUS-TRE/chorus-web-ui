@@ -1,15 +1,21 @@
 'use client'
 
-import { Bell, Inbox } from 'lucide-react'
+import { Inbox, Search } from 'lucide-react'
 
-import type { InboxTab } from '../_hooks/use-inbox-data'
+import type { InboxTab } from '../_hooks/use-notifications-inbox'
 
-export function InboxEmptyState({ tab }: { tab: InboxTab }) {
-  const Icon = tab === 'inbox' ? Inbox : Bell
-  const message =
-    tab === 'inbox'
-      ? 'No messages match your filters'
-      : 'No outgoing requests yet'
+interface InboxEmptyStateProps {
+  tab: InboxTab
+  hasSearchQuery: boolean
+}
+
+export function InboxEmptyState({ tab, hasSearchQuery }: InboxEmptyStateProps) {
+  const Icon = hasSearchQuery ? Search : Inbox
+  const message = hasSearchQuery
+    ? 'No notifications match your search'
+    : tab === 'unread'
+      ? "You're all caught up"
+      : 'No notifications yet'
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">

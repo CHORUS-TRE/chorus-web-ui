@@ -31,24 +31,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
         }
       }
 
-      return { data: notificationsResult.data }
-    } catch (error) {
-      return {
-        error: toChorusError(error)
-      }
-    }
-  }
-
-  async countUnread(): Promise<Result<number>> {
-    try {
-      const response = await this.dataSource.countUnreadNotifications()
-      const count = response.result
-
-      if (count === undefined) {
-        return { error: conversionError('API response validation failed') }
-      }
-
-      return { data: Number(count) }
+      return { data: notificationsResult.data, totalItems: response.totalItems }
     } catch (error) {
       return {
         error: toChorusError(error)
@@ -60,6 +43,19 @@ export class NotificationRepositoryImpl implements NotificationRepository {
     try {
       await this.dataSource.markNotificationsAsRead({
         body: { notificationIds: ids }
+      })
+      return { data: undefined }
+    } catch (error) {
+      return {
+        error: toChorusError(error)
+      }
+    }
+  }
+
+  async markAllAsRead(): Promise<Result<void>> {
+    try {
+      await this.dataSource.markNotificationsAsRead({
+        body: { markAll: true }
       })
       return { data: undefined }
     } catch (error) {

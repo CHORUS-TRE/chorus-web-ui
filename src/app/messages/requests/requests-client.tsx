@@ -57,6 +57,7 @@ import {
 } from '@/domain/model/approval-request'
 import { WorkspaceWithDev } from '@/domain/model/workspace'
 import {
+  canApproveRequest,
   formatBytes,
   getFiles,
   getTotalSize
@@ -621,6 +622,7 @@ export default function RequestsClient({
   >(null)
   const { toast } = useToast()
   const router = useRouter()
+  const onApprovalDecision = useAppState((state) => state.onApprovalDecision)
 
   const myRequests = React.useMemo(
     () => requests.filter((req) => req.requesterId === currentUser.id),
@@ -631,7 +633,7 @@ export default function RequestsClient({
     () =>
       requests.filter(
         (req) =>
-          req.approverIds?.includes(currentUser.id) &&
+          canApproveRequest(currentUser.id, req) &&
           req.requesterId !== currentUser.id
       ),
     [requests, currentUser.id]
@@ -667,23 +669,22 @@ export default function RequestsClient({
         title: `Request ${activeAction === 'approve' ? 'approved' : 'rejected'}`,
         description: 'The request has been processed successfully.'
       })
-      setRequests((prev) =>
-        prev.map((req) =>
-          req.id === selectedRequest.id
-            ? {
-                ...req,
-                status:
-                  activeAction === 'approve'
-                    ? ApprovalRequestStatus.APPROVED
-                    : ApprovalRequestStatus.REJECTED
-              }
-            : req
+      // Apply the server-confirmed request (status, step decisions) rather
+      // than guessing — a data transfer stays PENDING after only one of its
+      // two required steps is decided.
+      const updatedRequest = result.data
+      if (updatedRequest) {
+        setRequests((prev) =>
+          prev.map((req) =>
+            req.id === selectedRequest.id ? updatedRequest : req
+          )
         )
-      )
+      }
       setIsReviewDialogOpen(false)
       setSelectedRequest(null)
       setReviewNotes('')
       setActiveAction(null)
+      await onApprovalDecision(selectedRequest.id)
       router.refresh()
     } else {
       toast({

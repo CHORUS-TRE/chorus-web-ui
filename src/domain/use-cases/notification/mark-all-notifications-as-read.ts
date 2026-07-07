@@ -1,10 +1,10 @@
 import { Result } from '@/domain/model'
 import { NotificationRepository } from '@/domain/repository'
 
-export class CountUnreadNotifications {
+export class MarkAllNotificationsAsRead {
   constructor(private readonly repository: NotificationRepository) {}
 
-  async execute(): Promise<Result<number>> {
-    return this.repository.countUnread()
+  async execute(): Promise<Result<void>> {
+    return this.repository.markAllAsRead()
   }
 }

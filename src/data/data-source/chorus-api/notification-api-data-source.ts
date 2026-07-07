@@ -1,5 +1,4 @@
 import {
-  ChorusCountUnreadNotificationsReply,
   ChorusGetNotificationsReply,
   Configuration,
   NotificationServiceApi,
@@ -8,7 +7,6 @@ import {
 } from '@/internal/client'
 
 export interface NotificationDataSource {
-  countUnreadNotifications(): Promise<ChorusCountUnreadNotificationsReply>
   getNotifications(
     params: NotificationServiceGetNotificationsRequest
   ): Promise<ChorusGetNotificationsReply>
@@ -26,10 +24,6 @@ export class NotificationApiDataSourceImpl implements NotificationDataSource {
       credentials: 'include'
     })
     this.service = new NotificationServiceApi(configuration)
-  }
-
-  countUnreadNotifications(): Promise<ChorusCountUnreadNotificationsReply> {
-    return this.service.notificationServiceCountUnreadNotifications()
   }
 
   getNotifications(

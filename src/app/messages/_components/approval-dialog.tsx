@@ -18,6 +18,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ApprovalRequest } from '@/domain/model/approval-request'
 import { formatBytes, getTotalSize } from '@/lib/approval-request-utils'
+import { useAppState } from '@/stores/app-state-store'
 import { approveApprovalRequest } from '@/view-model/approval-request-view-model'
 
 import { TypeBadge } from '../requests/_components/type-badge'
@@ -39,6 +40,7 @@ export function ApprovalDialog({
 }: ApprovalDialogProps) {
   const [reviewNotes, setReviewNotes] = React.useState('')
   const { toast } = useToast()
+  const onApprovalDecision = useAppState((state) => state.onApprovalDecision)
 
   const handleSubmit = async () => {
     if (!request?.id || !action) return
@@ -56,6 +58,7 @@ export function ApprovalDialog({
       })
       setReviewNotes('')
       onOpenChange(false)
+      await onApprovalDecision(request.id)
       onComplete()
     } else {
       toast({

@@ -3,6 +3,7 @@
 import { type Spec } from '@json-render/core'
 
 import { type StateAwareHandler } from '@/components/chat/artifacts/dynamic-ui-renderer'
+import { APPROVAL_REQUESTS_FETCH_LIMIT } from '@/lib/approval-request-utils'
 import {
   fetchWorkspaceStatusParams,
   selectWorkspaceParams
@@ -288,7 +289,10 @@ export const workspaceStatusHandlers: Record<string, StateAwareHandler> = {
         }
 
         const [approvalsResult, appsResult] = await Promise.all([
-          listApprovalRequests({ filterWorkspaceId: workspaceId }),
+          listApprovalRequests({
+            filterWorkspaceId: workspaceId,
+            paginationLimit: APPROVAL_REQUESTS_FETCH_LIMIT
+          }),
           listAppInstances()
         ])
 

@@ -14,7 +14,12 @@ import {
   ApprovalRequestStatus
 } from '@/domain/model/approval-request'
 import { Permission, usePermissions } from '@/hooks/use-permissions'
-import { canActOnStep } from '@/lib/approval-request-utils'
+import {
+  APPROVAL_REQUESTS_FETCH_LIMIT,
+  canActOnStep,
+  getDestinationWorkspaceId,
+  getSourceWorkspaceId
+} from '@/lib/approval-request-utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { listApprovalRequests } from '@/view-model/approval-request-view-model'
 
@@ -49,7 +54,8 @@ export default function WorkspaceTransferRequestsPage() {
     setIsLoading(true)
     try {
       const approvalRequests = await listApprovalRequests({
-        filterWorkspaceId: workspaceId
+        filterWorkspaceId: workspaceId,
+        paginationLimit: APPROVAL_REQUESTS_FETCH_LIMIT
       })
 
       if (approvalRequests?.error) {
@@ -64,13 +70,13 @@ export default function WorkspaceTransferRequestsPage() {
 
       setOutgoing(
         (approvalRequests?.data ?? []).filter(
-          (req) => req.dataTransfer?.sourceWorkspaceId === workspaceId
+          (req) => getSourceWorkspaceId(req) === workspaceId
         )
       )
 
       setIncoming(
         (approvalRequests.data ?? []).filter(
-          (req) => req.dataTransfer?.destinationWorkspaceId === workspaceId
+          (req) => getDestinationWorkspaceId(req) === workspaceId
         )
       )
     } catch (error) {

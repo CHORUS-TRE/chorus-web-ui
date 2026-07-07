@@ -18,11 +18,19 @@ import {
   ApprovalRequestType
 } from '@/domain/model/approval-request'
 import {
+  type ApprovalStep,
   downloadRequestFiles,
   formatBytes,
   getFiles,
+  getRequiredSteps,
+  getStepDecision,
   getTotalSize
 } from '@/lib/approval-request-utils'
+
+const STEP_LABELS: Record<ApprovalStep, string> = {
+  download: 'Release',
+  upload: 'Receive'
+}
 
 import { StatusBadge } from './_components/status-badge'
 import { TypeBadge } from './_components/type-badge'
@@ -52,6 +60,9 @@ export const FileRequestCard = React.memo(function FileRequestCard({
 
   const files = getFiles(request)
   const totalSize = getTotalSize(request)
+  const decidedSteps = getRequiredSteps(request)
+    .map((step) => ({ step, decision: getStepDecision(request, step) }))
+    .filter((entry) => Boolean(entry.decision?.approvedAt))
 
   const isApprovedExtraction =
     request.status === ApprovalRequestStatus.APPROVED &&
@@ -194,21 +205,39 @@ export const FileRequestCard = React.memo(function FileRequestCard({
           </CollapsibleContent>
         </Collapsible>
 
-        {request.approvedById && (
+        {request.autoApproved ? (
           <div className="pt-2">
             <Separator className="mb-4 bg-muted/20" />
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-muted-foreground">
-                Reviewed by{' '}
-                <strong className="text-foreground">
-                  {request.approvedById}
-                </strong>
-              </span>
-              <span className="text-muted-foreground">
-                {request.approvedAt?.toLocaleDateString()}
-              </span>
+            <div className="text-[11px] text-muted-foreground">
+              Auto-approved
+              {request.approvedAt &&
+                ` on ${request.approvedAt.toLocaleDateString()}`}
             </div>
           </div>
+        ) : (
+          decidedSteps.length > 0 && (
+            <div className="pt-2">
+              <Separator className="mb-4 bg-muted/20" />
+              <div className="space-y-1">
+                {decidedSteps.map(({ step, decision }) => (
+                  <div
+                    key={step}
+                    className="flex items-center justify-between text-[11px]"
+                  >
+                    <span className="text-muted-foreground">
+                      {STEP_LABELS[step]} reviewed by{' '}
+                      <strong className="text-foreground">
+                        {decision?.approverId}
+                      </strong>
+                    </span>
+                    <span className="text-muted-foreground">
+                      {decision?.approvedAt?.toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
         )}
       </CardContent>
 

@@ -11,14 +11,15 @@ const features = [
   {
     icon: Shield,
     title: 'Your data stays here',
-    description: 'Nothing can be downloaded or shared outside CHORUS.',
+    description:
+      'Nothing can be downloaded or shared outside CHORUS without validation.',
     color: 'bg-[rgba(71,122,255,0.16)] text-[#6E97FF]'
   },
   {
     icon: Layers,
-    title: 'Private sessions',
+    title: 'Private workspaces',
     description:
-      'Each session is a private workspace. Close it and everything inside is gone.',
+      'Each session is a private workbench. You can share your work with collaborators, but the data stays put in the workspace.',
     color: 'bg-[rgba(182,255,18,0.14)] text-[#B6FF12]'
   },
   {

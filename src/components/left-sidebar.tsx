@@ -14,7 +14,6 @@ import {
   Store
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React from 'react'
 
 import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
 import { Link } from '@/components/ui/link'
@@ -24,7 +23,6 @@ import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
 import { useUserPreferences } from '@/stores/user-preferences-store'
-import { countMyApprovalRequests } from '@/view-model/approval-request-view-model'
 
 import packageInfo from '../../package.json'
 
@@ -83,25 +81,10 @@ function SidebarContent({
   const displayParticipatingCenters = useDisplayParticipatingCenters()
   const currentTab = searchParams.get('tab')
   const { unreadNotificationsCount } = useAppState()
-  const [pendingApprovalRequestsCount, setPendingApprovalRequestsCount] =
-    React.useState<number>()
-
-  React.useEffect(() => {
-    async function loadPendingApprovalRequestsCount() {
-      const result = await countMyApprovalRequests()
-      if (result.error) {
-        console.error('Failed to load approval requests count:', result.error)
-        return
-      }
-      setPendingApprovalRequestsCount(
-        result.data?.countByStatus?.['APPROVAL_REQUEST_STATUS_PENDING'] ?? 0
-      )
-    }
-    loadPendingApprovalRequestsCount()
-  }, [])
-
-  const messagesBadgeCount =
-    (unreadNotificationsCount ?? 0) + (pendingApprovalRequestsCount ?? 0)
+  // Unread notifications only: an actionable approval request already has a
+  // linked notification, so summing in the pending-request count double-
+  // counted it and also lit the badge for the user's own outgoing requests.
+  const messagesBadgeCount = unreadNotificationsCount ?? 0
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href

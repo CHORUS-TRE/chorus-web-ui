@@ -53,15 +53,13 @@ export default function ParticipatingCentersPage() {
         {[
           { label: 'Institutions', value: stats.total },
           { label: 'Countries', value: stats.countries },
-          { label: 'Cities', value: stats.cities },
+          { label: 'Cities', value: stats.cities }
         ].map((stat) => (
           <div
             key={stat.label}
             className="rounded-lg border border-muted/40 bg-contrast-background/70 p-4 text-center backdrop-blur-sm"
           >
-            <div className="text-2xl font-bold text-accent">
-              {stat.value}
-            </div>
+            <div className="text-2xl font-bold text-accent">{stat.value}</div>
             <div className="text-xs text-muted-foreground">{stat.label}</div>
           </div>
         ))}
