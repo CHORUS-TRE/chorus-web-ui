@@ -162,17 +162,23 @@ export const useAppStateStore = create<AppStateStore>((set, get) => ({
   },
 
   refreshNotifications: async () => {
-    // Optimization: Check unread count first
+    // Cheap poll: a single-row list request whose totalItems is the exact
+    // unread count. Only fetch the full list (a second request) when the
+    // count changed since last poll, or we don't have a list cached yet.
+    const previousCount = get().unreadNotificationsCount
     const countResult = await countUnreadNotifications()
 
-    if (countResult.data !== undefined) {
-      set({ unreadNotificationsCount: countResult.data })
+    if (countResult.error) {
+      console.error('Failed to refresh notifications count:', countResult.error)
+      return
     }
 
-    // If there are no unread notifications and we already have a list,
-    // we skip the full fetch to save bandwidth/resources.
-    // However, if we don't have ANY notifications yet (undefined), we still fetch once.
-    if (countResult.data === 0 && get().notifications !== undefined) {
+    const newCount = countResult.data ?? 0
+    set({ unreadNotificationsCount: newCount })
+
+    const countUnchanged =
+      previousCount !== undefined && previousCount === newCount
+    if (countUnchanged && get().notifications !== undefined) {
       return
     }
 

@@ -26,4 +26,5 @@ export interface Result<T> {
   data?: T
   error?: ChorusError
   issues?: ZodIssue[]
+  totalItems?: number
 }

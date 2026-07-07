@@ -4,7 +4,6 @@ import { env } from 'next-runtime-env'
 import { NotificationApiDataSourceImpl } from '@/data/data-source'
 import { NotificationRepositoryImpl } from '@/data/repository'
 import { Notification, Result } from '@/domain/model'
-import { CountUnreadNotifications } from '@/domain/use-cases/notification/count-unread-notifications'
 import { ListNotifications } from '@/domain/use-cases/notification/list-notifications'
 import { MarkNotificationsAsRead } from '@/domain/use-cases/notification/mark-notifications-as-read'
 import { NotificationServiceGetNotificationsRequest } from '@/internal/client'
@@ -25,12 +24,11 @@ export async function listNotifications(
 }
 
 export async function countUnreadNotifications(): Promise<Result<number>> {
-  const list = await listNotifications()
-  if (list.error) {
-    return { error: list.error }
+  const result = await listNotifications({ isRead: false, paginationLimit: 1 })
+  if (result.error) {
+    return { error: result.error, issues: result.issues }
   }
-  const count = list.data?.filter((n) => !n.readAt).length ?? 0
-  return { data: count }
+  return { data: result.totalItems ?? 0 }
 }
 
 export async function markNotificationsAsRead(

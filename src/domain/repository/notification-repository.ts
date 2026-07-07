@@ -7,6 +7,5 @@ export interface NotificationRepository {
   list(
     params?: NotificationServiceGetNotificationsRequest
   ): Promise<Result<Notification[]>>
-  countUnread(): Promise<Result<number>>
   markAsRead(ids: string[]): Promise<Result<void>>
 }
