@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useEffect, useState } from 'react'
 
 import { errorToast } from '@/components/error-toast'
@@ -124,7 +126,8 @@ export function useFileSystem(workspaceId?: string) {
   const [state, setState] = useState<FileSystemState>({
     items: {},
     selectedItems: [],
-    basketItems: [],
+    downloadQueueItems: [],
+    transferQueueItems: [],
     currentFolderId: 'root',
     viewMode: 'list',
     clipboard: null
@@ -359,18 +362,34 @@ export function useFileSystem(workspaceId?: string) {
     }
   }, [])
 
-  const selectBasketItem = useCallback((itemId: string, force?: boolean) => {
+  const toggleDownloadItem = useCallback((itemId: string, force?: boolean) => {
     setState((prev) => {
-      const isSelected = prev.basketItems.includes(itemId)
+      const isSelected = prev.downloadQueueItems.includes(itemId)
       const shouldSelect = force !== undefined ? force : !isSelected
 
       return {
         ...prev,
-        basketItems: shouldSelect
+        downloadQueueItems: shouldSelect
           ? isSelected
-            ? prev.basketItems
-            : [...prev.basketItems, itemId]
-          : prev.basketItems.filter((id) => id !== itemId)
+            ? prev.downloadQueueItems
+            : [...prev.downloadQueueItems, itemId]
+          : prev.downloadQueueItems.filter((id) => id !== itemId)
+      }
+    })
+  }, [])
+
+  const toggleTransferItem = useCallback((itemId: string, force?: boolean) => {
+    setState((prev) => {
+      const isSelected = prev.transferQueueItems.includes(itemId)
+      const shouldSelect = force !== undefined ? force : !isSelected
+
+      return {
+        ...prev,
+        transferQueueItems: shouldSelect
+          ? isSelected
+            ? prev.transferQueueItems
+            : [...prev.transferQueueItems, itemId]
+          : prev.transferQueueItems.filter((id) => id !== itemId)
       }
     })
   }, [])
@@ -1141,10 +1160,11 @@ export function useFileSystem(workspaceId?: string) {
     }))
   }, [])
 
-  const clearBasket = useCallback(() => {
+  const clearRequestQueue = useCallback(() => {
     setState((prev) => ({
       ...prev,
-      basketItems: []
+      downloadQueueItems: [],
+      transferQueueItems: []
     }))
   }, [])
 
@@ -1319,8 +1339,9 @@ export function useFileSystem(workspaceId?: string) {
     setSearch,
     toggleViewMode,
     clearSelection,
-    clearBasket,
-    selectBasketItem,
+    clearRequestQueue,
+    toggleDownloadItem,
+    toggleTransferItem,
     selectRange,
     selectAll,
     fetchFolderContents,

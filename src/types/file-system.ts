@@ -45,7 +45,8 @@ export interface FolderUploadBatch {
 export interface FileSystemState {
   items: Record<string, FileSystemItem>
   selectedItems: string[]
-  basketItems: string[]
+  downloadQueueItems: string[]
+  transferQueueItems: string[]
   currentFolderId: string | null
   viewMode: 'list' | 'grid'
   clipboard: FileClipboard | null

@@ -1,5 +1,8 @@
+'use client'
+
 import {
   Archive,
+  ArrowRightLeft,
   CornerLeftUp,
   Download,
   File,
@@ -7,6 +10,7 @@ import {
   Folder,
   ImageIcon,
   Loader2,
+  MoreVertical,
   Music,
   Pencil,
   Trash2,
@@ -17,6 +21,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import {
   formatDate as formatDateUtil,
@@ -35,9 +45,11 @@ interface FileGridProps {
   onNavigateToFolder: (folderId: string) => void
   onMoveItem: (itemId: string, newParentId: string) => void
   onDownload: (itemId: string) => void
+  onTransfer: (itemId: string) => void
   onDelete?: (itemId: string) => void
   onRename?: (itemId: string) => void
-  basketItems?: string[]
+  downloadQueueItems?: string[]
+  transferQueueItems?: string[]
   movingItemId?: string | null
   onContextMenu?: (e: React.MouseEvent, itemId: string | null) => void
   clipboard?: FileClipboard | null
@@ -143,9 +155,11 @@ export function FileGrid({
   onNavigateToFolder,
   onMoveItem,
   onDownload,
+  onTransfer,
   onDelete,
   onRename,
-  basketItems = [],
+  downloadQueueItems = [],
+  transferQueueItems = [],
   movingItemId,
   onContextMenu,
   clipboard,
@@ -322,22 +336,42 @@ export function FileGrid({
                 <div className="relative mb-2">
                   {getFileIcon(item)}
                   {item.type !== 'folder' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        'absolute -right-1 -top-1 h-6 w-6 rounded-full bg-background/80 p-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100',
-                        basketItems.includes(item.id)
-                          ? 'bg-accent text-accent-foreground opacity-100'
-                          : 'opacity-0'
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onDownload(item.id)
-                      }}
-                    >
-                      <Download className="h-3 w-3" />
-                    </Button>
+                    <div className="absolute -right-1 -top-1 flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          'h-6 w-6 rounded-full bg-background/80 p-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100',
+                          transferQueueItems.includes(item.id)
+                            ? 'bg-accent text-accent-foreground opacity-100'
+                            : 'opacity-0'
+                        )}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onTransfer(item.id)
+                        }}
+                        aria-label={`Add ${item.name} to transfer queue`}
+                      >
+                        <ArrowRightLeft className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          'h-6 w-6 rounded-full bg-background/80 p-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100',
+                          downloadQueueItems.includes(item.id)
+                            ? 'bg-accent text-accent-foreground opacity-100'
+                            : 'opacity-0'
+                        )}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onDownload(item.id)
+                        }}
+                        aria-label={`Add ${item.name} to download queue`}
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
+                    </div>
                   )}
                 </div>
                 <span
@@ -393,9 +427,26 @@ export function FileGrid({
                       }
                     }
                   }}
-                  title={`Add ${selectedCount} to basket`}
+                  title={`Add ${selectedCount} to download queue`}
                 >
                   <Download className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-muted-foreground hover:text-accent"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    for (const id of selectedItems) {
+                      const item = items.find((i) => i.id === id)
+                      if (item && item.type !== 'folder') {
+                        onTransfer(id)
+                      }
+                    }
+                  }}
+                  title={`Add ${selectedCount} to transfer queue`}
+                >
+                  <ArrowRightLeft className="h-3.5 w-3.5" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -496,48 +547,71 @@ export function FileGrid({
                   </span>
                 </div>
                 <div className="col-span-3 flex items-center justify-end gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 w-7 p-0 text-muted-foreground hover:text-accent"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onRename?.(item.id)
-                    }}
-                    title="Rename"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
                   {item.type !== 'folder' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        'h-7 w-7 p-0 text-muted-foreground hover:text-accent',
-                        basketItems.includes(item.id) &&
-                          'bg-accent/20 text-accent'
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onDownload(item.id)
-                      }}
-                      title="Add to basket"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                    </Button>
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          'h-7 gap-1 border-muted-foreground/30 px-2 text-xs text-muted-foreground hover:border-accent hover:text-accent',
+                          downloadQueueItems.includes(item.id) &&
+                            'border-accent bg-accent/20 text-accent'
+                        )}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onDownload(item.id)
+                        }}
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Download
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          'h-7 gap-1 border-muted-foreground/30 px-2 text-xs text-muted-foreground hover:border-accent hover:text-accent',
+                          transferQueueItems.includes(item.id) &&
+                            'border-accent bg-accent/20 text-accent'
+                        )}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onTransfer(item.id)
+                        }}
+                      >
+                        <ArrowRightLeft className="h-3.5 w-3.5" />
+                        Transfer
+                      </Button>
+                    </>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete?.(item.id)
-                    }}
-                    title="Delete"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0 text-muted-foreground hover:text-accent"
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={`More actions for ${item.name}`}
+                      >
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DropdownMenuItem onClick={() => onRename?.(item.id)}>
+                        <Pencil className="mr-2 h-3.5 w-3.5" />
+                        Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => onDelete?.(item.id)}
+                      >
+                        <Trash2 className="mr-2 h-3.5 w-3.5" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             )

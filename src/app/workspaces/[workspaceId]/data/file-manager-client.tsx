@@ -5,8 +5,8 @@ import {
   FolderPlus,
   FolderUp,
   HardDrive,
+  Inbox,
   Loader2,
-  ShoppingBasket,
   Upload
 } from 'lucide-react'
 import type React from 'react'
@@ -20,7 +20,7 @@ import {
 } from '@/components/file-manager/file-context-menu'
 import { FileGrid } from '@/components/file-manager/file-grid'
 import { FolderDeleteDialog } from '@/components/file-manager/folder-delete-dialog'
-import { SelectionBasket } from '@/components/file-manager/selection-basket'
+import { RequestQueue } from '@/components/file-manager/request-queue'
 import { toast } from '@/components/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
@@ -69,8 +69,8 @@ export default function FileManagerClient({
     importFile,
     importFolder,
     clearSelection,
-    clearBasket,
-    selectBasketItem,
+    toggleDownloadItem,
+    toggleTransferItem,
     selectRange,
     selectAll,
     fetchFolderContents,
@@ -84,7 +84,7 @@ export default function FileManagerClient({
   const [isDraggingOver, setIsDraggingOver] = useState(false)
   const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null)
   const [dragOverStoreId, setDragOverStoreId] = useState<string | null>(null)
-  const [showBasket, setShowBasket] = useState(false)
+  const [showRequests, setShowRequests] = useState(false)
   const [folderToDelete, setFolderToDelete] = useState<{
     id: string
     name: string
@@ -402,11 +402,23 @@ export default function FileManagerClient({
     }
   }
 
-  const handleRemoveFromBasket = (itemId: string) => {
-    selectBasketItem(itemId, false)
+  const handleRemoveDownloadItem = (itemId: string) => {
+    toggleDownloadItem(itemId, false)
   }
 
-  const handleDownloadRequest = async (
+  const handleRemoveTransferItem = (itemId: string) => {
+    toggleTransferItem(itemId, false)
+  }
+
+  const handleClearDownloadQueue = () => {
+    for (const id of state.downloadQueueItems) toggleDownloadItem(id, false)
+  }
+
+  const handleClearTransferQueue = () => {
+    for (const id of state.transferQueueItems) toggleTransferItem(id, false)
+  }
+
+  const handleSubmitDownloadRequest = async (
     items: FileSystemItem[],
     justification: string
   ) => {
@@ -432,13 +444,13 @@ export default function FileManagerClient({
         description: 'Your download request has been submitted for approval.',
         variant: 'default'
       })
-      clearBasket()
+      for (const item of items) toggleDownloadItem(item.id, false)
     } catch (error) {
       console.error('Error submitting download request:', error)
     }
   }
 
-  const handleTransferRequest = async (
+  const handleSubmitTransferRequest = async (
     items: FileSystemItem[],
     targetWorkspaceId: string,
     justification: string
@@ -466,14 +478,20 @@ export default function FileManagerClient({
         description: 'Your transfer request has been submitted for approval.',
         variant: 'default'
       })
-      clearBasket()
+      for (const item of items) toggleTransferItem(item.id, false)
     } catch (error) {
       console.error('Error submitting transfer request:', error)
     }
   }
 
-  const handleAddToBasket = (itemId: string) => {
-    selectBasketItem(itemId, true)
+  const handleAddToDownloadQueue = (itemId: string) => {
+    toggleDownloadItem(itemId, true)
+    setShowRequests(true)
+  }
+
+  const handleAddToTransferQueue = (itemId: string) => {
+    toggleTransferItem(itemId, true)
+    setShowRequests(true)
   }
 
   // Show loading state
@@ -487,14 +505,14 @@ export default function FileManagerClient({
 
   return (
     <div className="flex h-full flex-col gap-2 overflow-hidden">
-      {/* Top chip row — stores grouped in one container + basket button */}
+      {/* Top chip row — stores grouped in one container + requests button */}
       <div className="flex items-center gap-3">
         <div className="flex flex-1 items-center gap-1 overflow-x-auto rounded-full border border-muted/40 bg-card/40 px-2 py-1.5">
           {stores
             .filter((store) => store.status !== 'DISABLED')
             .map((store) => {
               const storeId = storeIdFromName(store.name)
-              const isActive = !showBasket && selectedStoreId === storeId
+              const isActive = selectedStoreId === storeId
               const isSelectable = store.status === 'READY'
               const isDropTarget = dragOverStoreId === storeId
               const tooltip = !isSelectable
@@ -515,7 +533,6 @@ export default function FileManagerClient({
                   )}
                   onClick={() => {
                     if (!isSelectable) return
-                    setShowBasket(false)
                     handleSelectStore(storeId)
                   }}
                   onDragOver={(e) => {
@@ -561,193 +578,208 @@ export default function FileManagerClient({
           type="button"
           className={cn(
             'flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
-            showBasket
+            showRequests
               ? 'border-accent text-accent'
-              : state.basketItems.length > 0
+              : state.downloadQueueItems.length +
+                    state.transferQueueItems.length >
+                  0
                 ? 'border-muted/40 text-accent hover:text-foreground'
                 : 'border-muted/40 text-muted-foreground hover:text-foreground'
           )}
-          onClick={() => setShowBasket(!showBasket)}
+          onClick={() => setShowRequests(!showRequests)}
         >
-          <ShoppingBasket className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+          <Inbox className="h-4 w-4 shrink-0" strokeWidth={1.75} />
           <span className="font-medium">
-            Basket
-            {state.basketItems.length > 0 && (
+            Requests
+            {state.downloadQueueItems.length + state.transferQueueItems.length >
+              0 && (
               <span className="ml-1 text-muted-foreground/70">
-                · {state.basketItems.length}
+                ·{' '}
+                {state.downloadQueueItems.length +
+                  state.transferQueueItems.length}
               </span>
             )}
           </span>
         </button>
       </div>
 
-      {/* Content panel — full width */}
-      <div className="card-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-muted/40 bg-card">
-        {showBasket ? (
-          /* Basket inline panel */
-          <div className="flex flex-1 flex-col overflow-auto p-4">
-            <SelectionBasket
-              selectedItems={state.basketItems
-                .map((id) => state.items[id])
-                .filter((item): item is FileSystemItem => item !== undefined)}
-              onRemoveItem={handleRemoveFromBasket}
-              onClearSelection={clearBasket}
-              onDownloadRequest={handleDownloadRequest}
-              onTransferRequest={handleTransferRequest}
-            />
-          </div>
-        ) : selectedStoreId ? (
-          <>
-            {/* Toolbar row: breadcrumb + actions */}
-            <div className="flex h-11 items-center justify-between border-b border-muted/40 px-3">
-              <Breadcrumb
-                currentPath={currentPath}
-                onNavigateToFolder={navigateToFolder}
-              />
-
-              <div className="flex items-center gap-1">
-                <Button
-                  onClick={handleCreateFolder}
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 px-2 text-accent"
-                >
-                  <FolderPlus className="h-4 w-4" />
-                  New folder
-                </Button>
-                <Button
-                  onClick={handleImport}
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 px-2 text-accent"
-                >
-                  <Upload className="h-4 w-4" />
-                  Import
-                </Button>
-                <Button
-                  onClick={handleImportFolder}
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 px-2 text-accent"
-                >
-                  <FolderUp className="h-4 w-4" />
-                  Upload folder
-                </Button>
-                <input
-                  ref={folderInputRef}
-                  type="file"
-                  className="hidden"
-                  onChange={handleFolderInputChange}
-                  {...({
-                    webkitdirectory: '',
-                    directory: ''
-                  } as React.InputHTMLAttributes<HTMLInputElement>)}
+      {/* Content panel — file browser + optional Request queue sidebar */}
+      <div className="flex min-h-0 min-w-0 flex-1 gap-2 overflow-hidden">
+        <div className="card-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-muted/40 bg-card">
+          {selectedStoreId ? (
+            <>
+              {/* Toolbar row: breadcrumb + actions */}
+              <div className="flex h-11 items-center justify-between border-b border-muted/40 px-3">
+                <Breadcrumb
+                  currentPath={currentPath}
+                  onNavigateToFolder={navigateToFolder}
                 />
-              </div>
-            </div>
 
-            {/* File browser area with drop zone */}
-            <div
-              className="relative flex min-h-0 flex-1 flex-col overflow-auto"
-              onDragOver={handleExternalDragOver}
-              onDragLeave={handleExternalDragLeave}
-              onDrop={handleExternalDrop}
-              onContextMenu={(e) => {
-                if (e.target === e.currentTarget) {
-                  handleContextMenu(e, null)
-                }
-              }}
-            >
-              {/* Copy progress overlay */}
-              {isCopying && (
-                <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-sm">
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                    <span className="text-sm font-medium">Copying…</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Drop zone overlay */}
-              {isDraggingOver && (
-                <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">
-                  <div className="flex flex-col items-center gap-2 text-accent">
-                    <Upload className="h-8 w-8" />
-                    <span className="text-sm font-medium">
-                      Drop files or folders to upload
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {currentChildren.length === 0 && !loading ? (
-                /* Empty state — full-height dashed dropzone */
-                <div
-                  className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground"
-                  onContextMenu={(e) => handleContextMenu(e, null)}
-                >
-                  <Upload className="h-12 w-12 opacity-40" />
-                  <div className="text-center">
-                    <p className="text-sm font-medium">No files yet</p>
-                    <p className="mt-1 text-xs">
-                      Drag & drop files or folders here, or click Import to get
-                      started
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={handleImport}>
-                    <Upload className="mr-2 h-4 w-4" />
+                <div className="flex items-center gap-1">
+                  <Button
+                    onClick={handleCreateFolder}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2 text-accent"
+                  >
+                    <FolderPlus className="h-4 w-4" />
+                    New folder
+                  </Button>
+                  <Button
+                    onClick={handleImport}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2 text-accent"
+                  >
+                    <Upload className="h-4 w-4" />
                     Import
                   </Button>
+                  <Button
+                    onClick={handleImportFolder}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2 text-accent"
+                  >
+                    <FolderUp className="h-4 w-4" />
+                    Upload folder
+                  </Button>
+                  <input
+                    ref={folderInputRef}
+                    type="file"
+                    className="hidden"
+                    onChange={handleFolderInputChange}
+                    {...({
+                      webkitdirectory: '',
+                      directory: ''
+                    } as React.InputHTMLAttributes<HTMLInputElement>)}
+                  />
                 </div>
-              ) : (
-                <FileGrid
-                  items={currentChildren}
-                  selectedItems={state.selectedItems}
-                  viewMode={state.viewMode}
-                  onSelectItem={selectItem}
-                  onSelectRange={selectRange}
-                  onSelectAll={selectAll}
-                  onClearSelection={clearSelection}
-                  onNavigateToFolder={navigateToFolder}
-                  onMoveItem={moveItem}
-                  onDownload={handleAddToBasket}
-                  onDelete={handleSmartDelete}
-                  onRename={(itemId) => setRenamingItemId(itemId)}
-                  basketItems={state.basketItems}
-                  movingItemId={movingItemId}
-                  onContextMenu={handleContextMenu}
-                  clipboard={state.clipboard}
-                  renamingItemId={renamingItemId}
-                  onRenameSubmit={(itemId, newName) => {
-                    renameItem(itemId, newName)
-                    setRenamingItemId(null)
-                  }}
-                  onRenameCancel={() => setRenamingItemId(null)}
-                  parentFolderId={(() => {
-                    if (
-                      !state.currentFolderId ||
-                      state.currentFolderId === 'root'
-                    ) {
-                      return null
-                    }
-                    const parentId =
-                      state.items[state.currentFolderId]?.parentId
-                    return parentId && parentId !== 'root' ? parentId : null
-                  })()}
-                />
-              )}
+              </div>
+
+              {/* File browser area with drop zone */}
+              <div
+                className="relative flex min-h-0 flex-1 flex-col overflow-auto"
+                onDragOver={handleExternalDragOver}
+                onDragLeave={handleExternalDragLeave}
+                onDrop={handleExternalDrop}
+                onContextMenu={(e) => {
+                  if (e.target === e.currentTarget) {
+                    handleContextMenu(e, null)
+                  }
+                }}
+              >
+                {/* Copy progress overlay */}
+                {isCopying && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-sm">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                      <span className="text-sm font-medium">Copying…</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Drop zone overlay */}
+                {isDraggingOver && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">
+                    <div className="flex flex-col items-center gap-2 text-accent">
+                      <Upload className="h-8 w-8" />
+                      <span className="text-sm font-medium">
+                        Drop files or folders to upload
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {currentChildren.length === 0 && !loading ? (
+                  /* Empty state — full-height dashed dropzone */
+                  <div
+                    className="m-3 flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-muted-foreground"
+                    onContextMenu={(e) => handleContextMenu(e, null)}
+                  >
+                    <Upload className="h-12 w-12 opacity-40" />
+                    <div className="text-center">
+                      <p className="text-sm font-medium">No files yet</p>
+                      <p className="mt-1 text-xs">
+                        Drag & drop files or folders here, or click Import to
+                        get started
+                      </p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={handleImport}>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Import
+                    </Button>
+                  </div>
+                ) : (
+                  <FileGrid
+                    items={currentChildren}
+                    selectedItems={state.selectedItems}
+                    viewMode={state.viewMode}
+                    onSelectItem={selectItem}
+                    onSelectRange={selectRange}
+                    onSelectAll={selectAll}
+                    onClearSelection={clearSelection}
+                    onNavigateToFolder={navigateToFolder}
+                    onMoveItem={moveItem}
+                    onDownload={handleAddToDownloadQueue}
+                    onTransfer={handleAddToTransferQueue}
+                    onDelete={handleSmartDelete}
+                    onRename={(itemId) => setRenamingItemId(itemId)}
+                    downloadQueueItems={state.downloadQueueItems}
+                    transferQueueItems={state.transferQueueItems}
+                    movingItemId={movingItemId}
+                    onContextMenu={handleContextMenu}
+                    clipboard={state.clipboard}
+                    renamingItemId={renamingItemId}
+                    onRenameSubmit={(itemId, newName) => {
+                      renameItem(itemId, newName)
+                      setRenamingItemId(null)
+                    }}
+                    onRenameCancel={() => setRenamingItemId(null)}
+                    parentFolderId={(() => {
+                      if (
+                        !state.currentFolderId ||
+                        state.currentFolderId === 'root'
+                      ) {
+                        return null
+                      }
+                      const parentId =
+                        state.items[state.currentFolderId]?.parentId
+                      return parentId && parentId !== 'root' ? parentId : null
+                    })()}
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            /* No store selected — welcome state */
+            <div className="flex flex-1 flex-col items-center justify-center gap-4 text-muted-foreground">
+              <HardDrive className="h-12 w-12 opacity-40" />
+              <div className="text-center">
+                <p className="text-sm font-medium">
+                  Select a store to browse files
+                </p>
+                <p className="mt-1 text-xs">Choose a store from the top bar</p>
+              </div>
             </div>
-          </>
-        ) : (
-          /* No store selected — welcome state */
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 text-muted-foreground">
-            <HardDrive className="h-12 w-12 opacity-40" />
-            <div className="text-center">
-              <p className="text-sm font-medium">
-                Select a store to browse files
-              </p>
-              <p className="mt-1 text-xs">Choose a store from the top bar</p>
-            </div>
+          )}
+        </div>
+
+        {showRequests && (
+          <div className="card-glass flex w-[320px] shrink-0 flex-col overflow-hidden rounded-xl border border-muted/40 bg-card">
+            <RequestQueue
+              downloadItems={state.downloadQueueItems
+                .map((id) => state.items[id])
+                .filter((item): item is FileSystemItem => item !== undefined)}
+              transferItems={state.transferQueueItems
+                .map((id) => state.items[id])
+                .filter((item): item is FileSystemItem => item !== undefined)}
+              onRemoveDownloadItem={handleRemoveDownloadItem}
+              onRemoveTransferItem={handleRemoveTransferItem}
+              onClearDownload={handleClearDownloadQueue}
+              onClearTransfer={handleClearTransferQueue}
+              onSubmitDownload={handleSubmitDownloadRequest}
+              onSubmitTransfer={handleSubmitTransferRequest}
+            />
           </div>
         )}
       </div>
