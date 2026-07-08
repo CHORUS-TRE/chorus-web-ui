@@ -1,3 +1,10 @@
+# [1.70.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.69.0...v1.70.0) (2026-07-08)
+
+
+### Features
+
+* implement request queue for file downloads and transfers ([c74d7db](https://github.com/CHORUS-TRE/chorus-web-ui/commit/c74d7db321b230cda2faf26a4abd014da1c25088))
+
 # [1.69.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.68.0...v1.69.0) (2026-07-07)
 
 
