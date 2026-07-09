@@ -1,3 +1,10 @@
+# [1.71.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.70.0...v1.71.0) (2026-07-09)
+
+
+### Features
+
+* add authentication logic and tests for chat API ([ac838a7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ac838a7f571bbb68f76a083a4d869733af426d32))
+
 # [1.70.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.69.0...v1.70.0) (2026-07-08)
 
 
