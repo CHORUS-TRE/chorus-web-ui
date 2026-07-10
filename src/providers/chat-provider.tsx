@@ -27,7 +27,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const initialMessages = useRef<UIMessage[]>(useChatStore.getState().messages)
 
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: '/api/chat', credentials: 'include' }),
+    () =>
+      new DefaultChatTransport({ api: '/api/chat', credentials: 'include' }),
     []
   )
 

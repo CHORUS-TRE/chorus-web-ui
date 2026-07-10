@@ -7,7 +7,6 @@ import { headers } from 'next/headers'
 import Script from 'next/script'
 import { env } from 'next-runtime-env'
 import React from 'react'
-import { Toaster as SonnerToaster } from 'sonner'
 
 import { AppStateInitializer } from '@/components/app-state-initializer'
 import { CookieConsent } from '@/components/cookie-consent'
@@ -90,7 +89,6 @@ export default async function RootLayout({
         >
           <Toaster />
           <ErrorDetailDialog />
-          <SonnerToaster position="top-right" theme="dark" richColors />
           <InstanceConfigInitializer>
             <DynamicThemeApplicator />
             <AuthenticationProvider>
