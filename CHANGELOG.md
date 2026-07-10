@@ -1,3 +1,10 @@
+## [1.71.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.0...v1.71.1) (2026-07-10)
+
+
+### Bug Fixes
+
+* include credentials in chat transport configuration ([6c16ae7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6c16ae76811d3036a4520c679d35411478b0002d))
+
 # [1.71.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.70.0...v1.71.0) (2026-07-09)
 
 
