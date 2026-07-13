@@ -1,3 +1,10 @@
+## [1.71.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.2...v1.71.3) (2026-07-13)
+
+
+### Bug Fixes
+
+* enhance authentication error handling and improve cookie processing ([2c07925](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2c079258467a9374c12121516e90dd367fa0215a))
+
 ## [1.71.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.1...v1.71.2) (2026-07-13)
 
 
