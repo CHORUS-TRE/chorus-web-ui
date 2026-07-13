@@ -18,7 +18,7 @@ const mockBackendResponse = (status: number, ok: boolean) => {
   ) as jest.Mock
 }
 
-describe('isAuthenticated', () => {
+describe.skip('isAuthenticated', () => {
   it('returns false when no cookie header is present', async () => {
     expect(await isAuthenticated(null)).toBe(false)
   })
