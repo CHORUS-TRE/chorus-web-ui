@@ -5,51 +5,107 @@ import { Configuration, UserServiceApi } from '@/internal/client'
 
 export const runtime = 'nodejs'
 
-const SESSION_COOKIE_NAME = 'jwttoken'
+type ApiError = Error & {
+  status?: number
+  response?: {
+    status?: number
+    statusText?: string
+  }
+  body?: unknown
+  cause?: unknown
+}
 
-function extractCookie(cookieHeader: string, name: string): string | undefined {
-  const prefix = `${name}=`
-  return cookieHeader
-    .split(';')
-    .map((pair) => pair.trim())
-    .find((pair) => pair.startsWith(prefix))
-    ?.slice(prefix.length)
+function logAuthenticationError(error: unknown): void {
+  if (error instanceof Error) {
+    const apiError = error as ApiError
+
+    console.error('Authentication check failed', {
+      name: apiError.name,
+      message: apiError.message,
+      status: apiError.status ?? apiError.response?.status,
+      statusText: apiError.response?.statusText,
+      cause: apiError.cause,
+      stack: process.env.NODE_ENV === 'development' ? apiError.stack : undefined
+    })
+
+    return
+  }
+
+  console.error('Authentication check failed with a non-Error value', {
+    errorType: typeof error
+  })
 }
 
 export async function isAuthenticated(
   cookieHeader: string | null
 ): Promise<boolean> {
-  if (!cookieHeader) return false
+  if (!cookieHeader) {
+    console.warn('Authentication check failed: cookie header is missing')
+    return false
+  }
 
-  // const jwtToken = extractCookie(cookieHeader, SESSION_COOKIE_NAME)
-  // if (!jwtToken) return false
+  const basePath = env('NEXT_PUBLIC_API_URL')
 
-  const userService = new UserServiceApi(
-    new Configuration({ basePath: env('NEXT_PUBLIC_API_URL') || '' })
-  )
+  if (!basePath) {
+    console.error(
+      'Authentication check failed: NEXT_PUBLIC_API_URL is not configured'
+    )
+    return false
+  }
 
-  console.log('isAuthenticated')
-  console.log('userService', userService)
-  console.log('cookieHeader', cookieHeader)
+  const userService = new UserServiceApi(new Configuration({ basePath }))
+
+  const cookieValue = cookieHeader.replace(/token=/, 'jwttoken=')
+  console.info('Performing authentication check with cookie header:', {
+    cookieHeader,
+    cookieValue
+  })
 
   try {
-    const r = await userService.userServiceGetUserMe({
-      headers: { Cookie: `${cookieHeader}` }
+    await userService.userServiceGetUserMe({
+      headers: {
+        Cookie: cookieValue
+      }
     })
-    console.log('User is authenticated')
-    console.log('User data:', r)
+
+    console.info('Authentication check succeeded')
     return true
-  } catch (e) {
-    console.error('Error occurred while checking authentication:', e)
+  } catch (error: unknown) {
+    logAuthenticationError(error)
     return false
   }
 }
 
 export async function POST(req: Request) {
-  if (!(await isAuthenticated(req.headers.get('cookie')))) {
-    return new Response('Unauthorized', { status: 401 })
+  const authenticated = await isAuthenticated(req.headers.get('cookie'))
+
+  if (!authenticated) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = (await req.json()) as { messages?: Record<string, unknown>[] }
-  return orchestrate(body.messages ?? [])
+  try {
+    const body = (await req.json()) as {
+      messages?: Record<string, unknown>[]
+    }
+
+    return await orchestrate(body.messages ?? [])
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      console.warn('Invalid JSON request body', {
+        message: error.message
+      })
+
+      return Response.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
+
+    console.error('Orchestration request failed', {
+      message: error instanceof Error ? error.message : String(error),
+      stack:
+        error instanceof Error && process.env.NODE_ENV === 'development'
+          ? error.stack
+          : undefined
+    })
+
+    return Response.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }
