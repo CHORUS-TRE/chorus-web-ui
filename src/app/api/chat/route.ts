@@ -15,6 +15,15 @@ type ApiError = Error & {
   cause?: unknown
 }
 
+function extractJwtCookie(cookieHeader: string): string | null {
+  const jwtCookie = cookieHeader
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith('jwttoken='))
+
+  return jwtCookie ?? null
+}
+
 function logAuthenticationError(error: unknown): void {
   if (error instanceof Error) {
     const apiError = error as ApiError
@@ -52,15 +61,21 @@ export async function isAuthenticated(
     return false
   }
 
+  const jwtCookie = extractJwtCookie(cookieHeader)
+  if (!jwtCookie) {
+    console.error('Authentication check failed: jwttoken cookie is missing')
+    return false
+  }
+
   const userService = new UserServiceApi(new Configuration({ basePath }))
   console.error('Performing authentication check with cookie header:', {
-    cookieHeader
+    jwtCookie
   })
 
   try {
     await userService.userServiceGetUserMe({
       headers: {
-        Cookie: cookieHeader
+        Cookie: jwtCookie
       }
     })
 
