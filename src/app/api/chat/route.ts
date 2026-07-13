@@ -53,16 +53,14 @@ export async function isAuthenticated(
   }
 
   const userService = new UserServiceApi(new Configuration({ basePath }))
-  const cookieValue = cookieHeader.replace(/token=/, 'jwttoken=')
   console.error('Performing authentication check with cookie header:', {
     cookieHeader,
-    cookieValue
   })
 
   try {
     await userService.userServiceGetUserMe({
       headers: {
-        Cookie: cookieValue
+        Cookie: cookieHeader
       }
     })
 
