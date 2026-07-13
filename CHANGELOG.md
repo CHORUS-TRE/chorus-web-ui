@@ -1,3 +1,11 @@
+## [1.71.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.3...v1.71.4) (2026-07-13)
+
+
+### Bug Fixes
+
+* enhance logging for authentication and message handling in chat provider ([f1f88a5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f1f88a5faa0a497ef099973557aa11a73ba40ad3))
+* improve error logging in authentication checks ([e19899c](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e19899c1f088120a1b8930d71bc35066507c187c))
+
 ## [1.71.3](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.2...v1.71.3) (2026-07-13)
 
 
