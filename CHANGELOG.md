@@ -1,3 +1,11 @@
+## [1.71.6](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.5...v1.71.6) (2026-07-13)
+
+
+### Bug Fixes
+
+* remove unnecessary change in cookie header logging for authentication check ([a538810](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a5388105150e3b08ee6a77ec7d4093ccbf708a47))
+* revert cookie header modification in authentication check ([39944c6](https://github.com/CHORUS-TRE/chorus-web-ui/commit/39944c61454dee2e24580da502688815c8777e03))
+
 ## [1.71.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.4...v1.71.5) (2026-07-13)
 
 
