@@ -54,7 +54,7 @@ export async function isAuthenticated(
 
   const userService = new UserServiceApi(new Configuration({ basePath }))
   const cookieValue = cookieHeader.replace(/token=/, 'jwttoken=')
-  console.error('Performing authentication check with cookie header:', {
+  console.debug('Performing authentication check with cookie header:', {
     cookieHeader,
     cookieValue
   })
@@ -66,7 +66,7 @@ export async function isAuthenticated(
       }
     })
 
-    console.error('Authentication check succeeded')
+    console.debug('Authentication check succeeded')
     return true
   } catch (error: unknown) {
     logAuthenticationError(error)
@@ -75,9 +75,20 @@ export async function isAuthenticated(
 }
 
 export async function POST(req: Request) {
+  const requestId = crypto.randomUUID()
+  const startedAt = Date.now()
+
+  console.log('[chat] request received', {
+    requestId,
+    method: req.method,
+    hasCookie: Boolean(req.headers.get('cookie'))
+  })
+
   const authenticated =
     process.env.NODE_ENV === 'development' ||
     (await isAuthenticated(req.headers.get('cookie')))
+
+  console.log('[chat] authentication result', { requestId, authenticated })
 
   if (!authenticated) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
@@ -87,11 +98,26 @@ export async function POST(req: Request) {
     const body = (await req.json()) as {
       messages?: Record<string, unknown>[]
     }
+    const messages = body.messages ?? []
 
-    return await orchestrate(body.messages ?? [])
+    console.log('[chat] request body parsed', {
+      requestId,
+      messageCount: messages.length,
+      roles: messages.map((m) => m.role)
+    })
+
+    const response = await orchestrate(messages)
+
+    console.log('[chat] orchestration completed', {
+      requestId,
+      durationMs: Date.now() - startedAt
+    })
+
+    return response
   } catch (error: unknown) {
     if (error instanceof SyntaxError) {
       console.warn('Invalid JSON request body', {
+        requestId,
         message: error.message
       })
 
@@ -99,6 +125,8 @@ export async function POST(req: Request) {
     }
 
     console.error('Orchestration request failed', {
+      requestId,
+      durationMs: Date.now() - startedAt,
       message: error instanceof Error ? error.message : String(error),
       stack:
         error instanceof Error && process.env.NODE_ENV === 'development'

@@ -36,8 +36,16 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     messages:
       initialMessages.current.length > 0 ? initialMessages.current : undefined,
     transport,
-    onFinish: () => {
+    onFinish: ({ message }) => {
       // Tool outputs are handled by the artifact renderers in ChatMessage
+      console.log('[chat] message finished', {
+        id: message.id,
+        role: message.role,
+        partCount: message.parts.length
+      })
+    },
+    onError: (err) => {
+      console.error('[chat] stream error', err)
     }
   })
 
@@ -45,6 +53,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     useChatStore.getState().setMessages(messages as UIMessage[])
   }, [messages])
+
+  useEffect(() => {
+    console.log('[chat] status changed', { status })
+  }, [status])
 
   return (
     <ChatContext.Provider

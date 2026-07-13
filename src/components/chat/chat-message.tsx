@@ -119,7 +119,10 @@ export function ChatMessage({ message }: { message: UIMessage }) {
   // Keep the last non-null artifact so interactive widgets (e.g. wizard) never
   // unmount when the AI SDK temporarily clears a tool part's output state.
   const [lastArtifact, setLastArtifact] = useState<ChatArtifact | null>(null)
-  const rawArtifact = !isUser ? extractArtifact(message) : null
+  const rawArtifact = useMemo(
+    () => (!isUser ? extractArtifact(message) : null),
+    [isUser, message.parts]
+  )
   useEffect(() => {
     if (rawArtifact) {
       setLastArtifact(rawArtifact)
