@@ -1,3 +1,10 @@
+## [1.71.8](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.7...v1.71.8) (2026-07-13)
+
+
+### Bug Fixes
+
+* update logging for JWT cookie and user service method calls ([5b3f25a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/5b3f25a75602d0703eb51e458e03deafd9738591))
+
 ## [1.71.7](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.6...v1.71.7) (2026-07-13)
 
 
