@@ -1,3 +1,10 @@
+## [1.71.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.1...v1.71.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* update authentication logic to use cookie header directly ([9f69769](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9f69769e4d3ce07953e58a6c1036bd0f6f6704ae))
+
 ## [1.71.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.0...v1.71.1) (2026-07-10)
 
 
