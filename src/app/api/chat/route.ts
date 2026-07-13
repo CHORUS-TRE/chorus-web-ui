@@ -40,7 +40,7 @@ export async function isAuthenticated(
   cookieHeader: string | null
 ): Promise<boolean> {
   if (!cookieHeader) {
-    console.warn('Authentication check failed: cookie header is missing')
+    console.error('Authentication check failed: cookie header is missing')
     return false
   }
 
@@ -54,7 +54,7 @@ export async function isAuthenticated(
 
   const userService = new UserServiceApi(new Configuration({ basePath }))
   const cookieValue = cookieHeader.replace(/token=/, 'jwttoken=')
-  console.debug('Performing authentication check with cookie header:', {
+  console.error('Performing authentication check with cookie header:', {
     cookieHeader,
     cookieValue
   })
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
   const requestId = crypto.randomUUID()
   const startedAt = Date.now()
 
-  console.log('[chat] request received', {
+  console.error('[chat] request received', {
     requestId,
     method: req.method,
     hasCookie: Boolean(req.headers.get('cookie'))
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
     process.env.NODE_ENV === 'development' ||
     (await isAuthenticated(req.headers.get('cookie')))
 
-  console.log('[chat] authentication result', { requestId, authenticated })
+  console.error('[chat] authentication result', { requestId, authenticated })
 
   if (!authenticated) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
     }
     const messages = body.messages ?? []
 
-    console.log('[chat] request body parsed', {
+    console.error('[chat] request body parsed', {
       requestId,
       messageCount: messages.length,
       roles: messages.map((m) => m.role)
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
 
     const response = await orchestrate(messages)
 
-    console.log('[chat] orchestration completed', {
+    console.error('[chat] orchestration completed', {
       requestId,
       durationMs: Date.now() - startedAt
     })
