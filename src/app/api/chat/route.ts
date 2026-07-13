@@ -21,19 +21,26 @@ export async function isAuthenticated(
 ): Promise<boolean> {
   if (!cookieHeader) return false
 
-  const jwtToken = extractCookie(cookieHeader, SESSION_COOKIE_NAME)
-  if (!jwtToken) return false
+  // const jwtToken = extractCookie(cookieHeader, SESSION_COOKIE_NAME)
+  // if (!jwtToken) return false
 
   const userService = new UserServiceApi(
     new Configuration({ basePath: env('NEXT_PUBLIC_API_URL') || '' })
   )
 
+  console.log('isAuthenticated')
+  console.log('userService', userService)
+  console.log('cookieHeader', cookieHeader)
+
   try {
-    await userService.userServiceGetUserMe({
-      headers: { Cookie: `${SESSION_COOKIE_NAME}=${jwtToken}` }
+    const r = await userService.userServiceGetUserMe({
+      headers: { Cookie: `${cookieHeader}` }
     })
+    console.log('User is authenticated')
+    console.log('User data:', r)
     return true
-  } catch {
+  } catch (e) {
+    console.error('Error occurred while checking authentication:', e)
     return false
   }
 }
