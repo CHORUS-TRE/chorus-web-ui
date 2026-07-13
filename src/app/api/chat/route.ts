@@ -54,7 +54,7 @@ export async function isAuthenticated(
 
   const userService = new UserServiceApi(new Configuration({ basePath }))
   console.error('Performing authentication check with cookie header:', {
-    cookieHeader,
+    cookieHeader
   })
 
   try {
