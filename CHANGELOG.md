@@ -1,3 +1,10 @@
+## [1.71.7](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.6...v1.71.7) (2026-07-13)
+
+
+### Bug Fixes
+
+* improve JWT extraction and error handling in authentication check ([f3602ea](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f3602eae0cd77fd20f9b2a52d8b562d54a8e5f05))
+
 ## [1.71.6](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.5...v1.71.6) (2026-07-13)
 
 
