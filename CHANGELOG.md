@@ -1,3 +1,10 @@
+## [1.71.5](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.4...v1.71.5) (2026-07-13)
+
+
+### Bug Fixes
+
+* replace console.log and console.debug with console.error for improved error logging in authentication and chat request handling ([faa61dc](https://github.com/CHORUS-TRE/chorus-web-ui/commit/faa61dc89c665eac6185f9e3956ba460464005bf))
+
 ## [1.71.4](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.3...v1.71.4) (2026-07-13)
 
 
