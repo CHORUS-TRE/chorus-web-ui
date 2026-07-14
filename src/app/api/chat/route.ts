@@ -67,17 +67,26 @@ export async function isAuthenticated(
     return false
   }
 
-  const userService = new UserServiceApi(new Configuration({ basePath }))
+  const apiSuffix = env('NEXT_PUBLIC_API_SUFFIX') ?? ''
   console.error('Performing authentication check with cookie header:', {
     Cookie: jwtCookie
   })
 
   try {
-    await userService.userServiceGetUserMe({
+    const response = await fetch(`${basePath}${apiSuffix}/users/me`, {
       headers: {
         Cookie: jwtCookie
       }
     })
+
+    if (!response.ok) {
+      console.error('Authentication check failed', {
+        status: response.status,
+        statusText: response.statusText,
+        body: await response.text()
+      })
+      return false
+    }
 
     console.debug('Authentication check succeeded')
     return true
