@@ -1,3 +1,10 @@
+## [1.71.10](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.9...v1.71.10) (2026-07-14)
+
+
+### Bug Fixes
+
+* update JWT cookie extraction and modify authentication request headers ([99b0e9e](https://github.com/CHORUS-TRE/chorus-web-ui/commit/99b0e9eff6d80d61964d925f98ef0b037be6695b))
+
 ## [1.71.9](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.8...v1.71.9) (2026-07-14)
 
 
