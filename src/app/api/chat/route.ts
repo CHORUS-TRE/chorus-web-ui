@@ -1,9 +1,13 @@
+import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { env } from 'next-runtime-env'
 
 import { orchestrate } from '@/app/api/.ai/agent/orchestrator'
-import { Configuration, UserServiceApi } from '@/internal/client'
 
 export const runtime = 'nodejs'
+let cachedJwks: {
+  issuer: string
+  jwks: ReturnType<typeof createRemoteJWKSet>
+} | null = null
 
 type ApiError = Error & {
   status?: number
@@ -45,19 +49,28 @@ function logAuthenticationError(error: unknown): void {
   })
 }
 
+function getJwks() {
+  if (cachedJwks) {
+    return cachedJwks
+  }
+
+  const issuer = 'https://auth..chorus-tre.ch/realms/chorus'
+  if (!issuer) {
+    throw new Error('KEYCLOAK_ISSUER is not configured')
+  }
+
+  cachedJwks = {
+    issuer,
+    jwks: createRemoteJWKSet(new URL(`${issuer}/protocol/openid-connect/certs`))
+  }
+  return cachedJwks
+}
+
 export async function isAuthenticated(
   cookieHeader: string | null
 ): Promise<boolean> {
   if (!cookieHeader) {
     console.error('Authentication check failed: cookie header is missing')
-    return false
-  }
-
-  const basePath = env('NEXT_PUBLIC_API_URL')
-  if (!basePath) {
-    console.error(
-      'Authentication check failed: NEXT_PUBLIC_API_URL is not configured'
-    )
     return false
   }
 
@@ -67,27 +80,10 @@ export async function isAuthenticated(
     return false
   }
 
-  const apiSuffix = env('NEXT_PUBLIC_API_SUFFIX') ?? ''
-  console.error('Performing authentication check with cookie header:', {
-    Cookie: jwtCookie
-  })
-
   try {
-    const response = await fetch(`${basePath}${apiSuffix}/users/me`, {
-      headers: {
-        Authorization: `Bearer ${jwtCookie}`
-      },
-      credentials: 'include'
-    })
+    const { issuer, jwks } = getJwks()
 
-    if (!response.ok) {
-      console.error('Authentication check failed', {
-        status: response.status,
-        statusText: response.statusText,
-        body: await response.text()
-      })
-      return false
-    }
+    await jwtVerify(jwtCookie, jwks, { issuer })
 
     console.debug('Authentication check succeeded')
     return true

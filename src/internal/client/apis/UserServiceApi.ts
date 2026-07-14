@@ -548,7 +548,6 @@ export class UserServiceApi extends runtime.BaseAPI {
   async userServiceGetUserMe(
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ChorusGetUserMeReply> {
-
     const response = await this.userServiceGetUserMeRaw(initOverrides)
     return await response.value()
   }
