@@ -1,3 +1,10 @@
+# [1.72.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.10...v1.72.0) (2026-07-14)
+
+
+### Features
+
+* add jose library for JWT handling and implement JWKS caching in authentication ([cfa94e2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cfa94e27bb19070dc7ce1c105a1e561989e4c071))
+
 ## [1.71.10](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.9...v1.71.10) (2026-07-14)
 
 
