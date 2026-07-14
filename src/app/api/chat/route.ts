@@ -21,7 +21,7 @@ function extractJwtCookie(cookieHeader: string): string | null {
     .map((cookie) => cookie.trim())
     .find((cookie) => cookie.startsWith('jwttoken='))
 
-  return jwtCookie ?? null
+  return jwtCookie?.slice('jwttoken='.length) ?? null
 }
 
 function logAuthenticationError(error: unknown): void {
@@ -75,8 +75,9 @@ export async function isAuthenticated(
   try {
     const response = await fetch(`${basePath}${apiSuffix}/users/me`, {
       headers: {
-        Cookie: jwtCookie
-      }
+        Authorization: `Bearer ${jwtCookie}`
+      },
+      credentials: 'include'
     })
 
     if (!response.ok) {
