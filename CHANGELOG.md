@@ -1,3 +1,10 @@
+## [1.72.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.72.0...v1.72.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* update Keycloak issuer URL in authentication logic ([aff3aef](https://github.com/CHORUS-TRE/chorus-web-ui/commit/aff3aef1dcfd7a608c2e472684aa921c43cd8e1e))
+
 # [1.72.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.10...v1.72.0) (2026-07-14)
 
 
