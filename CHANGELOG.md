@@ -1,3 +1,10 @@
+## [1.71.9](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.8...v1.71.9) (2026-07-14)
+
+
+### Bug Fixes
+
+* enhance authentication error logging and improve user retrieval process ([a215d1f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/a215d1fdd4774148a425cf3950c63802c9d35b9a))
+
 ## [1.71.8](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.71.7...v1.71.8) (2026-07-13)
 
 
