@@ -54,7 +54,7 @@ function getJwks() {
     return cachedJwks
   }
 
-  const issuer = 'https://auth..chorus-tre.ch/realms/chorus'
+  const issuer = 'https://auth.int.chorus-tre.ch/realms/chorus'
   if (!issuer) {
     throw new Error('KEYCLOAK_ISSUER is not configured')
   }
