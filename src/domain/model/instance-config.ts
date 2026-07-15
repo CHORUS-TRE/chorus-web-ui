@@ -11,7 +11,7 @@ export const INSTANCE_CONFIG_KEYS = {
   THEME: 'instance.theme',
   DEFAULT_THEME_MODE: 'instance.defaultTheme',
   LIMITS: 'instance.limits',
-  DISPLAY_PARTICIPATING_CENTERS: 'instance.displayParticipatingCenters'
+  DISPLAY_ORGANIZATIONS: 'instance.displayOrganizations'
 } as const
 
 // Logo configuration (light and dark variants)
@@ -76,7 +76,7 @@ export const InstanceConfigSchema = z.object({
   theme: InstanceThemeSchema.nullable().optional(),
   defaultThemeMode: ThemeModeSchema.default(DEFAULT_THEME_MODE),
   limits: InstanceLimitsSchema.nullable().optional(),
-  displayParticipatingCenters: z.boolean().default(false)
+  displayOrganizations: z.boolean().default(false)
 })
 
 export type InstanceConfig = z.infer<typeof InstanceConfigSchema>
@@ -96,5 +96,5 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
     maxSessionsPerUser: null,
     maxAppInstancesPerUser: null
   },
-  displayParticipatingCenters: false
+  displayOrganizations: false
 }

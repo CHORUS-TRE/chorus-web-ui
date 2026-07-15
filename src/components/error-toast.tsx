@@ -26,8 +26,14 @@ export function errorToast(
   error?: ChorusError | null,
   fallback = 'Something went wrong.'
 ): ErrorToastProps {
+  const validationSummary = error?.validationErrors?.length
+    ? error.validationErrors.map((ve) => `${ve.field}: ${ve.reason}`).join('; ')
+    : undefined
+
   const props: ErrorToastProps = {
-    description: error?.message ?? fallback
+    description: [error?.message ?? fallback, validationSummary]
+      .filter(Boolean)
+      .join(' — ')
   }
 
   if (error && hasErrorDetail(error)) {

@@ -22,4 +22,8 @@ export const useErrorDetailStore = create<ErrorDetailState>((set) => ({
  * (the (i) button on the toast). Plain message-only errors don't get one.
  */
 export const hasErrorDetail = (error?: ChorusError | null): boolean =>
-  !!error && (!!error.stackTrace || !!error.instance || !!error.title)
+  !!error &&
+  (!!error.stackTrace ||
+    !!error.instance ||
+    !!error.title ||
+    !!error.validationErrors?.length)

@@ -43,6 +43,11 @@ export function AdminTabs() {
       authorized: can('createApp', {})
     },
     {
+      href: '/admin/organizations',
+      label: 'Organizations',
+      authorized: can('setPlatformSettings', {})
+    },
+    {
       href: '/admin/data-requests',
       label: 'Data Requests',
       authorized: can('listWorkspaces', { workspace: '*' })

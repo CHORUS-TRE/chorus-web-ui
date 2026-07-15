@@ -18,7 +18,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
 import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
-import { useDisplayParticipatingCenters } from '@/hooks/use-instance-config'
+import { useDisplayOrganizations } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useAppState } from '@/stores/app-state-store'
@@ -61,9 +61,9 @@ export const navItems = [
     href: '/public-workspaces'
   },
   {
-    label: 'Participating Centers',
+    label: 'Organizations',
     icon: Building2,
-    href: '/participating-centers'
+    href: '/organizations'
   }
 ]
 
@@ -78,7 +78,7 @@ function SidebarContent({
   searchParams: URLSearchParams
 }) {
   const { isAdmin } = useAuthorization()
-  const displayParticipatingCenters = useDisplayParticipatingCenters()
+  const displayOrganizations = useDisplayOrganizations()
   const currentTab = searchParams.get('tab')
   const { unreadNotificationsCount } = useAppState()
   // Unread notifications only: an actionable approval request already has a
@@ -124,20 +124,20 @@ function SidebarContent({
           Dashboard
         </Link>
 
-        {/* Participating Centers */}
-        {displayParticipatingCenters && (
+        {/* Organizations */}
+        {displayOrganizations && (
           <Link
-            href="/participating-centers"
+            href="/organizations"
             variant="underline"
             className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:text-accent',
-              isActive('/participating-centers')
+              isActive('/organizations')
                 ? 'bg-accent/15 text-accent'
                 : 'text-muted-foreground'
             )}
           >
             <Building2 className="h-4 w-4" />
-            Participating Centers
+            Organizations
           </Link>
         )}
 

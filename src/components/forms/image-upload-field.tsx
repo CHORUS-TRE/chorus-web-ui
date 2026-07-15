@@ -15,6 +15,7 @@ interface ImageUploadFieldProps {
   error?: string
   label?: string
   className?: string
+  maxSizeBytes?: number
 }
 
 export function ImageUploadField({
@@ -22,22 +23,29 @@ export function ImageUploadField({
   onChange,
   error,
   label = 'Icon',
-  className
+  className,
+  maxSizeBytes = 2 * 1024 * 1024
 }: ImageUploadFieldProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [localError, setLocalError] = useState<string>()
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setLocalError(undefined)
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
+      setLocalError('File must be an image')
       onChange('')
       return
     }
 
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
+    // Validate file size
+    if (file.size > maxSizeBytes) {
+      setLocalError(
+        `Image must be smaller than ${Math.round(maxSizeBytes / 1024)}KB`
+      )
       onChange('')
       return
     }
@@ -48,6 +56,7 @@ export function ImageUploadField({
       onChange(base64)
     } catch (error) {
       console.error('Error converting image to base64:', error)
+      setLocalError('Failed to read image')
       onChange('')
     } finally {
       setIsLoading(false)
@@ -75,7 +84,7 @@ export function ImageUploadField({
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="text-white file:rounded-md file:border file:border-accent file:bg-background file:text-accent placeholder:text-white file:hover:cursor-pointer file:hover:bg-accent file:hover:text-black"
+            className="text-foreground-muted file:rounded-md file:border file:border-accent file:bg-background file:text-accent placeholder:text-white file:hover:cursor-pointer file:hover:bg-accent file:hover:text-black"
             disabled={isLoading}
           />
         </FormControl>
@@ -91,7 +100,9 @@ export function ImageUploadField({
           </div>
         )}
       </div>
-      <FormMessage className="text-destructive">{error}</FormMessage>
+      <FormMessage className="text-destructive">
+        {error || localError}
+      </FormMessage>
     </FormItem>
   )
 }

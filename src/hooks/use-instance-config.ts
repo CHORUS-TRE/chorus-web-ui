@@ -51,8 +51,8 @@ export function useInstanceConfig(): InstanceConfig {
   const defaultThemeModeRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.DEFAULT_THEME_MODE]
   )
-  const displayParticipatingCentersRaw = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
+  const displayOrganizationsRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_ORGANIZATIONS]
   )
 
   // Memoize the parsed config
@@ -91,13 +91,11 @@ export function useInstanceConfig(): InstanceConfig {
       }
     }
 
-    // Parse displayParticipatingCenters
-    let displayParticipatingCenters =
-      DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
-    if (displayParticipatingCentersRaw) {
+    // Parse displayOrganizations
+    let displayOrganizations = DEFAULT_INSTANCE_CONFIG.displayOrganizations
+    if (displayOrganizationsRaw) {
       try {
-        displayParticipatingCenters =
-          JSON.parse(displayParticipatingCentersRaw) === true
+        displayOrganizations = JSON.parse(displayOrganizationsRaw) === true
       } catch {
         // Keep default
       }
@@ -119,7 +117,7 @@ export function useInstanceConfig(): InstanceConfig {
       theme,
       limits,
       defaultThemeMode,
-      displayParticipatingCenters
+      displayOrganizations
     }
   }, [
     nameRaw,
@@ -130,7 +128,7 @@ export function useInstanceConfig(): InstanceConfig {
     themeRaw,
     limitsRaw,
     defaultThemeModeRaw,
-    displayParticipatingCentersRaw
+    displayOrganizationsRaw
   ])
 
   return config
@@ -139,20 +137,20 @@ export function useInstanceConfig(): InstanceConfig {
 /**
  * Hook to access whether the Participating Centers section should be shown
  */
-export function useDisplayParticipatingCenters(): boolean {
-  const displayParticipatingCentersRaw = useDevStoreCache(
-    (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
+export function useDisplayOrganizations(): boolean {
+  const displayOrganizationsRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_ORGANIZATIONS]
   )
 
   return useMemo(() => {
-    if (!displayParticipatingCentersRaw)
-      return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+    if (!displayOrganizationsRaw)
+      return DEFAULT_INSTANCE_CONFIG.displayOrganizations
     try {
-      return JSON.parse(displayParticipatingCentersRaw) === true
+      return JSON.parse(displayOrganizationsRaw) === true
     } catch {
-      return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+      return DEFAULT_INSTANCE_CONFIG.displayOrganizations
     }
-  }, [displayParticipatingCentersRaw])
+  }, [displayOrganizationsRaw])
 }
 
 /**

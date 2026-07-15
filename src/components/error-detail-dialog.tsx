@@ -1,13 +1,5 @@
 'use client'
 
-import { ChevronsUpDown } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '@/components/ui/collapsible'
 import {
   Dialog,
   DialogContent,
@@ -54,28 +46,31 @@ export function ErrorDetailDialog() {
               <dd className="break-all font-mono">{error.instance}</dd>
             </>
           )}
+          {error?.validationErrors?.length ? (
+            <>
+              <dt className="text-muted-foreground">Validation errors</dt>
+              <dd>
+                <ul>
+                  {error.validationErrors.map((ve, i) => (
+                    <li key={i}>
+                      <span className="font-mono">{ve.field}</span>: {ve.reason}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          ) : null}
         </dl>
 
         {error?.stackTrace && (
-          <Collapsible open>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 px-0 text-muted-foreground"
-              >
-                <ChevronsUpDown className="h-4 w-4" />
-                Technical details
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <ScrollArea className="mt-2 max-h-64 rounded-md border bg-muted/50">
-                <pre className="whitespace-pre-wrap break-all p-3 text-xs">
-                  {error.stackTrace}
-                </pre>
-              </ScrollArea>
-            </CollapsibleContent>
-          </Collapsible>
+          <div>
+            <p className="text-sm text-muted-foreground">Technical details</p>
+            <ScrollArea className="mt-2 h-64 rounded-md border bg-muted/50">
+              <pre className="whitespace-pre-wrap break-all p-3 text-xs">
+                {error.stackTrace}
+              </pre>
+            </ScrollArea>
+          </div>
         )}
       </DialogContent>
     </Dialog>
