@@ -173,4 +173,3 @@ jest.mock('next-runtime-env', () => ({
 
 // Mock env variables used by next-runtime-env
 process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3000'
-process.env.KEYCLOAK_ISSUER = 'https://auth.test.example/realms/chorus'
