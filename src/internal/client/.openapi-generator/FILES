@@ -8,6 +8,7 @@ apis/AuthorizationServiceApi.ts
 apis/DevstoreServiceApi.ts
 apis/HealthServiceApi.ts
 apis/NotificationServiceApi.ts
+apis/OrganizationServiceApi.ts
 apis/PlatformSettingsServiceApi.ts
 apis/StewardServiceApi.ts
 apis/TermsOfUseServiceApi.ts
@@ -18,6 +19,7 @@ apis/WorkspaceServiceApi.ts
 apis/WorkspaceServiceInstanceServiceApi.ts
 apis/index.ts
 index.ts
+models/ApiHttpBody.ts
 models/ApprovalRequestServiceApproveApprovalRequestBody.ts
 models/AuthenticationServiceAuthenticateOauthRedirectBody.ts
 models/ChorusAbortWorkspaceFileUploadReply.ts
@@ -74,6 +76,8 @@ models/ChorusCreateDataTransferRequestResult.ts
 models/ChorusCreateDynamicRoleReply.ts
 models/ChorusCreateDynamicRoleRequest.ts
 models/ChorusCreateDynamicRoleResult.ts
+models/ChorusCreateOrganizationReply.ts
+models/ChorusCreateOrganizationResult.ts
 models/ChorusCreateTermsOfUseVersionReply.ts
 models/ChorusCreateTermsOfUseVersionRequest.ts
 models/ChorusCreateTermsOfUseVersionResult.ts
@@ -97,6 +101,7 @@ models/ChorusDeleteAppInstanceResult.ts
 models/ChorusDeleteAppReply.ts
 models/ChorusDeleteApprovalRequestReply.ts
 models/ChorusDeleteEntryReply.ts
+models/ChorusDeleteOrganizationReply.ts
 models/ChorusDeleteUserReply.ts
 models/ChorusDeleteUserRoleReply.ts
 models/ChorusDeleteUserRoleResult.ts
@@ -126,6 +131,8 @@ models/ChorusGetEntryResult.ts
 models/ChorusGetMyTermsOfUseStatusReply.ts
 models/ChorusGetMyTermsOfUseStatusResult.ts
 models/ChorusGetNotificationsReply.ts
+models/ChorusGetOrganizationReply.ts
+models/ChorusGetOrganizationResult.ts
 models/ChorusGetPlatformSettingsReply.ts
 models/ChorusGetPlatformSettingsResult.ts
 models/ChorusGetTermsOfUseVersionReply.ts
@@ -160,6 +167,8 @@ models/ChorusListAuditReply.ts
 models/ChorusListAuditResult.ts
 models/ChorusListEntriesReply.ts
 models/ChorusListEntriesResult.ts
+models/ChorusListOrganizationsReply.ts
+models/ChorusListOrganizationsResult.ts
 models/ChorusListPermissionsReply.ts
 models/ChorusListPermissionsResult.ts
 models/ChorusListPublicWorkspacesReply.ts
@@ -187,6 +196,8 @@ models/ChorusMarkNotificationsAsReadRequest.ts
 models/ChorusNotification.ts
 models/ChorusNotificationContent.ts
 models/ChorusOpenID.ts
+models/ChorusOrganization.ts
+models/ChorusOrganizationLogo.ts
 models/ChorusPaginationQuery.ts
 models/ChorusPaginationResult.ts
 models/ChorusPlatformSettings.ts
@@ -219,6 +230,8 @@ models/ChorusUpdateAppInstanceReply.ts
 models/ChorusUpdateAppInstanceResult.ts
 models/ChorusUpdateAppReply.ts
 models/ChorusUpdateAppResult.ts
+models/ChorusUpdateOrganizationReply.ts
+models/ChorusUpdateOrganizationResult.ts
 models/ChorusUpdatePasswordReply.ts
 models/ChorusUpdatePasswordRequest.ts
 models/ChorusUpdatePlatformSettingsReply.ts
@@ -253,6 +266,8 @@ models/ChorusWorkspaceServiceInstanceFilter.ts
 models/ChorusWorkspaceStatus.ts
 models/ChorusWorkspaceVisibility.ts
 models/DevstoreServicePutWorkspaceEntryBody.ts
+models/OrganizationServiceUpdateOrganizationBody.ts
+models/ProtobufAny.ts
 models/TermsOfUseServiceUpdateTermsOfUseVersionBody.ts
 models/UserServiceCreateUserRoleBody.ts
 models/WorkbenchServiceAddUserRoleInWorkbenchBody.ts
