@@ -28,9 +28,12 @@ export function WizardLayout({
   subtitleOverride
 }: WizardLayoutProps) {
   return (
-    <div className="fixed inset-0 z-50 flex h-screen w-screen bg-[#0c0c0c] font-sans text-[#FAFAFA]">
-      {/* Left hero panel */}
-      <div className="relative flex w-[404px] flex-none flex-col overflow-hidden p-9">
+    <div className="fixed inset-0 z-50 flex h-screen w-screen bg-background font-sans text-foreground">
+      {/* Left hero panel - forced to the dark palette: it's a photo-backed
+          brand panel that needs a dark scrim for legibility regardless of
+          the active site theme, matching the pattern used for the
+          create-workspace form in step-workspace.tsx. */}
+      <div className="dark relative flex w-[404px] flex-none flex-col overflow-hidden bg-background p-9 text-foreground">
         <Image
           src="/cover-sm.png"
           alt=""
@@ -38,7 +41,7 @@ export function WizardLayout({
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(10,10,16,0.55)] via-[rgba(10,10,16,0.78)] to-[rgba(8,8,12,0.96)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/80 to-background/95" />
         <div className="relative flex h-full flex-col">
           <Image
             src="/logo-chorus-primaire-white@2x.svg"
@@ -48,7 +51,7 @@ export function WizardLayout({
             className="h-[18px] w-auto self-start"
           />
           <div className="mt-auto">
-            <div className="mb-[18px] text-[11px] font-semibold uppercase tracking-[0.1em] text-[#B6FF12]">
+            <div className="mb-[18px] text-[11px] font-semibold uppercase tracking-[0.1em] text-accent">
               {subtitleOverride ?? 'Secure Processing Environment'}
             </div>
             <StepRail currentStep={currentStep} />
@@ -57,7 +60,7 @@ export function WizardLayout({
       </div>
 
       {/* Right content panel */}
-      <div className="relative flex flex-1 flex-col justify-end overflow-y-auto bg-[#101010] p-14">
+      <div className="relative flex flex-1 flex-col justify-end overflow-y-auto p-14">
         {children}
       </div>
     </div>
@@ -75,27 +78,27 @@ function StepRail({ currentStep }: { currentStep: number }) {
         return (
           <div key={step.label} className="flex items-center gap-[13px] py-2">
             {isCompleted && (
-              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[rgba(182,255,18,0.16)] text-[#B6FF12]">
+              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-accent/15 text-accent">
                 <Check className="h-[13px] w-[13px]" strokeWidth={3} />
               </span>
             )}
             {isCurrent && (
-              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[#477AFF] text-[11px] font-semibold shadow-[0_0_0_4px_rgba(71,122,255,0.22)]">
+              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground shadow-[0_0_0_4px_hsl(var(--primary)/0.22)]">
                 {index + 1}
               </span>
             )}
             {isUpcoming && (
-              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full border-[1.5px] border-[#4a4a4a] text-[11px] text-[#8a8a8a]">
+              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full border-[1.5px] border-muted-foreground/40 text-[11px] text-muted-foreground">
                 {index + 1}
               </span>
             )}
             <span
               className={`text-[13.5px] ${
                 isCurrent
-                  ? 'font-medium text-[#FAFAFA]'
+                  ? 'font-medium text-foreground'
                   : isCompleted
-                    ? 'text-[#bdbdbd]'
-                    : 'text-[#8a8a8a]'
+                    ? 'text-foreground/70'
+                    : 'text-muted-foreground'
               }`}
             >
               {step.label}

@@ -169,20 +169,16 @@ export default function RoleCatalogPage() {
                       style={{ background: '#BCFF47' }}
                     />
                   )}
-                  <div
-                    className="mb-0.5 truncate text-sm font-medium"
-                    style={{ color: '#F2F2F2' }}
-                  >
+                  <div className="mb-0.5 truncate text-sm font-medium">
                     {ROLE_DISPLAY_NAMES[role.name] ?? role.name}
                   </div>
-                  <div
+                  {/* <div
                     className="mb-2 line-clamp-1 text-xs"
                     style={{ color: '#7E7E7E' }}
                   >
                     {role.description || 'No description'}
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {/* Scope pill */}
                     <span
                       className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize"
                       style={{ border: `1px solid ${dot}55`, color: dot }}
@@ -193,21 +189,18 @@ export default function RoleCatalogPage() {
                       />
                       {role.scope}
                     </span>
-                    {/* Static/dynamic */}
                     <span
                       className="rounded-full px-2 py-0.5 text-[10px] uppercase"
                       style={{ border: '1px solid #404040', color: '#9A9A9A' }}
                     >
                       {role.dynamic ? 'dynamic' : 'static'}
                     </span>
-                    {/* Permission count */}
                     <span
                       className="rounded-full px-2 py-0.5 text-[10px]"
                       style={{ border: '1px solid #404040', color: '#9A9A9A' }}
                     >
                       {role.permissions.length} permissions
                     </span>
-                    {/* User count */}
                     {userCount > 0 && (
                       <span
                         className="rounded-full px-2 py-0.5 text-[10px]"
@@ -219,7 +212,7 @@ export default function RoleCatalogPage() {
                         {userCount} {userCount === 1 ? 'user' : 'users'}
                       </span>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               )
             })}

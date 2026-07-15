@@ -123,11 +123,19 @@ export function ChatMessage({ message }: { message: UIMessage }) {
     () => (!isUser ? extractArtifact(message) : null),
     [isUser, message.parts]
   )
+  // extractArtifact() builds a brand-new wrapper object every render, so keying
+  // the effect on `rawArtifact` itself re-fires (and calls setLastArtifact) on
+  // every message update — including streamed text deltas unrelated to the
+  // artifact — which can spiral into "Maximum update depth exceeded" during
+  // bursty streaming. Gate on a serialized signature so the effect only runs
+  // when the artifact's actual content changes.
+  const rawArtifactKey = rawArtifact ? JSON.stringify(rawArtifact) : null
   useEffect(() => {
     if (rawArtifact) {
       setLastArtifact(rawArtifact)
     }
-  }, [rawArtifact])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawArtifactKey])
   const artifact = lastArtifact
 
   if (isUser) {

@@ -43,12 +43,12 @@ const ICON_PRESETS: LucideIcon[] = [
   Database
 ]
 const COLOR_PRESETS: string[] = [
-  'bg-[rgba(102,239,255,0.13)] text-[#66EFFF]',
-  'bg-[rgba(245,158,11,0.13)] text-[#FBBF24]',
-  'bg-[rgba(171,165,245,0.16)] text-[#ABA5F5]',
-  'bg-[rgba(182,255,18,0.14)] text-[#B6FF12]',
-  'bg-[rgba(110,151,255,0.16)] text-[#6E97FF]',
-  'bg-[rgba(255,255,255,0.06)] text-[#c8c8c8]'
+  'bg-cyan-500/10 text-cyan-700 dark:bg-[rgba(102,239,255,0.13)] dark:text-[#66EFFF]',
+  'bg-amber-500/10 text-amber-700 dark:bg-[rgba(245,158,11,0.13)] dark:text-[#FBBF24]',
+  'bg-violet-500/10 text-violet-700 dark:bg-[rgba(171,165,245,0.16)] dark:text-[#ABA5F5]',
+  'bg-lime-500/10 text-lime-700 dark:bg-[rgba(182,255,18,0.14)] dark:text-[#B6FF12]',
+  'bg-blue-500/10 text-blue-600 dark:bg-[rgba(110,151,255,0.16)] dark:text-[#6E97FF]',
+  'bg-muted/30 text-muted-foreground dark:bg-[rgba(255,255,255,0.06)] dark:text-[#c8c8c8]'
 ]
 
 export function StepApps({
@@ -88,13 +88,13 @@ export function StepApps({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a8a8a]">
+      <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
         Step 4 of 5
       </div>
       <h2 className="mb-3 text-[34px] font-medium tracking-[-0.02em]">
         Pick your apps for this session
       </h2>
-      <p className="mb-[22px] max-w-[580px] text-[14.5px] leading-[1.6] text-[#B8B8B8]">
+      <p className="mb-[22px] max-w-[580px] text-[14.5px] leading-[1.6] text-muted-foreground">
         Choose the tools you want available when your first session starts. You
         can always add more later.
       </p>
@@ -102,16 +102,16 @@ export function StepApps({
       {/* Search */}
       <div className="mb-4 flex items-center gap-2.5">
         <div className="relative max-w-[300px] flex-1">
-          <div className="flex h-[34px] items-center rounded-lg border border-[#333] bg-[#1a1a1a] pl-8 pr-3 text-[12.5px] text-[#6a6a6a]">
+          <div className="flex h-[34px] items-center rounded-lg border border-border bg-muted pl-8 pr-3 text-[12.5px] text-muted-foreground">
             <input
               type="text"
               placeholder="Search the App Store…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-transparent text-[12.5px] text-[#FAFAFA] placeholder:text-[#6a6a6a] focus:outline-none"
+              className="w-full bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
           </div>
-          <Search className="absolute left-[11px] top-[11px] h-[13px] w-[13px] text-[#8a8a8a]" />
+          <Search className="absolute left-[11px] top-[11px] h-[13px] w-[13px] text-muted-foreground" />
         </div>
       </div>
 
@@ -127,8 +127,8 @@ export function StepApps({
                   onClick={() => toggleApp(app.id)}
                   className={`flex cursor-pointer flex-col rounded-xl p-[15px] transition-all ${
                     isAdded
-                      ? 'border-[1.5px] border-[rgba(182,255,18,0.4)] bg-[rgba(182,255,18,0.06)]'
-                      : 'border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] hover:border-[rgba(255,255,255,0.2)]'
+                      ? 'border-[1.5px] border-accent/40 bg-accent/5'
+                      : 'border border-muted/40 bg-muted/10 hover:border-muted-foreground/30'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -141,15 +141,15 @@ export function StepApps({
                   <div className="mt-3 text-[13.5px] font-medium">
                     {app.name}
                   </div>
-                  <div className="mt-[3px] flex-1 text-[11.5px] leading-[1.45] text-[#9a9a9a]">
+                  <div className="mt-[3px] flex-1 text-[11.5px] leading-[1.45] text-muted-foreground">
                     {app.description}
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <span className="font-mono text-[10.5px] text-[#7a7a7a]">
+                    <span className="font-mono text-[10.5px] text-muted-foreground/70">
                       {app.version}
                     </span>
                     {isAdded ? (
-                      <span className="inline-flex items-center gap-[5px] text-xs font-medium text-[#B6FF12]">
+                      <span className="inline-flex items-center gap-[5px] text-xs font-medium text-accent">
                         <Check
                           className="h-[13px] w-[13px]"
                           strokeWidth={2.6}
@@ -157,7 +157,7 @@ export function StepApps({
                         Added
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-[#3a3a3a] px-[11px] py-1 text-[11.5px] text-[#c8c8c8]">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-muted-foreground/30 px-[11px] py-1 text-[11.5px] text-muted-foreground">
                         <Plus className="h-3 w-3" strokeWidth={2.2} />
                         Add
                       </span>
@@ -168,7 +168,7 @@ export function StepApps({
             })}
           </div>
         ) : (
-          <div className="flex h-full items-center justify-center text-[13px] text-[#8a8a8a]">
+          <div className="flex h-full items-center justify-center text-[13px] text-muted-foreground">
             {appCards.length === 0
               ? 'No apps are available yet.'
               : 'No apps match your search.'}
@@ -177,21 +177,21 @@ export function StepApps({
       </div>
 
       {/* Fixed footer */}
-      <div className="mt-4 flex flex-none items-center gap-3.5 border-t border-[rgba(255,255,255,0.08)] pt-4">
+      <div className="mt-4 flex flex-none items-center gap-3.5 border-t border-border pt-4">
         <button
           onClick={onBack}
-          className="px-2 py-[11px] text-[13.5px] text-[#9a9a9a] transition-colors hover:text-[#c8c8c8]"
+          className="px-2 py-[11px] text-[13.5px] text-muted-foreground transition-colors hover:text-foreground"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="inline-flex items-center gap-1.5 rounded-full border border-[#B6FF12] px-[22px] py-[11px] text-sm font-medium text-[#B6FF12] transition-all hover:gap-2.5"
+          className="inline-flex items-center gap-1.5 rounded-full border border-accent px-[22px] py-[11px] text-sm font-medium text-accent transition-all hover:gap-2.5"
         >
           Continue
           <ArrowRight className="h-[15px] w-[15px]" />
         </button>
-        <span className="ml-1 text-xs text-[#7a7a7a]">
+        <span className="ml-1 text-xs text-muted-foreground/70">
           {selectedAppIds.length} apps added · Step 4 of 5
         </span>
       </div>

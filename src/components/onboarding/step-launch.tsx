@@ -108,24 +108,24 @@ export function StepLaunch({
         className="pointer-events-none absolute -top-[60px] right-[-40px] h-[300px] w-[300px] rounded-full"
         style={{
           backgroundImage:
-            'radial-gradient(circle, rgba(182,255,18,0.1), transparent 70%)'
+            'radial-gradient(circle, hsl(var(--accent-background) / 0.1), transparent 70%)'
         }}
       />
       <div className="relative flex flex-col">
-        <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a8a8a]">
+        <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
           Final step
         </div>
         <h2 className="mb-3.5 text-[34px] font-medium tracking-[-0.02em]">
           Launch your first session
         </h2>
-        <p className="mb-7 max-w-[560px] text-[14.5px] leading-[1.6] text-[#B8B8B8]">
+        <p className="mb-7 max-w-[560px] text-[14.5px] leading-[1.6] text-muted-foreground">
           A session is a secure workspace that opens inside your workspace. Your
           apps run right in the browser — nothing installs on your computer.
         </p>
 
         {/* Session name */}
         <div className="mb-5 max-w-[560px]">
-          <label className="mb-[7px] block text-[11px] font-semibold uppercase tracking-[0.04em] text-[#8a8a8a]">
+          <label className="mb-[7px] block text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">
             Session name
           </label>
           <input
@@ -133,13 +133,13 @@ export function StepLaunch({
             value={sessionName}
             onChange={(e) => setSessionName(e.target.value)}
             placeholder="my-session"
-            className="w-full rounded-[7px] border border-[#3a3a3a] bg-[#1a1a1a] px-[11px] py-[9px] text-[13.5px] text-[#FAFAFA] placeholder:text-[#6a6a6a] focus:border-[#5a5a5a] focus:outline-none"
+            className="w-full rounded-[7px] border border-border bg-muted px-[11px] py-[9px] text-[13.5px] text-foreground placeholder:text-muted-foreground focus:border-muted-foreground focus:outline-none"
           />
         </div>
 
         {/* Apps in this session */}
-        <div className="max-w-[560px] rounded-[14px] border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] p-[22px]">
-          <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#8a8a8a]">
+        <div className="max-w-[560px] rounded-[14px] border border-muted/40 bg-muted/10 p-[22px]">
+          <div className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">
             Apps in this session
           </div>
           {selectedApps.length > 0 ? (
@@ -147,15 +147,15 @@ export function StepLaunch({
               {selectedApps.map((app) => (
                 <span
                   key={app.id}
-                  className="inline-flex items-center gap-2 rounded-full border border-[#333] bg-[#181818] px-3.5 py-[7px] text-[13px]"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3.5 py-[7px] text-[13px]"
                 >
-                  <span className="h-2 w-2 rounded-sm bg-[#B6FF12]" />
+                  <span className="h-2 w-2 rounded-sm bg-accent-background" />
                   {app.name}
                 </span>
               ))}
             </div>
           ) : (
-            <div className="text-[13px] text-[#8a8a8a]">
+            <div className="text-[13px] text-muted-foreground">
               No apps selected — your session will start empty. You can add apps
               from inside the session.
             </div>
@@ -166,14 +166,14 @@ export function StepLaunch({
         <div className="flex items-center gap-3.5 pt-8">
           <button
             onClick={onBack}
-            className="px-2 py-[11px] text-[13.5px] text-[#9a9a9a] transition-colors hover:text-[#c8c8c8]"
+            className="px-2 py-[11px] text-[13.5px] text-muted-foreground transition-colors hover:text-foreground"
           >
             Back
           </button>
           <button
             onClick={handleLaunch}
             disabled={launching || !workspace}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#B6FF12] px-[22px] py-[11px] text-sm font-medium text-[#B6FF12] transition-all hover:gap-2.5 disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-full border border-accent px-[22px] py-[11px] text-sm font-medium text-accent transition-all hover:gap-2.5 disabled:opacity-40"
           >
             {launching ? (
               <Loader2 className="h-[15px] w-[15px] animate-spin" />
@@ -184,13 +184,13 @@ export function StepLaunch({
           </button>
           <button
             onClick={onSkip}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#B6FF12] px-[22px] py-[11px] text-sm font-medium text-[#B6FF12] transition-all hover:gap-2.5"
+            className="inline-flex items-center gap-1.5 rounded-full border border-accent px-[22px] py-[11px] text-sm font-medium text-accent transition-all hover:gap-2.5"
           >
             I&apos;ll do this later
           </button>
         </div>
         {!workspace && (
-          <div className="mt-3 text-[12.5px] text-[#f0a0a0]">
+          <div className="mt-3 text-[12.5px] text-red-600 dark:text-[#f0a0a0]">
             No workspace was created. Go back to the workspace step to create
             one before launching a session.
           </div>

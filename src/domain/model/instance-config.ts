@@ -9,6 +9,7 @@ export const INSTANCE_CONFIG_KEYS = {
   TAGS: 'instance.tags',
   LOGO: 'instance.logo',
   THEME: 'instance.theme',
+  DEFAULT_THEME_MODE: 'instance.defaultTheme',
   LIMITS: 'instance.limits',
   DISPLAY_PARTICIPATING_CENTERS: 'instance.displayParticipatingCenters'
 } as const
@@ -42,6 +43,14 @@ export const InstanceThemeSchema = z.object({
 
 export type InstanceTheme = z.infer<typeof InstanceThemeSchema>
 
+// Platform-wide default theme mode, seeds next-themes' initial value for
+// visitors with no local theme preference of their own
+export const ThemeModeSchema = z.enum(['light', 'dark', 'system'])
+
+export type ThemeMode = z.infer<typeof ThemeModeSchema>
+
+export const DEFAULT_THEME_MODE: ThemeMode = 'dark'
+
 // Resource limits per user
 export const InstanceLimitsSchema = z.object({
   maxWorkspacesPerUser: z.number().int().min(0).nullable().default(null),
@@ -65,6 +74,7 @@ export const InstanceConfigSchema = z.object({
   website: z.string().default('https://www.chorus-tre.ch/en/'),
   logo: InstanceLogoSchema.nullable().optional(),
   theme: InstanceThemeSchema.nullable().optional(),
+  defaultThemeMode: ThemeModeSchema.default(DEFAULT_THEME_MODE),
   limits: InstanceLimitsSchema.nullable().optional(),
   displayParticipatingCenters: z.boolean().default(false)
 })
@@ -80,6 +90,7 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
   website: 'https://www.chorus-tre.ch/en/',
   logo: null,
   theme: null,
+  defaultThemeMode: DEFAULT_THEME_MODE,
   limits: {
     maxWorkspacesPerUser: null,
     maxSessionsPerUser: null,

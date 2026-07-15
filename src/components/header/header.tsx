@@ -1,12 +1,12 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
+import { HelpCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 
-import { BookmarkButton } from '@/components/bookmark-button'
 import { errorToast } from '@/components/error-toast'
 import { WorkbenchDeleteForm } from '@/components/forms/workbench-delete-form'
 import { WorkbenchUpdateForm } from '@/components/forms/workbench-update-form'
@@ -21,7 +21,14 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { AppBreadcrumb } from '@/components/ui/app-breadcrumb'
+import { Button } from '@/components/ui/button'
 import { Link } from '@/components/ui/link'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
@@ -30,6 +37,7 @@ import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
 import logoWhite from '@/public/logo-chorus-primaire-white@2x.svg'
 import { useAppState } from '@/stores/app-state-store'
+import { useUserPreferences } from '@/stores/user-preferences-store'
 import { deleteAppInstance } from '@/view-model/app-instance-view-model'
 
 import { RecentTabs } from './recent-tabs'
@@ -56,6 +64,7 @@ export function Header() {
     removeFromRecent
   } = useIframeCache()
   const { user } = useAuthentication()
+  const { toggleRightSidebar } = useUserPreferences()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -178,7 +187,25 @@ export function Header() {
 
         {/* Right: Actions & User Profile */}
         <div className="flex shrink-0 items-center gap-2">
-          {user && <BookmarkButton />}
+          {user && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleRightSidebar}
+                    aria-label="Help"
+                    className="h-8 w-8 text-foreground/80 transition-colors hover:text-accent"
+                  >
+                    <HelpCircle className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Help</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
 
           <UserProfileSection />
         </div>

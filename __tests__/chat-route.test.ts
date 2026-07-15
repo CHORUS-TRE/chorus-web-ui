@@ -5,26 +5,22 @@ jest.mock('../src/app/api/.ai/agent/orchestrator', () => ({
   orchestrate: jest.fn(() => new Response('ok', { status: 200 }))
 }))
 
-jest.mock('jose', () => ({
-  createRemoteJWKSet: jest.fn(() => jest.fn()),
-  jwtVerify: jest.fn()
-}))
-
-import { jwtVerify } from 'jose'
-
 import { orchestrate } from '@/app/api/.ai/agent/orchestrator'
 import { isAuthenticated, POST } from '@/app/api/chat/route'
 
-const mockJwtVerify = jwtVerify as jest.Mock
+const mockBackendResponse = (status: number, ok: boolean) => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve({ result: { me: { id: '1' } } }),
+      status,
+      ok
+    })
+  ) as jest.Mock
+}
 
 describe('isAuthenticated', () => {
-  beforeEach(() => {
-    mockJwtVerify.mockReset()
-  })
-
   it('returns false when no cookie header is present', async () => {
     expect(await isAuthenticated(null)).toBe(false)
-    expect(mockJwtVerify).not.toHaveBeenCalled()
   })
 
   it('returns false when the jwttoken cookie is absent, even with other cookies present', async () => {
@@ -32,32 +28,27 @@ describe('isAuthenticated', () => {
       '_pk_id.1.1fff=2e49eb75b3bfd6bf; mtm_consent=1'
     )
     expect(result).toBe(false)
-    expect(mockJwtVerify).not.toHaveBeenCalled()
+    expect(global.fetch).not.toHaveBeenCalled()
   })
 
-  it('returns false when the token fails verification', async () => {
-    mockJwtVerify.mockRejectedValueOnce(
-      new Error('signature verification failed')
-    )
+  it('returns false when the backend rejects the extracted token', async () => {
+    mockBackendResponse(401, false)
     expect(await isAuthenticated('jwttoken=invalid')).toBe(false)
   })
 
-  it('returns true when the token is verified', async () => {
-    mockJwtVerify.mockResolvedValueOnce({ payload: {}, protectedHeader: {} })
+  it('returns true when the backend confirms the extracted token', async () => {
+    mockBackendResponse(200, true)
     expect(await isAuthenticated('jwttoken=valid')).toBe(true)
   })
 
-  it('extracts just the token value from among other cookies and verifies it', async () => {
-    mockJwtVerify.mockResolvedValueOnce({ payload: {}, protectedHeader: {} })
+  it('extracts the jwttoken value from among other cookies and forwards it as a Cookie header', async () => {
+    mockBackendResponse(200, true)
     await isAuthenticated(
       '_pk_id.1.1fff=2e49eb75b3bfd6bf; jwttoken=abc.def.ghi; mtm_consent=1'
     )
 
-    expect(mockJwtVerify).toHaveBeenCalledWith(
-      'abc.def.ghi',
-      expect.anything(),
-      expect.objectContaining({ issuer: expect.any(String) })
-    )
+    const [, init] = (global.fetch as jest.Mock).mock.calls[0]
+    expect(init.headers.Cookie).toBe('jwttoken=abc.def.ghi')
   })
 })
 
@@ -78,8 +69,8 @@ describe('POST /api/chat', () => {
     expect(orchestrate).not.toHaveBeenCalled()
   })
 
-  it('returns 401 and never invokes the orchestrator when the token fails verification', async () => {
-    mockJwtVerify.mockRejectedValueOnce(new Error('invalid token'))
+  it('returns 401 and never invokes the orchestrator when the backend rejects the token', async () => {
+    mockBackendResponse(401, false)
     const req = new Request('http://localhost/api/chat', {
       method: 'POST',
       headers: { Cookie: 'jwttoken=invalid' },
@@ -93,7 +84,7 @@ describe('POST /api/chat', () => {
   })
 
   it('delegates to the orchestrator when the session is valid', async () => {
-    mockJwtVerify.mockResolvedValueOnce({ payload: {}, protectedHeader: {} })
+    mockBackendResponse(200, true)
     const messages = [{ role: 'user', content: 'hi' }]
     const req = new Request('http://localhost/api/chat', {
       method: 'POST',

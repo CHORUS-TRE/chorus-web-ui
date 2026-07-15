@@ -24,12 +24,6 @@ const config = async (): Promise<Config> => {
     'json-render/specs/search-results\\.spec\\.ts',
     'json-render/specs/workspace-status\\.spec\\.ts'
   ]
-  // next/jest ships ESM-only packages (e.g. geist) into an allowlist so they
-  // still get transformed instead of hitting node_modules' default ignore.
-  // jose (ESM-only) needs the same treatment, so it's added to that allowlist.
-  config.transformIgnorePatterns = (config.transformIgnorePatterns ?? []).map(
-    (pattern) => pattern.replace(/geist/g, 'geist|jose')
-  )
   return config
 }
 

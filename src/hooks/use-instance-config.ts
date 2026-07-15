@@ -5,12 +5,15 @@ import { useMemo } from 'react'
 import { AppInstanceStatus, WorkbenchStatus } from '@/domain/model'
 import {
   DEFAULT_INSTANCE_CONFIG,
+  DEFAULT_THEME_MODE,
   INSTANCE_CONFIG_KEYS,
   InstanceConfig,
   InstanceLimits,
   InstanceLimitsSchema,
   InstanceLogo,
-  InstanceLogoSchema
+  InstanceLogoSchema,
+  ThemeMode,
+  ThemeModeSchema
 } from '@/domain/model/instance-config'
 import { WorkspaceState } from '@/domain/model/workspace'
 import { useAppState } from '@/stores/app-state-store'
@@ -44,6 +47,9 @@ export function useInstanceConfig(): InstanceConfig {
   )
   const limitsRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.LIMITS]
+  )
+  const defaultThemeModeRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.DEFAULT_THEME_MODE]
   )
   const displayParticipatingCentersRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
@@ -97,6 +103,13 @@ export function useInstanceConfig(): InstanceConfig {
       }
     }
 
+    // Parse defaultThemeMode
+    let defaultThemeMode = DEFAULT_THEME_MODE
+    if (defaultThemeModeRaw) {
+      const validated = ThemeModeSchema.safeParse(defaultThemeModeRaw)
+      if (validated.success) defaultThemeMode = validated.data
+    }
+
     return {
       name: nameRaw || DEFAULT_INSTANCE_CONFIG.name,
       headline: headlineRaw || DEFAULT_INSTANCE_CONFIG.headline,
@@ -105,6 +118,7 @@ export function useInstanceConfig(): InstanceConfig {
       logo,
       theme,
       limits,
+      defaultThemeMode,
       displayParticipatingCenters
     }
   }, [
@@ -115,6 +129,7 @@ export function useInstanceConfig(): InstanceConfig {
     logoRaw,
     themeRaw,
     limitsRaw,
+    defaultThemeModeRaw,
     displayParticipatingCentersRaw
   ])
 
@@ -138,6 +153,21 @@ export function useDisplayParticipatingCenters(): boolean {
       return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
     }
   }, [displayParticipatingCentersRaw])
+}
+
+/**
+ * Hook to access the platform's default theme mode (light/dark/system)
+ */
+export function useInstanceDefaultThemeMode(): ThemeMode {
+  const defaultThemeModeRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.DEFAULT_THEME_MODE]
+  )
+
+  return useMemo(() => {
+    if (!defaultThemeModeRaw) return DEFAULT_THEME_MODE
+    const validated = ThemeModeSchema.safeParse(defaultThemeModeRaw)
+    return validated.success ? validated.data : DEFAULT_THEME_MODE
+  }, [defaultThemeModeRaw])
 }
 
 /**

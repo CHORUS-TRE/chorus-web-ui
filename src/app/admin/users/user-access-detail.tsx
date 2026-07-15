@@ -515,7 +515,7 @@ export function UserAccessDetail({
               <span className="text-xl font-medium">
                 {user.firstName} {user.lastName}
               </span>
-              <span
+              {/* <span
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
                   user.status === 'active'
@@ -532,14 +532,15 @@ export function UserAccessDetail({
                   )}
                 />
                 {user.status}
-              </span>
+              </span> */}
             </div>
             <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
               <span className="font-mono">@{user.username}</span>
               <span>·</span>
-              <span className="rounded-full border bg-muted/50 px-2 py-0.5 font-mono text-[10px]">
+              <span className="font-mono">{user.id}</span>
+              {/* <span className="rounded-full border bg-muted/50 px-2 py-0.5 font-mono text-[10px]">
                 {user.source}
-              </span>
+              </span> */}
             </div>
           </div>
           <div className="flex flex-shrink-0 items-center gap-2">
@@ -556,16 +557,12 @@ export function UserAccessDetail({
         </div>
 
         {/* Metrics band */}
-        <div className="mt-4 flex items-center gap-5">
-          <Metric value={grantCount} label="grants" />
-          <div className="h-7 w-px bg-border" />
+        <div className="mb-4 mt-4 flex items-center gap-5">
+          {/* <Metric value={grantCount} label="grants" />
+          <div className="h-7 w-px bg-border" /> */}
           <Metric value={roleCount} label="roles" />
           <div className="h-7 w-px bg-border" />
-          <Metric
-            value={effectiveCount}
-            label="effective permissions"
-            className="text-blue-400"
-          />
+          <Metric value={effectiveCount} label="permissions" />
           <div className="h-7 w-px bg-border" />
           <Metric
             value={sensitiveCount}
@@ -575,7 +572,7 @@ export function UserAccessDetail({
           />
           <div className="flex-1" />
           <div className="w-48 flex-shrink-0 space-y-1.5">
-            <ScopeBar breakdown={scopeBreakdown} />
+            {/* <ScopeBar breakdown={scopeBreakdown} />
             <div className="flex flex-wrap gap-x-3 gap-y-0.5">
               {(Object.keys(SCOPE_META) as ScopeKey[]).map((k) =>
                 scopeBreakdown[k] > 0 ? (
@@ -591,7 +588,7 @@ export function UserAccessDetail({
                   </span>
                 ) : null
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 

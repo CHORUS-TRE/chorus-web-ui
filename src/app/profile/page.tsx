@@ -45,7 +45,7 @@ export default function UserProfile() {
                   Basic Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-2">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Email
