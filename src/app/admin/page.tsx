@@ -2,6 +2,7 @@
 
 import {
   AppWindow,
+  Building2,
   LaptopMinimal,
   Package,
   Palette,
@@ -14,16 +15,19 @@ import {
 import { useEffect, useState } from 'react'
 
 import { StatCard } from '@/components/dashboard/stat-card'
+import { Organization } from '@/domain/model'
 import { User } from '@/domain/model/user'
 import { useAuthorization } from '@/providers/authorization-provider'
 import { useRoles } from '@/providers/roles-provider'
 import { useAppState } from '@/stores/app-state-store'
+import { organizationList } from '@/view-model/organization-view-model'
 import { listUsers } from '@/view-model/user-view-model'
 
 const AdminPage = () => {
   const { can } = useAuthorization()
   const { roles } = useRoles()
   const [users, setUsers] = useState<User[]>([])
+  const [organizations, setOrganizations] = useState<Organization[]>([])
 
   useEffect(() => {
     async function loadUsers() {
@@ -35,6 +39,18 @@ const AdminPage = () => {
       }
     }
     loadUsers()
+  }, [can])
+
+  useEffect(() => {
+    async function loadOrganizations() {
+      if (can('setPlatformSettings', {})) {
+        const result = await organizationList()
+        if (result.data) {
+          setOrganizations(result.data)
+        }
+      }
+    }
+    loadOrganizations()
   }, [can])
 
   const {
@@ -146,6 +162,14 @@ const AdminPage = () => {
 
         {can('setPlatformSettings') && (
           <>
+            <StatCard
+              href="/admin/organizations"
+              title="Organizations"
+              icon={Building2}
+              value={organizations?.length || 0}
+              description="Registered Organizations"
+            />
+
             <StatCard
               href="/admin/configuration"
               title="Configuration"

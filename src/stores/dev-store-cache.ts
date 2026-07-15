@@ -105,7 +105,7 @@ type DevStoreCacheState = {
   getInstanceTheme: () => InstanceTheme | null
   getInstanceDefaultThemeMode: () => ThemeMode
   getInstanceLimits: () => InstanceLimits | null
-  getDisplayParticipatingCenters: () => boolean
+  getDisplayOrganizations: () => boolean
 
   setInstanceName: (name: string) => Promise<boolean>
   setInstanceHeadline: (headline: string) => Promise<boolean>
@@ -115,7 +115,7 @@ type DevStoreCacheState = {
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
   setInstanceDefaultThemeMode: (mode: ThemeMode) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
-  setDisplayParticipatingCenters: (display: boolean) => Promise<boolean>
+  setDisplayOrganizations: (display: boolean) => Promise<boolean>
 
   // User bookmarks (JSON array stored at user.bookmarks)
   getUserBookmarks: () => Bookmarks
@@ -386,7 +386,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       logo: state.getInstanceLogo(),
       theme: state.getInstanceTheme(),
       defaultThemeMode: state.getInstanceDefaultThemeMode(),
-      displayParticipatingCenters: state.getDisplayParticipatingCenters()
+      displayOrganizations: state.getDisplayOrganizations()
     }
   },
 
@@ -473,16 +473,15 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     }
   },
 
-  getDisplayParticipatingCenters: () => {
-    const value =
-      get().global[INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS]
-    if (!value) return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+  getDisplayOrganizations: () => {
+    const value = get().global[INSTANCE_CONFIG_KEYS.DISPLAY_ORGANIZATIONS]
+    if (!value) return DEFAULT_INSTANCE_CONFIG.displayOrganizations
 
     try {
       return JSON.parse(value) === true
     } catch (e) {
-      console.error('Error parsing displayParticipatingCenters:', e)
-      return DEFAULT_INSTANCE_CONFIG.displayParticipatingCenters
+      console.error('Error parsing displayOrganizations:', e)
+      return DEFAULT_INSTANCE_CONFIG.displayOrganizations
     }
   },
 
@@ -528,9 +527,9 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     return get().setGlobal(INSTANCE_CONFIG_KEYS.LIMITS, JSON.stringify(limits))
   },
 
-  setDisplayParticipatingCenters: async (display: boolean) => {
+  setDisplayOrganizations: async (display: boolean) => {
     return get().setGlobal(
-      INSTANCE_CONFIG_KEYS.DISPLAY_PARTICIPATING_CENTERS,
+      INSTANCE_CONFIG_KEYS.DISPLAY_ORGANIZATIONS,
       JSON.stringify(display)
     )
   },

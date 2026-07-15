@@ -16,24 +16,24 @@ import {
 } from '@/components/ui/card'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Switch } from '@/components/ui/switch'
-import { useDisplayParticipatingCenters } from '@/hooks/use-instance-config'
+import { useDisplayOrganizations } from '@/hooks/use-instance-config'
 import { useDevStoreCache } from '@/stores/dev-store-cache'
 
 import { toast } from '../hooks/use-toast'
 
 const sidebarOptionsFormSchema = z.object({
-  displayParticipatingCenters: z.boolean()
+  displayOrganizations: z.boolean()
 })
 
 type SidebarOptionsFormValues = z.infer<typeof sidebarOptionsFormSchema>
 
 export function SidebarOptionsForm() {
-  const displayParticipatingCenters = useDisplayParticipatingCenters()
+  const displayOrganizations = useDisplayOrganizations()
 
   const form = useForm<SidebarOptionsFormValues>({
     resolver: zodResolver(sidebarOptionsFormSchema),
     defaultValues: {
-      displayParticipatingCenters
+      displayOrganizations
     }
   })
 
@@ -43,17 +43,15 @@ export function SidebarOptionsForm() {
   // but not while the user is actively editing
   useEffect(() => {
     if (!isInitializedRef.current || !form.formState.isDirty) {
-      form.reset({ displayParticipatingCenters })
+      form.reset({ displayOrganizations })
       isInitializedRef.current = true
     }
-  }, [displayParticipatingCenters, form])
+  }, [displayOrganizations, form])
 
   async function onSubmit(data: SidebarOptionsFormValues) {
     try {
-      const { setDisplayParticipatingCenters } = useDevStoreCache.getState()
-      const success = await setDisplayParticipatingCenters(
-        data.displayParticipatingCenters
-      )
+      const { setDisplayOrganizations } = useDevStoreCache.getState()
+      const success = await setDisplayOrganizations(data.displayOrganizations)
 
       if (success) {
         toast({
@@ -78,7 +76,7 @@ export function SidebarOptionsForm() {
   async function handleReset() {
     try {
       const { deleteGlobal } = useDevStoreCache.getState()
-      await deleteGlobal('instance.displayParticipatingCenters')
+      await deleteGlobal('instance.displayOrganizations')
 
       toast({
         title: 'Sidebar options reset successfully!'
@@ -108,14 +106,14 @@ export function SidebarOptionsForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <div className="font-medium">Display Participating Centers</div>
+                <div className="font-medium">Display Organizations</div>
                 <p className="text-sm text-muted-foreground">
-                  Show the Participating Centers link in the sidebar navigation.
+                  Show the Organizations link in the sidebar navigation.
                 </p>
               </div>
               <FormField
                 control={form.control}
-                name="displayParticipatingCenters"
+                name="displayOrganizations"
                 render={({ field }) => (
                   <FormControl>
                     <Switch

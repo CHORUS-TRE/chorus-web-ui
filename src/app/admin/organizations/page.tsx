@@ -13,6 +13,7 @@ import { toast } from '@/components/hooks/use-toast'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Switch } from '@/components/ui/switch'
 import {
   Table,
   TableBody,
@@ -22,7 +23,9 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { Organization } from '@/domain/model'
+import { useDisplayOrganizations } from '@/hooks/use-instance-config'
 import { countryName } from '@/lib/countries'
+import { useDevStoreCache } from '@/stores/dev-store-cache'
 import {
   organizationList,
   organizationLogoDataUrl,
@@ -37,6 +40,19 @@ export default function AdminOrganizationsPage() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [activeUpdateId, setActiveUpdateId] = useState<string | null>(null)
   const [activeDeleteId, setActiveDeleteId] = useState<string | null>(null)
+  const displayOrganizations = useDisplayOrganizations()
+
+  const handleToggleSidebar = async (checked: boolean) => {
+    const { setDisplayOrganizations } = useDevStoreCache.getState()
+    const success = await setDisplayOrganizations(checked)
+    if (!success) {
+      toast({
+        title: 'An error occurred.',
+        description: 'Please try again.',
+        variant: 'destructive'
+      })
+    }
+  }
 
   const fetchOrganizations = useCallback(async () => {
     const result = await organizationList()
@@ -82,7 +98,14 @@ export default function AdminOrganizationsPage() {
         </div>
       </div>
 
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={displayOrganizations}
+            onCheckedChange={handleToggleSidebar}
+          />
+          <span className="text-sm text-muted-foreground">Show in sidebar</span>
+        </div>
         <Button onClick={() => setShowCreateDialog(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Organization
