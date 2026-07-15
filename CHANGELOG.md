@@ -1,3 +1,17 @@
+# [1.73.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.72.1...v1.73.0) (2026-07-15)
+
+
+### Bug Fixes
+
+* adjust spacing in Basic Information card for improved layout ([11c5150](https://github.com/CHORUS-TRE/chorus-web-ui/commit/11c5150dd3f01fad48a930079d6c844d6f48ef97))
+* update UI styles for onboarding steps to use consistent color scheme ([8d17929](https://github.com/CHORUS-TRE/chorus-web-ui/commit/8d179295f908f5997bb8f6e418027d8f851c0acd))
+
+
+### Features
+
+* add help button with tooltip to header and improve bookmarks section layout ([ef9f689](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ef9f6898e8a1d7080059bd9ce0594176aef47a45))
+* implement default theme mode selection and application logic ([d4ea34f](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d4ea34f1eaa211d181ed45f8226fa074e37ea8bb))
+
 ## [1.72.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.72.0...v1.72.1) (2026-07-14)
 
 
