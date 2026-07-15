@@ -8,6 +8,7 @@ import {
 } from '@/domain/model/bookmark'
 import {
   DEFAULT_INSTANCE_CONFIG,
+  DEFAULT_THEME_MODE,
   INSTANCE_CONFIG_KEYS,
   InstanceConfig,
   InstanceLimits,
@@ -15,7 +16,9 @@ import {
   InstanceLogo,
   InstanceLogoSchema,
   InstanceTheme,
-  InstanceThemeSchema
+  InstanceThemeSchema,
+  ThemeMode,
+  ThemeModeSchema
 } from '@/domain/model/instance-config'
 import {
   DEFAULT_WORKSPACE_CONFIG,
@@ -100,6 +103,7 @@ type DevStoreCacheState = {
   getInstanceWebsite: () => string
   getInstanceLogo: () => InstanceLogo | null
   getInstanceTheme: () => InstanceTheme | null
+  getInstanceDefaultThemeMode: () => ThemeMode
   getInstanceLimits: () => InstanceLimits | null
   getDisplayParticipatingCenters: () => boolean
 
@@ -109,6 +113,7 @@ type DevStoreCacheState = {
   setInstanceWebsite: (website: string) => Promise<boolean>
   setInstanceLogo: (logo: InstanceLogo | null) => Promise<boolean>
   setInstanceTheme: (theme: InstanceTheme | null) => Promise<boolean>
+  setInstanceDefaultThemeMode: (mode: ThemeMode) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
   setDisplayParticipatingCenters: (display: boolean) => Promise<boolean>
 
@@ -380,6 +385,7 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       website: state.getInstanceWebsite(),
       logo: state.getInstanceLogo(),
       theme: state.getInstanceTheme(),
+      defaultThemeMode: state.getInstanceDefaultThemeMode(),
       displayParticipatingCenters: state.getDisplayParticipatingCenters()
     }
   },
@@ -439,6 +445,14 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       console.error('Error parsing instance theme:', e)
       return null
     }
+  },
+
+  getInstanceDefaultThemeMode: () => {
+    const value = get().global[INSTANCE_CONFIG_KEYS.DEFAULT_THEME_MODE]
+    if (!value) return DEFAULT_THEME_MODE
+
+    const validated = ThemeModeSchema.safeParse(value)
+    return validated.success ? validated.data : DEFAULT_THEME_MODE
   },
 
   getInstanceLimits: () => {
@@ -501,6 +515,10 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       return get().deleteGlobal(INSTANCE_CONFIG_KEYS.THEME)
     }
     return get().setGlobal(INSTANCE_CONFIG_KEYS.THEME, JSON.stringify(theme))
+  },
+
+  setInstanceDefaultThemeMode: async (mode: ThemeMode) => {
+    return get().setGlobal(INSTANCE_CONFIG_KEYS.DEFAULT_THEME_MODE, mode)
   },
 
   setInstanceLimits: async (limits: InstanceLimits | null) => {
