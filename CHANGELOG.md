@@ -1,3 +1,14 @@
+# [1.74.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.73.0...v1.74.0) (2026-07-15)
+
+
+### Features
+
+* add organization management APIs and models ([d1f9052](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d1f90527cd184ffe02bc92b4d43ef943ff991958))
+* add OrganizationService API endpoints and data handling ([f68d3e5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f68d3e51602eb2cd44583c99fca2304e2435f757))
+* enhance error handling with validation error display in dialogs and toasts ([96616f0](https://github.com/CHORUS-TRE/chorus-web-ui/commit/96616f0b88bf8f4f6c3d06cc26b60244f409f2da))
+* implement organization management features including CRUD forms and logo handling ([71cd5ad](https://github.com/CHORUS-TRE/chorus-web-ui/commit/71cd5ad4c706c6803c79f0fb15f74dd4ff5f8871))
+* remove obsolete logo files for participating centers ([ea957a9](https://github.com/CHORUS-TRE/chorus-web-ui/commit/ea957a92ad5cfb2fa492bc763b7bc2c7fd74a89f))
+
 # [1.73.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.72.1...v1.73.0) (2026-07-15)
 
 
