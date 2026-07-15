@@ -1,5 +1,13 @@
 import { z } from 'zod'
 
+import { isValidCountryCode } from '@/lib/countries'
+
+const CountryCodeSchema = z
+  .string()
+  .refine((value): boolean => value === '' || isValidCountryCode(value), {
+    message: 'Country must be a valid ISO 3166-1 alpha-2 code'
+  })
+
 export const OrganizationLogoSchema = z.object({
   data: z.string().optional(),
   contentType: z.string().optional()
@@ -24,7 +32,7 @@ export const OrganizationCreateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
   logo: OrganizationLogoSchema.optional(),
-  country: z.string().optional(),
+  country: CountryCodeSchema.optional(),
   city: z.string().optional(),
   contactUserId: z.string().optional(),
   websiteUrl: z.string().optional()

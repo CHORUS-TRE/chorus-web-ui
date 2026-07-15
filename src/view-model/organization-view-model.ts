@@ -58,8 +58,10 @@ export async function organizationCreate(
     const useCase = new OrganizationCreate(repository)
 
     const formValues = Object.fromEntries(formData.entries())
+    const logoRaw = formData.get('logo')
     const organization = {
-      ...formValues
+      ...formValues,
+      logo: logoRaw ? JSON.parse(logoRaw as string) : undefined
     } as unknown as OrganizationCreateType
 
     const validation = OrganizationCreateSchema.safeParse(organization)
@@ -83,8 +85,10 @@ export async function organizationUpdate(
     const useCase = new OrganizationUpdate(repository)
 
     const formValues = Object.fromEntries(formData.entries())
+    const logoRaw = formData.get('logo')
     const organization = {
-      ...formValues
+      ...formValues,
+      logo: logoRaw ? JSON.parse(logoRaw as string) : undefined
     } as unknown as OrganizationUpdateType
 
     const validation = OrganizationUpdateSchema.safeParse(organization)
