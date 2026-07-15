@@ -135,11 +135,10 @@ export function UsersMasterTable({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span
-                    className="truncate"
+                    className="text-foreground-muted truncate"
                     style={{
                       fontSize: 13.5,
-                      fontWeight: 500,
-                      color: '#F2F2F2'
+                      fontWeight: 500
                     }}
                     title={`id: ${user.id}`}
                   >
@@ -171,21 +170,8 @@ export function UsersMasterTable({
               </div>
 
               {/* Source badge */}
-              <span
-                className="shrink-0"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '1px 8px',
-                  borderRadius: 9999,
-                  border: '1px solid #404040',
-                  background: '#262626',
-                  color: '#9A9A9A',
-                  fontSize: 11,
-                  fontFamily: 'JetBrains Mono, monospace'
-                }}
-              >
-                {user.source || '—'}
+              <span className="rounded-full border bg-muted/50 px-2 py-0.5 font-mono text-[10px]">
+                {user.source}
               </span>
 
               {/* Grant count + scope bar */}
@@ -206,12 +192,12 @@ export function UsersMasterTable({
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  <b style={{ color: '#F2F2F2', fontWeight: 600 }}>
+                  <b style={{ color: '#7E7E7E', fontWeight: 600 }}>
                     {grantCount}
                   </b>{' '}
                   <span style={{ color: '#7E7E7E' }}>grants</span>
                 </div>
-                {grantCount > 0 && <ScopeBar summary={summary} />}
+                {/* {grantCount > 0 && <ScopeBar summary={summary} />} */}
               </div>
             </div>
           )

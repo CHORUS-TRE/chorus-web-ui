@@ -16,6 +16,7 @@ import { UploadPanel } from '@/components/file-manager/upload-panel'
 import IframeCacheRenderer from '@/components/iframe-cache-renderer'
 import { IframeCleanupDialog } from '@/components/iframe-cleanup-dialog'
 import { IframeDebugPanel } from '@/components/iframe-debug-panel'
+import { InstanceDefaultThemeApplicator } from '@/components/instance-default-theme-applicator'
 import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { Toaster } from '@/components/ui/toaster'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
@@ -91,6 +92,7 @@ export default async function RootLayout({
           <ErrorDetailDialog />
           <InstanceConfigInitializer>
             <DynamicThemeApplicator />
+            <InstanceDefaultThemeApplicator />
             <AuthenticationProvider>
               <RolesProvider>
                 <AuthorizationProvider>

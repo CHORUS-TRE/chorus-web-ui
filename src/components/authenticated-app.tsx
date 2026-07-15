@@ -178,47 +178,46 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             </div>
           )}
 
-          {/* Fixed sidebars for iframe pages - positioned at screen edges */}
+          {/* Left Sidebar - fixed at left edge, controlled by edge hover (session pages only) */}
           {isSessionPage && !isFullscreen && (
-            <>
-              {/* Left Sidebar - fixed at left edge, controlled by edge hover */}
-              <div
-                className={cn(
-                  'fixed left-3 top-16 z-40 h-[calc(100vh-5rem)] w-[240px] overflow-hidden transition-transform duration-300 ease-in-out',
-                  leftSidebarVisible && showLeftSidebar
-                    ? 'translate-x-0'
-                    : 'pointer-events-none -translate-x-[calc(100%+12px)]'
-                )}
-                onMouseEnter={showLeftSidebarHandler}
-                onMouseLeave={hideLeftSidebarHandler}
-              >
-                <LeftSidebar />
-              </div>
+            <div
+              className={cn(
+                'fixed left-3 top-16 z-40 h-[calc(100vh-5rem)] w-[240px] overflow-hidden transition-transform duration-300 ease-in-out',
+                leftSidebarVisible && showLeftSidebar
+                  ? 'translate-x-0'
+                  : 'pointer-events-none -translate-x-[calc(100%+12px)]'
+              )}
+              onMouseEnter={showLeftSidebarHandler}
+              onMouseLeave={hideLeftSidebarHandler}
+            >
+              <LeftSidebar />
+            </div>
+          )}
 
-              {/* Right Sidebar - fixed at right edge, controlled by header button only */}
-              <div
-                className={cn(
-                  'fixed right-4 top-16 z-30 h-[calc(100vh-5rem)] overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
-                  showRightSidebar
-                    ? 'translate-x-0 opacity-100'
-                    : 'pointer-events-none translate-x-full opacity-0',
-                  isResizing && 'duration-0'
-                )}
-                style={{ width: showRightSidebar ? rightSidebarWidth : 0 }}
-                id="right-sidebar-immersive"
-              >
-                {/* Resize Handle */}
-                {showRightSidebar && (
-                  <div
-                    className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
-                    onMouseDown={startResizing}
-                  />
-                )}
-                <div className="h-full w-full overflow-hidden">
-                  <RightSidebar />
-                </div>
+          {/* Right Sidebar - fixed at right edge, overlays content on every page */}
+          {!isFullscreen && (
+            <div
+              className={cn(
+                'fixed right-4 top-16 z-40 h-[calc(100vh-5rem)] overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                showRightSidebar
+                  ? 'translate-x-0 opacity-100'
+                  : 'pointer-events-none translate-x-full opacity-0',
+                isResizing && 'duration-0'
+              )}
+              style={{ width: showRightSidebar ? rightSidebarWidth : 0 }}
+              id="right-sidebar"
+            >
+              {/* Resize Handle */}
+              {showRightSidebar && (
+                <div
+                  className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
+                  onMouseDown={startResizing}
+                />
+              )}
+              <div className="h-full w-full overflow-hidden">
+                <RightSidebar />
               </div>
-            </>
+            </div>
           )}
 
           {/* Main Layout Container - only for non-iframe pages */}
@@ -245,63 +244,17 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
                   <LeftSidebar />
                 </div>
 
-                {/* Content container */}
+                {/* Main Content */}
                 <div
-                  className={cn(
-                    'flex h-full items-start gap-2',
-                    isFullscreen ? 'w-full' : 'min-w-0 flex-1'
-                  )}
+                  id="content"
+                  className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-muted/40"
                 >
-                  {/* Main Content */}
                   <div
-                    id="content"
-                    className={cn(
-                      'relative flex h-full flex-col overflow-hidden rounded-2xl border border-muted/40',
-                      showRightSidebar && !isFullscreen
-                        ? 'min-w-0 flex-1'
-                        : 'w-full'
-                    )}
+                    id="content-main"
+                    ref={contentMainRef}
+                    className="flex-1 overflow-auto bg-contrast-background/50 px-8 py-4 backdrop-blur-md"
                   >
-                    <div
-                      id="content-main"
-                      ref={contentMainRef}
-                      className="flex-1 overflow-auto bg-contrast-background/50 px-8 py-4 backdrop-blur-md"
-                    >
-                      {children}
-                    </div>
-                  </div>
-
-                  {/* Right Sidebar */}
-                  <div
-                    className={cn(
-                      'relative h-full overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
-                      !isFullscreen && showRightSidebar
-                        ? 'flex-shrink-0 translate-x-0 opacity-100'
-                        : 'w-0 translate-x-full opacity-0',
-                      isResizing && 'duration-0'
-                    )}
-                    style={{
-                      width:
-                        !isFullscreen && showRightSidebar
-                          ? rightSidebarWidth
-                          : 0,
-                      minWidth:
-                        !isFullscreen && showRightSidebar
-                          ? rightSidebarWidth
-                          : 0
-                    }}
-                    id="right-sidebar"
-                  >
-                    {/* Resize Handle */}
-                    {showRightSidebar && !isFullscreen && (
-                      <div
-                        className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
-                        onMouseDown={startResizing}
-                      />
-                    )}
-                    <div className="h-full w-full overflow-hidden">
-                      <RightSidebar />
-                    </div>
+                    {children}
                   </div>
                 </div>
               </div>
