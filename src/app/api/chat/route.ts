@@ -2,6 +2,7 @@ import { env } from 'next-runtime-env'
 
 import { orchestrate } from '@/app/api/.ai/agent/orchestrator'
 import { Configuration, UserServiceApi } from '@/internal/client'
+import { isAgentEnabled } from '@/lib/feature-flags'
 
 export const runtime = 'nodejs'
 
@@ -85,6 +86,10 @@ export async function isAuthenticated(
 }
 
 export async function POST(req: Request) {
+  if (!isAgentEnabled()) {
+    return Response.json({ error: 'Not found' }, { status: 404 })
+  }
+
   const requestId = crypto.randomUUID()
   const startedAt = Date.now()
 

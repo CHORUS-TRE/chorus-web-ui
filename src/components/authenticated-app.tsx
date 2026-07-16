@@ -198,7 +198,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
           {!isFullscreen && (
             <div
               className={cn(
-                'fixed right-4 top-16 z-40 h-[calc(100vh-5rem)] overflow-visible rounded-2xl border border-muted/40 bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                'fixed right-4 top-14 z-40 h-[calc(100vh-4rem)] overflow-visible rounded-2xl border border-muted bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
                 showRightSidebar
                   ? 'translate-x-0 opacity-100'
                   : 'pointer-events-none translate-x-full opacity-0',

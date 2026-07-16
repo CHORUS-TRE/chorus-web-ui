@@ -55,6 +55,40 @@ describe('isAuthenticated', () => {
 describe('POST /api/chat', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    process.env.NEXT_PUBLIC_ENABLE_AGENT = 'true'
+  })
+
+  afterAll(() => {
+    delete process.env.NEXT_PUBLIC_ENABLE_AGENT
+  })
+
+  it('returns 404 and never invokes the orchestrator when the agent flag is not enabled', async () => {
+    delete process.env.NEXT_PUBLIC_ENABLE_AGENT
+    mockBackendResponse(200, true)
+    const req = new Request('http://localhost/api/chat', {
+      method: 'POST',
+      headers: { Cookie: 'jwttoken=valid' },
+      body: JSON.stringify({ messages: [] })
+    })
+
+    const res = await POST(req)
+
+    expect(res.status).toBe(404)
+    expect(orchestrate).not.toHaveBeenCalled()
+  })
+
+  it('returns 404 when the agent flag holds any value other than "true"', async () => {
+    process.env.NEXT_PUBLIC_ENABLE_AGENT = 'false'
+    const req = new Request('http://localhost/api/chat', {
+      method: 'POST',
+      headers: { Cookie: 'jwttoken=valid' },
+      body: JSON.stringify({ messages: [] })
+    })
+
+    const res = await POST(req)
+
+    expect(res.status).toBe(404)
+    expect(orchestrate).not.toHaveBeenCalled()
   })
 
   it('returns 401 and never invokes the orchestrator when no session cookie is present', async () => {
