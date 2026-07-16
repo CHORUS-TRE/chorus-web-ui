@@ -220,7 +220,7 @@ export function InstanceConfigForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-muted-foreground">
                       Main headline displayed on the login page
                     </FormDescription>
                     <FormMessage />
@@ -240,7 +240,7 @@ export function InstanceConfigForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-muted-foreground">
                       Short tagline displayed below the headline
                     </FormDescription>
                     <FormMessage />
@@ -261,7 +261,7 @@ export function InstanceConfigForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-muted-foreground">
                       Link to your organization&apos;s website
                     </FormDescription>
                     <FormMessage />
@@ -295,7 +295,9 @@ export function InstanceConfigForm() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription>Per user</FormDescription>
+                      <FormDescription className="text-muted-foreground">
+                        Per user
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -315,7 +317,9 @@ export function InstanceConfigForm() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription>Per user</FormDescription>
+                      <FormDescription className="text-muted-foreground">
+                        Per user
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -335,7 +339,9 @@ export function InstanceConfigForm() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription>Per user</FormDescription>
+                      <FormDescription className="text-muted-foreground">
+                        Per user
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

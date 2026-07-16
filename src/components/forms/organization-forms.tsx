@@ -73,6 +73,11 @@ const DEFAULT_VALUES: OrganizationFormData = {
   logoDataUrl: ''
 }
 
+// Capitalizes the first letter of each word, applied live as the user types.
+function capitalizeWords(value: string): string {
+  return value.replace(/(^|\s)\S/g, (char) => char.toUpperCase())
+}
+
 // Splits a `data:<contentType>;base64,<data>` URI into its parts.
 function parseDataUrl(
   dataUrl: string
@@ -138,7 +143,10 @@ export function OrganizationCreateForm({
   }, [open, form])
 
   async function onSubmit(data: OrganizationFormData) {
-    const formData = buildFormData(data)
+    const formData = buildFormData({
+      ...data,
+      contactUserId: data.contactUserId || '1'
+    })
 
     startTransition(async () => {
       const result = await organizationCreate({}, formData)
@@ -425,7 +433,13 @@ function OrganizationFormFields({
             <FormItem>
               <FormLabel>City</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="e.g., Lausanne" />
+                <Input
+                  {...field}
+                  onChange={(e) =>
+                    field.onChange(capitalizeWords(e.target.value))
+                  }
+                  placeholder="e.g., Lausanne"
+                />
               </FormControl>
               <FormMessage className="text-destructive" />
             </FormItem>
