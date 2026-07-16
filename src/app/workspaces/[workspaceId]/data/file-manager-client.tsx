@@ -41,7 +41,6 @@ import {
   traverseDroppedEntry,
   traverseFileInput
 } from '@/utils/folder-traversal'
-import { formatFileSize } from '@/utils/format-file-size'
 import {
   createDataExtractionRequest,
   createDataTransferRequest
@@ -92,8 +91,6 @@ export default function FileManagerClient({
     name: string
     childCount: number
   } | null>(null)
-  const [pendingFolderUpload, setPendingFolderUpload] =
-    useState<FolderTraversalResult | null>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
 
   // Smart delete: check if folder is non-empty before deleting
@@ -172,24 +169,6 @@ export default function FileManagerClient({
     [importFolder, requestUpload, state.currentFolderId]
   )
 
-  const startFolderUpload = useCallback(
-    (traversal: FolderTraversalResult) => {
-      if (traversal.files.length > 500) {
-        setPendingFolderUpload(traversal)
-      } else {
-        requestFolderUpload(traversal)
-      }
-    },
-    [requestFolderUpload]
-  )
-
-  const handleConfirmFolderUpload = useCallback(() => {
-    if (pendingFolderUpload) {
-      requestFolderUpload(pendingFolderUpload)
-      setPendingFolderUpload(null)
-    }
-  }, [pendingFolderUpload, requestFolderUpload])
-
   const handleImportFolder = useCallback(() => {
     folderInputRef.current?.click()
   }, [])
@@ -200,12 +179,12 @@ export default function FileManagerClient({
       if (!files || files.length === 0) return
 
       const traversal = traverseFileInput(files)
-      startFolderUpload(traversal)
+      requestFolderUpload(traversal)
 
       // Reset input so the same folder can be re-selected
       e.target.value = ''
     },
-    [startFolderUpload]
+    [requestFolderUpload]
   )
 
   // External file drop handlers (drag from OS)
@@ -871,59 +850,6 @@ export default function FileManagerClient({
         itemCount={folderToDelete?.childCount ?? 0}
         onConfirmDelete={handleConfirmFolderDelete}
       />
-
-      {/* Large Folder Upload Confirmation Dialog */}
-      <Dialog
-        open={pendingFolderUpload !== null}
-        onOpenChange={(open) => {
-          if (!open) setPendingFolderUpload(null)
-        }}
-      >
-        <DialogContent className="bg-background">
-          <DialogHeader>
-            <DialogTitle>Upload large folder?</DialogTitle>
-          </DialogHeader>
-          <div className="py-4 text-sm text-muted-foreground">
-            <p>
-              <strong className="text-foreground">
-                {pendingFolderUpload?.rootFolderName}
-              </strong>{' '}
-              contains:
-            </p>
-            <ul className="mt-2 list-inside list-disc space-y-1">
-              <li>
-                {pendingFolderUpload?.files.length.toLocaleString()} files
-              </li>
-              <li>
-                {pendingFolderUpload?.directories.length.toLocaleString()}{' '}
-                folders
-              </li>
-              <li>
-                {formatFileSize((pendingFolderUpload?.totalSize ?? 0) / 1024)}{' '}
-                total
-              </li>
-            </ul>
-            {(pendingFolderUpload?.filteredCount ?? 0) > 0 && (
-              <p className="mt-2 text-xs">
-                {pendingFolderUpload?.filteredCount} hidden/system files
-                excluded.
-              </p>
-            )}
-          </div>
-          <DialogFooter>
-            <Button
-              variant="accent-filled"
-              onClick={() => setPendingFolderUpload(null)}
-            >
-              Cancel
-            </Button>
-            <Button variant="accent-filled" onClick={handleConfirmFolderUpload}>
-              <Upload className="h-4 w-4" />
-              Upload {pendingFolderUpload?.files.length.toLocaleString()} files
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {complianceDialog}
 
