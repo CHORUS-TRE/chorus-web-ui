@@ -160,7 +160,7 @@ export function ThemeEditorForm() {
             <Popover>
               <PopoverTrigger asChild>
                 <Button type="button" variant="ghost" size="icon">
-                  <Paintbrush className="h-4 w-4" />
+                  <Paintbrush className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto">

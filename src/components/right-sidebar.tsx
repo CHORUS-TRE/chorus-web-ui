@@ -6,6 +6,7 @@ import { AlertCircle, CircleX, createLucideIcon, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { isAgentEnabled } from '@/lib/feature-flags'
 import { cn } from '@/lib/utils'
 import { useChatContext } from '@/providers/chat-provider'
 import { useUserPreferences } from '@/stores/user-preferences-store'
@@ -123,7 +124,7 @@ export default function RightSidebar() {
     setInput(prompt)
   }
 
-  return (
+  return isAgentEnabled() ? (
     <div className="relative flex h-full w-full flex-col">
       {/* Header */}
       <div className="flex h-12 items-center justify-between border-b border-muted/30 px-4">
@@ -185,6 +186,32 @@ export default function RightSidebar() {
           placeholder="Ask Chorus anything…"
         />
       </div>
+    </div>
+  ) : (
+    <div className="relative flex h-full w-full flex-col">
+      {/* Header */}
+      <div className="flex h-12 items-center justify-between border-b border-muted/30 px-4">
+        <div className="flex items-center gap-2 font-semibold">
+          <span>Chorus Help</span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleRightSidebar}
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+        >
+          <CircleX className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <Button
+        variant="outline"
+        size="sm"
+        className="m-8 w-56"
+        onClick={() => window.open('https://docs.chorus-tre.ch/', '_blank')}
+      >
+        CHORUS documentation site
+      </Button>
     </div>
   )
 }

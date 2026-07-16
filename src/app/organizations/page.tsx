@@ -78,7 +78,7 @@ export default function OrganizationsPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3">
         {[
           { label: 'Institutions', value: stats.total },
           { label: 'Countries', value: stats.countries },

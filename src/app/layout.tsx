@@ -19,6 +19,7 @@ import { IframeDebugPanel } from '@/components/iframe-debug-panel'
 import { InstanceDefaultThemeApplicator } from '@/components/instance-default-theme-applicator'
 import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { Toaster } from '@/components/ui/toaster'
+import { serializePublicEnv } from '@/lib/serialize-public-env'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { AuthorizationProvider } from '@/providers/authorization-provider'
 import { FullscreenProvider } from '@/providers/fullscreen-provider'
@@ -57,7 +58,7 @@ export default async function RootLayout({
           nonce={nonce}
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
-            __html: `window.__ENV=${JSON.stringify(publicEnv)};`
+            __html: `window.__ENV=${serializePublicEnv(publicEnv)};`
           }}
         />
         <Script id="matomo-tag-manager" strategy="afterInteractive">
