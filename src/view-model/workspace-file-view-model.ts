@@ -34,13 +34,14 @@ const getRepository = async () => {
 
 export async function workspaceFileCreate(
   workspaceId: string,
-  file: WorkspaceFileCreateType
+  file: WorkspaceFileCreateType,
+  complianceMessage?: string
 ): Promise<Result<WorkspaceFile>> {
   try {
     if (!workspaceId) throw new Error('Invalid workspace id')
     const repository = await getRepository()
     const useCase = new WorkspaceFileCreate(repository)
-    return await useCase.execute(workspaceId, file)
+    return await useCase.execute(workspaceId, file, complianceMessage)
   } catch (error) {
     console.error('Error creating workspace file', error)
     return { error: toChorusError(error) }
@@ -129,14 +130,20 @@ export async function workspaceFileDelete(
 export async function workspaceFileInitUpload(
   workspaceId: string,
   path: string,
-  file: WorkspaceFileCreateType
+  file: WorkspaceFileCreateType,
+  complianceMessage?: string
 ): Promise<Result<{ uploadId: string; partSize: number; totalParts: number }>> {
   try {
     if (!workspaceId) throw new Error('Invalid workspace id')
     if (!path) throw new Error('Invalid file path')
     const repository = await getRepository()
     const useCase = new WorkspaceFileInitUpload(repository)
-    const result = await useCase.execute(workspaceId, path, file)
+    const result = await useCase.execute(
+      workspaceId,
+      path,
+      file,
+      complianceMessage
+    )
 
     if (result.data) {
       const size = file.size ? parseInt(file.size, 10) : 0

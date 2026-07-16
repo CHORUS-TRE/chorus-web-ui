@@ -723,20 +723,24 @@ export function useFileSystem(workspaceId?: string) {
   )
 
   const importFileDirect = useCallback(
-    async (file: File, filePath: string) => {
+    async (file: File, filePath: string, complianceMessage?: string) => {
       if (!workspaceId) {
         throw new Error('No workspace ID provided for file import')
       }
 
       const content = await readFileContent(file)
-      const result = await workspaceFileCreate(workspaceId, {
-        name: file.name,
-        path: filePath,
-        isDirectory: false,
-        mimeType: file.type,
-        size: file.size.toString(),
-        content
-      })
+      const result = await workspaceFileCreate(
+        workspaceId,
+        {
+          name: file.name,
+          path: filePath,
+          isDirectory: false,
+          mimeType: file.type,
+          size: file.size.toString(),
+          content
+        },
+        complianceMessage
+      )
 
       if (result.error) {
         throw new Error(result.error?.message)
@@ -746,7 +750,11 @@ export function useFileSystem(workspaceId?: string) {
   )
 
   const importFileMultipart = useCallback(
-    async (file: File, filePath: string): Promise<boolean> => {
+    async (
+      file: File,
+      filePath: string,
+      complianceMessage?: string
+    ): Promise<boolean> => {
       if (!workspaceId) {
         throw new Error('No workspace ID provided for file import')
       }
@@ -754,13 +762,18 @@ export function useFileSystem(workspaceId?: string) {
       const store = useAppStateStore.getState()
 
       // Initiate multipart upload
-      const initResult = await workspaceFileInitUpload(workspaceId, filePath, {
-        name: file.name,
-        path: filePath,
-        isDirectory: false,
-        mimeType: file.type,
-        size: file.size.toString()
-      })
+      const initResult = await workspaceFileInitUpload(
+        workspaceId,
+        filePath,
+        {
+          name: file.name,
+          path: filePath,
+          isDirectory: false,
+          mimeType: file.type,
+          size: file.size.toString()
+        },
+        complianceMessage
+      )
 
       if (initResult.error) {
         throw new Error(
@@ -906,7 +919,7 @@ export function useFileSystem(workspaceId?: string) {
   )
 
   const importFile = useCallback(
-    async (parentId: string, file: File) => {
+    async (parentId: string, file: File, complianceMessage?: string) => {
       if (!workspaceId) {
         console.error('No workspace ID provided for file import')
         return
@@ -936,11 +949,15 @@ export function useFileSystem(workspaceId?: string) {
       try {
         if (file.size > IMPORT_FILE_SIZE_THRESHOLD) {
           console.info('Using multipart upload for file:', file.name, file.size)
-          const completed = await importFileMultipart(fileToUpload, filePath)
+          const completed = await importFileMultipart(
+            fileToUpload,
+            filePath,
+            complianceMessage
+          )
           if (!completed) return
         } else {
           console.info('Using direct upload for file:', file.name, file.size)
-          await importFileDirect(fileToUpload, filePath)
+          await importFileDirect(fileToUpload, filePath, complianceMessage)
         }
 
         toast({
@@ -975,7 +992,11 @@ export function useFileSystem(workspaceId?: string) {
   )
 
   const importFolder = useCallback(
-    async (parentId: string, traversal: FolderTraversalResult) => {
+    async (
+      parentId: string,
+      traversal: FolderTraversalResult,
+      complianceMessage?: string
+    ) => {
       if (!workspaceId) {
         console.error('No workspace ID provided for folder import')
         return
@@ -1069,9 +1090,13 @@ export function useFileSystem(workspaceId?: string) {
 
             try {
               if (entry.file.size > IMPORT_FILE_SIZE_THRESHOLD) {
-                await importFileMultipart(entry.file, filePath)
+                await importFileMultipart(
+                  entry.file,
+                  filePath,
+                  complianceMessage
+                )
               } else {
-                await importFileDirect(entry.file, filePath)
+                await importFileDirect(entry.file, filePath, complianceMessage)
               }
               completedFiles++
             } catch (err) {

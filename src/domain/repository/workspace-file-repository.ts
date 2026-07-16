@@ -10,7 +10,8 @@ import {
 export interface WorkspaceFileRepository {
   create: (
     workspaceId: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ) => Promise<Result<WorkspaceFile>>
   get: (workspaceId: string, path: string) => Promise<Result<WorkspaceFile>>
   update: (
@@ -25,7 +26,8 @@ export interface WorkspaceFileRepository {
   initUpload: (
     workspaceId: string,
     path: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ) => Promise<
     Result<{ uploadId: string; partSize: number; totalParts: number }>
   >

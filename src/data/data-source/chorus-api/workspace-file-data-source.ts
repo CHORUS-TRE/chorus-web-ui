@@ -26,7 +26,8 @@ import {
 interface WorkspaceFileDataSource {
   create: (
     workspaceId: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ) => Promise<ChorusCreateWorkspaceFileReply>
   get: (
     workspaceId: string,
@@ -52,7 +53,8 @@ interface WorkspaceFileDataSource {
   initUpload: (
     workspaceId: string,
     path: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ) => Promise<ChorusInitiateWorkspaceFileUploadReply>
   uploadPart: (
     workspaceId: string,
@@ -88,12 +90,14 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
 
   create(
     workspaceId: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ): Promise<ChorusCreateWorkspaceFileReply> {
     const chorusFile = toChorusWorkspaceFile(file)
     return this.service.workspaceFileServiceCreateWorkspaceFile({
       workspaceId,
-      file: chorusFile
+      file: chorusFile,
+      complianceMessage
     })
   }
 
@@ -148,12 +152,14 @@ class WorkspaceFileDataSourceImpl implements WorkspaceFileDataSource {
   initUpload(
     workspaceId: string,
     path: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ): Promise<ChorusInitiateWorkspaceFileUploadReply> {
     return this.service.workspaceFileServiceInitiateWorkspaceFileUpload({
       workspaceId,
       path,
-      file
+      file,
+      complianceMessage
     })
   }
 
