@@ -1,3 +1,16 @@
+# [1.75.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.74.0...v1.75.0) (2026-07-16)
+
+
+### Bug Fixes
+
+* adjust grid layout and enhance form descriptions with muted text style ([dc1fdff](https://github.com/CHORUS-TRE/chorus-web-ui/commit/dc1fdff1b45d268e714ef0b895ab51947f41d56d))
+
+
+### Features
+
+* add feature flag for in-platform assistant and update related components ([176c55a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/176c55ad7d2be74e3766ab4556f3e40439e90032))
+* implement serializePublicEnv function for safe inline script serialization ([87d75ec](https://github.com/CHORUS-TRE/chorus-web-ui/commit/87d75ec18d54a2abbda2757d4a13e5cf185e5695))
+
 # [1.74.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.73.0...v1.74.0) (2026-07-15)
 
 
