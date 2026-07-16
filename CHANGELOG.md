@@ -1,3 +1,10 @@
+# [1.76.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.75.0...v1.76.0) (2026-07-16)
+
+
+### Features
+
+* implement upload compliance dialog and integrate compliance checks in file upload process ([57d5fd2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/57d5fd2446ca939a3fd912402bf13d8e0866ec3d))
+
 # [1.75.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.74.0...v1.75.0) (2026-07-16)
 
 
