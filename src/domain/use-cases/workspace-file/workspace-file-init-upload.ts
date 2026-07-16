@@ -5,7 +5,8 @@ export interface WorkspaceFileInitUploadUseCase {
   execute(
     workspaceId: string,
     path: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ): Promise<Result<{ uploadId: string; partSize: number; totalParts: number }>>
 }
 
@@ -19,10 +20,16 @@ export class WorkspaceFileInitUpload implements WorkspaceFileInitUploadUseCase {
   async execute(
     workspaceId: string,
     path: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ): Promise<
     Result<{ uploadId: string; partSize: number; totalParts: number }>
   > {
-    return this.repository.initUpload(workspaceId, path, file)
+    return this.repository.initUpload(
+      workspaceId,
+      path,
+      file,
+      complianceMessage
+    )
   }
 }

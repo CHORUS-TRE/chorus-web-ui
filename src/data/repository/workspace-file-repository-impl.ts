@@ -26,10 +26,15 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
 
   async create(
     workspaceId: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ): Promise<Result<WorkspaceFile>> {
     try {
-      const response = await this.dataSource.create(workspaceId, file)
+      const response = await this.dataSource.create(
+        workspaceId,
+        file,
+        complianceMessage
+      )
 
       if (response.result?.file) {
         const workspaceFile = fromChorusWorkspaceFile(response.result.file)
@@ -150,12 +155,18 @@ export class WorkspaceFileRepositoryImpl implements WorkspaceFileRepository {
   async initUpload(
     workspaceId: string,
     path: string,
-    file: WorkspaceFileCreateType
+    file: WorkspaceFileCreateType,
+    complianceMessage?: string
   ): Promise<
     Result<{ uploadId: string; partSize: number; totalParts: number }>
   > {
     try {
-      const response = await this.dataSource.initUpload(workspaceId, path, file)
+      const response = await this.dataSource.initUpload(
+        workspaceId,
+        path,
+        file,
+        complianceMessage
+      )
 
       if (response.result) {
         const { uploadId, partSize, totalParts } = response.result

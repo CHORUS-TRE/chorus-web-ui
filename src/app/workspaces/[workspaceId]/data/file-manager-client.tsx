@@ -33,6 +33,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useFileSystem } from '@/hooks/use-file-system'
 import { cn } from '@/lib/utils'
+import { useUploadComplianceGate } from '@/providers/upload-compliance-gate'
 import type { FileSystemItem } from '@/types/file-system'
 import type { FolderTraversalResult } from '@/utils/folder-traversal'
 import {
@@ -78,6 +79,7 @@ export default function FileManagerClient({
     clipboardCut,
     paste
   } = useFileSystem(workspaceId)
+  const { requestUpload, complianceDialog } = useUploadComplianceGate()
 
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false)
   const [newFolderName, setNewFolderName] = useState('')
@@ -151,23 +153,42 @@ export default function FileManagerClient({
     }
   }, [stores, selectedStoreId, handleSelectStore, storeIdFromName])
 
+  const requestFolderUpload = useCallback(
+    (traversal: FolderTraversalResult) => {
+      if (traversal.files.length === 0) {
+        void importFolder(state.currentFolderId || 'root', traversal)
+        return
+      }
+      requestUpload(
+        traversal.files.map((entry) => entry.relativePath),
+        (complianceMessage) =>
+          importFolder(
+            state.currentFolderId || 'root',
+            traversal,
+            complianceMessage
+          )
+      )
+    },
+    [importFolder, requestUpload, state.currentFolderId]
+  )
+
   const startFolderUpload = useCallback(
     (traversal: FolderTraversalResult) => {
       if (traversal.files.length > 500) {
         setPendingFolderUpload(traversal)
       } else {
-        importFolder(state.currentFolderId || 'root', traversal)
+        requestFolderUpload(traversal)
       }
     },
-    [importFolder, state.currentFolderId]
+    [requestFolderUpload]
   )
 
   const handleConfirmFolderUpload = useCallback(() => {
     if (pendingFolderUpload) {
-      importFolder(state.currentFolderId || 'root', pendingFolderUpload)
+      requestFolderUpload(pendingFolderUpload)
       setPendingFolderUpload(null)
     }
-  }, [pendingFolderUpload, importFolder, state.currentFolderId])
+  }, [pendingFolderUpload, requestFolderUpload])
 
   const handleImportFolder = useCallback(() => {
     folderInputRef.current?.click()
@@ -210,6 +231,8 @@ export default function FileManagerClient({
       // Detect dropped folders via webkitGetAsEntry
       if (hasDroppedFolders(e.dataTransfer)) {
         const items = Array.from(e.dataTransfer.items)
+        const traversals: FolderTraversalResult[] = []
+        const droppedFiles: File[] = []
         for (const item of items) {
           const entry = item.webkitGetAsEntry?.()
           if (!entry) continue
@@ -217,7 +240,7 @@ export default function FileManagerClient({
           if (entry.isDirectory) {
             try {
               const traversal = await traverseDroppedEntry(entry)
-              startFolderUpload(traversal)
+              traversals.push(traversal)
             } catch (error) {
               console.error('Error traversing dropped folder:', error)
               toast({
@@ -231,13 +254,34 @@ export default function FileManagerClient({
             const file = await new Promise<File>((resolve, reject) =>
               fileEntry.file(resolve, reject)
             )
-            try {
-              await importFile(state.currentFolderId || 'root', file)
-            } catch (error) {
-              console.error('Error importing dropped file:', error)
-            }
+            droppedFiles.push(file)
           }
         }
+
+        requestUpload(
+          [
+            ...traversals.flatMap((traversal) =>
+              traversal.files.map((entry) => entry.relativePath)
+            ),
+            ...droppedFiles.map((file) => file.name)
+          ],
+          async (complianceMessage) => {
+            for (const traversal of traversals) {
+              await importFolder(
+                state.currentFolderId || 'root',
+                traversal,
+                complianceMessage
+              )
+            }
+            for (const file of droppedFiles) {
+              await importFile(
+                state.currentFolderId || 'root',
+                file,
+                complianceMessage
+              )
+            }
+          }
+        )
         return
       }
 
@@ -245,15 +289,21 @@ export default function FileManagerClient({
       const files = e.dataTransfer.files
       if (files.length === 0) return
 
-      for (const file of Array.from(files)) {
-        try {
-          await importFile(state.currentFolderId || 'root', file)
-        } catch (error) {
-          console.error('Error importing dropped file:', error)
+      const droppedFiles = Array.from(files)
+      requestUpload(
+        droppedFiles.map((file) => file.name),
+        async (complianceMessage) => {
+          for (const file of droppedFiles) {
+            await importFile(
+              state.currentFolderId || 'root',
+              file,
+              complianceMessage
+            )
+          }
         }
-      }
+      )
     },
-    [importFile, startFolderUpload, state.currentFolderId]
+    [importFile, importFolder, requestUpload, state.currentFolderId]
   )
 
   // Context menu state
@@ -374,14 +424,20 @@ export default function FileManagerClient({
     input.multiple = true
     input.onchange = async (event) => {
       const files = (event.target as HTMLInputElement).files
-      if (files) {
-        for (const file of Array.from(files)) {
-          try {
-            await importFile(state.currentFolderId || 'root', file)
-          } catch (error) {
-            console.error('Error importing file:', error)
+      if (files && files.length > 0) {
+        const selectedFiles = Array.from(files)
+        requestUpload(
+          selectedFiles.map((file) => file.name),
+          async (complianceMessage) => {
+            for (const file of selectedFiles) {
+              await importFile(
+                state.currentFolderId || 'root',
+                file,
+                complianceMessage
+              )
+            }
           }
-        }
+        )
       }
     }
     input.click()
@@ -868,6 +924,8 @@ export default function FileManagerClient({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {complianceDialog}
 
       {/* Create Folder Dialog */}
       <Dialog

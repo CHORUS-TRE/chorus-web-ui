@@ -553,7 +553,7 @@ export function FileGrid({
                         variant="outline"
                         size="sm"
                         className={cn(
-                          'h-7 gap-1 border-muted-foreground/30 px-2 text-xs text-muted-foreground hover:border-accent hover:text-accent',
+                          'h-7 gap-1 border-accent/40 px-2 text-xs text-muted-foreground hover:border-accent hover:bg-accent/10 hover:text-accent',
                           downloadQueueItems.includes(item.id) &&
                             'border-accent bg-accent/20 text-accent'
                         )}
@@ -569,7 +569,7 @@ export function FileGrid({
                         variant="outline"
                         size="sm"
                         className={cn(
-                          'h-7 gap-1 border-muted-foreground/30 px-2 text-xs text-muted-foreground hover:border-accent hover:text-accent',
+                          'h-7 gap-1 border-accent/40 px-2 text-xs text-muted-foreground hover:border-accent hover:bg-accent/10 hover:text-accent',
                           transferQueueItems.includes(item.id) &&
                             'border-accent bg-accent/20 text-accent'
                         )}
