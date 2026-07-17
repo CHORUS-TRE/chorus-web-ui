@@ -19,6 +19,7 @@ import { IframeDebugPanel } from '@/components/iframe-debug-panel'
 import { InstanceDefaultThemeApplicator } from '@/components/instance-default-theme-applicator'
 import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { Toaster } from '@/components/ui/toaster'
+import { FeedbackProvider } from '@/features/feedback/feedback-provider'
 import { serializePublicEnv } from '@/lib/serialize-public-env'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
 import { AuthorizationProvider } from '@/providers/authorization-provider'
@@ -97,19 +98,21 @@ export default async function RootLayout({
             <AuthenticationProvider>
               <RolesProvider>
                 <AuthorizationProvider>
-                  <AppStateInitializer />
-                  <UploadPanel />
-                  <FullscreenProvider>
-                    <IframeCacheProvider>
-                      {/* Loads either authenticated-app or Login  */}
-                      {children}
-                      <IframeCacheRenderer />
-                      <IframeCleanupDialog />
-                      <IframeDebugPanel />
-                      <CookieConsent />
-                      <MatomoConsentSync />
-                    </IframeCacheProvider>
-                  </FullscreenProvider>
+                  <FeedbackProvider>
+                    <AppStateInitializer />
+                    <UploadPanel />
+                    <FullscreenProvider>
+                      <IframeCacheProvider>
+                        {/* Loads either authenticated-app or Login  */}
+                        {children}
+                        <IframeCacheRenderer />
+                        <IframeCleanupDialog />
+                        <IframeDebugPanel />
+                        <CookieConsent />
+                        <MatomoConsentSync />
+                      </IframeCacheProvider>
+                    </FullscreenProvider>
+                  </FeedbackProvider>
                 </AuthorizationProvider>
               </RolesProvider>
             </AuthenticationProvider>
