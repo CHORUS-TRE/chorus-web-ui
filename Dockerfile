@@ -26,13 +26,11 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone .
 COPY --from=builder /app/.next/static .next/static
-COPY --from=builder /app/certs/lforty-combined-ca-bundle.pem /etc/ssl/chuv/lforty-combined-ca-bundle.pem
 
 EXPOSE 3000
 ENV HOSTNAME=0.0.0.0
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV NODE_EXTRA_CA_CERTS=/etc/ssl/chuv/lforty-combined-ca-bundle.pem
 
 USER nonroot
 
