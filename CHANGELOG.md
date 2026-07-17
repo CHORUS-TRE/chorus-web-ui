@@ -1,3 +1,10 @@
+# [1.78.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.77.2...v1.78.0) (2026-07-17)
+
+
+### Features
+
+* add user guide processing script and integrate user guide in right sidebar ([f3bcef7](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f3bcef7e055bbdacf01373c6633a7bbb598ba85c))
+
 ## [1.77.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.77.1...v1.77.2) (2026-07-17)
 
 
