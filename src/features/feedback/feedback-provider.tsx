@@ -367,13 +367,22 @@ function FeedbackPin({
 
   useLayoutEffect(refresh, [refresh])
   useEffect(() => {
+    const observer = new MutationObserver(() => {
+      if (!findFeedbackElement(comment.sel)) return
+      refresh()
+      observer.disconnect()
+    })
+    if (!findFeedbackElement(comment.sel)) {
+      observer.observe(document.body, { childList: true, subtree: true })
+    }
     window.addEventListener('resize', refresh)
     window.addEventListener('scroll', refresh, true)
     return () => {
+      observer.disconnect()
       window.removeEventListener('resize', refresh)
       window.removeEventListener('scroll', refresh, true)
     }
-  }, [refresh])
+  }, [comment.sel, refresh])
 
   const onMouseDown = (event: ReactMouseEvent<HTMLButtonElement>) => {
     event.preventDefault()

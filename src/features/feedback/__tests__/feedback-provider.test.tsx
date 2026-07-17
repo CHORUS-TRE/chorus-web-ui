@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { FeedbackProvider, useFeedback } from '../feedback-provider'
 
@@ -53,6 +53,56 @@ describe('FeedbackProvider', () => {
     expect(
       screen.getByPlaceholderText('What should change here?')
     ).toBeVisible()
+  })
+
+  it('restores a pin when its target mounts after navigation', async () => {
+    localStorage.setItem(
+      'chorus.feedback.draft.user-1',
+      JSON.stringify([
+        {
+          id: 'feedback-after-navigation',
+          path: '/apps',
+          sel: '#late-target',
+          ox: 0.5,
+          oy: 0.5,
+          label: 'Late target',
+          text: 'Persistent feedback'
+        }
+      ])
+    )
+    mockPathname = '/workspaces'
+    const view = render(
+      <FeedbackProvider>
+        <TestControls />
+        <main />
+      </FeedbackProvider>
+    )
+
+    mockPathname = '/apps'
+    view.rerender(
+      <FeedbackProvider>
+        <TestControls />
+        <main />
+      </FeedbackProvider>
+    )
+    expect(
+      screen.queryByRole('button', { name: 'Edit feedback 1' })
+    ).not.toBeInTheDocument()
+
+    view.rerender(
+      <FeedbackProvider>
+        <TestControls />
+        <main>
+          <div id="late-target">Late target</div>
+        </main>
+      </FeedbackProvider>
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Edit feedback 1' })
+      ).toBeVisible()
+    )
   })
 
   it('keeps saved pins visible when feedback mode is inactive', () => {
