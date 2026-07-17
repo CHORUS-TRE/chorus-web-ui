@@ -3,11 +3,13 @@
 import {
   Bell,
   Building2,
+  Command,
   Database,
   GaugeCircle,
   Globe,
   HelpCircle,
   LaptopMinimal,
+  MessageSquarePlus,
   Package,
   Rocket,
   SlidersHorizontal,
@@ -18,6 +20,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { SidebarBookmarks } from '@/components/sidebar-bookmarks'
 import { Link } from '@/components/ui/link'
 import { Separator } from '@/components/ui/separator'
+import { useFeedback } from '@/features/feedback/feedback-provider'
 import { useDisplayOrganizations } from '@/hooks/use-instance-config'
 import { cn } from '@/lib/utils'
 import { useAuthorization } from '@/providers/authorization-provider'
@@ -78,6 +81,7 @@ function SidebarContent({
   searchParams: URLSearchParams
 }) {
   const { isAdmin } = useAuthorization()
+  const feedback = useFeedback()
   const displayOrganizations = useDisplayOrganizations()
   const currentTab = searchParams.get('tab')
   const { unreadNotificationsCount } = useAppState()
@@ -272,6 +276,24 @@ function SidebarContent({
           <HelpCircle className="h-4 w-4" />
           Help
         </Link>
+
+        <button
+          data-feedback-ui
+          type="button"
+          onClick={feedback.toggle}
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-accent',
+            feedback.active && 'bg-accent/15 text-accent'
+          )}
+          aria-pressed={feedback.active}
+          aria-keyshortcuts="Meta+F Control+F"
+        >
+          <MessageSquarePlus className="h-4 w-4" />
+          Feedback
+          <kbd className="ml-auto flex items-center gap-0.5 rounded border border-muted-foreground/20 bg-muted/50 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/70">
+            <Command className="h-3 w-3" aria-hidden="true" />F
+          </kbd>
+        </button>
         <p className="px-3 text-right text-[10px] text-muted-foreground/50">
           v{packageInfo.version}
         </p>
