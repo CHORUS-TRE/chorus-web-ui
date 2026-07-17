@@ -2,7 +2,14 @@
 
 import { owl } from '@lucide/lab'
 import { UIMessage } from 'ai'
-import { AlertCircle, CircleX, createLucideIcon, X } from 'lucide-react'
+import {
+  AlertCircle,
+  BookOpen,
+  CircleX,
+  createLucideIcon,
+  MessageCircle,
+  X
+} from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -13,6 +20,7 @@ import { useUserPreferences } from '@/stores/user-preferences-store'
 
 import { ChatInput } from './chat/chat-input'
 import { ChatMessage, TypingIndicator } from './chat/chat-message'
+import { UserGuide } from './user-guide'
 
 const Owl = createLucideIcon('Owl', owl)
 
@@ -98,6 +106,18 @@ export default function RightSidebar() {
   const { messages, sendMessage, status, error, clearError } = useChatContext()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [input, setInput] = useState('')
+  const [panel, setPanel] = useState<'assistant' | 'guide'>('guide')
+
+  useEffect(() => {
+    const savedPanel = localStorage.getItem('chorus-right-sidebar-panel')
+    if (savedPanel === 'assistant' || savedPanel === 'guide')
+      setPanel(savedPanel)
+  }, [])
+
+  const selectPanel = (nextPanel: 'assistant' | 'guide') => {
+    setPanel(nextPanel)
+    localStorage.setItem('chorus-right-sidebar-panel', nextPanel)
+  }
 
   const isLoading = status === 'streaming' || status === 'submitted'
 
@@ -151,41 +171,71 @@ export default function RightSidebar() {
         </Button>
       </div>
 
-      {/* Messages feed */}
-      <div
-        ref={scrollRef}
-        className="custom-scrollbar flex-1 space-y-4 overflow-y-auto p-4"
-      >
-        <WelcomeCard onPrompt={handleQuickPrompt} />
-        {(messages as UIMessage[]).map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
-        {isLoading && <TypingIndicator />}
-        {error && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-            <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-            <p className="flex-1">{friendlyError(error)}</p>
-            <button
-              onClick={clearError}
-              className="text-destructive/60 hover:text-destructive"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </div>
-        )}
+      <div className="grid grid-cols-2 border-b border-muted/30 p-1.5">
+        <button
+          onClick={() => selectPanel('assistant')}
+          className={cn(
+            'flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-colors',
+            panel === 'assistant'
+              ? 'bg-muted text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          <MessageCircle className="h-3.5 w-3.5" />
+          Assistant
+        </button>
+        <button
+          onClick={() => selectPanel('guide')}
+          className={cn(
+            'flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-colors',
+            panel === 'guide'
+              ? 'bg-muted text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          <BookOpen className="h-3.5 w-3.5" />
+          User Guide
+        </button>
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-muted/30">
-        <ChatInput
-          value={input}
-          onChange={setInput}
-          onSubmit={handleSubmit}
-          onFileSelect={handleFileSelect}
-          disabled={isLoading}
-          placeholder="Ask Chorus anything…"
-        />
-      </div>
+      {panel === 'guide' ? (
+        <UserGuide />
+      ) : (
+        <>
+          <div
+            ref={scrollRef}
+            className="custom-scrollbar flex-1 space-y-4 overflow-y-auto p-4"
+          >
+            <WelcomeCard onPrompt={handleQuickPrompt} />
+            {(messages as UIMessage[]).map((msg) => (
+              <ChatMessage key={msg.id} message={msg} />
+            ))}
+            {isLoading && <TypingIndicator />}
+            {error && (
+              <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                <p className="flex-1">{friendlyError(error)}</p>
+                <button
+                  onClick={clearError}
+                  className="text-destructive/60 hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="border-t border-muted/30">
+            <ChatInput
+              value={input}
+              onChange={setInput}
+              onSubmit={handleSubmit}
+              onFileSelect={handleFileSelect}
+              disabled={isLoading}
+              placeholder="Ask Chorus anything…"
+            />
+          </div>
+        </>
+      )}
     </div>
   ) : (
     <div className="relative flex h-full w-full flex-col">
@@ -204,14 +254,7 @@ export default function RightSidebar() {
         </Button>
       </div>
 
-      <Button
-        variant="outline"
-        size="sm"
-        className="m-8 w-56"
-        onClick={() => window.open('https://docs.chorus-tre.ch/', '_blank')}
-      >
-        CHORUS documentation site
-      </Button>
+      <UserGuide />
     </div>
   )
 }

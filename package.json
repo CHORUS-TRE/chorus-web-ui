@@ -6,6 +6,7 @@
   "scripts": {
     "prebuild": "pnpm exec tailwindcss -i src/styles/globals.css -o src/app/build.css && tsx scripts/build-index.ts",
     "build:index": "tsx scripts/build-index.ts",
+    "build:user-guide": "tsx scripts/process-user-guide.ts",
     "build": "next build",
     "dev": "next dev",
     "dev:turbo": "next dev --turbo",
