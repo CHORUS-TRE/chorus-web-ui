@@ -1,3 +1,10 @@
+## [1.77.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.77.0...v1.77.1) (2026-07-17)
+
+
+### Bug Fixes
+
+* add mutation observer to refresh feedback pins on DOM changes ([6727204](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6727204e70abfb5e1bd76a1705f65249d51ecbd8))
+
 # [1.77.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.76.1...v1.77.0) (2026-07-17)
 
 
