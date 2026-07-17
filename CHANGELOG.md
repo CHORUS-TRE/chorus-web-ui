@@ -1,3 +1,10 @@
+# [1.77.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.76.1...v1.77.0) (2026-07-17)
+
+
+### Features
+
+* implement feedback system with provider, composer, and submission panel ([9b81891](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9b818916d6ca20592a4017d9b48ea35ce2329604))
+
 ## [1.76.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.76.0...v1.76.1) (2026-07-16)
 
 # [1.76.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.75.0...v1.76.0) (2026-07-16)
