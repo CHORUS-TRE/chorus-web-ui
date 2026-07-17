@@ -1,3 +1,10 @@
+## [1.77.2](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.77.1...v1.77.2) (2026-07-17)
+
+
+### Bug Fixes
+
+* update approval requests fetch limit and remove unnecessary CA certs configuration ([9d3afa2](https://github.com/CHORUS-TRE/chorus-web-ui/commit/9d3afa255f4130b83abb07570dfb3de8ad84ed4b))
+
 ## [1.77.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.77.0...v1.77.1) (2026-07-17)
 
 
