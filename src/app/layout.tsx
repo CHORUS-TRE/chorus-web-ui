@@ -19,6 +19,7 @@ import { IframeDebugPanel } from '@/components/iframe-debug-panel'
 import { InstanceDefaultThemeApplicator } from '@/components/instance-default-theme-applicator'
 import { MatomoConsentSync } from '@/components/matomo-consent-sync'
 import { Toaster } from '@/components/ui/toaster'
+import { WireframeModeApplicator } from '@/components/wireframe-mode-applicator'
 import { FeedbackProvider } from '@/features/feedback/feedback-provider'
 import { serializePublicEnv } from '@/lib/serialize-public-env'
 import { AuthenticationProvider } from '@/providers/authentication-provider'
@@ -95,6 +96,7 @@ export default async function RootLayout({
           <InstanceConfigInitializer>
             <DynamicThemeApplicator />
             <InstanceDefaultThemeApplicator />
+            <WireframeModeApplicator />
             <AuthenticationProvider>
               <RolesProvider>
                 <AuthorizationProvider>

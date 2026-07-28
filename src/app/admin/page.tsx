@@ -177,14 +177,6 @@ const AdminPage = () => {
               value=""
               description="Manage platform settings"
             />
-
-            <StatCard
-              href="/admin/theme"
-              title="Theme"
-              icon={Palette}
-              value=""
-              description="Customize UI appearance"
-            />
           </>
         )}
       </div>

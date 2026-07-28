@@ -106,6 +106,7 @@ type DevStoreCacheState = {
   getInstanceDefaultThemeMode: () => ThemeMode
   getInstanceLimits: () => InstanceLimits | null
   getDisplayOrganizations: () => boolean
+  getWireframeModeEnabled: () => boolean
 
   setInstanceName: (name: string) => Promise<boolean>
   setInstanceHeadline: (headline: string) => Promise<boolean>
@@ -116,6 +117,7 @@ type DevStoreCacheState = {
   setInstanceDefaultThemeMode: (mode: ThemeMode) => Promise<boolean>
   setInstanceLimits: (limits: InstanceLimits | null) => Promise<boolean>
   setDisplayOrganizations: (display: boolean) => Promise<boolean>
+  setWireframeModeEnabled: (enabled: boolean) => Promise<boolean>
 
   // User bookmarks (JSON array stored at user.bookmarks)
   getUserBookmarks: () => Bookmarks
@@ -485,6 +487,18 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     }
   },
 
+  getWireframeModeEnabled: () => {
+    const value = get().global[INSTANCE_CONFIG_KEYS.WIREFRAME_MODE_ENABLED]
+    if (!value) return DEFAULT_INSTANCE_CONFIG.wireframeModeEnabled
+
+    try {
+      return JSON.parse(value) === true
+    } catch (e) {
+      console.error('Error parsing wireframeModeEnabled:', e)
+      return DEFAULT_INSTANCE_CONFIG.wireframeModeEnabled
+    }
+  },
+
   // Individual setters
   setInstanceName: async (name: string) => {
     return get().setGlobal(INSTANCE_CONFIG_KEYS.NAME, name)
@@ -531,6 +545,13 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
     return get().setGlobal(
       INSTANCE_CONFIG_KEYS.DISPLAY_ORGANIZATIONS,
       JSON.stringify(display)
+    )
+  },
+
+  setWireframeModeEnabled: async (enabled: boolean) => {
+    return get().setGlobal(
+      INSTANCE_CONFIG_KEYS.WIREFRAME_MODE_ENABLED,
+      JSON.stringify(enabled)
     )
   },
 

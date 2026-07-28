@@ -54,6 +54,9 @@ export function useInstanceConfig(): InstanceConfig {
   const displayOrganizationsRaw = useDevStoreCache(
     (state) => state.global[INSTANCE_CONFIG_KEYS.DISPLAY_ORGANIZATIONS]
   )
+  const wireframeModeEnabledRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.WIREFRAME_MODE_ENABLED]
+  )
 
   // Memoize the parsed config
   const config = useMemo((): InstanceConfig => {
@@ -108,6 +111,16 @@ export function useInstanceConfig(): InstanceConfig {
       if (validated.success) defaultThemeMode = validated.data
     }
 
+    // Parse wireframeModeEnabled
+    let wireframeModeEnabled = DEFAULT_INSTANCE_CONFIG.wireframeModeEnabled
+    if (wireframeModeEnabledRaw) {
+      try {
+        wireframeModeEnabled = JSON.parse(wireframeModeEnabledRaw) === true
+      } catch {
+        // Keep default
+      }
+    }
+
     return {
       name: nameRaw || DEFAULT_INSTANCE_CONFIG.name,
       headline: headlineRaw || DEFAULT_INSTANCE_CONFIG.headline,
@@ -117,7 +130,8 @@ export function useInstanceConfig(): InstanceConfig {
       theme,
       limits,
       defaultThemeMode,
-      displayOrganizations
+      displayOrganizations,
+      wireframeModeEnabled
     }
   }, [
     nameRaw,
@@ -128,7 +142,8 @@ export function useInstanceConfig(): InstanceConfig {
     themeRaw,
     limitsRaw,
     defaultThemeModeRaw,
-    displayOrganizationsRaw
+    displayOrganizationsRaw,
+    wireframeModeEnabledRaw
   ])
 
   return config
@@ -151,6 +166,25 @@ export function useDisplayOrganizations(): boolean {
       return DEFAULT_INSTANCE_CONFIG.displayOrganizations
     }
   }, [displayOrganizationsRaw])
+}
+
+/**
+ * Hook to access whether wireframe mode is enabled instance-wide
+ */
+export function useInstanceWireframeMode(): boolean {
+  const wireframeModeEnabledRaw = useDevStoreCache(
+    (state) => state.global[INSTANCE_CONFIG_KEYS.WIREFRAME_MODE_ENABLED]
+  )
+
+  return useMemo(() => {
+    if (!wireframeModeEnabledRaw)
+      return DEFAULT_INSTANCE_CONFIG.wireframeModeEnabled
+    try {
+      return JSON.parse(wireframeModeEnabledRaw) === true
+    } catch {
+      return DEFAULT_INSTANCE_CONFIG.wireframeModeEnabled
+    }
+  }, [wireframeModeEnabledRaw])
 }
 
 /**

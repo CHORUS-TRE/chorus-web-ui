@@ -7,6 +7,7 @@ import { InstanceConfigForm } from '@/components/forms/instance-config-form'
 import LogoUploadForm from '@/components/forms/logo-upload-form'
 import { SidebarOptionsForm } from '@/components/forms/sidebar-options-form'
 import { ThemeEditorForm } from '@/components/forms/theme-editor-form'
+import { WireframeModeForm } from '@/components/forms/wireframe-mode-form'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const ConfigurationPage = () => {
@@ -39,6 +40,8 @@ const ConfigurationPage = () => {
           <SidebarOptionsForm />
 
           <DefaultThemeModeForm />
+
+          <WireframeModeForm />
 
           <div>
             <h3 className="mb-4 text-lg font-semibold">Theme</h3>

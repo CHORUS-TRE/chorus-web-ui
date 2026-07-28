@@ -196,26 +196,28 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 
           {/* Right Sidebar - fixed at right edge, overlays content on every page */}
           {!isFullscreen && (
-            <div
-              className={cn(
-                'fixed right-4 top-14 z-40 h-[calc(100vh-4rem)] overflow-visible rounded-2xl border border-muted bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
-                showRightSidebar
-                  ? 'translate-x-0 opacity-100'
-                  : 'pointer-events-none translate-x-full opacity-0',
-                isResizing && 'duration-0'
-              )}
-              style={{ width: showRightSidebar ? rightSidebarWidth : 0 }}
-              id="right-sidebar"
-            >
-              {/* Resize Handle */}
-              {showRightSidebar && (
-                <div
-                  className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
-                  onMouseDown={startResizing}
-                />
-              )}
-              <div className="h-full w-full overflow-hidden">
-                <RightSidebar />
+            <div data-fidelity="wireframe">
+              <div
+                className={cn(
+                  'fixed right-4 top-14 z-40 h-[calc(100vh-4rem)] overflow-visible rounded-2xl border border-muted bg-contrast-background/50 backdrop-blur-md transition-all duration-300 ease-in-out',
+                  showRightSidebar
+                    ? 'translate-x-0 opacity-100'
+                    : 'pointer-events-none translate-x-full opacity-0',
+                  isResizing && 'duration-0'
+                )}
+                style={{ width: showRightSidebar ? rightSidebarWidth : 0 }}
+                id="right-sidebar"
+              >
+                {/* Resize Handle */}
+                {showRightSidebar && (
+                  <div
+                    className="absolute left-0 top-0 z-50 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50 active:bg-primary"
+                    onMouseDown={startResizing}
+                  />
+                )}
+                <div className="h-full w-full overflow-hidden">
+                  <RightSidebar />
+                </div>
               </div>
             </div>
           )}

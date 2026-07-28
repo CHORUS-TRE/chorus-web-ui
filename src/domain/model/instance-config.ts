@@ -11,7 +11,8 @@ export const INSTANCE_CONFIG_KEYS = {
   THEME: 'instance.theme',
   DEFAULT_THEME_MODE: 'instance.defaultTheme',
   LIMITS: 'instance.limits',
-  DISPLAY_ORGANIZATIONS: 'instance.displayOrganizations'
+  DISPLAY_ORGANIZATIONS: 'instance.displayOrganizations',
+  WIREFRAME_MODE_ENABLED: 'instance.wireframeModeEnabled'
 } as const
 
 // Logo configuration (light and dark variants)
@@ -76,7 +77,8 @@ export const InstanceConfigSchema = z.object({
   theme: InstanceThemeSchema.nullable().optional(),
   defaultThemeMode: ThemeModeSchema.default(DEFAULT_THEME_MODE),
   limits: InstanceLimitsSchema.nullable().optional(),
-  displayOrganizations: z.boolean().default(false)
+  displayOrganizations: z.boolean().default(false),
+  wireframeModeEnabled: z.boolean().default(false)
 })
 
 export type InstanceConfig = z.infer<typeof InstanceConfigSchema>
@@ -96,5 +98,6 @@ export const DEFAULT_INSTANCE_CONFIG: InstanceConfig = {
     maxSessionsPerUser: null,
     maxAppInstancesPerUser: null
   },
-  displayOrganizations: false
+  displayOrganizations: false,
+  wireframeModeEnabled: false
 }

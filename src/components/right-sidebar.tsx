@@ -238,7 +238,7 @@ export default function RightSidebar() {
       )}
     </div>
   ) : (
-    <div className="relative flex h-full w-full flex-col">
+    <div className="relative flex h-full w-full flex-col p-4">
       {/* Header */}
       <div className="flex h-12 items-center justify-between border-b border-muted/30 px-4">
         <div className="flex items-center gap-2 font-semibold">

@@ -286,12 +286,12 @@ function SidebarContent({
             feedback.active && 'bg-accent/15 text-accent'
           )}
           aria-pressed={feedback.active}
-          aria-keyshortcuts="Meta+F Control+F"
+          aria-keyshortcuts="Meta+K Control+K"
         >
           <MessageSquarePlus className="h-4 w-4" />
           Feedback
           <kbd className="ml-auto flex items-center gap-0.5 rounded border border-muted-foreground/20 bg-muted/50 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/70">
-            <Command className="h-3 w-3" aria-hidden="true" />F
+            <Command className="h-3 w-3" aria-hidden="true" />K
           </kbd>
         </button>
         <p className="px-3 text-right text-[10px] text-muted-foreground/50">
