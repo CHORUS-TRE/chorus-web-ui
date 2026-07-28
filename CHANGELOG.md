@@ -1,3 +1,15 @@
+# [1.79.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.78.0...v1.79.0) (2026-07-28)
+
+
+### Bug Fixes
+
+* update keyboard shortcut for toggling feedback popup from Command+F to Command+K ([f3536d5](https://github.com/CHORUS-TRE/chorus-web-ui/commit/f3536d5f28721de793a1d54605419810e8e0418d))
+
+
+### Features
+
+* implement wireframe mode functionality and UI integration ([56222ab](https://github.com/CHORUS-TRE/chorus-web-ui/commit/56222ab47429dc95a2811607452b08a6f8c839bb))
+
 # [1.78.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.77.2...v1.78.0) (2026-07-17)
 
 
