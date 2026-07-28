@@ -193,7 +193,7 @@ function CachedIframeRenderer({
           borderRadius: 0,
           overflow: 'hidden'
         }}
-        className="bg-background transition-all duration-150 ease-in-out"
+        className="bg-background transition-opacity duration-150 ease-in-out"
         id={`iframe-${iframe.id}`}
         ref={iFrameRef}
         aria-label={iframe.name}
