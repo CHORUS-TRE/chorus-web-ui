@@ -1,3 +1,10 @@
+## [1.79.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.79.0...v1.79.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* add wireframe mode enabled state to dev store cache ([d9e3777](https://github.com/CHORUS-TRE/chorus-web-ui/commit/d9e37774621e7ea297d0c30b6188a67bfbd8d828))
+
 # [1.79.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.78.0...v1.79.0) (2026-07-28)
 
 
