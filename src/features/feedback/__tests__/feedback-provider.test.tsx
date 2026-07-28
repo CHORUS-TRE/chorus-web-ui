@@ -144,7 +144,7 @@ describe('FeedbackProvider', () => {
     ).toMatchObject({ path: '/apps' })
   })
 
-  it('toggles the feedback popup with Command+F', () => {
+  it('toggles the feedback popup with Command+K', () => {
     render(
       <FeedbackProvider>
         <TestControls />
@@ -169,7 +169,7 @@ describe('FeedbackProvider', () => {
       value: jest.fn(() => page)
     })
     fireEvent.mouseMove(document, { clientX: 400, clientY: 300 })
-    fireEvent.keyDown(document, { key: 'f', metaKey: true })
+    fireEvent.keyDown(document, { key: 'k', metaKey: true })
 
     const textarea = screen.getByPlaceholderText('What should change here?')
     expect(textarea).toBeVisible()
@@ -185,7 +185,7 @@ describe('FeedbackProvider', () => {
     ).toHaveProperty('tagName', 'HEADER')
     expect(document.body).toHaveAttribute('data-feedback-mode', 'active')
 
-    fireEvent.keyDown(document, { key: 'f', metaKey: true })
+    fireEvent.keyDown(document, { key: 'k', metaKey: true })
 
     expect(
       screen.queryByPlaceholderText('What should change here?')

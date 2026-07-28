@@ -689,7 +689,7 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
     if (!enabled) return
     const onShortcut = (event: KeyboardEvent) => {
       if (
-        event.key.toLowerCase() !== 'f' ||
+        event.key.toLowerCase() !== 'k' ||
         (!event.metaKey && !event.ctrlKey)
       ) {
         return
