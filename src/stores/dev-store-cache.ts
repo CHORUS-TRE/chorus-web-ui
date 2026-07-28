@@ -388,7 +388,8 @@ export const useDevStoreCache = create<DevStoreCacheState>((set, get) => ({
       logo: state.getInstanceLogo(),
       theme: state.getInstanceTheme(),
       defaultThemeMode: state.getInstanceDefaultThemeMode(),
-      displayOrganizations: state.getDisplayOrganizations()
+      displayOrganizations: state.getDisplayOrganizations(),
+      wireframeModeEnabled: state.getWireframeModeEnabled()
     }
   },
 
