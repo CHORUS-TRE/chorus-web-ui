@@ -12,6 +12,20 @@ function originToken(url: string): string {
   }
 }
 
+function connectTokens(url: string): string[] {
+  if (!url) return []
+  try {
+    const parsed = new URL(url)
+    const websocketProtocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:'
+    return [
+      `${parsed.protocol}//${parsed.host}`,
+      `${websocketProtocol}//${parsed.host}`
+    ]
+  } catch {
+    return [url]
+  }
+}
+
 export function buildCsp(params: {
   nonce: string
   apiUrl: string
@@ -22,8 +36,8 @@ export function buildCsp(params: {
 
   const connectSrc = [
     "'self'",
-    originToken(apiUrl),
-    originToken(matomoUrl),
+    ...connectTokens(apiUrl),
+    ...connectTokens(matomoUrl),
     ...(isDev ? ['ws://localhost:*', 'wss://localhost:*'] : [])
   ]
     .filter(Boolean)
@@ -44,7 +58,54 @@ export function buildCsp(params: {
   ].join('; ')
 }
 
+export function buildXpraCsp(params: {
+  apiUrl: string
+  isDev: boolean
+}): string {
+  const { apiUrl, isDev } = params
+  const connectSrc = [
+    "'self'",
+    ...connectTokens(apiUrl),
+    ...(isDev ? ['ws://localhost:*', 'wss://localhost:*'] : [])
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  // xpra-html5 is a vendored, self-contained legacy application. Its static
+  // index uses inline bootstrap code and event handlers, and its decoders use
+  // workers/WASM. Keep this relaxation scoped to /vendor/xpra only.
+  return [
+    `default-src 'self'`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob:`,
+    `worker-src 'self' blob:`,
+    `style-src 'self' 'unsafe-inline'`,
+    `img-src 'self' data: blob:`,
+    `font-src 'self' data:`,
+    `media-src 'self' data: blob:`,
+    `connect-src ${connectSrc}`,
+    `frame-ancestors 'self'`,
+    `object-src 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`
+  ].join('; ')
+}
+
 export function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith('/vendor/xpra/')) {
+    const response = NextResponse.next()
+    response.headers.set(
+      'Content-Security-Policy',
+      buildXpraCsp({
+        apiUrl: process.env.NEXT_PUBLIC_API_URL ?? '',
+        isDev: process.env.NODE_ENV === 'development'
+      })
+    )
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    return response
+  }
+
   const nonce = randomBytes(16).toString('base64')
 
   const csp = buildCsp({

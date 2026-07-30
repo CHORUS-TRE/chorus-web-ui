@@ -7,12 +7,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CachedIframe } from '@/domain/model'
 import { WorkbenchServerPodStatus } from '@/domain/model'
 import { isSessionPath } from '@/lib/route-utils'
+import { registerXpraSession } from '@/lib/xpra-session-registry'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
 import { LoadingOverlay } from './loading-overlay'
+import { XpraWeb, XpraWebHandle } from './xpra-web'
 
 /**
  * Renders a single cached iframe with proper visibility management.
@@ -26,6 +28,7 @@ function CachedIframeRenderer({
   isActive: boolean
 }) {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
+  const xpraRef = useRef<XpraWebHandle>(null)
   const [isIframeLoaded, setIsIframeLoaded] = useState(false)
   // Track which URLs have successfully loaded to handle switching between cached iframes
   const loadedUrlsRef = useRef<Set<string>>(new Set())
@@ -101,6 +104,11 @@ function CachedIframeRenderer({
     iFrameRef.current?.addEventListener('mouseover', handleMouseOver)
   }, [])
 
+  useEffect(() => {
+    if (iframe.type !== 'session' || !xpraRef.current) return
+    return registerXpraSession(iframe.id, xpraRef.current)
+  }, [iframe.id, iframe.type, isDelayComplete])
+
   // Show loading overlay if:
   // 1. Iframe is active
   // 2. Not already loaded
@@ -165,42 +173,67 @@ function CachedIframeRenderer({
         </div>
       )} */}
 
-      <iframe
-        title={iframe.name}
-        src={
-          iframe.type === 'session'
-            ? isPodReady && isDelayComplete
-              ? iframe.url
-              : 'about:blank'
-            : iframe.url
-        }
-        allow="autoplay; fullscreen; clipboard-write; clipboard-read;"
-        style={{
-          width: isFullscreen ? '100vw' : 'calc(100vw - 15px)',
-          height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',
-          visibility: showLoadingOverlay
-            ? 'hidden'
-            : isActive
-              ? 'visible'
-              : 'hidden',
-          pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
-          position: 'fixed' as const,
-          left: isFullscreen ? 0 : 15,
-          top: isFullscreen ? 0 : 44,
-          zIndex: isActive ? 20 : -1,
-          opacity: showLoadingOverlay ? 0 : isActive ? 1 : 0,
-          filter: 'none',
-          borderRadius: 0,
-          overflow: 'hidden'
-        }}
-        className="bg-background transition-opacity duration-150 ease-in-out"
-        id={`iframe-${iframe.id}`}
-        ref={iFrameRef}
-        aria-label={iframe.name}
-        aria-hidden={showLoadingOverlay || !isActive}
-        onLoad={handleLoad}
-        tabIndex={isActive && !showLoadingOverlay ? 0 : -1}
-      />
+      {iframe.type === 'session' ? (
+        isPodReady &&
+        isDelayComplete && (
+          <XpraWeb
+            ref={xpraRef}
+            title={iframe.name}
+            streamUrl={iframe.url}
+            onConnected={() => setIsIframeLoaded(true)}
+            onDisconnected={() => setIsIframeLoaded(true)}
+            style={{
+              width: isFullscreen ? '100vw' : 'calc(100vw - 15px)',
+              height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',
+              visibility: showLoadingOverlay
+                ? 'hidden'
+                : isActive
+                  ? 'visible'
+                  : 'hidden',
+              pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
+              position: 'fixed',
+              left: isFullscreen ? 0 : 15,
+              top: isFullscreen ? 0 : 44,
+              zIndex: isActive ? 20 : -1,
+              opacity: showLoadingOverlay ? 0 : isActive ? 1 : 0,
+              border: 0,
+              overflow: 'hidden'
+            }}
+            className="bg-background transition-opacity duration-150 ease-in-out"
+          />
+        )
+      ) : (
+        <iframe
+          title={iframe.name}
+          src={iframe.url}
+          allow="autoplay; fullscreen; clipboard-write; clipboard-read;"
+          style={{
+            width: isFullscreen ? '100vw' : 'calc(100vw - 15px)',
+            height: isFullscreen ? '100vh' : 'calc(100vh - 44px)',
+            visibility: showLoadingOverlay
+              ? 'hidden'
+              : isActive
+                ? 'visible'
+                : 'hidden',
+            pointerEvents: isActive && !showLoadingOverlay ? 'auto' : 'none',
+            position: 'fixed' as const,
+            left: isFullscreen ? 0 : 15,
+            top: isFullscreen ? 0 : 44,
+            zIndex: isActive ? 20 : -1,
+            opacity: showLoadingOverlay ? 0 : isActive ? 1 : 0,
+            filter: 'none',
+            borderRadius: 0,
+            overflow: 'hidden'
+          }}
+          className="bg-background transition-opacity duration-150 ease-in-out"
+          id={`iframe-${iframe.id}`}
+          ref={iFrameRef}
+          aria-label={iframe.name}
+          aria-hidden={showLoadingOverlay || !isActive}
+          onLoad={handleLoad}
+          tabIndex={isActive && !showLoadingOverlay ? 0 : -1}
+        />
+      )}
     </>
   )
 }

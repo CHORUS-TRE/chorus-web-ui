@@ -1,4 +1,4 @@
-import { buildCsp } from '@/proxy'
+import { buildCsp, buildXpraCsp } from '@/proxy'
 
 const base = {
   nonce: 'dGVzdG5vbmNlMTI=',
@@ -17,19 +17,19 @@ describe('buildCsp', () => {
     expect(scriptSrc).not.toContain('unsafe-inline')
   })
 
-  it('includes API host (scheme-agnostic) in connect-src', () => {
+  it('includes API HTTPS and WebSocket origins in connect-src', () => {
     const csp = buildCsp(base)
-    expect(csp).toContain("connect-src 'self' api.example.com")
+    expect(csp).toContain(
+      "connect-src 'self' https://api.example.com wss://api.example.com"
+    )
   })
 
   it('includes Matomo host in connect-src when provided', () => {
     const csp = buildCsp({ ...base, matomoUrl: 'https://matomo.example.com' })
-    expect(csp).toContain(
-      "connect-src 'self' api.example.com matomo.example.com"
-    )
+    expect(csp).toContain('https://matomo.example.com wss://matomo.example.com')
   })
 
-  it('produces the same connect-src token regardless of http or https scheme in Matomo URL', () => {
+  it('uses matching HTTP and WebSocket schemes', () => {
     const cspHttps = buildCsp({
       ...base,
       matomoUrl: 'https://matomo.example.com'
@@ -38,14 +38,19 @@ describe('buildCsp', () => {
       ...base,
       matomoUrl: 'http://matomo.example.com'
     })
-    expect(cspHttps.match(/connect-src [^;]+/)?.[0]).toBe(
-      cspHttp.match(/connect-src [^;]+/)?.[0]
+    expect(cspHttps).toContain(
+      'https://matomo.example.com wss://matomo.example.com'
+    )
+    expect(cspHttp).toContain(
+      'http://matomo.example.com ws://matomo.example.com'
     )
   })
 
   it('omits Matomo token from connect-src when matomoUrl is empty', () => {
     const csp = buildCsp({ ...base, matomoUrl: '' })
-    expect(csp).toContain("connect-src 'self' api.example.com")
+    expect(csp).toContain(
+      "connect-src 'self' https://api.example.com wss://api.example.com"
+    )
     expect(csp).not.toContain('undefined')
   })
 
@@ -68,8 +73,8 @@ describe('buildCsp', () => {
 
   it('omits ws://localhost:* from connect-src in production', () => {
     const csp = buildCsp({ ...base, isDev: false })
-    expect(csp).not.toContain('ws://')
-    expect(csp).not.toContain('wss://')
+    expect(csp).not.toContain('ws://localhost:*')
+    expect(csp).not.toContain('wss://localhost:*')
   })
 
   it('always sets frame-ancestors self', () => {
@@ -90,5 +95,32 @@ describe('buildCsp', () => {
   it('always sets form-action self', () => {
     const csp = buildCsp(base)
     expect(csp).toContain("form-action 'self'")
+  })
+})
+
+describe('buildXpraCsp', () => {
+  it('allows the vendored bootstrap, workers and WASM', () => {
+    const csp = buildXpraCsp({
+      apiUrl: base.apiUrl,
+      isDev: false
+    })
+
+    expect(csp).toContain(
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob:"
+    )
+    expect(csp).toContain("worker-src 'self' blob:")
+    expect(csp).toContain(
+      "connect-src 'self' https://api.example.com wss://api.example.com"
+    )
+  })
+
+  it('keeps framing restricted to the Chorus origin', () => {
+    const csp = buildXpraCsp({
+      apiUrl: base.apiUrl,
+      isDev: false
+    })
+
+    expect(csp).toContain("frame-ancestors 'self'")
+    expect(csp).toContain("object-src 'none'")
   })
 })

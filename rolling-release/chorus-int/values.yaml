@@ -18,6 +18,11 @@ env:
     value: "500"
   - name: NEXT_PUBLIC_ENABLE_AGENT
     value: "false"
+  # Embed the Xpra client vendored in public/vendor/xpra (same origin, with the
+  # window.chorusXpra bridge). Set to "remote" to fall back to the client served
+  # by the session pod.
+  - name: NEXT_PUBLIC_XPRA_CLIENT
+    value: "local"
   - name: LLM_API_BASE_URL
     value: https://api.anthropic.com/v1
   - name: LLM_API_MODEL
