@@ -273,6 +273,20 @@ For more detailed information about our testing strategy, including best practic
 
 Any use of the software for purposes other than academic research, including for commercial purposes, shall be requested in advance from [CHUV](mailto:pactt.legal@chuv.ch).
 
+### Third-party components
+
+The restriction above applies to code written for CHORUS. It does **not** apply to the
+third-party components distributed in this repository, which keep their own licenses.
+
+The main one is the Xpra HTML5 client vendored at `public/vendor/xpra/`, licensed under
+**MPL-2.0** (full text in `public/vendor/xpra/LICENSE`). MPL-2.0 §3.3 allows shipping
+covered code inside a larger work under other terms only if those files stay under the MPL
+and recipients keep the rights the MPL grants them — so the paragraph above cannot extend
+to them.
+
+See [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md) for the full inventory, including
+the libraries bundled inside the Xpra client.
+
 ## Acknowledgments
 
 This project has received funding from the Swiss State Secretariat for Education, Research and Innovation (SERI) under contract number 23.00638, as part of the Horizon Europe project “EBRAINS 2.0”.

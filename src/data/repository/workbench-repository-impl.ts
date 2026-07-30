@@ -70,7 +70,6 @@ export class WorkbenchRepositoryImpl implements WorkbenchRepository {
       const validatedData = WorkbenchSchema.parse(response.result.workbench)
       return { data: validatedData }
     } catch (error) {
-      console.error('Error getting workbench', error)
       return { error: toChorusError(error) }
     }
   }

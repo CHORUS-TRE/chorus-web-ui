@@ -20,13 +20,16 @@ export function useWorkbenchStatus(workbenchId?: string) {
       return
     }
 
+    let cancelled = false
+    let pollTimer: ReturnType<typeof setTimeout> | undefined
+    const startedAt = Date.now()
+
     const poll = async () => {
       const result = await getWorkbench(workbenchId)
+      if (cancelled) return
 
       if (result.error) {
         setResponse({ error: result.error?.message })
-        clearInterval(intervalId)
-        clearTimeout(timeoutId)
         return
       }
 
@@ -40,23 +43,20 @@ export function useWorkbenchStatus(workbenchId?: string) {
         })
 
         if (result.data.serverPodStatus === WorkbenchServerPodStatus.READY) {
-          clearInterval(intervalId)
-          clearTimeout(timeoutId)
+          return
         }
+      }
+
+      if (Date.now() - startedAt < TIMEOUT) {
+        pollTimer = setTimeout(poll, POLLING_INTERVAL)
       }
     }
 
-    // Initial poll
-    poll()
-
-    const intervalId: NodeJS.Timeout = setInterval(poll, POLLING_INTERVAL)
-    const timeoutId = setTimeout(() => {
-      clearInterval(intervalId)
-    }, TIMEOUT)
+    void poll()
 
     return () => {
-      clearInterval(intervalId)
-      clearTimeout(timeoutId)
+      cancelled = true
+      if (pollTimer) clearTimeout(pollTimer)
     }
   }, [workbenchId])
 

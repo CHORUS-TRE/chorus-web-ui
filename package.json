@@ -10,6 +10,7 @@
     "build": "next build",
     "dev": "next dev",
     "dev:turbo": "next dev --turbo",
+    "dev:webpack": "next dev --webpack",
     "lint": "pnpm exec eslint . --fix",
     "start": "next start",
     "test": "jest --watch",
