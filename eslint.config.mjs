@@ -101,7 +101,6 @@ export default defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
-    'public/wasm_exec.js',
     // Third-party code served as-is. Linting it is noise, and --fix would rewrite
     // upstream sources, making the next vendor update (and reapplying the
     // chorusXpra bridge) a merge nightmare. See public/vendor/xpra/CHORUS-VENDOR.md.

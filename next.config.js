@@ -14,18 +14,7 @@ const config = {
       }
     ]
   },
-  // This is needed to ensure the Go WASM module can be loaded correctly
-  webpack: (config) => {
-    config.experiments = { asyncWebAssembly: true, layers: true }
-    // Add rule to handle .wasm files as assets
-    config.module.rules.push({
-      test: /\.wasm$/,
-      type: 'asset/resource'
-    })
-    return config
-  },
   // Turbopack configuration (Next.js 16 uses Turbopack by default)
-  // WebAssembly support is built-in with Turbopack
   turbopack: {},
   serverExternalPackages: ['better-sqlite3'],
   output: 'standalone',

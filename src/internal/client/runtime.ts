@@ -162,7 +162,8 @@ export class BaseAPI {
     const errorBody = await response.json().catch(() => null)
     const errorMessage =
       errorBody?.message || errorBody?.error || response.statusText
-    console.error('API Error:', {
+    const logApiError = response.status >= 500 ? console.error : console.warn
+    logApiError('API Error:', {
       status: response.status,
       statusText: response.statusText,
       error: errorMessage,

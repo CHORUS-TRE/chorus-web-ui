@@ -2,6 +2,11 @@
 build
 coverage
 
+# Third-party code served as-is: reformatting it would make the next vendor
+# update (and reapplying the chorusXpra bridge) a merge nightmare.
+# See public/vendor/xpra/CHORUS-VENDOR.md.
+public/vendor/
+
 # Ignore all HTML files:
 **/*.html
 **/*.htm

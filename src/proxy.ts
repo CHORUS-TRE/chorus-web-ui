@@ -72,11 +72,11 @@ export function buildXpraCsp(params: {
     .join(' ')
 
   // xpra-html5 is a vendored, self-contained legacy application. Its static
-  // index uses inline bootstrap code and event handlers, and its decoders use
-  // workers/WASM. Keep this relaxation scoped to /vendor/xpra only.
+  // index uses inline bootstrap code and event handlers, and its decoders run in
+  // workers. Keep this relaxation scoped to /vendor/xpra only.
   return [
     `default-src 'self'`,
-    `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob:`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:`,
     `worker-src 'self' blob:`,
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' data: blob:`,

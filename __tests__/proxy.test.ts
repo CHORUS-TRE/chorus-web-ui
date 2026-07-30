@@ -99,15 +99,17 @@ describe('buildCsp', () => {
 })
 
 describe('buildXpraCsp', () => {
-  it('allows the vendored bootstrap, workers and WASM', () => {
+  it('allows the vendored bootstrap and workers, but not WASM', () => {
     const csp = buildXpraCsp({
       apiUrl: base.apiUrl,
       isDev: false
     })
 
     expect(csp).toContain(
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob:"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:"
     )
+    // The vendored client has no WebAssembly: no reason to widen script-src.
+    expect(csp).not.toContain('wasm-unsafe-eval')
     expect(csp).toContain("worker-src 'self' blob:")
     expect(csp).toContain(
       "connect-src 'self' https://api.example.com wss://api.example.com"
