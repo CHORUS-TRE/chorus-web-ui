@@ -1,3 +1,15 @@
+# [1.80.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.79.1...v1.80.0) (2026-07-30)
+
+
+### Bug Fixes
+
+* stop animating iframe geometry to reduce Xpra click-coordinate drift after resize ([2d64a73](https://github.com/CHORUS-TRE/chorus-web-ui/commit/2d64a731670785eb8085875c40e83702e66d052e))
+
+
+### Features
+
+* add xpra support with service worker and iframe integration ([095f32b](https://github.com/CHORUS-TRE/chorus-web-ui/commit/095f32b07805a97cf33f47cf92e469c335159e8d))
+
 ## [1.79.1](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.79.0...v1.79.1) (2026-07-28)
 
 
