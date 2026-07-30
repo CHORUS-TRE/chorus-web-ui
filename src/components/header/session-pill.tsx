@@ -12,7 +12,7 @@ import {
   X
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
@@ -32,9 +32,18 @@ import {
   WorkbenchServerPodStatus
 } from '@/domain/model'
 import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
+import { focusXpraApp } from '@/lib/xpra-session-registry'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 
-import { AppLaunchToastContent } from './app-launch-toast'
+const MENU_ITEM_VALUE = 'session-menu'
+
+const TERMINAL_APP_STATUSES = new Set<K8sAppInstanceStatus>([
+  K8sAppInstanceStatus.RUNNING,
+  K8sAppInstanceStatus.COMPLETE,
+  K8sAppInstanceStatus.FAILED,
+  K8sAppInstanceStatus.STOPPED,
+  K8sAppInstanceStatus.KILLED
+])
 
 // --- Internal sub-components ---
 
@@ -47,13 +56,7 @@ function AppLaunchingPill({
   const currentStatus = statusData?.status || initialInstance.k8sStatus
 
   // If it reached a terminal state, show active indicator only
-  if (
-    currentStatus === K8sAppInstanceStatus.RUNNING ||
-    currentStatus === K8sAppInstanceStatus.COMPLETE ||
-    currentStatus === K8sAppInstanceStatus.FAILED ||
-    currentStatus === K8sAppInstanceStatus.STOPPED ||
-    currentStatus === K8sAppInstanceStatus.KILLED
-  ) {
+  if (currentStatus && TERMINAL_APP_STATUSES.has(currentStatus)) {
     return <CheckCircle2 className="h-3 w-3 text-[#88b04b]" />
   }
 
@@ -66,19 +69,20 @@ function AppLaunchingPill({
 function SessionStatusSection({
   sessionId,
   workbenches,
+  currentStatus,
+  currentMessage,
   onDelete
 }: {
   sessionId: string
   workbenches: Workbench[] | undefined
+  currentStatus: WorkbenchServerPodStatus | undefined
+  currentMessage: string | undefined
   onDelete: (id: string) => void
 }) {
   const session = workbenches?.find((wb) => wb.id === sessionId)
-  const { data: statusData } = useWorkbenchStatus(sessionId)
 
   if (!session) return null
 
-  const currentStatus = statusData?.status || session.serverPodStatus
-  const currentMessage = statusData?.message || session.serverPodMessage
   const isRunning = currentStatus === WorkbenchServerPodStatus.READY
 
   return (
@@ -148,25 +152,33 @@ function SessionStatusSection({
 function AppInstanceStatusRow({
   instance,
   apps,
-  onClose
+  status,
+  message,
+  onClose,
+  onFocus
 }: {
   instance: AppInstance
   apps: App[] | undefined
+  status: K8sAppInstanceStatus | undefined
+  message: string | undefined
   onClose: (id: string, name: string) => void
+  onFocus: (candidates: string[]) => void
 }) {
-  const { data: statusData } = useAppInstanceStatus(instance.id)
-
   const appName =
     apps?.find((a) => a.id === instance.appId)?.name || instance.name || 'App'
   const appIcon =
     apps?.find((a) => a.id === instance.appId)?.iconURL || 'AppWindow'
 
-  const currentStatus = statusData?.status || instance.k8sStatus
-  const currentMessage = statusData?.message || instance.k8sMessage
+  const currentStatus = status || instance.k8sStatus
+  const currentMessage = message || instance.k8sMessage
   const isRunning = currentStatus === K8sAppInstanceStatus.RUNNING
 
   return (
-    <div className="space-y-2">
+    <div
+      className="cursor-pointer space-y-2 rounded-lg p-1 transition-colors hover:bg-muted/50"
+      onClick={() => onFocus([appName, instance.name || '', instance.appId])}
+      title={`Bring ${appName} to front`}
+    >
       <div className="group/app flex items-center justify-between">
         <div className="flex min-w-0 items-center gap-2">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-muted">
@@ -227,13 +239,36 @@ function AppInstanceStatusRow({
   )
 }
 
+// Polls one app instance's status regardless of whether the menu is open,
+// so status changes can be detected (and the menu opened) even while closed.
+function AppStatusWatcher({
+  instance,
+  onStatus
+}: {
+  instance: AppInstance
+  onStatus: (
+    id: string,
+    status: K8sAppInstanceStatus | undefined,
+    message: string | undefined
+  ) => void
+}) {
+  const { data } = useAppInstanceStatus(instance.id)
+  const status = data?.status || instance.k8sStatus
+  const message = data?.message || instance.k8sMessage
+
+  useEffect(() => {
+    onStatus(instance.id, status, message)
+  }, [instance.id, status, message, onStatus])
+
+  return null
+}
+
 // --- Main exported components ---
 
 export interface SessionPillProps {
   sessionId: string
   sessionName: string
   launchingApps: AppInstance[]
-  getAppName: (appId: string) => string
   apps: App[] | undefined
   appInstances: AppInstance[] | undefined
   workbenches: Workbench[] | undefined
@@ -246,7 +281,6 @@ export function SessionPill({
   sessionId,
   sessionName,
   launchingApps,
-  getAppName,
   apps,
   appInstances,
   workbenches,
@@ -256,34 +290,95 @@ export function SessionPill({
 }: SessionPillProps) {
   const router = useRouter()
   const { toggleFullscreen } = useFullscreenContext()
-  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set())
-
-  const handleAppDone = useCallback((id: string) => {
-    setDismissedIds((prev) => new Set(prev).add(id))
-  }, [])
-
-  const visibleLaunchingApps = launchingApps.filter(
-    (a) => !dismissedIds.has(a.id)
-  )
-
-  const getSessionApps = (sid: string): AppInstance[] => {
-    return (
-      appInstances?.filter((instance) => instance.workbenchId === sid) || []
-    )
-  }
+  const [menuValue, setMenuValue] = useState('')
 
   const session = workbenches?.find((wb) => wb.id === sessionId)
+  const { data: sessionStatusData } = useWorkbenchStatus(sessionId)
+  const sessionStatus = sessionStatusData?.status || session?.serverPodStatus
+  const sessionMessage = sessionStatusData?.message || session?.serverPodMessage
+
+  const sessionApps =
+    appInstances?.filter((instance) => instance.workbenchId === sessionId) || []
+  const sessionAppIds = sessionApps.map((a) => a.id).join(',')
+
+  // Status per app instance, polled by the always-mounted AppStatusWatchers
+  // below (not the menu content, which unmounts while closed).
+  const [appStatuses, setAppStatuses] = useState<
+    Record<string, { status?: K8sAppInstanceStatus; message?: string }>
+  >({})
+
+  const handleAppStatus = useCallback(
+    (
+      id: string,
+      status: K8sAppInstanceStatus | undefined,
+      message: string | undefined
+    ) => {
+      setAppStatuses((prev) => {
+        const existing = prev[id]
+        if (existing?.status === status && existing?.message === message) {
+          return prev
+        }
+        return { ...prev, [id]: { status, message } }
+      })
+    },
+    []
+  )
+
+  // Drop status entries for app instances no longer in this session
+  useEffect(() => {
+    const currentIds = new Set(sessionAppIds ? sessionAppIds.split(',') : [])
+    setAppStatuses((prev) => {
+      let changed = false
+      const next: typeof prev = {}
+      for (const id of Object.keys(prev)) {
+        if (currentIds.has(id)) {
+          next[id] = prev[id]
+        } else {
+          changed = true
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [sessionAppIds])
+
+  // Open the menu whenever the session's or an app's status changes; close
+  // it once nothing is active anymore. Manual open/close (hover) in between
+  // is untouched — these effects only fire on genuine status changes.
+  const statusKey = `${sessionStatus}::${sessionApps
+    .map((a) => `${a.id}:${appStatuses[a.id]?.status}`)
+    .join('|')}`
+  const prevStatusKeyRef = useRef(statusKey)
+  useEffect(() => {
+    if (statusKey !== prevStatusKeyRef.current) {
+      setMenuValue(MENU_ITEM_VALUE)
+    }
+    prevStatusKeyRef.current = statusKey
+  }, [statusKey])
+
+  const hasActivity =
+    sessionStatus !== WorkbenchServerPodStatus.READY ||
+    sessionApps.some((a) => {
+      const status = appStatuses[a.id]?.status
+      return !status || !TERMINAL_APP_STATUSES.has(status)
+    })
+  const wasActiveRef = useRef(hasActivity)
+  useEffect(() => {
+    if (wasActiveRef.current && !hasActivity) {
+      setMenuValue('')
+    }
+    wasActiveRef.current = hasActivity
+  }, [hasActivity])
 
   const menuContent = () => {
     if (!session) return null
-
-    const appsRunning = getSessionApps(sessionId)
 
     return (
       <div className="flex min-w-[260px] flex-col overflow-hidden rounded-lg border border-border bg-popover shadow-md">
         <SessionStatusSection
           sessionId={sessionId}
           workbenches={workbenches}
+          currentStatus={sessionStatus}
+          currentMessage={sessionMessage}
           onDelete={onDeleteSession}
         />
 
@@ -293,14 +388,20 @@ export function SessionPill({
             Applications
           </p>
 
-          {appsRunning.length > 0 ? (
+          {sessionApps.length > 0 ? (
             <div className="space-y-4">
-              {appsRunning.map((instance: AppInstance) => (
+              {sessionApps.map((instance: AppInstance) => (
                 <AppInstanceStatusRow
                   key={instance.id}
                   instance={instance}
                   apps={apps}
+                  status={appStatuses[instance.id]?.status}
+                  message={appStatuses[instance.id]?.message}
                   onClose={onCloseAppInstance}
+                  onFocus={(candidates) => {
+                    focusXpraApp(sessionId, candidates)
+                    setMenuValue('')
+                  }}
                 />
               ))}
             </div>
@@ -372,52 +473,53 @@ export function SessionPill({
   }
 
   return (
-    <div className="group/pill relative flex h-9 items-center backdrop-blur-md">
-      {/* Left: Logo + Session Name & Status */}
-      <div className="flex items-center gap-1.5 pr-2">
-        {launchingApps.length > 0 ? (
-          <AppLaunchingPill initialInstance={launchingApps[0]} />
-        ) : (
-          <CheckCircle2 className="h-3 w-3 text-accent" />
-        )}
-      </div>
-      <div className="flex min-w-0 flex-col justify-center">
-        <p className="truncate text-[13px] font-bold leading-tight text-foreground">
-          {sessionName}
-        </p>
-      </div>
+    <NavigationMenu
+      className="z-50 max-w-none flex-none justify-start"
+      value={menuValue}
+      onValueChange={setMenuValue}
+    >
+      <NavigationMenuList className="w-full space-x-0">
+        <NavigationMenuItem value={MENU_ITEM_VALUE} className="w-full">
+          {/* The whole bar is the hover/click trigger, not just the "MENU" label */}
+          <NavigationMenuTrigger
+            onClick={(e) => e.preventDefault()}
+            className="group/pill flex h-9 w-full items-center justify-start rounded-full border-none bg-transparent px-0 shadow-none backdrop-blur-md hover:bg-transparent data-[state=open]:bg-transparent"
+          >
+            {/* Left: Logo + Session Name & Status */}
+            <div className="flex items-center gap-1.5 pr-2">
+              {launchingApps.length > 0 ? (
+                <AppLaunchingPill initialInstance={launchingApps[0]} />
+              ) : (
+                <CheckCircle2 className="h-3 w-3 text-accent" />
+              )}
+            </div>
+            <div className="flex min-w-0 flex-col justify-center">
+              <p className="truncate text-[13px] font-bold leading-tight text-foreground">
+                {sessionName}
+              </p>
+            </div>
 
-      {/* Vertical Separator */}
-      <div className="ml-2 h-5 w-px bg-foreground/30" />
+            {/* Vertical Separator */}
+            <div className="ml-2 h-5 w-px bg-foreground/30" />
 
-      {/* Right: MENU Trigger via NavigationMenu */}
-      <NavigationMenu className="z-50">
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="mr-0.5 flex h-7 items-center gap-2 rounded-full border-none bg-transparent px-3 pt-0.5 text-[11px] font-black tracking-widest text-accent shadow-none hover:bg-transparent hover:text-accent data-[state=open]:bg-transparent">
+            <span className="ml-2 mr-0.5 text-[11px] font-black tracking-widest text-accent">
               MENU
-            </NavigationMenuTrigger>
-            <NavigationMenuContent className="!left-auto !right-0 !translate-x-0 border-none bg-transparent p-0 shadow-none">
-              {menuContent()}
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+            </span>
+          </NavigationMenuTrigger>
+          <NavigationMenuContent className="!left-auto !right-0 !translate-x-0 border-none bg-transparent p-0 shadow-none">
+            {menuContent()}
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
 
-      {/* Floating app launch status panel */}
-      {visibleLaunchingApps.length > 0 && (
-        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[260px] space-y-1.5 rounded-lg border border-border bg-popover p-3 shadow-md">
-          {visibleLaunchingApps.map((instance) => (
-            <AppLaunchToastContent
-              key={instance.id}
-              appInstanceId={instance.id}
-              appName={getAppName(instance.appId)}
-              appIconUrl={apps?.find((a) => a.id === instance.appId)?.iconURL}
-              onDone={() => handleAppDone(instance.id)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+      {/* Watch every app instance's status regardless of menu open state */}
+      {sessionApps.map((instance) => (
+        <AppStatusWatcher
+          key={instance.id}
+          instance={instance}
+          onStatus={handleAppStatus}
+        />
+      ))}
+    </NavigationMenu>
   )
 }

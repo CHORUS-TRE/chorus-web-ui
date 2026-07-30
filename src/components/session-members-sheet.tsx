@@ -2,6 +2,7 @@
 
 import { ExternalLink, Info, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { errorToast } from '@/components/error-toast'
@@ -62,6 +63,7 @@ export function SessionMembersSheet({
   session,
   onUpdate
 }: SessionMembersSheetProps) {
+  const router = useRouter()
   const { can } = useAuthorization()
   const { user: currentUser } = useAuthentication()
   const { rolesByName } = useRoles()
@@ -76,6 +78,8 @@ export function SessionMembersSheet({
       })
     : false
 
+  const workspaceMembersHref = `/workspaces/${workspaceId}/users`
+
   const loadUsers = useCallback(async () => {
     setLoading(true)
     try {
@@ -87,6 +91,12 @@ export function SessionMembersSheet({
           )
         )
         setUsers(workspaceUsers)
+        if (workspaceUsers.length === 0) {
+          // Nobody to assign to the session yet — send the user straight to
+          // the workspace members page instead of showing an empty modal.
+          onOpenChange(false)
+          router.push(workspaceMembersHref)
+        }
       } else if (result.error) {
         toast({
           title: 'Error',
@@ -97,7 +107,7 @@ export function SessionMembersSheet({
     } finally {
       setLoading(false)
     }
-  }, [workspaceId])
+  }, [workspaceId, onOpenChange, router, workspaceMembersHref])
 
   useEffect(() => {
     if (open) loadUsers()
@@ -158,8 +168,6 @@ export function SessionMembersSheet({
       setPendingCell(null)
     }
   }
-
-  const workspaceMembersHref = `/workspaces/${workspaceId}/users`
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -95,9 +95,6 @@ export function Header() {
     )
   }, [params.sessionId, appInstances])
 
-  const getAppName = (appId: string) =>
-    apps?.find((a) => a.id === appId)?.name ?? 'App'
-
   // Get display name for a session (app names if running, otherwise session name)
   const getSessionDisplayName = (sessionId: string) => {
     const session = workbenches?.find((wb) => wb.id === sessionId)
@@ -159,7 +156,6 @@ export function Header() {
                   sessionId={params.sessionId}
                   sessionName={getSessionDisplayName(params.sessionId)}
                   launchingApps={launchingApps}
-                  getAppName={getAppName}
                   apps={apps}
                   appInstances={appInstances}
                   workbenches={workbenches}
