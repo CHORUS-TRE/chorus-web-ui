@@ -16,6 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
+import { SessionMembersSheet } from '@/components/session-members-sheet'
 import { Button } from '@/components/ui/button'
 import {
   NavigationMenu,
@@ -521,5 +522,15 @@ export function SessionPill({
         />
       ))}
     </NavigationMenu>
+
+      {session && session.workspaceId && (
+        <SessionMembersSheet
+          open={membersOpen}
+          onOpenChange={setMembersOpen}
+          workspaceId={session.workspaceId}
+          session={session}
+        />
+      )}
+    </div>
   )
 }
