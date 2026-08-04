@@ -1,6 +1,12 @@
 'use client'
 
-import { MessageSquareText, RefreshCw, Trash2 } from 'lucide-react'
+import {
+  Camera,
+  ExternalLink,
+  MessageSquareText,
+  RefreshCw,
+  Trash2
+} from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -196,7 +202,26 @@ export default function AdminFeedbackPage() {
                     {record.source.path}
                   </TableCell>
                   <TableCell>{record.reporter.displayName}</TableCell>
-                  <TableCell>{record.comments.length}</TableCell>
+                  <TableCell>
+                    <span className="flex items-center gap-2">
+                      {record.comments.length}
+                      {record.comments.some(
+                        (comment) => comment.screenshot
+                      ) && (
+                        <span
+                          className="flex items-center gap-1 text-xs text-amber-600"
+                          title="Includes screenshots"
+                        >
+                          <Camera className="h-3.5 w-3.5" />
+                          {
+                            record.comments.filter(
+                              (comment) => comment.screenshot
+                            ).length
+                          }
+                        </span>
+                      )}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -251,6 +276,31 @@ export default function AdminFeedbackPage() {
                     {comment.label} · {comment.sel}
                   </div>
                   <p className="whitespace-pre-wrap text-sm">{comment.text}</p>
+                  {comment.screenshot && (
+                    <div className="mt-3 overflow-hidden rounded-md border border-amber-400/40 bg-background p-2">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1.5 text-xs font-medium text-amber-600">
+                          <Camera className="h-3.5 w-3.5" /> Screenshot attached
+                        </span>
+                        <Button asChild variant="ghost" size="sm">
+                          <a
+                            href={comment.screenshot}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <ExternalLink /> Open full size
+                          </a>
+                        </Button>
+                      </div>
+                      {/* Feedback captures are generated data URLs, not static assets. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={comment.screenshot}
+                        alt={`Screenshot attached to feedback comment ${index + 1}`}
+                        className="max-h-[520px] w-full rounded object-contain"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
