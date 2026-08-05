@@ -1,3 +1,13 @@
+# [1.81.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.80.0...v1.81.0) (2026-08-05)
+
+
+### Features
+
+* add SessionMembersSheet to display session members in SessionPill ([6db1b4a](https://github.com/CHORUS-TRE/chorus-web-ui/commit/6db1b4a18119e1fa445c086c69a118352833c68c))
+* fix tests ([e8f47eb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/e8f47ebb79082318062af8f58d982e5aa6bc114e))
+* implement session settings management and xpra reconnect functionality ([51b501d](https://github.com/CHORUS-TRE/chorus-web-ui/commit/51b501d30a313dcdf44215727403a8a4d83d5591))
+* improve feedback selection and captures ([b8f87fb](https://github.com/CHORUS-TRE/chorus-web-ui/commit/b8f87fb50fa8a8429bc4add26d24849acf6d32d5))
+
 # [1.80.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.79.1...v1.80.0) (2026-07-30)
 
 
