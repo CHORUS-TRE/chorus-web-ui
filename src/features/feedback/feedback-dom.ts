@@ -67,6 +67,7 @@ export function feedbackMarkdown(
       `## ${index + 1}. ${comment.label}`,
       '',
       comment.text,
+      ...(comment.screenshot ? ['', 'Screenshot: attached'] : []),
       '',
       `Page: ${comment.path ?? metadata.path ?? 'unknown'}`,
       `CSS: \`${comment.sel}\``,

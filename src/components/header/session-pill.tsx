@@ -2,12 +2,13 @@
 
 import {
   AppWindow,
+  Check,
   CheckCircle2,
   LaptopMinimal,
   Loader2,
   Maximize,
+  Plus,
   Settings,
-  Trash2,
   UserPlus,
   X
 } from 'lucide-react'
@@ -15,8 +16,11 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAppInstanceStatus } from '@/components/hooks/use-app-instance-status'
+import { useSessionSettings } from '@/components/hooks/use-session-settings'
 import { useWorkbenchStatus } from '@/components/hooks/use-workbench-status'
+import { SessionMembersSheet } from '@/components/session-members-sheet'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -28,11 +32,13 @@ import {
   App,
   AppInstance,
   K8sAppInstanceStatus,
+  KEYBOARD_LAYOUT_OPTIONS,
+  SessionXpraSettings,
   Workbench,
   WorkbenchServerPodStatus
 } from '@/domain/model'
 import { cn, parseK8sInsufficientResourceMessage } from '@/lib/utils'
-import { focusXpraApp } from '@/lib/xpra-session-registry'
+import { focusXpraApp, setXpraKeyboard } from '@/lib/xpra-session-registry'
 import { useFullscreenContext } from '@/providers/fullscreen-provider'
 
 const MENU_ITEM_VALUE = 'session-menu'
@@ -46,6 +52,65 @@ const TERMINAL_APP_STATUSES = new Set<K8sAppInstanceStatus>([
 ])
 
 // --- Internal sub-components ---
+
+// Dimmed by default, revealed on hover/focus of the containing group/session
+// or group/app row. Arms on first click (shows Cancel/Confirm) rather than
+// deleting immediately.
+function ConfirmDeleteButton({
+  onConfirm,
+  title
+}: {
+  onConfirm: () => void
+  title: string
+}) {
+  const [confirming, setConfirming] = useState(false)
+
+  if (confirming) {
+    return (
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-muted-foreground hover:text-foreground"
+          onClick={(e) => {
+            e.stopPropagation()
+            setConfirming(false)
+          }}
+          title="Cancel"
+        >
+          <X className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-destructive hover:bg-destructive/10"
+          onClick={(e) => {
+            e.stopPropagation()
+            onConfirm()
+          }}
+          title="Confirm delete"
+        >
+          <Check className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-6 w-6 text-muted-foreground/40 opacity-60 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover/app:opacity-100 group-hover/session:opacity-100"
+      onClick={(e) => {
+        e.stopPropagation()
+        setConfirming(true)
+      }}
+      title={title}
+    >
+      <X className="h-3.5 w-3.5" />
+    </Button>
+  )
+}
 
 function AppLaunchingPill({
   initialInstance
@@ -117,18 +182,10 @@ function SessionStatusSection({
             ) : (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/40" />
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 opacity-75 transition-opacity hover:bg-muted group-hover/session:opacity-100"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDelete(sessionId)
-              }}
+            <ConfirmDeleteButton
+              onConfirm={() => onDelete(sessionId)}
               title="Delete Session"
-            >
-              <X className="h-3.5 w-3.5" />
-            </Button>
+            />
           </div>
         </div>
         {/* Progress Bar */}
@@ -155,31 +212,45 @@ function AppInstanceStatusRow({
   status,
   message,
   onClose,
-  onFocus
+  onFocusApp
 }: {
   instance: AppInstance
   apps: App[] | undefined
   status: K8sAppInstanceStatus | undefined
   message: string | undefined
   onClose: (id: string, name: string) => void
-  onFocus: (candidates: string[]) => void
+  onFocusApp: (candidates: string[], dockerImageName?: string) => void
 }) {
-  const appName =
-    apps?.find((a) => a.id === instance.appId)?.name || instance.name || 'App'
-  const appIcon =
-    apps?.find((a) => a.id === instance.appId)?.iconURL || 'AppWindow'
+  const app = apps?.find((a) => a.id === instance.appId)
+  const appName = app?.name || instance.name || 'App'
+  const appIcon = app?.iconURL || 'AppWindow'
 
   const currentStatus = status || instance.k8sStatus
   const currentMessage = message || instance.k8sMessage
   const isRunning = currentStatus === K8sAppInstanceStatus.RUNNING
 
+  const handleFocus = () => {
+    if (!isRunning) return
+    onFocusApp([appName, instance.appId], app?.dockerImageName)
+  }
+
   return (
-    <div
-      className="cursor-pointer space-y-2 rounded-lg p-1 transition-colors hover:bg-muted/50"
-      onClick={() => onFocus([appName, instance.name || '', instance.appId])}
-      title={`Bring ${appName} to front`}
-    >
-      <div className="group/app flex items-center justify-between">
+    <div className="space-y-2">
+      <div
+        className={cn(
+          'group/app -mx-1.5 flex items-center justify-between rounded-lg px-1.5 py-1 transition-colors',
+          isRunning && 'cursor-pointer hover:bg-accent/10'
+        )}
+        role={isRunning ? 'button' : undefined}
+        tabIndex={isRunning ? 0 : undefined}
+        onClick={handleFocus}
+        onKeyDown={(e) => {
+          if (isRunning && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault()
+            handleFocus()
+          }
+        }}
+      >
         <div className="flex min-w-0 items-center gap-2">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-muted">
             {appIcon ? (
@@ -209,17 +280,10 @@ function AppInstanceStatusRow({
           ) : (
             <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/40" />
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 opacity-90 transition-opacity hover:bg-muted group-hover/app:opacity-100"
-            onClick={(e) => {
-              e.stopPropagation()
-              onClose(instance.id, appName)
-            }}
-          >
-            <X className="h-3.5 w-3.5" />
-          </Button>
+          <ConfirmDeleteButton
+            onConfirm={() => onClose(instance.id, appName)}
+            title="Close app"
+          />
         </div>
       </div>
       {/* Progress Bar */}
@@ -263,6 +327,83 @@ function AppStatusWatcher({
   return null
 }
 
+const inputSelectClass =
+  'h-8 rounded-md border border-border bg-background px-2 text-[11px] text-muted-foreground'
+
+export function SessionInputSection({ sessionId }: { sessionId: string }) {
+  const { settings, update } = useSessionSettings(sessionId)
+  const set = (patch: Partial<SessionXpraSettings>) => update(patch)
+
+  return (
+    <div className="space-y-3 p-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+        Input
+      </p>
+
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <Label
+            htmlFor="pill-keyboard-layout"
+            className="text-[11px] font-normal text-muted-foreground"
+          >
+            Keyboard layout
+          </Label>
+          <select
+            id="pill-keyboard-layout"
+            className={inputSelectClass}
+            value={settings.keyboardLayout}
+            onChange={(e) => set({ keyboardLayout: e.target.value })}
+          >
+            <option value="">Automatic</option>
+            {KEYBOARD_LAYOUT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between gap-4">
+          <Label
+            htmlFor="pill-swap-keys"
+            className="text-[11px] font-normal text-muted-foreground"
+          >
+            Swap cmd / ctrl
+          </Label>
+          <input
+            id="pill-swap-keys"
+            type="checkbox"
+            checked={settings.swapKeys}
+            onChange={(e) => set({ swapKeys: e.target.checked })}
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-4">
+          <Label
+            htmlFor="pill-on-screen-keyboard"
+            className="text-[11px] font-normal text-muted-foreground"
+          >
+            On-screen keyboard
+          </Label>
+          <input
+            id="pill-on-screen-keyboard"
+            type="checkbox"
+            checked={settings.onScreenKeyboard}
+            onChange={(e) => {
+              console.log('[osk] 1. checkbox changed', {
+                sessionId,
+                checked: e.target.checked
+              })
+              set({ onScreenKeyboard: e.target.checked })
+              setXpraKeyboard(sessionId, e.target.checked)
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // --- Main exported components ---
 
 export interface SessionPillProps {
@@ -291,6 +432,7 @@ export function SessionPill({
   const router = useRouter()
   const { toggleFullscreen } = useFullscreenContext()
   const [menuValue, setMenuValue] = useState('')
+  const [membersOpen, setMembersOpen] = useState(false)
 
   const session = workbenches?.find((wb) => wb.id === sessionId)
   const { data: sessionStatusData } = useWorkbenchStatus(sessionId)
@@ -369,6 +511,11 @@ export function SessionPill({
     wasActiveRef.current = hasActivity
   }, [hasActivity])
 
+  const handleFocusApp = (candidates: string[], dockerImageName?: string) => {
+    focusXpraApp(sessionId, candidates, dockerImageName)
+    setMenuValue('')
+  }
+
   const menuContent = () => {
     if (!session) return null
 
@@ -384,9 +531,24 @@ export function SessionPill({
 
         {/* Applications Section */}
         <div className="space-y-4 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
-            Applications
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+              Applications
+            </p>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-6 w-6 border-accent/40 bg-transparent text-accent hover:bg-accent hover:text-accent-foreground"
+              title="Launch a new app"
+              onClick={() =>
+                router.push(
+                  `/workspaces/${session.workspaceId}/sessions/${sessionId}/app-store`
+                )
+              }
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </Button>
+          </div>
 
           {sessionApps.length > 0 ? (
             <div className="space-y-4">
@@ -398,10 +560,7 @@ export function SessionPill({
                   status={appStatuses[instance.id]?.status}
                   message={appStatuses[instance.id]?.message}
                   onClose={onCloseAppInstance}
-                  onFocus={(candidates) => {
-                    focusXpraApp(sessionId, candidates)
-                    setMenuValue('')
-                  }}
+                  onFocusApp={handleFocusApp}
                 />
               ))}
             </div>
@@ -416,25 +575,15 @@ export function SessionPill({
 
         <div className="h-px bg-border/50" />
 
+        <SessionInputSection sessionId={sessionId} />
+
+        <div className="h-px bg-border/50" />
+
         {/* Actions Section */}
         <div className="space-y-0.5 p-1.5">
           <button
-            onClick={() =>
-              router.push(
-                `/workspaces/${session.workspaceId}/sessions/${sessionId}/app-store`
-              )
-            }
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent transition-all hover:bg-accent hover:text-accent-foreground"
-          >
-            <AppWindow className="h-4 w-4" style={{ color: 'inherit' }} />
-            Launch an app
-          </button>
-
-          <button
-            onClick={() =>
-              router.push(`/workspaces/${session.workspaceId}/users`)
-            }
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-accent-foreground"
+            onClick={() => setMembersOpen(true)}
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
           >
             <UserPlus className="h-4 w-4" style={{ color: 'inherit' }} />
             Add Member
@@ -442,7 +591,7 @@ export function SessionPill({
 
           <button
             onClick={() => onUpdateSession(sessionId)}
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-accent/60 transition-all hover:bg-accent hover:text-accent-foreground"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
           >
             <Settings className="h-4 w-4" style={{ color: 'inherit' }} />
             Settings
@@ -457,60 +606,20 @@ export function SessionPill({
             Fullscreen
           </button>
         </div>
-
-        {/* Delete Section */}
-        <div className="mt-auto border-t border-border bg-red-500/5 p-1.5">
-          <button
-            onClick={() => onDeleteSession(sessionId)}
-            className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
-          >
-            <Trash2 className="h-4 w-4 text-red-400/60 transition-colors group-hover:text-red-400" />
-            Delete Session
-          </button>
-        </div>
       </div>
     )
   }
 
   return (
-    <NavigationMenu
-      className="z-50 max-w-none flex-none justify-start"
-      value={menuValue}
-      onValueChange={setMenuValue}
-    >
-      <NavigationMenuList className="w-full space-x-0">
-        <NavigationMenuItem value={MENU_ITEM_VALUE} className="w-full">
-          {/* The whole bar is the hover/click trigger, not just the "MENU" label */}
-          <NavigationMenuTrigger
-            onClick={(e) => e.preventDefault()}
-            className="group/pill flex h-9 w-full items-center justify-start rounded-full border-none bg-transparent px-0 shadow-none backdrop-blur-md hover:bg-transparent data-[state=open]:bg-transparent"
-          >
-            {/* Left: Logo + Session Name & Status */}
-            <div className="flex items-center gap-1.5 pr-2">
-              {launchingApps.length > 0 ? (
-                <AppLaunchingPill initialInstance={launchingApps[0]} />
-              ) : (
-                <CheckCircle2 className="h-3 w-3 text-accent" />
-              )}
-            </div>
-            <div className="flex min-w-0 flex-col justify-center">
-              <p className="truncate text-[13px] font-bold leading-tight text-foreground">
-                {sessionName}
-              </p>
-            </div>
-
-            {/* Vertical Separator */}
-            <div className="ml-2 h-5 w-px bg-foreground/30" />
-
-            <span className="ml-2 mr-0.5 text-[11px] font-black tracking-widest text-accent">
-              MENU
-            </span>
-          </NavigationMenuTrigger>
-          <NavigationMenuContent className="!left-auto !right-0 !translate-x-0 border-none bg-transparent p-0 shadow-none">
-            {menuContent()}
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
+    <div className="group/pill relative flex h-9">
+      {/* Left: Logo + Status */}
+      <div className="flex items-center">
+        {launchingApps.length > 0 ? (
+          <AppLaunchingPill initialInstance={launchingApps[0]} />
+        ) : (
+          <CheckCircle2 className="h-3 w-3 text-accent" />
+        )}
+      </div>
 
       {/* Watch every app instance's status regardless of menu open state */}
       {sessionApps.map((instance) => (
@@ -520,6 +629,37 @@ export function SessionPill({
           onStatus={handleAppStatus}
         />
       ))}
-    </NavigationMenu>
+
+      {/* Session Name + Menu Trigger via NavigationMenu — the whole title
+          is the hover/click target, not just the "menu" label */}
+      <NavigationMenu
+        className="z-50 min-w-0"
+        value={menuValue}
+        onValueChange={setMenuValue}
+      >
+        <NavigationMenuList>
+          <NavigationMenuItem value={MENU_ITEM_VALUE}>
+            <NavigationMenuTrigger
+              onClick={(e) => e.preventDefault()}
+              className="mr-0.5 flex h-7 min-w-0 items-center px-1.5 text-sm text-accent"
+            >
+              <span className="truncate">{sessionName}</span>
+            </NavigationMenuTrigger>
+            <NavigationMenuContent className="!left-auto !right-0 !translate-x-0 p-0 shadow-none">
+              {menuContent()}
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+
+      {session && session.workspaceId && (
+        <SessionMembersSheet
+          open={membersOpen}
+          onOpenChange={setMembersOpen}
+          workspaceId={session.workspaceId}
+          session={session}
+        />
+      )}
+    </div>
   )
 }

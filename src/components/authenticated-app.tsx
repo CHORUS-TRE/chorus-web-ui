@@ -224,7 +224,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
 
           {/* Main Layout Container - only for non-iframe pages */}
           {!isSessionPage && (
-            <div className="fixed inset-0 top-12 z-30 p-4 transition-all duration-300 ease-in-out">
+            <div className="fixed inset-0 top-11 z-30 p-4 transition-all duration-300 ease-in-out">
               <div
                 className={cn(
                   'flex h-full w-full',
@@ -268,7 +268,7 @@ function AuthenticatedAppContent({ children }: MainLayoutProps) {
             <div
               id="content-main"
               ref={contentMainRef}
-              className="pointer-events-none fixed inset-0 top-12 z-30"
+              className="pointer-events-none fixed inset-0 top-11 z-30"
             >
               {children}
             </div>

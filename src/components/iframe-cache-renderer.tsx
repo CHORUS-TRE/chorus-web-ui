@@ -12,7 +12,9 @@ import { useFullscreenContext } from '@/providers/fullscreen-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import { useAppState } from '@/stores/app-state-store'
 
+import { useSessionSettings } from './hooks/use-session-settings'
 import { useWorkbenchStatus } from './hooks/use-workbench-status'
+import { useXpraReconnectReset } from './hooks/use-xpra-reconnect-reset'
 import { LoadingOverlay } from './loading-overlay'
 import { XpraWeb, XpraWebHandle } from './xpra-web'
 
@@ -29,6 +31,7 @@ function CachedIframeRenderer({
 }) {
   const iFrameRef = useRef<HTMLIFrameElement>(null)
   const xpraRef = useRef<XpraWebHandle>(null)
+  const { settings: sessionSettings } = useSessionSettings(iframe.id)
   const [isIframeLoaded, setIsIframeLoaded] = useState(false)
   // Track which URLs have successfully loaded to handle switching between cached iframes
   const loadedUrlsRef = useRef<Set<string>>(new Set())
@@ -109,6 +112,12 @@ function CachedIframeRenderer({
     return registerXpraSession(iframe.id, xpraRef.current)
   }, [iframe.id, iframe.type, isDelayComplete])
 
+  // An init-setting change remounts the Xpra iframe (see xpra-web.tsx). Drop
+  // the loaded flag so the overlay covers the reconnect; onConnected clears it.
+  useXpraReconnectReset(sessionSettings, iframe.type === 'session', () =>
+    setIsIframeLoaded(false)
+  )
+
   // Show loading overlay if:
   // 1. Iframe is active
   // 2. Not already loaded
@@ -180,6 +189,7 @@ function CachedIframeRenderer({
             ref={xpraRef}
             title={iframe.name}
             streamUrl={iframe.url}
+            settings={sessionSettings}
             onConnected={() => setIsIframeLoaded(true)}
             onDisconnected={() => setIsIframeLoaded(true)}
             style={{

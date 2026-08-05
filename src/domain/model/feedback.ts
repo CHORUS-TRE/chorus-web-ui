@@ -14,7 +14,8 @@ export const feedbackCommentSchema = z.object({
   ox: z.number(),
   oy: z.number(),
   label: z.string(),
-  text: z.string().min(1)
+  text: z.string().min(1),
+  screenshot: z.string().startsWith('data:image/png;base64,').optional()
 })
 
 export const feedbackRecordSchema = z.object({

@@ -10,7 +10,9 @@ import {
   useRef
 } from 'react'
 
+import { SessionXpraSettings } from '@/domain/model'
 import { xpraClientSource } from '@/lib/feature-flags'
+import { initParamsKey, toXpraParams } from '@/lib/session-settings'
 
 export type XpraWindow = {
   id: number
@@ -19,10 +21,23 @@ export type XpraWindow = {
   minimized: boolean
 }
 
+export type XpraSessionInfo = {
+  endpoint: string
+  display: string
+  platform: string
+  connectedSince: string
+}
+
 type XpraBridge = {
   listWindows: () => XpraWindow[]
   focusWindow: (windowId: number) => boolean
   resize: () => void
+  setAudio: (enabled: boolean) => void
+  setKeyboard: (visible: boolean) => void
+  uploadFile: () => void
+  downloadFile: () => void
+  getSessionInfo: () => XpraSessionInfo | undefined
+  reconnect: () => void
 }
 
 type XpraFrameWindow = Window & {
@@ -38,11 +53,25 @@ type XpraWebProps = {
   title: string
   className?: string
   style?: CSSProperties
+  settings?: SessionXpraSettings
   onConnected?: () => void
   onDisconnected?: (reason: string) => void
 }
 
-function buildClientUrl(streamUrl: string): string {
+function applySettings(
+  params: URLSearchParams,
+  settings: SessionXpraSettings | undefined
+): void {
+  if (!settings) return
+  for (const [key, value] of Object.entries(toXpraParams(settings))) {
+    params.set(key, value)
+  }
+}
+
+function buildClientUrl(
+  streamUrl: string,
+  settings: SessionXpraSettings | undefined
+): string {
   const endpoint = new URL(streamUrl, window.location.href)
   const params = new URLSearchParams(endpoint.search)
 
@@ -54,21 +83,56 @@ function buildClientUrl(streamUrl: string): string {
   params.set('ssl', String(endpoint.protocol === 'https:'))
   params.set('path', endpoint.pathname)
   params.set('embedded', 'true')
+  applySettings(params, settings)
 
   return `/vendor/xpra/index.html?${params.toString()}`
 }
 
+// The pod-served client is the same upstream index.html and reads the same
+// query params, so the init-time settings apply there too — only the
+// chorusXpra bridge is unavailable cross-origin. streamUrl is preserved
+// byte-for-byte (no parse/reserialize round-trip) since it may one day carry
+// a token or other query param that must not be re-encoded or reordered.
+function buildRemoteUrl(
+  streamUrl: string,
+  settings: SessionXpraSettings | undefined
+): string {
+  if (!settings) return streamUrl
+  const query = new URLSearchParams(toXpraParams(settings)).toString()
+  const separator = streamUrl.includes('?') ? '&' : '?'
+  return `${streamUrl}${separator}${query}`
+}
+
 export const XpraWeb = forwardRef<XpraWebHandle, XpraWebProps>(function XpraWeb(
-  { streamUrl, title, className, style, onConnected, onDisconnected },
+  { streamUrl, title, className, style, settings, onConnected, onDisconnected },
   forwardedRef
 ) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   // 'local' embeds the vendored client (same origin, chorusXpra bridge);
   // 'remote' embeds the client served by the session pod (cross-origin, no bridge).
   const isLocalClient = xpraClientSource() === 'local'
+  // Init-time settings can only be applied while the client boots, so changing
+  // one has to remount the iframe. Live settings are excluded on purpose.
+  const remountKey = useMemo(
+    () => (settings ? initParamsKey(settings) : 'default'),
+    [settings]
+  )
+
+  // Keyed on remountKey, not settings: `key={remountKey}` below only gives the
+  // iframe a new DOM node when an init setting changes, so a live-only change
+  // (e.g. toggling on-screen keyboard) must not recompute `src` either —
+  // changing `src` on the existing node makes the browser reload it even
+  // though React never remounted it, defeating the live setting entirely.
+  // Live settings apply through the chorusXpra bridge instead (setKeyboard/
+  // setAudio in the imperative handle below), never through the URL after boot.
   const clientUrl = useMemo(
-    () => (isLocalClient ? buildClientUrl(streamUrl) : streamUrl),
-    [isLocalClient, streamUrl]
+    () =>
+      isLocalClient
+        ? buildClientUrl(streamUrl, settings)
+        : buildRemoteUrl(streamUrl, settings),
+    // settings is intentionally excluded, see comment above
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isLocalClient, streamUrl, remountKey]
   )
 
   const getBridge = useCallback(() => {
@@ -85,6 +149,19 @@ export const XpraWeb = forwardRef<XpraWebHandle, XpraWebProps>(function XpraWeb(
       listWindows: () => getBridge()?.listWindows() ?? [],
       focusWindow: (windowId) => getBridge()?.focusWindow(windowId) ?? false,
       resize: () => getBridge()?.resize(),
+      setAudio: (enabled) => getBridge()?.setAudio(enabled),
+      setKeyboard: (visible) => {
+        const bridge = getBridge()
+        console.log('[osk] 3. XpraWebHandle.setKeyboard', {
+          visible,
+          hasBridge: Boolean(bridge)
+        })
+        return bridge?.setKeyboard(visible)
+      },
+      uploadFile: () => getBridge()?.uploadFile(),
+      downloadFile: () => getBridge()?.downloadFile(),
+      getSessionInfo: () => getBridge()?.getSessionInfo(),
+      reconnect: () => getBridge()?.reconnect(),
       focus: () => iframeRef.current?.focus()
     }),
     [getBridge]
@@ -132,6 +209,7 @@ export const XpraWeb = forwardRef<XpraWebHandle, XpraWebProps>(function XpraWeb(
   return (
     <div className={className} style={{ ...style, overflow: 'hidden' }}>
       <iframe
+        key={remountKey}
         ref={iframeRef}
         src={clientUrl}
         title={title}

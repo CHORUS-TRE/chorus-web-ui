@@ -50,9 +50,10 @@ describe('FeedbackProvider', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /enable/i }))
 
+    expect(document.body).toHaveAttribute('data-feedback-mode', 'active')
     expect(
-      screen.getByPlaceholderText('What should change here?')
-    ).toBeVisible()
+      screen.queryByPlaceholderText('What should change here?')
+    ).not.toBeInTheDocument()
   })
 
   it('restores a pin when its target mounts after navigation', async () => {
@@ -117,14 +118,14 @@ describe('FeedbackProvider', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /enable/i }))
     expect(
-      screen.getByPlaceholderText('What should change here?')
-    ).toBeVisible()
+      screen.queryByPlaceholderText('What should change here?')
+    ).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Target' }), {
       clientX: 20,
       clientY: 20
     })
     expect(
-      screen.getByRole('button', { name: /See\/Send feedbacks/ })
+      screen.getByRole('button', { name: /Review comments/ })
     ).toBeVisible()
     fireEvent.change(screen.getByPlaceholderText('What should change here?'), {
       target: { value: 'Improve this action' }
@@ -134,17 +135,16 @@ describe('FeedbackProvider', () => {
     expect(
       screen.getByRole('button', { name: 'Edit feedback 1' })
     ).toBeVisible()
-    fireEvent.click(screen.getByRole('button', { name: /disable/i }))
+    expect(screen.getByRole('button', { name: /enable/i })).toBeVisible()
     expect(
       screen.getByRole('button', { name: 'Edit feedback 1' })
     ).toBeVisible()
-    expect(screen.getByRole('button', { name: /enable/i })).toBeVisible()
     expect(
       JSON.parse(localStorage.getItem('chorus.feedback.draft.user-1')!)[0]
     ).toMatchObject({ path: '/apps' })
   })
 
-  it('toggles the feedback popup with Command+K', () => {
+  it('toggles the feedback picker with Command+K', () => {
     render(
       <FeedbackProvider>
         <TestControls />
@@ -171,18 +171,17 @@ describe('FeedbackProvider', () => {
     fireEvent.mouseMove(document, { clientX: 400, clientY: 300 })
     fireEvent.keyDown(document, { key: 'k', metaKey: true })
 
-    const textarea = screen.getByPlaceholderText('What should change here?')
-    expect(textarea).toBeVisible()
-    expect(textarea.closest('section')).toHaveStyle({
-      left: '412px',
-      top: '312px'
-    })
-    const crosshair = document.querySelector('[data-feedback-target]')
-    expect(crosshair).toBeInTheDocument()
-    expect(crosshair).toHaveStyle({ left: '400px', top: '300px' })
     expect(
-      screen.getByText('main “Page content”').previousElementSibling
-    ).toHaveProperty('tagName', 'HEADER')
+      screen.queryByPlaceholderText('What should change here?')
+    ).not.toBeInTheDocument()
+    expect(document.querySelector('[data-feedback-picker-target]')).toHaveStyle(
+      {
+        left: '100px',
+        top: '100px',
+        width: '600px',
+        height: '500px'
+      }
+    )
     expect(document.body).toHaveAttribute('data-feedback-mode', 'active')
 
     fireEvent.keyDown(document, { key: 'k', metaKey: true })
@@ -222,20 +221,37 @@ describe('FeedbackProvider', () => {
     )
 
     fireEvent.click(screen.getByRole('button', { name: /enable/i }))
-    const review = screen.getByRole('button', { name: /See\/Send feedbacks/ })
+    fireEvent.mouseDown(
+      screen.getByRole('button', { name: 'Edit feedback 1' }),
+      { clientX: 20, clientY: 20 }
+    )
+    fireEvent.mouseUp(document, { clientX: 20, clientY: 20 })
+    const review = screen.getByRole('button', { name: /Review comments/ })
     expect(review).toBeEnabled()
     fireEvent.click(review)
 
     expect(screen.queryByText('#feedback-target')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Edit comment 1' }))
+    fireEvent.change(screen.getByRole('textbox', { name: 'Comment 1' }), {
+      target: { value: 'Updated feedback' }
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+    expect(screen.getByText('Updated feedback')).toBeVisible()
+    expect(
+      JSON.parse(localStorage.getItem('chorus.feedback.draft.user-1')!)[0]
+    ).toMatchObject({ text: 'Updated feedback' })
+
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }))
     expect(confirm).toHaveBeenCalledWith(
       'Clear all feedback comments? This action cannot be undone.'
     )
-    expect(screen.getByText('Existing feedback')).toBeVisible()
+    expect(screen.getByText('Updated feedback')).toBeVisible()
 
-    confirm.mockReturnValue(true)
-    fireEvent.click(screen.getByRole('button', { name: 'Clear' }))
-    expect(screen.queryByText('Existing feedback')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Delete comment 1' }))
+    expect(screen.queryByText('Updated feedback')).not.toBeInTheDocument()
+    expect(localStorage.getItem('chorus.feedback.draft.user-1')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Later' }))
+    expect(screen.queryByText('Send feedback')).not.toBeInTheDocument()
     confirm.mockRestore()
   })
 
@@ -261,11 +277,12 @@ describe('FeedbackProvider', () => {
         <button type="button">Workspaces target</button>
       </FeedbackProvider>
     )
+    fireEvent.click(screen.getByRole('button', { name: /enable/i }))
     fireEvent.click(screen.getByRole('button', { name: 'Workspaces target' }))
     fireEvent.change(screen.getByPlaceholderText('What should change here?'), {
       target: { value: 'Workspaces comment' }
     })
-    fireEvent.click(screen.getByRole('button', { name: /See\/Send feedbacks/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Review comments/ }))
 
     expect(screen.getByText(/2 comments across 2 pages/i)).toBeVisible()
     expect(screen.getByText('/apps')).toBeVisible()

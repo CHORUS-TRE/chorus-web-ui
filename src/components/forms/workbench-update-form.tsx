@@ -1,12 +1,15 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { Loader2, RefreshCw } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { ZodIssue } from 'zod'
 
 import { errorToast } from '@/components/error-toast'
+import { DisplayTab } from '@/components/forms/session-settings/display-tab'
+import { SessionTab } from '@/components/forms/session-settings/session-tab'
+import { useSessionSettings } from '@/components/hooks/use-session-settings'
 import { Button } from '@/components/ui/button'
 import {
   Dialog as DialogContainer,
@@ -16,16 +19,10 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import { Form } from '@/components/ui/form'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
+  INIT_SETTING_KEYS,
   Workbench,
   WorkbenchUpdateSchema,
   WorkbenchUpdateType
@@ -33,7 +30,6 @@ import {
 import { workbenchUpdate } from '@/view-model/workbench-view-model'
 
 import { toast } from '../hooks/use-toast'
-import { Textarea } from '../ui/textarea'
 
 export function WorkbenchUpdateForm({
   state: [open, setOpen],
@@ -81,6 +77,39 @@ export function WorkbenchUpdateForm({
       })
     }
   }, [open, workbench, form])
+
+  const sessionId = workbench.id ?? ''
+  const { settings } = useSessionSettings(sessionId)
+
+  // Snapshot of the init settings as they were when the dialog opened, so the
+  // warning reflects what *this* editing session will cost. Computed during
+  // render (React's documented "adjust state while rendering" pattern —
+  // see https://react.dev/reference/react/useState#storing-information-from-previous-renders)
+  // rather than in a useEffect: an effect runs after paint, so on reopen
+  // there would be one painted frame where `openedWith` still held the
+  // previous cycle's settings while `settings` already reflected changes
+  // persisted (to localStorage) before Cancel — a false-positive warning
+  // flash. The previous `open` value is tracked in state, not a ref
+  // (per the React docs' own recommendation for this pattern), so this
+  // stays clear of both the pre-existing reset effect's `prevOpenRef` and
+  // of `react-hooks/refs`, which flags reading/writing a ref's `.current`
+  // during render.
+  // Note: the effect-based version's defect (stale value for one paint
+  // before the effect corrected it) can't be regression-tested under RTL —
+  // act() flushes effects synchronously, collapsing that gap — so
+  // correctness here rests on this render-time pattern itself, not on a test.
+  const [openedWith, setOpenedWith] = useState(settings)
+  const [wasOpen, setWasOpen] = useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) {
+      setOpenedWith(settings)
+    }
+  }
+
+  const willReconnect = INIT_SETTING_KEYS.some(
+    (key) => settings[key] !== openedWith[key]
+  )
 
   async function onSubmit(data: WorkbenchUpdateType) {
     try {
@@ -146,9 +175,11 @@ export function WorkbenchUpdateForm({
 
   return (
     <DialogContainer open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-background sm:max-w-md">
+      <DialogContent className="bg-background sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-foreground">Edit Session</DialogTitle>
+          <DialogTitle className="text-foreground">
+            Session Settings
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             Make changes to your session here. Click save when you&apos;re done.
           </DialogDescription>
@@ -169,41 +200,28 @@ export function WorkbenchUpdateForm({
             />
             <input type="hidden" {...form.register('status')} />
 
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Session name"
-                      className="text-muted-foreground placeholder:text-muted-foreground"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <Tabs defaultValue="session">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="session">Session</TabsTrigger>
+                <TabsTrigger value="display">Display</TabsTrigger>
+              </TabsList>
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      className="min-h-[100px] resize-none text-muted-foreground placeholder:text-muted-foreground"
-                      placeholder="Session description (optional)"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <TabsContent value="session" className="pt-4">
+                <SessionTab form={form} />
+              </TabsContent>
+
+              <TabsContent value="display" className="pt-4">
+                <DisplayTab sessionId={workbench.id ?? ''} />
+              </TabsContent>
+            </Tabs>
+
+            {willReconnect && (
+              <p className="flex items-center gap-2 rounded-md bg-muted/50 p-2 text-[11px] text-muted-foreground">
+                <RefreshCw className="h-3 w-3" />
+                Reconnects the session on save — running applications are not
+                affected.
+              </p>
+            )}
 
             <DialogFooter className="pt-4">
               <Button

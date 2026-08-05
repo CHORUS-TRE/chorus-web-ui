@@ -136,7 +136,7 @@ export function AppBreadcrumb() {
             <BreadcrumbList className="gap-0.5 text-sm">
               {breadcrumbItems.map((item, index) => (
                 <React.Fragment key={item.href}>
-                  <BreadcrumbItem>
+                  <BreadcrumbItem className="-mt-0.2">
                     {item.isPage ? (
                       <BreadcrumbPage className="flex max-w-[200px] items-center gap-0.5 truncate font-medium text-foreground">
                         {item.icon && <item.icon className="h-3.5 w-3.5" />}

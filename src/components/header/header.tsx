@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { HelpCircle } from 'lucide-react'
+import { Command, HelpCircle, MessageSquarePlus } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -30,8 +30,10 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import { AppInstance, K8sAppInstanceStatus } from '@/domain/model'
+import { useFeedback } from '@/features/feedback/feedback-provider'
 import { useInstanceLogo } from '@/hooks/use-instance-config'
 import { isSessionPath } from '@/lib/route-utils'
+import { cn } from '@/lib/utils'
 import { useAuthentication } from '@/providers/authentication-provider'
 import { useIframeCache } from '@/providers/iframe-cache-provider'
 import logoBlack from '@/public/logo-chorus-primaire-black@2x.svg'
@@ -65,6 +67,7 @@ export function Header() {
   } = useIframeCache()
   const { user } = useAuthentication()
   const { toggleRightSidebar } = useUserPreferences()
+  const feedback = useFeedback()
   const params = useParams<{ workspaceId: string; sessionId: string }>()
   const workspaceId = params?.workspaceId || user?.workspaceId
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -118,7 +121,7 @@ export function Header() {
   return (
     <>
       <nav
-        className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 border-b border-muted/40 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
+        className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
         id="header"
       >
         {/* Left: Logo & Session Pill */}
@@ -183,6 +186,36 @@ export function Header() {
 
         {/* Right: Actions & User Profile */}
         <div className="flex shrink-0 items-center gap-2">
+          {user && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    data-feedback-ui
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={feedback.toggle}
+                    aria-label="Feedback"
+                    aria-pressed={feedback.active}
+                    aria-keyshortcuts="Meta+K Control+K"
+                    className={cn(
+                      'h-8 gap-1.5 border px-2 text-foreground/80 transition-colors hover:text-accent',
+                      feedback.active
+                        ? 'border-amber-400 bg-amber-400/15 text-amber-600 hover:bg-amber-400/20 hover:text-amber-600'
+                        : 'border-transparent'
+                    )}
+                  >
+                    <MessageSquarePlus className="h-4 w-4" />
+                    <span className="hidden xl:inline">Feedback</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Select an element to comment on (⌘K)
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           {user && (
             <TooltipProvider>
               <Tooltip>
