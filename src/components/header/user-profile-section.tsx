@@ -104,7 +104,7 @@ export function UserProfileSection() {
               <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                 Your Roles
               </p>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex max-w-96 flex-wrap gap-1">
                 {globalRoles.map((role) => (
                   <span
                     key={role}

@@ -1461,7 +1461,6 @@
       }
 
       let client;
-
       // CHORUS integration bridge.
       // The vendored client is loaded from the same origin as chorus-web-ui,
       // so the React host can use the native Xpra window/focus API directly.
@@ -1493,6 +1492,56 @@
             return;
           }
           client._screen_resized();
+        },
+        setAudio(enabled) {
+          if (!client || !client.audio_enabled) {
+            return;
+          }
+          const playing = client.audio_state === "playing" || client.audio_state === "waiting";
+          if (enabled && !playing) {
+            client.on_audio_state_change("waiting", "chorus settings");
+            client._audio_start_stream();
+            client._sound_start_receiving();
+          } else if (!enabled && playing) {
+            client.on_audio_state_change("stopped", "chorus settings");
+            client.close_audio();
+          }
+        },
+        setKeyboard(visible) {
+          // toggle_keyboard() flips; call it only when the state is wrong.
+          const shown = $(".simple-keyboard").is(":visible");
+          console.log('[osk] 4. vendored chorusXpra.setKeyboard', {
+            visible,
+            shown,
+            willToggle: shown !== Boolean(visible),
+            elementCount: $(".simple-keyboard").length
+          });
+          if (shown !== Boolean(visible)) {
+            toggle_keyboard();
+          }
+        },
+        uploadFile() {
+          upload_file();
+        },
+        downloadFile() {
+          download_file();
+        },
+        getSessionInfo() {
+          if (!client) {
+            return undefined;
+          }
+          return {
+            endpoint: client.uri || "",
+            display: client.server_display || "",
+            platform: client.server_platform || "",
+            connectedSince: client.client_start_time ? client.client_start_time.toISOString() : ""
+          };
+        },
+        reconnect() {
+          if (client) {
+            client.disconnect_reason = "CHORUS settings change";
+            client.close();
+          }
         }
       };
 

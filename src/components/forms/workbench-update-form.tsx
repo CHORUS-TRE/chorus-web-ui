@@ -8,9 +8,7 @@ import { ZodIssue } from 'zod'
 
 import { errorToast } from '@/components/error-toast'
 import { DisplayTab } from '@/components/forms/session-settings/display-tab'
-import { SessionActions } from '@/components/forms/session-settings/session-actions'
 import { SessionTab } from '@/components/forms/session-settings/session-tab'
-import { TransferTab } from '@/components/forms/session-settings/transfer-tab'
 import { useSessionSettings } from '@/components/hooks/use-session-settings'
 import { Button } from '@/components/ui/button'
 import {
@@ -203,10 +201,9 @@ export function WorkbenchUpdateForm({
             <input type="hidden" {...form.register('status')} />
 
             <Tabs defaultValue="session">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="session">Session</TabsTrigger>
                 <TabsTrigger value="display">Display</TabsTrigger>
-                <TabsTrigger value="transfer">Transfer</TabsTrigger>
               </TabsList>
 
               <TabsContent value="session" className="pt-4">
@@ -216,13 +213,7 @@ export function WorkbenchUpdateForm({
               <TabsContent value="display" className="pt-4">
                 <DisplayTab sessionId={workbench.id ?? ''} />
               </TabsContent>
-
-              <TabsContent value="transfer" className="pt-4">
-                <TransferTab sessionId={workbench.id ?? ''} />
-              </TabsContent>
             </Tabs>
-
-            <SessionActions sessionId={workbench.id ?? ''} />
 
             {willReconnect && (
               <p className="flex items-center gap-2 rounded-md bg-muted/50 p-2 text-[11px] text-muted-foreground">

@@ -121,7 +121,7 @@ export function Header() {
   return (
     <>
       <nav
-        className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 border-b border-muted/40 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
+        className="flex h-11 min-w-full flex-nowrap items-center justify-between gap-2 bg-contrast-background/80 px-2 text-foreground shadow-lg backdrop-blur-sm"
         id="header"
       >
         {/* Left: Logo & Session Pill */}
@@ -208,9 +208,6 @@ export function Header() {
                   >
                     <MessageSquarePlus className="h-4 w-4" />
                     <span className="hidden xl:inline">Feedback</span>
-                    <kbd className="hidden items-center gap-0.5 rounded border border-muted-foreground/20 bg-background/50 px-1 py-0.5 font-mono text-[9px] text-muted-foreground lg:flex">
-                      <Command className="h-2.5 w-2.5" aria-hidden="true" />K
-                    </kbd>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

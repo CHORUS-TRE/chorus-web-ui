@@ -139,10 +139,10 @@ export function RecentTabs({
                   }
                 }}
                 className={cn(
-                  'group relative flex items-center gap-2 px-3 py-2 text-xs font-medium transition-all duration-200',
+                  'group relative flex items-center gap-2 px-3 py-2 text-xs font-medium',
                   isActive
-                    ? 'text-foreground-muted z-20 translate-y-[1px] rounded-t-md border-x border-t border-primary bg-primary/40 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)] before:absolute before:bottom-0 before:left-[-12px] before:h-3 before:w-3 after:absolute after:bottom-0 after:right-[-12px] after:h-3 after:w-3'
-                    : 'rounded-t-md border-x border-t border-muted text-accent/50 hover:bg-muted/5 hover:text-accent'
+                    ? 'bg-muted-background z-20 rounded-t-md border-x border-t border-accent/60 text-accent'
+                    : 'border border-transparent text-muted-foreground hover:rounded-md hover:border hover:border-accent/60 hover:bg-muted/5 hover:text-accent'
                 )}
               >
                 <LaptopMinimal className="h-3.5 w-3.5 shrink-0" />
@@ -222,10 +222,7 @@ export function RecentTabs({
               }
             }}
             className={cn(
-              'group relative flex items-center gap-2 px-3 py-2 text-xs font-medium transition-all duration-200',
-              isActive
-                ? 'z-20 translate-y-[1px] rounded-t-md border-x border-t border-muted bg-muted text-accent shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)] before:absolute before:bottom-0 before:left-[-12px] before:h-3 before:w-3 after:absolute after:bottom-0 after:right-[-12px] after:h-3 after:w-3'
-                : 'rounded-t-md border-x border-t border-muted text-muted-foreground hover:bg-muted/5 hover:text-foreground'
+              'group relative flex items-center gap-2 px-3 py-2 text-xs font-medium'
             )}
           >
             <Globe className="h-3.5 w-3.5 shrink-0" />
