@@ -39,7 +39,7 @@ export default function AdminInstancesPage() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
-            <AppWindow className="h-9 w-9" />
+            <AppWindow className="h-7 w-7 text-primary" />
             App Instances Management
           </h1>
           <p className="mb-8 text-muted-foreground">

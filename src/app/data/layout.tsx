@@ -62,7 +62,7 @@ function DataShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-full w-full flex-col">
       <div className="flex items-center justify-between gap-3">
         <h2 className="mb-4 mt-5 flex w-full flex-row items-center gap-3 text-start">
-          <Database className="h-9 w-9" />
+          <Database className="h-7 w-7 text-primary" />
           Data
         </h2>
       </div>

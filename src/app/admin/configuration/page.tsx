@@ -14,7 +14,7 @@ const ConfigurationPage = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
-        <Settings2 className="h-9 w-9" />
+        <Settings2 className="h-7 w-7 text-primary" />
         Instance Configuration
       </h1>
       <p className="mb-8 text-muted-foreground">

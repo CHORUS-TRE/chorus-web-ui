@@ -268,7 +268,7 @@ const ProtocolDashboard = () => {
 
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <FlaskConical className="h-9 w-9" />
+            <FlaskConical className="h-7 w-7 text-primary" />
             Guide de Rédaction de Protocole de Recherche
           </h2>
         </div>
