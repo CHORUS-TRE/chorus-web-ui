@@ -1,3 +1,11 @@
+# [1.82.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.81.0...v1.82.0) (2026-08-06)
+
+
+### Features
+
+* enhance data workspace and file manager UI with improved layout and navigation ([eda9662](https://github.com/CHORUS-TRE/chorus-web-ui/commit/eda9662b464b1d903d31e1bc235b5ef2edc4e998))
+* update icon sizes and colors across various admin and dashboard pages ([cb99611](https://github.com/CHORUS-TRE/chorus-web-ui/commit/cb9961196930e67078bf2b3189c5ce34a6df9960))
+
 # [1.81.0](https://github.com/CHORUS-TRE/chorus-web-ui/compare/v1.80.0...v1.81.0) (2026-08-05)
 
 
