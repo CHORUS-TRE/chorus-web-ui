@@ -8,7 +8,7 @@ export default function TermsOfUsePage() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="mb-2 flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
-        <ScrollText className="h-9 w-9" />
+        <ScrollText className="h-7 w-7 text-primary" />
         Terms of Use
       </h1>
       <p className="mb-8 text-muted-foreground">

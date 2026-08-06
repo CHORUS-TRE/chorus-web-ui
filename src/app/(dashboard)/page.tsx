@@ -158,7 +158,7 @@ export default function CHORUSDashboard() {
       <div className="mb-8 w-full">
         <div className="flex items-baseline gap-3">
           <h2 className="mb-2 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <CircleGauge className="h-9 w-9" />
+            <CircleGauge className="h-7 w-7 text-primary" />
             Welcome back, {user?.firstName ?? ''}
           </h2>
           <div className="ml-auto flex gap-2.5">

@@ -27,7 +27,7 @@ export default function AdminAuditPage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="mb-8 mt-5 flex w-full flex-row items-center gap-3 text-start">
-              <ScrollText className="h-9 w-9" />
+              <ScrollText className="h-7 w-7 text-primary" />
               Platform Audit
             </h2>
             <p className="text-sm text-muted-foreground">

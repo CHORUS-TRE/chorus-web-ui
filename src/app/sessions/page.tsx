@@ -94,7 +94,7 @@ export default function SessionPage() {
       <div className="w-full">
         <div className="flex items-center justify-between gap-3">
           <h2 className="mb-5 mt-5 flex w-full flex-row items-center gap-3 text-start">
-            <LaptopMinimal className="h-9 w-9" />
+            <LaptopMinimal className="h-7 w-7 text-primary" />
             Sessions
           </h2>
           {workspaces && workspaces.length > 0 && (

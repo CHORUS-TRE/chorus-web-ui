@@ -125,7 +125,7 @@ export default function AdminFeedbackPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
-            <MessageSquareText className="h-9 w-9" />
+            <MessageSquareText className="h-7 w-7 text-primary" />
             Feedback
           </h1>
           <p className="text-muted-foreground">

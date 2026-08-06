@@ -94,7 +94,7 @@ export default function AdminAppStorePage() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
-            <Store className="h-9 w-9" />
+            <Store className="h-7 w-7 text-primary" />
             App Store
           </h1>
           <p className="mb-8 text-muted-foreground">

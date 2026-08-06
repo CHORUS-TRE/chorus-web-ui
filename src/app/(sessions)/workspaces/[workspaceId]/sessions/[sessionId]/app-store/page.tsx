@@ -23,7 +23,7 @@ export default function SessionAppStorePage() {
       <div className="pointer-events-auto flex w-full flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-contrast-background/60 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] backdrop-blur-md">
         <div className="flex items-center justify-between gap-3 px-10 pb-4 pt-10">
           <h2 className="flex w-full flex-row items-center gap-3 text-start">
-            <Store className="h-9 w-9" />
+            <Store className="h-7 w-7 text-primary" />
             App Store
           </h2>
           <Button

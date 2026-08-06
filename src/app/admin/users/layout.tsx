@@ -28,7 +28,7 @@ export default function UsersLayout({
   return (
     <div className="container mx-auto p-6">
       <h1 className="flex items-center gap-3 text-3xl font-semibold text-muted-foreground">
-        <Users className="h-9 w-9" />
+        <Users className="h-7 w-7 text-primary" />
         Users&apos; Management
       </h1>
       <p className="mb-4 text-muted-foreground">Manage users in the system.</p>
